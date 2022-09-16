@@ -1,12 +1,16 @@
 use super::result;
 use crate::cuda;
 
-pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Vec<std::ffi::c_char>, CompilationError> {
+pub struct Ptx {
+    pub(crate) image: Vec<std::ffi::c_char>,
+}
+
+pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompilationError> {
     let prog = result::create_program(src)?;
     unsafe {
         result::compile_program(prog, &[])?;
-        let ptx_src = result::get_ptx(prog)?;
-        Ok(ptx_src)
+        let image = result::get_ptx(prog)?;
+        Ok(Ptx { image })
     }
 }
 
