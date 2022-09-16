@@ -1,4 +1,4 @@
-use cudarc::{cuda::refcount::*, nvrtc::compile::*};
+use cudarc::{nvrtc::*, prelude::*};
 use std::{marker::PhantomData, rc::Rc};
 
 trait NumElements {
