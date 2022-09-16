@@ -266,8 +266,8 @@ impl CudaDevice {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
-    pub fn get_module(&self, fname: &str) -> Option<&CudaModule> {
-        self.modules.get(fname)
+    pub fn get_module(&self, key: &str) -> Option<&CudaModule> {
+        self.modules.get(key)
     }
 }
 

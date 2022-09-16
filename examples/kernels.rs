@@ -71,7 +71,7 @@ where
     type Err = CudaError;
     fn launch(&self, (out, inp, _): (&mut CudaRc<T>, &CudaRc<T>, Op)) -> Result<(), Self::Err> {
         let module = self.get_module(Op::NAME).unwrap();
-        let f = module.get_fn(Op::NAME).unwrap();
+        let f = module.get_fn("kernel").unwrap();
         let cfg = LaunchConfig::for_num_elems(T::NUMEL as u32);
         unsafe { self.launch_cuda_function(f, cfg, (out, inp, &T::NUMEL)) }?;
         Ok(())
@@ -81,7 +81,7 @@ where
 pub struct SinOp;
 
 impl BinaryKernelOp for SinOp {
-    const NAME: &'static str = "sin_kernel";
+    const NAME: &'static str = "SinOp";
     const CU_SRC: &'static str = "
 __device__ void op(float *out, const float *in) {
     *out = sin(*in);
@@ -95,7 +95,7 @@ __device__ void op(float *out, const float *in) {
 pub struct CosOp;
 
 impl BinaryKernelOp for CosOp {
-    const NAME: &'static str = "cos_kernel";
+    const NAME: &'static str = "CosOp";
     const CU_SRC: &'static str = "
 __device__ void op(float *out, const float *in) {
     *out = cos(*in);
@@ -118,14 +118,13 @@ impl<Op: BinaryKernelOp> CompileKernel for ForEach<Op> {
     fn compile() -> Result<Self::Compiled, Self::Err> {
         let mut cu_src = format!(
             "
-extern \"C\" __global__ void {kname}(float *out, const float *inp, int numel) {{
-int i = blockIdx.x * blockDim.x + threadIdx.x;
-if (i < numel) {{
-    op(out + i, inp + i);
-}}
+extern \"C\" __global__ void kernel(float *out, const float *inp, int numel) {{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < numel) {{
+        op(out + i, inp + i);
+    }}
 }}
 ",
-            kname = Op::NAME,
         );
         cu_src.insert_str(0, Op::CU_SRC);
         compile_ptx(cu_src)
@@ -134,8 +133,8 @@ if (i < numel) {{
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let gpu = CudaDeviceBuilder::new(0)
-        .with_nvrtc_module(SinOp::NAME, ForEach::<SinOp>::compile()?, &[SinOp::NAME])
-        .with_nvrtc_module(CosOp::NAME, ForEach::<CosOp>::compile()?, &[CosOp::NAME])
+        .with_nvrtc_module(SinOp::NAME, ForEach::<SinOp>::compile()?, &["kernel"])
+        .with_nvrtc_module(CosOp::NAME, ForEach::<CosOp>::compile()?, &["kernel"])
         .build()
         .unwrap();
 
