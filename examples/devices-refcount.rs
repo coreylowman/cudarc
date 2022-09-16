@@ -1,74 +1,94 @@
 #![feature(generic_associated_types)]
 
-use cudas::cuda::{
-    refcount::{CudaDevice, CudaRc},
-    result::CudaError,
-};
+use cudas::cuda::refcount::*;
 use std::rc::Rc;
-
-trait DeviceAlloc<T> {
-    type Device;
-    fn device(&self) -> &Rc<Self::Device>;
-}
-
-trait ToDevice<T, D>: DeviceAlloc<T> {
-    type Err;
-    type DeviceAlloc: DeviceAlloc<T, Device = D>;
-    fn to(&self, device: &Rc<D>) -> Result<Self::DeviceAlloc, Self::Err>;
-}
 
 pub struct Cpu;
 
-pub struct CpuAlloc<T> {
+pub struct CpuRc<T> {
     data: Rc<T>,
     device: Rc<Cpu>,
 }
 
-impl<T> DeviceAlloc<T> for CpuAlloc<T> {
+trait DeviceRc<T> {
+    type Device;
+    fn device(&self) -> &Rc<Self::Device>;
+}
+
+impl<T> DeviceRc<T> for CpuRc<T> {
     type Device = Cpu;
     fn device(&self) -> &Rc<Self::Device> {
         &self.device
     }
 }
 
-impl<T> ToDevice<T, CudaDevice> for CpuAlloc<T> {
-    type Err = CudaError;
-    type DeviceAlloc = CudaRc<T>;
-    fn to(&self, device: &Rc<CudaDevice>) -> Result<Self::DeviceAlloc, Self::Err> {
-        let mut alloc = device.alloc()?;
-        device.clone_from_host(&mut alloc, self.data.as_ref())?;
-        Ok(alloc)
-    }
-}
-
-impl<T> DeviceAlloc<T> for CudaRc<T> {
+impl<T> DeviceRc<T> for CudaRc<T> {
     type Device = CudaDevice;
     fn device(&self) -> &Rc<Self::Device> {
-        &self.device
+        self.device()
     }
 }
 
-struct Tensor1D<const M: usize, D: DeviceAlloc<[f32; M]> = CpuAlloc<[f32; M]>> {
-    data: Rc<D>,
+trait Device {
+    type DeviceRc<T>: DeviceRc<T>;
+}
+
+impl Device for Cpu {
+    type DeviceRc<T> = CpuRc<T>;
+}
+
+impl Device for CudaDevice {
+    type DeviceRc<T> = CudaRc<T>;
+}
+
+trait CloneToDevice<T: Clone, D: Device> {
+    type Err;
+    fn to(&self, device: &Rc<D>) -> Result<D::DeviceRc<T>, Self::Err>;
+}
+
+impl<T: Clone> CloneToDevice<T, CudaDevice> for CpuRc<T> {
+    type Err = CudaError;
+    fn to(&self, device: &Rc<CudaDevice>) -> Result<CudaRc<T>, Self::Err> {
+        device.take(self.data.clone())
+    }
+}
+
+impl<T: Clone> CloneToDevice<T, Cpu> for CudaRc<T> {
+    type Err = CudaError;
+    fn to(&self, device: &Rc<Cpu>) -> Result<CpuRc<T>, Self::Err> {
+        let data = self.clone().into_host()?;
+        Ok(CpuRc {
+            data,
+            device: device.clone(),
+        })
+    }
+}
+
+struct Tensor1D<const M: usize, D: Device = Cpu> {
+    rc: D::DeviceRc<[f32; M]>,
+}
+
+impl<const M: usize, Src: Device, Dst: Device> CloneToDevice<[f32; M], Dst> for Tensor1D<M, Src>
+where
+    Src::DeviceRc<[f32; M]>: CloneToDevice<[f32; M], Dst>,
+{
+    type Err = <Src::DeviceRc<[f32; M]> as CloneToDevice<[f32; M], Dst>>::Err;
+    fn to(&self, device: &Rc<Dst>) -> Result<<Dst as Device>::DeviceRc<[f32; M]>, Self::Err> {
+        self.rc.to(device)
+    }
 }
 
 fn main() {
     let cpu = Rc::new(Cpu);
-    let gpu = CudaDevice::new(0).unwrap();
+    let gpu = CudaDeviceBuilder::new(0).build().unwrap();
 
-    let t = Tensor1D {
-        data: Rc::new(CpuAlloc {
-            data: Box::new([1.0f32, 2.0, 3.0]),
-            device: cpu,
-        }),
+    let t: Tensor1D<3> = Tensor1D {
+        rc: CpuRc {
+            data: Rc::new([1.0, 2.0, 3.0]),
+            device: cpu.clone(),
+        },
     };
-
-    let mut q = Rc::new(gpu.alloc::<[f32; 3]>().unwrap());
-    // let r = q.clone();
-    let t = Rc::make_mut(&mut q);
-
-    // let t_gpu = t.gpu(&gpu).unwrap();
-
-    // let t_cpu = t_gpu.cpu(&cpu).unwrap();
-    // println!("{:?}", t_cpu.data);
+    let t_gpu = t.to(&gpu).unwrap();
+    let t_cpu = t_gpu.to(&cpu).unwrap();
+    println!("{:?}", t_cpu.data);
 }

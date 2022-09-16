@@ -31,8 +31,8 @@ pub struct CudaRc<T> {
 }
 
 impl<T: Clone> CudaRc<T> {
-    pub fn dup(&self) -> Result<Self, CudaError> {
-        self.t_cuda.device.dup(self)
+    pub fn device(&self) -> &Rc<CudaDevice> {
+        &self.t_cuda.device
     }
 
     pub fn maybe_into_host(mut self) -> Result<Option<Rc<T>>, CudaError> {
@@ -263,10 +263,6 @@ impl CudaDevice {
 
     pub fn synchronize(&self) -> Result<(), CudaError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
-    }
-
-    pub fn has_module(&self, key: &'static str) -> bool {
-        self.modules.contains_key(key)
     }
 
     pub fn get_module(&self, fname: &str) -> Option<&CudaModule> {
