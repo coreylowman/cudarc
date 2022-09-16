@@ -1,5 +1,7 @@
 use super::result;
 use super::sys;
+use std::alloc::alloc_zeroed;
+use std::alloc::Layout;
 use std::collections::HashMap;
 use std::marker::PhantomData;
 
@@ -33,11 +35,28 @@ pub struct LinkedAlloc<'device, T> {
     pub(crate) cpu_data: Option<Box<T>>,
 }
 
-impl<'a, T> LinkedAlloc<'a, T> {
-    pub fn reclaim_host(mut self) -> Result<Option<Box<T>>, result::CudaError> {
+impl<'a, T: Clone> LinkedAlloc<'a, T> {
+    pub fn dup(&self) -> Result<Self, result::CudaError> {
+        self.gpu_data.device.dup(self)
+    }
+
+    pub fn maybe_reclaim_host(mut self) -> Result<Option<Box<T>>, result::CudaError> {
         self.gpu_data.device.maybe_sync_host(&mut self)?;
         // NOTE: CudaAlloc drop impl is called here
         Ok(self.cpu_data)
+    }
+
+    pub fn reclaim_host(mut self) -> Result<Box<T>, result::CudaError> {
+        self.cpu_data.get_or_insert_with(|| {
+            let layout = Layout::new::<T>();
+            unsafe {
+                let ptr = alloc_zeroed(layout) as *mut T;
+                Box::from_raw(ptr)
+            }
+        });
+        self.gpu_data.device.maybe_sync_host(&mut self)?;
+        // NOTE: CudaAlloc drop impl is called here
+        Ok(self.cpu_data.unwrap())
     }
 }
 

@@ -1,5 +1,7 @@
 use super::result;
 use super::sys;
+use std::alloc::alloc_zeroed;
+use std::alloc::Layout;
 use std::collections::HashMap;
 use std::marker::PhantomData;
 use std::rc::Rc;
@@ -16,10 +18,27 @@ pub struct LinkedAlloc<T> {
 }
 
 impl<T: Clone> LinkedAlloc<T> {
-    pub fn reclaim_host(mut self) -> Result<Option<Rc<T>>, result::CudaError> {
+    pub fn dup(&self) -> Result<Self, result::CudaError> {
+        self.gpu_data.device.dup(self)
+    }
+
+    pub fn maybe_reclaim_host(mut self) -> Result<Option<Rc<T>>, result::CudaError> {
         self.gpu_data.device.clone().maybe_sync_host(&mut self)?;
         // NOTE: CudaAlloc drop impl is called here
         Ok(self.cpu_data)
+    }
+
+    pub fn reclaim_host(mut self) -> Result<Rc<T>, result::CudaError> {
+        self.cpu_data.get_or_insert_with(|| {
+            let layout = Layout::new::<T>();
+            unsafe {
+                let ptr = alloc_zeroed(layout) as *mut T;
+                Box::from_raw(ptr).into()
+            }
+        });
+        self.gpu_data.device.clone().maybe_sync_host(&mut self)?;
+        // NOTE: CudaAlloc drop impl is called here
+        Ok(self.cpu_data.unwrap())
     }
 }
 
@@ -240,15 +259,15 @@ pub trait IntoKernelParam {
     fn into_kernel_param(&mut self) -> *mut std::ffi::c_void;
 }
 
-impl<T> IntoKernelParam for &mut CudaAlloc<T> {
+impl<T> IntoKernelParam for &mut LinkedAlloc<T> {
     fn into_kernel_param(&mut self) -> *mut std::ffi::c_void {
-        (&mut self.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
+        (&mut self.gpu_data.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-impl<T> IntoKernelParam for &CudaAlloc<T> {
+impl<T> IntoKernelParam for &LinkedAlloc<T> {
     fn into_kernel_param(&mut self) -> *mut std::ffi::c_void {
-        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+        (&self.gpu_data.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
