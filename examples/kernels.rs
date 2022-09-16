@@ -92,6 +92,20 @@ __device__ void op(float *out, const float *in) {
     }
 }
 
+pub struct CosOp;
+
+impl BinaryKernelOp for CosOp {
+    const NAME: &'static str = "cos_kernel";
+    const CU_SRC: &'static str = "
+__device__ void op(float *out, const float *in) {
+    *out = cos(*in);
+}
+";
+    fn execute(&mut self, out: &mut f32, inp: &f32) {
+        *out = inp.cos();
+    }
+}
+
 trait CompileKernel {
     type Compiled;
     type Err;
@@ -120,27 +134,33 @@ if (i < numel) {{
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let gpu = CudaDeviceBuilder::new(0)
-        .with_nvrtc_ptx(SinOp::NAME, ForEach::<SinOp>::compile()?, &[SinOp::NAME])
+        .with_nvrtc_module(SinOp::NAME, ForEach::<SinOp>::compile()?, &[SinOp::NAME])
+        .with_nvrtc_module(CosOp::NAME, ForEach::<CosOp>::compile()?, &[CosOp::NAME])
         .build()
         .unwrap();
 
     let a_host: Rc<[f32; 3]> = Rc::new([1.0, 2.0, 3.0]);
     let mut b_host = a_host.clone();
+    let mut c_host = a_host.clone();
 
     Cpu.launch((&mut b_host, &a_host, SinOp)).unwrap();
+    Cpu.launch((&mut c_host, &a_host, CosOp)).unwrap();
+
     println!("cpu sin: a={a_host:?} b={b_host:?}");
+    println!("cpu cos: a={a_host:?} c={c_host:?}");
 
     let a_dev = gpu.take(a_host.clone())?;
     let mut b_dev = a_dev.clone();
+    let mut c_dev = a_dev.clone();
 
     gpu.launch((&mut b_dev, &a_dev, SinOp))?;
+    gpu.launch((&mut c_dev, &a_dev, CosOp))?;
 
     let a_host_2 = a_dev.into_host()?;
     let b_host_2 = b_dev.into_host()?;
+    let c_host_2 = c_dev.into_host()?;
     println!("gpu sin: a={a_host_2:?} b={b_host_2:?}");
-
-    assert_eq!(a_host_2, a_host);
-    assert_eq!(b_host_2, b_host);
+    println!("gpu cos: a={a_host_2:?} b={c_host_2:?}");
 
     Ok(())
 }

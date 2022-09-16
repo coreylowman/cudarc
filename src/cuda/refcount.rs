@@ -115,7 +115,7 @@ impl CudaDeviceBuilder {
         self
     }
 
-    pub fn with_nvrtc_ptx(
+    pub fn with_nvrtc_module(
         mut self,
         key: &'static str,
         ptx: Ptx,
