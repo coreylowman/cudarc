@@ -1,5 +1,8 @@
 use super::sys as nvrtc;
-use std::{ffi::CString, mem::MaybeUninit};
+use std::{
+    ffi::{CStr, CString},
+    mem::MaybeUninit,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct NvrtcError(nvrtc::nvrtcResult);
@@ -25,13 +28,10 @@ pub unsafe fn compile_program<'a>(
     prog: nvrtc::nvrtcProgram,
     options: &[&'a str],
 ) -> Result<(), NvrtcError> {
-    let mut opts: Vec<*const std::ffi::c_char> = Vec::with_capacity(options.len());
-    for &opt in options.iter() {
-        let opt_c = CString::new(opt).unwrap();
-        opts.push(opt_c.as_c_str().as_ptr());
-    }
-    let opts_ptr = (&opts).as_ptr();
-    nvrtc::nvrtcCompileProgram(prog, options.len() as i32, opts_ptr).result()
+    let c_strings: Vec<CString> = options.iter().map(|&o| CString::new(o).unwrap()).collect();
+    let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
+    let opts: Vec<*const std::ffi::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
+    nvrtc::nvrtcCompileProgram(prog, options.len() as i32, opts.as_ptr()).result()
 }
 
 pub fn create_program<S: AsRef<str>>(src: S) -> Result<nvrtc::nvrtcProgram, NvrtcError> {

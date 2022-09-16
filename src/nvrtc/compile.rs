@@ -6,126 +6,94 @@ pub struct Ptx {
     pub(crate) image: Vec<std::ffi::c_char>,
 }
 
-pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompilationError> {
-    let prog = result::create_program(src).map_err(CompilationError::CreationError)?;
+pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
+    compile_ptx_with_opts(src, Default::default())
+}
+
+pub fn compile_ptx_with_opts<S: AsRef<str>>(
+    src: S,
+    opts: CompileOptions,
+) -> Result<Ptx, CompileError> {
+    let options = opts.build();
+    let prog = result::create_program(src).map_err(CompileError::CreationError)?;
     unsafe {
-        result::compile_program(prog, &[]).map_err(|error| {
+        result::compile_program(prog, &options).map_err(|error| {
             let log = result::get_program_log(prog).unwrap();
-            CompilationError::CompileError {
+            CompileError::CompileError {
                 error,
                 log: CStr::from_ptr(log.as_ptr()).to_owned(),
+                options,
             }
         })?;
-        let image = result::get_ptx(prog).map_err(CompilationError::GetPtxError)?;
+        let image = result::get_ptx(prog).map_err(CompileError::GetPtxError)?;
         Ok(Ptx { image })
     }
 }
 
 #[derive(Debug)]
-pub enum CompilationError {
+pub enum CompileError {
     CreationError(result::NvrtcError),
     CompileError {
         error: result::NvrtcError,
         log: CString,
+        options: Vec<&'static str>,
     },
     GetPtxError(result::NvrtcError),
 }
 
-impl std::fmt::Display for CompilationError {
+impl std::fmt::Display for CompileError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
-impl std::error::Error for CompilationError {}
+impl std::error::Error for CompileError {}
 
+/// TODO add more of the options
+///
 /// See https://docs.nvidia.com/cuda/nvrtc/index.html#group__options
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Hash, PartialEq, Eq)]
 pub struct CompileOptions {
-    gpu_arch: GpuArchitecture,
-    relocatable_device_code: bool,
-    extensible_whole_program: bool,
-    device_debug: bool,
-    generate_line_info: bool,
-    maxrregcount: Option<usize>,
-    ftz: bool,
-    prec_sqrt: bool,
-    prec_div: bool,
-    fmad: bool,
-    extra_device_vectorization: bool,
-    modify_stack_limit: bool,
-    dlink_time_opt: bool,
-    std: Option<LanguageDialect>,
-    builtin_move_forward: bool,
-    builtin_initializer_list: bool,
-    disable_warnings: bool,
-    restrict: bool,
-    device_as_default_execution_space: bool,
-    device_int128: bool,
-    version_ident: bool,
+    pub ftz: Option<bool>,
+    pub prec_sqrt: Option<bool>,
+    pub prec_div: Option<bool>,
+    pub fmad: Option<bool>,
+    pub use_fast_math: Option<bool>,
 }
 
-impl Default for CompileOptions {
-    fn default() -> Self {
-        Self {
-            gpu_arch: GpuArchitecture::Compute52,
-            relocatable_device_code: false,
-            extensible_whole_program: false,
-            device_debug: false,
-            generate_line_info: false,
-            maxrregcount: None,
-            ftz: false,
-            prec_sqrt: true,
-            prec_div: true,
-            fmad: true,
-            extra_device_vectorization: false,
-            modify_stack_limit: true,
-            dlink_time_opt: false,
-            std: None,
-            builtin_move_forward: true,
-            builtin_initializer_list: true,
-            disable_warnings: false,
-            restrict: false,
-            device_as_default_execution_space: false,
-            device_int128: false,
-            version_ident: false,
+impl CompileOptions {
+    fn build(self) -> Vec<&'static str> {
+        let mut options = Vec::with_capacity(4);
+
+        match self.ftz {
+            Some(true) => options.push("--ftz=true"),
+            Some(false) => options.push("--ftz=false"),
+            None => {}
         }
+
+        match self.prec_sqrt {
+            Some(true) => options.push("--prec-sqrt=true"),
+            Some(false) => options.push("--prec-sqrt=false"),
+            None => {}
+        }
+
+        match self.prec_div {
+            Some(true) => options.push("--prec-div=true"),
+            Some(false) => options.push("--prec-div=false"),
+            None => {}
+        }
+
+        match self.fmad {
+            Some(true) => options.push("--fmad=true"),
+            Some(false) => options.push("--fmad=false"),
+            None => {}
+        }
+
+        match self.use_fast_math {
+            Some(true) => options.push("--fmad=true"),
+            _ => {}
+        }
+
+        options
     }
-}
-
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
-pub enum GpuArchitecture {
-    Compute35,
-    Compute37,
-    Compute50,
-    Compute52,
-    Compute53,
-    Compute60,
-    Compute61,
-    Compute62,
-    Compute70,
-    Compute72,
-    Compute75,
-    Compute80,
-    Sm35,
-    Sm37,
-    Sm50,
-    Sm52,
-    Sm53,
-    Sm60,
-    Sm61,
-    Sm62,
-    Sm70,
-    Sm72,
-    Sm75,
-    Sm80,
-}
-
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
-pub enum LanguageDialect {
-    Cpp03,
-    Cpp11,
-    Cpp14,
-    Cpp17,
-    Cpp20,
 }

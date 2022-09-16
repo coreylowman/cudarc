@@ -111,7 +111,7 @@ trait CompileKernel {
 
 impl<Op: BinaryKernelOp> CompileKernel for ForEach<Op> {
     type Compiled = Ptx;
-    type Err = CompilationError;
+    type Err = CompileError;
     fn compile() -> Result<Self::Compiled, Self::Err> {
         let mut cu_src = format!(
             "
