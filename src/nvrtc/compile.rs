@@ -1,5 +1,6 @@
 use super::result;
 
+#[derive(Debug)]
 pub struct Ptx {
     pub(crate) image: Vec<std::ffi::c_char>,
 }

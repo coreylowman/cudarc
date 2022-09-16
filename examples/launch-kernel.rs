@@ -1,12 +1,15 @@
 use cudas::cuda::refcount::*;
 use std::rc::Rc;
 
-fn main() -> Result<(), CudaError> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dev = CudaDeviceBuilder::new(0)
-        .with_precompiled_ptx("sin", "./examples/sin.ptx", &["sin_kernel"])
+        .with_precompiled_ptx("sin_module", "./examples/sin.ptx", &["sin_kernel"])
         .build()?;
 
-    let module = dev.get_module("sin").unwrap();
+    // "sin_module" is the key used with CudaDeviceBuilder
+    let module = dev.get_module("sin_module").unwrap();
+
+    // "sin_kernel" is the name of the actual function inside the .ptx file
     let f = module.get_fn("sin_kernel").unwrap();
 
     let a_host: Rc<[f32; 3]> = Rc::new([1.0, 2.0, 3.0]);

@@ -1,11 +1,11 @@
 use std::{
-    ffi::{c_uint, c_void},
+    ffi::{c_uint, c_void, CStr},
     mem::{size_of, MaybeUninit},
 };
 
 use super::sys;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct CudaError(sys::CUresult);
 
 impl sys::CUresult {
@@ -17,9 +17,37 @@ impl sys::CUresult {
     }
 }
 
+impl CudaError {
+    pub fn error_name(&self) -> Result<&CStr, CudaError> {
+        let mut err_str = MaybeUninit::uninit();
+        unsafe {
+            sys::cuGetErrorName(self.0, err_str.as_mut_ptr()).result()?;
+            Ok(CStr::from_ptr(err_str.assume_init()))
+        }
+    }
+
+    pub fn error_string(&self) -> Result<&CStr, CudaError> {
+        let mut err_str = MaybeUninit::uninit();
+        unsafe {
+            sys::cuGetErrorString(self.0, err_str.as_mut_ptr()).result()?;
+            Ok(CStr::from_ptr(err_str.assume_init()))
+        }
+    }
+}
+
+impl std::fmt::Debug for CudaError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let err_str = self.error_string().unwrap();
+        f.debug_tuple("CudaError")
+            .field(&self.0)
+            .field(&err_str)
+            .finish()
+    }
+}
+
 impl std::fmt::Display for CudaError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_fmt(format_args!("{:?}", self))
+        write!(f, "{self:?}")
     }
 }
 

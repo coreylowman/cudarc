@@ -74,115 +74,6 @@ impl<T> Drop for CudaUniquePtr<T> {
     }
 }
 
-pub struct CudaDeviceBuilder {
-    ordinal: usize,
-    precompiled_modules: Vec<PrecompiledPtxConfig>,
-    nvrtc_modules: Vec<NvrtcConfig>,
-}
-
-pub(crate) struct PrecompiledPtxConfig {
-    pub(crate) key: &'static str,
-    pub(crate) fname: &'static str,
-    pub(crate) fn_names: Vec<&'static str>,
-}
-
-pub(crate) struct NvrtcConfig {
-    pub(crate) key: &'static str,
-    pub(crate) ptx: Ptx,
-    pub(crate) fn_names: Vec<&'static str>,
-}
-
-impl CudaDeviceBuilder {
-    pub fn new(ordinal: usize) -> Self {
-        Self {
-            ordinal,
-            precompiled_modules: Vec::new(),
-            nvrtc_modules: Vec::new(),
-        }
-    }
-
-    pub fn with_precompiled_ptx(
-        mut self,
-        key: &'static str,
-        fname: &'static str,
-        fn_names: &[&'static str],
-    ) -> Self {
-        self.precompiled_modules.push(PrecompiledPtxConfig {
-            key,
-            fname,
-            fn_names: fn_names.iter().cloned().collect(),
-        });
-        self
-    }
-
-    pub fn with_nvrtc_module(
-        mut self,
-        key: &'static str,
-        ptx: Ptx,
-        fn_names: &[&'static str],
-    ) -> Self {
-        self.nvrtc_modules.push(NvrtcConfig {
-            key,
-            ptx,
-            fn_names: fn_names.iter().cloned().collect(),
-        });
-        self
-    }
-
-    pub fn build(mut self) -> Result<Rc<CudaDevice>, CudaError> {
-        result::init()?;
-        let cu_device = result::device::get(self.ordinal as i32)?;
-
-        // primary context initialization
-        let cu_primary_ctx = unsafe { result::device::primary_ctx_retain(cu_device) }?;
-        unsafe { result::ctx::set_current(cu_primary_ctx) }?;
-
-        // stream initialization
-        let cu_stream =
-            result::stream::create(result::stream::CUstream_flags::CU_STREAM_NON_BLOCKING)?;
-
-        let mut modules =
-            HashMap::with_capacity(self.nvrtc_modules.len() + self.precompiled_modules.len());
-
-        // load
-        for cu in self.precompiled_modules.drain(..) {
-            let module = Self::build_module(result::module::load(cu.fname)?, &cu.fn_names)?;
-            modules.insert(cu.key, module);
-        }
-
-        for ptx in self.nvrtc_modules.drain(..) {
-            let module = Self::build_module(
-                unsafe { result::module::load_data(ptx.ptx.image.as_ptr() as *const _) }?,
-                &ptx.fn_names,
-            )?;
-            modules.insert(ptx.key, module);
-        }
-
-        let device = CudaDevice {
-            cu_device,
-            cu_primary_ctx,
-            cu_stream,
-            modules,
-        };
-        Ok(Rc::new(device))
-    }
-
-    fn build_module(
-        cu_module: sys::CUmodule,
-        fn_names: &[&'static str],
-    ) -> Result<CudaModule, CudaError> {
-        let mut functions = HashMap::with_capacity(fn_names.len());
-        for &fn_name in fn_names.iter() {
-            let cu_function = unsafe { result::module::get_function(cu_module, fn_name) }?;
-            functions.insert(fn_name, CudaFunction { cu_function });
-        }
-        Ok(CudaModule {
-            cu_module,
-            functions,
-        })
-    }
-}
-
 #[derive(Debug)]
 pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
@@ -391,3 +282,165 @@ impl_launch!([A, B], [0, 1]);
 impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
+
+#[derive(Debug)]
+pub struct CudaDeviceBuilder {
+    ordinal: usize,
+    precompiled_modules: Vec<PrecompiledPtxConfig>,
+    nvrtc_modules: Vec<NvrtcConfig>,
+}
+
+#[derive(Debug)]
+pub struct PrecompiledPtxConfig {
+    pub(crate) key: &'static str,
+    pub(crate) fname: &'static str,
+    pub(crate) fn_names: Vec<&'static str>,
+}
+
+#[derive(Debug)]
+pub struct NvrtcConfig {
+    pub(crate) key: &'static str,
+    pub(crate) ptx: Ptx,
+    pub(crate) fn_names: Vec<&'static str>,
+}
+
+impl CudaDeviceBuilder {
+    pub fn new(ordinal: usize) -> Self {
+        Self {
+            ordinal,
+            precompiled_modules: Vec::new(),
+            nvrtc_modules: Vec::new(),
+        }
+    }
+
+    pub fn with_precompiled_ptx(
+        mut self,
+        key: &'static str,
+        path: &'static str,
+        fn_names: &[&'static str],
+    ) -> Self {
+        self.precompiled_modules.push(PrecompiledPtxConfig {
+            key,
+            fname: path,
+            fn_names: fn_names.iter().cloned().collect(),
+        });
+        self
+    }
+
+    pub fn with_nvrtc_module(
+        mut self,
+        key: &'static str,
+        ptx: Ptx,
+        fn_names: &[&'static str],
+    ) -> Self {
+        self.nvrtc_modules.push(NvrtcConfig {
+            key,
+            ptx,
+            fn_names: fn_names.iter().cloned().collect(),
+        });
+        self
+    }
+
+    pub fn build(mut self) -> Result<Rc<CudaDevice>, BuildError> {
+        result::init().map_err(BuildError::InitError)?;
+
+        let cu_device =
+            result::device::get(self.ordinal as i32).map_err(BuildError::OrdinalError)?;
+
+        // primary context initialization
+        let cu_primary_ctx = unsafe { result::device::primary_ctx_retain(cu_device) }
+            .map_err(BuildError::ContextError)?;
+
+        unsafe { result::ctx::set_current(cu_primary_ctx) }.map_err(BuildError::ContextError)?;
+
+        // stream initialization
+        let cu_stream =
+            result::stream::create(result::stream::CUstream_flags::CU_STREAM_NON_BLOCKING)
+                .map_err(BuildError::StreamError)?;
+
+        let mut modules =
+            HashMap::with_capacity(self.nvrtc_modules.len() + self.precompiled_modules.len());
+
+        for cu in self.precompiled_modules.drain(..) {
+            let cu_module =
+                result::module::load(cu.fname).map_err(|e| BuildError::PtxLoadingError {
+                    key: cu.key,
+                    cuda: e,
+                })?;
+            let module = Self::build_module(cu.key, cu_module, &cu.fn_names)?;
+            modules.insert(cu.key, module);
+        }
+
+        for ptx in self.nvrtc_modules.drain(..) {
+            let image = ptx.ptx.image.as_ptr() as *const _;
+            let cu_module = unsafe { result::module::load_data(image) }.map_err(|e| {
+                BuildError::NvrtcLoadingError {
+                    key: ptx.key,
+                    cuda: e,
+                }
+            })?;
+            let module = Self::build_module(ptx.key, cu_module, &ptx.fn_names)?;
+            modules.insert(ptx.key, module);
+        }
+
+        let device = CudaDevice {
+            cu_device,
+            cu_primary_ctx,
+            cu_stream,
+            modules,
+        };
+        Ok(Rc::new(device))
+    }
+
+    fn build_module(
+        key: &'static str,
+        cu_module: sys::CUmodule,
+        fn_names: &[&'static str],
+    ) -> Result<CudaModule, BuildError> {
+        let mut functions = HashMap::with_capacity(fn_names.len());
+        for &fn_name in fn_names.iter() {
+            let cu_function =
+                unsafe { result::module::get_function(cu_module, fn_name) }.map_err(|e| {
+                    BuildError::GetFunctionError {
+                        key,
+                        symbol: fn_name,
+                        cuda: e,
+                    }
+                })?;
+            functions.insert(fn_name, CudaFunction { cu_function });
+        }
+        Ok(CudaModule {
+            cu_module,
+            functions,
+        })
+    }
+}
+
+#[derive(Debug)]
+pub enum BuildError {
+    InitError(CudaError),
+    OrdinalError(CudaError),
+    ContextError(CudaError),
+    StreamError(CudaError),
+    PtxLoadingError {
+        key: &'static str,
+        cuda: CudaError,
+    },
+    NvrtcLoadingError {
+        key: &'static str,
+        cuda: CudaError,
+    },
+    GetFunctionError {
+        key: &'static str,
+        symbol: &'static str,
+        cuda: CudaError,
+    },
+}
+
+impl std::fmt::Display for BuildError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
+impl std::error::Error for BuildError {}
