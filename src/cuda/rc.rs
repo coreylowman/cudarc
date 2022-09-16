@@ -1,4 +1,4 @@
-//! Safe abstractions over [crate::cuda::result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
+//! Safe abstractions over [result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
 //!
 //! # Safety
 //!
@@ -25,9 +25,9 @@
 //!
 //! ### Device Pointer lifetimes
 //!
-//! The next part of safety is ensuring that any created [sys::CUdeviceptr] do not outlive
+//! The next part of safety is ensuring that [sys::CUdeviceptr] do not outlive
 //! the [CudaDevice]. Again it is possible to do this with lifetimes, but for usability
-//! we choose to holding an [Rc<CudaDevice>] along with every [sys::CUdeviceptr].
+//! we choose to bundle [Rc<CudaDevice>] along with every [sys::CUdeviceptr].
 //!
 //! ### Host and Device Data lifetimes
 //!
@@ -50,6 +50,7 @@ use std::rc::Rc;
 
 pub use result::CudaError;
 
+/// TODO
 pub unsafe trait Zeroable {}
 unsafe impl Zeroable for i8 {}
 unsafe impl Zeroable for i16 {}
@@ -65,6 +66,7 @@ unsafe impl Zeroable for f32 {}
 unsafe impl Zeroable for f64 {}
 unsafe impl<T: Zeroable, const M: usize> Zeroable for [T; M] {}
 
+/// TODO
 #[derive(Debug, Clone)]
 pub struct CudaRc<T> {
     pub(crate) t_cuda: Rc<CudaUniquePtr<T>>,
@@ -72,17 +74,20 @@ pub struct CudaRc<T> {
 }
 
 impl<T> CudaRc<T> {
+    /// TODO
     pub fn device(&self) -> &Rc<CudaDevice> {
         &self.t_cuda.device
     }
 }
 
 impl<T: Clone> CudaRc<T> {
+    /// TODO
     pub fn maybe_into_host(mut self) -> Result<Option<Rc<T>>, CudaError> {
         self.t_cuda.device.clone().sync_host(&mut self)?;
         Ok(self.t_host)
     }
 
+    /// TODO
     pub fn into_host(mut self) -> Result<Rc<T>, CudaError> {
         self.t_host.get_or_insert_with(|| {
             let layout = Layout::new::<T>();
@@ -96,6 +101,7 @@ impl<T: Clone> CudaRc<T> {
     }
 }
 
+/// TODO
 #[derive(Debug)]
 pub(crate) struct CudaUniquePtr<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
@@ -115,6 +121,7 @@ impl<T> Drop for CudaUniquePtr<T> {
     }
 }
 
+/// TODO
 #[derive(Debug)]
 pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
@@ -142,6 +149,7 @@ impl Drop for CudaDevice {
 }
 
 impl CudaDevice {
+    /// TODO
     /// unsafe because the memory is unset
     unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaUniquePtr<T>, CudaError> {
         let cu_device_ptr = unsafe { result::malloc_async::<T>(self.cu_stream) }?;
@@ -152,6 +160,7 @@ impl CudaDevice {
         })
     }
 
+    /// TODO
     fn dup<T>(self: &Rc<Self>, src: &CudaUniquePtr<T>) -> Result<CudaUniquePtr<T>, CudaError> {
         let alloc = unsafe { self.alloc() }?;
         unsafe {
@@ -160,6 +169,7 @@ impl CudaDevice {
         Ok(alloc)
     }
 
+    /// TODO
     pub fn alloc_zeros<T: Zeroable>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
         let alloc = unsafe { self.alloc() }?;
         unsafe { result::memset_d8_async::<T>(alloc.cu_device_ptr, 0, self.cu_stream) }?;
@@ -169,6 +179,7 @@ impl CudaDevice {
         })
     }
 
+    /// TODO
     pub fn take<T>(self: &Rc<Self>, host_data: Rc<T>) -> Result<CudaRc<T>, CudaError> {
         let alloc = unsafe { self.alloc() }?;
         unsafe {
@@ -180,6 +191,7 @@ impl CudaDevice {
         })
     }
 
+    /// TODO
     pub(crate) fn sync_host<T: Clone>(&self, t: &mut CudaRc<T>) -> Result<(), CudaError> {
         if let Some(host_data) = &mut t.t_host {
             unsafe {
@@ -194,15 +206,18 @@ impl CudaDevice {
         Ok(())
     }
 
+    /// TODO
     pub(crate) fn synchronize(&self) -> Result<(), CudaError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
+    /// TODO
     pub fn get_module(&self, key: &str) -> Option<&CudaModule> {
         self.modules.get(key)
     }
 }
 
+/// TODO
 #[derive(Debug)]
 pub struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
@@ -210,16 +225,19 @@ pub struct CudaModule {
 }
 
 impl CudaModule {
+    /// TODO
     pub fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
         self.functions.get(name)
     }
 }
 
+/// TODO
 #[derive(Debug)]
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
 }
 
+/// TODO
 #[derive(Clone, Copy)]
 pub struct LaunchConfig {
     pub grid_dim: (u32, u32, u32),
@@ -228,6 +246,7 @@ pub struct LaunchConfig {
 }
 
 impl LaunchConfig {
+    /// TODO
     pub fn for_num_elems(n: u32) -> Self {
         Self {
             grid_dim: (1, 1, 1),
@@ -237,10 +256,12 @@ impl LaunchConfig {
     }
 }
 
+/// TODO
 pub unsafe trait IntoKernelParam {
     fn into_kernel_param(self) -> *mut std::ffi::c_void;
 }
 
+/// TODO
 pub trait LaunchCudaFunction<Params> {
     /// # Safety
     ///
@@ -324,6 +345,7 @@ impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
 
+/// TODO
 #[derive(Debug)]
 pub struct CudaDeviceBuilder {
     ordinal: usize,
@@ -331,21 +353,24 @@ pub struct CudaDeviceBuilder {
     nvrtc_modules: Vec<NvrtcConfig>,
 }
 
+/// TODO
 #[derive(Debug)]
-pub struct PrecompiledPtxConfig {
+pub(crate) struct PrecompiledPtxConfig {
     pub(crate) key: &'static str,
     pub(crate) fname: &'static str,
     pub(crate) fn_names: Vec<&'static str>,
 }
 
+/// TODO
 #[derive(Debug)]
-pub struct NvrtcConfig {
+pub(crate) struct NvrtcConfig {
     pub(crate) key: &'static str,
     pub(crate) ptx: Ptx,
     pub(crate) fn_names: Vec<&'static str>,
 }
 
 impl CudaDeviceBuilder {
+    /// TODO
     pub fn new(ordinal: usize) -> Self {
         Self {
             ordinal,
@@ -354,6 +379,7 @@ impl CudaDeviceBuilder {
         }
     }
 
+    /// TODO
     pub fn with_precompiled_ptx(
         mut self,
         key: &'static str,
@@ -368,6 +394,7 @@ impl CudaDeviceBuilder {
         self
     }
 
+    /// TODO
     pub fn with_nvrtc_module(
         mut self,
         key: &'static str,
@@ -382,6 +409,7 @@ impl CudaDeviceBuilder {
         self
     }
 
+    /// TODO
     pub fn build(mut self) -> Result<Rc<CudaDevice>, BuildError> {
         result::init().map_err(BuildError::InitError)?;
 
@@ -395,9 +423,8 @@ impl CudaDeviceBuilder {
         unsafe { result::ctx::set_current(cu_primary_ctx) }.map_err(BuildError::ContextError)?;
 
         // stream initialization
-        let cu_stream =
-            result::stream::create(result::stream::CUstream_flags::CU_STREAM_NON_BLOCKING)
-                .map_err(BuildError::StreamError)?;
+        let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)
+            .map_err(BuildError::StreamError)?;
 
         let mut modules =
             HashMap::with_capacity(self.nvrtc_modules.len() + self.precompiled_modules.len());
@@ -457,6 +484,7 @@ impl CudaDeviceBuilder {
     }
 }
 
+/// TODO
 #[derive(Debug)]
 pub enum BuildError {
     InitError(CudaError),

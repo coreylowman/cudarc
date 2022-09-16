@@ -1,4 +1,4 @@
-//! A thin wrapper around [sys].
+//! A thin wrapper around [sys] providing [Result]s with [NvrtcError].
 
 use super::sys;
 use std::{
@@ -6,10 +6,12 @@ use std::{
     mem::MaybeUninit,
 };
 
+/// TODO
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct NvrtcError(sys::nvrtcResult);
+pub struct NvrtcError(pub sys::nvrtcResult);
 
 impl sys::nvrtcResult {
+    /// Transforms into a [Result] of [NvrtcError]
     pub fn result(self) -> Result<(), NvrtcError> {
         match self {
             sys::nvrtcResult::NVRTC_SUCCESS => Ok(()),
@@ -20,22 +22,13 @@ impl sys::nvrtcResult {
 
 impl std::fmt::Display for NvrtcError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_fmt(format_args!("{:?}", self))
+        write!(f, "{self:?}")
     }
 }
 
 impl std::error::Error for NvrtcError {}
 
-pub unsafe fn compile_program<'a>(
-    prog: sys::nvrtcProgram,
-    options: &[&'a str],
-) -> Result<(), NvrtcError> {
-    let c_strings: Vec<CString> = options.iter().map(|&o| CString::new(o).unwrap()).collect();
-    let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
-    let opts: Vec<*const std::ffi::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
-    sys::nvrtcCompileProgram(prog, options.len() as i32, opts.as_ptr()).result()
-}
-
+/// Creates a program
 pub fn create_program<S: AsRef<str>>(src: S) -> Result<sys::nvrtcProgram, NvrtcError> {
     let src_c = CString::new(src.as_ref()).unwrap();
     let mut prog = MaybeUninit::uninit();
@@ -53,10 +46,23 @@ pub fn create_program<S: AsRef<str>>(src: S) -> Result<sys::nvrtcProgram, NvrtcE
     }
 }
 
+/// Compiles something
+pub unsafe fn compile_program<'a>(
+    prog: sys::nvrtcProgram,
+    options: &[&'a str],
+) -> Result<(), NvrtcError> {
+    let c_strings: Vec<CString> = options.iter().map(|&o| CString::new(o).unwrap()).collect();
+    let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
+    let opts: Vec<*const std::ffi::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
+    sys::nvrtcCompileProgram(prog, options.len() as i32, opts.as_ptr()).result()
+}
+
+/// Release
 pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError> {
     sys::nvrtcDestroyProgram(&prog as *const _ as *mut _).result()
 }
 
+/// Extract ptx
 pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::ffi::c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
@@ -66,6 +72,7 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::ffi::c_char>, 
     Ok(ptx_src)
 }
 
+/// Extract log
 pub unsafe fn get_program_log(
     prog: sys::nvrtcProgram,
 ) -> Result<Vec<std::ffi::c_char>, NvrtcError> {

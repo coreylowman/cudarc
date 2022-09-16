@@ -1,15 +1,18 @@
 use super::result;
 use std::ffi::{CStr, CString};
 
-#[derive(Debug)]
+/// TODO
+#[derive(Debug, Clone)]
 pub struct Ptx {
     pub(crate) image: Vec<std::ffi::c_char>,
 }
 
+/// Calls [compile_ptx_with_opts] with no options.
 pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
     compile_ptx_with_opts(src, Default::default())
 }
 
+/// TODO
 pub fn compile_ptx_with_opts<S: AsRef<str>>(
     src: S,
     opts: CompileOptions,
@@ -30,7 +33,8 @@ pub fn compile_ptx_with_opts<S: AsRef<str>>(
     }
 }
 
-#[derive(Debug)]
+/// TODO
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CompileError {
     CreationError(result::NvrtcError),
     CompileError {
@@ -51,7 +55,7 @@ impl std::error::Error for CompileError {}
 
 /// TODO add more of the options
 ///
-/// See https://docs.nvidia.com/cuda/nvrtc/index.html#group__options
+/// See <https://docs.nvidia.com/cuda/nvrtc/index.html#group__options>
 #[derive(Clone, Copy, Debug, Default, Hash, PartialEq, Eq)]
 pub struct CompileOptions {
     pub ftz: Option<bool>,
@@ -62,7 +66,7 @@ pub struct CompileOptions {
 }
 
 impl CompileOptions {
-    fn build(self) -> Vec<&'static str> {
+    pub(crate) fn build(self) -> Vec<&'static str> {
         let mut options = Vec::with_capacity(4);
 
         match self.ftz {
