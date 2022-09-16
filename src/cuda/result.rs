@@ -1,9 +1,10 @@
+//! A thin wrapper around [sys].
+
+use super::sys;
 use std::{
     ffi::{c_uint, c_void, CStr},
     mem::{size_of, MaybeUninit},
 };
-
-use super::sys;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct CudaError(sys::CUresult);

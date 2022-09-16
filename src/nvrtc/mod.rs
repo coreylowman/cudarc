@@ -3,4 +3,6 @@ pub mod result;
 #[allow(warnings)]
 pub mod sys;
 
-pub use compile::*;
+pub mod prelude {
+    pub use super::compile::*;
+}

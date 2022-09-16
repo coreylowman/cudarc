@@ -2,5 +2,5 @@ pub mod cuda;
 pub mod nvrtc;
 
 pub mod prelude {
-    pub use crate::cuda::rc::*;
+    pub use crate::cuda::prelude::*;
 }
