@@ -26,15 +26,17 @@ unsafe impl<T: Zeroable, const M: usize> Zeroable for [T; M] {}
 
 #[derive(Debug, Clone)]
 pub struct CudaRc<T> {
-    pub(crate) t_cuda: Rc<CudaPtr<T>>,
+    pub(crate) t_cuda: Rc<CudaUniquePtr<T>>,
     pub(crate) t_host: Option<Rc<T>>,
 }
 
-impl<T: Clone> CudaRc<T> {
+impl<T> CudaRc<T> {
     pub fn device(&self) -> &Rc<CudaDevice> {
         &self.t_cuda.device
     }
+}
 
+impl<T: Clone> CudaRc<T> {
     pub fn maybe_into_host(mut self) -> Result<Option<Rc<T>>, CudaError> {
         self.t_cuda.device.clone().sync_host(&mut self)?;
         Ok(self.t_host)
@@ -54,13 +56,19 @@ impl<T: Clone> CudaRc<T> {
 }
 
 #[derive(Debug)]
-pub(crate) struct CudaPtr<T> {
+pub(crate) struct CudaUniquePtr<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub device: Rc<CudaDevice>,
     marker: PhantomData<*const T>,
 }
 
-impl<T> Drop for CudaPtr<T> {
+impl<T> Clone for CudaUniquePtr<T> {
+    fn clone(&self) -> Self {
+        self.device.dup(self).unwrap()
+    }
+}
+
+impl<T> Drop for CudaUniquePtr<T> {
     fn drop(&mut self) {
         unsafe { result::free_async(self.cu_device_ptr, self.device.cu_stream) }.unwrap();
     }
@@ -203,13 +211,21 @@ impl Drop for CudaDevice {
 
 impl CudaDevice {
     /// unsafe because the memory is unset
-    unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaPtr<T>, CudaError> {
+    unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaUniquePtr<T>, CudaError> {
         let cu_device_ptr = unsafe { result::malloc_async::<T>(self.cu_stream) }?;
-        Ok(CudaPtr {
+        Ok(CudaUniquePtr {
             cu_device_ptr,
             device: self.clone(),
             marker: PhantomData,
         })
+    }
+
+    fn dup<T>(self: &Rc<Self>, src: &CudaUniquePtr<T>) -> Result<CudaUniquePtr<T>, CudaError> {
+        let alloc = unsafe { self.alloc() }?;
+        unsafe {
+            result::memcpy_dtod_async::<T>(alloc.cu_device_ptr, src.cu_device_ptr, self.cu_stream)
+        }?;
+        Ok(alloc)
     }
 
     pub fn alloc_zeros<T: Zeroable>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
@@ -229,21 +245,6 @@ impl CudaDevice {
         Ok(CudaRc {
             t_cuda: Rc::new(alloc),
             t_host: Some(host_data),
-        })
-    }
-
-    pub fn dup<T>(self: &Rc<Self>, src: &CudaRc<T>) -> Result<CudaRc<T>, CudaError> {
-        let alloc = unsafe { self.alloc() }?;
-        unsafe {
-            result::memcpy_dtod_async::<T>(
-                alloc.cu_device_ptr,
-                src.t_cuda.cu_device_ptr,
-                self.cu_stream,
-            )
-        }?;
-        Ok(CudaRc {
-            t_cuda: Rc::new(alloc),
-            t_host: src.t_host.clone(),
         })
     }
 
@@ -305,7 +306,7 @@ impl LaunchConfig {
 }
 
 pub unsafe trait IntoKernelParam {
-    fn into_kernel_param(&self) -> *mut std::ffi::c_void;
+    fn into_kernel_param(self) -> *mut std::ffi::c_void;
 }
 
 pub trait LaunchCudaFunction<Params> {
@@ -317,16 +318,23 @@ pub trait LaunchCudaFunction<Params> {
     ) -> Result<(), CudaError>;
 }
 
+unsafe impl<T> IntoKernelParam for &mut CudaRc<T> {
+    fn into_kernel_param(self) -> *mut std::ffi::c_void {
+        let ptr = Rc::make_mut(&mut self.t_cuda);
+        (&mut ptr.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
 unsafe impl<T> IntoKernelParam for &CudaRc<T> {
-    fn into_kernel_param(&self) -> *mut std::ffi::c_void {
+    fn into_kernel_param(self) -> *mut std::ffi::c_void {
         (&self.t_cuda.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
 macro_rules! impl_into_kernel_param {
     ($T:ty) => {
-        unsafe impl IntoKernelParam for $T {
-            fn into_kernel_param(&self) -> *mut std::ffi::c_void {
+        unsafe impl IntoKernelParam for &$T {
+            fn into_kernel_param(self) -> *mut std::ffi::c_void {
                 self as *const $T as *mut std::ffi::c_void
             }
         }

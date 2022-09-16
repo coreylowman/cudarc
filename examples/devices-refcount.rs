@@ -12,19 +12,19 @@ pub struct CpuRc<T> {
 
 trait DeviceRc<T> {
     type Device;
-    fn device(&self) -> &Rc<Self::Device>;
+    fn device_ref(&self) -> &Rc<Self::Device>;
 }
 
 impl<T> DeviceRc<T> for CpuRc<T> {
     type Device = Cpu;
-    fn device(&self) -> &Rc<Self::Device> {
+    fn device_ref(&self) -> &Rc<Self::Device> {
         &self.device
     }
 }
 
 impl<T> DeviceRc<T> for CudaRc<T> {
     type Device = CudaDevice;
-    fn device(&self) -> &Rc<Self::Device> {
+    fn device_ref(&self) -> &Rc<Self::Device> {
         self.device()
     }
 }
