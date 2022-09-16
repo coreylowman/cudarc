@@ -18,7 +18,7 @@ fn main() -> Result<(), CudaError> {
     let cfg = LaunchConfig::for_num_elems(n);
     unsafe { dev.launch_cuda_function(f, cfg, (&b_dev, &a_dev, n)) }?;
 
-    let b_host = b_dev.reclaim_host()?;
+    let b_host = b_dev.into_host()?;
 
     println!("Found {:?}", b_host);
     println!("Expected {:?}", a_host.map(f32::sin));

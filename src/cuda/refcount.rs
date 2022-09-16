@@ -35,13 +35,12 @@ impl<T: Clone> CudaRc<T> {
         self.t_cuda.device.dup(self)
     }
 
-    pub fn maybe_reclaim_host(mut self) -> Result<Option<Rc<T>>, CudaError> {
+    pub fn maybe_into_host(mut self) -> Result<Option<Rc<T>>, CudaError> {
         self.t_cuda.device.clone().sync_host(&mut self)?;
-        // NOTE: CudaAlloc drop impl is called here
         Ok(self.t_host)
     }
 
-    pub fn reclaim_host(mut self) -> Result<Rc<T>, CudaError> {
+    pub fn into_host(mut self) -> Result<Rc<T>, CudaError> {
         self.t_host.get_or_insert_with(|| {
             let layout = Layout::new::<T>();
             unsafe {
@@ -50,7 +49,6 @@ impl<T: Clone> CudaRc<T> {
             }
         });
         self.t_cuda.device.clone().sync_host(&mut self)?;
-        // NOTE: CudaAlloc drop impl is called here
         Ok(self.t_host.unwrap())
     }
 }
@@ -65,49 +63,6 @@ pub(crate) struct CudaPtr<T> {
 impl<T> Drop for CudaPtr<T> {
     fn drop(&mut self) {
         unsafe { result::free_async(self.cu_device_ptr, self.device.cu_stream) }.unwrap();
-    }
-}
-
-#[derive(Debug)]
-pub struct CudaDevice {
-    pub(crate) cu_device: sys::CUdevice,
-    pub(crate) cu_primary_ctx: sys::CUcontext,
-    pub(crate) cu_stream: sys::CUstream,
-    pub(crate) modules: HashMap<&'static str, CudaModule>,
-}
-
-#[derive(Debug)]
-pub struct CudaModule {
-    pub(crate) cu_module: sys::CUmodule,
-    pub(crate) functions: HashMap<&'static str, CudaFunction>,
-}
-
-impl CudaModule {
-    pub unsafe fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
-        self.functions.get(name)
-    }
-}
-
-#[derive(Debug)]
-pub struct CudaFunction {
-    pub(crate) cu_function: sys::CUfunction,
-}
-
-impl Drop for CudaDevice {
-    fn drop(&mut self) {
-        for (_, module) in self.modules.drain() {
-            unsafe { result::module::unload(module.cu_module) }.unwrap();
-        }
-
-        let stream = std::mem::replace(&mut self.cu_stream, std::ptr::null_mut());
-        if !stream.is_null() {
-            unsafe { result::stream::destroy(stream) }.unwrap();
-        }
-
-        let ctx = std::mem::replace(&mut self.cu_primary_ctx, std::ptr::null_mut());
-        if !ctx.is_null() {
-            unsafe { result::device::primary_ctx_release(self.cu_device) }.unwrap();
-        }
     }
 }
 
@@ -220,6 +175,32 @@ impl CudaDeviceBuilder {
     }
 }
 
+#[derive(Debug)]
+pub struct CudaDevice {
+    pub(crate) cu_device: sys::CUdevice,
+    pub(crate) cu_primary_ctx: sys::CUcontext,
+    pub(crate) cu_stream: sys::CUstream,
+    pub(crate) modules: HashMap<&'static str, CudaModule>,
+}
+
+impl Drop for CudaDevice {
+    fn drop(&mut self) {
+        for (_, module) in self.modules.drain() {
+            unsafe { result::module::unload(module.cu_module) }.unwrap();
+        }
+
+        let stream = std::mem::replace(&mut self.cu_stream, std::ptr::null_mut());
+        if !stream.is_null() {
+            unsafe { result::stream::destroy(stream) }.unwrap();
+        }
+
+        let ctx = std::mem::replace(&mut self.cu_primary_ctx, std::ptr::null_mut());
+        if !ctx.is_null() {
+            unsafe { result::device::primary_ctx_release(self.cu_device) }.unwrap();
+        }
+    }
+}
+
 impl CudaDevice {
     /// unsafe because the memory is unset
     unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaPtr<T>, CudaError> {
@@ -293,6 +274,23 @@ impl CudaDevice {
     }
 }
 
+#[derive(Debug)]
+pub struct CudaModule {
+    pub(crate) cu_module: sys::CUmodule,
+    pub(crate) functions: HashMap<&'static str, CudaFunction>,
+}
+
+impl CudaModule {
+    pub unsafe fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
+        self.functions.get(name)
+    }
+}
+
+#[derive(Debug)]
+pub struct CudaFunction {
+    pub(crate) cu_function: sys::CUfunction,
+}
+
 #[derive(Clone, Copy)]
 pub struct LaunchConfig {
     pub grid_dim: (u32, u32, u32),
@@ -311,7 +309,7 @@ impl LaunchConfig {
 }
 
 pub unsafe trait IntoKernelParam {
-    fn into_kernel_param(&mut self) -> *mut std::ffi::c_void;
+    fn into_kernel_param(&self) -> *mut std::ffi::c_void;
 }
 
 pub trait LaunchCudaFunction<Params> {
@@ -324,7 +322,7 @@ pub trait LaunchCudaFunction<Params> {
 }
 
 unsafe impl<T> IntoKernelParam for &CudaRc<T> {
-    fn into_kernel_param(&mut self) -> *mut std::ffi::c_void {
+    fn into_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.t_cuda.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
@@ -332,8 +330,8 @@ unsafe impl<T> IntoKernelParam for &CudaRc<T> {
 macro_rules! impl_into_kernel_param {
     ($T:ty) => {
         unsafe impl IntoKernelParam for $T {
-            fn into_kernel_param(&mut self) -> *mut std::ffi::c_void {
-                self as *mut _ as *mut std::ffi::c_void
+            fn into_kernel_param(&self) -> *mut std::ffi::c_void {
+                self as *const $T as *mut std::ffi::c_void
             }
         }
     };
@@ -359,7 +357,7 @@ impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for CudaDevi
         &self,
         func: &CudaFunction,
         cfg: LaunchConfig,
-        mut args: ($($Vars, )*)
+        args: ($($Vars, )*)
     ) -> Result<(), CudaError> {
         let params = &mut [$(args.$Idx.into_kernel_param(), )*];
         unsafe {
