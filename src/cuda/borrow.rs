@@ -1,6 +1,5 @@
 use super::result;
 use super::sys;
-use std::alloc::{alloc_zeroed, Layout};
 use std::collections::HashMap;
 use std::marker::PhantomData;
 
@@ -29,10 +28,22 @@ pub struct CudaFunction {
 }
 
 #[derive(Debug)]
-pub struct InCudaMemory<'device, T> {
+pub struct LinkedAlloc<'device, T> {
+    pub(crate) gpu_data: CudaAlloc<'device, T>,
+    pub(crate) cpu_data: Option<Box<T>>,
+}
+
+#[derive(Debug)]
+pub struct CudaAlloc<'device, T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
-    pub(crate) host_data: Option<Box<T>>,
-    device: PhantomData<&'device CudaDevice>,
+    pub(crate) device: &'device CudaDevice,
+    marker: PhantomData<*const T>,
+}
+
+impl<'a, T> Drop for CudaAlloc<'a, T> {
+    fn drop(&mut self) {
+        unsafe { result::free_async(self.cu_device_ptr, self.device.cu_stream) }.unwrap();
+    }
 }
 
 impl Drop for CudaDevice {
@@ -69,40 +80,65 @@ impl CudaDevice {
         })
     }
 
+    /// unsafe becuase it the memory is unset
+    unsafe fn alloc<T>(&self) -> Result<CudaAlloc<T>, result::CudaError> {
+        let cu_device_ptr = unsafe { result::malloc_async::<T>(self.cu_stream) }?;
+        Ok(CudaAlloc {
+            cu_device_ptr,
+            device: self,
+            marker: PhantomData,
+        })
+    }
+
     /// Unsafe because it memsets all allocated memory to 0, and T may not be valid.
-    pub unsafe fn alloc<T>(&self) -> Result<InCudaMemory<T>, result::CudaError> {
-        let cu_device_ptr = unsafe { result::malloc_async::<T>(self.cu_stream) }?;
-        unsafe { result::memset_d8_async::<T>(cu_device_ptr, 0, self.cu_stream) }?;
-        Ok(InCudaMemory {
-            cu_device_ptr,
-            host_data: None,
-            device: PhantomData,
+    pub unsafe fn alloc_zeros<T>(&self) -> Result<LinkedAlloc<T>, result::CudaError> {
+        let alloc = self.alloc()?;
+        unsafe { result::memset_d8_async::<T>(alloc.cu_device_ptr, 0, self.cu_stream) }?;
+        Ok(LinkedAlloc {
+            gpu_data: alloc,
+            cpu_data: None,
         })
     }
 
-    pub fn take<T>(&self, host_data: Box<T>) -> Result<InCudaMemory<T>, result::CudaError> {
-        let cu_device_ptr = unsafe { result::malloc_async::<T>(self.cu_stream) }?;
-        unsafe { result::memcpy_htod_async(cu_device_ptr, host_data.as_ref(), self.cu_stream) }?;
-        Ok(InCudaMemory {
-            cu_device_ptr,
-            host_data: Some(host_data),
-            device: PhantomData,
+    pub fn take<T>(&self, host_data: Box<T>) -> Result<LinkedAlloc<T>, result::CudaError> {
+        let alloc = unsafe { self.alloc()? };
+        unsafe {
+            result::memcpy_htod_async(alloc.cu_device_ptr, host_data.as_ref(), self.cu_stream)
+        }?;
+        Ok(LinkedAlloc {
+            gpu_data: alloc,
+            cpu_data: Some(host_data),
         })
     }
 
-    /// Unsafe because it may allocate a new Box with all zeros, and T may not be valid
-    pub fn release<T>(&self, t: InCudaMemory<T>) -> Result<Box<T>, result::CudaError> {
-        let mut host_data = t.host_data.unwrap_or_else(|| {
-            let layout = Layout::new::<T>();
+    pub fn dup<T: Clone>(&self, src: &LinkedAlloc<T>) -> Result<LinkedAlloc<T>, result::CudaError> {
+        let alloc = unsafe { self.alloc() }?;
+        unsafe {
+            result::memcpy_dtod_async::<T>(
+                alloc.cu_device_ptr,
+                src.gpu_data.cu_device_ptr,
+                self.cu_stream,
+            )
+        }?;
+        Ok(LinkedAlloc {
+            gpu_data: alloc,
+            cpu_data: src.cpu_data.clone(),
+        })
+    }
+
+    pub fn reclaim<T>(&self, mut t: LinkedAlloc<T>) -> Result<Option<Box<T>>, result::CudaError> {
+        if let Some(host_data) = &mut t.cpu_data {
             unsafe {
-                let ptr = alloc_zeroed(layout) as *mut T;
-                Box::from_raw(ptr)
-            }
-        });
-        unsafe { result::memcpy_dtoh_async(host_data.as_mut(), t.cu_device_ptr, self.cu_stream) }?;
-        self.synchronize()?;
-        unsafe { result::free_async(t.cu_device_ptr, self.cu_stream) }?;
-        Ok(host_data)
+                result::memcpy_dtoh_async(
+                    host_data.as_mut(),
+                    t.gpu_data.cu_device_ptr,
+                    self.cu_stream,
+                )
+            }?;
+            self.synchronize()?;
+        }
+        // NOTE: CudaAlloc's drop impl is called here
+        Ok(t.cpu_data)
     }
 
     pub fn synchronize(&self) -> Result<(), result::CudaError> {
@@ -190,13 +226,13 @@ pub trait IntoKernelParam {
     fn into_kernel_param(&mut self) -> *mut std::ffi::c_void;
 }
 
-impl<'a, T> IntoKernelParam for &mut InCudaMemory<'a, T> {
+impl<'a, T> IntoKernelParam for &mut CudaAlloc<'a, T> {
     fn into_kernel_param(&mut self) -> *mut std::ffi::c_void {
         (&mut self.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-impl<'a, T> IntoKernelParam for &InCudaMemory<'a, T> {
+impl<'a, T> IntoKernelParam for &CudaAlloc<'a, T> {
     fn into_kernel_param(&mut self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
