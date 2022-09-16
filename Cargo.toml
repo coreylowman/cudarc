@@ -2,6 +2,21 @@
 name = "cudarc"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+
+description = "Safe wrappers around CUDA apis"
+homepage = "https://github.com/coreylowman/cudarc"
+documentation = "https://docs.rs/cudarc"
+repository = "https://github.com/coreylowman/cudarc"
+readme = "README.md"
+
+keywords = [
+    "cuda",
+    "nvidia",
+    "gpu",
+    "nvrtc",
+    "cudart",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
