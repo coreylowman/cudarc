@@ -147,6 +147,21 @@ pub unsafe fn memcpy_dtoh_async<T>(
     sys::cuMemcpyDtoHAsync_v2(dst as *mut T as *mut _, src, size_of::<T>(), stream).result()
 }
 
+pub unsafe fn memcpy_dtod<T>(
+    dst: sys::CUdeviceptr,
+    src: sys::CUdeviceptr,
+) -> Result<(), CudaError> {
+    sys::cuMemcpyDtoD_v2(dst, src, size_of::<T>()).result()
+}
+
+pub unsafe fn memcpy_dtod_async<T>(
+    dst: sys::CUdeviceptr,
+    src: sys::CUdeviceptr,
+    stream: sys::CUstream,
+) -> Result<(), CudaError> {
+    sys::cuMemcpyDtoDAsync_v2(dst, src, size_of::<T>(), stream).result()
+}
+
 pub mod module {
     use super::{sys, CudaError};
     use std::{ffi::CString, mem::MaybeUninit};
