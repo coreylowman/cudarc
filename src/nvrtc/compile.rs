@@ -1,34 +1,15 @@
 use super::result;
-use crate::cuda;
 
 pub struct Ptx {
     pub(crate) image: Vec<std::ffi::c_char>,
 }
 
-pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompilationError> {
+pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, result::NvrtcError> {
     let prog = result::create_program(src)?;
     unsafe {
         result::compile_program(prog, &[])?;
         let image = result::get_ptx(prog)?;
         Ok(Ptx { image })
-    }
-}
-
-#[derive(Debug)]
-pub enum CompilationError {
-    NvrtcError(result::NvrtcError),
-    CudaError(cuda::result::CudaError),
-}
-
-impl From<result::NvrtcError> for CompilationError {
-    fn from(e: result::NvrtcError) -> Self {
-        Self::NvrtcError(e)
-    }
-}
-
-impl From<cuda::result::CudaError> for CompilationError {
-    fn from(e: cuda::result::CudaError) -> Self {
-        Self::CudaError(e)
     }
 }
 

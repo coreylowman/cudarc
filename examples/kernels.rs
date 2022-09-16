@@ -1,14 +1,15 @@
-use cudas::{cuda::refcount::*, nvrtc::compile::*};
+use cudas::{
+    cuda::refcount::*,
+    nvrtc::{compile::*, result::NvrtcError},
+};
 use std::{marker::PhantomData, rc::Rc};
 
 trait NumElements {
     const NUMEL: usize;
 }
-
 impl NumElements for f32 {
     const NUMEL: usize = 1;
 }
-
 impl<T: NumElements, const M: usize> NumElements for [T; M] {
     const NUMEL: usize = T::NUMEL * M;
 }
@@ -91,15 +92,15 @@ __device__ void op(float *out, const float *in) {
     }
 }
 
-trait CompileKernel<K> {
+trait CompileKernel {
     type Compiled;
     type Err;
     fn compile() -> Result<Self::Compiled, Self::Err>;
 }
 
-impl<Op: BinaryKernelOp> CompileKernel<ForEach<Op>> for CudaDevice {
+impl<Op: BinaryKernelOp> CompileKernel for ForEach<Op> {
     type Compiled = Ptx;
-    type Err = CompilationError;
+    type Err = NvrtcError;
     fn compile() -> Result<Self::Compiled, Self::Err> {
         let mut cu_src = format!(
             "
@@ -119,11 +120,7 @@ if (i < numel) {{
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let gpu = CudaDeviceBuilder::new(0)
-        .with_nvrtc_ptx(
-            SinOp::NAME,
-            <CudaDevice as CompileKernel<ForEach<SinOp>>>::compile().unwrap(),
-            &[SinOp::NAME],
-        )
+        .with_nvrtc_ptx(SinOp::NAME, ForEach::<SinOp>::compile()?, &[SinOp::NAME])
         .build()
         .unwrap();
 
