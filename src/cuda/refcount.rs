@@ -310,6 +310,13 @@ pub unsafe trait IntoKernelParam {
 }
 
 pub trait LaunchCudaFunction<Params> {
+    /// # Safety
+    ///
+    /// This method is **very** unsafe.
+    /// **`params` can be changed regardless of `&` or `&mut` usage.**
+    ///
+    /// Additionally, there are no guaruntees that the `params`
+    /// are the correct number or types or order for `func`.
     unsafe fn launch_cuda_function(
         &self,
         func: &CudaFunction,
