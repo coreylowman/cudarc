@@ -53,7 +53,7 @@ pub unsafe fn compile_program<'a>(
 ) -> Result<(), NvrtcError> {
     let c_strings: Vec<CString> = options.iter().map(|&o| CString::new(o).unwrap()).collect();
     let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
-    let opts: Vec<*const std::ffi::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
+    let opts: Vec<*const std::os::raw::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
     sys::nvrtcCompileProgram(prog, options.len() as i32, opts.as_ptr()).result()
 }
 
@@ -63,11 +63,11 @@ pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError>
 }
 
 /// Extract ptx
-pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::ffi::c_char>, NvrtcError> {
+pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::os::raw::c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
 
-    let mut ptx_src: Vec<std::ffi::c_char> = vec![0i8; size];
+    let mut ptx_src: Vec<std::os::raw::c_char> = vec![0i8; size];
     sys::nvrtcGetPTX(prog, ptx_src.as_mut_ptr()).result()?;
     Ok(ptx_src)
 }
@@ -75,11 +75,11 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::ffi::c_char>, 
 /// Extract log
 pub unsafe fn get_program_log(
     prog: sys::nvrtcProgram,
-) -> Result<Vec<std::ffi::c_char>, NvrtcError> {
+) -> Result<Vec<std::os::raw::c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
 
-    let mut log_src: Vec<std::ffi::c_char> = vec![0; size];
+    let mut log_src: Vec<std::os::raw::c_char> = vec![0; size];
     sys::nvrtcGetProgramLog(prog, log_src.as_mut_ptr()).result()?;
     Ok(log_src)
 }

@@ -2,8 +2,9 @@
 
 use super::sys;
 use std::{
-    ffi::{c_uint, c_void, CStr},
+    ffi::{c_void, CStr},
     mem::{size_of, MaybeUninit},
+    os::raw::c_uint,
 };
 
 /// TODO
@@ -70,7 +71,7 @@ pub mod device {
     use std::mem::MaybeUninit;
 
     /// TODO
-    pub fn get(ordinal: std::ffi::c_int) -> Result<sys::CUdevice, CudaError> {
+    pub fn get(ordinal: std::os::raw::c_int) -> Result<sys::CUdevice, CudaError> {
         let mut dev: sys::CUdevice = 0;
         unsafe { sys::cuDeviceGet((&mut dev) as *mut sys::CUdevice, ordinal).result()? }
         Ok(dev)
@@ -146,22 +147,16 @@ pub mod stream {
 
 /// TODO
 pub unsafe fn malloc<T>() -> Result<sys::CUdeviceptr, CudaError> {
-    let bytesize = size_of::<T>();
     let mut dev_ptr = MaybeUninit::uninit();
-    unsafe {
-        sys::cuMemAlloc_v2(dev_ptr.as_mut_ptr(), bytesize).result()?;
-        Ok(dev_ptr.assume_init())
-    }
+    sys::cuMemAlloc_v2(dev_ptr.as_mut_ptr(), size_of::<T>()).result()?;
+    Ok(dev_ptr.assume_init())
 }
 
 /// TODO
 pub unsafe fn malloc_async<T>(stream: sys::CUstream) -> Result<sys::CUdeviceptr, CudaError> {
-    let bytesize = size_of::<T>();
     let mut dev_ptr = MaybeUninit::uninit();
-    unsafe {
-        sys::cuMemAllocAsync(dev_ptr.as_mut_ptr(), bytesize, stream).result()?;
-        Ok(dev_ptr.assume_init())
-    }
+    sys::cuMemAllocAsync(dev_ptr.as_mut_ptr(), size_of::<T>(), stream).result()?;
+    Ok(dev_ptr.assume_init())
 }
 
 /// TODO
@@ -175,14 +170,17 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
 }
 
 /// TODO
-pub unsafe fn memset_d8<T>(dptr: sys::CUdeviceptr, uc: std::ffi::c_uchar) -> Result<(), CudaError> {
+pub unsafe fn memset_d8<T>(
+    dptr: sys::CUdeviceptr,
+    uc: std::os::raw::c_uchar,
+) -> Result<(), CudaError> {
     sys::cuMemsetD8_v2(dptr, uc, size_of::<T>()).result()
 }
 
 /// TODO
 pub unsafe fn memset_d8_async<T>(
     dptr: sys::CUdeviceptr,
-    uc: std::ffi::c_uchar,
+    uc: std::os::raw::c_uchar,
     stream: sys::CUstream,
 ) -> Result<(), CudaError> {
     sys::cuMemsetD8Async(dptr, uc, size_of::<T>(), stream).result()
@@ -265,15 +263,13 @@ pub mod module {
         let name_cstr = CString::new(name.as_ref()).unwrap();
         let name_ptr = name_cstr.as_c_str().as_ptr();
         let mut func = MaybeUninit::uninit();
-        unsafe {
-            sys::cuModuleGetFunction(func.as_mut_ptr(), module, name_ptr).result()?;
-            Ok(func.assume_init())
-        }
+        sys::cuModuleGetFunction(func.as_mut_ptr(), module, name_ptr).result()?;
+        Ok(func.assume_init())
     }
 
     /// TODO
     pub unsafe fn unload(module: sys::CUmodule) -> Result<(), CudaError> {
-        unsafe { sys::cuModuleUnload(module).result() }
+        sys::cuModuleUnload(module).result()
     }
 }
 

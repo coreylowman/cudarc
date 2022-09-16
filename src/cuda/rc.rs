@@ -152,7 +152,7 @@ impl CudaDevice {
     /// TODO
     /// unsafe because the memory is unset
     unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaUniquePtr<T>, CudaError> {
-        let cu_device_ptr = unsafe { result::malloc_async::<T>(self.cu_stream) }?;
+        let cu_device_ptr = result::malloc_async::<T>(self.cu_stream)?;
         Ok(CudaUniquePtr {
             cu_device_ptr,
             device: self.clone(),
@@ -324,16 +324,14 @@ impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for CudaDevi
         args: ($($Vars, )*)
     ) -> Result<(), CudaError> {
         let params = &mut [$(args.$Idx.into_kernel_param(), )*];
-        unsafe {
-            result::launch_kernel(
-                func.cu_function,
-                cfg.grid_dim,
-                cfg.block_dim,
-                cfg.shared_mem_bytes,
-                self.cu_stream,
-                params,
-            )
-        }
+        result::launch_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            params,
+        )
     }
 }
     };
@@ -389,7 +387,7 @@ impl CudaDeviceBuilder {
         self.precompiled_modules.push(PrecompiledPtxConfig {
             key,
             fname: path,
-            fn_names: fn_names.iter().cloned().collect(),
+            fn_names: fn_names.to_vec(),
         });
         self
     }
@@ -404,7 +402,7 @@ impl CudaDeviceBuilder {
         self.nvrtc_modules.push(NvrtcConfig {
             key,
             ptx,
-            fn_names: fn_names.iter().cloned().collect(),
+            fn_names: fn_names.to_vec(),
         });
         self
     }

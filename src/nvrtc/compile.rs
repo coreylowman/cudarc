@@ -4,7 +4,7 @@ use std::ffi::{CStr, CString};
 /// TODO
 #[derive(Debug, Clone)]
 pub struct Ptx {
-    pub(crate) image: Vec<std::ffi::c_char>,
+    pub(crate) image: Vec<std::os::raw::c_char>,
 }
 
 /// Calls [compile_ptx_with_opts] with no options.
