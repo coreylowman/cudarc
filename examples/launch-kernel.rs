@@ -7,7 +7,7 @@ fn main() -> Result<(), CudaError> {
         .build()?;
 
     let module = dev.get_module("sin").unwrap();
-    let f = unsafe { module.get_fn("sin_kernel").unwrap() };
+    let f = module.get_fn("sin_kernel").unwrap();
 
     let a_host: Rc<[f32; 3]> = Rc::new([1.0, 2.0, 3.0]);
 

@@ -278,7 +278,7 @@ pub struct CudaModule {
 }
 
 impl CudaModule {
-    pub unsafe fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
+    pub fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
         self.functions.get(name)
     }
 }
