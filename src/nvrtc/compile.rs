@@ -1,18 +1,43 @@
 use super::result;
+use std::ffi::{CStr, CString};
 
 #[derive(Debug)]
 pub struct Ptx {
     pub(crate) image: Vec<std::ffi::c_char>,
 }
 
-pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, result::NvrtcError> {
-    let prog = result::create_program(src)?;
+pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompilationError> {
+    let prog = result::create_program(src).map_err(CompilationError::CreationError)?;
     unsafe {
-        result::compile_program(prog, &[])?;
-        let image = result::get_ptx(prog)?;
+        result::compile_program(prog, &[]).map_err(|error| {
+            let log = result::get_program_log(prog).unwrap();
+            CompilationError::CompileError {
+                error,
+                log: CStr::from_ptr(log.as_ptr()).to_owned(),
+            }
+        })?;
+        let image = result::get_ptx(prog).map_err(CompilationError::GetPtxError)?;
         Ok(Ptx { image })
     }
 }
+
+#[derive(Debug)]
+pub enum CompilationError {
+    CreationError(result::NvrtcError),
+    CompileError {
+        error: result::NvrtcError,
+        log: CString,
+    },
+    GetPtxError(result::NvrtcError),
+}
+
+impl std::fmt::Display for CompilationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
+impl std::error::Error for CompilationError {}
 
 /// See https://docs.nvidia.com/cuda/nvrtc/index.html#group__options
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]

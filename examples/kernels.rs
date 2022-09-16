@@ -1,7 +1,4 @@
-use cudas::{
-    cuda::refcount::*,
-    nvrtc::{compile::*, result::NvrtcError},
-};
+use cudas::{cuda::refcount::*, nvrtc::compile::*};
 use std::{marker::PhantomData, rc::Rc};
 
 trait NumElements {
@@ -114,7 +111,7 @@ trait CompileKernel {
 
 impl<Op: BinaryKernelOp> CompileKernel for ForEach<Op> {
     type Compiled = Ptx;
-    type Err = NvrtcError;
+    type Err = CompilationError;
     fn compile() -> Result<Self::Compiled, Self::Err> {
         let mut cu_src = format!(
             "
