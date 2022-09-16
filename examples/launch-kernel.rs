@@ -1,4 +1,4 @@
-use cudas::cuda::refcount::*;
+use cudarc::cuda::refcount::*;
 use std::rc::Rc;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

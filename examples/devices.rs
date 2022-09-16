@@ -1,6 +1,6 @@
 #![feature(generic_associated_types)]
 
-use cudas::cuda::refcount::*;
+use cudarc::cuda::refcount::*;
 use std::rc::Rc;
 
 pub struct Cpu;

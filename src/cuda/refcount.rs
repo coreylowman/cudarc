@@ -1,3 +1,44 @@
+//! Safe abstractions over [crate::cuda::result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
+//!
+//! # Safety
+//!
+//! There are a number of aspects to this, but at a high level this API utilizes [std::rc::Rc] as well
+//! as proper management of resources.
+//!
+//! ### Context/Stream lifetimes
+//!
+//! The first part of safety is ensuring that [sys::CUcontext], [sys::CUdevice], and [sys::CUstream] all
+//! live the required amount of time (i.e. stream requires context, context requires device).
+//!
+//! This is accomplished by putting all of them inside one struct, the [CudaDevice]. There are other ways,
+//! such as adding newtypes that carry lifetimes with them, but this approach was chosen to make working
+//! with device pointers easier.
+//!
+//! Additionally, [CudaDevice] implements [Drop] as releasing all the data from the device in
+//! the expected way.
+//!
+//! ### Single stream operations
+//!
+//! The next part of safety is ensuring that all operations happen on the same stream. This
+//! is pretty easy to accomplish by using all the `*_async` methods in [crate::cuda::result].
+//! Otherwise there can be confusing with data copying if you don't use all async methods.
+//!
+//! ### Device Pointer lifetimes
+//!
+//! The next part of safety is ensuring that any created [sys::CUdeviceptr] do not outlive
+//! the [CudaDevice]. Again it is possible to do this with lifetimes, but for usability
+//! we choose to holding an [Rc<CudaDevice>] along with every [sys::CUdeviceptr].
+//!
+//! ### Host and Device Data lifetimes
+//!
+//! Each device allocation can be associated with a host allocation. We want to ensure
+//! that these have the same lifetimes.
+//!
+//! This is done in [CudaRc<T>], which owns both the (optional) host and device data.
+//! In order to initialize device data for a host allocation, you can call
+//! [CudaDevice::take()], and to reclaim (& sync) the host data, you can call
+//! [CudaRc::into_host()].
+
 use super::result;
 use super::sys;
 use crate::nvrtc::compile::Ptx;
@@ -58,7 +99,7 @@ impl<T: Clone> CudaRc<T> {
 #[derive(Debug)]
 pub(crate) struct CudaUniquePtr<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
-    pub device: Rc<CudaDevice>,
+    pub(crate) device: Rc<CudaDevice>,
     marker: PhantomData<*const T>,
 }
 
@@ -139,7 +180,7 @@ impl CudaDevice {
         })
     }
 
-    pub fn sync_host<T: Clone>(&self, t: &mut CudaRc<T>) -> Result<(), CudaError> {
+    pub(crate) fn sync_host<T: Clone>(&self, t: &mut CudaRc<T>) -> Result<(), CudaError> {
         if let Some(host_data) = &mut t.t_host {
             unsafe {
                 result::memcpy_dtoh_async(
@@ -153,7 +194,7 @@ impl CudaDevice {
         Ok(())
     }
 
-    pub fn synchronize(&self) -> Result<(), CudaError> {
+    pub(crate) fn synchronize(&self) -> Result<(), CudaError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
