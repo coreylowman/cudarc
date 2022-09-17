@@ -689,39 +689,63 @@ unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use std::rc::Rc;
+
     #[test]
     fn test_post_build_rc_count() {
-        todo!();
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        assert_eq!(Rc::strong_count(&device), 1);
     }
 
     #[test]
     fn test_post_alloc_rc_counts() {
-        todo!();
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let t = device.alloc_zeros::<f32>().unwrap();
+        assert!(t.t_host.is_none());
+        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
     }
 
     #[test]
     fn test_post_take_rc_counts() {
-        todo!();
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let t = device.take(Rc::new(0.0f32)).unwrap();
+        assert!(t.t_host.is_some());
+        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
+        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
     }
 
     #[test]
     fn test_post_clone_rc_counts() {
-        todo!();
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let r = t.clone();
+        assert_eq!(Rc::strong_count(&device), 3);
+        assert_eq!(Rc::strong_count(&t.t_cuda), 2);
+        assert_eq!(Rc::strong_count(&r.t_cuda), 2);
+        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
+        assert_eq!(r.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
     }
 
     #[test]
     fn test_post_into_host_counts() {
-        todo!();
-    }
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let r = t.clone();
 
-    #[test]
-    fn test_post_sync_release_counts() {
-        todo!();
-    }
+        // NOTE: cuda rc was decremented, but host rc was not
+        let r_host = r.into_host().unwrap();
+        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
+        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
+        assert_eq!(Rc::strong_count(&r_host), 2);
 
-    #[test]
-    fn test_post_drop_counts() {
-        todo!();
+        drop(r_host);
+        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
+        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
     }
 
     #[test]
