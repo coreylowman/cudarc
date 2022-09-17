@@ -45,6 +45,7 @@ use crate::nvrtc::compile::Ptx;
 use std::alloc::alloc_zeroed;
 use std::alloc::Layout;
 use std::collections::HashMap;
+use std::ffi::CString;
 use std::marker::PhantomData;
 use std::rc::Rc;
 
@@ -143,7 +144,7 @@ impl Drop for CudaDevice {
 
         let ctx = std::mem::replace(&mut self.cu_primary_ctx, std::ptr::null_mut());
         if !ctx.is_null() {
-            unsafe { result::device::primary_ctx_release(self.cu_device) }.unwrap();
+            unsafe { result::primary_ctx::release(self.cu_device) }.unwrap();
         }
     }
 }
@@ -415,9 +416,10 @@ impl CudaDeviceBuilder {
             result::device::get(self.ordinal as i32).map_err(BuildError::OrdinalError)?;
 
         // primary context initialization
-        let cu_primary_ctx = unsafe { result::device::primary_ctx_retain(cu_device) }
-            .map_err(BuildError::ContextError)?;
+        let cu_primary_ctx =
+            unsafe { result::primary_ctx::retain(cu_device) }.map_err(BuildError::ContextError)?;
 
+        // TODO is this necessary to call?
         unsafe { result::ctx::set_current(cu_primary_ctx) }.map_err(BuildError::ContextError)?;
 
         // stream initialization
@@ -428,8 +430,9 @@ impl CudaDeviceBuilder {
             HashMap::with_capacity(self.nvrtc_modules.len() + self.precompiled_modules.len());
 
         for cu in self.precompiled_modules.drain(..) {
+            let name_c = CString::new(cu.fname).map_err(BuildError::CStringError)?;
             let cu_module =
-                result::module::load(cu.fname).map_err(|e| BuildError::PtxLoadingError {
+                result::module::load(name_c).map_err(|e| BuildError::PtxLoadingError {
                     key: cu.key,
                     cuda: e,
                 })?;
@@ -465,13 +468,12 @@ impl CudaDeviceBuilder {
     ) -> Result<CudaModule, BuildError> {
         let mut functions = HashMap::with_capacity(fn_names.len());
         for &fn_name in fn_names.iter() {
-            let cu_function =
-                unsafe { result::module::get_function(cu_module, fn_name) }.map_err(|e| {
-                    BuildError::GetFunctionError {
-                        key,
-                        symbol: fn_name,
-                        cuda: e,
-                    }
+            let fn_name_c = CString::new(fn_name).map_err(BuildError::CStringError)?;
+            let cu_function = unsafe { result::module::get_function(cu_module, fn_name_c) }
+                .map_err(|e| BuildError::GetFunctionError {
+                    key,
+                    symbol: fn_name,
+                    cuda: e,
                 })?;
             functions.insert(fn_name, CudaFunction { cu_function });
         }
@@ -502,6 +504,7 @@ pub enum BuildError {
         symbol: &'static str,
         cuda: CudaError,
     },
+    CStringError(std::ffi::NulError),
 }
 
 impl std::fmt::Display for BuildError {
