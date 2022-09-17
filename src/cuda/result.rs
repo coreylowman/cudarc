@@ -100,6 +100,28 @@ pub mod device {
             Ok(dev.assume_init())
         }
     }
+
+    /// Gets the number of available devices.
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g52b5ce05cb8c5fb6831b2c0ff2887c74)
+    pub fn get_count() -> Result<std::os::raw::c_int, CudaError> {
+        let mut count = MaybeUninit::uninit();
+        unsafe {
+            sys::cuDeviceGetCount(count.as_mut_ptr()).result()?;
+            Ok(count.assume_init())
+        }
+    }
+
+    /// Returns the total amount of memory in bytes on the device.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1gc6a0d6551335a3780f9f3c967a0fde5d)
+    ///
+    /// # Safety
+    /// Must be a device returned from [get].
+    pub unsafe fn total_mem(dev: sys::CUdevice) -> Result<usize, CudaError> {
+        let mut bytes = MaybeUninit::uninit();
+        sys::cuDeviceTotalMem_v2(bytes.as_mut_ptr(), dev).result()?;
+        Ok(bytes.assume_init())
+    }
 }
 
 pub mod primary_ctx {
