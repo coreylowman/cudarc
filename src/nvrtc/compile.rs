@@ -1,48 +1,110 @@
+//! A safe wrapper around [result] for compiling PTX files.
+//!
+//! Call [compile_ptx()] or [compile_ptx_with_opts()].
+
 use super::result;
+use super::sys;
 use std::ffi::{CStr, CString};
 
-/// TODO
+/// An opaque structure representing a compiled PTX program
+/// output from [compile_ptx()] or [compile_ptx_with_opts()].
 #[derive(Debug, Clone)]
 pub struct Ptx {
     pub(crate) image: Vec<std::os::raw::c_char>,
 }
 
-/// Calls [compile_ptx_with_opts] with no options.
+/// Calls [compile_ptx_with_opts] with no options. `src` is the source string
+/// of a `.cu` file.
+///
+/// Example:
+/// ```rust
+/// # use cudarc::nvrtc::compile::*;
+/// let ptx = compile_ptx("extern \"C\" __global__ void kernel() { }").unwrap();
+/// ```
 pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
     compile_ptx_with_opts(src, Default::default())
 }
 
-/// TODO
+/// Compiles `src` with the given `opts`. `src` is the source string of a `.cu` file.
+///
+/// Example:
+/// ```rust
+/// # use cudarc::nvrtc::compile::*;
+/// let opts = CompileOptions {
+///     ftz: Some(true),
+///     maxrregcount: Some(10),
+///     ..Default::default()
+/// };
+/// let ptx = compile_ptx_with_opts("extern \"C\" __global__ void kernel() { }", opts).unwrap();
+/// ```
 pub fn compile_ptx_with_opts<S: AsRef<str>>(
     src: S,
     opts: CompileOptions,
 ) -> Result<Ptx, CompileError> {
-    let options = opts.build();
-    let prog = result::create_program(src).map_err(CompileError::CreationError)?;
-    unsafe {
-        result::compile_program(prog, &options).map_err(|error| {
-            let log = result::get_program_log(prog).unwrap();
+    let prog = Program::create(src)?;
+    prog.compile(opts)
+}
+
+pub(crate) struct Program {
+    prog: sys::nvrtcProgram,
+}
+
+impl Program {
+    pub(crate) fn create<S: AsRef<str>>(src: S) -> Result<Self, CompileError> {
+        let prog = result::create_program(src).map_err(CompileError::CreationError)?;
+        Ok(Self { prog })
+    }
+
+    pub(crate) fn compile(self, opts: CompileOptions) -> Result<Ptx, CompileError> {
+        let options = opts.build();
+
+        unsafe { result::compile_program(self.prog, &options) }.map_err(|e| {
+            let log_raw = unsafe { result::get_program_log(self.prog) }.unwrap();
+            let log_ptr = log_raw.as_ptr();
+            let log = unsafe { CStr::from_ptr(log_ptr) }.to_owned();
             CompileError::CompileError {
-                error,
-                log: CStr::from_ptr(log.as_ptr()).to_owned(),
+                nvrtc: e,
                 options,
+                log,
             }
         })?;
-        let image = result::get_ptx(prog).map_err(CompileError::GetPtxError)?;
+
+        let image = unsafe { result::get_ptx(self.prog) }.map_err(CompileError::GetPtxError)?;
+
         Ok(Ptx { image })
     }
 }
 
-/// TODO
+impl Drop for Program {
+    fn drop(&mut self) {
+        let prog = std::mem::replace(&mut self.prog, std::ptr::null_mut());
+        if !prog.is_null() {
+            unsafe { result::destroy_program(prog) }.unwrap()
+        }
+    }
+}
+
+/// Represents an error that happens during nvrtc compilation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CompileError {
+    /// Error happened during [result::create_program()]
     CreationError(result::NvrtcError),
+
+    /// Error happened during [result::compile_program()]
     CompileError {
-        error: result::NvrtcError,
+        nvrtc: result::NvrtcError,
+        options: Vec<String>,
         log: CString,
-        options: Vec<&'static str>,
     },
+
+    /// Error happened during [result::get_program_log()]
+    GetLogError(result::NvrtcError),
+
+    /// Error happened during [result::get_ptx()]
     GetPtxError(result::NvrtcError),
+
+    /// Error happened during [result::destroy_program()]
+    DestroyError(result::NvrtcError),
 }
 
 impl std::fmt::Display for CompileError {
@@ -53,9 +115,26 @@ impl std::fmt::Display for CompileError {
 
 impl std::error::Error for CompileError {}
 
-/// TODO add more of the options
-///
+/// Flags you can pass to the nvrtc compiler.
 /// See <https://docs.nvidia.com/cuda/nvrtc/index.html#group__options>
+/// for all available flags and documentation for what they do.
+///
+/// All fields of this struct match one of the flags in the documentation.
+/// if a field is `None` it will not be passed to the compiler.
+///
+/// All fields default to `None`.
+///
+/// *NOTE*: not all flags are currently supported.
+///
+/// Example:
+/// ```rust
+/// # use cudarc::nvrtc::compile::*;
+/// // "--ftz=true" will be passed to the compiler
+/// let opts = CompileOptions {
+///     ftz: Some(true),
+///     ..Default::default()
+/// };
+/// ```
 #[derive(Clone, Copy, Debug, Default, Hash, PartialEq, Eq)]
 pub struct CompileOptions {
     pub ftz: Option<bool>,
@@ -63,41 +142,80 @@ pub struct CompileOptions {
     pub prec_div: Option<bool>,
     pub fmad: Option<bool>,
     pub use_fast_math: Option<bool>,
+    pub maxrregcount: Option<usize>,
 }
 
 impl CompileOptions {
-    pub(crate) fn build(self) -> Vec<&'static str> {
-        let mut options = Vec::with_capacity(4);
+    pub(crate) fn build(self) -> Vec<String> {
+        let mut options: Vec<String> = Vec::new();
 
-        match self.ftz {
-            Some(true) => options.push("--ftz=true"),
-            Some(false) => options.push("--ftz=false"),
-            None => {}
+        if let Some(v) = self.ftz {
+            options.push(format!("--ftz={v}"));
         }
 
-        match self.prec_sqrt {
-            Some(true) => options.push("--prec-sqrt=true"),
-            Some(false) => options.push("--prec-sqrt=false"),
-            None => {}
+        if let Some(v) = self.prec_sqrt {
+            options.push(format!("--prec-sqrt={v}"));
         }
 
-        match self.prec_div {
-            Some(true) => options.push("--prec-div=true"),
-            Some(false) => options.push("--prec-div=false"),
-            None => {}
+        if let Some(v) = self.prec_div {
+            options.push(format!("--prec-div={v}"));
         }
 
-        match self.fmad {
-            Some(true) => options.push("--fmad=true"),
-            Some(false) => options.push("--fmad=false"),
-            None => {}
+        if let Some(v) = self.fmad {
+            options.push(format!("--fmad={v}"));
         }
 
-        match self.use_fast_math {
-            Some(true) => options.push("--fmad=true"),
-            _ => {}
+        if let Some(true) = self.use_fast_math {
+            options.push("--fmad=true".into());
+        }
+
+        if let Some(count) = self.maxrregcount {
+            options.push(format!("--maxrregcount={count}"));
         }
 
         options
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_compile_no_opts() {
+        const SRC: &str =
+            "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, int numel) {
+            int i = blockIdx.x * blockDim.x + threadIdx.x;
+            if (i < numel) {
+                out[i] = sin(inp[i]);
+            }
+        }";
+        let ptx = compile_ptx_with_opts(SRC, Default::default()).unwrap();
+        assert!(!ptx.image.is_empty());
+    }
+
+    #[test]
+    fn test_compile_options_build_none() {
+        let opts: CompileOptions = Default::default();
+        assert!(opts.build().is_empty());
+    }
+
+    #[test]
+    fn test_compile_options_build_ftz() {
+        let opts = CompileOptions {
+            ftz: Some(true),
+            ..Default::default()
+        };
+        assert_eq!(&opts.build(), &["--ftz=true"]);
+    }
+
+    #[test]
+    fn test_compile_options_build_multi() {
+        let opts = CompileOptions {
+            prec_div: Some(false),
+            maxrregcount: Some(60),
+            ..Default::default()
+        };
+        assert_eq!(&opts.build(), &["--prec-div=false", "--maxrregcount=60"]);
     }
 }

@@ -71,8 +71,15 @@ pub fn create_program<S: AsRef<str>>(src: S) -> Result<sys::nvrtcProgram, NvrtcE
 /// # Safety
 ///
 /// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
-pub unsafe fn compile_program(prog: sys::nvrtcProgram, options: &[&str]) -> Result<(), NvrtcError> {
-    let c_strings: Vec<CString> = options.iter().map(|&o| CString::new(o).unwrap()).collect();
+pub unsafe fn compile_program<O: Clone + Into<Vec<u8>>>(
+    prog: sys::nvrtcProgram,
+    options: &[O],
+) -> Result<(), NvrtcError> {
+    let c_strings: Vec<CString> = options
+        .iter()
+        .cloned()
+        .map(|o| CString::new(o).unwrap())
+        .collect();
     let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
     let opts: Vec<*const std::os::raw::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
     sys::nvrtcCompileProgram(prog, opts.len() as std::os::raw::c_int, opts.as_ptr()).result()
@@ -132,7 +139,7 @@ mod tests {
     #[test]
     fn test_compile_program_no_opts() {
         let prog = create_program("extern \"C\" __global__ void kernel() { }").unwrap();
-        unsafe { compile_program(prog, &[]) }.unwrap();
+        unsafe { compile_program::<&str>(prog, &[]) }.unwrap();
         unsafe { destroy_program(prog) }.unwrap();
     }
 
@@ -154,7 +161,7 @@ mod tests {
     fn test_compile_bad_program() {
         let prog = create_program("extern \"C\" __global__ void kernel(").unwrap();
         assert_eq!(
-            unsafe { compile_program(prog, &[]) }.unwrap_err(),
+            unsafe { compile_program::<&str>(prog, &[]) }.unwrap_err(),
             NvrtcError(sys::nvrtcResult::NVRTC_ERROR_COMPILATION)
         );
     }
@@ -169,7 +176,7 @@ mod tests {
             }
         }";
         let prog = create_program(SRC).unwrap();
-        unsafe { compile_program(prog, &[]) }.unwrap();
+        unsafe { compile_program::<&str>(prog, &[]) }.unwrap();
         let ptx = unsafe { get_ptx(prog) }.unwrap();
         assert!(!ptx.is_empty());
 
