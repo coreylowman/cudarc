@@ -433,6 +433,12 @@ macro_rules! impl_into_kernel_param {
                 self as *const $T as *mut std::ffi::c_void
             }
         }
+
+        unsafe impl IntoKernelParam for &mut $T {
+            fn into_kernel_param(self) -> *mut std::ffi::c_void {
+                self as *mut $T as *mut std::ffi::c_void
+            }
+        }
     };
 }
 
@@ -715,6 +721,8 @@ mod tests {
         assert_eq!(Rc::strong_count(&device), 2);
         assert_eq!(Rc::strong_count(&t.t_cuda), 1);
         assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
+        drop(t);
+        assert_eq!(Rc::strong_count(&device), 1);
     }
 
     #[test]
@@ -727,6 +735,10 @@ mod tests {
         assert_eq!(Rc::strong_count(&r.t_cuda), 2);
         assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
         assert_eq!(r.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
+        drop(t);
+        assert_eq!(Rc::strong_count(&device), 2);
+        drop(r);
+        assert_eq!(Rc::strong_count(&device), 1);
     }
 
     #[test]
@@ -760,6 +772,31 @@ mod tests {
 
     #[test]
     fn test_post_device_drop_memory() {
+        todo!();
+    }
+
+    #[test]
+    fn test_mut_into_kernel_param_no_inc_rc() {
+        todo!();
+    }
+
+    #[test]
+    fn test_ref_into_kernel_param_inc_rc() {
+        todo!();
+    }
+
+    #[test]
+    fn test_build_with_ptxs() {
+        todo!();
+    }
+
+    #[test]
+    fn test_launch_with_mut_and_ref_cudarc() {
+        todo!();
+    }
+
+    #[test]
+    fn test_launch_with_mut_and_ref_builtin() {
         todo!();
     }
 }
