@@ -4,6 +4,9 @@
 //! mostly all still unsafe because order of operations
 //! really matters.
 //!
+//! This also only exposes the `*_async` version of functions
+//! because mixing the two is confusing and even more unsafe.
+//!
 //! This module also groups functions into sub-modules
 //! to make naming easier. For example [sys::cuStreamCreate()]
 //! turns into [stream::create()], where [stream] is a module.

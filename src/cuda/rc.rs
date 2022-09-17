@@ -1,5 +1,27 @@
 //! Safe abstractions over [result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
 //!
+//! # Usage
+//!
+//! ### Instanting a [CudaDevice] with [CudaDeviceBuilder]
+//!
+//! TODO
+//!
+//! ### Allocating device memory with host data
+//!
+//! TODO
+//!
+//! ### Allocating device memory without host data
+//!
+//! TODO
+//!
+//! ### Mutating device memory with [CudaDevice::launch_kernel] and [CudaFunction]
+//!
+//! TODO
+//!
+//! ### Reclaiming device data
+//!
+//! TODO
+//!
 //! # Safety
 //!
 //! There are a number of aspects to this, but at a high level this API utilizes [std::rc::Rc] as well
@@ -29,6 +51,9 @@
 //! the [CudaDevice]. Again it is possible to do this with lifetimes, but for usability
 //! we choose to bundle [Rc<CudaDevice>] along with every [sys::CUdeviceptr].
 //!
+//! Additionally we don't want to double free any device pointers, so free is only
+//! called when the device pointer is dropped. Thanks rust!
+//!
 //! ### Host and Device Data lifetimes
 //!
 //! Each device allocation can be associated with a host allocation. We want to ensure
@@ -51,23 +76,36 @@ use std::rc::Rc;
 
 pub use result::CudaError;
 
-/// TODO
-pub unsafe trait Zeroable {}
-unsafe impl Zeroable for i8 {}
-unsafe impl Zeroable for i16 {}
-unsafe impl Zeroable for i32 {}
-unsafe impl Zeroable for i64 {}
-unsafe impl Zeroable for isize {}
-unsafe impl Zeroable for u8 {}
-unsafe impl Zeroable for u16 {}
-unsafe impl Zeroable for u32 {}
-unsafe impl Zeroable for u64 {}
-unsafe impl Zeroable for usize {}
-unsafe impl Zeroable for f32 {}
-unsafe impl Zeroable for f64 {}
-unsafe impl<T: Zeroable, const M: usize> Zeroable for [T; M] {}
-
-/// TODO
+/// Contains a reference counted pointer to both
+/// device and host memory allocated for type `T`.
+///
+/// # Host data
+///
+/// *This owns the host data it is associated with*. However
+/// it is possible to create device memory without having
+/// a corresponding host memory, so the host memory is
+/// actually [Option].
+///
+/// # Reference counting
+///
+/// When cloned it will increment reference counters
+/// instead of cloning actual data.
+///
+/// # Reclaiming host data
+///
+/// To reclaim the host data for this device data,
+/// use [CudaRc::sync_release()] or [CudaRc::into_host()].
+/// These will both perform necessary synchronization to ensure
+/// that the device data finishes copying over.
+///
+/// # Mutating device data
+///
+/// This can only be done by launching kernels via
+/// [CudaDevice::launch_kernel()]. Pass `&mut CudaRc<T>`
+/// if you want to mutate the rc, and `&CudaRc<T>` otherwise.
+///
+/// Unfortunately, `&CudaRc<T>` can **still be mutated
+/// by the [CudaFunction]**.
 #[derive(Debug, Clone)]
 pub struct CudaRc<T> {
     pub(crate) t_cuda: Rc<CudaUniquePtr<T>>,
@@ -75,20 +113,34 @@ pub struct CudaRc<T> {
 }
 
 impl<T> CudaRc<T> {
-    /// TODO
+    /// Returns a reference to the underlying [CudaDevice]
     pub fn device(&self) -> &Rc<CudaDevice> {
         &self.t_cuda.device
     }
 }
 
 impl<T: Clone> CudaRc<T> {
-    /// TODO
-    pub fn maybe_into_host(mut self) -> Result<Option<Rc<T>>, CudaError> {
-        self.t_cuda.device.clone().sync_host(&mut self)?;
+    /// Copies device memory into host memory if it exists,
+    /// synchronizes the stream, and then returns the host data.
+    ///
+    /// Note: This decrements the reference count on the device memory,
+    /// so if there no other references to it, it will be freed.
+    pub fn sync_release(mut self) -> Result<Option<Rc<T>>, CudaError> {
+        self.t_cuda.device.clone().maybe_sync_host(&mut self)?;
         Ok(self.t_host)
     }
 
-    /// TODO
+    /// If the host data doesn't exist, allocates zerod memory
+    /// for the type. Then calls [Self::sync_release] and unwraps
+    /// the option.
+    ///
+    /// Note: This decrements the reference count on the device memory,
+    /// so if there no other references to it, it will be freed.
+    ///
+    /// # Safety
+    /// Even though this allocates zerod memory for `T`
+    /// and `T` is not necessarily [ValidAsZeroBits], it
+    /// is safe since the device memory is valid for T.
     pub fn into_host(mut self) -> Result<Rc<T>, CudaError> {
         self.t_host.get_or_insert_with(|| {
             let layout = Layout::new::<T>();
@@ -97,12 +149,19 @@ impl<T: Clone> CudaRc<T> {
                 Box::from_raw(ptr).into()
             }
         });
-        self.t_cuda.device.clone().sync_host(&mut self)?;
-        Ok(self.t_host.unwrap())
+        self.sync_release().map(Option::unwrap)
     }
 }
 
-/// TODO
+/// Wrapper around [sys::CUdeviceptr] that also contains a [Rc<CudaDevice>].
+/// This helps with safety because it:
+/// 1. Ensures that the device pointer is associated with the type `T` it was created with
+/// 2. Makes the CudaDevice stay alive as long as this object lives
+/// 3. impl [Drop] to properly free resources with the device's stream.
+/// 4. impl [Clone] as actually doing a device allocation instead of cloning the
+/// device pointer.
+///
+/// This can only be created by [CudaDevice::alloc].
 #[derive(Debug)]
 pub(crate) struct CudaUniquePtr<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
@@ -110,9 +169,37 @@ pub(crate) struct CudaUniquePtr<T> {
     marker: PhantomData<*const T>,
 }
 
+impl<T> CudaUniquePtr<T> {
+    /// Allocates device memory and increments the reference counter to [CudaDevice].
+    ///
+    /// # Safety
+    /// This is unsafe because the device memory is unset after this call.
+    unsafe fn alloc(device: &Rc<CudaDevice>) -> Result<CudaUniquePtr<T>, CudaError> {
+        let cu_device_ptr = result::malloc_async::<T>(device.cu_stream)?;
+        Ok(CudaUniquePtr {
+            cu_device_ptr,
+            device: device.clone(),
+            marker: PhantomData,
+        })
+    }
+
+    /// Allocates new memory for type `T` and schedules a device to device copy of memory.
+    fn dup(&self) -> Result<CudaUniquePtr<T>, CudaError> {
+        let alloc = unsafe { Self::alloc(&self.device) }?;
+        unsafe {
+            result::memcpy_dtod_async::<T>(
+                alloc.cu_device_ptr,
+                self.cu_device_ptr,
+                self.device.cu_stream,
+            )
+        }?;
+        Ok(alloc)
+    }
+}
+
 impl<T> Clone for CudaUniquePtr<T> {
     fn clone(&self) -> Self {
-        self.device.dup(self).unwrap()
+        self.dup().unwrap()
     }
 }
 
@@ -122,7 +209,17 @@ impl<T> Drop for CudaUniquePtr<T> {
     }
 }
 
-/// TODO
+/// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
+/// and [CudaModule]s.
+///
+/// **Must be created through [CudaDeviceBuilder].**
+///
+/// # Safety
+/// 1. impl [Drop] to call all the corresponding resource cleanup methods
+/// 2. Doesn't impl clone, so you can't have multiple device pointers
+/// hanging around.
+/// 3. Any allocations enforce that self is an [Rc], meaning no allocation
+/// can outlive the [CudaDevice]
 #[derive(Debug)]
 pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
@@ -150,29 +247,14 @@ impl Drop for CudaDevice {
 }
 
 impl CudaDevice {
-    /// TODO
-    /// unsafe because the memory is unset
-    unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaUniquePtr<T>, CudaError> {
-        let cu_device_ptr = result::malloc_async::<T>(self.cu_stream)?;
-        Ok(CudaUniquePtr {
-            cu_device_ptr,
-            device: self.clone(),
-            marker: PhantomData,
-        })
-    }
-
-    /// TODO
-    fn dup<T>(self: &Rc<Self>, src: &CudaUniquePtr<T>) -> Result<CudaUniquePtr<T>, CudaError> {
-        let alloc = unsafe { self.alloc() }?;
-        unsafe {
-            result::memcpy_dtod_async::<T>(alloc.cu_device_ptr, src.cu_device_ptr, self.cu_stream)
-        }?;
-        Ok(alloc)
-    }
-
-    /// TODO
-    pub fn alloc_zeros<T: Zeroable>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
-        let alloc = unsafe { self.alloc() }?;
+    /// Allocates device memory with no associated host memory, and memsets
+    /// the device memory to all 0s.
+    ///
+    /// # Safety
+    /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
+    /// 2. Self is [Rc<Self>], and this method increments the rc for self
+    pub fn alloc_zeros<T: ValidAsZeroBits>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
+        let alloc = unsafe { CudaUniquePtr::alloc(self) }?;
         unsafe { result::memset_d8_async::<T>(alloc.cu_device_ptr, 0, self.cu_stream) }?;
         Ok(CudaRc {
             t_cuda: Rc::new(alloc),
@@ -180,9 +262,17 @@ impl CudaDevice {
         })
     }
 
-    /// TODO
+    /// Takes ownership of `host_data`, and does an async allocation and async copy of the
+    /// host data to device.
+    ///
+    /// # Safety
+    /// 1. This takes ownership of host data, meaning any asynchronous copies from host
+    /// data are safe because they are behind this struct. Since host data is an Rc,
+    /// any mutations by another ref will not mutate this data.
+    /// 2. The device memory is valid because the host memory is valid.
+    /// 3. Self is [Rc<Self>], and this method increments the rc for self
     pub fn take<T>(self: &Rc<Self>, host_data: Rc<T>) -> Result<CudaRc<T>, CudaError> {
-        let alloc = unsafe { self.alloc() }?;
+        let alloc = unsafe { CudaUniquePtr::alloc(self) }?;
         unsafe {
             result::memcpy_htod_async(alloc.cu_device_ptr, host_data.as_ref(), self.cu_stream)
         }?;
@@ -192,8 +282,10 @@ impl CudaDevice {
         })
     }
 
-    /// TODO
-    pub(crate) fn sync_host<T: Clone>(&self, t: &mut CudaRc<T>) -> Result<(), CudaError> {
+    /// If host data exists, schedules a device to host copy and then synchronizes
+    ///
+    /// Note: This will clone the host data if there is more than 1 reference to it.
+    pub(crate) fn maybe_sync_host<T: Clone>(&self, t: &mut CudaRc<T>) -> Result<(), CudaError> {
         if let Some(host_data) = &mut t.t_host {
             unsafe {
                 result::memcpy_dtoh_async(
@@ -207,18 +299,23 @@ impl CudaDevice {
         Ok(())
     }
 
-    /// TODO
+    /// Synchronizes the stream.
     pub(crate) fn synchronize(&self) -> Result<(), CudaError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
-    /// TODO
+    /// Return the module associated with `key`.
     pub fn get_module(&self, key: &str) -> Option<&CudaModule> {
         self.modules.get(key)
     }
 }
 
-/// TODO
+/// Wrapper around [sys::CUmodule] that also contains
+/// the loaded [CudaFunction] associated with this module.
+///
+/// See [CudaModule::get_fn()] for retrieving function handles.
+///
+/// See [CudaDeviceBuilder] for how to construct these modules.
 #[derive(Debug)]
 pub struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
@@ -226,28 +323,39 @@ pub struct CudaModule {
 }
 
 impl CudaModule {
-    /// TODO
+    /// Returns reference to function with `name`. If function
+    /// was not already loaded into CudaModule, then `None`
+    /// is returned.
     pub fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
         self.functions.get(name)
     }
 }
 
-/// TODO
+/// Wrapper around [sys::CUfunction] to prevent it from being cloned.
 #[derive(Debug)]
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
 }
 
-/// TODO
+/// Configuration for [result::launch_kernel]
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1gb8f3dc3031b40da29d5f9a7139e52e15)
+/// for description of each parameter.
 #[derive(Clone, Copy)]
 pub struct LaunchConfig {
+    /// (width, height, depth) of grid in blocks
     pub grid_dim: (u32, u32, u32),
+
+    /// (x, y, z) dimension of each thread block
     pub block_dim: (u32, u32, u32),
+
+    /// Dynamic shared-memory size per thread block in bytes
     pub shared_mem_bytes: u32,
 }
 
 impl LaunchConfig {
-    /// TODO
+    /// A simple function to create launch configuration
+    /// with 1 grid and n threads
     pub fn for_num_elems(n: u32) -> Self {
         Self {
             grid_dim: (1, 1, 1),
@@ -257,20 +365,46 @@ impl LaunchConfig {
     }
 }
 
-/// TODO
+/// Something that can be turned into a parameter for
+/// [result::launch_kernel].
+///
+/// # Safety
+///
+/// This is unsafe because it can take any type and
+/// turn it into a mutable pointer.
+///
+/// Additionally, all the safety notices for [result::launch_kernel]
+/// apply here as well.
 pub unsafe trait IntoKernelParam {
     fn into_kernel_param(self) -> *mut std::ffi::c_void;
 }
 
-/// TODO
-pub trait LaunchCudaFunction<Params> {
+/// Can launch a [CudaFunction] with the corresponding generic type `Params`.
+///
+/// This is impl'd multiple times for different number and types of params. In
+/// general, `Params` should impl [IntoKernelParam]
+///
+/// # Safety
+/// This is not safe really ever, because there's no garuntee that `Params`
+/// will work for any [CudaFunction] passed in. Great care should be taken
+/// to ensure that [CudaFunction] works with `Params` and that the correct
+/// parameters have `&mut` in front of them.
+///
+/// **Make sure that any mutable [CudaRc] are passed with `&mut CudaRc`,
+/// to ensure that the ref count is correctly maintained**
+pub unsafe trait LaunchCudaFunction<Params> {
+    /// Launches the [CudaFunction] with the corresponding `Params`.
+    ///
+    /// **Make sure that any mutable [CudaRc] are passed with `&mut CudaRc`,
+    /// to ensure that the ref count is correctly maintained**
+    ///
     /// # Safety
-    ///
     /// This method is **very** unsafe.
-    /// **`params` can be changed regardless of `&` or `&mut` usage.**
-    ///
-    /// Additionally, there are no guaruntees that the `params`
-    /// are the correct number or types or order for `func`.
+    /// 1. `params` can be changed regardless of `&` or `&mut` usage.
+    /// 2. `params` will be changed at some later point even after the
+    /// function returns due to async
+    /// 3. There are no guaruntees that the `params`
+    /// are the correct number/types/order for `func`.
     unsafe fn launch_cuda_function(
         &self,
         func: &CudaFunction,
@@ -317,7 +451,7 @@ impl_into_kernel_param!(f64);
 
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
-impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for CudaDevice {
+unsafe impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for CudaDevice {
     unsafe fn launch_cuda_function(
         &self,
         func: &CudaFunction,
@@ -344,15 +478,21 @@ impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
 
-/// TODO
+/// A builder for [CudaDevice].
+///
+/// Call [CudaDeviceBuilder::new()] to start, and [CudaDeviceBuilder::build]
+/// to finish.
+///
+/// Provides a way to specify what modules & functions to load into
+/// the device via [CudaDeviceBuilder::with_precompiled_ptx()]
+/// and [CudaDeviceBuilder::with_nvrtc_ptx()].
 #[derive(Debug)]
 pub struct CudaDeviceBuilder {
-    ordinal: usize,
-    precompiled_modules: Vec<PrecompiledPtxConfig>,
-    nvrtc_modules: Vec<NvrtcConfig>,
+    pub(crate) ordinal: usize,
+    pub(crate) precompiled_modules: Vec<PrecompiledPtxConfig>,
+    pub(crate) nvrtc_modules: Vec<NvrtcConfig>,
 }
 
-/// TODO
 #[derive(Debug)]
 pub(crate) struct PrecompiledPtxConfig {
     pub(crate) key: &'static str,
@@ -360,7 +500,6 @@ pub(crate) struct PrecompiledPtxConfig {
     pub(crate) fn_names: Vec<&'static str>,
 }
 
-/// TODO
 #[derive(Debug)]
 pub(crate) struct NvrtcConfig {
     pub(crate) key: &'static str,
@@ -369,7 +508,8 @@ pub(crate) struct NvrtcConfig {
 }
 
 impl CudaDeviceBuilder {
-    /// TODO
+    /// Starts a new builder object.
+    /// - `ordinal` is the index of th cuda device to attach to.
     pub fn new(ordinal: usize) -> Self {
         Self {
             ordinal,
@@ -378,7 +518,11 @@ impl CudaDeviceBuilder {
         }
     }
 
-    /// TODO
+    /// Adds a path to a precompiled `.ptx` file to be loaded as a module on the device.
+    ///
+    /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_module()]
+    /// - `path` is a file
+    /// - `fn_names` is a slice of function names to load into the module during build.
     pub fn with_precompiled_ptx(
         mut self,
         key: &'static str,
@@ -393,8 +537,12 @@ impl CudaDeviceBuilder {
         self
     }
 
-    /// TODO
-    pub fn with_nvrtc_module(
+    /// Add a [Ptx] compiled with nvrtc to be loaded as a module on the device.
+    ///
+    /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_module()]
+    /// - `ptx` contains the compilex ptx
+    /// - `fn_names` is a slice of function names to load into the module during build.
+    pub fn with_nvrtc_ptx(
         mut self,
         key: &'static str,
         ptx: Ptx,
@@ -408,12 +556,15 @@ impl CudaDeviceBuilder {
         self
     }
 
-    /// TODO
+    /// Builds the [CudaDevice]:
+    /// 1. Initializes cuda with [result::init]
+    /// 2. Creates the device/primary ctx, and stream
+    /// 3. Uses nvrtc to compile and the modules & functions
     pub fn build(mut self) -> Result<Rc<CudaDevice>, BuildError> {
         result::init().map_err(BuildError::InitError)?;
 
         let cu_device =
-            result::device::get(self.ordinal as i32).map_err(BuildError::OrdinalError)?;
+            result::device::get(self.ordinal as i32).map_err(BuildError::DeviceError)?;
 
         // primary context initialization
         let cu_primary_ctx =
@@ -484,11 +635,11 @@ impl CudaDeviceBuilder {
     }
 }
 
-/// TODO
+/// An error the occurs during [CudaDeviceBuilder::build]
 #[derive(Debug)]
 pub enum BuildError {
     InitError(CudaError),
-    OrdinalError(CudaError),
+    DeviceError(CudaError),
     ContextError(CudaError),
     StreamError(CudaError),
     PtxLoadingError {
@@ -514,3 +665,77 @@ impl std::fmt::Display for BuildError {
 }
 
 impl std::error::Error for BuildError {}
+
+/// Marker trait to indicate that the type is valid
+/// when all of its bits are set to 0.
+///
+/// # Safety
+/// Not all types are valid when all bits are set to 0.
+/// Be very sure when implementing this trait!
+pub unsafe trait ValidAsZeroBits {}
+unsafe impl ValidAsZeroBits for i8 {}
+unsafe impl ValidAsZeroBits for i16 {}
+unsafe impl ValidAsZeroBits for i32 {}
+unsafe impl ValidAsZeroBits for i64 {}
+unsafe impl ValidAsZeroBits for isize {}
+unsafe impl ValidAsZeroBits for u8 {}
+unsafe impl ValidAsZeroBits for u16 {}
+unsafe impl ValidAsZeroBits for u32 {}
+unsafe impl ValidAsZeroBits for u64 {}
+unsafe impl ValidAsZeroBits for usize {}
+unsafe impl ValidAsZeroBits for f32 {}
+unsafe impl ValidAsZeroBits for f64 {}
+unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_post_build_rc_count() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_alloc_rc_counts() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_take_rc_counts() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_clone_rc_counts() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_into_host_counts() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_sync_release_counts() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_drop_counts() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_alloc_memory() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_cudarc_drop_memory() {
+        todo!();
+    }
+
+    #[test]
+    fn test_post_device_drop_memory() {
+        todo!();
+    }
+}
