@@ -113,16 +113,15 @@ impl<Op: BinaryKernelOp> CompileKernel for ForEach<Op> {
     type Compiled = Ptx;
     type Err = CompileError;
     fn compile() -> Result<Self::Compiled, Self::Err> {
-        let mut cu_src = format!(
-            "
+        const CU_SRC: &str = "
 extern \"C\" __global__ void kernel(float *out, const float *inp, int numel) {{
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < numel) {{
         op(out + i, inp + i);
     }}
 }}
-",
-        );
+";
+        let mut cu_src = CU_SRC.to_owned();
         cu_src.insert_str(0, Op::CU_SRC);
         compile_ptx(cu_src)
     }
@@ -145,7 +144,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cpu sin: a={a_host:?} b={b_host:?}");
     println!("cpu cos: a={a_host:?} c={c_host:?}");
 
-    let a_dev = gpu.take(a_host.clone())?;
+    let a_dev = gpu.take(a_host)?;
     let mut b_dev = a_dev.clone();
     let mut c_dev = a_dev.clone();
 
