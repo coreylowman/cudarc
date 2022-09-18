@@ -8,17 +8,24 @@
 //!
 //! ### Allocating device memory with host data
 //!
+//! See [CudaDevice::take()]
+//!
 //! TODO
 //!
 //! ### Allocating device memory without host data
 //!
+//! See [CudaDevice::alloc_zeros()]
+//!
 //! TODO
 //!
-//! ### Mutating device memory with [CudaDevice::launch_kernel] and [CudaFunction]
+//! ### Mutating device memory with [LaunchCudaFunction] and [CudaFunction]
 //!
 //! TODO
 //!
 //! ### Reclaiming device data
+//!
+//! See [CudaRc::into_host()], [CudaRc::sync_release()], or you can just
+//! drop the [CudaRc].
 //!
 //! TODO
 //!
@@ -101,7 +108,8 @@ pub use result::CudaError;
 /// # Mutating device data
 ///
 /// This can only be done by launching kernels via
-/// [CudaDevice::launch_kernel()]. Pass `&mut CudaRc<T>`
+/// [LaunchCudaFunction] which is implemented
+/// by [CudaDevice]. Pass `&mut CudaRc<T>`
 /// if you want to mutate the rc, and `&CudaRc<T>` otherwise.
 ///
 /// Unfortunately, `&CudaRc<T>` can **still be mutated
