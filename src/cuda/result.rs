@@ -351,6 +351,16 @@ pub unsafe fn memcpy_dtod_async<T>(
     sys::cuMemcpyDtoDAsync_v2(dst, src, size_of::<T>(), stream).result()
 }
 
+/// Returns (free, total) memory in bytes.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g808f555540d0143a331cc42aa98835c0)
+pub fn mem_get_info() -> Result<(usize, usize), CudaError> {
+    let mut free = 0;
+    let mut total = 0;
+    unsafe { sys::cuMemGetInfo_v2(&mut free as *mut _, &mut total as *mut _) }.result()?;
+    Ok((free, total))
+}
+
 pub mod module {
     //! Module management functions (`cuModule*`).
     //!

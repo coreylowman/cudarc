@@ -498,24 +498,24 @@ impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
 /// to finish.
 ///
 /// Provides a way to specify what modules & functions to load into
-/// the device via [CudaDeviceBuilder::with_precompiled_ptx()]
-/// and [CudaDeviceBuilder::with_nvrtc_ptx()].
+/// the device via [CudaDeviceBuilder::with_ptx_from_file()]
+/// and [CudaDeviceBuilder::with_ptx()].
 #[derive(Debug)]
 pub struct CudaDeviceBuilder {
     pub(crate) ordinal: usize,
-    pub(crate) precompiled_modules: Vec<PrecompiledPtxConfig>,
-    pub(crate) nvrtc_modules: Vec<NvrtcConfig>,
+    pub(crate) ptx_files: Vec<PtxFileConfig>,
+    pub(crate) ptxs: Vec<PtxConfig>,
 }
 
 #[derive(Debug)]
-pub(crate) struct PrecompiledPtxConfig {
+pub(crate) struct PtxFileConfig {
     pub(crate) key: &'static str,
     pub(crate) fname: &'static str,
     pub(crate) fn_names: Vec<&'static str>,
 }
 
 #[derive(Debug)]
-pub(crate) struct NvrtcConfig {
+pub(crate) struct PtxConfig {
     pub(crate) key: &'static str,
     pub(crate) ptx: Ptx,
     pub(crate) fn_names: Vec<&'static str>,
@@ -527,8 +527,8 @@ impl CudaDeviceBuilder {
     pub fn new(ordinal: usize) -> Self {
         Self {
             ordinal,
-            precompiled_modules: Vec::new(),
-            nvrtc_modules: Vec::new(),
+            ptx_files: Vec::new(),
+            ptxs: Vec::new(),
         }
     }
 
@@ -537,13 +537,13 @@ impl CudaDeviceBuilder {
     /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_module()]
     /// - `path` is a file
     /// - `fn_names` is a slice of function names to load into the module during build.
-    pub fn with_precompiled_ptx(
+    pub fn with_ptx_from_file(
         mut self,
         key: &'static str,
         path: &'static str,
         fn_names: &[&'static str],
     ) -> Self {
-        self.precompiled_modules.push(PrecompiledPtxConfig {
+        self.ptx_files.push(PtxFileConfig {
             key,
             fname: path,
             fn_names: fn_names.to_vec(),
@@ -556,13 +556,8 @@ impl CudaDeviceBuilder {
     /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_module()]
     /// - `ptx` contains the compilex ptx
     /// - `fn_names` is a slice of function names to load into the module during build.
-    pub fn with_nvrtc_ptx(
-        mut self,
-        key: &'static str,
-        ptx: Ptx,
-        fn_names: &[&'static str],
-    ) -> Self {
-        self.nvrtc_modules.push(NvrtcConfig {
+    pub fn with_ptx(mut self, key: &'static str, ptx: Ptx, fn_names: &[&'static str]) -> Self {
+        self.ptxs.push(PtxConfig {
             key,
             ptx,
             fn_names: fn_names.to_vec(),
@@ -584,17 +579,15 @@ impl CudaDeviceBuilder {
         let cu_primary_ctx =
             unsafe { result::primary_ctx::retain(cu_device) }.map_err(BuildError::ContextError)?;
 
-        // TODO is this necessary to call?
         unsafe { result::ctx::set_current(cu_primary_ctx) }.map_err(BuildError::ContextError)?;
 
         // stream initialization
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)
             .map_err(BuildError::StreamError)?;
 
-        let mut modules =
-            HashMap::with_capacity(self.nvrtc_modules.len() + self.precompiled_modules.len());
+        let mut modules = HashMap::with_capacity(self.ptxs.len() + self.ptx_files.len());
 
-        for cu in self.precompiled_modules.drain(..) {
+        for cu in self.ptx_files.drain(..) {
             let name_c = CString::new(cu.fname).map_err(BuildError::CStringError)?;
             let cu_module =
                 result::module::load(name_c).map_err(|e| BuildError::PtxLoadingError {
@@ -605,7 +598,7 @@ impl CudaDeviceBuilder {
             modules.insert(cu.key, module);
         }
 
-        for ptx in self.nvrtc_modules.drain(..) {
+        for ptx in self.ptxs.drain(..) {
             let image = ptx.ptx.image.as_ptr() as *const _;
             let cu_module = unsafe { result::module::load_data(image) }.map_err(|e| {
                 BuildError::NvrtcLoadingError {
@@ -738,7 +731,7 @@ mod tests {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let t = device.take(Rc::new(0.0f32)).unwrap();
         let r = t.clone();
-        assert_eq!(Rc::strong_count(&device), 3);
+        assert_eq!(Rc::strong_count(&device), 2);
         assert_eq!(Rc::strong_count(&t.t_cuda), 2);
         assert_eq!(Rc::strong_count(&r.t_cuda), 2);
         assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
@@ -755,12 +748,12 @@ mod tests {
         let t = device.take(Rc::new(0.0f32)).unwrap();
         let r = t.clone();
 
-        // NOTE: cuda rc was decremented, but host rc was not
+        // NOTE: into_host mutates host data, which makes a different Rc
         let r_host = r.into_host().unwrap();
         assert_eq!(Rc::strong_count(&device), 2);
         assert_eq!(Rc::strong_count(&t.t_cuda), 1);
-        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
-        assert_eq!(Rc::strong_count(&r_host), 2);
+        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
+        assert_eq!(Rc::strong_count(&r_host), 1);
 
         drop(r_host);
         assert_eq!(Rc::strong_count(&device), 2);
@@ -770,17 +763,21 @@ mod tests {
 
     #[test]
     fn test_post_alloc_memory() {
-        todo!();
-    }
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let (free1, total1) = result::mem_get_info().unwrap();
 
-    #[test]
-    fn test_post_cudarc_drop_memory() {
-        todo!();
-    }
+        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let (free2, total2) = result::mem_get_info().unwrap();
+        assert_eq!(total1, total2);
+        assert!(free2 < free1);
 
-    #[test]
-    fn test_post_device_drop_memory() {
-        todo!();
+        drop(t);
+        device.synchronize().unwrap();
+
+        let (free3, total3) = result::mem_get_info().unwrap();
+        assert_eq!(total2, total3);
+        assert!(free3 > free2);
+        assert_eq!(free3, free1);
     }
 
     #[test]

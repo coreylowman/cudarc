@@ -129,8 +129,8 @@ extern \"C\" __global__ void kernel(float *out, const float *inp, int numel) {{
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let gpu = CudaDeviceBuilder::new(0)
-        .with_nvrtc_ptx(SinOp::NAME, ForEach::<SinOp>::compile()?, &["kernel"])
-        .with_nvrtc_ptx(CosOp::NAME, ForEach::<CosOp>::compile()?, &["kernel"])
+        .with_ptx(SinOp::NAME, ForEach::<SinOp>::compile()?, &["kernel"])
+        .with_ptx(CosOp::NAME, ForEach::<CosOp>::compile()?, &["kernel"])
         .build()
         .unwrap();
 

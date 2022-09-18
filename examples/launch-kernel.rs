@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dev = CudaDeviceBuilder::new(0)
-        .with_precompiled_ptx("sin_module", "./examples/sin.ptx", &["sin_kernel"])
+        .with_ptx_from_file("sin_module", "./examples/sin.ptx", &["sin_kernel"])
         .build()?;
 
     // "sin_module" is the key used with CudaDeviceBuilder
