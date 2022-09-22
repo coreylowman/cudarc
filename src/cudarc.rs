@@ -760,12 +760,22 @@ mod tests {
 
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
-        todo!();
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let mut t = device.take(Rc::new(0.0f32)).unwrap();
+        let _r = t.clone();
+        assert_eq!(Rc::strong_count(&device), 2);
+        let _ = (&mut t).into_kernel_param();
+        assert_eq!(Rc::strong_count(&device), 3);
     }
 
     #[test]
     fn test_ref_into_kernel_param_inc_rc() {
-        todo!();
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let _r = t.clone();
+        assert_eq!(Rc::strong_count(&device), 2);
+        let _ = (&t).into_kernel_param();
+        assert_eq!(Rc::strong_count(&device), 2);
     }
 
     #[test]
