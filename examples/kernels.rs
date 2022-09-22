@@ -1,15 +1,5 @@
-use cudarc::{nvrtc::prelude::*, prelude::*};
+use cudarc::{arrays::NumElements, nvrtc::prelude::*, prelude::*};
 use std::{marker::PhantomData, rc::Rc};
-
-trait NumElements {
-    const NUMEL: usize;
-}
-impl NumElements for f32 {
-    const NUMEL: usize = 1;
-}
-impl<T: NumElements, const M: usize> NumElements for [T; M] {
-    const NUMEL: usize = T::NUMEL * M;
-}
 
 struct Cpu;
 

@@ -2,32 +2,11 @@
 //!
 //! # Usage
 //!
-//! ### Instanting a [CudaDevice] with [CudaDeviceBuilder]
-//!
-//! TODO
-//!
-//! ### Allocating device memory with host data
-//!
-//! See [CudaDevice::take()]
-//!
-//! TODO
-//!
-//! ### Allocating device memory without host data
-//!
-//! See [CudaDevice::alloc_zeros()]
-//!
-//! TODO
-//!
-//! ### Mutating device memory with [LaunchCudaFunction] and [CudaFunction]
-//!
-//! TODO
-//!
-//! ### Reclaiming device data
-//!
-//! See [CudaRc::into_host()], [CudaRc::sync_release()], or you can just
+//! 1. Instante a [CudaDevice] with [CudaDeviceBuilder]
+//! 2. Allocate device memory with host data with [CudaDevice::take()] or [CudaDevice::alloc_zeros()]
+//! 3. Mutate device memory with [LaunchCudaFunction] and [CudaFunction]
+//! 4. Transfer to host memory with [CudaRc::into_host()], [CudaRc::sync_release()], or you can just
 //! drop the [CudaRc].
-//!
-//! TODO
 //!
 //! # Safety
 //!
