@@ -21,6 +21,7 @@ keywords = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rand = "0.8.5"
 
 [build-dependencies]
 find_cuda_helper = "0.2.0"

@@ -5,11 +5,6 @@
 //! 2. [result] thin wrapper around [sys] to return [Result<_, result::CudaError>]
 //! 3. [sys] the raw bindings
 
-pub mod rc;
 pub mod result;
 #[allow(warnings)]
 pub mod sys;
-
-pub mod prelude {
-    pub use super::rc::*;
-}
