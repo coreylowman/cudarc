@@ -1,10 +1,10 @@
 //! Safe abstractions over the [CUDA toolkit APIs](https://docs.nvidia.com/cuda/index.html)
 
 pub mod arrays;
-pub mod compile;
 pub mod cuda;
 pub mod cudarc;
 pub mod curand;
+pub mod jit;
 pub mod nvrtc;
 pub mod rng;
 

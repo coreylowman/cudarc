@@ -3,7 +3,7 @@ use cudarc::rng::CudaRng;
 
 fn main() {
     let dev = CudaDeviceBuilder::new(0).build().unwrap();
-    let rng = CudaRng::new(0, dev).unwrap();
+    let rng = CudaRng::new(0, dev.clone()).unwrap();
 
     let mut t_dev = dev.alloc_zeros::<[f32; 10]>().unwrap();
     rng.fill_with_uniform(&mut t_dev).unwrap();

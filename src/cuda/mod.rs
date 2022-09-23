@@ -1,9 +1,8 @@
 //! Wrappers around the [CUDA driver API](https://docs.nvidia.com/cuda/cuda-driver-api/index.html),
-//! in three levels: [rc], [result], [sys].
+//! in two levels: [result], [sys]. See [crate::cudarc] for safe wrappers.
 //!
-//! 1. [rc] provides safe abstractions over [result]
-//! 2. [result] thin wrapper around [sys] to return [Result<_, result::CudaError>]
-//! 3. [sys] the raw bindings
+//! 1. [result] thin wrapper around [sys] to return [Result<_, result::CudaError>]
+//! 2. [sys] the raw bindings
 
 pub mod result;
 #[allow(warnings)]

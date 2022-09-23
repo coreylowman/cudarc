@@ -17,7 +17,7 @@ pub struct Ptx {
 ///
 /// Example:
 /// ```rust
-/// # use cudarc::nvrtc::compile::*;
+/// # use cudarc::jit::*;
 /// let ptx = compile_ptx("extern \"C\" __global__ void kernel() { }").unwrap();
 /// ```
 pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
@@ -28,7 +28,7 @@ pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
 ///
 /// Example:
 /// ```rust
-/// # use cudarc::nvrtc::compile::*;
+/// # use cudarc::jit::*;
 /// let opts = CompileOptions {
 ///     ftz: Some(true),
 ///     maxrregcount: Some(10),
@@ -127,7 +127,7 @@ impl std::error::Error for CompileError {}
 ///
 /// Example:
 /// ```rust
-/// # use cudarc::nvrtc::compile::*;
+/// # use cudarc::jit::*;
 /// // "--ftz=true" will be passed to the compiler
 /// let opts = CompileOptions {
 ///     ftz: Some(true),

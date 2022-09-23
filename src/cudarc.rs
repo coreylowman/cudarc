@@ -50,8 +50,8 @@
 //! [CudaDevice::take()], and to reclaim (& sync) the host data, you can call
 //! [CudaRc::into_host()].
 
-use crate::compile::Ptx;
 use crate::cuda::{result, sys};
+use crate::jit::Ptx;
 use std::alloc::alloc_zeroed;
 use std::alloc::Layout;
 use std::collections::HashMap;
@@ -674,6 +674,8 @@ unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
 
 #[cfg(test)]
 mod tests {
+    use crate::jit::compile_ptx_with_opts;
+
     use super::*;
     use std::rc::Rc;
 
@@ -740,6 +742,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "must be executed by itself"]
     fn test_post_alloc_memory() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let (free1, total1) = result::mem_get_info().unwrap();
@@ -778,18 +781,58 @@ mod tests {
         assert_eq!(Rc::strong_count(&device), 2);
     }
 
-    #[test]
-    fn test_build_with_ptxs() {
-        todo!();
+    const SIN_CU: &str =
+        "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
+    size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < numel) {
+        out[i] = sin(inp[i]);
     }
+}";
 
     #[test]
     fn test_launch_with_mut_and_ref_cudarc() {
-        todo!();
-    }
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx("sin", ptx, &["sin_kernel"])
+            .build()
+            .unwrap();
+        let m = dev.get_module("sin").unwrap();
+        let sin_kernel = m.get_fn("sin_kernel").unwrap();
 
-    #[test]
-    fn test_launch_with_mut_and_ref_builtin() {
-        todo!();
+        let a_host = Rc::new([-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]);
+        assert_eq!(Rc::strong_count(&a_host), 1);
+
+        let a_dev = dev.take(a_host.clone()).unwrap();
+        assert_eq!(Rc::strong_count(&a_host), 2);
+        assert_eq!(Rc::strong_count(&a_dev.t_cuda), 1);
+
+        let mut b_dev = a_dev.clone();
+        assert_eq!(Rc::strong_count(&a_host), 3);
+        assert_eq!(Rc::strong_count(&a_dev.t_cuda), 2);
+        assert_eq!(Rc::strong_count(&b_dev.t_cuda), 2);
+
+        unsafe {
+            dev.launch_cuda_function(
+                sin_kernel,
+                LaunchConfig::for_num_elems(10),
+                (&mut b_dev, &a_dev, &10usize),
+            )
+            .unwrap();
+        }
+
+        assert_eq!(Rc::strong_count(&a_host), 3);
+        assert_eq!(Rc::strong_count(&a_dev.t_cuda), 1);
+        assert_eq!(Rc::strong_count(&b_dev.t_cuda), 1);
+
+        let b_host = b_dev.into_host().unwrap();
+        assert_eq!(Rc::strong_count(&a_host), 2);
+
+        let expected = a_host.map(f32::sin);
+        for i in 0..10 {
+            assert!((b_host[i] - expected[i]).abs() <= 1e-6);
+        }
+
+        drop(a_dev);
+        assert_eq!(Rc::strong_count(&a_host), 1);
     }
 }
