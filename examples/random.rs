@@ -2,8 +2,8 @@ use cudarc::prelude::*;
 use cudarc::rng::CudaRng;
 
 fn main() {
-    let rng = CudaRng::new(0).unwrap();
     let dev = CudaDeviceBuilder::new(0).build().unwrap();
+    let rng = CudaRng::new(0, dev).unwrap();
 
     let mut t_dev = dev.alloc_zeros::<[f32; 10]>().unwrap();
     rng.fill_with_uniform(&mut t_dev).unwrap();

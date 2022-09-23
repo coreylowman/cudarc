@@ -76,14 +76,6 @@ pub mod generate {
         sys::curandGenerate(gen, out, num).result()
     }
 
-    pub unsafe fn uniform_u64(
-        gen: sys::curandGenerator_t,
-        out: *mut u64,
-        num: usize,
-    ) -> Result<(), CurandError> {
-        sys::curandGenerateLongLong(gen, out, num).result()
-    }
-
     pub unsafe fn normal_f32(
         gen: sys::curandGenerator_t,
         out: *mut f32,
@@ -153,12 +145,6 @@ impl UniformFill<f64> for sys::curandGenerator_t {
 impl UniformFill<u32> for sys::curandGenerator_t {
     unsafe fn fill(self, out: *mut u32, num: usize) -> Result<(), CurandError> {
         generate::uniform_u32(self, out, num)
-    }
-}
-
-impl UniformFill<u64> for sys::curandGenerator_t {
-    unsafe fn fill(self, out: *mut u64, num: usize) -> Result<(), CurandError> {
-        generate::uniform_u64(self, out, num)
     }
 }
 

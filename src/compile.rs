@@ -2,8 +2,7 @@
 //!
 //! Call [compile_ptx()] or [compile_ptx_with_opts()].
 
-use super::result;
-use super::sys;
+use crate::nvrtc::{result, sys};
 use std::ffi::{CStr, CString};
 
 /// An opaque structure representing a compiled PTX program

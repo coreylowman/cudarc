@@ -50,8 +50,8 @@
 //! [CudaDevice::take()], and to reclaim (& sync) the host data, you can call
 //! [CudaRc::into_host()].
 
+use crate::compile::Ptx;
 use crate::cuda::{result, sys};
-use crate::nvrtc::compile::Ptx;
 use std::alloc::alloc_zeroed;
 use std::alloc::Layout;
 use std::collections::HashMap;
