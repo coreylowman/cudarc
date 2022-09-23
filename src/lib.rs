@@ -1,4 +1,7 @@
-//! Safe abstractions over the [CUDA toolkit APIs](https://docs.nvidia.com/cuda/index.html)
+//! Safe abstractions over:
+//! 1. [CUDA driver API](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
+//! 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
+//! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 
 pub mod arrays;
 pub mod cuda;

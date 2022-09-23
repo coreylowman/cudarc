@@ -1,4 +1,4 @@
-//! A safe wrapper around [result] for compiling PTX files.
+//! Safe abstractions around [crate::nvrtc::result] for compiling PTX files.
 //!
 //! Call [compile_ptx()] or [compile_ptx_with_opts()].
 

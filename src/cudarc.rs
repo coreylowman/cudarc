@@ -1,12 +1,60 @@
-//! Safe abstractions over [result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
+//! Safe abstractions over [crate::cuda::result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
 //!
 //! # Usage
 //!
-//! 1. Instante a [CudaDevice] with [CudaDeviceBuilder]
+//! 1. Instantiate a [CudaDevice] with [CudaDeviceBuilder]:
+//!
+//! ```rust
+//! # use cudarc::prelude::*;
+//! let device = CudaDeviceBuilder::new(0).build().unwrap();
+//! ```
+//!
 //! 2. Allocate device memory with host data with [CudaDevice::take()] or [CudaDevice::alloc_zeros()]
-//! 3. Mutate device memory with [LaunchCudaFunction] and [CudaFunction]
+//!
+//! ```rust
+//! # use cudarc::prelude::*;
+//! # use std::rc::Rc;
+//! # let device = CudaDeviceBuilder::new(0).build().unwrap();
+//! let a_dev: CudaRc<[f32; 10]> = device.alloc_zeros::<[f32; 10]>().unwrap();
+//! let b_dev: CudaRc<f32> = device.take(Rc::new(0.0f32)).unwrap();
+//! ```
+//!
+//! 3. Mutate device memory with [LaunchCudaFunction] and [CudaFunction] (or [crate::rng::CudaRng]).
 //! 4. Transfer to host memory with [CudaRc::into_host()], [CudaRc::sync_release()], or you can just
 //! drop the [CudaRc].
+//!
+//! ```rust
+//! # use cudarc::prelude::*;
+//! # use std::rc::Rc;
+//! # let device = CudaDeviceBuilder::new(0).build().unwrap();
+//! let a_dev: CudaRc<[f32; 10]> = device.alloc_zeros::<[f32; 10]>().unwrap();
+//! let a_host: Rc<[f32; 10]> = a_dev.into_host().unwrap();
+//! ```
+//!
+//! ## CudaModule and CudaFunction
+//!
+//! In order to mutate device data, you need to use cuda kernels. Loading kernels is
+//! done with [CudaDeviceBuilder::with_ptx()] and [CudaDeviceBuilder::with_ptx_from_file()]:
+//!
+//! ```rust
+//! # use cudarc::cudarc::*;
+//! # use cudarc::jit::*;
+//! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! let device = CudaDeviceBuilder::new(0)
+//!     .with_ptx("module_key", ptx, &["my_function"])
+//!     .build()
+//!     .unwrap();
+//! ```
+//!
+//! Retrieve the module & function:
+//! ```rust
+//! # use cudarc::cudarc::*;
+//! # use cudarc::jit::*;
+//! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! # let device = CudaDeviceBuilder::new(0).with_ptx("module_key", ptx, &["my_function"]).build().unwrap();
+//! let module: &CudaModule = device.get_module("module_key").unwrap();
+//! let func: &CudaFunction = module.get_fn("my_function").unwrap();
+//! ```
 //!
 //! # Safety
 //!
@@ -16,7 +64,7 @@
 //! ### Context/Stream lifetimes
 //!
 //! The first part of safety is ensuring that [sys::CUcontext], [sys::CUdevice], and [sys::CUstream] all
-//! live the required amount of time (i.e. stream requires context, context requires device).
+//! live the required amount of time (i.e. device outlives context, which outlives stream).
 //!
 //! This is accomplished by putting all of them inside one struct, the [CudaDevice]. There are other ways,
 //! such as adding newtypes that carry lifetimes with them, but this approach was chosen to make working
@@ -25,17 +73,11 @@
 //! Additionally, [CudaDevice] implements [Drop] as releasing all the data from the device in
 //! the expected way.
 //!
-//! ### Single stream operations
+//! ### Device Data lifetimes
 //!
-//! The next part of safety is ensuring that all operations happen on the same stream. This
-//! is pretty easy to accomplish by using all the `*_async` methods in [crate::cuda::result].
-//! Otherwise there can be confusing with data copying if you don't use all async methods.
-//!
-//! ### Device Pointer lifetimes
-//!
-//! The next part of safety is ensuring that [sys::CUdeviceptr] do not outlive
-//! the [CudaDevice]. Again it is possible to do this with lifetimes, but for usability
-//! we choose to bundle [Rc<CudaDevice>] along with every [sys::CUdeviceptr].
+//! The next part of safety is ensuring that [CudaRc] do not outlive
+//! the [CudaDevice]. For usability, each [CudaRc] owns an [Rc<CudaDevice>]
+//! to ensure the device stays alive.
 //!
 //! Additionally we don't want to double free any device pointers, so free is only
 //! called when the device pointer is dropped. Thanks rust!
@@ -49,6 +91,15 @@
 //! In order to initialize device data for a host allocation, you can call
 //! [CudaDevice::take()], and to reclaim (& sync) the host data, you can call
 //! [CudaRc::into_host()].
+//!
+//! ### Single stream operations
+//!
+//! The next part of safety is ensuring that:
+//! 1. The null stream is not used
+//! 2. Data isnt mutated by more than 1 stream at a time.
+//!
+//! At the moment, only a single stream is supported, and only the `*_async` methods
+//! in [crate::cuda::result] are used.
 
 use crate::cuda::{result, sys};
 use crate::jit::Ptx;

@@ -1,14 +1,38 @@
+//! Safe abstractions around [crate::curand::result] with [CudaRng].
+
 use crate::arrays::NumElements;
 use crate::cudarc::{CudaDevice, CudaRc};
 use crate::curand::{result, sys};
 use std::rc::Rc;
 
+/// Host side RNG that can fill [CudaRc] with random values.
+///
+/// 1. Create:
+/// ```rust
+/// # use cudarc::{prelude::*, rng::*};
+/// let device = CudaDeviceBuilder::new(0).build().unwrap();
+/// let rng = CudaRng::new(0, device).unwrap();
+/// ```
+/// 2. Fill device memory:
+/// ```rust
+/// # use cudarc::{prelude::*, rng::*};
+/// # let device = CudaDeviceBuilder::new(0).build().unwrap();
+/// # let rng = CudaRng::new(0, device.clone()).unwrap();
+/// let mut a_dev = device.alloc_zeros::<[f32; 10]>().unwrap();
+/// rng.fill_with_uniform(&mut a_dev).unwrap();
+/// ```
+///
+/// The three distributions are:
+/// 1. Uniform - [CudaRng::fill_with_uniform()]
+/// 2. Normal - [CudaRng::fill_with_normal()]
+/// 3. LogNormal - [CudaRng::fill_with_log_normal()]
 pub struct CudaRng {
     gen: sys::curandGenerator_t,
     device: Rc<CudaDevice>,
 }
 
 impl CudaRng {
+    /// Constructs the RNG with the given `seed`. Requires the stream from [CudaDevice] to submit kernels.
     pub fn new(seed: u64, device: Rc<CudaDevice>) -> Result<Self, result::CurandError> {
         let gen = result::create_generator()?;
         let mut rng = Self { gen, device };
@@ -17,10 +41,12 @@ impl CudaRng {
         Ok(rng)
     }
 
+    /// Re-seed the RNG.
     pub fn set_seed(&mut self, seed: u64) -> Result<(), result::CurandError> {
         unsafe { result::set_seed(self.gen, seed) }
     }
 
+    /// Fill the [CudaRc] with data from a `Uniform` distribution
     pub fn fill_with_uniform<T>(&self, t: &mut CudaRc<T>) -> Result<(), result::CurandError>
     where
         T: NumElements,
@@ -36,6 +62,7 @@ impl CudaRng {
         }
     }
 
+    /// Fill the [CudaRc] with data from a `Normal(mean, std)` distribution.
     pub fn fill_with_normal<T>(
         &self,
         t: &mut CudaRc<T>,
@@ -58,6 +85,7 @@ impl CudaRng {
         }
     }
 
+    /// Fill the `CudaRc` with data from a `LogNormal(mean, std)` distribution.
     pub fn fill_with_log_normal<T>(
         &self,
         t: &mut CudaRc<T>,
