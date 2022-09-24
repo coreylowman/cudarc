@@ -33,9 +33,10 @@
 //!
 //! ## CudaModule and CudaFunction
 //!
-//! In order to mutate device data, you need to use cuda kernels. Loading kernels is
-//! done with [CudaDeviceBuilder::with_ptx()] and [CudaDeviceBuilder::with_ptx_from_file()]:
+//! In order to mutate device data, you need to use cuda kernels.
 //!
+//! Loading kernels is done with [CudaDeviceBuilder::with_ptx()]
+//! and [CudaDeviceBuilder::with_ptx_from_file()]:
 //! ```rust
 //! # use cudarc::cudarc::*;
 //! # use cudarc::jit::*;
@@ -55,6 +56,21 @@
 //! let module: &CudaModule = device.get_module("module_key").unwrap();
 //! let func: &CudaFunction = module.get_fn("my_function").unwrap();
 //! ```
+//!
+//! Asynchronously execute the kernel:
+//! ```rust
+//! # use cudarc::cudarc::*;
+//! # use cudarc::jit::*;
+//! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! # let device = CudaDeviceBuilder::new(0).with_ptx("module_key", ptx, &["my_function"]).build().unwrap();
+//! # let module: &CudaModule = device.get_module("module_key").unwrap();
+//! # let func: &CudaFunction = module.get_fn("my_function").unwrap();
+//! let mut a = device.alloc_zeros::<[f32; 10]>().unwrap();
+//! let cfg = LaunchConfig::for_num_elems(10);
+//! unsafe { device.launch_cuda_function(func, cfg, (&mut a, )) }.unwrap();
+//! ```
+//!
+//! Note: Launching kernels is **extremely unsafe**. See [LaunchCudaFunction] for more info.
 //!
 //! # Safety
 //!
