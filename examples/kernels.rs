@@ -1,4 +1,4 @@
-use cudarc::{arrays::NumElements, jit::*, prelude::*};
+use cudarc::{jit::*, prelude::*};
 use std::{marker::PhantomData, rc::Rc};
 
 struct Cpu;

@@ -1,4 +1,4 @@
-use cudarc::prelude::*;
+use cudarc::cudarc::CudaDeviceBuilder;
 use cudarc::rng::CudaRng;
 
 fn main() {

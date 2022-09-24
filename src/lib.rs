@@ -12,8 +12,10 @@ pub mod nvrtc;
 pub mod rng;
 
 pub mod prelude {
+    pub use crate::arrays::NumElements;
     pub use crate::cudarc::{
         CudaDevice, CudaDeviceBuilder, CudaError, CudaRc, IntoKernelParam, LaunchConfig,
         LaunchCudaFunction,
     };
+    pub use crate::rng::CudaRng;
 }

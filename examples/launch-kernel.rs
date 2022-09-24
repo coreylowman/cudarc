@@ -1,4 +1,4 @@
-use cudarc::prelude::*;
+use cudarc::cudarc::{CudaDeviceBuilder, LaunchConfig, LaunchCudaFunction};
 use std::rc::Rc;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
