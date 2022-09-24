@@ -1,4 +1,4 @@
-# cudarc: minimal and safe api over cuda
+# cudarc: minimal and safe api over the cuda toolkit
 
 Safe abstractions over:
 1. [CUDA driver API](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
