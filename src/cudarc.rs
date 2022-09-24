@@ -1,4 +1,4 @@
-//! Safe abstractions over [crate::cuda::result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
+//! Safe abstractions over [crate::driver::result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
 //!
 //! # Usage
 //!
@@ -115,9 +115,9 @@
 //! 2. Data isnt mutated by more than 1 stream at a time.
 //!
 //! At the moment, only a single stream is supported, and only the `*_async` methods
-//! in [crate::cuda::result] are used.
+//! in [crate::driver::result] are used.
 
-use crate::cuda::{result, sys};
+use crate::driver::{result, sys};
 use crate::jit::Ptx;
 use std::alloc::alloc_zeroed;
 use std::alloc::Layout;

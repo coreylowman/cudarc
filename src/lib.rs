@@ -4,9 +4,9 @@
 //! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 
 pub mod arrays;
-pub mod cuda;
 pub mod cudarc;
 pub mod curand;
+pub mod driver;
 pub mod jit;
 pub mod nvrtc;
 pub mod rng;
