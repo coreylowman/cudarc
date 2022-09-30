@@ -64,12 +64,14 @@ impl std::fmt::Debug for CudaError {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::fmt::Display for CudaError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for CudaError {}
 
 /// Initializes the CUDA driver API.

@@ -6,6 +6,7 @@ use core::{
     ffi::{c_char, c_int, CStr},
     mem::MaybeUninit,
 };
+use std::vec::Vec;
 
 /// Wrapper around [sys::nvrtcResult]. See
 /// [nvrtcResult docs](https://docs.nvidia.com/cuda/nvrtc/index.html#group__error_1g31e41ef222c0ea75b4c48f715b3cd9f0)
@@ -22,12 +23,14 @@ impl sys::nvrtcResult {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::fmt::Display for NvrtcError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for NvrtcError {}
 
 /// Creates a program from source code `src`. This should be source code from a .cu file.
@@ -109,7 +112,10 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError
     let mut size: usize = 0;
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
 
-    let mut ptx_src: Vec<c_char> = vec![0i8; size];
+    let mut ptx_src: Vec<c_char> = Vec::with_capacity(size);
+    for _ in 0..size {
+        ptx_src.push(0);
+    }
     sys::nvrtcGetPTX(prog, ptx_src.as_mut_ptr()).result()?;
     Ok(ptx_src)
 }
@@ -126,7 +132,10 @@ pub unsafe fn get_program_log(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, Nv
     let mut size: usize = 0;
     sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
 
-    let mut log_src: Vec<c_char> = vec![0; size];
+    let mut log_src: Vec<c_char> = Vec::with_capacity(size);
+    for _ in 0..size {
+        log_src.push(0);
+    }
     sys::nvrtcGetProgramLog(prog, log_src.as_mut_ptr()).result()?;
     Ok(log_src)
 }

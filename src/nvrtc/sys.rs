@@ -17,19 +17,16 @@ pub enum nvrtcResult {
     NVRTC_ERROR_INTERNAL_ERROR = 11,
 }
 extern "C" {
-    pub fn nvrtcGetErrorString(result: nvrtcResult) -> *const ::std::os::raw::c_char;
+    pub fn nvrtcGetErrorString(result: nvrtcResult) -> *const core::ffi::c_char;
 }
 extern "C" {
-    pub fn nvrtcVersion(
-        major: *mut ::std::os::raw::c_int,
-        minor: *mut ::std::os::raw::c_int,
-    ) -> nvrtcResult;
+    pub fn nvrtcVersion(major: *mut core::ffi::c_int, minor: *mut core::ffi::c_int) -> nvrtcResult;
 }
 extern "C" {
-    pub fn nvrtcGetNumSupportedArchs(numArchs: *mut ::std::os::raw::c_int) -> nvrtcResult;
+    pub fn nvrtcGetNumSupportedArchs(numArchs: *mut core::ffi::c_int) -> nvrtcResult;
 }
 extern "C" {
-    pub fn nvrtcGetSupportedArchs(supportedArchs: *mut ::std::os::raw::c_int) -> nvrtcResult;
+    pub fn nvrtcGetSupportedArchs(supportedArchs: *mut core::ffi::c_int) -> nvrtcResult;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -40,11 +37,11 @@ pub type nvrtcProgram = *mut _nvrtcProgram;
 extern "C" {
     pub fn nvrtcCreateProgram(
         prog: *mut nvrtcProgram,
-        src: *const ::std::os::raw::c_char,
-        name: *const ::std::os::raw::c_char,
-        numHeaders: ::std::os::raw::c_int,
-        headers: *const *const ::std::os::raw::c_char,
-        includeNames: *const *const ::std::os::raw::c_char,
+        src: *const core::ffi::c_char,
+        name: *const core::ffi::c_char,
+        numHeaders: core::ffi::c_int,
+        headers: *const *const core::ffi::c_char,
+        includeNames: *const *const core::ffi::c_char,
     ) -> nvrtcResult;
 }
 extern "C" {
@@ -53,38 +50,38 @@ extern "C" {
 extern "C" {
     pub fn nvrtcCompileProgram(
         prog: nvrtcProgram,
-        numOptions: ::std::os::raw::c_int,
-        options: *const *const ::std::os::raw::c_char,
+        numOptions: core::ffi::c_int,
+        options: *const *const core::ffi::c_char,
     ) -> nvrtcResult;
 }
 extern "C" {
     pub fn nvrtcGetPTXSize(prog: nvrtcProgram, ptxSizeRet: *mut usize) -> nvrtcResult;
 }
 extern "C" {
-    pub fn nvrtcGetPTX(prog: nvrtcProgram, ptx: *mut ::std::os::raw::c_char) -> nvrtcResult;
+    pub fn nvrtcGetPTX(prog: nvrtcProgram, ptx: *mut core::ffi::c_char) -> nvrtcResult;
 }
 extern "C" {
     pub fn nvrtcGetCUBINSize(prog: nvrtcProgram, cubinSizeRet: *mut usize) -> nvrtcResult;
 }
 extern "C" {
-    pub fn nvrtcGetCUBIN(prog: nvrtcProgram, cubin: *mut ::std::os::raw::c_char) -> nvrtcResult;
+    pub fn nvrtcGetCUBIN(prog: nvrtcProgram, cubin: *mut core::ffi::c_char) -> nvrtcResult;
 }
 extern "C" {
     pub fn nvrtcGetProgramLogSize(prog: nvrtcProgram, logSizeRet: *mut usize) -> nvrtcResult;
 }
 extern "C" {
-    pub fn nvrtcGetProgramLog(prog: nvrtcProgram, log: *mut ::std::os::raw::c_char) -> nvrtcResult;
+    pub fn nvrtcGetProgramLog(prog: nvrtcProgram, log: *mut core::ffi::c_char) -> nvrtcResult;
 }
 extern "C" {
     pub fn nvrtcAddNameExpression(
         prog: nvrtcProgram,
-        name_expression: *const ::std::os::raw::c_char,
+        name_expression: *const core::ffi::c_char,
     ) -> nvrtcResult;
 }
 extern "C" {
     pub fn nvrtcGetLoweredName(
         prog: nvrtcProgram,
-        name_expression: *const ::std::os::raw::c_char,
-        lowered_name: *mut *const ::std::os::raw::c_char,
+        name_expression: *const core::ffi::c_char,
+        lowered_name: *mut *const core::ffi::c_char,
     ) -> nvrtcResult;
 }

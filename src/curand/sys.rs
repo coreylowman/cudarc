@@ -68,8 +68,8 @@ pub enum curandDirectionVectorSet {
     CURAND_SCRAMBLED_DIRECTION_VECTORS_64_JOEKUO6 = 104,
 }
 pub use self::curandDirectionVectorSet as curandDirectionVectorSet_t;
-pub type curandDirectionVectors32_t = [::std::os::raw::c_uint; 32usize];
-pub type curandDirectionVectors64_t = [::std::os::raw::c_ulonglong; 64usize];
+pub type curandDirectionVectors32_t = [core::ffi::c_uint; 32usize];
+pub type curandDirectionVectors64_t = [core::ffi::c_ulonglong; 64usize];
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct curandGenerator_st {
@@ -96,7 +96,7 @@ pub struct curandHistogramM2_st {
     _unused: [u8; 0],
 }
 pub type curandHistogramM2_t = *mut curandHistogramM2_st;
-pub type curandHistogramM2K_st = ::std::os::raw::c_uint;
+pub type curandHistogramM2K_st = core::ffi::c_uint;
 pub type curandHistogramM2K_t = *mut curandHistogramM2K_st;
 pub type curandHistogramM2V_st = curandDistribution_st;
 pub type curandHistogramM2V_t = *mut curandHistogramM2V_st;
@@ -141,12 +141,12 @@ extern "C" {
     pub fn curandDestroyGenerator(generator: curandGenerator_t) -> curandStatus_t;
 }
 extern "C" {
-    pub fn curandGetVersion(version: *mut ::std::os::raw::c_int) -> curandStatus_t;
+    pub fn curandGetVersion(version: *mut core::ffi::c_int) -> curandStatus_t;
 }
 extern "C" {
     pub fn curandGetProperty(
         type_: libraryPropertyType,
-        value: *mut ::std::os::raw::c_int,
+        value: *mut core::ffi::c_int,
     ) -> curandStatus_t;
 }
 extern "C" {
@@ -155,13 +155,13 @@ extern "C" {
 extern "C" {
     pub fn curandSetPseudoRandomGeneratorSeed(
         generator: curandGenerator_t,
-        seed: ::std::os::raw::c_ulonglong,
+        seed: core::ffi::c_ulonglong,
     ) -> curandStatus_t;
 }
 extern "C" {
     pub fn curandSetGeneratorOffset(
         generator: curandGenerator_t,
-        offset: ::std::os::raw::c_ulonglong,
+        offset: core::ffi::c_ulonglong,
     ) -> curandStatus_t;
 }
 extern "C" {
@@ -173,20 +173,20 @@ extern "C" {
 extern "C" {
     pub fn curandSetQuasiRandomGeneratorDimensions(
         generator: curandGenerator_t,
-        num_dimensions: ::std::os::raw::c_uint,
+        num_dimensions: core::ffi::c_uint,
     ) -> curandStatus_t;
 }
 extern "C" {
     pub fn curandGenerate(
         generator: curandGenerator_t,
-        outputPtr: *mut ::std::os::raw::c_uint,
+        outputPtr: *mut core::ffi::c_uint,
         num: usize,
     ) -> curandStatus_t;
 }
 extern "C" {
     pub fn curandGenerateLongLong(
         generator: curandGenerator_t,
-        outputPtr: *mut ::std::os::raw::c_ulonglong,
+        outputPtr: *mut core::ffi::c_ulonglong,
         num: usize,
     ) -> curandStatus_t;
 }
@@ -254,7 +254,7 @@ extern "C" {
 extern "C" {
     pub fn curandGeneratePoisson(
         generator: curandGenerator_t,
-        outputPtr: *mut ::std::os::raw::c_uint,
+        outputPtr: *mut core::ffi::c_uint,
         n: usize,
         lambda: f64,
     ) -> curandStatus_t;
@@ -262,7 +262,7 @@ extern "C" {
 extern "C" {
     pub fn curandGeneratePoissonMethod(
         generator: curandGenerator_t,
-        outputPtr: *mut ::std::os::raw::c_uint,
+        outputPtr: *mut core::ffi::c_uint,
         n: usize,
         lambda: f64,
         method: curandMethod_t,
@@ -271,18 +271,18 @@ extern "C" {
 extern "C" {
     pub fn curandGenerateBinomial(
         generator: curandGenerator_t,
-        outputPtr: *mut ::std::os::raw::c_uint,
+        outputPtr: *mut core::ffi::c_uint,
         num: usize,
-        n: ::std::os::raw::c_uint,
+        n: core::ffi::c_uint,
         p: f64,
     ) -> curandStatus_t;
 }
 extern "C" {
     pub fn curandGenerateBinomialMethod(
         generator: curandGenerator_t,
-        outputPtr: *mut ::std::os::raw::c_uint,
+        outputPtr: *mut core::ffi::c_uint,
         num: usize,
-        n: ::std::os::raw::c_uint,
+        n: core::ffi::c_uint,
         p: f64,
         method: curandMethod_t,
     ) -> curandStatus_t;
@@ -297,9 +297,7 @@ extern "C" {
     ) -> curandStatus_t;
 }
 extern "C" {
-    pub fn curandGetScrambleConstants32(
-        constants: *mut *mut ::std::os::raw::c_uint,
-    ) -> curandStatus_t;
+    pub fn curandGetScrambleConstants32(constants: *mut *mut core::ffi::c_uint) -> curandStatus_t;
 }
 extern "C" {
     pub fn curandGetDirectionVectors64(
@@ -309,6 +307,6 @@ extern "C" {
 }
 extern "C" {
     pub fn curandGetScrambleConstants64(
-        constants: *mut *mut ::std::os::raw::c_ulonglong,
+        constants: *mut *mut core::ffi::c_ulonglong,
     ) -> curandStatus_t;
 }

@@ -5,6 +5,7 @@
 use crate::nvrtc::{result, sys};
 use alloc::ffi::CString;
 use core::ffi::{c_char, CStr};
+use std::{borrow::ToOwned, string::String, vec::Vec};
 
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
@@ -107,12 +108,14 @@ pub enum CompileError {
     DestroyError(result::NvrtcError),
 }
 
+#[cfg(feature = "std")]
 impl std::fmt::Display for CompileError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for CompileError {}
 
 /// Flags you can pass to the nvrtc compiler.
@@ -150,19 +153,19 @@ impl CompileOptions {
         let mut options: Vec<String> = Vec::new();
 
         if let Some(v) = self.ftz {
-            options.push(format!("--ftz={v}"));
+            options.push(alloc::format!("--ftz={v}"));
         }
 
         if let Some(v) = self.prec_sqrt {
-            options.push(format!("--prec-sqrt={v}"));
+            options.push(alloc::format!("--prec-sqrt={v}"));
         }
 
         if let Some(v) = self.prec_div {
-            options.push(format!("--prec-div={v}"));
+            options.push(alloc::format!("--prec-div={v}"));
         }
 
         if let Some(v) = self.fmad {
-            options.push(format!("--fmad={v}"));
+            options.push(alloc::format!("--fmad={v}"));
         }
 
         if let Some(true) = self.use_fast_math {
@@ -170,7 +173,7 @@ impl CompileOptions {
         }
 
         if let Some(count) = self.maxrregcount {
-            options.push(format!("--maxrregcount={count}"));
+            options.push(alloc::format!("--maxrregcount={count}"));
         }
 
         options

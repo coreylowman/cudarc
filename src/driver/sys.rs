@@ -32,13 +32,13 @@ pub const CU_TRSF_NORMALIZED_COORDINATES: u32 = 2;
 pub const CU_TRSF_SRGB: u32 = 16;
 pub const CU_TRSF_DISABLE_TRILINEAR_OPTIMIZATION: u32 = 32;
 pub const CU_PARAM_TR_DEFAULT: i32 = -1;
-pub type __uint32_t = ::std::os::raw::c_uint;
-pub type __uint64_t = ::std::os::raw::c_ulong;
+pub type __uint32_t = core::ffi::c_uint;
+pub type __uint64_t = core::ffi::c_ulong;
 pub type cuuint32_t = u32;
 pub type cuuint64_t = u64;
-pub type CUdeviceptr_v2 = ::std::os::raw::c_ulonglong;
+pub type CUdeviceptr_v2 = core::ffi::c_ulonglong;
 pub type CUdeviceptr = CUdeviceptr_v2;
-pub type CUdevice_v1 = ::std::os::raw::c_int;
+pub type CUdevice_v1 = core::ffi::c_int;
 pub type CUdevice = CUdevice_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -100,9 +100,9 @@ pub struct CUgraphicsResource_st {
     _unused: [u8; 0],
 }
 pub type CUgraphicsResource = *mut CUgraphicsResource_st;
-pub type CUtexObject_v1 = ::std::os::raw::c_ulonglong;
+pub type CUtexObject_v1 = core::ffi::c_ulonglong;
 pub type CUtexObject = CUtexObject_v1;
-pub type CUsurfObject_v1 = ::std::os::raw::c_ulonglong;
+pub type CUsurfObject_v1 = core::ffi::c_ulonglong;
 pub type CUsurfObject = CUsurfObject_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -149,26 +149,26 @@ pub type CUuserObject = *mut CUuserObject_st;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUuuid_st {
-    pub bytes: [::std::os::raw::c_char; 16usize],
+    pub bytes: [core::ffi::c_char; 16usize],
 }
 #[test]
 fn bindgen_test_layout_CUuuid_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUuuid_st>(),
+        ::core::mem::size_of::<CUuuid_st>(),
         16usize,
         concat!("Size of: ", stringify!(CUuuid_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUuuid_st>(),
+        ::core::mem::align_of::<CUuuid_st>(),
         1usize,
         concat!("Alignment of ", stringify!(CUuuid_st))
     );
     fn test_field_bytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUuuid_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUuuid_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).bytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).bytes) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -185,26 +185,26 @@ pub type CUuuid = CUuuid_st;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUipcEventHandle_st {
-    pub reserved: [::std::os::raw::c_char; 64usize],
+    pub reserved: [core::ffi::c_char; 64usize],
 }
 #[test]
 fn bindgen_test_layout_CUipcEventHandle_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUipcEventHandle_st>(),
+        ::core::mem::size_of::<CUipcEventHandle_st>(),
         64usize,
         concat!("Size of: ", stringify!(CUipcEventHandle_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUipcEventHandle_st>(),
+        ::core::mem::align_of::<CUipcEventHandle_st>(),
         1usize,
         concat!("Alignment of ", stringify!(CUipcEventHandle_st))
     );
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUipcEventHandle_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUipcEventHandle_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -219,9 +219,9 @@ fn bindgen_test_layout_CUipcEventHandle_st() {
 }
 impl Default for CUipcEventHandle_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -231,26 +231,26 @@ pub type CUipcEventHandle = CUipcEventHandle_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUipcMemHandle_st {
-    pub reserved: [::std::os::raw::c_char; 64usize],
+    pub reserved: [core::ffi::c_char; 64usize],
 }
 #[test]
 fn bindgen_test_layout_CUipcMemHandle_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUipcMemHandle_st>(),
+        ::core::mem::size_of::<CUipcMemHandle_st>(),
         64usize,
         concat!("Size of: ", stringify!(CUipcMemHandle_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUipcMemHandle_st>(),
+        ::core::mem::align_of::<CUipcMemHandle_st>(),
         1usize,
         concat!("Alignment of ", stringify!(CUipcMemHandle_st))
     );
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUipcMemHandle_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUipcMemHandle_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -265,9 +265,9 @@ fn bindgen_test_layout_CUipcMemHandle_st() {
 }
 impl Default for CUipcMemHandle_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -377,7 +377,7 @@ pub struct CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st {
     pub address: CUdeviceptr,
     pub __bindgen_anon_1:
         CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: core::ffi::c_uint,
     pub alias: CUdeviceptr,
 }
 #[repr(C)]
@@ -390,7 +390,7 @@ pub union CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindge
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1(
 ) {
     assert_eq!(
-        ::std::mem::size_of::<
+        ::core::mem::size_of::<
             CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1,
         >(),
         8usize,
@@ -402,7 +402,7 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<
+        ::core::mem::align_of::<
             CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1,
         >(),
         8usize,
@@ -416,11 +416,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
     fn test_field_value() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -437,11 +437,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
     fn test_field_value64() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value64) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value64) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -458,9 +458,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
 }
 impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -468,7 +468,7 @@ impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st_
 #[test]
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st>(),
+        ::core::mem::size_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st>(),
         40usize,
         concat!(
             "Size of: ",
@@ -476,7 +476,7 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st>(),
+        ::core::mem::align_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -486,11 +486,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
     fn test_field_operation() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -505,11 +505,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
     fn test_field_address() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).address) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).address) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -524,11 +524,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -543,11 +543,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
     fn test_field_alias() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).alias) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).alias) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -562,9 +562,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValuePara
 }
 impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -576,7 +576,7 @@ pub struct CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st {
     pub address: CUdeviceptr,
     pub __bindgen_anon_1:
         CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: core::ffi::c_uint,
     pub alias: CUdeviceptr,
 }
 #[repr(C)]
@@ -589,7 +589,7 @@ pub union CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindg
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1(
 ) {
     assert_eq!(
-        ::std::mem::size_of::<
+        ::core::mem::size_of::<
             CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1,
         >(),
         8usize,
@@ -601,7 +601,7 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<
+        ::core::mem::align_of::<
             CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1,
         >(),
         8usize,
@@ -615,11 +615,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
     fn test_field_value() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -636,11 +636,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
     fn test_field_value64() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value64) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value64) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -657,9 +657,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
 }
 impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -667,7 +667,7 @@ impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st
 #[test]
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st>(),
+        ::core::mem::size_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st>(),
         40usize,
         concat!(
             "Size of: ",
@@ -675,7 +675,7 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st>(),
+        ::core::mem::align_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -685,11 +685,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
     fn test_field_operation() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -704,11 +704,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
     fn test_field_address() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).address) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).address) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -723,11 +723,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -742,11 +742,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
     fn test_field_alias() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).alias) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).alias) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -761,9 +761,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValuePar
 }
 impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -772,13 +772,14 @@ impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st {
     pub operation: CUstreamBatchMemOpType,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st>(
-        ),
+        ::core::mem::size_of::<
+            CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st,
+        >(),
         8usize,
         concat!(
             "Size of: ",
@@ -786,7 +787,7 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWr
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<
+        ::core::mem::align_of::<
             CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st,
         >(),
         4usize,
@@ -798,11 +799,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWr
     fn test_field_operation() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -817,11 +818,11 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWr
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -836,9 +837,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWr
 }
 impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -846,21 +847,21 @@ impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesPa
 #[test]
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union() {
     assert_eq!(
-        ::std::mem::size_of::<CUstreamBatchMemOpParams_union>(),
+        ::core::mem::size_of::<CUstreamBatchMemOpParams_union>(),
         48usize,
         concat!("Size of: ", stringify!(CUstreamBatchMemOpParams_union))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUstreamBatchMemOpParams_union>(),
+        ::core::mem::align_of::<CUstreamBatchMemOpParams_union>(),
         8usize,
         concat!("Alignment of ", stringify!(CUstreamBatchMemOpParams_union))
     );
     fn test_field_operation() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).operation) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -875,9 +876,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union() {
     fn test_field_waitValue() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).waitValue) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).waitValue) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -892,9 +893,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union() {
     fn test_field_writeValue() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).writeValue) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).writeValue) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -909,9 +910,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union() {
     fn test_field_flushRemoteWrites() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flushRemoteWrites) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flushRemoteWrites) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -926,9 +927,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union() {
     fn test_field_pad() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamBatchMemOpParams_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).pad) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).pad) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -943,9 +944,9 @@ fn bindgen_test_layout_CUstreamBatchMemOpParams_union() {
 }
 impl Default for CUstreamBatchMemOpParams_union {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1148,35 +1149,35 @@ pub use self::CUdevice_attribute_enum as CUdevice_attribute;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUdevprop_st {
-    pub maxThreadsPerBlock: ::std::os::raw::c_int,
-    pub maxThreadsDim: [::std::os::raw::c_int; 3usize],
-    pub maxGridSize: [::std::os::raw::c_int; 3usize],
-    pub sharedMemPerBlock: ::std::os::raw::c_int,
-    pub totalConstantMemory: ::std::os::raw::c_int,
-    pub SIMDWidth: ::std::os::raw::c_int,
-    pub memPitch: ::std::os::raw::c_int,
-    pub regsPerBlock: ::std::os::raw::c_int,
-    pub clockRate: ::std::os::raw::c_int,
-    pub textureAlign: ::std::os::raw::c_int,
+    pub maxThreadsPerBlock: core::ffi::c_int,
+    pub maxThreadsDim: [core::ffi::c_int; 3usize],
+    pub maxGridSize: [core::ffi::c_int; 3usize],
+    pub sharedMemPerBlock: core::ffi::c_int,
+    pub totalConstantMemory: core::ffi::c_int,
+    pub SIMDWidth: core::ffi::c_int,
+    pub memPitch: core::ffi::c_int,
+    pub regsPerBlock: core::ffi::c_int,
+    pub clockRate: core::ffi::c_int,
+    pub textureAlign: core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_CUdevprop_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUdevprop_st>(),
+        ::core::mem::size_of::<CUdevprop_st>(),
         56usize,
         concat!("Size of: ", stringify!(CUdevprop_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUdevprop_st>(),
+        ::core::mem::align_of::<CUdevprop_st>(),
         4usize,
         concat!("Alignment of ", stringify!(CUdevprop_st))
     );
     fn test_field_maxThreadsPerBlock() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).maxThreadsPerBlock) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).maxThreadsPerBlock) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -1191,9 +1192,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_maxThreadsDim() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).maxThreadsDim) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).maxThreadsDim) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -1208,9 +1209,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_maxGridSize() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).maxGridSize) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).maxGridSize) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -1225,9 +1226,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_sharedMemPerBlock() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).sharedMemPerBlock) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).sharedMemPerBlock) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -1242,9 +1243,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_totalConstantMemory() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).totalConstantMemory) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).totalConstantMemory) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -1259,9 +1260,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_SIMDWidth() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).SIMDWidth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).SIMDWidth) as usize - ptr as usize
             },
             36usize,
             concat!(
@@ -1276,9 +1277,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_memPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).memPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).memPitch) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -1293,9 +1294,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_regsPerBlock() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).regsPerBlock) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).regsPerBlock) as usize - ptr as usize
             },
             44usize,
             concat!(
@@ -1310,9 +1311,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_clockRate() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).clockRate) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).clockRate) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -1327,9 +1328,9 @@ fn bindgen_test_layout_CUdevprop_st() {
     fn test_field_textureAlign() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUdevprop_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUdevprop_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).textureAlign) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).textureAlign) as usize - ptr as usize
             },
             52usize,
             concat!(
@@ -1576,7 +1577,7 @@ pub enum CUresourcetype_enum {
 }
 pub use self::CUresourcetype_enum as CUresourcetype;
 pub type CUhostFn =
-    ::std::option::Option<unsafe extern "C" fn(userData: *mut ::std::os::raw::c_void)>;
+    ::core::option::Option<unsafe extern "C" fn(userData: *mut ::core::ffi::c_void)>;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUaccessProperty_enum {
@@ -1588,7 +1589,7 @@ pub use self::CUaccessProperty_enum as CUaccessProperty;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct CUaccessPolicyWindow_st {
-    pub base_ptr: *mut ::std::os::raw::c_void,
+    pub base_ptr: *mut ::core::ffi::c_void,
     pub num_bytes: usize,
     pub hitRatio: f32,
     pub hitProp: CUaccessProperty,
@@ -1597,21 +1598,21 @@ pub struct CUaccessPolicyWindow_st {
 #[test]
 fn bindgen_test_layout_CUaccessPolicyWindow_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUaccessPolicyWindow_st>(),
+        ::core::mem::size_of::<CUaccessPolicyWindow_st>(),
         32usize,
         concat!("Size of: ", stringify!(CUaccessPolicyWindow_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUaccessPolicyWindow_st>(),
+        ::core::mem::align_of::<CUaccessPolicyWindow_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUaccessPolicyWindow_st))
     );
     fn test_field_base_ptr() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).base_ptr) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).base_ptr) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -1626,9 +1627,9 @@ fn bindgen_test_layout_CUaccessPolicyWindow_st() {
     fn test_field_num_bytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).num_bytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).num_bytes) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -1643,9 +1644,9 @@ fn bindgen_test_layout_CUaccessPolicyWindow_st() {
     fn test_field_hitRatio() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).hitRatio) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).hitRatio) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -1660,9 +1661,9 @@ fn bindgen_test_layout_CUaccessPolicyWindow_st() {
     fn test_field_hitProp() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).hitProp) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).hitProp) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -1677,9 +1678,9 @@ fn bindgen_test_layout_CUaccessPolicyWindow_st() {
     fn test_field_missProp() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUaccessPolicyWindow_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).missProp) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).missProp) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -1694,9 +1695,9 @@ fn bindgen_test_layout_CUaccessPolicyWindow_st() {
 }
 impl Default for CUaccessPolicyWindow_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1707,34 +1708,34 @@ pub type CUaccessPolicyWindow = CUaccessPolicyWindow_v1;
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_KERNEL_NODE_PARAMS_st {
     pub func: CUfunction,
-    pub gridDimX: ::std::os::raw::c_uint,
-    pub gridDimY: ::std::os::raw::c_uint,
-    pub gridDimZ: ::std::os::raw::c_uint,
-    pub blockDimX: ::std::os::raw::c_uint,
-    pub blockDimY: ::std::os::raw::c_uint,
-    pub blockDimZ: ::std::os::raw::c_uint,
-    pub sharedMemBytes: ::std::os::raw::c_uint,
-    pub kernelParams: *mut *mut ::std::os::raw::c_void,
-    pub extra: *mut *mut ::std::os::raw::c_void,
+    pub gridDimX: core::ffi::c_uint,
+    pub gridDimY: core::ffi::c_uint,
+    pub gridDimZ: core::ffi::c_uint,
+    pub blockDimX: core::ffi::c_uint,
+    pub blockDimY: core::ffi::c_uint,
+    pub blockDimZ: core::ffi::c_uint,
+    pub sharedMemBytes: core::ffi::c_uint,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_KERNEL_NODE_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_KERNEL_NODE_PARAMS_st>(),
         56usize,
         concat!("Size of: ", stringify!(CUDA_KERNEL_NODE_PARAMS_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_KERNEL_NODE_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_KERNEL_NODE_PARAMS_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_KERNEL_NODE_PARAMS_st))
     );
     fn test_field_func() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).func) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).func) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -1749,9 +1750,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_gridDimX() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gridDimX) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gridDimX) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -1766,9 +1767,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_gridDimY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gridDimY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gridDimY) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -1783,9 +1784,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_gridDimZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gridDimZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gridDimZ) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -1800,9 +1801,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_blockDimX() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).blockDimX) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).blockDimX) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -1817,9 +1818,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_blockDimY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).blockDimY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).blockDimY) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -1834,9 +1835,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_blockDimZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).blockDimZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).blockDimZ) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -1851,9 +1852,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_sharedMemBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -1868,9 +1869,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_kernelParams() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -1885,9 +1886,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
     fn test_field_extra() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_KERNEL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).extra) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).extra) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -1902,9 +1903,9 @@ fn bindgen_test_layout_CUDA_KERNEL_NODE_PARAMS_st() {
 }
 impl Default for CUDA_KERNEL_NODE_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1916,29 +1917,29 @@ pub type CUDA_KERNEL_NODE_PARAMS = CUDA_KERNEL_NODE_PARAMS_v1;
 pub struct CUDA_MEMSET_NODE_PARAMS_st {
     pub dst: CUdeviceptr,
     pub pitch: usize,
-    pub value: ::std::os::raw::c_uint,
-    pub elementSize: ::std::os::raw::c_uint,
+    pub value: core::ffi::c_uint,
+    pub elementSize: core::ffi::c_uint,
     pub width: usize,
     pub height: usize,
 }
 #[test]
 fn bindgen_test_layout_CUDA_MEMSET_NODE_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_MEMSET_NODE_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_MEMSET_NODE_PARAMS_st>(),
         40usize,
         concat!("Size of: ", stringify!(CUDA_MEMSET_NODE_PARAMS_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_MEMSET_NODE_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_MEMSET_NODE_PARAMS_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_MEMSET_NODE_PARAMS_st))
     );
     fn test_field_dst() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dst) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dst) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -1953,9 +1954,9 @@ fn bindgen_test_layout_CUDA_MEMSET_NODE_PARAMS_st() {
     fn test_field_pitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -1970,9 +1971,9 @@ fn bindgen_test_layout_CUDA_MEMSET_NODE_PARAMS_st() {
     fn test_field_value() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -1987,9 +1988,9 @@ fn bindgen_test_layout_CUDA_MEMSET_NODE_PARAMS_st() {
     fn test_field_elementSize() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).elementSize) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).elementSize) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -2004,9 +2005,9 @@ fn bindgen_test_layout_CUDA_MEMSET_NODE_PARAMS_st() {
     fn test_field_width() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -2021,9 +2022,9 @@ fn bindgen_test_layout_CUDA_MEMSET_NODE_PARAMS_st() {
     fn test_field_height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMSET_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -2042,26 +2043,26 @@ pub type CUDA_MEMSET_NODE_PARAMS = CUDA_MEMSET_NODE_PARAMS_v1;
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_HOST_NODE_PARAMS_st {
     pub fn_: CUhostFn,
-    pub userData: *mut ::std::os::raw::c_void,
+    pub userData: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_HOST_NODE_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_HOST_NODE_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_HOST_NODE_PARAMS_st>(),
         16usize,
         concat!("Size of: ", stringify!(CUDA_HOST_NODE_PARAMS_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_HOST_NODE_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_HOST_NODE_PARAMS_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_HOST_NODE_PARAMS_st))
     );
     fn test_field_fn() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_HOST_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_HOST_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fn_) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fn_) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2076,9 +2077,9 @@ fn bindgen_test_layout_CUDA_HOST_NODE_PARAMS_st() {
     fn test_field_userData() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_HOST_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_HOST_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).userData) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).userData) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -2093,9 +2094,9 @@ fn bindgen_test_layout_CUDA_HOST_NODE_PARAMS_st() {
 }
 impl Default for CUDA_HOST_NODE_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2137,26 +2138,26 @@ pub use self::CUkernelNodeAttrID_enum as CUkernelNodeAttrID;
 #[derive(Copy, Clone)]
 pub union CUkernelNodeAttrValue_union {
     pub accessPolicyWindow: CUaccessPolicyWindow,
-    pub cooperative: ::std::os::raw::c_int,
+    pub cooperative: core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_CUkernelNodeAttrValue_union() {
     assert_eq!(
-        ::std::mem::size_of::<CUkernelNodeAttrValue_union>(),
+        ::core::mem::size_of::<CUkernelNodeAttrValue_union>(),
         32usize,
         concat!("Size of: ", stringify!(CUkernelNodeAttrValue_union))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUkernelNodeAttrValue_union>(),
+        ::core::mem::align_of::<CUkernelNodeAttrValue_union>(),
         8usize,
         concat!("Alignment of ", stringify!(CUkernelNodeAttrValue_union))
     );
     fn test_field_accessPolicyWindow() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUkernelNodeAttrValue_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUkernelNodeAttrValue_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).accessPolicyWindow) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).accessPolicyWindow) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2171,9 +2172,9 @@ fn bindgen_test_layout_CUkernelNodeAttrValue_union() {
     fn test_field_cooperative() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUkernelNodeAttrValue_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUkernelNodeAttrValue_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).cooperative) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).cooperative) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2188,9 +2189,9 @@ fn bindgen_test_layout_CUkernelNodeAttrValue_union() {
 }
 impl Default for CUkernelNodeAttrValue_union {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2229,21 +2230,21 @@ pub union CUstreamAttrValue_union {
 #[test]
 fn bindgen_test_layout_CUstreamAttrValue_union() {
     assert_eq!(
-        ::std::mem::size_of::<CUstreamAttrValue_union>(),
+        ::core::mem::size_of::<CUstreamAttrValue_union>(),
         32usize,
         concat!("Size of: ", stringify!(CUstreamAttrValue_union))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUstreamAttrValue_union>(),
+        ::core::mem::align_of::<CUstreamAttrValue_union>(),
         8usize,
         concat!("Alignment of ", stringify!(CUstreamAttrValue_union))
     );
     fn test_field_accessPolicyWindow() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamAttrValue_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamAttrValue_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).accessPolicyWindow) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).accessPolicyWindow) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2258,9 +2259,9 @@ fn bindgen_test_layout_CUstreamAttrValue_union() {
     fn test_field_syncPolicy() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUstreamAttrValue_union>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUstreamAttrValue_union>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).syncPolicy) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).syncPolicy) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2275,9 +2276,9 @@ fn bindgen_test_layout_CUstreamAttrValue_union() {
 }
 impl Default for CUstreamAttrValue_union {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2390,29 +2391,25 @@ pub enum CUdevice_P2PAttribute_enum {
     CU_DEVICE_P2P_ATTRIBUTE_ACCESS_ACCESS_SUPPORTED = 4,
 }
 pub use self::CUdevice_P2PAttribute_enum as CUdevice_P2PAttribute;
-pub type CUstreamCallback = ::std::option::Option<
-    unsafe extern "C" fn(
-        hStream: CUstream,
-        status: CUresult,
-        userData: *mut ::std::os::raw::c_void,
-    ),
+pub type CUstreamCallback = ::core::option::Option<
+    unsafe extern "C" fn(hStream: CUstream, status: CUresult, userData: *mut ::core::ffi::c_void),
 >;
 pub type CUoccupancyB2DSize =
-    ::std::option::Option<unsafe extern "C" fn(blockSize: ::std::os::raw::c_int) -> usize>;
+    ::core::option::Option<unsafe extern "C" fn(blockSize: core::ffi::c_int) -> usize>;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_MEMCPY2D_st {
     pub srcXInBytes: usize,
     pub srcY: usize,
     pub srcMemoryType: CUmemorytype,
-    pub srcHost: *const ::std::os::raw::c_void,
+    pub srcHost: *const ::core::ffi::c_void,
     pub srcDevice: CUdeviceptr,
     pub srcArray: CUarray,
     pub srcPitch: usize,
     pub dstXInBytes: usize,
     pub dstY: usize,
     pub dstMemoryType: CUmemorytype,
-    pub dstHost: *mut ::std::os::raw::c_void,
+    pub dstHost: *mut ::core::ffi::c_void,
     pub dstDevice: CUdeviceptr,
     pub dstArray: CUarray,
     pub dstPitch: usize,
@@ -2422,21 +2419,21 @@ pub struct CUDA_MEMCPY2D_st {
 #[test]
 fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_MEMCPY2D_st>(),
+        ::core::mem::size_of::<CUDA_MEMCPY2D_st>(),
         128usize,
         concat!("Size of: ", stringify!(CUDA_MEMCPY2D_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_MEMCPY2D_st>(),
+        ::core::mem::align_of::<CUDA_MEMCPY2D_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_MEMCPY2D_st))
     );
     fn test_field_srcXInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcXInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcXInBytes) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2451,9 +2448,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_srcY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcY) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -2468,9 +2465,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_srcMemoryType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcMemoryType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcMemoryType) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -2485,9 +2482,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_srcHost() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcHost) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcHost) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -2502,9 +2499,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_srcDevice() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -2519,9 +2516,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_srcArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -2536,9 +2533,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_srcPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcPitch) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -2553,9 +2550,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstXInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstXInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstXInBytes) as usize - ptr as usize
             },
             56usize,
             concat!(
@@ -2570,9 +2567,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstY) as usize - ptr as usize
             },
             64usize,
             concat!(
@@ -2587,9 +2584,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstMemoryType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstMemoryType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstMemoryType) as usize - ptr as usize
             },
             72usize,
             concat!(
@@ -2604,9 +2601,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstHost() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstHost) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstHost) as usize - ptr as usize
             },
             80usize,
             concat!(
@@ -2621,9 +2618,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstDevice() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize
             },
             88usize,
             concat!(
@@ -2638,9 +2635,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize
             },
             96usize,
             concat!(
@@ -2655,9 +2652,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_dstPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstPitch) as usize - ptr as usize
             },
             104usize,
             concat!(
@@ -2672,9 +2669,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_WidthInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).WidthInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).WidthInBytes) as usize - ptr as usize
             },
             112usize,
             concat!(
@@ -2689,9 +2686,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
     fn test_field_Height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY2D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
             },
             120usize,
             concat!(
@@ -2706,9 +2703,9 @@ fn bindgen_test_layout_CUDA_MEMCPY2D_st() {
 }
 impl Default for CUDA_MEMCPY2D_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2723,10 +2720,10 @@ pub struct CUDA_MEMCPY3D_st {
     pub srcZ: usize,
     pub srcLOD: usize,
     pub srcMemoryType: CUmemorytype,
-    pub srcHost: *const ::std::os::raw::c_void,
+    pub srcHost: *const ::core::ffi::c_void,
     pub srcDevice: CUdeviceptr,
     pub srcArray: CUarray,
-    pub reserved0: *mut ::std::os::raw::c_void,
+    pub reserved0: *mut ::core::ffi::c_void,
     pub srcPitch: usize,
     pub srcHeight: usize,
     pub dstXInBytes: usize,
@@ -2734,10 +2731,10 @@ pub struct CUDA_MEMCPY3D_st {
     pub dstZ: usize,
     pub dstLOD: usize,
     pub dstMemoryType: CUmemorytype,
-    pub dstHost: *mut ::std::os::raw::c_void,
+    pub dstHost: *mut ::core::ffi::c_void,
     pub dstDevice: CUdeviceptr,
     pub dstArray: CUarray,
-    pub reserved1: *mut ::std::os::raw::c_void,
+    pub reserved1: *mut ::core::ffi::c_void,
     pub dstPitch: usize,
     pub dstHeight: usize,
     pub WidthInBytes: usize,
@@ -2747,21 +2744,21 @@ pub struct CUDA_MEMCPY3D_st {
 #[test]
 fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_MEMCPY3D_st>(),
+        ::core::mem::size_of::<CUDA_MEMCPY3D_st>(),
         200usize,
         concat!("Size of: ", stringify!(CUDA_MEMCPY3D_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_MEMCPY3D_st>(),
+        ::core::mem::align_of::<CUDA_MEMCPY3D_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_MEMCPY3D_st))
     );
     fn test_field_srcXInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcXInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcXInBytes) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -2776,9 +2773,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcY) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -2793,9 +2790,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcZ) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -2810,9 +2807,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcLOD() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcLOD) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcLOD) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -2827,9 +2824,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcMemoryType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcMemoryType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcMemoryType) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -2844,9 +2841,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcHost() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcHost) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcHost) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -2861,9 +2858,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcDevice() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -2878,9 +2875,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize
             },
             56usize,
             concat!(
@@ -2895,9 +2892,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_reserved0() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved0) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved0) as usize - ptr as usize
             },
             64usize,
             concat!(
@@ -2912,9 +2909,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcPitch) as usize - ptr as usize
             },
             72usize,
             concat!(
@@ -2929,9 +2926,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_srcHeight() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcHeight) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcHeight) as usize - ptr as usize
             },
             80usize,
             concat!(
@@ -2946,9 +2943,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstXInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstXInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstXInBytes) as usize - ptr as usize
             },
             88usize,
             concat!(
@@ -2963,9 +2960,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstY) as usize - ptr as usize
             },
             96usize,
             concat!(
@@ -2980,9 +2977,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstZ) as usize - ptr as usize
             },
             104usize,
             concat!(
@@ -2997,9 +2994,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstLOD() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstLOD) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstLOD) as usize - ptr as usize
             },
             112usize,
             concat!(
@@ -3014,9 +3011,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstMemoryType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstMemoryType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstMemoryType) as usize - ptr as usize
             },
             120usize,
             concat!(
@@ -3031,9 +3028,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstHost() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstHost) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstHost) as usize - ptr as usize
             },
             128usize,
             concat!(
@@ -3048,9 +3045,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstDevice() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize
             },
             136usize,
             concat!(
@@ -3065,9 +3062,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize
             },
             144usize,
             concat!(
@@ -3082,9 +3079,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_reserved1() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved1) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved1) as usize - ptr as usize
             },
             152usize,
             concat!(
@@ -3099,9 +3096,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstPitch) as usize - ptr as usize
             },
             160usize,
             concat!(
@@ -3116,9 +3113,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_dstHeight() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstHeight) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstHeight) as usize - ptr as usize
             },
             168usize,
             concat!(
@@ -3133,9 +3130,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_WidthInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).WidthInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).WidthInBytes) as usize - ptr as usize
             },
             176usize,
             concat!(
@@ -3150,9 +3147,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_Height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
             },
             184usize,
             concat!(
@@ -3167,9 +3164,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
     fn test_field_Depth() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Depth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Depth) as usize - ptr as usize
             },
             192usize,
             concat!(
@@ -3184,9 +3181,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_st() {
 }
 impl Default for CUDA_MEMCPY3D_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -3201,7 +3198,7 @@ pub struct CUDA_MEMCPY3D_PEER_st {
     pub srcZ: usize,
     pub srcLOD: usize,
     pub srcMemoryType: CUmemorytype,
-    pub srcHost: *const ::std::os::raw::c_void,
+    pub srcHost: *const ::core::ffi::c_void,
     pub srcDevice: CUdeviceptr,
     pub srcArray: CUarray,
     pub srcContext: CUcontext,
@@ -3212,7 +3209,7 @@ pub struct CUDA_MEMCPY3D_PEER_st {
     pub dstZ: usize,
     pub dstLOD: usize,
     pub dstMemoryType: CUmemorytype,
-    pub dstHost: *mut ::std::os::raw::c_void,
+    pub dstHost: *mut ::core::ffi::c_void,
     pub dstDevice: CUdeviceptr,
     pub dstArray: CUarray,
     pub dstContext: CUcontext,
@@ -3225,21 +3222,21 @@ pub struct CUDA_MEMCPY3D_PEER_st {
 #[test]
 fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_MEMCPY3D_PEER_st>(),
+        ::core::mem::size_of::<CUDA_MEMCPY3D_PEER_st>(),
         200usize,
         concat!("Size of: ", stringify!(CUDA_MEMCPY3D_PEER_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_MEMCPY3D_PEER_st>(),
+        ::core::mem::align_of::<CUDA_MEMCPY3D_PEER_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_MEMCPY3D_PEER_st))
     );
     fn test_field_srcXInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcXInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcXInBytes) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -3254,9 +3251,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcY) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -3271,9 +3268,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcZ) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -3288,9 +3285,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcLOD() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcLOD) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcLOD) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -3305,9 +3302,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcMemoryType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcMemoryType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcMemoryType) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -3322,9 +3319,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcHost() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcHost) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcHost) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -3339,9 +3336,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcDevice() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -3356,9 +3353,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize
             },
             56usize,
             concat!(
@@ -3373,9 +3370,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcContext() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcContext) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcContext) as usize - ptr as usize
             },
             64usize,
             concat!(
@@ -3390,9 +3387,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcPitch) as usize - ptr as usize
             },
             72usize,
             concat!(
@@ -3407,9 +3404,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_srcHeight() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).srcHeight) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).srcHeight) as usize - ptr as usize
             },
             80usize,
             concat!(
@@ -3424,9 +3421,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstXInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstXInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstXInBytes) as usize - ptr as usize
             },
             88usize,
             concat!(
@@ -3441,9 +3438,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstY) as usize - ptr as usize
             },
             96usize,
             concat!(
@@ -3458,9 +3455,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstZ) as usize - ptr as usize
             },
             104usize,
             concat!(
@@ -3475,9 +3472,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstLOD() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstLOD) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstLOD) as usize - ptr as usize
             },
             112usize,
             concat!(
@@ -3492,9 +3489,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstMemoryType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstMemoryType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstMemoryType) as usize - ptr as usize
             },
             120usize,
             concat!(
@@ -3509,9 +3506,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstHost() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstHost) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstHost) as usize - ptr as usize
             },
             128usize,
             concat!(
@@ -3526,9 +3523,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstDevice() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize
             },
             136usize,
             concat!(
@@ -3543,9 +3540,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize
             },
             144usize,
             concat!(
@@ -3560,9 +3557,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstContext() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstContext) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstContext) as usize - ptr as usize
             },
             152usize,
             concat!(
@@ -3577,9 +3574,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstPitch() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstPitch) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstPitch) as usize - ptr as usize
             },
             160usize,
             concat!(
@@ -3594,9 +3591,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_dstHeight() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).dstHeight) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).dstHeight) as usize - ptr as usize
             },
             168usize,
             concat!(
@@ -3611,9 +3608,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_WidthInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).WidthInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).WidthInBytes) as usize - ptr as usize
             },
             176usize,
             concat!(
@@ -3628,9 +3625,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_Height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
             },
             184usize,
             concat!(
@@ -3645,9 +3642,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
     fn test_field_Depth() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_MEMCPY3D_PEER_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Depth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Depth) as usize - ptr as usize
             },
             192usize,
             concat!(
@@ -3662,9 +3659,9 @@ fn bindgen_test_layout_CUDA_MEMCPY3D_PEER_st() {
 }
 impl Default for CUDA_MEMCPY3D_PEER_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -3677,26 +3674,26 @@ pub struct CUDA_ARRAY_DESCRIPTOR_st {
     pub Width: usize,
     pub Height: usize,
     pub Format: CUarray_format,
-    pub NumChannels: ::std::os::raw::c_uint,
+    pub NumChannels: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_ARRAY_DESCRIPTOR_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_ARRAY_DESCRIPTOR_st>(),
+        ::core::mem::size_of::<CUDA_ARRAY_DESCRIPTOR_st>(),
         24usize,
         concat!("Size of: ", stringify!(CUDA_ARRAY_DESCRIPTOR_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_ARRAY_DESCRIPTOR_st>(),
+        ::core::mem::align_of::<CUDA_ARRAY_DESCRIPTOR_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_ARRAY_DESCRIPTOR_st))
     );
     fn test_field_Width() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Width) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Width) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -3711,9 +3708,9 @@ fn bindgen_test_layout_CUDA_ARRAY_DESCRIPTOR_st() {
     fn test_field_Height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -3728,9 +3725,9 @@ fn bindgen_test_layout_CUDA_ARRAY_DESCRIPTOR_st() {
     fn test_field_Format() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Format) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Format) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -3745,9 +3742,9 @@ fn bindgen_test_layout_CUDA_ARRAY_DESCRIPTOR_st() {
     fn test_field_NumChannels() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).NumChannels) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).NumChannels) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -3762,9 +3759,9 @@ fn bindgen_test_layout_CUDA_ARRAY_DESCRIPTOR_st() {
 }
 impl Default for CUDA_ARRAY_DESCRIPTOR_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -3778,27 +3775,27 @@ pub struct CUDA_ARRAY3D_DESCRIPTOR_st {
     pub Height: usize,
     pub Depth: usize,
     pub Format: CUarray_format,
-    pub NumChannels: ::std::os::raw::c_uint,
-    pub Flags: ::std::os::raw::c_uint,
+    pub NumChannels: core::ffi::c_uint,
+    pub Flags: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_ARRAY3D_DESCRIPTOR_st>(),
+        ::core::mem::size_of::<CUDA_ARRAY3D_DESCRIPTOR_st>(),
         40usize,
         concat!("Size of: ", stringify!(CUDA_ARRAY3D_DESCRIPTOR_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_ARRAY3D_DESCRIPTOR_st>(),
+        ::core::mem::align_of::<CUDA_ARRAY3D_DESCRIPTOR_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_ARRAY3D_DESCRIPTOR_st))
     );
     fn test_field_Width() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Width) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Width) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -3813,9 +3810,9 @@ fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
     fn test_field_Height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Height) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -3830,9 +3827,9 @@ fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
     fn test_field_Depth() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Depth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Depth) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -3847,9 +3844,9 @@ fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
     fn test_field_Format() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Format) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Format) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -3864,9 +3861,9 @@ fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
     fn test_field_NumChannels() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).NumChannels) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).NumChannels) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -3881,9 +3878,9 @@ fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
     fn test_field_Flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY3D_DESCRIPTOR_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).Flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).Flags) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -3898,9 +3895,9 @@ fn bindgen_test_layout_CUDA_ARRAY3D_DESCRIPTOR_st() {
 }
 impl Default for CUDA_ARRAY3D_DESCRIPTOR_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -3911,22 +3908,22 @@ pub type CUDA_ARRAY3D_DESCRIPTOR = CUDA_ARRAY3D_DESCRIPTOR_v2;
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_ARRAY_SPARSE_PROPERTIES_st {
     pub tileExtent: CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1,
-    pub miptailFirstLevel: ::std::os::raw::c_uint,
-    pub miptailSize: ::std::os::raw::c_ulonglong,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 4usize],
+    pub miptailFirstLevel: core::ffi::c_uint,
+    pub miptailSize: core::ffi::c_ulonglong,
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 4usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1 {
-    pub width: ::std::os::raw::c_uint,
-    pub height: ::std::os::raw::c_uint,
-    pub depth: ::std::os::raw::c_uint,
+    pub width: core::ffi::c_uint,
+    pub height: core::ffi::c_uint,
+    pub depth: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1>(),
         12usize,
         concat!(
             "Size of: ",
@@ -3934,7 +3931,7 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1>(),
         4usize,
         concat!(
             "Alignment of ",
@@ -3944,9 +3941,11 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
     fn test_field_width() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -3961,9 +3960,11 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
     fn test_field_height() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -3978,9 +3979,11 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
     fn test_field_depth() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).depth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).depth) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -3996,21 +3999,21 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
 #[test]
 fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st>(),
+        ::core::mem::size_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st>(),
         48usize,
         concat!("Size of: ", stringify!(CUDA_ARRAY_SPARSE_PROPERTIES_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st>(),
+        ::core::mem::align_of::<CUDA_ARRAY_SPARSE_PROPERTIES_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_ARRAY_SPARSE_PROPERTIES_st))
     );
     fn test_field_tileExtent() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).tileExtent) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).tileExtent) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4025,9 +4028,9 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st() {
     fn test_field_miptailFirstLevel() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).miptailFirstLevel) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).miptailFirstLevel) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -4042,9 +4045,9 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st() {
     fn test_field_miptailSize() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).miptailSize) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).miptailSize) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -4059,9 +4062,9 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st() {
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -4076,9 +4079,9 @@ fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_ARRAY_SPARSE_PROPERTIES_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -4098,7 +4101,7 @@ pub type CUDA_ARRAY_SPARSE_PROPERTIES = CUDA_ARRAY_SPARSE_PROPERTIES_v1;
 pub struct CUDA_RESOURCE_DESC_st {
     pub resType: CUresourcetype,
     pub res: CUDA_RESOURCE_DESC_st__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: core::ffi::c_uint,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -4117,7 +4120,7 @@ pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -4125,7 +4128,7 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4135,11 +4138,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
     fn test_field_hArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).hArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).hArray) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4154,9 +4157,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
 }
 impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4169,7 +4172,7 @@ pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2 {
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Size of: ",
@@ -4177,7 +4180,7 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4187,11 +4190,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2() {
     fn test_field_hMipmappedArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).hMipmappedArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).hMipmappedArray) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4206,9 +4209,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2() {
 }
 impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4218,13 +4221,13 @@ impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2 {
 pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3 {
     pub devPtr: CUdeviceptr,
     pub format: CUarray_format,
-    pub numChannels: ::std::os::raw::c_uint,
+    pub numChannels: core::ffi::c_uint,
     pub sizeInBytes: usize,
 }
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3>(),
         24usize,
         concat!(
             "Size of: ",
@@ -4232,7 +4235,7 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4242,11 +4245,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
     fn test_field_devPtr() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4261,11 +4264,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
     fn test_field_format() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).format) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).format) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -4280,11 +4283,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
     fn test_field_numChannels() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).numChannels) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).numChannels) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -4299,11 +4302,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
     fn test_field_sizeInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).sizeInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).sizeInBytes) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -4318,9 +4321,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3() {
 }
 impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4330,7 +4333,7 @@ impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3 {
 pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4 {
     pub devPtr: CUdeviceptr,
     pub format: CUarray_format,
-    pub numChannels: ::std::os::raw::c_uint,
+    pub numChannels: core::ffi::c_uint,
     pub width: usize,
     pub height: usize,
     pub pitchInBytes: usize,
@@ -4338,7 +4341,7 @@ pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4 {
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4>(),
         40usize,
         concat!(
             "Size of: ",
@@ -4346,7 +4349,7 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4356,11 +4359,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     fn test_field_devPtr() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4375,11 +4378,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     fn test_field_format() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).format) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).format) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -4394,11 +4397,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     fn test_field_numChannels() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).numChannels) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).numChannels) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -4413,11 +4416,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     fn test_field_width() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -4432,11 +4435,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     fn test_field_height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -4451,11 +4454,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
     fn test_field_pitchInBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).pitchInBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).pitchInBytes) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -4470,9 +4473,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4() {
 }
 impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4480,12 +4483,12 @@ impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4 {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5 {
-    pub reserved: [::std::os::raw::c_int; 32usize],
+    pub reserved: [core::ffi::c_int; 32usize],
 }
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5>(),
         128usize,
         concat!(
             "Size of: ",
@@ -4493,7 +4496,7 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5>(),
         4usize,
         concat!(
             "Alignment of ",
@@ -4503,11 +4506,11 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4523,12 +4526,12 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5() {
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>(),
         128usize,
         concat!("Size of: ", stringify!(CUDA_RESOURCE_DESC_st__bindgen_ty_1))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4539,9 +4542,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).array) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).array) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4557,9 +4560,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4575,9 +4578,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).linear) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).linear) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4593,9 +4596,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).pitch2D) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).pitch2D) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4611,9 +4614,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4628,9 +4631,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st__bindgen_ty_1() {
 }
 impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4638,21 +4641,21 @@ impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_DESC_st>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_DESC_st>(),
         144usize,
         concat!("Size of: ", stringify!(CUDA_RESOURCE_DESC_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_DESC_st>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_DESC_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_RESOURCE_DESC_st))
     );
     fn test_field_resType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).resType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).resType) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4667,9 +4670,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st() {
     fn test_field_res() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).res) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).res) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -4684,9 +4687,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st() {
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             136usize,
             concat!(
@@ -4701,9 +4704,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_DESC_st() {
 }
 impl Default for CUDA_RESOURCE_DESC_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4715,33 +4718,33 @@ pub type CUDA_RESOURCE_DESC = CUDA_RESOURCE_DESC_v1;
 pub struct CUDA_TEXTURE_DESC_st {
     pub addressMode: [CUaddress_mode; 3usize],
     pub filterMode: CUfilter_mode,
-    pub flags: ::std::os::raw::c_uint,
-    pub maxAnisotropy: ::std::os::raw::c_uint,
+    pub flags: core::ffi::c_uint,
+    pub maxAnisotropy: core::ffi::c_uint,
     pub mipmapFilterMode: CUfilter_mode,
     pub mipmapLevelBias: f32,
     pub minMipmapLevelClamp: f32,
     pub maxMipmapLevelClamp: f32,
     pub borderColor: [f32; 4usize],
-    pub reserved: [::std::os::raw::c_int; 12usize],
+    pub reserved: [core::ffi::c_int; 12usize],
 }
 #[test]
 fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_TEXTURE_DESC_st>(),
+        ::core::mem::size_of::<CUDA_TEXTURE_DESC_st>(),
         104usize,
         concat!("Size of: ", stringify!(CUDA_TEXTURE_DESC_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_TEXTURE_DESC_st>(),
+        ::core::mem::align_of::<CUDA_TEXTURE_DESC_st>(),
         4usize,
         concat!("Alignment of ", stringify!(CUDA_TEXTURE_DESC_st))
     );
     fn test_field_addressMode() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).addressMode) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).addressMode) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -4756,9 +4759,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_filterMode() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).filterMode) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).filterMode) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -4773,9 +4776,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -4790,9 +4793,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_maxAnisotropy() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).maxAnisotropy) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).maxAnisotropy) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -4807,9 +4810,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_mipmapFilterMode() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).mipmapFilterMode) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).mipmapFilterMode) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -4824,9 +4827,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_mipmapLevelBias() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).mipmapLevelBias) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).mipmapLevelBias) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -4841,9 +4844,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_minMipmapLevelClamp() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).minMipmapLevelClamp) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).minMipmapLevelClamp) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -4858,9 +4861,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_maxMipmapLevelClamp() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).maxMipmapLevelClamp) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).maxMipmapLevelClamp) as usize - ptr as usize
             },
             36usize,
             concat!(
@@ -4875,9 +4878,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_borderColor() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).borderColor) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).borderColor) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -4892,9 +4895,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_TEXTURE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             56usize,
             concat!(
@@ -4909,9 +4912,9 @@ fn bindgen_test_layout_CUDA_TEXTURE_DESC_st() {
 }
 impl Default for CUDA_TEXTURE_DESC_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4965,30 +4968,30 @@ pub struct CUDA_RESOURCE_VIEW_DESC_st {
     pub width: usize,
     pub height: usize,
     pub depth: usize,
-    pub firstMipmapLevel: ::std::os::raw::c_uint,
-    pub lastMipmapLevel: ::std::os::raw::c_uint,
-    pub firstLayer: ::std::os::raw::c_uint,
-    pub lastLayer: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub firstMipmapLevel: core::ffi::c_uint,
+    pub lastMipmapLevel: core::ffi::c_uint,
+    pub firstLayer: core::ffi::c_uint,
+    pub lastLayer: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[test]
 fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_RESOURCE_VIEW_DESC_st>(),
+        ::core::mem::size_of::<CUDA_RESOURCE_VIEW_DESC_st>(),
         112usize,
         concat!("Size of: ", stringify!(CUDA_RESOURCE_VIEW_DESC_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_RESOURCE_VIEW_DESC_st>(),
+        ::core::mem::align_of::<CUDA_RESOURCE_VIEW_DESC_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_RESOURCE_VIEW_DESC_st))
     );
     fn test_field_format() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).format) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).format) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5003,9 +5006,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_width() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5020,9 +5023,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_height() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -5037,9 +5040,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_depth() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).depth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).depth) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -5054,9 +5057,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_firstMipmapLevel() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).firstMipmapLevel) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).firstMipmapLevel) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -5071,9 +5074,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_lastMipmapLevel() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).lastMipmapLevel) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).lastMipmapLevel) as usize - ptr as usize
             },
             36usize,
             concat!(
@@ -5088,9 +5091,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_firstLayer() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).firstLayer) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).firstLayer) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -5105,9 +5108,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_lastLayer() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).lastLayer) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).lastLayer) as usize - ptr as usize
             },
             44usize,
             concat!(
@@ -5122,9 +5125,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_RESOURCE_VIEW_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -5139,9 +5142,9 @@ fn bindgen_test_layout_CUDA_RESOURCE_VIEW_DESC_st() {
 }
 impl Default for CUDA_RESOURCE_VIEW_DESC_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5151,13 +5154,13 @@ pub type CUDA_RESOURCE_VIEW_DESC = CUDA_RESOURCE_VIEW_DESC_v1;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st {
-    pub p2pToken: ::std::os::raw::c_ulonglong,
-    pub vaSpaceToken: ::std::os::raw::c_uint,
+    pub p2pToken: core::ffi::c_ulonglong,
+    pub vaSpaceToken: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>(),
+        ::core::mem::size_of::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>(),
         16usize,
         concat!(
             "Size of: ",
@@ -5165,7 +5168,7 @@ fn bindgen_test_layout_CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>(),
+        ::core::mem::align_of::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5176,9 +5179,9 @@ fn bindgen_test_layout_CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).p2pToken) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).p2pToken) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5194,9 +5197,9 @@ fn bindgen_test_layout_CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).vaSpaceToken) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).vaSpaceToken) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5223,34 +5226,34 @@ pub use self::CUDA_POINTER_ATTRIBUTE_ACCESS_FLAGS_enum as CUDA_POINTER_ATTRIBUTE
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_LAUNCH_PARAMS_st {
     pub function: CUfunction,
-    pub gridDimX: ::std::os::raw::c_uint,
-    pub gridDimY: ::std::os::raw::c_uint,
-    pub gridDimZ: ::std::os::raw::c_uint,
-    pub blockDimX: ::std::os::raw::c_uint,
-    pub blockDimY: ::std::os::raw::c_uint,
-    pub blockDimZ: ::std::os::raw::c_uint,
-    pub sharedMemBytes: ::std::os::raw::c_uint,
+    pub gridDimX: core::ffi::c_uint,
+    pub gridDimY: core::ffi::c_uint,
+    pub gridDimZ: core::ffi::c_uint,
+    pub blockDimX: core::ffi::c_uint,
+    pub blockDimY: core::ffi::c_uint,
+    pub blockDimZ: core::ffi::c_uint,
+    pub sharedMemBytes: core::ffi::c_uint,
     pub hStream: CUstream,
-    pub kernelParams: *mut *mut ::std::os::raw::c_void,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_LAUNCH_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_LAUNCH_PARAMS_st>(),
         56usize,
         concat!("Size of: ", stringify!(CUDA_LAUNCH_PARAMS_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_LAUNCH_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_LAUNCH_PARAMS_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUDA_LAUNCH_PARAMS_st))
     );
     fn test_field_function() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).function) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).function) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5265,9 +5268,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_gridDimX() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gridDimX) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gridDimX) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5282,9 +5285,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_gridDimY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gridDimY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gridDimY) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -5299,9 +5302,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_gridDimZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gridDimZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gridDimZ) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -5316,9 +5319,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_blockDimX() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).blockDimX) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).blockDimX) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -5333,9 +5336,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_blockDimY() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).blockDimY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).blockDimY) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -5350,9 +5353,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_blockDimZ() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).blockDimZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).blockDimZ) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -5367,9 +5370,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_sharedMemBytes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -5384,9 +5387,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_hStream() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).hStream) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).hStream) as usize - ptr as usize
             },
             40usize,
             concat!(
@@ -5401,9 +5404,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
     fn test_field_kernelParams() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_LAUNCH_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -5418,9 +5421,9 @@ fn bindgen_test_layout_CUDA_LAUNCH_PARAMS_st() {
 }
 impl Default for CUDA_LAUNCH_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5445,27 +5448,27 @@ pub use self::CUexternalMemoryHandleType_enum as CUexternalMemoryHandleType;
 pub struct CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st {
     pub type_: CUexternalMemoryHandleType,
     pub handle: CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1,
-    pub size: ::std::os::raw::c_ulonglong,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub size: core::ffi::c_ulonglong,
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 {
-    pub fd: ::std::os::raw::c_int,
+    pub fd: core::ffi::c_int,
     pub win32: CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1,
-    pub nvSciBufObject: *const ::std::os::raw::c_void,
+    pub nvSciBufObject: *const ::core::ffi::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
-    pub handle: *mut ::std::os::raw::c_void,
-    pub name: *const ::std::os::raw::c_void,
+    pub handle: *mut ::core::ffi::c_void,
+    pub name: *const ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -5473,7 +5476,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindge
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5483,11 +5486,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindge
     fn test_field_handle() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5502,11 +5505,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindge
     fn test_field_name() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).name) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5521,9 +5524,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindge
 }
 impl Default for CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5531,7 +5534,7 @@ impl Default for CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -5539,7 +5542,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5549,11 +5552,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1() {
     fn test_field_fd() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fd) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fd) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5568,11 +5571,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1() {
     fn test_field_win32() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).win32) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).win32) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5587,11 +5590,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1() {
     fn test_field_nvSciBufObject() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).nvSciBufObject) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).nvSciBufObject) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5606,9 +5609,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1() {
 }
 impl Default for CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5616,12 +5619,12 @@ impl Default for CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>(),
         104usize,
         concat!("Size of: ", stringify!(CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5632,9 +5635,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5650,9 +5653,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5668,9 +5671,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -5686,9 +5689,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -5704,9 +5707,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             36usize,
             concat!(
@@ -5721,9 +5724,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st() {
 }
 impl Default for CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5733,20 +5736,20 @@ pub type CUDA_EXTERNAL_MEMORY_HANDLE_DESC = CUDA_EXTERNAL_MEMORY_HANDLE_DESC_v1;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st {
-    pub offset: ::std::os::raw::c_ulonglong,
-    pub size: ::std::os::raw::c_ulonglong,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub offset: core::ffi::c_ulonglong,
+    pub size: core::ffi::c_ulonglong,
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>(),
         88usize,
         concat!("Size of: ", stringify!(CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5757,9 +5760,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5775,9 +5778,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5793,9 +5796,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -5811,9 +5814,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -5831,15 +5834,15 @@ pub type CUDA_EXTERNAL_MEMORY_BUFFER_DESC = CUDA_EXTERNAL_MEMORY_BUFFER_DESC_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st {
-    pub offset: ::std::os::raw::c_ulonglong,
+    pub offset: core::ffi::c_ulonglong,
     pub arrayDesc: CUDA_ARRAY3D_DESCRIPTOR,
-    pub numLevels: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub numLevels: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>(),
         120usize,
         concat!(
             "Size of: ",
@@ -5847,7 +5850,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5857,11 +5860,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
     fn test_field_offset() {
         assert_eq!(
             unsafe {
-                let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>::uninit(
-                    );
+                let uninit = :: core :: mem :: MaybeUninit :: < CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st > :: uninit () ;
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -5876,11 +5877,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
     fn test_field_arrayDesc() {
         assert_eq!(
             unsafe {
-                let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>::uninit(
-                    );
+                let uninit = :: core :: mem :: MaybeUninit :: < CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st > :: uninit () ;
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).arrayDesc) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).arrayDesc) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -5895,11 +5894,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
     fn test_field_numLevels() {
         assert_eq!(
             unsafe {
-                let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>::uninit(
-                    );
+                let uninit = :: core :: mem :: MaybeUninit :: < CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st > :: uninit () ;
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).numLevels) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).numLevels) as usize - ptr as usize
             },
             48usize,
             concat!(
@@ -5914,11 +5911,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st>::uninit(
-                    );
+                let uninit = :: core :: mem :: MaybeUninit :: < CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st > :: uninit () ;
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             52usize,
             concat!(
@@ -5933,9 +5928,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
 }
 impl Default for CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5963,26 +5958,27 @@ pub use self::CUexternalSemaphoreHandleType_enum as CUexternalSemaphoreHandleTyp
 pub struct CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st {
     pub type_: CUexternalSemaphoreHandleType,
     pub handle: CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1 {
-    pub fd: ::std::os::raw::c_int,
+    pub fd: core::ffi::c_int,
     pub win32: CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1,
-    pub nvSciSyncObj: *const ::std::os::raw::c_void,
+    pub nvSciSyncObj: *const ::core::ffi::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
-    pub handle: *mut ::std::os::raw::c_void,
-    pub name: *const ::std::os::raw::c_void,
+    pub handle: *mut ::core::ffi::c_void,
+    pub name: *const ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(
+        ),
         16usize,
         concat!(
             "Size of: ",
@@ -5990,7 +5986,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bin
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1>(
         ),
         8usize,
         concat!(
@@ -6001,11 +5997,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bin
     fn test_field_handle() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6020,11 +6016,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bin
     fn test_field_name() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).name) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -6039,9 +6035,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bin
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6049,7 +6045,7 @@ impl Default for CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_t
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -6057,7 +6053,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6067,11 +6063,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1() {
     fn test_field_fd() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fd) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fd) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6086,11 +6082,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1() {
     fn test_field_win32() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).win32) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).win32) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6105,11 +6101,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1() {
     fn test_field_nvSciSyncObj() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).nvSciSyncObj) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).nvSciSyncObj) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6124,9 +6120,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1() {
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6134,7 +6130,7 @@ impl Default for CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>(),
         96usize,
         concat!(
             "Size of: ",
@@ -6142,7 +6138,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6153,9 +6149,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6171,9 +6167,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -6189,9 +6185,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -6207,9 +6203,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -6224,9 +6220,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st() {
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6237,8 +6233,8 @@ pub type CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC = CUDA_EXTERNAL_SEMAPHORE_HANDLE_DE
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st {
     pub params: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -6246,17 +6242,17 @@ pub struct CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1 {
     pub fence: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
     pub nvSciSync: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
     pub keyedMutex: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
-    pub reserved: [::std::os::raw::c_uint; 12usize],
+    pub reserved: [core::ffi::c_uint; 12usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1 {
-    pub value: ::std::os::raw::c_ulonglong,
+    pub value: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
         ),
         8usize,
         concat!(
@@ -6265,7 +6261,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
         ),
         8usize,
         concat!(
@@ -6276,11 +6272,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
     fn test_field_value() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6296,13 +6292,13 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2 {
-    pub fence: *mut ::std::os::raw::c_void,
-    pub reserved: ::std::os::raw::c_ulonglong,
+    pub fence: *mut ::core::ffi::c_void,
+    pub reserved: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
         ),
         8usize,
         concat!(
@@ -6311,7 +6307,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
         ),
         8usize,
         concat!(
@@ -6322,11 +6318,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
     fn test_field_fence() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6341,11 +6337,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6360,9 +6356,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6370,12 +6366,12 @@ impl Default for CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3 {
-    pub key: ::std::os::raw::c_ulonglong,
+    pub key: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
         ),
         8usize,
         concat!(
@@ -6384,7 +6380,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
         ),
         8usize,
         concat!(
@@ -6395,11 +6391,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
     fn test_field_key() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).key) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6415,7 +6411,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1>(),
         72usize,
         concat!(
             "Size of: ",
@@ -6423,7 +6419,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() 
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6433,11 +6429,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() 
     fn test_field_fence() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6452,11 +6448,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() 
     fn test_field_nvSciSync() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -6471,11 +6467,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() 
     fn test_field_keyedMutex() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -6490,11 +6486,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() 
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -6509,9 +6505,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1() 
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6519,7 +6515,7 @@ impl Default for CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>(),
         144usize,
         concat!(
             "Size of: ",
@@ -6527,7 +6523,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6538,9 +6534,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).params) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6556,9 +6552,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             72usize,
             concat!(
@@ -6574,9 +6570,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             76usize,
             concat!(
@@ -6591,9 +6587,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st() {
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6604,8 +6600,8 @@ pub type CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS = CUDA_EXTERNAL_SEMAPHORE_SIGNAL_
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st {
     pub params: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -6613,17 +6609,18 @@ pub struct CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1 {
     pub fence: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
     pub nvSciSync: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
     pub keyedMutex: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
-    pub reserved: [::std::os::raw::c_uint; 10usize],
+    pub reserved: [core::ffi::c_uint; 10usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1 {
-    pub value: ::std::os::raw::c_ulonglong,
+    pub value: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
+        ),
         8usize,
         concat!(
             "Size of: ",
@@ -6631,7 +6628,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1>(
         ),
         8usize,
         concat!(
@@ -6642,11 +6639,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
     fn test_field_value() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6662,13 +6659,14 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2 {
-    pub fence: *mut ::std::os::raw::c_void,
-    pub reserved: ::std::os::raw::c_ulonglong,
+    pub fence: *mut ::core::ffi::c_void,
+    pub reserved: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
+        ),
         8usize,
         concat!(
             "Size of: ",
@@ -6676,7 +6674,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2>(
         ),
         8usize,
         concat!(
@@ -6687,11 +6685,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
     fn test_field_fence() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6706,11 +6704,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6725,9 +6723,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6735,13 +6733,14 @@ impl Default for CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_t
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3 {
-    pub key: ::std::os::raw::c_ulonglong,
-    pub timeoutMs: ::std::os::raw::c_uint,
+    pub key: core::ffi::c_ulonglong,
+    pub timeoutMs: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
+        ),
         16usize,
         concat!(
             "Size of: ",
@@ -6749,7 +6748,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3>(
         ),
         8usize,
         concat!(
@@ -6760,11 +6759,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
     fn test_field_key() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).key) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6779,11 +6778,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
     fn test_field_timeoutMs() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).timeoutMs) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).timeoutMs) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -6799,7 +6798,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1>(),
         72usize,
         concat!(
             "Size of: ",
@@ -6807,7 +6806,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6817,11 +6816,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
     fn test_field_fence() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6836,11 +6835,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
     fn test_field_nvSciSync() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -6855,11 +6854,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
     fn test_field_keyedMutex() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -6874,11 +6873,11 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<
+                let uninit = ::core::mem::MaybeUninit::<
                     CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
                 >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             32usize,
             concat!(
@@ -6893,9 +6892,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1() {
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6903,7 +6902,7 @@ impl Default for CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>(),
         144usize,
         concat!(
             "Size of: ",
@@ -6911,7 +6910,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6922,9 +6921,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).params) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -6940,9 +6939,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             72usize,
             concat!(
@@ -6958,9 +6957,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             76usize,
             concat!(
@@ -6975,9 +6974,9 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st() {
 }
 impl Default for CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6989,17 +6988,17 @@ pub type CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS = CUDA_EXTERNAL_SEMAPHORE_WAIT_PARA
 pub struct CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st {
     pub extSemArray: *mut CUexternalSemaphore,
     pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
-    pub numExtSems: ::std::os::raw::c_uint,
+    pub numExtSems: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>(),
         24usize,
         concat!("Size of: ", stringify!(CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -7010,9 +7009,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7028,9 +7027,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -7046,9 +7045,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>::uninit();
+                    ::core::mem::MaybeUninit::<CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -7063,9 +7062,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st() {
 }
 impl Default for CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7077,17 +7076,17 @@ pub type CUDA_EXT_SEM_SIGNAL_NODE_PARAMS = CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_v1;
 pub struct CUDA_EXT_SEM_WAIT_NODE_PARAMS_st {
     pub extSemArray: *mut CUexternalSemaphore,
     pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
-    pub numExtSems: ::std::os::raw::c_uint,
+    pub numExtSems: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXT_SEM_WAIT_NODE_PARAMS_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>(),
+        ::core::mem::size_of::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>(),
         24usize,
         concat!("Size of: ", stringify!(CUDA_EXT_SEM_WAIT_NODE_PARAMS_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>(),
+        ::core::mem::align_of::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -7097,9 +7096,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_WAIT_NODE_PARAMS_st() {
     fn test_field_extSemArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7114,9 +7113,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_WAIT_NODE_PARAMS_st() {
     fn test_field_paramsArray() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -7131,9 +7130,9 @@ fn bindgen_test_layout_CUDA_EXT_SEM_WAIT_NODE_PARAMS_st() {
     fn test_field_numExtSems() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUDA_EXT_SEM_WAIT_NODE_PARAMS_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -7148,16 +7147,16 @@ fn bindgen_test_layout_CUDA_EXT_SEM_WAIT_NODE_PARAMS_st() {
 }
 impl Default for CUDA_EXT_SEM_WAIT_NODE_PARAMS_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 pub type CUDA_EXT_SEM_WAIT_NODE_PARAMS_v1 = CUDA_EXT_SEM_WAIT_NODE_PARAMS_st;
 pub type CUDA_EXT_SEM_WAIT_NODE_PARAMS = CUDA_EXT_SEM_WAIT_NODE_PARAMS_v1;
-pub type CUmemGenericAllocationHandle_v1 = ::std::os::raw::c_ulonglong;
+pub type CUmemGenericAllocationHandle_v1 = core::ffi::c_ulonglong;
 pub type CUmemGenericAllocationHandle = CUmemGenericAllocationHandle_v1;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -7231,10 +7230,10 @@ pub struct CUarrayMapInfo_st {
     pub memOperationType: CUmemOperationType,
     pub memHandleType: CUmemHandleType,
     pub memHandle: CUarrayMapInfo_st__bindgen_ty_3,
-    pub offset: ::std::os::raw::c_ulonglong,
-    pub deviceBitMask: ::std::os::raw::c_uint,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 2usize],
+    pub offset: core::ffi::c_ulonglong,
+    pub deviceBitMask: core::ffi::c_uint,
+    pub flags: core::ffi::c_uint,
+    pub reserved: [core::ffi::c_uint; 2usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -7245,21 +7244,21 @@ pub union CUarrayMapInfo_st__bindgen_ty_1 {
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_1>(),
         8usize,
         concat!("Size of: ", stringify!(CUarrayMapInfo_st__bindgen_ty_1))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_1>(),
         8usize,
         concat!("Alignment of ", stringify!(CUarrayMapInfo_st__bindgen_ty_1))
     );
     fn test_field_mipmap() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_1>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7274,9 +7273,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_1() {
     fn test_field_array() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_1>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).array) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).array) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7291,9 +7290,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_1() {
 }
 impl Default for CUarrayMapInfo_st__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7307,19 +7306,19 @@ pub union CUarrayMapInfo_st__bindgen_ty_2 {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 {
-    pub level: ::std::os::raw::c_uint,
-    pub layer: ::std::os::raw::c_uint,
-    pub offsetX: ::std::os::raw::c_uint,
-    pub offsetY: ::std::os::raw::c_uint,
-    pub offsetZ: ::std::os::raw::c_uint,
-    pub extentWidth: ::std::os::raw::c_uint,
-    pub extentHeight: ::std::os::raw::c_uint,
-    pub extentDepth: ::std::os::raw::c_uint,
+    pub level: core::ffi::c_uint,
+    pub layer: core::ffi::c_uint,
+    pub offsetX: core::ffi::c_uint,
+    pub offsetY: core::ffi::c_uint,
+    pub offsetZ: core::ffi::c_uint,
+    pub extentWidth: core::ffi::c_uint,
+    pub extentHeight: core::ffi::c_uint,
+    pub extentDepth: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1>(),
         32usize,
         concat!(
             "Size of: ",
@@ -7327,7 +7326,7 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1>(),
         4usize,
         concat!(
             "Alignment of ",
@@ -7337,9 +7336,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_level() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).level) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).level) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7354,9 +7355,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_layer() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).layer) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).layer) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -7371,9 +7374,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_offsetX() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offsetX) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offsetX) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -7388,9 +7393,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_offsetY() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offsetY) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offsetY) as usize - ptr as usize
             },
             12usize,
             concat!(
@@ -7405,9 +7412,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_offsetZ() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offsetZ) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offsetZ) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -7422,9 +7431,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_extentWidth() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).extentWidth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).extentWidth) as usize - ptr as usize
             },
             20usize,
             concat!(
@@ -7439,9 +7450,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_extentHeight() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).extentHeight) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).extentHeight) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -7456,9 +7469,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
     fn test_field_extentDepth() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).extentDepth) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).extentDepth) as usize - ptr as usize
             },
             28usize,
             concat!(
@@ -7474,14 +7489,14 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2 {
-    pub layer: ::std::os::raw::c_uint,
-    pub offset: ::std::os::raw::c_ulonglong,
-    pub size: ::std::os::raw::c_ulonglong,
+    pub layer: core::ffi::c_uint,
+    pub offset: core::ffi::c_ulonglong,
+    pub size: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
     assert_eq!(
-        ::std::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2>(),
+        ::core::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2>(),
         24usize,
         concat!(
             "Size of: ",
@@ -7489,7 +7504,7 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2>(),
+        ::core::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -7499,9 +7514,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
     fn test_field_layer() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).layer) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).layer) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7516,9 +7533,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
     fn test_field_offset() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -7533,9 +7552,11 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
     fn test_field_size() {
         assert_eq!(
             unsafe {
-                let uninit = :: std :: mem :: MaybeUninit :: < CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2 > :: uninit () ;
+                let uninit = ::core::mem::MaybeUninit::<
+                    CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2,
+                >::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -7551,21 +7572,21 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2() {
     assert_eq!(
-        ::std::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_2>(),
+        ::core::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_2>(),
         32usize,
         concat!("Size of: ", stringify!(CUarrayMapInfo_st__bindgen_ty_2))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_2>(),
+        ::core::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_2>(),
         8usize,
         concat!("Alignment of ", stringify!(CUarrayMapInfo_st__bindgen_ty_2))
     );
     fn test_field_sparseLevel() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_2>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_2>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).sparseLevel) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).sparseLevel) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7580,9 +7601,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2() {
     fn test_field_miptail() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_2>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_2>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).miptail) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).miptail) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7597,9 +7618,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2() {
 }
 impl Default for CUarrayMapInfo_st__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7612,21 +7633,21 @@ pub union CUarrayMapInfo_st__bindgen_ty_3 {
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_3() {
     assert_eq!(
-        ::std::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_3>(),
+        ::core::mem::size_of::<CUarrayMapInfo_st__bindgen_ty_3>(),
         8usize,
         concat!("Size of: ", stringify!(CUarrayMapInfo_st__bindgen_ty_3))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_3>(),
+        ::core::mem::align_of::<CUarrayMapInfo_st__bindgen_ty_3>(),
         8usize,
         concat!("Alignment of ", stringify!(CUarrayMapInfo_st__bindgen_ty_3))
     );
     fn test_field_memHandle() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_3>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st__bindgen_ty_3>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).memHandle) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).memHandle) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7641,9 +7662,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_3() {
 }
 impl Default for CUarrayMapInfo_st__bindgen_ty_3 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7651,21 +7672,21 @@ impl Default for CUarrayMapInfo_st__bindgen_ty_3 {
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUarrayMapInfo_st>(),
+        ::core::mem::size_of::<CUarrayMapInfo_st>(),
         96usize,
         concat!("Size of: ", stringify!(CUarrayMapInfo_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUarrayMapInfo_st>(),
+        ::core::mem::align_of::<CUarrayMapInfo_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUarrayMapInfo_st))
     );
     fn test_field_resourceType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).resourceType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).resourceType) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7680,9 +7701,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_resource() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).resource) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).resource) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -7697,9 +7718,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_subresourceType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).subresourceType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).subresourceType) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -7714,9 +7735,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_subresource() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).subresource) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).subresource) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -7731,9 +7752,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_memOperationType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).memOperationType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).memOperationType) as usize - ptr as usize
             },
             56usize,
             concat!(
@@ -7748,9 +7769,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_memHandleType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).memHandleType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).memHandleType) as usize - ptr as usize
             },
             60usize,
             concat!(
@@ -7765,9 +7786,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_memHandle() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).memHandle) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).memHandle) as usize - ptr as usize
             },
             64usize,
             concat!(
@@ -7782,9 +7803,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_offset() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).offset) as usize - ptr as usize
             },
             72usize,
             concat!(
@@ -7799,9 +7820,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_deviceBitMask() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).deviceBitMask) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).deviceBitMask) as usize - ptr as usize
             },
             80usize,
             concat!(
@@ -7816,9 +7837,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             84usize,
             concat!(
@@ -7833,9 +7854,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUarrayMapInfo_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             88usize,
             concat!(
@@ -7850,9 +7871,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st() {
 }
 impl Default for CUarrayMapInfo_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7863,26 +7884,26 @@ pub type CUarrayMapInfo = CUarrayMapInfo_v1;
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUmemLocation_st {
     pub type_: CUmemLocationType,
-    pub id: ::std::os::raw::c_int,
+    pub id: core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_CUmemLocation_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUmemLocation_st>(),
+        ::core::mem::size_of::<CUmemLocation_st>(),
         8usize,
         concat!("Size of: ", stringify!(CUmemLocation_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUmemLocation_st>(),
+        ::core::mem::align_of::<CUmemLocation_st>(),
         4usize,
         concat!("Alignment of ", stringify!(CUmemLocation_st))
     );
     fn test_field_type() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemLocation_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemLocation_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7897,9 +7918,9 @@ fn bindgen_test_layout_CUmemLocation_st() {
     fn test_field_id() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemLocation_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemLocation_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).id) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).id) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -7914,9 +7935,9 @@ fn bindgen_test_layout_CUmemLocation_st() {
 }
 impl Default for CUmemLocation_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7936,21 +7957,21 @@ pub struct CUmemAllocationProp_st {
     pub type_: CUmemAllocationType,
     pub requestedHandleTypes: CUmemAllocationHandleType,
     pub location: CUmemLocation,
-    pub win32HandleMetaData: *mut ::std::os::raw::c_void,
+    pub win32HandleMetaData: *mut ::core::ffi::c_void,
     pub allocFlags: CUmemAllocationProp_st__bindgen_ty_1,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUmemAllocationProp_st__bindgen_ty_1 {
-    pub compressionType: ::std::os::raw::c_uchar,
-    pub gpuDirectRDMACapable: ::std::os::raw::c_uchar,
-    pub usage: ::std::os::raw::c_ushort,
-    pub reserved: [::std::os::raw::c_uchar; 4usize],
+    pub compressionType: core::ffi::c_uchar,
+    pub gpuDirectRDMACapable: core::ffi::c_uchar,
+    pub usage: core::ffi::c_ushort,
+    pub reserved: [core::ffi::c_uchar; 4usize],
 }
 #[test]
 fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
     assert_eq!(
-        ::std::mem::size_of::<CUmemAllocationProp_st__bindgen_ty_1>(),
+        ::core::mem::size_of::<CUmemAllocationProp_st__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -7958,7 +7979,7 @@ fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<CUmemAllocationProp_st__bindgen_ty_1>(),
+        ::core::mem::align_of::<CUmemAllocationProp_st__bindgen_ty_1>(),
         2usize,
         concat!(
             "Alignment of ",
@@ -7969,9 +7990,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).compressionType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).compressionType) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -7987,9 +8008,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).gpuDirectRDMACapable) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).gpuDirectRDMACapable) as usize - ptr as usize
             },
             1usize,
             concat!(
@@ -8005,9 +8026,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).usage) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).usage) as usize - ptr as usize
             },
             2usize,
             concat!(
@@ -8023,9 +8044,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
         assert_eq!(
             unsafe {
                 let uninit =
-                    ::std::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
+                    ::core::mem::MaybeUninit::<CUmemAllocationProp_st__bindgen_ty_1>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -8041,21 +8062,21 @@ fn bindgen_test_layout_CUmemAllocationProp_st__bindgen_ty_1() {
 #[test]
 fn bindgen_test_layout_CUmemAllocationProp_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUmemAllocationProp_st>(),
+        ::core::mem::size_of::<CUmemAllocationProp_st>(),
         32usize,
         concat!("Size of: ", stringify!(CUmemAllocationProp_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUmemAllocationProp_st>(),
+        ::core::mem::align_of::<CUmemAllocationProp_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUmemAllocationProp_st))
     );
     fn test_field_type() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -8070,9 +8091,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st() {
     fn test_field_requestedHandleTypes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).requestedHandleTypes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).requestedHandleTypes) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -8087,9 +8108,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st() {
     fn test_field_location() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).location) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).location) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -8104,9 +8125,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st() {
     fn test_field_win32HandleMetaData() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).win32HandleMetaData) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).win32HandleMetaData) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -8121,9 +8142,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st() {
     fn test_field_allocFlags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAllocationProp_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).allocFlags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).allocFlags) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -8138,9 +8159,9 @@ fn bindgen_test_layout_CUmemAllocationProp_st() {
 }
 impl Default for CUmemAllocationProp_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -8156,21 +8177,21 @@ pub struct CUmemAccessDesc_st {
 #[test]
 fn bindgen_test_layout_CUmemAccessDesc_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUmemAccessDesc_st>(),
+        ::core::mem::size_of::<CUmemAccessDesc_st>(),
         12usize,
         concat!("Size of: ", stringify!(CUmemAccessDesc_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUmemAccessDesc_st>(),
+        ::core::mem::align_of::<CUmemAccessDesc_st>(),
         4usize,
         concat!("Alignment of ", stringify!(CUmemAccessDesc_st))
     );
     fn test_field_location() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAccessDesc_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAccessDesc_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).location) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).location) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -8185,9 +8206,9 @@ fn bindgen_test_layout_CUmemAccessDesc_st() {
     fn test_field_flags() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemAccessDesc_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemAccessDesc_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -8202,9 +8223,9 @@ fn bindgen_test_layout_CUmemAccessDesc_st() {
 }
 impl Default for CUmemAccessDesc_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -8243,27 +8264,27 @@ pub struct CUmemPoolProps_st {
     pub allocType: CUmemAllocationType,
     pub handleTypes: CUmemAllocationHandleType,
     pub location: CUmemLocation,
-    pub win32SecurityAttributes: *mut ::std::os::raw::c_void,
-    pub reserved: [::std::os::raw::c_uchar; 64usize],
+    pub win32SecurityAttributes: *mut ::core::ffi::c_void,
+    pub reserved: [core::ffi::c_uchar; 64usize],
 }
 #[test]
 fn bindgen_test_layout_CUmemPoolProps_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUmemPoolProps_st>(),
+        ::core::mem::size_of::<CUmemPoolProps_st>(),
         88usize,
         concat!("Size of: ", stringify!(CUmemPoolProps_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUmemPoolProps_st>(),
+        ::core::mem::align_of::<CUmemPoolProps_st>(),
         8usize,
         concat!("Alignment of ", stringify!(CUmemPoolProps_st))
     );
     fn test_field_allocType() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).allocType) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).allocType) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -8278,9 +8299,9 @@ fn bindgen_test_layout_CUmemPoolProps_st() {
     fn test_field_handleTypes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).handleTypes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).handleTypes) as usize - ptr as usize
             },
             4usize,
             concat!(
@@ -8295,9 +8316,9 @@ fn bindgen_test_layout_CUmemPoolProps_st() {
     fn test_field_location() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).location) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).location) as usize - ptr as usize
             },
             8usize,
             concat!(
@@ -8312,9 +8333,9 @@ fn bindgen_test_layout_CUmemPoolProps_st() {
     fn test_field_win32SecurityAttributes() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).win32SecurityAttributes) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).win32SecurityAttributes) as usize - ptr as usize
             },
             16usize,
             concat!(
@@ -8329,9 +8350,9 @@ fn bindgen_test_layout_CUmemPoolProps_st() {
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemPoolProps_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             24usize,
             concat!(
@@ -8346,9 +8367,9 @@ fn bindgen_test_layout_CUmemPoolProps_st() {
 }
 impl Default for CUmemPoolProps_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -8358,26 +8379,26 @@ pub type CUmemPoolProps = CUmemPoolProps_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUmemPoolPtrExportData_st {
-    pub reserved: [::std::os::raw::c_uchar; 64usize],
+    pub reserved: [core::ffi::c_uchar; 64usize],
 }
 #[test]
 fn bindgen_test_layout_CUmemPoolPtrExportData_st() {
     assert_eq!(
-        ::std::mem::size_of::<CUmemPoolPtrExportData_st>(),
+        ::core::mem::size_of::<CUmemPoolPtrExportData_st>(),
         64usize,
         concat!("Size of: ", stringify!(CUmemPoolPtrExportData_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUmemPoolPtrExportData_st>(),
+        ::core::mem::align_of::<CUmemPoolPtrExportData_st>(),
         1usize,
         concat!("Alignment of ", stringify!(CUmemPoolPtrExportData_st))
     );
     fn test_field_reserved() {
         assert_eq!(
             unsafe {
-                let uninit = ::std::mem::MaybeUninit::<CUmemPoolPtrExportData_st>::uninit();
+                let uninit = ::core::mem::MaybeUninit::<CUmemPoolPtrExportData_st>::uninit();
                 let ptr = uninit.as_ptr();
-                ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
+                ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize
             },
             0usize,
             concat!(
@@ -8392,9 +8413,9 @@ fn bindgen_test_layout_CUmemPoolPtrExportData_st() {
 }
 impl Default for CUmemPoolPtrExportData_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -8458,27 +8479,27 @@ pub enum CUuserObjectRetain_flags_enum {
 }
 pub use self::CUuserObjectRetain_flags_enum as CUuserObjectRetain_flags;
 extern "C" {
-    pub fn cuGetErrorString(error: CUresult, pStr: *mut *const ::std::os::raw::c_char) -> CUresult;
+    pub fn cuGetErrorString(error: CUresult, pStr: *mut *const core::ffi::c_char) -> CUresult;
 }
 extern "C" {
-    pub fn cuGetErrorName(error: CUresult, pStr: *mut *const ::std::os::raw::c_char) -> CUresult;
+    pub fn cuGetErrorName(error: CUresult, pStr: *mut *const core::ffi::c_char) -> CUresult;
 }
 extern "C" {
-    pub fn cuInit(Flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuInit(Flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
-    pub fn cuDriverGetVersion(driverVersion: *mut ::std::os::raw::c_int) -> CUresult;
+    pub fn cuDriverGetVersion(driverVersion: *mut core::ffi::c_int) -> CUresult;
 }
 extern "C" {
-    pub fn cuDeviceGet(device: *mut CUdevice, ordinal: ::std::os::raw::c_int) -> CUresult;
+    pub fn cuDeviceGet(device: *mut CUdevice, ordinal: core::ffi::c_int) -> CUresult;
 }
 extern "C" {
-    pub fn cuDeviceGetCount(count: *mut ::std::os::raw::c_int) -> CUresult;
+    pub fn cuDeviceGetCount(count: *mut core::ffi::c_int) -> CUresult;
 }
 extern "C" {
     pub fn cuDeviceGetName(
-        name: *mut ::std::os::raw::c_char,
-        len: ::std::os::raw::c_int,
+        name: *mut core::ffi::c_char,
+        len: core::ffi::c_int,
         dev: CUdevice,
     ) -> CUresult;
 }
@@ -8487,8 +8508,8 @@ extern "C" {
 }
 extern "C" {
     pub fn cuDeviceGetLuid(
-        luid: *mut ::std::os::raw::c_char,
-        deviceNodeMask: *mut ::std::os::raw::c_uint,
+        luid: *mut core::ffi::c_char,
+        deviceNodeMask: *mut core::ffi::c_uint,
         dev: CUdevice,
     ) -> CUresult;
 }
@@ -8499,22 +8520,22 @@ extern "C" {
     pub fn cuDeviceGetTexture1DLinearMaxWidth(
         maxWidthInElements: *mut usize,
         format: CUarray_format,
-        numChannels: ::std::os::raw::c_uint,
+        numChannels: core::ffi::c_uint,
         dev: CUdevice,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuDeviceGetAttribute(
-        pi: *mut ::std::os::raw::c_int,
+        pi: *mut core::ffi::c_int,
         attrib: CUdevice_attribute,
         dev: CUdevice,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::std::os::raw::c_void,
+        nvSciSyncAttrList: *mut ::core::ffi::c_void,
         dev: CUdevice,
-        flags: ::std::os::raw::c_int,
+        flags: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
@@ -8531,8 +8552,8 @@ extern "C" {
 }
 extern "C" {
     pub fn cuDeviceComputeCapability(
-        major: *mut ::std::os::raw::c_int,
-        minor: *mut ::std::os::raw::c_int,
+        major: *mut core::ffi::c_int,
+        minor: *mut core::ffi::c_int,
         dev: CUdevice,
     ) -> CUresult;
 }
@@ -8543,13 +8564,13 @@ extern "C" {
     pub fn cuDevicePrimaryCtxRelease_v2(dev: CUdevice) -> CUresult;
 }
 extern "C" {
-    pub fn cuDevicePrimaryCtxSetFlags_v2(dev: CUdevice, flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuDevicePrimaryCtxSetFlags_v2(dev: CUdevice, flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuDevicePrimaryCtxGetState(
         dev: CUdevice,
-        flags: *mut ::std::os::raw::c_uint,
-        active: *mut ::std::os::raw::c_int,
+        flags: *mut core::ffi::c_uint,
+        active: *mut core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
@@ -8558,7 +8579,7 @@ extern "C" {
 extern "C" {
     pub fn cuCtxCreate_v2(
         pctx: *mut CUcontext,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
         dev: CUdevice,
     ) -> CUresult;
 }
@@ -8581,7 +8602,7 @@ extern "C" {
     pub fn cuCtxGetDevice(device: *mut CUdevice) -> CUresult;
 }
 extern "C" {
-    pub fn cuCtxGetFlags(flags: *mut ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuCtxGetFlags(flags: *mut core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuCtxSynchronize() -> CUresult;
@@ -8605,45 +8626,42 @@ extern "C" {
     pub fn cuCtxSetSharedMemConfig(config: CUsharedconfig) -> CUresult;
 }
 extern "C" {
-    pub fn cuCtxGetApiVersion(ctx: CUcontext, version: *mut ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuCtxGetApiVersion(ctx: CUcontext, version: *mut core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuCtxGetStreamPriorityRange(
-        leastPriority: *mut ::std::os::raw::c_int,
-        greatestPriority: *mut ::std::os::raw::c_int,
+        leastPriority: *mut core::ffi::c_int,
+        greatestPriority: *mut core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuCtxResetPersistingL2Cache() -> CUresult;
 }
 extern "C" {
-    pub fn cuCtxAttach(pctx: *mut CUcontext, flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuCtxAttach(pctx: *mut CUcontext, flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuCtxDetach(ctx: CUcontext) -> CUresult;
 }
 extern "C" {
-    pub fn cuModuleLoad(module: *mut CUmodule, fname: *const ::std::os::raw::c_char) -> CUresult;
+    pub fn cuModuleLoad(module: *mut CUmodule, fname: *const core::ffi::c_char) -> CUresult;
 }
 extern "C" {
-    pub fn cuModuleLoadData(
-        module: *mut CUmodule,
-        image: *const ::std::os::raw::c_void,
-    ) -> CUresult;
+    pub fn cuModuleLoadData(module: *mut CUmodule, image: *const ::core::ffi::c_void) -> CUresult;
 }
 extern "C" {
     pub fn cuModuleLoadDataEx(
         module: *mut CUmodule,
-        image: *const ::std::os::raw::c_void,
-        numOptions: ::std::os::raw::c_uint,
+        image: *const ::core::ffi::c_void,
+        numOptions: core::ffi::c_uint,
         options: *mut CUjit_option,
-        optionValues: *mut *mut ::std::os::raw::c_void,
+        optionValues: *mut *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuModuleLoadFatBinary(
         module: *mut CUmodule,
-        fatCubin: *const ::std::os::raw::c_void,
+        fatCubin: *const ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
@@ -8653,7 +8671,7 @@ extern "C" {
     pub fn cuModuleGetFunction(
         hfunc: *mut CUfunction,
         hmod: CUmodule,
-        name: *const ::std::os::raw::c_char,
+        name: *const core::ffi::c_char,
     ) -> CUresult;
 }
 extern "C" {
@@ -8661,28 +8679,28 @@ extern "C" {
         dptr: *mut CUdeviceptr,
         bytes: *mut usize,
         hmod: CUmodule,
-        name: *const ::std::os::raw::c_char,
+        name: *const core::ffi::c_char,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuModuleGetTexRef(
         pTexRef: *mut CUtexref,
         hmod: CUmodule,
-        name: *const ::std::os::raw::c_char,
+        name: *const core::ffi::c_char,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuModuleGetSurfRef(
         pSurfRef: *mut CUsurfref,
         hmod: CUmodule,
-        name: *const ::std::os::raw::c_char,
+        name: *const core::ffi::c_char,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLinkCreate_v2(
-        numOptions: ::std::os::raw::c_uint,
+        numOptions: core::ffi::c_uint,
         options: *mut CUjit_option,
-        optionValues: *mut *mut ::std::os::raw::c_void,
+        optionValues: *mut *mut ::core::ffi::c_void,
         stateOut: *mut CUlinkState,
     ) -> CUresult;
 }
@@ -8690,28 +8708,28 @@ extern "C" {
     pub fn cuLinkAddData_v2(
         state: CUlinkState,
         type_: CUjitInputType,
-        data: *mut ::std::os::raw::c_void,
+        data: *mut ::core::ffi::c_void,
         size: usize,
-        name: *const ::std::os::raw::c_char,
-        numOptions: ::std::os::raw::c_uint,
+        name: *const core::ffi::c_char,
+        numOptions: core::ffi::c_uint,
         options: *mut CUjit_option,
-        optionValues: *mut *mut ::std::os::raw::c_void,
+        optionValues: *mut *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLinkAddFile_v2(
         state: CUlinkState,
         type_: CUjitInputType,
-        path: *const ::std::os::raw::c_char,
-        numOptions: ::std::os::raw::c_uint,
+        path: *const core::ffi::c_char,
+        numOptions: core::ffi::c_uint,
         options: *mut CUjit_option,
-        optionValues: *mut *mut ::std::os::raw::c_void,
+        optionValues: *mut *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLinkComplete(
         state: CUlinkState,
-        cubinOut: *mut *mut ::std::os::raw::c_void,
+        cubinOut: *mut *mut ::core::ffi::c_void,
         sizeOut: *mut usize,
     ) -> CUresult;
 }
@@ -8730,7 +8748,7 @@ extern "C" {
         pPitch: *mut usize,
         WidthInBytes: usize,
         Height: usize,
-        ElementSizeBytes: ::std::os::raw::c_uint,
+        ElementSizeBytes: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -8744,48 +8762,48 @@ extern "C" {
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuMemAllocHost_v2(pp: *mut *mut ::std::os::raw::c_void, bytesize: usize) -> CUresult;
+    pub fn cuMemAllocHost_v2(pp: *mut *mut ::core::ffi::c_void, bytesize: usize) -> CUresult;
 }
 extern "C" {
-    pub fn cuMemFreeHost(p: *mut ::std::os::raw::c_void) -> CUresult;
+    pub fn cuMemFreeHost(p: *mut ::core::ffi::c_void) -> CUresult;
 }
 extern "C" {
     pub fn cuMemHostAlloc(
-        pp: *mut *mut ::std::os::raw::c_void,
+        pp: *mut *mut ::core::ffi::c_void,
         bytesize: usize,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemHostGetDevicePointer_v2(
         pdptr: *mut CUdeviceptr,
-        p: *mut ::std::os::raw::c_void,
-        Flags: ::std::os::raw::c_uint,
+        p: *mut ::core::ffi::c_void,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemHostGetFlags(
-        pFlags: *mut ::std::os::raw::c_uint,
-        p: *mut ::std::os::raw::c_void,
+        pFlags: *mut core::ffi::c_uint,
+        p: *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemAllocManaged(
         dptr: *mut CUdeviceptr,
         bytesize: usize,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuDeviceGetByPCIBusId(
         dev: *mut CUdevice,
-        pciBusId: *const ::std::os::raw::c_char,
+        pciBusId: *const core::ffi::c_char,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuDeviceGetPCIBusId(
-        pciBusId: *mut ::std::os::raw::c_char,
-        len: ::std::os::raw::c_int,
+        pciBusId: *mut core::ffi::c_char,
+        len: core::ffi::c_int,
         dev: CUdevice,
     ) -> CUresult;
 }
@@ -8802,7 +8820,7 @@ extern "C" {
     pub fn cuIpcOpenMemHandle_v2(
         pdptr: *mut CUdeviceptr,
         handle: CUipcMemHandle,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -8810,13 +8828,13 @@ extern "C" {
 }
 extern "C" {
     pub fn cuMemHostRegister_v2(
-        p: *mut ::std::os::raw::c_void,
+        p: *mut ::core::ffi::c_void,
         bytesize: usize,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuMemHostUnregister(p: *mut ::std::os::raw::c_void) -> CUresult;
+    pub fn cuMemHostUnregister(p: *mut ::core::ffi::c_void) -> CUresult;
 }
 extern "C" {
     pub fn cuMemcpy(dst: CUdeviceptr, src: CUdeviceptr, ByteCount: usize) -> CUresult;
@@ -8833,13 +8851,13 @@ extern "C" {
 extern "C" {
     pub fn cuMemcpyHtoD_v2(
         dstDevice: CUdeviceptr,
-        srcHost: *const ::std::os::raw::c_void,
+        srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemcpyDtoH_v2(
-        dstHost: *mut ::std::os::raw::c_void,
+        dstHost: *mut ::core::ffi::c_void,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
     ) -> CUresult;
@@ -8871,13 +8889,13 @@ extern "C" {
     pub fn cuMemcpyHtoA_v2(
         dstArray: CUarray,
         dstOffset: usize,
-        srcHost: *const ::std::os::raw::c_void,
+        srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemcpyAtoH_v2(
-        dstHost: *mut ::std::os::raw::c_void,
+        dstHost: *mut ::core::ffi::c_void,
         srcArray: CUarray,
         srcOffset: usize,
         ByteCount: usize,
@@ -8925,14 +8943,14 @@ extern "C" {
 extern "C" {
     pub fn cuMemcpyHtoDAsync_v2(
         dstDevice: CUdeviceptr,
-        srcHost: *const ::std::os::raw::c_void,
+        srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
         hStream: CUstream,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemcpyDtoHAsync_v2(
-        dstHost: *mut ::std::os::raw::c_void,
+        dstHost: *mut ::core::ffi::c_void,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
         hStream: CUstream,
@@ -8950,14 +8968,14 @@ extern "C" {
     pub fn cuMemcpyHtoAAsync_v2(
         dstArray: CUarray,
         dstOffset: usize,
-        srcHost: *const ::std::os::raw::c_void,
+        srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
         hStream: CUstream,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemcpyAtoHAsync_v2(
-        dstHost: *mut ::std::os::raw::c_void,
+        dstHost: *mut ::core::ffi::c_void,
         srcArray: CUarray,
         srcOffset: usize,
         ByteCount: usize,
@@ -8974,25 +8992,19 @@ extern "C" {
     pub fn cuMemcpy3DPeerAsync(pCopy: *const CUDA_MEMCPY3D_PEER, hStream: CUstream) -> CUresult;
 }
 extern "C" {
-    pub fn cuMemsetD8_v2(dstDevice: CUdeviceptr, uc: ::std::os::raw::c_uchar, N: usize)
-        -> CUresult;
+    pub fn cuMemsetD8_v2(dstDevice: CUdeviceptr, uc: core::ffi::c_uchar, N: usize) -> CUresult;
 }
 extern "C" {
-    pub fn cuMemsetD16_v2(
-        dstDevice: CUdeviceptr,
-        us: ::std::os::raw::c_ushort,
-        N: usize,
-    ) -> CUresult;
+    pub fn cuMemsetD16_v2(dstDevice: CUdeviceptr, us: core::ffi::c_ushort, N: usize) -> CUresult;
 }
 extern "C" {
-    pub fn cuMemsetD32_v2(dstDevice: CUdeviceptr, ui: ::std::os::raw::c_uint, N: usize)
-        -> CUresult;
+    pub fn cuMemsetD32_v2(dstDevice: CUdeviceptr, ui: core::ffi::c_uint, N: usize) -> CUresult;
 }
 extern "C" {
     pub fn cuMemsetD2D8_v2(
         dstDevice: CUdeviceptr,
         dstPitch: usize,
-        uc: ::std::os::raw::c_uchar,
+        uc: core::ffi::c_uchar,
         Width: usize,
         Height: usize,
     ) -> CUresult;
@@ -9001,7 +9013,7 @@ extern "C" {
     pub fn cuMemsetD2D16_v2(
         dstDevice: CUdeviceptr,
         dstPitch: usize,
-        us: ::std::os::raw::c_ushort,
+        us: core::ffi::c_ushort,
         Width: usize,
         Height: usize,
     ) -> CUresult;
@@ -9010,7 +9022,7 @@ extern "C" {
     pub fn cuMemsetD2D32_v2(
         dstDevice: CUdeviceptr,
         dstPitch: usize,
-        ui: ::std::os::raw::c_uint,
+        ui: core::ffi::c_uint,
         Width: usize,
         Height: usize,
     ) -> CUresult;
@@ -9018,7 +9030,7 @@ extern "C" {
 extern "C" {
     pub fn cuMemsetD8Async(
         dstDevice: CUdeviceptr,
-        uc: ::std::os::raw::c_uchar,
+        uc: core::ffi::c_uchar,
         N: usize,
         hStream: CUstream,
     ) -> CUresult;
@@ -9026,7 +9038,7 @@ extern "C" {
 extern "C" {
     pub fn cuMemsetD16Async(
         dstDevice: CUdeviceptr,
-        us: ::std::os::raw::c_ushort,
+        us: core::ffi::c_ushort,
         N: usize,
         hStream: CUstream,
     ) -> CUresult;
@@ -9034,7 +9046,7 @@ extern "C" {
 extern "C" {
     pub fn cuMemsetD32Async(
         dstDevice: CUdeviceptr,
-        ui: ::std::os::raw::c_uint,
+        ui: core::ffi::c_uint,
         N: usize,
         hStream: CUstream,
     ) -> CUresult;
@@ -9043,7 +9055,7 @@ extern "C" {
     pub fn cuMemsetD2D8Async(
         dstDevice: CUdeviceptr,
         dstPitch: usize,
-        uc: ::std::os::raw::c_uchar,
+        uc: core::ffi::c_uchar,
         Width: usize,
         Height: usize,
         hStream: CUstream,
@@ -9053,7 +9065,7 @@ extern "C" {
     pub fn cuMemsetD2D16Async(
         dstDevice: CUdeviceptr,
         dstPitch: usize,
-        us: ::std::os::raw::c_ushort,
+        us: core::ffi::c_ushort,
         Width: usize,
         Height: usize,
         hStream: CUstream,
@@ -9063,7 +9075,7 @@ extern "C" {
     pub fn cuMemsetD2D32Async(
         dstDevice: CUdeviceptr,
         dstPitch: usize,
-        ui: ::std::os::raw::c_uint,
+        ui: core::ffi::c_uint,
         Width: usize,
         Height: usize,
         hStream: CUstream,
@@ -9097,7 +9109,7 @@ extern "C" {
     pub fn cuArrayGetPlane(
         pPlaneArray: *mut CUarray,
         hArray: CUarray,
-        planeIdx: ::std::os::raw::c_uint,
+        planeIdx: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9119,14 +9131,14 @@ extern "C" {
     pub fn cuMipmappedArrayCreate(
         pHandle: *mut CUmipmappedArray,
         pMipmappedArrayDesc: *const CUDA_ARRAY3D_DESCRIPTOR,
-        numMipmapLevels: ::std::os::raw::c_uint,
+        numMipmapLevels: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMipmappedArrayGetLevel(
         pLevelArray: *mut CUarray,
         hMipmappedArray: CUmipmappedArray,
-        level: ::std::os::raw::c_uint,
+        level: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9138,7 +9150,7 @@ extern "C" {
         size: usize,
         alignment: usize,
         addr: CUdeviceptr,
-        flags: ::std::os::raw::c_ulonglong,
+        flags: core::ffi::c_ulonglong,
     ) -> CUresult;
 }
 extern "C" {
@@ -9149,7 +9161,7 @@ extern "C" {
         handle: *mut CUmemGenericAllocationHandle,
         size: usize,
         prop: *const CUmemAllocationProp,
-        flags: ::std::os::raw::c_ulonglong,
+        flags: core::ffi::c_ulonglong,
     ) -> CUresult;
 }
 extern "C" {
@@ -9161,13 +9173,13 @@ extern "C" {
         size: usize,
         offset: usize,
         handle: CUmemGenericAllocationHandle,
-        flags: ::std::os::raw::c_ulonglong,
+        flags: core::ffi::c_ulonglong,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemMapArrayAsync(
         mapInfoList: *mut CUarrayMapInfo,
-        count: ::std::os::raw::c_uint,
+        count: core::ffi::c_uint,
         hStream: CUstream,
     ) -> CUresult;
 }
@@ -9184,23 +9196,23 @@ extern "C" {
 }
 extern "C" {
     pub fn cuMemGetAccess(
-        flags: *mut ::std::os::raw::c_ulonglong,
+        flags: *mut core::ffi::c_ulonglong,
         location: *const CUmemLocation,
         ptr: CUdeviceptr,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemExportToShareableHandle(
-        shareableHandle: *mut ::std::os::raw::c_void,
+        shareableHandle: *mut ::core::ffi::c_void,
         handle: CUmemGenericAllocationHandle,
         handleType: CUmemAllocationHandleType,
-        flags: ::std::os::raw::c_ulonglong,
+        flags: core::ffi::c_ulonglong,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemImportFromShareableHandle(
         handle: *mut CUmemGenericAllocationHandle,
-        osHandle: *mut ::std::os::raw::c_void,
+        osHandle: *mut ::core::ffi::c_void,
         shHandleType: CUmemAllocationHandleType,
     ) -> CUresult;
 }
@@ -9220,7 +9232,7 @@ extern "C" {
 extern "C" {
     pub fn cuMemRetainAllocationHandle(
         handle: *mut CUmemGenericAllocationHandle,
-        addr: *mut ::std::os::raw::c_void,
+        addr: *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
@@ -9236,14 +9248,14 @@ extern "C" {
     pub fn cuMemPoolSetAttribute(
         pool: CUmemoryPool,
         attr: CUmemPool_attribute,
-        value: *mut ::std::os::raw::c_void,
+        value: *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemPoolGetAttribute(
         pool: CUmemoryPool,
         attr: CUmemPool_attribute,
-        value: *mut ::std::os::raw::c_void,
+        value: *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
@@ -9276,18 +9288,18 @@ extern "C" {
 }
 extern "C" {
     pub fn cuMemPoolExportToShareableHandle(
-        handle_out: *mut ::std::os::raw::c_void,
+        handle_out: *mut ::core::ffi::c_void,
         pool: CUmemoryPool,
         handleType: CUmemAllocationHandleType,
-        flags: ::std::os::raw::c_ulonglong,
+        flags: core::ffi::c_ulonglong,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuMemPoolImportFromShareableHandle(
         pool_out: *mut CUmemoryPool,
-        handle: *mut ::std::os::raw::c_void,
+        handle: *mut ::core::ffi::c_void,
         handleType: CUmemAllocationHandleType,
-        flags: ::std::os::raw::c_ulonglong,
+        flags: core::ffi::c_ulonglong,
     ) -> CUresult;
 }
 extern "C" {
@@ -9305,7 +9317,7 @@ extern "C" {
 }
 extern "C" {
     pub fn cuPointerGetAttribute(
-        data: *mut ::std::os::raw::c_void,
+        data: *mut ::core::ffi::c_void,
         attribute: CUpointer_attribute,
         ptr: CUdeviceptr,
     ) -> CUresult;
@@ -9328,7 +9340,7 @@ extern "C" {
 }
 extern "C" {
     pub fn cuMemRangeGetAttribute(
-        data: *mut ::std::os::raw::c_void,
+        data: *mut ::core::ffi::c_void,
         dataSize: usize,
         attribute: CUmem_range_attribute,
         devPtr: CUdeviceptr,
@@ -9337,7 +9349,7 @@ extern "C" {
 }
 extern "C" {
     pub fn cuMemRangeGetAttributes(
-        data: *mut *mut ::std::os::raw::c_void,
+        data: *mut *mut ::core::ffi::c_void,
         dataSizes: *mut usize,
         attributes: *mut CUmem_range_attribute,
         numAttributes: usize,
@@ -9347,35 +9359,34 @@ extern "C" {
 }
 extern "C" {
     pub fn cuPointerSetAttribute(
-        value: *const ::std::os::raw::c_void,
+        value: *const ::core::ffi::c_void,
         attribute: CUpointer_attribute,
         ptr: CUdeviceptr,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuPointerGetAttributes(
-        numAttributes: ::std::os::raw::c_uint,
+        numAttributes: core::ffi::c_uint,
         attributes: *mut CUpointer_attribute,
-        data: *mut *mut ::std::os::raw::c_void,
+        data: *mut *mut ::core::ffi::c_void,
         ptr: CUdeviceptr,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuStreamCreate(phStream: *mut CUstream, Flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuStreamCreate(phStream: *mut CUstream, Flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuStreamCreateWithPriority(
         phStream: *mut CUstream,
-        flags: ::std::os::raw::c_uint,
-        priority: ::std::os::raw::c_int,
+        flags: core::ffi::c_uint,
+        priority: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuStreamGetPriority(hStream: CUstream, priority: *mut ::std::os::raw::c_int)
-        -> CUresult;
+    pub fn cuStreamGetPriority(hStream: CUstream, priority: *mut core::ffi::c_int) -> CUresult;
 }
 extern "C" {
-    pub fn cuStreamGetFlags(hStream: CUstream, flags: *mut ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuStreamGetFlags(hStream: CUstream, flags: *mut core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuStreamGetCtx(hStream: CUstream, pctx: *mut CUcontext) -> CUresult;
@@ -9384,15 +9395,15 @@ extern "C" {
     pub fn cuStreamWaitEvent(
         hStream: CUstream,
         hEvent: CUevent,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuStreamAddCallback(
         hStream: CUstream,
         callback: CUstreamCallback,
-        userData: *mut ::std::os::raw::c_void,
-        flags: ::std::os::raw::c_uint,
+        userData: *mut ::core::ffi::c_void,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9432,7 +9443,7 @@ extern "C" {
         hStream: CUstream,
         dependencies: *mut CUgraphNode,
         numDependencies: usize,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9440,7 +9451,7 @@ extern "C" {
         hStream: CUstream,
         dptr: CUdeviceptr,
         length: usize,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9470,7 +9481,7 @@ extern "C" {
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuEventCreate(phEvent: *mut CUevent, Flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuEventCreate(phEvent: *mut CUevent, Flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuEventRecord(hEvent: CUevent, hStream: CUstream) -> CUresult;
@@ -9479,7 +9490,7 @@ extern "C" {
     pub fn cuEventRecordWithFlags(
         hEvent: CUevent,
         hStream: CUstream,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9527,7 +9538,7 @@ extern "C" {
     pub fn cuSignalExternalSemaphoresAsync(
         extSemArray: *const CUexternalSemaphore,
         paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
-        numExtSems: ::std::os::raw::c_uint,
+        numExtSems: core::ffi::c_uint,
         stream: CUstream,
     ) -> CUresult;
 }
@@ -9535,7 +9546,7 @@ extern "C" {
     pub fn cuWaitExternalSemaphoresAsync(
         extSemArray: *const CUexternalSemaphore,
         paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
-        numExtSems: ::std::os::raw::c_uint,
+        numExtSems: core::ffi::c_uint,
         stream: CUstream,
     ) -> CUresult;
 }
@@ -9547,7 +9558,7 @@ extern "C" {
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint32_t,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9555,7 +9566,7 @@ extern "C" {
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint64_t,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9563,7 +9574,7 @@ extern "C" {
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint32_t,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9571,20 +9582,20 @@ extern "C" {
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint64_t,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuStreamBatchMemOp(
         stream: CUstream,
-        count: ::std::os::raw::c_uint,
+        count: core::ffi::c_uint,
         paramArray: *mut CUstreamBatchMemOpParams,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuFuncGetAttribute(
-        pi: *mut ::std::os::raw::c_int,
+        pi: *mut core::ffi::c_int,
         attrib: CUfunction_attribute,
         hfunc: CUfunction,
     ) -> CUresult;
@@ -9593,7 +9604,7 @@ extern "C" {
     pub fn cuFuncSetAttribute(
         hfunc: CUfunction,
         attrib: CUfunction_attribute,
-        value: ::std::os::raw::c_int,
+        value: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
@@ -9608,76 +9619,76 @@ extern "C" {
 extern "C" {
     pub fn cuLaunchKernel(
         f: CUfunction,
-        gridDimX: ::std::os::raw::c_uint,
-        gridDimY: ::std::os::raw::c_uint,
-        gridDimZ: ::std::os::raw::c_uint,
-        blockDimX: ::std::os::raw::c_uint,
-        blockDimY: ::std::os::raw::c_uint,
-        blockDimZ: ::std::os::raw::c_uint,
-        sharedMemBytes: ::std::os::raw::c_uint,
+        gridDimX: core::ffi::c_uint,
+        gridDimY: core::ffi::c_uint,
+        gridDimZ: core::ffi::c_uint,
+        blockDimX: core::ffi::c_uint,
+        blockDimY: core::ffi::c_uint,
+        blockDimZ: core::ffi::c_uint,
+        sharedMemBytes: core::ffi::c_uint,
         hStream: CUstream,
-        kernelParams: *mut *mut ::std::os::raw::c_void,
-        extra: *mut *mut ::std::os::raw::c_void,
+        kernelParams: *mut *mut ::core::ffi::c_void,
+        extra: *mut *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLaunchCooperativeKernel(
         f: CUfunction,
-        gridDimX: ::std::os::raw::c_uint,
-        gridDimY: ::std::os::raw::c_uint,
-        gridDimZ: ::std::os::raw::c_uint,
-        blockDimX: ::std::os::raw::c_uint,
-        blockDimY: ::std::os::raw::c_uint,
-        blockDimZ: ::std::os::raw::c_uint,
-        sharedMemBytes: ::std::os::raw::c_uint,
+        gridDimX: core::ffi::c_uint,
+        gridDimY: core::ffi::c_uint,
+        gridDimZ: core::ffi::c_uint,
+        blockDimX: core::ffi::c_uint,
+        blockDimY: core::ffi::c_uint,
+        blockDimZ: core::ffi::c_uint,
+        sharedMemBytes: core::ffi::c_uint,
         hStream: CUstream,
-        kernelParams: *mut *mut ::std::os::raw::c_void,
+        kernelParams: *mut *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLaunchCooperativeKernelMultiDevice(
         launchParamsList: *mut CUDA_LAUNCH_PARAMS,
-        numDevices: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
+        numDevices: core::ffi::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLaunchHostFunc(
         hStream: CUstream,
         fn_: CUhostFn,
-        userData: *mut ::std::os::raw::c_void,
+        userData: *mut ::core::ffi::c_void,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuFuncSetBlockShape(
         hfunc: CUfunction,
-        x: ::std::os::raw::c_int,
-        y: ::std::os::raw::c_int,
-        z: ::std::os::raw::c_int,
+        x: core::ffi::c_int,
+        y: core::ffi::c_int,
+        z: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuFuncSetSharedSize(hfunc: CUfunction, bytes: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuFuncSetSharedSize(hfunc: CUfunction, bytes: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
-    pub fn cuParamSetSize(hfunc: CUfunction, numbytes: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuParamSetSize(hfunc: CUfunction, numbytes: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuParamSeti(
         hfunc: CUfunction,
-        offset: ::std::os::raw::c_int,
-        value: ::std::os::raw::c_uint,
+        offset: core::ffi::c_int,
+        value: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuParamSetf(hfunc: CUfunction, offset: ::std::os::raw::c_int, value: f32) -> CUresult;
+    pub fn cuParamSetf(hfunc: CUfunction, offset: core::ffi::c_int, value: f32) -> CUresult;
 }
 extern "C" {
     pub fn cuParamSetv(
         hfunc: CUfunction,
-        offset: ::std::os::raw::c_int,
-        ptr: *mut ::std::os::raw::c_void,
-        numbytes: ::std::os::raw::c_uint,
+        offset: core::ffi::c_int,
+        ptr: *mut ::core::ffi::c_void,
+        numbytes: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -9686,27 +9697,27 @@ extern "C" {
 extern "C" {
     pub fn cuLaunchGrid(
         f: CUfunction,
-        grid_width: ::std::os::raw::c_int,
-        grid_height: ::std::os::raw::c_int,
+        grid_width: core::ffi::c_int,
+        grid_height: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuLaunchGridAsync(
         f: CUfunction,
-        grid_width: ::std::os::raw::c_int,
-        grid_height: ::std::os::raw::c_int,
+        grid_width: core::ffi::c_int,
+        grid_height: core::ffi::c_int,
         hStream: CUstream,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuParamSetTexRef(
         hfunc: CUfunction,
-        texunit: ::std::os::raw::c_int,
+        texunit: core::ffi::c_int,
         hTexRef: CUtexref,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuGraphCreate(phGraph: *mut CUgraph, flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuGraphCreate(phGraph: *mut CUgraph, flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuGraphAddKernelNode(
@@ -9959,7 +9970,7 @@ extern "C" {
         phGraphExec: *mut CUgraphExec,
         hGraph: CUgraph,
         phErrorNode: *mut CUgraphNode,
-        logBuffer: *mut ::std::os::raw::c_char,
+        logBuffer: *mut core::ffi::c_char,
         bufferSize: usize,
     ) -> CUresult;
 }
@@ -10068,98 +10079,98 @@ extern "C" {
 extern "C" {
     pub fn cuGraphDebugDotPrint(
         hGraph: CUgraph,
-        path: *const ::std::os::raw::c_char,
-        flags: ::std::os::raw::c_uint,
+        path: *const core::ffi::c_char,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuUserObjectCreate(
         object_out: *mut CUuserObject,
-        ptr: *mut ::std::os::raw::c_void,
+        ptr: *mut ::core::ffi::c_void,
         destroy: CUhostFn,
-        initialRefcount: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
+        initialRefcount: core::ffi::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuUserObjectRetain(object: CUuserObject, count: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuUserObjectRetain(object: CUuserObject, count: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
-    pub fn cuUserObjectRelease(object: CUuserObject, count: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuUserObjectRelease(object: CUuserObject, count: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuGraphRetainUserObject(
         graph: CUgraph,
         object: CUuserObject,
-        count: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
+        count: core::ffi::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuGraphReleaseUserObject(
         graph: CUgraph,
         object: CUuserObject,
-        count: ::std::os::raw::c_uint,
+        count: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuOccupancyMaxActiveBlocksPerMultiprocessor(
-        numBlocks: *mut ::std::os::raw::c_int,
+        numBlocks: *mut core::ffi::c_int,
         func: CUfunction,
-        blockSize: ::std::os::raw::c_int,
+        blockSize: core::ffi::c_int,
         dynamicSMemSize: usize,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
-        numBlocks: *mut ::std::os::raw::c_int,
+        numBlocks: *mut core::ffi::c_int,
         func: CUfunction,
-        blockSize: ::std::os::raw::c_int,
+        blockSize: core::ffi::c_int,
         dynamicSMemSize: usize,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuOccupancyMaxPotentialBlockSize(
-        minGridSize: *mut ::std::os::raw::c_int,
-        blockSize: *mut ::std::os::raw::c_int,
+        minGridSize: *mut core::ffi::c_int,
+        blockSize: *mut core::ffi::c_int,
         func: CUfunction,
         blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
         dynamicSMemSize: usize,
-        blockSizeLimit: ::std::os::raw::c_int,
+        blockSizeLimit: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuOccupancyMaxPotentialBlockSizeWithFlags(
-        minGridSize: *mut ::std::os::raw::c_int,
-        blockSize: *mut ::std::os::raw::c_int,
+        minGridSize: *mut core::ffi::c_int,
+        blockSize: *mut core::ffi::c_int,
         func: CUfunction,
         blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
         dynamicSMemSize: usize,
-        blockSizeLimit: ::std::os::raw::c_int,
-        flags: ::std::os::raw::c_uint,
+        blockSizeLimit: core::ffi::c_int,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuOccupancyAvailableDynamicSMemPerBlock(
         dynamicSmemSize: *mut usize,
         func: CUfunction,
-        numBlocks: ::std::os::raw::c_int,
-        blockSize: ::std::os::raw::c_int,
+        numBlocks: core::ffi::c_int,
+        blockSize: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuTexRefSetArray(
         hTexRef: CUtexref,
         hArray: CUarray,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuTexRefSetMipmappedArray(
         hTexRef: CUtexref,
         hMipmappedArray: CUmipmappedArray,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -10182,13 +10193,13 @@ extern "C" {
     pub fn cuTexRefSetFormat(
         hTexRef: CUtexref,
         fmt: CUarray_format,
-        NumPackedComponents: ::std::os::raw::c_int,
+        NumPackedComponents: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuTexRefSetAddressMode(
         hTexRef: CUtexref,
-        dim: ::std::os::raw::c_int,
+        dim: core::ffi::c_int,
         am: CUaddress_mode,
     ) -> CUresult;
 }
@@ -10209,16 +10220,13 @@ extern "C" {
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuTexRefSetMaxAnisotropy(
-        hTexRef: CUtexref,
-        maxAniso: ::std::os::raw::c_uint,
-    ) -> CUresult;
+    pub fn cuTexRefSetMaxAnisotropy(hTexRef: CUtexref, maxAniso: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuTexRefSetBorderColor(hTexRef: CUtexref, pBorderColor: *mut f32) -> CUresult;
 }
 extern "C" {
-    pub fn cuTexRefSetFlags(hTexRef: CUtexref, Flags: ::std::os::raw::c_uint) -> CUresult;
+    pub fn cuTexRefSetFlags(hTexRef: CUtexref, Flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuTexRefGetAddress_v2(pdptr: *mut CUdeviceptr, hTexRef: CUtexref) -> CUresult;
@@ -10236,7 +10244,7 @@ extern "C" {
     pub fn cuTexRefGetAddressMode(
         pam: *mut CUaddress_mode,
         hTexRef: CUtexref,
-        dim: ::std::os::raw::c_int,
+        dim: core::ffi::c_int,
     ) -> CUresult;
 }
 extern "C" {
@@ -10245,7 +10253,7 @@ extern "C" {
 extern "C" {
     pub fn cuTexRefGetFormat(
         pFormat: *mut CUarray_format,
-        pNumChannels: *mut ::std::os::raw::c_int,
+        pNumChannels: *mut core::ffi::c_int,
         hTexRef: CUtexref,
     ) -> CUresult;
 }
@@ -10264,7 +10272,7 @@ extern "C" {
 }
 extern "C" {
     pub fn cuTexRefGetMaxAnisotropy(
-        pmaxAniso: *mut ::std::os::raw::c_int,
+        pmaxAniso: *mut core::ffi::c_int,
         hTexRef: CUtexref,
     ) -> CUresult;
 }
@@ -10272,7 +10280,7 @@ extern "C" {
     pub fn cuTexRefGetBorderColor(pBorderColor: *mut f32, hTexRef: CUtexref) -> CUresult;
 }
 extern "C" {
-    pub fn cuTexRefGetFlags(pFlags: *mut ::std::os::raw::c_uint, hTexRef: CUtexref) -> CUresult;
+    pub fn cuTexRefGetFlags(pFlags: *mut core::ffi::c_uint, hTexRef: CUtexref) -> CUresult;
 }
 extern "C" {
     pub fn cuTexRefCreate(pTexRef: *mut CUtexref) -> CUresult;
@@ -10284,7 +10292,7 @@ extern "C" {
     pub fn cuSurfRefSetArray(
         hSurfRef: CUsurfref,
         hArray: CUarray,
-        Flags: ::std::os::raw::c_uint,
+        Flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -10336,21 +10344,20 @@ extern "C" {
 }
 extern "C" {
     pub fn cuDeviceCanAccessPeer(
-        canAccessPeer: *mut ::std::os::raw::c_int,
+        canAccessPeer: *mut core::ffi::c_int,
         dev: CUdevice,
         peerDev: CUdevice,
     ) -> CUresult;
 }
 extern "C" {
-    pub fn cuCtxEnablePeerAccess(peerContext: CUcontext, Flags: ::std::os::raw::c_uint)
-        -> CUresult;
+    pub fn cuCtxEnablePeerAccess(peerContext: CUcontext, Flags: core::ffi::c_uint) -> CUresult;
 }
 extern "C" {
     pub fn cuCtxDisablePeerAccess(peerContext: CUcontext) -> CUresult;
 }
 extern "C" {
     pub fn cuDeviceGetP2PAttribute(
-        value: *mut ::std::os::raw::c_int,
+        value: *mut core::ffi::c_int,
         attrib: CUdevice_P2PAttribute,
         srcDevice: CUdevice,
         dstDevice: CUdevice,
@@ -10363,8 +10370,8 @@ extern "C" {
     pub fn cuGraphicsSubResourceGetMappedArray(
         pArray: *mut CUarray,
         resource: CUgraphicsResource,
-        arrayIndex: ::std::os::raw::c_uint,
-        mipLevel: ::std::os::raw::c_uint,
+        arrayIndex: core::ffi::c_uint,
+        mipLevel: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
@@ -10383,34 +10390,34 @@ extern "C" {
 extern "C" {
     pub fn cuGraphicsResourceSetMapFlags_v2(
         resource: CUgraphicsResource,
-        flags: ::std::os::raw::c_uint,
+        flags: core::ffi::c_uint,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuGraphicsMapResources(
-        count: ::std::os::raw::c_uint,
+        count: core::ffi::c_uint,
         resources: *mut CUgraphicsResource,
         hStream: CUstream,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuGraphicsUnmapResources(
-        count: ::std::os::raw::c_uint,
+        count: core::ffi::c_uint,
         resources: *mut CUgraphicsResource,
         hStream: CUstream,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuGetProcAddress(
-        symbol: *const ::std::os::raw::c_char,
-        pfn: *mut *mut ::std::os::raw::c_void,
-        cudaVersion: ::std::os::raw::c_int,
+        symbol: *const core::ffi::c_char,
+        pfn: *mut *mut ::core::ffi::c_void,
+        cudaVersion: core::ffi::c_int,
         flags: cuuint64_t,
     ) -> CUresult;
 }
 extern "C" {
     pub fn cuGetExportTable(
-        ppExportTable: *mut *const ::std::os::raw::c_void,
+        ppExportTable: *mut *const ::core::ffi::c_void,
         pExportTableId: *const CUuuid,
     ) -> CUresult;
 }

@@ -119,12 +119,9 @@
 
 use crate::driver::{result, sys};
 use crate::jit::Ptx;
-use std::alloc::alloc_zeroed;
-use std::alloc::Layout;
-use std::collections::HashMap;
-use std::ffi::CString;
-use std::marker::PhantomData;
-use std::rc::Rc;
+use alloc::alloc::{alloc_zeroed, Layout};
+use alloc::ffi::{CString, NulError};
+use std::{boxed::Box, collections::BTreeMap, marker::PhantomData, rc::Rc, vec::Vec};
 
 pub use result::CudaError;
 
@@ -278,14 +275,15 @@ pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
     pub(crate) cu_primary_ctx: sys::CUcontext,
     pub(crate) cu_stream: sys::CUstream,
-    pub(crate) modules: HashMap<&'static str, CudaModule>,
+    pub(crate) modules: BTreeMap<&'static str, CudaModule>,
 }
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
-        for (_, module) in self.modules.drain() {
+        for (_, module) in self.modules.iter() {
             unsafe { result::module::unload(module.cu_module) }.unwrap();
         }
+        self.modules.clear();
 
         let stream = std::mem::replace(&mut self.cu_stream, std::ptr::null_mut());
         if !stream.is_null() {
@@ -372,7 +370,7 @@ impl CudaDevice {
 #[derive(Debug)]
 pub struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
-    pub(crate) functions: HashMap<&'static str, CudaFunction>,
+    pub(crate) functions: BTreeMap<&'static str, CudaFunction>,
 }
 
 impl CudaModule {
@@ -630,7 +628,7 @@ impl CudaDeviceBuilder {
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)
             .map_err(BuildError::StreamError)?;
 
-        let mut modules = HashMap::with_capacity(self.ptxs.len() + self.ptx_files.len());
+        let mut modules = BTreeMap::new();
 
         for cu in self.ptx_files.drain(..) {
             let name_c = CString::new(cu.fname).map_err(BuildError::CStringError)?;
@@ -669,7 +667,7 @@ impl CudaDeviceBuilder {
         cu_module: sys::CUmodule,
         fn_names: &[&'static str],
     ) -> Result<CudaModule, BuildError> {
-        let mut functions = HashMap::with_capacity(fn_names.len());
+        let mut functions = BTreeMap::new();
         for &fn_name in fn_names.iter() {
             let fn_name_c = CString::new(fn_name).map_err(BuildError::CStringError)?;
             let cu_function = unsafe { result::module::get_function(cu_module, fn_name_c) }
@@ -707,15 +705,17 @@ pub enum BuildError {
         symbol: &'static str,
         cuda: CudaError,
     },
-    CStringError(std::ffi::NulError),
+    CStringError(NulError),
 }
 
+#[cfg(feature = "std")]
 impl std::fmt::Display for BuildError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for BuildError {}
 
 /// Marker trait to indicate that the type is valid
