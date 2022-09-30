@@ -22,11 +22,15 @@ impl sys::curandStatus_t {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::fmt::Display for CurandError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
+
+#[cfg(feature = "std")]
+impl std::error::Error for CurandError {}
 
 /// Create new random number generator with the default pseudo rng type.
 ///
