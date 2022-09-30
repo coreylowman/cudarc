@@ -12,11 +12,8 @@
 //! turns into [stream::create()], where [stream] is a module.
 
 use super::sys;
-use std::{
-    ffi::{c_void, CStr},
-    mem::{size_of, MaybeUninit},
-    os::raw::c_uint,
-};
+use core::ffi::{c_uchar, c_uint, c_void, CStr};
+use std::mem::{size_of, MaybeUninit};
 
 /// Wrapper around [sys::CUresult]. See
 /// nvidia's [CUresult docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TYPES.html#group__CUDA__TYPES_1gc6c391505e117393cc2558fff6bfc2e9)
@@ -89,11 +86,12 @@ pub mod device {
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE)
 
     use super::{sys, CudaError};
+    use core::ffi::c_int;
     use std::mem::MaybeUninit;
 
     /// Get a device for a specific ordinal.
     /// See [cuDeviceGet() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8bdd1cc7201304b01357b8034f6587cb).
-    pub fn get(ordinal: std::os::raw::c_int) -> Result<sys::CUdevice, CudaError> {
+    pub fn get(ordinal: c_int) -> Result<sys::CUdevice, CudaError> {
         let mut dev = MaybeUninit::uninit();
         unsafe {
             sys::cuDeviceGet(dev.as_mut_ptr(), ordinal).result()?;
@@ -103,7 +101,7 @@ pub mod device {
 
     /// Gets the number of available devices.
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g52b5ce05cb8c5fb6831b2c0ff2887c74)
-    pub fn get_count() -> Result<std::os::raw::c_int, CudaError> {
+    pub fn get_count() -> Result<c_int, CudaError> {
         let mut count = MaybeUninit::uninit();
         unsafe {
             sys::cuDeviceGetCount(count.as_mut_ptr()).result()?;
@@ -291,7 +289,7 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
 /// 3. The stream should be the stream the memory was allocated on.
 pub unsafe fn memset_d8_async<T>(
     dptr: sys::CUdeviceptr,
-    uc: std::os::raw::c_uchar,
+    uc: c_uchar,
     stream: sys::CUstream,
 ) -> Result<(), CudaError> {
     sys::cuMemsetD8Async(dptr, uc, size_of::<T>(), stream).result()
@@ -367,7 +365,9 @@ pub mod module {
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE)
 
     use super::{sys, CudaError};
-    use std::{ffi::CString, mem::MaybeUninit};
+    use alloc::ffi::CString;
+    use core::ffi::c_void;
+    use std::mem::MaybeUninit;
 
     /// Loads a compute module from a given file.
     ///
@@ -392,7 +392,7 @@ pub mod module {
     ///
     /// # Safety
     /// The image must be properly formed pointer
-    pub unsafe fn load_data(image: *const std::ffi::c_void) -> Result<sys::CUmodule, CudaError> {
+    pub unsafe fn load_data(image: *const c_void) -> Result<sys::CUmodule, CudaError> {
         let mut module = MaybeUninit::uninit();
         sys::cuModuleLoadData(module.as_mut_ptr(), image).result()?;
         Ok(module.assume_init())

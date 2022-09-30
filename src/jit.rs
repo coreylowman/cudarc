@@ -3,13 +3,14 @@
 //! Call [compile_ptx()] or [compile_ptx_with_opts()].
 
 use crate::nvrtc::{result, sys};
-use std::ffi::{CStr, CString};
+use alloc::ffi::CString;
+use core::ffi::{c_char, CStr};
 
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
 #[derive(Debug, Clone)]
 pub struct Ptx {
-    pub(crate) image: Vec<std::os::raw::c_char>,
+    pub(crate) image: Vec<c_char>,
 }
 
 /// Calls [compile_ptx_with_opts] with no options. `src` is the source string

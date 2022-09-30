@@ -3,6 +3,8 @@
 //! 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
 //! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 
+extern crate alloc;
+
 pub mod arrays;
 pub mod cudarc;
 pub mod curand;

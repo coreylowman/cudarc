@@ -1,8 +1,9 @@
 //! A thin wrapper around [sys] providing [Result]s with [NvrtcError].
 
 use super::sys;
-use std::{
-    ffi::{CStr, CString},
+use alloc::ffi::CString;
+use core::{
+    ffi::{c_char, c_int, CStr},
     mem::MaybeUninit,
 };
 
@@ -81,8 +82,8 @@ pub unsafe fn compile_program<O: Clone + Into<Vec<u8>>>(
         .map(|o| CString::new(o).unwrap())
         .collect();
     let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
-    let opts: Vec<*const std::os::raw::c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
-    sys::nvrtcCompileProgram(prog, opts.len() as std::os::raw::c_int, opts.as_ptr()).result()
+    let opts: Vec<*const c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
+    sys::nvrtcCompileProgram(prog, opts.len() as c_int, opts.as_ptr()).result()
 }
 
 /// Releases resources associated with `prog`.
@@ -104,11 +105,11 @@ pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError>
 /// # Safety
 ///
 /// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
-pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::os::raw::c_char>, NvrtcError> {
+pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
 
-    let mut ptx_src: Vec<std::os::raw::c_char> = vec![0i8; size];
+    let mut ptx_src: Vec<c_char> = vec![0i8; size];
     sys::nvrtcGetPTX(prog, ptx_src.as_mut_ptr()).result()?;
     Ok(ptx_src)
 }
@@ -121,13 +122,11 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<std::os::raw::c_cha
 /// # Safety
 ///
 /// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
-pub unsafe fn get_program_log(
-    prog: sys::nvrtcProgram,
-) -> Result<Vec<std::os::raw::c_char>, NvrtcError> {
+pub unsafe fn get_program_log(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
 
-    let mut log_src: Vec<std::os::raw::c_char> = vec![0; size];
+    let mut log_src: Vec<c_char> = vec![0; size];
     sys::nvrtcGetProgramLog(prog, log_src.as_mut_ptr()).result()?;
     Ok(log_src)
 }
