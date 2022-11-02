@@ -1,4 +1,5 @@
-use cudarc::{jit::*, prelude::*};
+#![feature(generic_const_exprs)]
+use cudarc::{jit::*, prelude::*, arrays::{FixedSizeArray, Array}};
 use std::{marker::PhantomData, rc::Rc};
 
 struct Cpu;
@@ -39,12 +40,12 @@ impl<Op: BinaryKernelOp> ForEachCpuImpl<f32, Op> for ForEach<Op> {
     }
 }
 
-impl<T, const M: usize, Op: BinaryKernelOp> ForEachCpuImpl<[T; M], Op> for ForEach<Op>
+impl<T, const A: usize, const B: usize, Op: BinaryKernelOp> ForEachCpuImpl<Array<T, A, B>, Op> for ForEach<Op>
 where
     Self: ForEachCpuImpl<T, Op>,
 {
-    fn foreach(out: &mut [T; M], inp: &[T; M], op: &mut Op) {
-        for i in 0..M {
+    fn foreach(out: &mut Array<T, A, B>, inp: &Array<T, A, B>, op: &mut Op) {
+        for i in 0..A {
             Self::foreach(&mut out[i], &inp[i], op);
         }
     }
@@ -124,7 +125,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .unwrap();
 
-    let a_host: Rc<[f32; 3]> = Rc::new([1.0, 2.0, 3.0]);
+    let a_host: Rc<FixedSizeArray<f32, 3>> = Rc::new([1.0, 2.0, 3.0].into());
     let mut b_host = a_host.clone();
     let mut c_host = a_host.clone();
 

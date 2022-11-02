@@ -1,3 +1,4 @@
+use cudarc::arrays::FixedSizeArray;
 use cudarc::cudarc::CudaDeviceBuilder;
 use cudarc::rng::CudaRng;
 
@@ -5,7 +6,7 @@ fn main() {
     let dev = CudaDeviceBuilder::new(0).build().unwrap();
     let rng = CudaRng::new(0, dev.clone()).unwrap();
 
-    let mut t_dev = dev.alloc_zeros::<[f32; 10]>().unwrap();
+    let mut t_dev = dev.alloc_zeros::<FixedSizeArray<f32, 10>>().unwrap();
     rng.fill_with_uniform(&mut t_dev).unwrap();
     let t_host = t_dev.into_host().unwrap();
     println!("Uniform: {:?}", t_host);
