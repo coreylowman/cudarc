@@ -1,5 +1,3 @@
-#![feature(generic_associated_types)]
-
 use cudarc::prelude::*;
 use std::rc::Rc;
 
