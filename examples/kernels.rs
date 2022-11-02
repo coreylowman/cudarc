@@ -1,5 +1,5 @@
 use cudarc::{jit::*, prelude::*};
-use std::{marker::PhantomData, rc::Rc};
+use std::{marker::PhantomData, sync::Arc};
 
 struct Cpu;
 
@@ -16,15 +16,15 @@ pub trait LaunchKernel<K, Args> {
     fn launch(&self, args: Args) -> Result<(), Self::Err>;
 }
 
-impl<T: Clone, Op> LaunchKernel<ForEach<Op>, (&mut Rc<T>, &Rc<T>, Op)> for Cpu
+impl<T: Clone, Op> LaunchKernel<ForEach<Op>, (&mut Arc<T>, &Arc<T>, Op)> for Cpu
 where
     Op: BinaryKernelOp,
     ForEach<Op>: ForEachCpuImpl<T, Op>,
 {
     type Err = ();
 
-    fn launch(&self, (out, inp, mut op): (&mut Rc<T>, &Rc<T>, Op)) -> Result<(), Self::Err> {
-        ForEach::foreach(Rc::make_mut(out), inp.as_ref(), &mut op);
+    fn launch(&self, (out, inp, mut op): (&mut Arc<T>, &Arc<T>, Op)) -> Result<(), Self::Err> {
+        ForEach::foreach(Arc::make_mut(out), inp.as_ref(), &mut op);
         Ok(())
     }
 }
@@ -124,7 +124,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .unwrap();
 
-    let a_host: Rc<[f32; 3]> = Rc::new([1.0, 2.0, 3.0]);
+    let a_host: Arc<[f32; 3]> = Arc::new([1.0, 2.0, 3.0]);
     let mut b_host = a_host.clone();
     let mut c_host = a_host.clone();
 

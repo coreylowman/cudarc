@@ -3,7 +3,7 @@
 use crate::arrays::NumElements;
 use crate::cudarc::{CudaDevice, CudaRc};
 use crate::curand::{result, sys};
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Host side RNG that can fill [CudaRc] with random values.
 ///
@@ -28,12 +28,12 @@ use std::rc::Rc;
 /// 3. LogNormal - [CudaRng::fill_with_log_normal()]
 pub struct CudaRng {
     gen: sys::curandGenerator_t,
-    device: Rc<CudaDevice>,
+    device: Arc<CudaDevice>,
 }
 
 impl CudaRng {
     /// Constructs the RNG with the given `seed`. Requires the stream from [CudaDevice] to submit kernels.
-    pub fn new(seed: u64, device: Rc<CudaDevice>) -> Result<Self, result::CurandError> {
+    pub fn new(seed: u64, device: Arc<CudaDevice>) -> Result<Self, result::CurandError> {
         let gen = result::create_generator()?;
         let mut rng = Self { gen, device };
         rng.set_seed(seed)?;
@@ -52,7 +52,7 @@ impl CudaRng {
         T: NumElements,
         sys::curandGenerator_t: result::UniformFill<T::Dtype>,
     {
-        let out = Rc::make_mut(&mut t.t_cuda);
+        let out = Arc::make_mut(&mut t.t_cuda);
         unsafe {
             result::UniformFill::<T::Dtype>::fill(
                 self.gen,
@@ -73,7 +73,7 @@ impl CudaRng {
         T: NumElements,
         sys::curandGenerator_t: result::NormalFill<T::Dtype>,
     {
-        let out = Rc::make_mut(&mut t.t_cuda);
+        let out = Arc::make_mut(&mut t.t_cuda);
         unsafe {
             result::NormalFill::<T::Dtype>::fill(
                 self.gen,
@@ -96,7 +96,7 @@ impl CudaRng {
         T: NumElements,
         sys::curandGenerator_t: result::LogNormalFill<T::Dtype>,
     {
-        let out = Rc::make_mut(&mut t.t_cuda);
+        let out = Arc::make_mut(&mut t.t_cuda);
         unsafe {
             result::LogNormalFill::<T::Dtype>::fill(
                 self.gen,
@@ -127,7 +127,7 @@ mod tests {
         prelude::*,
     };
 
-    fn gen_uniform<T: Clone + NumElements + ValidAsZeroBits>(seed: u64) -> Rc<T>
+    fn gen_uniform<T: Clone + NumElements + ValidAsZeroBits>(seed: u64) -> Arc<T>
     where
         sys::curandGenerator_t: UniformFill<T::Dtype>,
     {
@@ -142,7 +142,7 @@ mod tests {
         seed: u64,
         mean: T::Dtype,
         std: T::Dtype,
-    ) -> Rc<T>
+    ) -> Arc<T>
     where
         sys::curandGenerator_t: NormalFill<T::Dtype>,
     {
@@ -157,7 +157,7 @@ mod tests {
         seed: u64,
         mean: T::Dtype,
         std: T::Dtype,
-    ) -> Rc<T>
+    ) -> Arc<T>
     where
         sys::curandGenerator_t: LogNormalFill<T::Dtype>,
     {
@@ -171,15 +171,15 @@ mod tests {
     #[test]
     fn test_rc_counts() {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
-        assert_eq!(Rc::strong_count(&dev), 1);
+        assert_eq!(Arc::strong_count(&dev), 1);
         let a_rng = CudaRng::new(0, dev.clone()).unwrap();
-        assert_eq!(Rc::strong_count(&dev), 2);
+        assert_eq!(Arc::strong_count(&dev), 2);
         let a_dev = dev.alloc_zeros::<[f32; 10]>().unwrap();
-        assert_eq!(Rc::strong_count(&dev), 3);
+        assert_eq!(Arc::strong_count(&dev), 3);
         drop(a_rng);
-        assert_eq!(Rc::strong_count(&dev), 2);
+        assert_eq!(Arc::strong_count(&dev), 2);
         drop(a_dev);
-        assert_eq!(Rc::strong_count(&dev), 1);
+        assert_eq!(Arc::strong_count(&dev), 1);
     }
 
     #[test]

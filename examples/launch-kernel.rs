@@ -1,5 +1,5 @@
 use cudarc::cudarc::{CudaDeviceBuilder, LaunchConfig, LaunchCudaFunction};
-use std::rc::Rc;
+use std::sync::Arc;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dev = CudaDeviceBuilder::new(0)
@@ -12,7 +12,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // "sin_kernel" is the name of the actual function inside the .ptx file
     let f = module.get_fn("sin_kernel").unwrap();
 
-    let a_host: Rc<[f32; 3]> = Rc::new([1.0, 2.0, 3.0]);
+    let a_host: Arc<[f32; 3]> = Arc::new([1.0, 2.0, 3.0]);
 
     let a_dev = dev.take(a_host.clone())?;
     let mut b_dev = a_dev.clone();
