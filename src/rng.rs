@@ -124,7 +124,7 @@ mod tests {
     use crate::{
         cudarc::ValidAsZeroBits,
         curand::result::{LogNormalFill, NormalFill, UniformFill},
-        prelude::*,
+        prelude::*, arrays::Array,
     };
 
     fn gen_uniform<T: Clone + NumElements + ValidAsZeroBits>(seed: u64) -> Rc<T>
@@ -218,11 +218,11 @@ mod tests {
         assert_ne!(a_host.as_ref(), b_host.as_ref());
     }
 
-    const N: usize = 1000;
+    const N: usize = 999;
 
     #[test]
     fn test_uniform_f32() {
-        let a = gen_uniform::<[f32; N]>(0);
+        let a = gen_uniform::<Array<f32, N>>(0);
         for i in 0..N {
             assert!(0.0 < a[i] && a[i] <= 1.0);
         }
@@ -230,7 +230,7 @@ mod tests {
 
     #[test]
     fn test_uniform_f64() {
-        let a = gen_uniform::<[f64; N]>(0);
+        let a = gen_uniform::<Array<f64, N>>(0);
         for i in 0..N {
             assert!(0.0 < a[i] && a[i] <= 1.0);
         }
@@ -246,12 +246,12 @@ mod tests {
 
     #[test]
     fn test_normal_f32() {
-        let a = gen_normal::<[f32; N]>(0, 0.0, 1.0);
+        let a = gen_normal::<Array<f32, N>>(0, 0.0, 1.0);
         for i in 0..N {
             assert!(a[i] != 0.0);
         }
 
-        let b = gen_normal::<[f32; N]>(0, -1.0, 2.0);
+        let b = gen_normal::<Array<f32, N>>(0, -1.0, 2.0);
         for i in 0..N {
             assert_ne!(a[i], b[i]);
         }
@@ -259,12 +259,12 @@ mod tests {
 
     #[test]
     fn test_normal_f64() {
-        let a = gen_normal::<[f64; N]>(0, 0.0, 1.0);
+        let a = gen_normal::<Array<f64, N>>(0, 0.0, 1.0);
         for i in 0..N {
             assert!(a[i] != 0.0);
         }
 
-        let b = gen_normal::<[f64; N]>(0, -1.0, 2.0);
+        let b = gen_normal::<Array<f64, N>>(0, -1.0, 2.0);
         for i in 0..N {
             assert_ne!(a[i], b[i]);
         }
@@ -272,12 +272,12 @@ mod tests {
 
     #[test]
     fn test_log_normal_f32() {
-        let a = gen_log_normal::<[f32; N]>(0, 0.0, 1.0);
+        let a = gen_log_normal::<Array<f32, N>>(0, 0.0, 1.0);
         for i in 0..N {
             assert!(a[i] != 0.0);
         }
 
-        let b = gen_log_normal::<[f32; N]>(0, -1.0, 2.0);
+        let b = gen_log_normal::<Array<f32, N>>(0, -1.0, 2.0);
         for i in 0..N {
             assert_ne!(a[i], b[i]);
         }
@@ -285,12 +285,12 @@ mod tests {
 
     #[test]
     fn test_log_normal_f64() {
-        let a = gen_log_normal::<[f64; N]>(0, 0.0, 1.0);
+        let a = gen_log_normal::<Array<f64, N>>(0, 0.0, 1.0);
         for i in 0..N {
             assert!(a[i] != 0.0);
         }
 
-        let b = gen_log_normal::<[f64; N]>(0, -1.0, 2.0);
+        let b = gen_log_normal::<Array<f64, N>>(0, -1.0, 2.0);
         for i in 0..N {
             assert_ne!(a[i], b[i]);
         }

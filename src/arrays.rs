@@ -3,6 +3,8 @@ pub trait NumElements {
     type Dtype;
 }
 
+pub type Array<N, const A: usize> = [N; (A + 1) / 2 * 2];
+
 macro_rules! impl_numel_for_builtin {
     ($T:ty) => {
         impl NumElements for $T {
