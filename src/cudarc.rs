@@ -737,6 +737,7 @@ unsafe impl ValidAsZeroBits for u64 {}
 unsafe impl ValidAsZeroBits for usize {}
 unsafe impl ValidAsZeroBits for f32 {}
 unsafe impl ValidAsZeroBits for f64 {}
+unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
 
 #[cfg(test)]
 mod tests {
