@@ -9,6 +9,7 @@ extern crate no_std_compat as std;
 
 pub mod arrays;
 pub mod cudarc;
+pub mod cublas;
 pub mod curand;
 pub mod driver;
 pub mod jit;

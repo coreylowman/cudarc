@@ -298,6 +298,18 @@ impl Drop for CudaDevice {
 }
 
 impl CudaDevice {
+    /// Allocates device memory with no associated host memory.
+    ///
+    /// # Safety
+    /// 1. Must be initialized before use!
+    pub unsafe fn alloc<T>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
+        let alloc = CudaUniquePtr::alloc(self)?;
+        Ok(CudaRc {
+            t_cuda: Rc::new(alloc),
+            t_host: None,
+        })
+    }
+
     /// Allocates device memory with no associated host memory, and memsets
     /// the device memory to all 0s.
     ///
@@ -305,12 +317,9 @@ impl CudaDevice {
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [Rc<Self>], and this method increments the rc for self
     pub fn alloc_zeros<T: ValidAsZeroBits>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
-        let alloc = unsafe { CudaUniquePtr::alloc(self) }?;
-        unsafe { result::memset_d8_async::<T>(alloc.cu_device_ptr, 0, self.cu_stream) }?;
-        Ok(CudaRc {
-            t_cuda: Rc::new(alloc),
-            t_host: None,
-        })
+        let alloc = unsafe { self.alloc() }?;
+        unsafe { result::memset_d8_async::<T>(alloc.t_cuda.cu_device_ptr, 0, self.cu_stream) }?;
+        Ok(alloc)
     }
 
     /// Takes ownership of `host_data`, and does an async allocation and async copy of the
@@ -467,13 +476,13 @@ pub unsafe trait LaunchCudaFunction<Params> {
 unsafe impl<T> IntoKernelParam for &mut CudaRc<T> {
     fn into_kernel_param(self) -> *mut std::ffi::c_void {
         let ptr = Rc::make_mut(&mut self.t_cuda);
-        (&mut ptr.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
+        ptr.cu_device_ptr as *mut std::ffi::c_void
     }
 }
 
 unsafe impl<T> IntoKernelParam for &CudaRc<T> {
     fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        (&self.t_cuda.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+        self.t_cuda.cu_device_ptr as *mut std::ffi::c_void
     }
 }
 
