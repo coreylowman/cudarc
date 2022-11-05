@@ -6,7 +6,7 @@ use std::rc::Rc;
 pub struct Cpu;
 
 pub struct CpuRc<T> {
-    data: Rc<T>,
+    data:   Rc<T>,
     device: Rc<Cpu>,
 }
 
@@ -17,6 +17,7 @@ trait DeviceRc<T> {
 
 impl<T> DeviceRc<T> for CpuRc<T> {
     type Device = Cpu;
+
     fn device_ref(&self) -> &Rc<Self::Device> {
         &self.device
     }
@@ -24,6 +25,7 @@ impl<T> DeviceRc<T> for CpuRc<T> {
 
 impl<T> DeviceRc<T> for CudaRc<T> {
     type Device = CudaDevice;
+
     fn device_ref(&self) -> &Rc<Self::Device> {
         self.device()
     }
@@ -48,6 +50,7 @@ trait CloneToDevice<T: Clone, D: Device> {
 
 impl<T: Clone> CloneToDevice<T, CudaDevice> for CpuRc<T> {
     type Err = CudaError;
+
     fn to(&self, device: &Rc<CudaDevice>) -> Result<CudaRc<T>, Self::Err> {
         device.take(self.data.clone())
     }
@@ -55,6 +58,7 @@ impl<T: Clone> CloneToDevice<T, CudaDevice> for CpuRc<T> {
 
 impl<T: Clone> CloneToDevice<T, Cpu> for CudaRc<T> {
     type Err = CudaError;
+
     fn to(&self, device: &Rc<Cpu>) -> Result<CpuRc<T>, Self::Err> {
         let data = self.clone().into_host()?;
         Ok(CpuRc {
@@ -73,6 +77,7 @@ where
     Src::DeviceRc<[f32; M]>: CloneToDevice<[f32; M], Dst>,
 {
     type Err = <Src::DeviceRc<[f32; M]> as CloneToDevice<[f32; M], Dst>>::Err;
+
     fn to(&self, device: &Rc<Dst>) -> Result<<Dst as Device>::DeviceRc<[f32; M]>, Self::Err> {
         self.rc.to(device)
     }
@@ -84,7 +89,7 @@ fn main() {
 
     let t: Tensor1D<3> = Tensor1D {
         rc: CpuRc {
-            data: Rc::new([1.0, 2.0, 3.0]),
+            data:   Rc::new([1.0, 2.0, 3.0]),
             device: cpu.clone(),
         },
     };

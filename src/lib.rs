@@ -8,8 +8,8 @@ extern crate alloc;
 extern crate no_std_compat as std;
 
 pub mod arrays;
-pub mod cudarc;
 pub mod cublas;
+pub mod cudarc;
 pub mod curand;
 pub mod driver;
 pub mod jit;
@@ -18,6 +18,7 @@ pub mod rng;
 
 pub mod prelude {
     pub use crate::arrays::NumElements;
+    pub use crate::cublas::result::*;
     pub use crate::cudarc::{
         CudaDevice, CudaDeviceBuilder, CudaError, CudaRc, IntoKernelParam, LaunchConfig,
         LaunchCudaFunction,

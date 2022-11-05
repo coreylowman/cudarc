@@ -132,14 +132,15 @@ pub mod primary_ctx {
     use super::{sys, CudaError};
     use std::mem::MaybeUninit;
 
-    /// Creates a primary context on the device and pushes it onto the primary context stack.
-    /// Call [release] to free it.
+    /// Creates a primary context on the device and pushes it onto the primary
+    /// context stack. Call [release] to free it.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__PRIMARY__CTX.html#group__CUDA__PRIMARY__CTX_1g9051f2d5c31501997a6cb0530290a300)
     ///
     /// # Safety
     ///
-    /// This is only safe with a device that was returned from [super::device::get].
+    /// This is only safe with a device that was returned from
+    /// [super::device::get].
     pub unsafe fn retain(dev: sys::CUdevice) -> Result<sys::CUcontext, CudaError> {
         let mut ctx = MaybeUninit::uninit();
         sys::cuDevicePrimaryCtxRetain(ctx.as_mut_ptr(), dev).result()?;
@@ -152,7 +153,8 @@ pub mod primary_ctx {
     ///
     /// # Safety
     ///
-    /// This is only safe with a device that was returned from [super::device::get].
+    /// This is only safe with a device that was returned from
+    /// [super::device::get].
     pub unsafe fn release(dev: sys::CUdevice) -> Result<(), CudaError> {
         sys::cuDevicePrimaryCtxRelease_v2(dev).result()
     }
@@ -171,9 +173,9 @@ pub mod ctx {
     ///
     /// # Safety
     ///
-    /// This has weird behavior depending on the value of `ctx`. See cuda docs for more info.
-    /// In general this should only be called with an already initialized context,
-    /// and one that wasn't already freed.
+    /// This has weird behavior depending on the value of `ctx`. See cuda docs
+    /// for more info. In general this should only be called with an already
+    /// initialized context, and one that wasn't already freed.
     pub unsafe fn set_current(ctx: sys::CUcontext) -> Result<(), CudaError> {
         sys::cuCtxSetCurrent(ctx).result()
     }
@@ -212,7 +214,8 @@ pub mod stream {
         }
     }
 
-    /// The null stream, which is just a null pointer. **Recommend not using this.**
+    /// The null stream, which is just a null pointer. **Recommend not using
+    /// this.**
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/stream-sync-behavior.html#stream-sync-behavior__default-stream)
     pub fn null() -> sys::CUstream {
@@ -236,8 +239,9 @@ pub mod stream {
     ///
     /// # Safety
     ///
-    /// This should only be called with stream created by [create] and not already
-    /// destroyed. This follows default stream semantics, see relevant cuda docs.
+    /// This should only be called with stream created by [create] and not
+    /// already destroyed. This follows default stream semantics, see relevant
+    /// cuda docs.
     pub unsafe fn synchronize(stream: sys::CUstream) -> Result<(), CudaError> {
         sys::cuStreamSynchronize(stream).result()
     }
@@ -248,8 +252,9 @@ pub mod stream {
     ///
     /// # Safety
     ///
-    /// This should only be called with stream created by [create] and not already
-    /// destroyed. This follows default stream semantics, see relevant cuda docs.
+    /// This should only be called with stream created by [create] and not
+    /// already destroyed. This follows default stream semantics, see relevant
+    /// cuda docs.
     pub unsafe fn destroy(stream: sys::CUstream) -> Result<(), CudaError> {
         sys::cuStreamDestroy_v2(stream).result()
     }
@@ -386,9 +391,12 @@ pub mod module {
     /// Load a module's data:
     ///
     /// > The pointer may be obtained by mapping a cubin or PTX or fatbin file,
-    /// > passing a cubin or PTX or fatbin file as a NULL-terminated text string,
-    /// > or incorporating a cubin or fatbin object into the executable resources
-    /// > and using operating system calls such as Windows FindResource() to obtain the pointer.
+    /// > passing a cubin or PTX or fatbin file as a NULL-terminated text
+    /// > string,
+    /// > or incorporating a cubin or fatbin object into the executable
+    /// > resources
+    /// > and using operating system calls such as Windows FindResource() to
+    /// > obtain the pointer.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1g04ce266ce03720f479eab76136b90c0b)
     ///
@@ -434,12 +442,13 @@ pub mod module {
 /// # Safety
 /// This method is **very unsafe**.
 ///
-/// 1. The cuda function must be a valid handle returned from a non-unloaded module.
-/// 2. This is asynchronous, so the results of calling this function happen
-/// at a later point after this function returns.
-/// 3. All parameters used for this kernel should have been allocated by stream (I think?)
-/// 4. The cuda kernel has mutable access to every parameter, that means every parameter
-/// can change at a later point after callign this function. *Even non-mutable references*.
+/// 1. The cuda function must be a valid handle returned from a non-unloaded
+/// module. 2. This is asynchronous, so the results of calling this function
+/// happen at a later point after this function returns.
+/// 3. All parameters used for this kernel should have been allocated by stream
+/// (I think?) 4. The cuda kernel has mutable access to every parameter, that
+/// means every parameter can change at a later point after callign this
+/// function. *Even non-mutable references*.
 pub unsafe fn launch_kernel(
     f: sys::CUfunction,
     grid_dim: (c_uint, c_uint, c_uint),
