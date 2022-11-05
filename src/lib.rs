@@ -18,7 +18,7 @@ pub mod rng;
 
 pub mod prelude {
     pub use crate::arrays::NumElements;
-    pub use crate::cublas::result::*;
+    pub use crate::cublas::*;
     pub use crate::cudarc::{
         CudaDevice, CudaDeviceBuilder, CudaError, CudaRc, IntoKernelParam, LaunchConfig,
         LaunchCudaFunction,

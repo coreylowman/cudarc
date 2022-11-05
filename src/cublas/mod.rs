@@ -1,5 +1,11 @@
 //! Wrappers around the [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
 
-pub mod result;
+mod gemv;
+mod result;
 #[allow(warnings)]
-pub mod sys;
+mod sys;
+mod tensor;
+
+pub use gemv::*;
+pub use result::*;
+pub use tensor::*;
