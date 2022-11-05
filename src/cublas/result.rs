@@ -27,6 +27,8 @@ impl std::fmt::Display for CublasError {
 #[cfg(feature = "std")]
 impl std::error::Error for CublasError {}
 
+/// A handle to a cublas context. This is thread-safe according to NVIDIA (<https://docs.nvidia.com/cuda/cublas/index.html#thread-safety2>),
+/// as long as no configuration is changed.
 pub struct CublasHandle(pub(crate) cublasHandle_t);
 impl Drop for CublasHandle {
     fn drop(&mut self) {

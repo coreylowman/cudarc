@@ -25,20 +25,14 @@ fn main() -> CublasResult<()> {
     let vector = CublasVector::new(vector_allocation, &VECTOR)?;
 
     let matrix_allocation = unsafe { device.alloc() }.unwrap();
-    let mut transposed = [[0.0; 3]; 3];
-    for (y, row) in MATRIX.into_iter().enumerate() {
-        for (x, cell) in row.into_iter().enumerate() {
-            transposed[x][y] = cell;
-        }
-    }
-    let matrix = CublasMatrix::new(matrix_allocation, &transposed)?;
+    let matrix = CublasMatrix::new(matrix_allocation, &MATRIX)?;
 
     let out_allocation = unsafe { device.alloc() }.unwrap();
     let mut result = unsafe { CublasVector::uninit(out_allocation) };
     result.gemv(&cublas_handle, &matrix, &vector, false)?;
 
     let mut result_host = Default::default();
-    result.get(&mut result_host)?;
+    result.copy_to(&mut result_host)?;
 
     println!("v * M ");
     println!(
@@ -50,7 +44,7 @@ fn main() -> CublasResult<()> {
 
     result.gemv(&cublas_handle, &matrix.transposed(), &vector, true)?;
 
-    result.get(&mut result_host)?;
+    result.copy_to(&mut result_host)?;
 
 
     println!("v * M + v * M^T");

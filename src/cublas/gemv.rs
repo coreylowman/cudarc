@@ -2,9 +2,16 @@ use crate::prelude::*;
 
 use super::sys::*;
 
+/// Functions for a matrix-vector multiplication. (<https://docs.nvidia.com/cuda/cublas/index.html#cublas-lt-t-gt-gemv>)
 pub trait Gemv<T, M, const S: usize, const C: usize>: Sized + CublasTensor {
     type InputVector;
 
+    /// Calculates the matrix-vector multiplication of `matrix` and `vector`.
+    /// `add_to_output` decides weather the result should be added (if true)
+    /// or set (if false) to `self`.
+    ///
+    /// # Safety
+    /// Only if `add_to_output` is true `self` must be initialized.
     fn gemv(
         &mut self,
         cublas_handle: &CublasHandle,
@@ -13,6 +20,11 @@ pub trait Gemv<T, M, const S: usize, const C: usize>: Sized + CublasTensor {
         add_to_output: bool,
     ) -> CublasResult<()>;
 
+    /// Creates a new [CublasVector] in the `allocation`
+    /// from the matrix-vector multiplication of `matrix` and `vector`.
+    ///
+    /// # Safety
+    /// This function is safe if `allocation` is uninitialized.
     fn from_gemv(
         allocation: CudaRc<Self::Value>,
         cublas_handle: &CublasHandle,
@@ -24,6 +36,11 @@ pub trait Gemv<T, M, const S: usize, const C: usize>: Sized + CublasTensor {
         Ok(s)
     }
 
+    /// Adds the matrix-vector multiplication of `matrix` and `vector` to
+    /// `self`.
+    ///
+    /// # Safety
+    /// `self` must be initialized.
     fn add_gemv(
         &mut self,
         cublas_handle: &CublasHandle,
@@ -33,6 +50,8 @@ pub trait Gemv<T, M, const S: usize, const C: usize>: Sized + CublasTensor {
         self.gemv(cublas_handle, matrix, vector, true)
     }
 }
+/// Implements [Gemv] for different element types ([f32], [f64])
+/// and different matrix "states" ([CublasMatrix], [CublasMatrixTransposed])
 macro_rules! impl_gemv {
     (
         $type:ty,
@@ -94,7 +113,7 @@ macro_rules! impl_gemv {
         );
         impl_gemv!(
             $type,
-            TransposedCublasMatrix,
+            CublasMatrixTransposed,
             cublasOperation_t::CUBLAS_OP_N,
             R,
             C,
@@ -108,9 +127,6 @@ macro_rules! impl_gemv {
 }
 impl_gemv!(f32: 0.0f32, 1.0f32, cublasSgemv_v2);
 impl_gemv!(f64: 0.0f64, 1.0f64, cublasDgemv_v2);
-
-// used to have an easier macro impl
-type TransposedCublasMatrix<T, const R: usize, const C: usize> = Transposed<CublasMatrix<T, R, C>>;
 
 #[cfg(test)]
 mod tests {
@@ -139,7 +155,7 @@ mod tests {
             .add_gemv(&cublas_handle, &d_matrix.transposed(), &d_vector)
             .unwrap();
 
-        d_out.get(&mut h_out).unwrap();
+        d_out.copy_to(&mut h_out).unwrap();
         assert_eq!(h_out, h_expected);
     }
 
@@ -164,7 +180,7 @@ mod tests {
             let d_out =
                 CublasVector::from_gemv(ptr_o, &cublas_handle, &d_matrix, &d_vector).unwrap();
 
-            d_out.get(&mut h_out).unwrap();
+            d_out.copy_to(&mut h_out).unwrap();
         }
         assert_eq!(h_out, h_expected);
     }
