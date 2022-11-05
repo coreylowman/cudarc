@@ -41,3 +41,13 @@ impl Drop for CudnnHandle {
         unsafe { cudnnDestroy(self.0).result().unwrap() };
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+
+    #[test]
+    fn test_create_handle() {
+        let _handle = CudnnHandle::create().unwrap();
+    }
+}

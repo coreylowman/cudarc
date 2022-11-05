@@ -13,5 +13,5 @@ bindgen \
   --with-derive-ord \
   --size_t-is-usize \
   --use-core \
-  wrapper.h -- --include-directory "/mnt/e/Max/cudnn/include" --include-directory "/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/include" \
+  wrapper.h -- --include-directory "/mnt/c/Program Files/NVIDIA/CUDNN/include" --include-directory "/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/include" \
   > sys.rs
