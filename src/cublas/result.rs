@@ -35,9 +35,7 @@ unsafe impl Send for CublasHandle {}
 unsafe impl Sync for CublasHandle {}
 impl Drop for CublasHandle {
     fn drop(&mut self) {
-        unsafe {
-            cublasDestroy_v2(self.0);
-        }
+        unsafe { cublasDestroy_v2(self.0).result().unwrap(); }
     }
 }
 
