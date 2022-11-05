@@ -2,8 +2,7 @@
 //!
 //! Two flavors of generation:
 //! 1. Not generic: See [generate] for non-generic generation functions.
-//! 2. Generic: See [UniformFill], [NormalFill], and [LogNormalFill] for generic
-//! generation functions.
+//! 2. Generic: See [UniformFill], [NormalFill], and [LogNormalFill] for generic generation functions.
 
 use super::sys;
 use std::mem::MaybeUninit;

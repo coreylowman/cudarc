@@ -6,9 +6,8 @@ pub trait NumElements {
 macro_rules! impl_numel_for_builtin {
     ($T:ty) => {
         impl NumElements for $T {
-            type Dtype = Self;
-
             const NUMEL: usize = 1;
+            type Dtype = Self;
         }
     };
 }
@@ -27,7 +26,6 @@ impl_numel_for_builtin!(f32);
 impl_numel_for_builtin!(f64);
 
 impl<T: NumElements, const M: usize> NumElements for [T; M] {
-    type Dtype = T::Dtype;
-
     const NUMEL: usize = T::NUMEL * M;
+    type Dtype = T::Dtype;
 }

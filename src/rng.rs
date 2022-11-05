@@ -27,13 +27,12 @@ use std::rc::Rc;
 /// 2. Normal - [CudaRng::fill_with_normal()]
 /// 3. LogNormal - [CudaRng::fill_with_log_normal()]
 pub struct CudaRng {
-    gen:    sys::curandGenerator_t,
+    gen: sys::curandGenerator_t,
     device: Rc<CudaDevice>,
 }
 
 impl CudaRng {
-    /// Constructs the RNG with the given `seed`. Requires the stream from
-    /// [CudaDevice] to submit kernels.
+    /// Constructs the RNG with the given `seed`. Requires the stream from [CudaDevice] to submit kernels.
     pub fn new(seed: u64, device: Rc<CudaDevice>) -> Result<Self, result::CurandError> {
         let gen = result::create_generator()?;
         let mut rng = Self { gen, device };
@@ -122,9 +121,11 @@ impl Drop for CudaRng {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cudarc::ValidAsZeroBits;
-    use crate::curand::result::{LogNormalFill, NormalFill, UniformFill};
-    use crate::prelude::*;
+    use crate::{
+        cudarc::ValidAsZeroBits,
+        curand::result::{LogNormalFill, NormalFill, UniformFill},
+        prelude::*,
+    };
 
     fn gen_uniform<T: Clone + NumElements + ValidAsZeroBits>(seed: u64) -> Rc<T>
     where

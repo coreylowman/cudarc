@@ -383,7 +383,7 @@ pub struct CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUstreamBatchMemOpParams_union_CUstreamMemOpWaitValueParams_st__bindgen_ty_1 {
-    pub value:   cuuint32_t,
+    pub value: cuuint32_t,
     pub value64: cuuint64_t,
 }
 #[test]
@@ -582,7 +582,7 @@ pub struct CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st__bindgen_ty_1 {
-    pub value:   cuuint32_t,
+    pub value: cuuint32_t,
     pub value64: cuuint64_t,
 }
 #[test]
@@ -772,7 +772,7 @@ impl Default for CUstreamBatchMemOpParams_union_CUstreamMemOpWriteValueParams_st
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st {
     pub operation: CUstreamBatchMemOpType,
-    pub flags:     core::ffi::c_uint,
+    pub flags: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUstreamBatchMemOpParams_union_CUstreamMemOpFlushRemoteWritesParams_st() {
@@ -1589,11 +1589,11 @@ pub use self::CUaccessProperty_enum as CUaccessProperty;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct CUaccessPolicyWindow_st {
-    pub base_ptr:  *mut ::core::ffi::c_void,
+    pub base_ptr: *mut ::core::ffi::c_void,
     pub num_bytes: usize,
-    pub hitRatio:  f32,
-    pub hitProp:   CUaccessProperty,
-    pub missProp:  CUaccessProperty,
+    pub hitRatio: f32,
+    pub hitProp: CUaccessProperty,
+    pub missProp: CUaccessProperty,
 }
 #[test]
 fn bindgen_test_layout_CUaccessPolicyWindow_st() {
@@ -2042,7 +2042,7 @@ pub type CUDA_MEMSET_NODE_PARAMS = CUDA_MEMSET_NODE_PARAMS_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_HOST_NODE_PARAMS_st {
-    pub fn_:      CUhostFn,
+    pub fn_: CUhostFn,
     pub userData: *mut ::core::ffi::c_void,
 }
 #[test]
@@ -3916,9 +3916,9 @@ pub struct CUDA_ARRAY_SPARSE_PROPERTIES_st {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1 {
-    pub width:  core::ffi::c_uint,
+    pub width: core::ffi::c_uint,
     pub height: core::ffi::c_uint,
-    pub depth:  core::ffi::c_uint,
+    pub depth: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_ARRAY_SPARSE_PROPERTIES_st__bindgen_ty_1() {
@@ -4100,16 +4100,16 @@ pub type CUDA_ARRAY_SPARSE_PROPERTIES = CUDA_ARRAY_SPARSE_PROPERTIES_v1;
 #[derive(Copy, Clone)]
 pub struct CUDA_RESOURCE_DESC_st {
     pub resType: CUresourcetype,
-    pub res:     CUDA_RESOURCE_DESC_st__bindgen_ty_1,
-    pub flags:   core::ffi::c_uint,
+    pub res: CUDA_RESOURCE_DESC_st__bindgen_ty_1,
+    pub flags: core::ffi::c_uint,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_RESOURCE_DESC_st__bindgen_ty_1 {
-    pub array:    CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1,
-    pub mipmap:   CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2,
-    pub linear:   CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3,
-    pub pitch2D:  CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
+    pub array: CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_1,
+    pub mipmap: CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2,
+    pub linear: CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3,
+    pub pitch2D: CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_4,
     pub reserved: CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_5,
 }
 #[repr(C)]
@@ -4219,8 +4219,8 @@ impl Default for CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_2 {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_RESOURCE_DESC_st__bindgen_ty_1__bindgen_ty_3 {
-    pub devPtr:      CUdeviceptr,
-    pub format:      CUarray_format,
+    pub devPtr: CUdeviceptr,
+    pub format: CUarray_format,
     pub numChannels: core::ffi::c_uint,
     pub sizeInBytes: usize,
 }
@@ -5154,7 +5154,7 @@ pub type CUDA_RESOURCE_VIEW_DESC = CUDA_RESOURCE_VIEW_DESC_v1;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_POINTER_ATTRIBUTE_P2P_TOKENS_st {
-    pub p2pToken:     core::ffi::c_ulonglong,
+    pub p2pToken: core::ffi::c_ulonglong,
     pub vaSpaceToken: core::ffi::c_uint,
 }
 #[test]
@@ -5446,10 +5446,10 @@ pub use self::CUexternalMemoryHandleType_enum as CUexternalMemoryHandleType;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st {
-    pub type_:    CUexternalMemoryHandleType,
-    pub handle:   CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1,
-    pub size:     core::ffi::c_ulonglong,
-    pub flags:    core::ffi::c_uint,
+    pub type_: CUexternalMemoryHandleType,
+    pub handle: CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1,
+    pub size: core::ffi::c_ulonglong,
+    pub flags: core::ffi::c_uint,
     pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
@@ -5463,7 +5463,7 @@ pub union CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
     pub handle: *mut ::core::ffi::c_void,
-    pub name:   *const ::core::ffi::c_void,
+    pub name: *const ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
@@ -5736,9 +5736,9 @@ pub type CUDA_EXTERNAL_MEMORY_HANDLE_DESC = CUDA_EXTERNAL_MEMORY_HANDLE_DESC_v1;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_MEMORY_BUFFER_DESC_st {
-    pub offset:   core::ffi::c_ulonglong,
-    pub size:     core::ffi::c_ulonglong,
-    pub flags:    core::ffi::c_uint,
+    pub offset: core::ffi::c_ulonglong,
+    pub size: core::ffi::c_ulonglong,
+    pub flags: core::ffi::c_uint,
     pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[test]
@@ -5834,10 +5834,10 @@ pub type CUDA_EXTERNAL_MEMORY_BUFFER_DESC = CUDA_EXTERNAL_MEMORY_BUFFER_DESC_v1;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st {
-    pub offset:    core::ffi::c_ulonglong,
+    pub offset: core::ffi::c_ulonglong,
     pub arrayDesc: CUDA_ARRAY3D_DESCRIPTOR,
     pub numLevels: core::ffi::c_uint,
-    pub reserved:  [core::ffi::c_uint; 16usize],
+    pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC_st() {
@@ -5956,9 +5956,9 @@ pub use self::CUexternalSemaphoreHandleType_enum as CUexternalSemaphoreHandleTyp
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st {
-    pub type_:    CUexternalSemaphoreHandleType,
-    pub handle:   CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1,
-    pub flags:    core::ffi::c_uint,
+    pub type_: CUexternalSemaphoreHandleType,
+    pub handle: CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1,
+    pub flags: core::ffi::c_uint,
     pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
@@ -5972,7 +5972,7 @@ pub union CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1 {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
     pub handle: *mut ::core::ffi::c_void,
-    pub name:   *const ::core::ffi::c_void,
+    pub name: *const ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1() {
@@ -6232,17 +6232,17 @@ pub type CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC = CUDA_EXTERNAL_SEMAPHORE_HANDLE_DE
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st {
-    pub params:   CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
-    pub flags:    core::ffi::c_uint,
+    pub params: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1,
+    pub flags: core::ffi::c_uint,
     pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1 {
-    pub fence:      CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
-    pub nvSciSync:  CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
+    pub fence: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
+    pub nvSciSync: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
     pub keyedMutex: CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
-    pub reserved:   [core::ffi::c_uint; 12usize],
+    pub reserved: [core::ffi::c_uint; 12usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -6292,7 +6292,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__b
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS_st__bindgen_ty_1__bindgen_ty_2 {
-    pub fence:    *mut ::core::ffi::c_void,
+    pub fence: *mut ::core::ffi::c_void,
     pub reserved: core::ffi::c_ulonglong,
 }
 #[test]
@@ -6599,17 +6599,17 @@ pub type CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS = CUDA_EXTERNAL_SEMAPHORE_SIGNAL_
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st {
-    pub params:   CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
-    pub flags:    core::ffi::c_uint,
+    pub params: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1,
+    pub flags: core::ffi::c_uint,
     pub reserved: [core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1 {
-    pub fence:      CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
-    pub nvSciSync:  CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
+    pub fence: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_1,
+    pub nvSciSync: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2,
     pub keyedMutex: CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_3,
-    pub reserved:   [core::ffi::c_uint; 10usize],
+    pub reserved: [core::ffi::c_uint; 10usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -6659,7 +6659,7 @@ fn bindgen_test_layout_CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bin
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS_st__bindgen_ty_1__bindgen_ty_2 {
-    pub fence:    *mut ::core::ffi::c_void,
+    pub fence: *mut ::core::ffi::c_void,
     pub reserved: core::ffi::c_ulonglong,
 }
 #[test]
@@ -6988,7 +6988,7 @@ pub type CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS = CUDA_EXTERNAL_SEMAPHORE_WAIT_PARA
 pub struct CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st {
     pub extSemArray: *mut CUexternalSemaphore,
     pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
-    pub numExtSems:  core::ffi::c_uint,
+    pub numExtSems: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_st() {
@@ -7076,7 +7076,7 @@ pub type CUDA_EXT_SEM_SIGNAL_NODE_PARAMS = CUDA_EXT_SEM_SIGNAL_NODE_PARAMS_v1;
 pub struct CUDA_EXT_SEM_WAIT_NODE_PARAMS_st {
     pub extSemArray: *mut CUexternalSemaphore,
     pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
-    pub numExtSems:  core::ffi::c_uint,
+    pub numExtSems: core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_CUDA_EXT_SEM_WAIT_NODE_PARAMS_st() {
@@ -7239,7 +7239,7 @@ pub struct CUarrayMapInfo_st {
 #[derive(Copy, Clone)]
 pub union CUarrayMapInfo_st__bindgen_ty_1 {
     pub mipmap: CUmipmappedArray,
-    pub array:  CUarray,
+    pub array: CUarray,
 }
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_1() {
@@ -7301,7 +7301,7 @@ impl Default for CUarrayMapInfo_st__bindgen_ty_1 {
 #[derive(Copy, Clone)]
 pub union CUarrayMapInfo_st__bindgen_ty_2 {
     pub sparseLevel: CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1,
-    pub miptail:     CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2,
+    pub miptail: CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -7489,9 +7489,9 @@ fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_1() {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2 {
-    pub layer:  core::ffi::c_uint,
+    pub layer: core::ffi::c_uint,
     pub offset: core::ffi::c_ulonglong,
-    pub size:   core::ffi::c_ulonglong,
+    pub size: core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_CUarrayMapInfo_st__bindgen_ty_2__bindgen_ty_2() {
@@ -7884,7 +7884,7 @@ pub type CUarrayMapInfo = CUarrayMapInfo_v1;
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUmemLocation_st {
     pub type_: CUmemLocationType,
-    pub id:    core::ffi::c_int,
+    pub id: core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_CUmemLocation_st() {
@@ -8172,7 +8172,7 @@ pub type CUmemAllocationProp = CUmemAllocationProp_v1;
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUmemAccessDesc_st {
     pub location: CUmemLocation,
-    pub flags:    CUmemAccess_flags,
+    pub flags: CUmemAccess_flags,
 }
 #[test]
 fn bindgen_test_layout_CUmemAccessDesc_st() {

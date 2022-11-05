@@ -2,8 +2,10 @@
 
 use super::sys;
 use alloc::ffi::CString;
-use core::ffi::{c_char, c_int, CStr};
-use core::mem::MaybeUninit;
+use core::{
+    ffi::{c_char, c_int, CStr},
+    mem::MaybeUninit,
+};
 use std::vec::Vec;
 
 /// Wrapper around [sys::nvrtcResult]. See
@@ -31,8 +33,7 @@ impl std::fmt::Display for NvrtcError {
 #[cfg(feature = "std")]
 impl std::error::Error for NvrtcError {}
 
-/// Creates a program from source code `src`. This should be source code from a
-/// .cu file.
+/// Creates a program from source code `src`. This should be source code from a .cu file.
 ///
 /// See [nvrtcCreateProgram() docs](https://docs.nvidia.com/cuda/nvrtc/index.html#group__compilation_1g9ae65f68911d1cf0adda2af4ad8cb458)
 ///
@@ -73,8 +74,7 @@ pub fn create_program<S: AsRef<str>>(src: S) -> Result<sys::nvrtcProgram, NvrtcE
 ///
 /// # Safety
 ///
-/// `prog` must be created from [create_program()] and not have been freed by
-/// [destroy_program()].
+/// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
 pub unsafe fn compile_program<O: Clone + Into<Vec<u8>>>(
     prog: sys::nvrtcProgram,
     options: &[O],
@@ -95,22 +95,19 @@ pub unsafe fn compile_program<O: Clone + Into<Vec<u8>>>(
 ///
 /// # Safety
 ///
-/// `prog` must be created from [create_program()] and not have been freed by
-/// [destroy_program()].
+/// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
 pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError> {
     sys::nvrtcDestroyProgram(&prog as *const _ as *mut _).result()
 }
 
-/// Extract the ptx associated with `prog`. Call [compile_program()] before
-/// this.
+/// Extract the ptx associated with `prog`. Call [compile_program()] before this.
 ///
 /// See [nvrtcGetPTX() docs](https://docs.nvidia.com/cuda/nvrtc/index.html#group__compilation_1gc9a66bbbd47c256f4a8955517b3965da)
 /// and [nvrtcGetPTXSize() docs](https://docs.nvidia.com/cuda/nvrtc/index.html#group__compilation_1gc622d6ffb6fff71e209407da19612c1a).
 ///
 /// # Safety
 ///
-/// `prog` must be created from [create_program()] and not have been freed by
-/// [destroy_program()].
+/// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
 pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
@@ -130,8 +127,7 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError
 ///
 /// # Safety
 ///
-/// `prog` must be created from [create_program()] and not have been freed by
-/// [destroy_program()].
+/// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
 pub unsafe fn get_program_log(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
@@ -180,8 +176,8 @@ mod tests {
 
     #[test]
     fn test_get_ptx() {
-        const SRC: &str = "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, \
-                           int numel) {
+        const SRC: &str =
+            "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, int numel) {
             int i = blockIdx.x * blockDim.x + threadIdx.x;
             if (i < numel) {
                 out[i] = sin(inp[i]);

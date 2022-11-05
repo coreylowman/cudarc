@@ -5,9 +5,7 @@
 use crate::nvrtc::{result, sys};
 use alloc::ffi::CString;
 use core::ffi::{c_char, CStr};
-use std::borrow::ToOwned;
-use std::string::String;
-use std::vec::Vec;
+use std::{borrow::ToOwned, string::String, vec::Vec};
 
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
@@ -28,8 +26,7 @@ pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
     compile_ptx_with_opts(src, Default::default())
 }
 
-/// Compiles `src` with the given `opts`. `src` is the source string of a `.cu`
-/// file.
+/// Compiles `src` with the given `opts`. `src` is the source string of a `.cu` file.
 ///
 /// Example:
 /// ```rust
@@ -96,9 +93,9 @@ pub enum CompileError {
 
     /// Error happened during [result::compile_program()]
     CompileError {
-        nvrtc:   result::NvrtcError,
+        nvrtc: result::NvrtcError,
         options: Vec<String>,
-        log:     CString,
+        log: CString,
     },
 
     /// Error happened during [result::get_program_log()]
@@ -189,8 +186,8 @@ mod tests {
 
     #[test]
     fn test_compile_no_opts() {
-        const SRC: &str = "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, \
-                           int numel) {
+        const SRC: &str =
+            "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, int numel) {
             int i = blockIdx.x * blockDim.x + threadIdx.x;
             if (i < numel) {
                 out[i] = sin(inp[i]);
