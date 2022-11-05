@@ -9,6 +9,7 @@ extern crate no_std_compat as std;
 
 pub mod arrays;
 pub mod cudarc;
+pub mod cudnn;
 pub mod curand;
 pub mod driver;
 pub mod jit;
@@ -21,5 +22,6 @@ pub mod prelude {
         CudaDevice, CudaDeviceBuilder, CudaError, CudaRc, IntoKernelParam, LaunchConfig,
         LaunchCudaFunction,
     };
+    pub use crate::cudnn::*;
     pub use crate::rng::CudaRng;
 }
