@@ -3,6 +3,7 @@
 //! 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
 //! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 #![no_std]
+#![feature(generic_const_exprs)]
 
 extern crate alloc;
 extern crate no_std_compat as std;

@@ -1,4 +1,4 @@
-use super::sys::cudnnDataType_t;
+use super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 
 /// Convert a Rust type to a [cudnnDataType_t].
 /// # Supported rust-types
@@ -20,6 +20,9 @@ pub trait TensorDataType {
     const MAX: Self;
 
     fn get_data_type() -> cudnnDataType_t;
+    fn get_tensor_format() -> cudnnTensorFormat_t {
+        cudnnTensorFormat_t::CUDNN_TENSOR_NCHW
+    }
 }
 macro_rules! impl_data_type {
     ($type:ty : $name:ident, $zero:expr, $one:expr, $max:expr) => {

@@ -1,7 +1,7 @@
 use core::{marker::PhantomData, mem::size_of};
 
 use super::sys::*;
-use crate::{prelude::*, driver::sys::cuMemcpyHtoD_v2};
+use crate::{prelude::*, driver::result::memcpy_htod_async};
 
 /// recommended by docs <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensorNdDescriptor>
 pub struct Tensor4DDescriptor<T, const N: usize, const C: usize, const H: usize, const W: usize> {
@@ -16,7 +16,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         unsafe {
             cudnnSetTensor4dDescriptor(
                 descriptor.0,
-                cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+                T::get_tensor_format(),
                 T::get_data_type(),
                 N as _,
                 C as _,
@@ -54,12 +54,15 @@ pub struct Tensor4D<T, const N: usize, const C: usize, const H: usize, const W: 
     pub(crate) data: CudaRc<[[[[T; W]; H]; C]; N]>,
 }
 impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize> Tensor4D<T, N, C, H, W> {
-    pub fn create(allocation: CudaRc<[[[[T; W]; H]; C]; N]>, data: [[[[T; W]; H]; C]; N]) -> CudnnResult<Self> {
+    pub fn create_async(allocation: CudaRc<[[[[T; W]; H]; C]; N]>, data: &[[[[T; W]; H]; C]; N]) -> CudnnResult<Self> {
         let t = unsafe { Self::uninit(allocation) }?;
-        unsafe { cuMemcpyHtoD_v2(t.data.t_cuda.cu_device_ptr, data.as_ptr() as *const _, t.size())}.result().unwrap();
+        unsafe { memcpy_htod_async(t.data.t_cuda.cu_device_ptr, data, t.data.device().cu_stream).unwrap();}
         Ok(t)
     }
 
+    ///
+    /// # Safety
+    /// Tensor must be not be read from as it is uninitialized.
     pub unsafe fn uninit(allocation: CudaRc<[[[[T; W]; H]; C]; N]>) -> CudnnResult<Self> {
         Ok(Self {
             descriptor: Tensor4DDescriptor::create(TensorDescriptor::create()?)?,
@@ -67,13 +70,17 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         })
     }
 
-    pub fn size(&self) -> usize {
+    pub const fn size(&self) -> usize {
         size_of::<T>() * N * C * H * W
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use core::mem::zeroed;
+
+    use alloc::rc::Rc;
+
     use super::super::sys::*;
     use crate::prelude::*;
 
@@ -89,15 +96,15 @@ mod tests {
         )
         .unwrap();
         unsafe {
-            let mut data_type = std::mem::zeroed();
-            let mut n = std::mem::zeroed();
-            let mut h = std::mem::zeroed();
-            let mut c = std::mem::zeroed();
-            let mut w = std::mem::zeroed();
-            let mut n_stride = std::mem::zeroed();
-            let mut h_stride = std::mem::zeroed();
-            let mut c_stride = std::mem::zeroed();
-            let mut w_stride = std::mem::zeroed();
+            let mut data_type = zeroed();
+            let mut n = zeroed();
+            let mut h = zeroed();
+            let mut c = zeroed();
+            let mut w = zeroed();
+            let mut n_stride = zeroed();
+            let mut h_stride = zeroed();
+            let mut c_stride = zeroed();
+            let mut w_stride = zeroed();
             cudnnGetTensor4dDescriptor(
                 cut.descriptor.0,
                 &mut data_type,
@@ -126,6 +133,9 @@ mod tests {
 
     #[test]
     fn test_create_tensor() {
-        Tensor4D::create(CudaDeviceBuilder::new(0).build().unwrap().alloc_zeros().unwrap(), [[[[-3.0, -2.0], [-1.0, -0.0]], [[0.0, 1.0], [2.0, 3.0]]]]).unwrap();
+        let data = [[[[0.0, 1.0]]], [[[2.0, 3.0]]]];
+        let t = Tensor2D::create_async(CudaDeviceBuilder::new(0).build().unwrap().take(Rc::new(unsafe { zeroed() })).unwrap(), &data).unwrap();
+        let on_gpu = *t.data.sync_release().unwrap().unwrap();
+        assert_eq!(data, on_gpu);
     }
 }
