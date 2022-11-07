@@ -1,14 +1,15 @@
 use super::sys::cudnnActivationMode_t;
 
 /// A Marker for an [ActivationMode].
-/// 
+///
 /// # Supported modes
 /// [Sigmoid], [Relu], [Tanh], [Elu], [Swish]
-/// 
+///
 /// [Relu] has its upper bound set to `f64::MAX`.
-/// 
-/// Other modes are currently not supported as they require additional parameters.
-/// 
+///
+/// Other modes are currently not supported as they require additional
+/// parameters.
+///
 /// # See also
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnActivationMode_t>
 pub trait ActivationMode {
@@ -16,12 +17,13 @@ pub trait ActivationMode {
     fn get_additional_parameter() -> f64;
 }
 macro_rules! impl_activation_mode {
-    ($name:ident: $mode:ident) => {
+    ($name:ident : $mode:ident) => {
         pub struct $name;
         impl ActivationMode for $name {
             fn get_activation_mode() -> cudnnActivationMode_t {
                 cudnnActivationMode_t::$mode
             }
+
             fn get_additional_parameter() -> f64 {
                 f64::MAX
             }
@@ -36,14 +38,26 @@ impl_activation_mode!(Elu: CUDNN_ACTIVATION_ELU);
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::sys::cudnnActivationMode_t;
+    use super::*;
 
     #[test]
     fn test() {
-        assert_eq!(Sigmoid::get_activation_mode(), cudnnActivationMode_t::CUDNN_ACTIVATION_SIGMOID);
-        assert_eq!(Relu::get_activation_mode(), cudnnActivationMode_t::CUDNN_ACTIVATION_RELU);
-        assert_eq!(Tanh::get_activation_mode(), cudnnActivationMode_t::CUDNN_ACTIVATION_TANH);
-        assert_eq!(Elu::get_activation_mode(), cudnnActivationMode_t::CUDNN_ACTIVATION_ELU);
+        assert_eq!(
+            Sigmoid::get_activation_mode(),
+            cudnnActivationMode_t::CUDNN_ACTIVATION_SIGMOID
+        );
+        assert_eq!(
+            Relu::get_activation_mode(),
+            cudnnActivationMode_t::CUDNN_ACTIVATION_RELU
+        );
+        assert_eq!(
+            Tanh::get_activation_mode(),
+            cudnnActivationMode_t::CUDNN_ACTIVATION_TANH
+        );
+        assert_eq!(
+            Elu::get_activation_mode(),
+            cudnnActivationMode_t::CUDNN_ACTIVATION_ELU
+        );
     }
 }

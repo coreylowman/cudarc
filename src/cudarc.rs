@@ -224,7 +224,7 @@ impl<T> CudaUniquePtr<T> {
     ///
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
-    unsafe fn alloc(device: &Rc<CudaDevice>) -> Result<CudaUniquePtr<T>, CudaError> {
+    pub(crate) unsafe fn alloc(device: &Rc<CudaDevice>) -> Result<CudaUniquePtr<T>, CudaError> {
         let cu_device_ptr = result::malloc_async::<T>(device.cu_stream)?;
         Ok(CudaUniquePtr {
             cu_device_ptr,

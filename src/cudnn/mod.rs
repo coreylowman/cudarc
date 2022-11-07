@@ -1,15 +1,15 @@
-mod result;
-mod conv;
-mod tensor;
 mod activation;
 mod activation_mode;
+mod conv;
+mod data_type;
+mod result;
 #[allow(warnings)]
 mod sys;
-mod data_type;
+mod tensor;
 
-pub use result::*;
-pub use conv::*;
-pub use tensor::*;
-pub use data_type::*;
 pub use activation::*;
 pub use activation_mode::*;
+pub use conv::*;
+pub use data_type::*;
+pub use result::*;
+pub use tensor::*;

@@ -1,5 +1,5 @@
 use core::marker::PhantomData;
-use core::mem::zeroed;
+use core::mem::{zeroed, MaybeUninit};
 
 use super::sys::*;
 use crate::prelude::*;
@@ -11,9 +11,11 @@ pub use filter::*;
 pub struct ConvolutionDescriptor(pub(crate) cudnnConvolutionDescriptor_t);
 impl ConvolutionDescriptor {
     pub fn create() -> CudnnResult<Self> {
-        let mut descriptor: Self = unsafe { std::mem::zeroed() };
-        unsafe { cudnnCreateConvolutionDescriptor(&mut descriptor.0 as *mut _) }.result()?;
-        Ok(descriptor)
+        let mut descriptor = MaybeUninit::uninit();
+        unsafe {
+            cudnnCreateConvolutionDescriptor(descriptor.as_mut_ptr()).result()?;
+            Ok(Self(descriptor.assume_init()))
+        }
     }
 }
 impl Drop for ConvolutionDescriptor {
@@ -152,13 +154,8 @@ mod tests {
 
     #[test]
     fn test_simple_convolution() {
-        let cudnn_handle = CudnnHandle::create().unwrap();
         let cuda = CudaDeviceBuilder::new(0).build().unwrap();
-
-        let input_allocation = cuda.alloc_zeros().unwrap();
-        let filter_allocation = cuda.alloc_zeros().unwrap();
-        let output_allocation = cuda.take(Rc::new(unsafe { std::mem::zeroed() })).unwrap();
-        let workspace_allocation: CudaRc<[u8; 10000]> = cuda.alloc_zeros().unwrap();
+        let cudnn_handle = CudnnHandle::create(&cuda).unwrap();
 
         let mut input_data = [[0.0; 5]; 5];
         for y in 0..5 {
@@ -166,14 +163,14 @@ mod tests {
                 input_data[y][x] = (y * 5 + x) as f64;
             }
         }
-        let input =
-            Tensor4D::create_async(input_allocation.clone(), &[[input_data, input_data]]).unwrap();
-        let filter = Filter::<f64, 1, 2, 2, 2>::create_async(
-            filter_allocation.clone(),
-            &[[[[1.0f64; 2]; 2]; 2]; 1],
-        )
-        .unwrap();
-        let mut output = unsafe { Tensor4D::uninit(output_allocation.clone()) }.unwrap();
+
+        let input_allocation = cuda.take(Rc::new([[input_data, input_data]])).unwrap();
+        let filter_allocation = cuda.take(Rc::new([[[[1.0f64; 2]; 2]; 2]; 1])).unwrap();
+        let output_allocation = cuda.alloc_zeros().unwrap();
+        let workspace_allocation: CudaRc<[u8; 10000]> = cuda.alloc_zeros().unwrap();
+        let input = Tensor4D::create(input_allocation.clone()).unwrap();
+        let filter = Filter::<f64, 1, 2, 2, 2>::create(filter_allocation.clone()).unwrap();
+        let mut output = Tensor4D::create(output_allocation.clone()).unwrap();
 
         let convolution = Convolution2D::<f64, 0, 0, 1, 1>::create().unwrap();
         convolution
@@ -186,7 +183,7 @@ mod tests {
             )
             .unwrap();
 
-        let output = output_allocation.sync_release().unwrap().unwrap();
+        let output = output_allocation.into_host().unwrap();
         for y in 0..4 {
             for x in 0..4 {
                 let expected = 24 + y * 40 + x * 8;

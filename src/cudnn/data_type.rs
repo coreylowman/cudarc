@@ -3,10 +3,11 @@ use super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 /// Convert a Rust type to a [cudnnDataType_t].
 /// # Supported rust-types
 /// [f32] and [f64]
-/// 
-/// 
+///
+///
 /// # Unsupported Types
-/// [bool], [u8], [i8], [i32] and [i64], as they (somehow?) aren't supported in some tensor functions.
+/// [bool], [u8], [i8], [i32] and [i64], as they (somehow?) aren't supported in
+/// some tensor functions.
 ///
 /// Other (cudnn) types ([core::simd::i8x4], [core::simd::u8x4],
 /// [core::simd::i8x32], f16 and bf16) are unsupported as they require special
@@ -27,9 +28,9 @@ pub trait TensorDataType {
 macro_rules! impl_data_type {
     ($type:ty : $name:ident, $zero:expr, $one:expr, $max:expr) => {
         impl TensorDataType for $type {
-            const ZERO: Self = $zero;
-            const ONE: Self = $one;
             const MAX: Self = $max;
+            const ONE: Self = $one;
+            const ZERO: Self = $zero;
 
             fn get_data_type() -> cudnnDataType_t {
                 cudnnDataType_t::$name

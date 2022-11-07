@@ -1,5 +1,9 @@
 //! A thin wrapper around [sys] providing [Result]s with [CudnnError].
 
+use core::mem::MaybeUninit;
+
+use crate::cudarc::CudaDevice;
+
 use super::sys::*;
 
 pub type CudnnResult<T> = Result<T, CudnnError>;
@@ -30,10 +34,15 @@ impl std::error::Error for CudnnError {}
 // No sync because of https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#thread-safety
 pub struct CudnnHandle(pub(crate) cudnnHandle_t);
 impl CudnnHandle {
-    pub fn create() -> CudnnResult<Self> {
-        let mut handle: Self = unsafe { std::mem::zeroed() };
-        unsafe { cudnnCreate(&mut handle.0 as *mut _) }.result()?;
-        Ok(handle)
+    pub fn create(device: &CudaDevice) -> CudnnResult<Self> {
+        let mut handle = MaybeUninit::uninit();
+        unsafe {
+            cudnnCreate(handle.as_mut_ptr()).result()?;
+            let handle = handle.assume_init();
+            // TODO maybe fix this cast to the "same" type?
+            cudnnSetStream(handle, device.cu_stream as *mut _).result()?;
+            Ok(Self(handle))
+        }
     }
 }
 impl Drop for CudnnHandle {
@@ -48,6 +57,6 @@ mod tests {
 
     #[test]
     fn test_create_handle() {
-        let _handle = CudnnHandle::create().unwrap();
+        let _handle = CudnnHandle::create(&CudaDeviceBuilder::new(0).build().unwrap()).unwrap();
     }
 }
