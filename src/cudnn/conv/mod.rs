@@ -1,15 +1,28 @@
-use core::marker::PhantomData;
-use core::mem::{zeroed, MaybeUninit};
+use core::mem::MaybeUninit;
 
 use super::sys::*;
 use crate::prelude::*;
 
 mod filter;
+mod filter_backward;
+mod backward;
+mod forward;
 
 pub use filter::*;
+pub use filter_backward::*;
+pub use backward::*;
+pub use forward::*;
 
+/// A convolution descriptor, may be reused if the same convolution settings (padding, stride, ...) are used.
+/// 
+/// # See also
+/// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnConvolutionDescriptor_t>
 pub struct ConvolutionDescriptor(pub(crate) cudnnConvolutionDescriptor_t);
 impl ConvolutionDescriptor {
+    /// Creates a new [ConvolutionDescriptor].
+    /// 
+    /// # See also
+    /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateConvolutionDescriptor>
     pub fn create() -> CudnnResult<Self> {
         let mut descriptor = MaybeUninit::uninit();
         unsafe {
@@ -26,119 +39,18 @@ impl Drop for ConvolutionDescriptor {
     }
 }
 
-pub struct Assert<const A: usize, const B: usize>;
-pub trait ConstEq {}
-impl<const A: usize> ConstEq for Assert<A, A> {}
-
-/// `U` and `V` must be >0
-pub struct Convolution2D<T, const P_H: usize, const P_W: usize, const V_S: usize, const H_S: usize>
-{
-    descriptor: ConvolutionDescriptor,
-    data_type:  PhantomData<T>,
+/// A trait wrapper for [ConvolutionOutput].
+pub trait ConvolutionOutputTrait {
+    const SIZE: usize;
 }
-impl<T: TensorDataType, const P_H: usize, const P_W: usize, const V_S: usize, const H_S: usize>
-    Convolution2D<T, P_H, P_W, V_S, H_S>
-{
-    pub fn create() -> CudnnResult<Self> {
-        let descriptor = ConvolutionDescriptor::create()?;
-        unsafe {
-            cudnnSetConvolution2dDescriptor(
-                descriptor.0,
-                P_H as _,
-                P_W as _,
-                V_S as _,
-                H_S as _,
-                1,
-                1,
-                cudnnConvolutionMode_t::CUDNN_CONVOLUTION,
-                T::get_data_type(),
-            )
-        }
-        .result()?;
-        Ok(Self {
-            descriptor,
-            data_type: PhantomData,
-        })
-    }
-
-    pub fn forward<
-        const C_IN: usize,
-        const C_OUT: usize,
-        const H_IN: usize,
-        const W_IN: usize,
-        const H_F: usize,
-        const W_F: usize,
-        const N: usize,
-    >(
-        &self,
-        cudnn_handle: CudnnHandle,
-        input: &Tensor4D<T, N, C_IN, H_IN, W_IN>,
-        filter: &Filter<T, C_OUT, C_IN, H_F, W_F>,
-        output: &mut Tensor4D<
-            T,
-            N,
-            C_OUT,
-            { H_IN - (H_F - 1) + 2 * P_H },
-            { W_IN - (W_F - 1) + 2 * P_W },
-        >,
-        workspace: CudaRc<[u8; 10000]>,
-    ) -> CudnnResult<()> {
-        unsafe {
-            // let mut n = zeroed();
-            // let mut c = zeroed();
-            // let mut h = zeroed();
-            // let mut w = zeroed();
-            // cudnnGetConvolution2dForwardOutputDim(self.descriptor.0,
-            // input.descriptor.descriptor.0, filter.descriptor.0, &mut n, &mut c, &mut h,
-            // &mut w).result().unwrap(); std::println!("{n}|{c}|{h}|{w}");
-            // std::println!("{}|{}|{}|{}", N, C_OUT, H_IN - (H_F - 1) + 2 * P_H, W_IN -
-            // (W_F - 1) + 2 * P_W);
-            let mut output_amount: i32 = zeroed();
-            let mut algorithm: cudnnConvolutionFwdAlgoPerf_t = zeroed();
-            cudnnGetConvolutionForwardAlgorithm_v7(
-                cudnn_handle.0,
-                input.descriptor.descriptor.0,
-                filter.descriptor.0,
-                self.descriptor.0,
-                output.descriptor.descriptor.0,
-                1,
-                &mut output_amount,
-                &mut algorithm,
-            )
-            .result()?;
-            assert_eq!(
-                output_amount, 1,
-                "cudnnGetConvolutionForwardAlgorithm_v7 returned 0 algorithms"
-            );
-            let mut workspace_size: usize = zeroed();
-            cudnnGetConvolutionForwardWorkspaceSize(
-                cudnn_handle.0,
-                input.descriptor.descriptor.0,
-                filter.descriptor.0,
-                self.descriptor.0,
-                output.descriptor.descriptor.0,
-                algorithm.algo,
-                &mut workspace_size,
-            )
-            .result()?;
-            cudnnConvolutionForward(
-                cudnn_handle.0,
-                &T::ONE as *const _ as *const _,
-                input.descriptor.descriptor.0,
-                input.data.t_cuda.cu_device_ptr as *const _,
-                filter.descriptor.0,
-                filter.data.t_cuda.cu_device_ptr as *const _,
-                self.descriptor.0,
-                algorithm.algo,
-                workspace.t_cuda.cu_device_ptr as *mut _,
-                workspace_size,
-                &T::ZERO as *const _ as *const _,
-                output.descriptor.descriptor.0,
-                output.data.t_cuda.cu_device_ptr as *mut _,
-            )
-            .result()
-        }
-    }
+/// [ConvolutionOutputTrait::SIZE] is the output dimension, calculated by:
+///     - `D`: the input dimension (width or height)
+///     - `P`: the padding, equal on both sides
+///     - `K`: the kernel size (or filter size)
+///     - `S`: the stride
+pub struct ConvolutionOutput<const H: usize, const P: usize, const K: usize, const S: usize>;
+impl<const D: usize, const P: usize, const K: usize, const S: usize> ConvolutionOutputTrait for ConvolutionOutput<D, P, K, S> {
+    const SIZE: usize = (D + 2 * P - K) / S + 1;
 }
 
 #[cfg(test)]
@@ -149,13 +61,13 @@ mod tests {
 
     #[test]
     fn test_create_descriptor() {
-        let _descriptor = Convolution2D::<f64, 0, 0, 1, 1>::create().unwrap();
+        let _descriptor = ConvolutionDescriptor::create().unwrap();
     }
 
     #[test]
     fn test_simple_convolution() {
         let cuda = CudaDeviceBuilder::new(0).build().unwrap();
-        let cudnn_handle = CudnnHandle::create(&cuda).unwrap();
+        let cudnn_handle = Rc::new(CudnnHandle::create(&cuda).unwrap());
 
         let mut input_data = [[0.0; 5]; 5];
         for y in 0..5 {
@@ -167,21 +79,28 @@ mod tests {
         let input_allocation = cuda.take(Rc::new([[input_data, input_data]])).unwrap();
         let filter_allocation = cuda.take(Rc::new([[[[1.0f64; 2]; 2]; 2]; 1])).unwrap();
         let output_allocation = cuda.alloc_zeros().unwrap();
-        let workspace_allocation: CudaRc<[u8; 10000]> = cuda.alloc_zeros().unwrap();
-        let input = Tensor4D::create(input_allocation.clone()).unwrap();
+        let dx_allocation = cuda.alloc_zeros().unwrap();
+        let dw_allocation = cuda.alloc_zeros().unwrap();
+        let x = Tensor4D::create(input_allocation.clone()).unwrap();
         let filter = Filter::<f64, 1, 2, 2, 2>::create(filter_allocation.clone()).unwrap();
-        let mut output = Tensor4D::create(output_allocation.clone()).unwrap();
+        let y = Tensor4D::create(output_allocation.clone()).unwrap();
+        let dx = Tensor4D::create(dx_allocation.clone()).unwrap();
+        let dw = Filter::create(dw_allocation.clone()).unwrap();
+        let dy = y.clone();
 
-        let convolution = Convolution2D::<f64, 0, 0, 1, 1>::create().unwrap();
-        convolution
-            .forward(
-                cudnn_handle,
-                &input,
-                &filter,
-                &mut output,
-                workspace_allocation.clone(),
+        let convolution_forward =
+            Convolution2DForward::<f64, 5, 5, 0, 0, 1, 1, 1, 2, 1, 2, 2, 1, 1>::create(
+                cudnn_handle.clone(),
+                x,
+                filter,
+                y,
             )
             .unwrap();
+        let convolution_backward = convolution_forward.get_backward(dy.clone(), dx);
+        let convolution_backward_filter = convolution_forward.get_filter_backward(dy, dw);
+        let mut convolution =
+            AlgorithmWithWorkspace::create(convolution_forward, cuda.clone()).unwrap();
+        convolution.execute().unwrap();
 
         let output = output_allocation.into_host().unwrap();
         for y in 0..4 {
@@ -190,9 +109,41 @@ mod tests {
                 let actual = output[0][0][y][x];
                 assert!(
                     (actual - expected as f64) < f64::EPSILON,
-                    "Output data {output:?} is at index {x}|{y} not {expected}, but {actual}."
+                    "Output data {y:?} is at index {x}|{y} not {expected}, but {actual}."
                 );
             }
         }
+
+        let mut convolution =
+            AlgorithmWithWorkspace::create(convolution_backward, cuda.clone()).unwrap();
+        convolution.execute().unwrap();
+
+        // TODO maybe check if this is right?
+        assert_eq!(&*dx_allocation.into_host().unwrap(), &[[
+            [
+                [24.0, 56.0, 72.0, 88.0, 48.0],
+                [88.0, 192.0, 224.0, 256.0, 136.0],
+                [168.0, 352.0, 384.0, 416.0, 216.0],
+                [248.0, 512.0, 544.0, 576.0, 296.0],
+                [144.0, 296.0, 312.0, 328.0, 168.0]
+            ],
+            [
+                [24.0, 56.0, 72.0, 88.0, 48.0],
+                [88.0, 192.0, 224.0, 256.0, 136.0],
+                [168.0, 352.0, 384.0, 416.0, 216.0],
+                [248.0, 512.0, 544.0, 576.0, 296.0],
+                [144.0, 296.0, 312.0, 328.0, 168.0]
+            ]
+        ]]);
+
+        let mut convolution =
+            AlgorithmWithWorkspace::create(convolution_backward_filter, cuda.clone()).unwrap();
+        convolution.execute().unwrap();
+
+        // TODO maybe check if this is right?
+        assert_eq!(&*dw_allocation.into_host().unwrap(), &[[
+            [[27200.0, 25664.0], [19520.0, 17984.0]],
+            [[27200.0, 25664.0], [19520.0, 17984.0]]
+        ]]);
     }
 }

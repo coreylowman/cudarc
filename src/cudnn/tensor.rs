@@ -1,6 +1,8 @@
 use core::marker::PhantomData;
 use core::mem::{size_of, MaybeUninit};
 
+use alloc::rc::Rc;
+
 use super::sys::*;
 use crate::prelude::*;
 
@@ -52,9 +54,18 @@ impl Drop for TensorDescriptor {
 }
 pub type Tensor2D<T, const N: usize, const W: usize> = Tensor4D<T, N, 1, 1, W>;
 pub type Tensor3D<T, const N: usize, const H: usize, const W: usize> = Tensor4D<T, N, 1, H, W>;
+/// A 4D-tensor with the `NCHW`-layout. Cloning this tensor only clones the point and thus increases the reference count.
 pub struct Tensor4D<T, const N: usize, const C: usize, const H: usize, const W: usize> {
-    pub(crate) descriptor: Tensor4DDescriptor<T, N, C, H, W>,
+    pub(crate) descriptor: Rc<Tensor4DDescriptor<T, N, C, H, W>>,
     pub(crate) data: CudaRc<[[[[T; W]; H]; C]; N]>,
+}
+impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Clone for Tensor4D<T, N, C, H, W> {
+    fn clone(&self) -> Self {
+        Self {
+            data: self.data.clone(),
+            descriptor: Rc::clone(&self.descriptor)
+        }
+    }
 }
 impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
     Tensor4D<T, N, C, H, W>
@@ -63,7 +74,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
     /// Tensor must be initialized or not be read from until it is so.
     pub fn create(allocation: CudaRc<[[[[T; W]; H]; C]; N]>) -> CudnnResult<Self> {
         Ok(Self {
-            descriptor: Tensor4DDescriptor::create(TensorDescriptor::create()?)?,
+            descriptor: Rc::new(Tensor4DDescriptor::create(TensorDescriptor::create()?)?),
             data: allocation,
         })
     }

@@ -1,5 +1,7 @@
 use core::mem::MaybeUninit;
 
+use alloc::rc::Rc;
+
 use super::super::sys::*;
 use crate::prelude::*;
 
@@ -21,8 +23,18 @@ impl Drop for FilterDescriptor {
     }
 }
 pub struct Filter<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> {
-    pub(crate) descriptor: FilterDescriptor,
+    pub(crate) descriptor: Rc<FilterDescriptor>,
     pub(crate) data: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>,
+}
+impl<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> Clone
+    for Filter<T, C_OUT, C_IN, H, W>
+{
+    fn clone(&self) -> Self {
+        Self {
+            descriptor: Rc::clone(&self.descriptor),
+            data: self.data.clone(),
+        }
+    }
 }
 impl<T: TensorDataType, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize>
     Filter<T, C_OUT, C_IN, H, W>
@@ -30,7 +42,7 @@ where
     [(); W * H * C_IN * C_OUT]:,
 {
     pub fn create(allocation: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>) -> CudnnResult<Self> {
-        let descriptor = FilterDescriptor::create()?;
+        let descriptor = Rc::new(FilterDescriptor::create()?);
         unsafe {
             cudnnSetFilter4dDescriptor(
                 descriptor.0,

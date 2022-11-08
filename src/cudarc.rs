@@ -156,12 +156,19 @@ pub use result::CudaError;
 ///
 /// Unfortunately, `&CudaRc<T>` can **still be mutated
 /// by the [CudaFunction]**.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CudaRc<T> {
     pub(crate) t_cuda: Rc<CudaUniquePtr<T>>,
     pub(crate) t_host: Option<Rc<T>>,
 }
-
+impl<T> Clone for CudaRc<T> {
+    fn clone(&self) -> Self {
+        Self {
+            t_cuda: Rc::clone(&self.t_cuda),
+            t_host: self.t_host.as_ref().map(Rc::clone)
+        }
+    }
+}
 impl<T> CudaRc<T> {
     /// Returns a reference to the underlying [CudaDevice]
     pub fn device(&self) -> &Rc<CudaDevice> {
