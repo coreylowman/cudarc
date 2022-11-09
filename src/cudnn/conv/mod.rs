@@ -3,24 +3,25 @@ use core::mem::MaybeUninit;
 use super::sys::*;
 use crate::prelude::*;
 
+mod backward;
 mod filter;
 mod filter_backward;
-mod backward;
 mod forward;
 
+pub use backward::*;
 pub use filter::*;
 pub use filter_backward::*;
-pub use backward::*;
 pub use forward::*;
 
-/// A convolution descriptor, may be reused if the same convolution settings (padding, stride, ...) are used.
-/// 
+/// A convolution descriptor, may be reused if the same convolution settings
+/// (padding, stride, ...) are used.
+///
 /// # See also
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnConvolutionDescriptor_t>
 pub struct ConvolutionDescriptor(pub(crate) cudnnConvolutionDescriptor_t);
 impl ConvolutionDescriptor {
     /// Creates a new [ConvolutionDescriptor].
-    /// 
+    ///
     /// # See also
     /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateConvolutionDescriptor>
     pub fn create() -> CudnnResult<Self> {
@@ -49,7 +50,9 @@ pub trait ConvolutionOutputTrait {
 ///     - `K`: the kernel size (or filter size)
 ///     - `S`: the stride
 pub struct ConvolutionOutput<const H: usize, const P: usize, const K: usize, const S: usize>;
-impl<const D: usize, const P: usize, const K: usize, const S: usize> ConvolutionOutputTrait for ConvolutionOutput<D, P, K, S> {
+impl<const D: usize, const P: usize, const K: usize, const S: usize> ConvolutionOutputTrait
+    for ConvolutionOutput<D, P, K, S>
+{
     const SIZE: usize = (D + 2 * P - K) / S + 1;
 }
 
@@ -76,33 +79,29 @@ mod tests {
             }
         }
 
-        let input_allocation = cuda.take(Rc::new([[input_data, input_data]])).unwrap();
-        let filter_allocation = cuda.take(Rc::new([[[[1.0f64; 2]; 2]; 2]; 1])).unwrap();
-        let output_allocation = cuda.alloc_zeros().unwrap();
-        let dx_allocation = cuda.alloc_zeros().unwrap();
-        let dw_allocation = cuda.alloc_zeros().unwrap();
-        let x = Tensor4D::create(input_allocation.clone()).unwrap();
-        let filter = Filter::<f64, 1, 2, 2, 2>::create(filter_allocation.clone()).unwrap();
-        let y = Tensor4D::create(output_allocation.clone()).unwrap();
-        let dx = Tensor4D::create(dx_allocation.clone()).unwrap();
-        let dw = Filter::create(dw_allocation.clone()).unwrap();
-        let dy = y.clone();
+        let x = Tensor4D::alloc_with(&cuda, [[input_data, input_data]]).unwrap();
+        let filter =
+            Filter::<f64, 1, 2, 2, 2>::alloc_with(&cuda, [[[[1.0f64; 2]; 2]; 2]; 1]).unwrap();
+        let y = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
+        let dx = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
+        let dw = unsafe { Filter::alloc_uninit(&cuda) }.unwrap();
 
         let convolution_forward =
             Convolution2DForward::<f64, 5, 5, 0, 0, 1, 1, 1, 2, 1, 2, 2, 1, 1>::create(
                 cudnn_handle.clone(),
                 x,
                 filter,
-                y,
+                y.clone(),
             )
             .unwrap();
-        let convolution_backward = convolution_forward.get_backward(dy.clone(), dx);
-        let convolution_backward_filter = convolution_forward.get_filter_backward(dy, dw);
+        let convolution_backward = convolution_forward.get_backward(y.clone(), dx.clone());
+        let convolution_backward_filter =
+            convolution_forward.get_filter_backward(y.clone(), dw.clone());
         let mut convolution =
             AlgorithmWithWorkspace::create(convolution_forward, cuda.clone()).unwrap();
         convolution.execute().unwrap();
 
-        let output = output_allocation.into_host().unwrap();
+        let output = y.data.into_host().unwrap();
         for y in 0..4 {
             for x in 0..4 {
                 let expected = 24 + y * 40 + x * 8;
@@ -119,7 +118,7 @@ mod tests {
         convolution.execute().unwrap();
 
         // TODO maybe check if this is right?
-        assert_eq!(&*dx_allocation.into_host().unwrap(), &[[
+        assert_eq!(&*dx.data.into_host().unwrap(), &[[
             [
                 [24.0, 56.0, 72.0, 88.0, 48.0],
                 [88.0, 192.0, 224.0, 256.0, 136.0],
@@ -141,7 +140,7 @@ mod tests {
         convolution.execute().unwrap();
 
         // TODO maybe check if this is right?
-        assert_eq!(&*dw_allocation.into_host().unwrap(), &[[
+        assert_eq!(&*dw.data.into_host().unwrap(), &[[
             [[27200.0, 25664.0], [19520.0, 17984.0]],
             [[27200.0, 25664.0], [19520.0, 17984.0]]
         ]]);

@@ -1,16 +1,26 @@
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 
+use alloc::rc::Rc;
+
 use super::sys::*;
 use crate::prelude::*;
 
 pub struct Activation<A> {
-    descriptor:      ActivationDescriptor,
+    pub(crate) descriptor: Rc<ActivationDescriptor>,
     activation_mode: PhantomData<A>,
+}
+impl<A> Clone for Activation<A> {
+    fn clone(&self) -> Self {
+        Self {
+            activation_mode: PhantomData,
+            descriptor:      Rc::clone(&self.descriptor),
+        }
+    }
 }
 impl<A: ActivationMode> Activation<A> {
     pub fn create() -> CudnnResult<Self> {
-        let descriptor = ActivationDescriptor::create()?;
+        let descriptor = Rc::new(ActivationDescriptor::create()?);
         unsafe {
             cudnnSetActivationDescriptor(
                 descriptor.0,
@@ -107,9 +117,6 @@ impl Drop for ActivationDescriptor {
 
 #[cfg(test)]
 mod tests {
-    use alloc::rc::Rc;
-
-    use crate::cudarc::CudaUniquePtr;
     use crate::prelude::*;
 
     #[test]
@@ -121,47 +128,24 @@ mod tests {
     fn test_relu_activation_forward_backward() {
         let cuda = CudaDeviceBuilder::new(0).build().unwrap();
         let cudnn_handle = CudnnHandle::create(&cuda).unwrap();
-        let allocation_in = cuda
-            .take(Rc::new([[[[f64::NAN, 2.0]]], [[[-1.0, 0.0]]]]))
-            .unwrap();
-        let tensor_in = Tensor2D::create(allocation_in.clone()).unwrap();
-        let allocation_d_in = cuda
-            .take(Rc::new([[[[f64::NAN, 3.0]]], [[[-1.0, 0.0]]]]))
-            .unwrap();
-        let tensor_d_in = Tensor2D::create(allocation_d_in.clone()).unwrap();
-        let allocation_out = CudaRc {
-            t_cuda: Rc::new(unsafe { CudaUniquePtr::alloc(&cuda).unwrap() }),
-            t_host: None,
-        };
-        let mut tensor_out = Tensor2D::create(allocation_out.clone()).unwrap();
-
-        let allocation_d_out = CudaRc {
-            t_cuda: Rc::new(unsafe { CudaUniquePtr::alloc(&cuda).unwrap() }),
-            t_host: None,
-        };
-        let mut tensor_d_out = Tensor2D::create(allocation_d_out.clone()).unwrap();
+        let x = Tensor2D::alloc_with(&cuda, [[[[f64::NAN, 2.0]]], [[[-1.0, 0.0]]]]).unwrap();
+        let dy = Tensor2D::alloc_with(&cuda, [[[[f64::NAN, 3.0]]], [[[-1.0, 0.0]]]]).unwrap();
+        let mut dx = unsafe { Tensor2D::alloc_uninit(&cuda) }.unwrap();
+        let mut y = unsafe { Tensor2D::alloc_uninit(&cuda) }.unwrap();
 
         let activation = Activation::<Relu>::create().unwrap();
-        activation
-            .forward(&cudnn_handle, &tensor_in, &mut tensor_out)
-            .unwrap();
+        activation.forward(&cudnn_handle, &x, &mut y).unwrap();
 
-        let out = allocation_out.into_host().unwrap();
+        let out = y.data.clone().into_host().unwrap();
         assert!(out[0][0][0][0].is_nan());
         assert!((out[0][0][0][1] - 2.0).abs() < f64::EPSILON);
         assert!(out[1][0][0][0].abs() < f64::EPSILON);
         assert!(out[1][0][0][1].abs() < f64::EPSILON);
         activation
-            .backward(
-                &cudnn_handle,
-                &tensor_in,
-                &tensor_d_in,
-                &tensor_out,
-                &mut tensor_d_out,
-            )
+            .backward(&cudnn_handle, &x, &dy, &y, &mut dx)
             .unwrap();
 
-        let out = allocation_d_out.into_host().unwrap();
+        let out = dx.data.into_host().unwrap();
         // NANs aren't backpropagated
         assert!(out[0][0][0][0].abs() < f64::EPSILON);
         assert!((out[0][0][0][1] - 3.0).abs() < f64::EPSILON);

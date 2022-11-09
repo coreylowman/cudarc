@@ -5,6 +5,8 @@ use alloc::rc::Rc;
 use super::super::sys::*;
 use crate::prelude::*;
 
+/// A struct that holds all the data to calculate `dx` by `y`, the filter and
+/// `dy`.
 pub struct Convolution2DBackward<
     T,
     const H: usize,
@@ -25,7 +27,13 @@ pub struct Convolution2DBackward<
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
 {
     descriptor: Rc<ConvolutionDescriptor>,
-    dy: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+    dy: Tensor4D<
+        T,
+        N,
+        C_OUT,
+        { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+        { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+    >,
     filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
     dx: Tensor4D<T, N, C_IN, H, W>,
     cudnn_handle: Rc<CudnnHandle>,
@@ -53,7 +61,13 @@ where
     pub fn create(
         cudnn_handle: Rc<CudnnHandle>,
         descriptor: Rc<ConvolutionDescriptor>,
-        dy: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+        dy: Tensor4D<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
         filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
         dx: Tensor4D<T, N, C_IN, H, W>,
     ) -> Self {

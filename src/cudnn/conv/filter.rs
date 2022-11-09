@@ -3,6 +3,7 @@ use core::mem::MaybeUninit;
 use alloc::rc::Rc;
 
 use super::super::sys::*;
+use crate::cudarc::CudaUniquePtr;
 use crate::prelude::*;
 
 pub struct FilterDescriptor(pub(crate) cudnnFilterDescriptor_t);
@@ -60,6 +61,20 @@ where
             data: allocation,
         })
     }
+
+    pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudnnResult<Self> {
+        Self::create(CudaRc {
+            t_cuda: Rc::new(CudaUniquePtr::alloc(device).unwrap()),
+            t_host: None,
+        })
+    }
+
+    pub fn alloc_with(
+        device: &Rc<CudaDevice>,
+        value: [[[[T; W]; H]; C_IN]; C_OUT],
+    ) -> CudnnResult<Self> {
+        Self::create(device.take(Rc::new(value)).unwrap())
+    }
 }
 
 #[cfg(test)]
@@ -71,12 +86,9 @@ mod tests {
 
     #[test]
     fn test_create_descriptor() {
-        let descriptor = Filter::<f64, 1, 2, 3, 4>::create(
-            CudaDeviceBuilder::new(0)
-                .build()
-                .unwrap()
-                .take(Rc::new([[[[1.0f64; 4]; 3]; 2]; 1]))
-                .unwrap(),
+        let descriptor = Filter::<f64, 1, 2, 3, 4>::alloc_with(
+            &CudaDeviceBuilder::new(0).build().unwrap(),
+            [[[[1.0f64; 4]; 3]; 2]; 1],
         )
         .unwrap();
         unsafe {

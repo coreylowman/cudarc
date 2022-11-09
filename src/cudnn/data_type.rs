@@ -1,3 +1,5 @@
+use crate::cudarc::ValidAsZeroBits;
+
 use super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 
 /// Convert a Rust type to a [cudnnDataType_t].
@@ -15,7 +17,7 @@ use super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 ///
 /// # See also
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDataType_t>
-pub trait TensorDataType {
+pub trait TensorDataType: ValidAsZeroBits {
     const ZERO: Self;
     const ONE: Self;
     const MAX: Self;

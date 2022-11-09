@@ -5,6 +5,8 @@ use alloc::rc::Rc;
 use super::super::sys::*;
 use crate::prelude::*;
 
+/// A struct that holds all the data to calculate `dw` (filter gradients) by
+/// `x`, `y`, the filter and `dy`.
 pub struct Convolution2DBackwardFilter<
     T,
     const H: usize,
@@ -26,8 +28,20 @@ pub struct Convolution2DBackwardFilter<
 {
     descriptor: Rc<ConvolutionDescriptor>,
     x: Tensor4D<T, N, C_IN, H, W>,
-    y: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
-    dy: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+    y: Tensor4D<
+        T,
+        N,
+        C_OUT,
+        { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+        { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+    >,
+    dy: Tensor4D<
+        T,
+        N,
+        C_OUT,
+        { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+        { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+    >,
     dw: Filter<T, C_OUT, C_IN, F_H, F_W>,
     filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
     cudnn_handle: Rc<CudnnHandle>,
@@ -57,8 +71,20 @@ where
         descriptor: Rc<ConvolutionDescriptor>,
         filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
         x: Tensor4D<T, N, C_IN, H, W>,
-        y: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
-        dy: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+        y: Tensor4D<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
+        dy: Tensor4D<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
         dw: Filter<T, C_OUT, C_IN, F_H, F_W>,
     ) -> Self {
         Self {

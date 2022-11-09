@@ -4,6 +4,7 @@ use core::mem::{size_of, MaybeUninit};
 use alloc::rc::Rc;
 
 use super::sys::*;
+use crate::cudarc::CudaUniquePtr;
 use crate::prelude::*;
 
 /// recommended by docs <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensorNdDescriptor>
@@ -54,16 +55,19 @@ impl Drop for TensorDescriptor {
 }
 pub type Tensor2D<T, const N: usize, const W: usize> = Tensor4D<T, N, 1, 1, W>;
 pub type Tensor3D<T, const N: usize, const H: usize, const W: usize> = Tensor4D<T, N, 1, H, W>;
-/// A 4D-tensor with the `NCHW`-layout. Cloning this tensor only clones the point and thus increases the reference count.
+/// A 4D-tensor with the `NCHW`-layout. Cloning this tensor only clones the
+/// point and thus increases the reference count.
 pub struct Tensor4D<T, const N: usize, const C: usize, const H: usize, const W: usize> {
     pub(crate) descriptor: Rc<Tensor4DDescriptor<T, N, C, H, W>>,
     pub(crate) data: CudaRc<[[[[T; W]; H]; C]; N]>,
 }
-impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Clone for Tensor4D<T, N, C, H, W> {
+impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Clone
+    for Tensor4D<T, N, C, H, W>
+{
     fn clone(&self) -> Self {
         Self {
             data: self.data.clone(),
-            descriptor: Rc::clone(&self.descriptor)
+            descriptor: Rc::clone(&self.descriptor),
         }
     }
 }
@@ -79,6 +83,39 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         })
     }
 
+    pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudnnResult<Self> {
+        Self::create(CudaRc {
+            t_cuda: Rc::new(CudaUniquePtr::alloc(device).unwrap()),
+            t_host: None,
+        })
+    }
+
+    pub fn alloc_with(device: &Rc<CudaDevice>, value: [[[[T; W]; H]; C]; N]) -> CudnnResult<Self> {
+        Self::create(device.take(Rc::new(value)).unwrap())
+    }
+
+    pub fn alloc_all_same(
+        device: &Rc<CudaDevice>,
+        cudnn_handle: &CudnnHandle,
+        value: &T,
+    ) -> CudnnResult<Self> {
+        let s = unsafe { Self::alloc_uninit(device) }?;
+        s.set_all(cudnn_handle, value)?;
+        Ok(s)
+    }
+
+    pub fn set_all(&self, cudnn_handle: &CudnnHandle, v: &T) -> CudnnResult<()> {
+        unsafe {
+            cudnnSetTensor(
+                cudnn_handle.0,
+                self.descriptor.descriptor.0,
+                self.data.t_cuda.cu_device_ptr as *mut _,
+                v as *const _ as *const _,
+            )
+        }
+        .result()
+    }
+
     pub const fn size(&self) -> usize {
         size_of::<T>() * N * C * H * W
     }
@@ -87,8 +124,6 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
 #[cfg(test)]
 mod tests {
     use core::mem::zeroed;
-
-    use alloc::rc::Rc;
 
     use super::super::sys::*;
     use crate::prelude::*;
@@ -142,14 +177,7 @@ mod tests {
     #[test]
     fn test_create_tensor() {
         let data = [[[[0.0, 1.0]]], [[[2.0, 3.0]]]];
-        let t = Tensor2D::create(
-            CudaDeviceBuilder::new(0)
-                .build()
-                .unwrap()
-                .take(Rc::new(data))
-                .unwrap(),
-        )
-        .unwrap();
+        let t = Tensor2D::alloc_with(&CudaDeviceBuilder::new(0).build().unwrap(), data).unwrap();
         let on_gpu = *t.data.sync_release().unwrap().unwrap();
         assert_eq!(data, on_gpu);
     }

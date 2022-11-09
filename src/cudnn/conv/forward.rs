@@ -5,6 +5,7 @@ use alloc::rc::Rc;
 use super::super::sys::*;
 use crate::prelude::*;
 
+/// A struct that holds all the data to calculate `y` by the filter and `x`.
 pub struct Convolution2DForward<
     T,
     const H: usize,
@@ -27,7 +28,13 @@ pub struct Convolution2DForward<
     descriptor: Rc<ConvolutionDescriptor>,
     x: Tensor4D<T, N, C_IN, H, W>,
     filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
-    y: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+    y: Tensor4D<
+        T,
+        N,
+        C_OUT,
+        { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+        { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+    >,
     cudnn_handle: Rc<CudnnHandle>,
 }
 impl<
@@ -54,7 +61,13 @@ where
         cudnn_handle: Rc<CudnnHandle>,
         x: Tensor4D<T, N, C_IN, H, W>,
         filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
-        y: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+        y: Tensor4D<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
     ) -> CudnnResult<Self> {
         let descriptor = Rc::new(ConvolutionDescriptor::create()?);
         unsafe {
@@ -82,7 +95,13 @@ where
 
     pub fn get_backward(
         &self,
-        dy: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+        dy: Tensor4D<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
         dx: Tensor4D<T, N, C_IN, H, W>,
     ) -> Convolution2DBackward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
     {
@@ -97,7 +116,13 @@ where
 
     pub fn get_filter_backward(
         &self,
-        dy: Tensor4D<T, N, C_OUT, {ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE}, {ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE}>,
+        dy: Tensor4D<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
         dw: Filter<T, C_OUT, C_IN, F_H, F_W>,
     ) -> Convolution2DBackwardFilter<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
     {
