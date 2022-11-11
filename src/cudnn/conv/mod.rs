@@ -3,11 +3,13 @@ use core::mem::MaybeUninit;
 use super::sys::*;
 use crate::prelude::*;
 
+mod algorithm_with_workspace;
 mod backward;
 mod filter;
 mod filter_backward;
 mod forward;
 
+pub use algorithm_with_workspace::*;
 pub use backward::*;
 pub use filter::*;
 pub use filter_backward::*;
@@ -58,8 +60,6 @@ impl<const D: usize, const P: usize, const K: usize, const S: usize> Convolution
 
 #[cfg(test)]
 mod tests {
-    use alloc::rc::Rc;
-
     use crate::prelude::*;
 
     #[test]
@@ -70,7 +70,7 @@ mod tests {
     #[test]
     fn test_simple_convolution() {
         let cuda = CudaDeviceBuilder::new(0).build().unwrap();
-        let cudnn_handle = Rc::new(CudnnHandle::create(&cuda).unwrap());
+        let cudnn_handle = CudnnHandle::create(&cuda).unwrap();
 
         let mut input_data = [[0.0; 5]; 5];
         for y in 0..5 {
@@ -82,24 +82,27 @@ mod tests {
         let x = Tensor4D::alloc_with(&cuda, [[input_data, input_data]]).unwrap();
         let filter =
             Filter::<f64, 1, 2, 2, 2>::alloc_with(&cuda, [[[[1.0f64; 2]; 2]; 2]; 1]).unwrap();
-        let y = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
-        let dx = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
-        let dw = unsafe { Filter::alloc_uninit(&cuda) }.unwrap();
+        let mut y = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
+        let mut dx = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
+        let mut dw = unsafe { Filter::alloc_uninit(&cuda) }.unwrap();
 
         let convolution_forward =
             Convolution2DForward::<f64, 5, 5, 0, 0, 1, 1, 1, 2, 1, 2, 2, 1, 1>::create(
-                cudnn_handle.clone(),
-                x,
-                filter,
-                y.clone(),
+                x.get_descriptor_rc(),
+                filter.get_descriptor_rc(),
+                y.get_descriptor_rc(),
             )
             .unwrap();
-        let convolution_backward = convolution_forward.get_backward(y.clone(), dx.clone());
+        let convolution_backward =
+            convolution_forward.get_backward(y.get_descriptor_rc(), dx.get_descriptor_rc());
         let convolution_backward_filter =
-            convolution_forward.get_filter_backward(y.clone(), dw.clone());
+            convolution_forward.get_filter_backward(y.get_descriptor_rc());
         let mut convolution =
-            AlgorithmWithWorkspace::create(convolution_forward, cuda.clone()).unwrap();
-        convolution.execute().unwrap();
+            AlgorithmWithWorkspace::create(&cudnn_handle, convolution_forward, cuda.clone())
+                .unwrap();
+        convolution
+            .execute(&cudnn_handle, &x, &filter, &mut y)
+            .unwrap();
 
         let output = y.get_data().unwrap();
         for y in 0..4 {
@@ -114,8 +117,11 @@ mod tests {
         }
 
         let mut convolution =
-            AlgorithmWithWorkspace::create(convolution_backward, cuda.clone()).unwrap();
-        convolution.execute().unwrap();
+            AlgorithmWithWorkspace::create(&cudnn_handle, convolution_backward, cuda.clone())
+                .unwrap();
+        convolution
+            .execute(&cudnn_handle, &y, &filter, &mut dx)
+            .unwrap();
 
         // TODO maybe check if this is right?
         assert_eq!(&*dx.get_data().unwrap(), &[[
@@ -135,9 +141,13 @@ mod tests {
             ]
         ]]);
 
-        let mut convolution =
-            AlgorithmWithWorkspace::create(convolution_backward_filter, cuda.clone()).unwrap();
-        convolution.execute().unwrap();
+        let mut convolution = AlgorithmWithWorkspace::create(
+            &cudnn_handle,
+            convolution_backward_filter,
+            cuda.clone(),
+        )
+        .unwrap();
+        convolution.execute(&cudnn_handle, &x, &y, &mut dw).unwrap();
 
         // TODO maybe check if this is right?
         assert_eq!(&*dw.get_data().unwrap(), &[[

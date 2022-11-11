@@ -4,6 +4,7 @@ mod operation;
 mod tensor4d;
 
 pub use data_type::*;
+pub use descriptor::*;
 pub use operation::*;
 pub use tensor4d::*;
 

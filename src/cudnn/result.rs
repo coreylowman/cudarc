@@ -3,9 +3,9 @@
 use core::mem::MaybeUninit;
 
 use crate::cudarc::CudaDevice;
+use crate::prelude::*;
 
 use super::sys::*;
-use super::CudaCudnnResult;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct CudnnError(pub cudnnStatus_t);

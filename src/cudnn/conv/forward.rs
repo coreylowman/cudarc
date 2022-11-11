@@ -26,16 +26,17 @@ pub struct Convolution2DForward<
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
 {
     descriptor: Rc<ConvolutionDescriptor>,
-    x: Tensor4D<T, N, C_IN, H, W>,
-    filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
-    y: Tensor4D<
-        T,
-        N,
-        C_OUT,
-        { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
-        { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+    x: Rc<TensorDescriptor<T, N, C_IN, H, W>>,
+    filter: Rc<FilterDescriptor<T, C_OUT, C_IN, F_H, F_W>>,
+    y: Rc<
+        TensorDescriptor<
+            T,
+            N,
+            C_OUT,
+            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        >,
     >,
-    cudnn_handle: Rc<CudnnHandle>,
 }
 impl<
         T: TensorDataType,
@@ -58,15 +59,16 @@ where
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
 {
     pub fn create(
-        cudnn_handle: Rc<CudnnHandle>,
-        x: Tensor4D<T, N, C_IN, H, W>,
-        filter: Filter<T, C_OUT, C_IN, F_H, F_W>,
-        y: Tensor4D<
-            T,
-            N,
-            C_OUT,
-            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
-            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        x: Rc<TensorDescriptor<T, N, C_IN, H, W>>,
+        filter: Rc<FilterDescriptor<T, C_OUT, C_IN, F_H, F_W>>,
+        y: Rc<
+            TensorDescriptor<
+                T,
+                N,
+                C_OUT,
+                { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+                { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+            >,
         >,
     ) -> CudaCudnnResult<Self> {
         let descriptor = Rc::new(ConvolutionDescriptor::create()?);
@@ -85,7 +87,6 @@ where
         }
         .result()?;
         Ok(Self {
-            cudnn_handle,
             descriptor,
             x,
             filter,
@@ -95,45 +96,39 @@ where
 
     pub fn get_backward(
         &self,
-        dy: Tensor4D<
-            T,
-            N,
-            C_OUT,
-            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
-            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        dy: Rc<
+            TensorDescriptor<
+                T,
+                N,
+                C_OUT,
+                { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+                { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+            >,
         >,
-        dx: Tensor4D<T, N, C_IN, H, W>,
+        dx: Rc<TensorDescriptor<T, N, C_IN, H, W>>,
     ) -> Convolution2DBackward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
     {
-        Convolution2DBackward::create(
-            self.cudnn_handle.clone(),
-            self.descriptor.clone(),
-            dy,
-            self.filter.clone(),
-            dx,
-        )
+        Convolution2DBackward::create(self.descriptor.clone(), dy, Rc::clone(&self.filter), dx)
     }
 
     pub fn get_filter_backward(
         &self,
-        dy: Tensor4D<
-            T,
-            N,
-            C_OUT,
-            { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
-            { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+        dy: Rc<
+            TensorDescriptor<
+                T,
+                N,
+                C_OUT,
+                { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+                { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+            >,
         >,
-        dw: Filter<T, C_OUT, C_IN, F_H, F_W>,
     ) -> Convolution2DBackwardFilter<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
     {
         Convolution2DBackwardFilter::create(
-            self.cudnn_handle.clone(),
             self.descriptor.clone(),
-            self.filter.clone(),
-            self.x.clone(),
-            self.y.clone(),
+            Rc::clone(&self.filter),
+            Rc::clone(&self.x),
             dy,
-            dw,
         )
     }
 }
@@ -159,14 +154,25 @@ where
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
     [(); F_W * F_H * C_IN * C_OUT]:,
 {
+    type InputA = Tensor4D<T, N, C_IN, H, W>;
+    type InputB = Filter<T, C_OUT, C_IN, F_H, F_W>;
+    type Output = Tensor4D<
+        T,
+        N,
+        C_OUT,
+        { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
+        { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
+    >;
+
     fn get_workspace_size(
         &self,
+        cudnn_handle: &CudnnHandle,
         algorithm: &cudnnConvolutionFwdAlgoPerf_t,
     ) -> CudaCudnnResult<usize> {
         let mut workspace_size = MaybeUninit::uninit();
         unsafe {
             cudnnGetConvolutionForwardWorkspaceSize(
-                self.cudnn_handle.get_handle(),
+                cudnn_handle.get_handle(),
                 self.x.get_descriptor(),
                 self.filter.get_descriptor(),
                 self.descriptor.0,
@@ -179,12 +185,15 @@ where
         }
     }
 
-    fn get_algorithm(&self) -> CudaCudnnResult<cudnnConvolutionFwdAlgoPerf_t> {
+    fn get_algorithm(
+        &self,
+        cudnn_handle: &CudnnHandle,
+    ) -> CudaCudnnResult<cudnnConvolutionFwdAlgoPerf_t> {
         let mut output_amount = MaybeUninit::uninit();
         let mut algorithm = MaybeUninit::uninit();
         unsafe {
             cudnnGetConvolutionForwardAlgorithm_v7(
-                self.cudnn_handle.get_handle(),
+                cudnn_handle.get_handle(),
                 self.x.get_descriptor(),
                 self.filter.get_descriptor(),
                 self.descriptor.0,
@@ -205,25 +214,29 @@ where
 
     fn execute(
         &mut self,
+        cudnn_handle: &CudnnHandle,
         algorithm: &cudnnConvolutionFwdAlgoPerf_t,
         workspace_allocation: crate::driver::sys::CUdeviceptr,
         workspace_size: usize,
+        x: &Self::InputA,
+        filter: &Self::InputB,
+        y: &mut Self::Output,
     ) -> CudaCudnnResult<()> {
         unsafe {
             cudnnConvolutionForward(
-                self.cudnn_handle.get_handle(),
+                cudnn_handle.get_handle(),
                 &T::ONE as *const _ as *const _,
-                self.x.get_descriptor(),
-                self.x.get_data_ptr(),
-                self.filter.get_descriptor(),
-                self.filter.get_data_ptr(),
+                x.get_descriptor(),
+                x.get_data_ptr(),
+                filter.get_descriptor(),
+                filter.get_data_ptr(),
                 self.descriptor.0,
                 algorithm.algo,
                 workspace_allocation as *mut _,
                 workspace_size,
                 &T::ZERO as *const _ as *const _,
-                self.y.get_descriptor(),
-                self.y.get_data_ptr_mut(),
+                y.get_descriptor(),
+                y.get_data_ptr_mut(),
             )
         }
         .result()

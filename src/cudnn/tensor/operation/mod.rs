@@ -1,13 +1,13 @@
 mod descriptor;
 mod mode;
 
+pub use descriptor::*;
 pub use mode::*;
 
 use core::marker::PhantomData;
 
 use crate::cudnn::sys::*;
 use crate::prelude::*;
-use descriptor::*;
 
 const NAN_PROPAGATION: cudnnNanPropagation_t = cudnnNanPropagation_t::CUDNN_PROPAGATE_NAN;
 

@@ -33,6 +33,11 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
     }
 
     #[inline(always)]
+    pub fn get_descriptor_rc(&self) -> Rc<TensorDescriptor<T, N, C, H, W>> {
+        Rc::clone(&self.descriptor)
+    }
+
+    #[inline(always)]
     pub fn get_data_ptr(&self) -> *const c_void {
         self.data.t_cuda.cu_device_ptr as *const _
     }
