@@ -1,6 +1,6 @@
 use crate::cudarc::ValidAsZeroBits;
 
-use super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
+use super::super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 
 /// Convert a Rust type to a [cudnnDataType_t].
 /// # Supported rust-types
@@ -45,7 +45,7 @@ impl_data_type!(f64: CUDNN_DATA_DOUBLE, 0.0f64, 1.0f64, f64::MAX);
 
 #[cfg(test)]
 mod tests {
-    use super::super::sys::cudnnDataType_t;
+    use super::super::super::sys::cudnnDataType_t;
     use super::TensorDataType;
 
     #[test]

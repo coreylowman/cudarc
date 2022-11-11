@@ -1,6 +1,6 @@
 use core::mem::MaybeUninit;
 
-use super::super::sys::*;
+use crate::cudnn::sys::*;
 use crate::prelude::*;
 
 pub struct TensorOpsDescriptor(pub(crate) cudnnOpTensorDescriptor_t);

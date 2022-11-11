@@ -1,4 +1,4 @@
-use super::super::sys::*;
+use crate::cudnn::sys::*;
 
 pub trait TensorOperation {
     fn get_tensor_operation() -> cudnnOpTensorOp_t;

@@ -1,7 +1,7 @@
+mod conv_filter;
 mod descriptor;
-mod filter;
 
-pub use filter::*;
+pub use conv_filter::*;
 
 #[cfg(test)]
 mod tests {

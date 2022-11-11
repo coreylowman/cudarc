@@ -1,5 +1,10 @@
+mod data_type;
 mod descriptor;
+mod operation;
 mod tensor4d;
+
+pub use data_type::*;
+pub use operation::*;
 pub use tensor4d::*;
 
 #[cfg(test)]
