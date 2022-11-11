@@ -1,53 +1,13 @@
 use core::ffi::c_void;
-use core::marker::PhantomData;
-use core::mem::{size_of, MaybeUninit};
+use core::mem::size_of;
 
 use alloc::rc::Rc;
 
-use super::sys::*;
+use super::super::sys::*;
+use super::descriptor::TensorDescriptor;
 use crate::cudarc::CudaUniquePtr;
 use crate::prelude::*;
 
-pub struct TensorDescriptor<T, const N: usize, const C: usize, const H: usize, const W: usize> {
-    descriptor: cudnnTensorDescriptor_t,
-    data_type:  PhantomData<T>,
-}
-impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
-    TensorDescriptor<T, N, C, H, W>
-{
-    pub fn create() -> CudaCudnnResult<Self> {
-        let descriptor = unsafe {
-            let mut descriptor = MaybeUninit::uninit();
-            cudnnCreateTensorDescriptor(descriptor.as_mut_ptr()).result()?;
-            descriptor.assume_init()
-        };
-        unsafe {
-            cudnnSetTensor4dDescriptor(
-                descriptor,
-                T::get_tensor_format(),
-                T::get_data_type(),
-                N as _,
-                C as _,
-                H as _,
-                W as _,
-            )
-        }
-        .result()?;
-        Ok(Self {
-            descriptor,
-            data_type: PhantomData,
-        })
-    }
-}
-impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Drop
-    for TensorDescriptor<T, N, C, H, W>
-{
-    fn drop(&mut self) {
-        unsafe { cudnnDestroyTensorDescriptor(self.descriptor) }
-            .result()
-            .unwrap();
-    }
-}
 /// A 4D-tensor with the `NCHW`-layout. Cloning this tensor only clones the
 /// point and thus increases the reference count.
 pub struct Tensor4D<T, const N: usize, const C: usize, const H: usize, const W: usize> {
@@ -69,7 +29,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
 {
     #[inline(always)]
     pub fn get_descriptor(&self) -> cudnnTensorDescriptor_t {
-        self.descriptor.descriptor
+        self.descriptor.get_descriptor()
     }
 
     #[inline(always)]
@@ -132,18 +92,5 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
 
     pub const fn size(&self) -> usize {
         size_of::<T>() * N * C * H * W
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::prelude::*;
-
-    #[test]
-    fn test_create_tensor() {
-        let data = [[[[0.0, 1.0]]], [[[2.0, 3.0]]]];
-        let t = Tensor4D::alloc_with(&CudaDeviceBuilder::new(0).build().unwrap(), data).unwrap();
-        let on_gpu = *t.get_data().unwrap();
-        assert_eq!(data, on_gpu);
     }
 }

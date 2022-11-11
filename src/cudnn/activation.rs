@@ -66,7 +66,7 @@ impl<A: ActivationMode> Activation<A> {
             activation_mode: PhantomData,
         })
     }
-    
+
     pub fn forward<
         T: TensorDataType,
         const N: usize,
