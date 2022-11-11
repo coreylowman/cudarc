@@ -20,14 +20,13 @@ pub struct WithWorkspace<T> {
     pub(crate) device: Rc<CudaDevice>,
 }
 impl<T: RequiresWorkspace> WithWorkspace<T> {
-    pub fn create(data: T, device: Rc<CudaDevice>) -> CudnnResult<Self> {
+    pub fn create(data: T, device: Rc<CudaDevice>) -> CudaCudnnResult<Self> {
         let workspace_size = data.get_workspace_size()?;
         let workspace_allocation = unsafe {
             let mut dev_ptr = MaybeUninit::uninit();
-            // TODO other return type
             cuMemAllocAsync(dev_ptr.as_mut_ptr(), workspace_size, device.cu_stream)
                 .result()
-                .unwrap();
+                .into_cuda_cudnn_result()?;
             dev_ptr.assume_init()
         };
         Ok(Self {

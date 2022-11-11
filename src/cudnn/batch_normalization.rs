@@ -95,7 +95,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         cudnn_handle: Rc<CudnnHandle>,
         x: Tensor4D<T, N, C, H, W>,
         y: Tensor4D<T, N, C, H, W>,
-    ) -> CudnnResult<Self> {
+    ) -> CudaCudnnResult<Self> {
         let bias = Tensor4D::alloc_all_same(device, &cudnn_handle, &T::ZERO)?;
         let scale = Tensor4D::alloc_all_same(device, &cudnn_handle, &T::ONE)?;
         let saved_mean = unsafe { Tensor4D::alloc_uninit(device) }?;

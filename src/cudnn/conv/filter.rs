@@ -8,7 +8,7 @@ use crate::prelude::*;
 
 pub struct FilterDescriptor(pub(crate) cudnnFilterDescriptor_t);
 impl FilterDescriptor {
-    pub fn create() -> CudnnResult<Self> {
+    pub fn create() -> CudaCudnnResult<Self> {
         let mut descriptor = MaybeUninit::uninit();
         unsafe {
             cudnnCreateFilterDescriptor(descriptor.as_mut_ptr()).result()?;
@@ -42,7 +42,7 @@ impl<T: TensorDataType, const C_OUT: usize, const C_IN: usize, const H: usize, c
 where
     [(); W * H * C_IN * C_OUT]:,
 {
-    pub fn create(allocation: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>) -> CudnnResult<Self> {
+    pub fn create(allocation: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>) -> CudaCudnnResult<Self> {
         let descriptor = Rc::new(FilterDescriptor::create()?);
         unsafe {
             cudnnSetFilter4dDescriptor(
@@ -62,9 +62,9 @@ where
         })
     }
 
-    pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudnnResult<Self> {
+    pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
         Self::create(CudaRc {
-            t_cuda: Rc::new(CudaUniquePtr::alloc(device).unwrap()),
+            t_cuda: Rc::new(CudaUniquePtr::alloc(device).into_cuda_cudnn_result()?),
             t_host: None,
         })
     }
@@ -72,8 +72,8 @@ where
     pub fn alloc_with(
         device: &Rc<CudaDevice>,
         value: [[[[T; W]; H]; C_IN]; C_OUT],
-    ) -> CudnnResult<Self> {
-        Self::create(device.take(Rc::new(value)).unwrap())
+    ) -> CudaCudnnResult<Self> {
+        Self::create(device.take(Rc::new(value)).into_cuda_cudnn_result()?)
     }
 }
 

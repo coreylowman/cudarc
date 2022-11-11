@@ -18,7 +18,7 @@ pub struct AlgorithmWithWorkspace<A, T> {
     pub(crate) algorithm: A,
 }
 impl<A, T: RequiresAlgorithmWithWorkspace<A>> AlgorithmWithWorkspace<A, T> {
-    pub fn create(data: T, device: Rc<CudaDevice>) -> CudnnResult<WithWorkspace<Self>> {
+    pub fn create(data: T, device: Rc<CudaDevice>) -> CudaCudnnResult<WithWorkspace<Self>> {
         WithWorkspace::create(
             Self {
                 algorithm: data.get_algorithm()?,

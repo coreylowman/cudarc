@@ -24,7 +24,7 @@ impl ConvolutionDescriptor {
     ///
     /// # See also
     /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateConvolutionDescriptor>
-    pub fn create() -> CudnnResult<Self> {
+    pub fn create() -> CudaCudnnResult<Self> {
         let mut descriptor = MaybeUninit::uninit();
         unsafe {
             cudnnCreateConvolutionDescriptor(descriptor.as_mut_ptr()).result()?;

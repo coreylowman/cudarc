@@ -56,7 +56,7 @@ impl<A> Clone for Activation<A> {
     }
 }
 impl<A: ActivationMode> Activation<A> {
-    pub fn create() -> CudnnResult<Self> {
+    pub fn create() -> CudaCudnnResult<Self> {
         let descriptor = Rc::new(ActivationDescriptor::create()?);
         unsafe {
             cudnnSetActivationDescriptor(
@@ -136,7 +136,7 @@ impl<A: ActivationMode> Activation<A> {
 
 pub struct ActivationDescriptor(pub(crate) cudnnActivationDescriptor_t);
 impl ActivationDescriptor {
-    pub fn create() -> CudnnResult<Self> {
+    pub fn create() -> CudaCudnnResult<Self> {
         let mut descriptor = MaybeUninit::uninit();
         unsafe {
             cudnnCreateActivationDescriptor(descriptor.as_mut_ptr()).result()?;
@@ -165,10 +165,10 @@ mod tests {
     fn test_relu_activation_forward_backward() {
         let cuda = CudaDeviceBuilder::new(0).build().unwrap();
         let cudnn_handle = CudnnHandle::create(&cuda).unwrap();
-        let x = Tensor2D::alloc_with(&cuda, [[[[f64::NAN, 2.0]]], [[[-1.0, 0.0]]]]).unwrap();
-        let dy = Tensor2D::alloc_with(&cuda, [[[[f64::NAN, 3.0]]], [[[-1.0, 0.0]]]]).unwrap();
-        let mut dx = unsafe { Tensor2D::alloc_uninit(&cuda) }.unwrap();
-        let mut y = unsafe { Tensor2D::alloc_uninit(&cuda) }.unwrap();
+        let x = Tensor4D::alloc_with(&cuda, [[[[f64::NAN, 2.0]]], [[[-1.0, 0.0]]]]).unwrap();
+        let dy = Tensor4D::alloc_with(&cuda, [[[[f64::NAN, 3.0]]], [[[-1.0, 0.0]]]]).unwrap();
+        let mut dx = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
+        let mut y = unsafe { Tensor4D::alloc_uninit(&cuda) }.unwrap();
 
         let activation = Activation::<Relu>::create().unwrap();
         activation.forward(&cudnn_handle, &x, &mut y).unwrap();
