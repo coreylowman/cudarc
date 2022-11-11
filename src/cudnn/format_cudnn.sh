@@ -8,5 +8,5 @@ for filename in $BASEDIR/*.rs; do
     then
         continue
     fi
-    rustfmt "$@" -l $filename
+    rustfmt "$@" -l "$filename"
 done

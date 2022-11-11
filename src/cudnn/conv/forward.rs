@@ -163,10 +163,10 @@ where
         unsafe {
             cudnnGetConvolutionForwardWorkspaceSize(
                 self.cudnn_handle.0,
-                self.x.descriptor.descriptor.0,
+                self.x.descriptor.0,
                 self.filter.descriptor.0,
                 self.descriptor.0,
-                self.y.descriptor.descriptor.0,
+                self.y.descriptor.0,
                 algorithm.algo,
                 workspace_size.as_mut_ptr(),
             )
@@ -181,10 +181,10 @@ where
         unsafe {
             cudnnGetConvolutionForwardAlgorithm_v7(
                 self.cudnn_handle.0,
-                self.x.descriptor.descriptor.0,
+                self.x.descriptor.0,
                 self.filter.descriptor.0,
                 self.descriptor.0,
-                self.y.descriptor.descriptor.0,
+                self.y.descriptor.0,
                 1,
                 output_amount.as_mut_ptr(),
                 algorithm.as_mut_ptr(),
@@ -209,7 +209,7 @@ where
             cudnnConvolutionForward(
                 self.cudnn_handle.0,
                 &T::ONE as *const _ as *const _,
-                self.x.descriptor.descriptor.0,
+                self.x.descriptor.0,
                 self.x.data.t_cuda.cu_device_ptr as *const _,
                 self.filter.descriptor.0,
                 self.filter.data.t_cuda.cu_device_ptr as *const _,
@@ -218,7 +218,7 @@ where
                 workspace_allocation as *mut _,
                 workspace_size,
                 &T::ZERO as *const _ as *const _,
-                self.y.descriptor.descriptor.0,
+                self.y.descriptor.0,
                 self.y.data.t_cuda.cu_device_ptr as *mut _,
             )
         }

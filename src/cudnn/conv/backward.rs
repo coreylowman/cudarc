@@ -110,9 +110,9 @@ where
             cudnnGetConvolutionBackwardDataWorkspaceSize(
                 self.cudnn_handle.0,
                 self.filter.descriptor.0,
-                self.dy.descriptor.descriptor.0,
+                self.dy.descriptor.0,
                 self.descriptor.0,
-                self.dx.descriptor.descriptor.0,
+                self.dx.descriptor.0,
                 algorithm.algo,
                 workspace_size.as_mut_ptr(),
             )
@@ -128,9 +128,9 @@ where
             cudnnGetConvolutionBackwardDataAlgorithm_v7(
                 self.cudnn_handle.0,
                 self.filter.descriptor.0,
-                self.dy.descriptor.descriptor.0,
+                self.dy.descriptor.0,
                 self.descriptor.0,
-                self.dx.descriptor.descriptor.0,
+                self.dx.descriptor.0,
                 1,
                 output_amount.as_mut_ptr(),
                 algorithm.as_mut_ptr(),
@@ -157,14 +157,14 @@ where
                 &T::ONE as *const _ as *const _,
                 self.filter.descriptor.0,
                 self.filter.data.t_cuda.cu_device_ptr as *const _,
-                self.dy.descriptor.descriptor.0,
+                self.dy.descriptor.0,
                 self.dy.data.t_cuda.cu_device_ptr as *const _,
                 self.descriptor.0,
                 algorithm.algo,
                 workspace_allocation as *mut _,
                 workspace_size,
                 &T::ZERO as *const _ as *const _,
-                self.dx.descriptor.descriptor.0,
+                self.dx.descriptor.0,
                 self.dx.data.t_cuda.cu_device_ptr as *mut _,
             )
         }

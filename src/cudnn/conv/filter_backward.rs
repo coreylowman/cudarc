@@ -125,8 +125,8 @@ where
         unsafe {
             cudnnGetConvolutionBackwardFilterAlgorithm_v7(
                 self.cudnn_handle.0,
-                self.x.descriptor.descriptor.0,
-                self.dy.descriptor.descriptor.0,
+                self.x.descriptor.0,
+                self.dy.descriptor.0,
                 self.descriptor.0,
                 self.filter.descriptor.0,
                 1,
@@ -151,8 +151,8 @@ where
         unsafe {
             cudnnGetConvolutionBackwardFilterWorkspaceSize(
                 self.cudnn_handle.0,
-                self.x.descriptor.descriptor.0,
-                self.dy.descriptor.descriptor.0,
+                self.x.descriptor.0,
+                self.dy.descriptor.0,
                 self.descriptor.0,
                 self.filter.descriptor.0,
                 algorithm.algo,
@@ -173,9 +173,9 @@ where
             cudnnConvolutionBackwardFilter(
                 self.cudnn_handle.0,
                 &T::ONE as *const _ as *const _,
-                self.x.descriptor.descriptor.0,
+                self.x.descriptor.0,
                 self.x.data.t_cuda.cu_device_ptr as *const _,
-                self.y.descriptor.descriptor.0,
+                self.y.descriptor.0,
                 self.y.data.t_cuda.cu_device_ptr as *const _,
                 self.descriptor.0,
                 algorithm.algo,
