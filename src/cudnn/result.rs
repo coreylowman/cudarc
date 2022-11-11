@@ -5,18 +5,17 @@ use core::mem::MaybeUninit;
 use crate::cudarc::CudaDevice;
 
 use super::sys::*;
-
-pub type CudnnResult<T> = Result<T, CudnnError>;
+use super::CudaCudnnResult;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct CudnnError(pub cudnnStatus_t);
 
 impl cudnnStatus_t {
-    /// Transforms into a [Result] of [CudnnError]
-    pub fn result(self) -> Result<(), CudnnError> {
+    /// Transforms into a [CudaCudnnResult]
+    pub fn result(self) -> CudaCudnnResult<()> {
         match self {
             cudnnStatus_t::CUDNN_STATUS_SUCCESS => Ok(()),
-            _ => Err(CudnnError(self)),
+            _ => Err(CudnnError(self).into()),
         }
     }
 }
@@ -32,9 +31,9 @@ impl std::fmt::Display for CudnnError {
 impl std::error::Error for CudnnError {}
 
 // No sync because of https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#thread-safety
-pub struct CudnnHandle(pub(crate) cudnnHandle_t);
+pub struct CudnnHandle(cudnnHandle_t);
 impl CudnnHandle {
-    pub fn create(device: &CudaDevice) -> CudnnResult<Self> {
+    pub fn create(device: &CudaDevice) -> CudaCudnnResult<Self> {
         let mut handle = MaybeUninit::uninit();
         unsafe {
             cudnnCreate(handle.as_mut_ptr()).result()?;
@@ -44,10 +43,15 @@ impl CudnnHandle {
             Ok(Self(handle))
         }
     }
+
+    #[inline(always)]
+    pub fn get_handle(&self) -> cudnnHandle_t {
+        self.0
+    }
 }
 impl Drop for CudnnHandle {
     fn drop(&mut self) {
-        unsafe { cudnnDestroy(self.0).result().unwrap() };
+        unsafe { cudnnDestroy(self.get_handle()).result().unwrap() };
     }
 }
 

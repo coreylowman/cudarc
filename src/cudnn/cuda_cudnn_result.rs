@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+/// This implements `From<CudaError>` and `From<CudnnError>` so using the
+/// `?`-operator coerces into `CudaCudnnError`.
 #[derive(Debug, Clone)]
 pub enum CudaCudnnError {
     CudaError(CudaError),
@@ -19,11 +21,6 @@ pub trait IntoCudaCudnnResult<T> {
     fn into_cuda_cudnn_result(self) -> CudaCudnnResult<T>;
 }
 impl<T> IntoCudaCudnnResult<T> for Result<T, CudaError> {
-    fn into_cuda_cudnn_result(self) -> CudaCudnnResult<T> {
-        self.map_err(Into::into)
-    }
-}
-impl<T> IntoCudaCudnnResult<T> for Result<T, CudnnError> {
     fn into_cuda_cudnn_result(self) -> CudaCudnnResult<T> {
         self.map_err(Into::into)
     }

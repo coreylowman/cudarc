@@ -6,12 +6,12 @@ use crate::driver::sys::{cuMemAllocAsync, cuMemFreeAsync, CUdeviceptr};
 use crate::prelude::*;
 
 pub trait RequiresWorkspace {
-    fn get_workspace_size(&self) -> CudnnResult<usize>;
+    fn get_workspace_size(&self) -> CudaCudnnResult<usize>;
     fn execute(
         &mut self,
         workspace_allocation: CUdeviceptr,
         workspace_size: usize,
-    ) -> CudnnResult<()>;
+    ) -> CudaCudnnResult<()>;
 }
 pub struct WithWorkspace<T> {
     pub(crate) data: T,
@@ -24,9 +24,7 @@ impl<T: RequiresWorkspace> WithWorkspace<T> {
         let workspace_size = data.get_workspace_size()?;
         let workspace_allocation = unsafe {
             let mut dev_ptr = MaybeUninit::uninit();
-            cuMemAllocAsync(dev_ptr.as_mut_ptr(), workspace_size, device.cu_stream)
-                .result()
-                .into_cuda_cudnn_result()?;
+            cuMemAllocAsync(dev_ptr.as_mut_ptr(), workspace_size, device.cu_stream).result()?;
             dev_ptr.assume_init()
         };
         Ok(Self {
@@ -37,7 +35,7 @@ impl<T: RequiresWorkspace> WithWorkspace<T> {
         })
     }
 
-    pub fn execute(&mut self) -> CudnnResult<()> {
+    pub fn execute(&mut self) -> CudaCudnnResult<()> {
         self.data
             .execute(self.workspace_allocation, self.workspace_size)
     }

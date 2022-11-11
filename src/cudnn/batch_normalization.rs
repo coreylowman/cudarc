@@ -37,28 +37,28 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         x: &Tensor4D<T, N, C, H, W>,
         dx: &mut Tensor4D<T, N, C, H, W>,
         dy: &Tensor4D<T, N, C, H, W>,
-    ) -> CudnnResult<()> {
+    ) -> CudaCudnnResult<()> {
         unsafe {
             cudnnBatchNormalizationBackward(
-                cudnn_handle.0,
+                cudnn_handle.get_handle(),
                 MODE,
                 &T::ONE as *const _ as *const _,
                 &T::ZERO as *const _ as *const _,
                 &T::ZERO as *const _ as *const _,
                 &T::ONE as *const _ as *const _,
-                x.descriptor.0,
-                x.data.t_cuda.cu_device_ptr as *const _,
-                dy.descriptor.0,
-                dy.data.t_cuda.cu_device_ptr as *const _,
-                dx.descriptor.0,
-                dx.data.t_cuda.cu_device_ptr as *mut _,
-                self.dummy_diff.descriptor.0,
-                self.dummy_diff.data.t_cuda.cu_device_ptr as *const _,
-                self.dummy_diff.data.t_cuda.cu_device_ptr as *mut _,
-                self.dummy_diff.data.t_cuda.cu_device_ptr as *mut _,
+                x.get_descriptor(),
+                x.get_data_ptr(),
+                dy.get_descriptor(),
+                dy.get_data_ptr(),
+                dx.get_descriptor(),
+                dx.get_data_ptr_mut(),
+                self.dummy_diff.get_descriptor(),
+                self.dummy_diff.get_data_ptr(),
+                self.dummy_diff.get_data_ptr_mut(),
+                self.dummy_diff.get_data_ptr_mut(),
                 CUDNN_BN_MIN_EPSILON,
-                self.saved_mean.data.t_cuda.cu_device_ptr as *const _,
-                self.saved_variance.data.t_cuda.cu_device_ptr as *const _,
+                self.saved_mean.get_data_ptr(),
+                self.saved_variance.get_data_ptr(),
             )
             .result()
         }
@@ -112,26 +112,26 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         x: &Tensor4D<T, N, C, H, W>,
         y: &mut Tensor4D<T, N, C, H, W>,
         exponential_average_factor: f64,
-    ) -> CudnnResult<()> {
+    ) -> CudaCudnnResult<()> {
         unsafe {
             cudnnBatchNormalizationForwardTraining(
-                cudnn_handle.0,
+                cudnn_handle.get_handle(),
                 MODE,
                 &T::ONE as *const _ as *const _,
                 &T::ZERO as *const _ as *const _,
-                x.descriptor.0,
-                x.data.t_cuda.cu_device_ptr as *const _,
-                y.descriptor.0,
-                y.data.t_cuda.cu_device_ptr as *mut _,
-                self.scale.descriptor.0,
-                self.scale.data.t_cuda.cu_device_ptr as *const _,
-                self.bias.data.t_cuda.cu_device_ptr as *const _,
+                x.get_descriptor(),
+                x.get_data_ptr(),
+                y.get_descriptor(),
+                y.get_data_ptr_mut(),
+                self.scale.get_descriptor(),
+                self.scale.get_data_ptr(),
+                self.bias.get_data_ptr(),
                 exponential_average_factor,
-                self.running_mean.data.t_cuda.cu_device_ptr as *mut _,
-                self.running_variance.data.t_cuda.cu_device_ptr as *mut _,
+                self.running_mean.get_data_ptr_mut(),
+                self.running_variance.get_data_ptr_mut(),
                 CUDNN_BN_MIN_EPSILON,
-                self.saved_mean.data.t_cuda.cu_device_ptr as *mut _,
-                self.saved_variance.data.t_cuda.cu_device_ptr as *mut _,
+                self.saved_mean.get_data_ptr_mut(),
+                self.saved_variance.get_data_ptr_mut(),
             )
             .result()
         }
@@ -156,13 +156,11 @@ mod tests {
 
         forward.execute(&cudnn_handle, &x, &mut y, 1.0).unwrap();
 
-        assert_eq!(&*y.data.clone().into_host().unwrap(), &[[[[1.0, -1.0]], [
-            [1.0, -1.0]
-        ]]]);
+        assert_eq!(&*y.get_data().unwrap(), &[[[[1.0, -1.0]], [[1.0, -1.0]]]]);
 
         backward.execute(&cudnn_handle, &x, &mut dx, &y).unwrap();
 
-        // TODO seems to be wrong
-        std::println!("{:?}", dx.data.into_host());
+        // TODO check if this is really right
+        assert_eq!(&*dx.get_data().unwrap(), &[[[[0.0, 0.0]], [[0.0, 0.0]]]]);
     }
 }

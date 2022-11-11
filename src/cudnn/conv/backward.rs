@@ -100,19 +100,20 @@ impl<
 where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
+    [(); F_W * F_H * C_IN * C_OUT]:,
 {
     fn get_workspace_size(
         &self,
         algorithm: &cudnnConvolutionBwdDataAlgoPerf_t,
-    ) -> CudnnResult<usize> {
+    ) -> CudaCudnnResult<usize> {
         let mut workspace_size = MaybeUninit::uninit();
         unsafe {
             cudnnGetConvolutionBackwardDataWorkspaceSize(
-                self.cudnn_handle.0,
-                self.filter.descriptor.0,
-                self.dy.descriptor.0,
+                self.cudnn_handle.get_handle(),
+                self.filter.get_descriptor(),
+                self.dy.get_descriptor(),
                 self.descriptor.0,
-                self.dx.descriptor.0,
+                self.dx.get_descriptor(),
                 algorithm.algo,
                 workspace_size.as_mut_ptr(),
             )
@@ -121,16 +122,16 @@ where
         }
     }
 
-    fn get_algorithm(&self) -> CudnnResult<cudnnConvolutionBwdDataAlgoPerf_t> {
+    fn get_algorithm(&self) -> CudaCudnnResult<cudnnConvolutionBwdDataAlgoPerf_t> {
         let mut output_amount = MaybeUninit::uninit();
         let mut algorithm = MaybeUninit::uninit();
         unsafe {
             cudnnGetConvolutionBackwardDataAlgorithm_v7(
-                self.cudnn_handle.0,
-                self.filter.descriptor.0,
-                self.dy.descriptor.0,
+                self.cudnn_handle.get_handle(),
+                self.filter.get_descriptor(),
+                self.dy.get_descriptor(),
                 self.descriptor.0,
-                self.dx.descriptor.0,
+                self.dx.get_descriptor(),
                 1,
                 output_amount.as_mut_ptr(),
                 algorithm.as_mut_ptr(),
@@ -150,22 +151,22 @@ where
         algorithm: &cudnnConvolutionBwdDataAlgoPerf_t,
         workspace_allocation: crate::driver::sys::CUdeviceptr,
         workspace_size: usize,
-    ) -> CudnnResult<()> {
+    ) -> CudaCudnnResult<()> {
         unsafe {
             cudnnConvolutionBackwardData(
-                self.cudnn_handle.0,
+                self.cudnn_handle.get_handle(),
                 &T::ONE as *const _ as *const _,
-                self.filter.descriptor.0,
-                self.filter.data.t_cuda.cu_device_ptr as *const _,
-                self.dy.descriptor.0,
-                self.dy.data.t_cuda.cu_device_ptr as *const _,
+                self.filter.get_descriptor(),
+                self.filter.get_data_ptr(),
+                self.dy.get_descriptor(),
+                self.dy.get_data_ptr(),
                 self.descriptor.0,
                 algorithm.algo,
                 workspace_allocation as *mut _,
                 workspace_size,
                 &T::ZERO as *const _ as *const _,
-                self.dx.descriptor.0,
-                self.dx.data.t_cuda.cu_device_ptr as *mut _,
+                self.dx.get_descriptor(),
+                self.dx.get_data_ptr_mut(),
             )
         }
         .result()

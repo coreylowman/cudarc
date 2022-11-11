@@ -28,7 +28,7 @@ const NAN_PROPAGATION: cudnnNanPropagation_t = cudnnNanPropagation_t::CUDNN_PROP
 
 pub struct TensorOpsDescriptor(pub(crate) cudnnOpTensorDescriptor_t);
 impl TensorOpsDescriptor {
-    pub fn create() -> CudnnResult<Self> {
+    pub fn create() -> CudaCudnnResult<Self> {
         let mut descriptor = MaybeUninit::uninit();
         unsafe {
             cudnnCreateOpTensorDescriptor(descriptor.as_mut_ptr()).result()?;
@@ -50,7 +50,7 @@ pub struct TensorOp<T, O> {
     data_type: PhantomData<T>,
 }
 impl<T: TensorDataType, O: TensorOperation> TensorOp<T, O> {
-    pub fn create() -> CudnnResult<Self> {
+    pub fn create() -> CudaCudnnResult<Self> {
         let descriptor = TensorOpsDescriptor::create()?;
         unsafe {
             cudnnSetOpTensorDescriptor(
@@ -74,20 +74,20 @@ impl<T: TensorDataType, O: TensorOperation> TensorOp<T, O> {
         a: &Tensor4D<T, N, C, H, W>,
         b: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
-    ) -> CudnnResult<()> {
+    ) -> CudaCudnnResult<()> {
         unsafe {
             cudnnOpTensor(
-                cudnn_handle.0,
+                cudnn_handle.get_handle(),
                 self.descriptor.0,
                 &T::ONE as *const _ as *const _,
-                a.descriptor.0,
-                a.data.t_cuda.cu_device_ptr as *const _,
+                a.get_descriptor(),
+                a.get_data_ptr(),
                 &T::ONE as *const _ as *const _,
-                b.descriptor.0,
-                b.data.t_cuda.cu_device_ptr as *const _,
+                b.get_descriptor(),
+                b.get_data_ptr(),
                 &T::ZERO as *const _ as *const _,
-                out.descriptor.0,
-                out.data.t_cuda.cu_device_ptr as *mut _,
+                out.get_descriptor(),
+                out.get_data_ptr_mut(),
             )
         }
         .result()
@@ -99,7 +99,7 @@ pub trait SingleParameterOp<T> {
         cudnn_handle: &CudnnHandle,
         a: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
-    ) -> CudnnResult<()>;
+    ) -> CudaCudnnResult<()>;
 }
 pub trait MultiParameterOp<T> {
     fn execute<const N: usize, const C: usize, const H: usize, const W: usize>(
@@ -108,7 +108,7 @@ pub trait MultiParameterOp<T> {
         a: &Tensor4D<T, N, C, H, W>,
         b: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
-    ) -> CudnnResult<()>;
+    ) -> CudaCudnnResult<()>;
 }
 macro_rules! impl_tensor_op_execution {
     ($tensor_op:ty) => {
@@ -119,7 +119,7 @@ macro_rules! impl_tensor_op_execution {
                 a: &Tensor4D<T, N, C, H, W>,
                 b: &Tensor4D<T, N, C, H, W>,
                 out: &mut Tensor4D<T, N, C, H, W>,
-            ) -> CudnnResult<()> {
+            ) -> CudaCudnnResult<()> {
                 self.execute_op(cudnn_handle, a, b, out)
             }
         }
@@ -131,7 +131,7 @@ macro_rules! impl_tensor_op_execution {
                 cudnn_handle: &CudnnHandle,
                 a: &Tensor4D<T, N, C, H, W>,
                 out: &mut Tensor4D<T, N, C, H, W>,
-            ) -> CudnnResult<()> {
+            ) -> CudaCudnnResult<()> {
                 self.execute_op(cudnn_handle, a, a, out)
             }
         }
@@ -177,7 +177,7 @@ mod tests {
     fn test_add() {
         let (cudnn, op, a, b, mut out) = get_information::<OperationAdd>();
         op.execute(&cudnn, &a, &b, &mut out).unwrap();
-        let output = out.data.into_host().unwrap();
+        let output = out.get_data().unwrap();
         assert_eq!(output[0][0][0][0], 4.0);
         assert_eq!(output[0][0][0][1], 2.0);
         assert_eq!(output[0][0][0][2], -3.0);
@@ -190,7 +190,7 @@ mod tests {
     fn test_mul() {
         let (cudnn, op, a, b, mut out) = get_information::<OperationMul>();
         op.execute(&cudnn, &a, &b, &mut out).unwrap();
-        let output = out.data.into_host().unwrap();
+        let output = out.get_data().unwrap();
         assert_eq!(output[0][0][0][0], 3.0);
         assert_eq!(output[0][0][0][1], 0.0);
         assert_eq!(output[0][0][0][2], 2.0);
@@ -203,7 +203,7 @@ mod tests {
     fn test_min() {
         let (cudnn, op, a, b, mut out) = get_information::<OperationMin>();
         op.execute(&cudnn, &a, &b, &mut out).unwrap();
-        let output = out.data.into_host().unwrap();
+        let output = out.get_data().unwrap();
         assert_eq!(output[0][0][0][0], 1.0);
         assert_eq!(output[0][0][0][1], 0.0);
         assert_eq!(output[0][0][0][2], -2.0);
@@ -216,7 +216,7 @@ mod tests {
     fn test_max() {
         let (cudnn, op, a, b, mut out) = get_information::<OperationMax>();
         op.execute(&cudnn, &a, &b, &mut out).unwrap();
-        let output = out.data.into_host().unwrap();
+        let output = out.get_data().unwrap();
         assert_eq!(output[0][0][0][0], 3.0);
         assert_eq!(output[0][0][0][1], 2.0);
         assert_eq!(output[0][0][0][2], -1.0);
@@ -229,7 +229,7 @@ mod tests {
     fn test_sqrt() {
         let (cudnn, op, a, _, mut out) = get_information::<OperationSqrt>();
         op.execute(&cudnn, &a, &mut out).unwrap();
-        let output = out.data.into_host().unwrap();
+        let output = out.get_data().unwrap();
         assert_eq!(output[0][0][0][0], 1.0);
         assert_eq!(output[0][0][0][1], 2.0f64.sqrt());
         assert!(output[0][0][0][2].is_nan());
@@ -242,7 +242,7 @@ mod tests {
     fn test_not() {
         let (cudnn, op, a, _, mut out) = get_information::<OperationNot>();
         op.execute(&cudnn, &a, &mut out).unwrap();
-        let output = out.data.into_host().unwrap();
+        let output = out.get_data().unwrap();
         // TODO check if this is really right
         assert_eq!(output[0][0][0][0], 0.0);
         assert_eq!(output[0][0][0][1], -1.0);

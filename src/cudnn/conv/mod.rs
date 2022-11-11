@@ -101,7 +101,7 @@ mod tests {
             AlgorithmWithWorkspace::create(convolution_forward, cuda.clone()).unwrap();
         convolution.execute().unwrap();
 
-        let output = y.data.into_host().unwrap();
+        let output = y.get_data().unwrap();
         for y in 0..4 {
             for x in 0..4 {
                 let expected = 24 + y * 40 + x * 8;
@@ -118,7 +118,7 @@ mod tests {
         convolution.execute().unwrap();
 
         // TODO maybe check if this is right?
-        assert_eq!(&*dx.data.into_host().unwrap(), &[[
+        assert_eq!(&*dx.get_data().unwrap(), &[[
             [
                 [24.0, 56.0, 72.0, 88.0, 48.0],
                 [88.0, 192.0, 224.0, 256.0, 136.0],
@@ -140,7 +140,7 @@ mod tests {
         convolution.execute().unwrap();
 
         // TODO maybe check if this is right?
-        assert_eq!(&*dw.data.into_host().unwrap(), &[[
+        assert_eq!(&*dw.get_data().unwrap(), &[[
             [[27200.0, 25664.0], [19520.0, 17984.0]],
             [[27200.0, 25664.0], [19520.0, 17984.0]]
         ]]);

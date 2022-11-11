@@ -17,7 +17,7 @@ use super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 ///
 /// # See also
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDataType_t>
-pub trait TensorDataType: ValidAsZeroBits {
+pub trait TensorDataType: ValidAsZeroBits + Clone {
     const ZERO: Self;
     const ONE: Self;
     const MAX: Self;

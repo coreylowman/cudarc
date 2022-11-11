@@ -1,3 +1,5 @@
+use core::ffi::c_void;
+use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 
 use alloc::rc::Rc;
@@ -6,26 +8,55 @@ use super::super::sys::*;
 use crate::cudarc::CudaUniquePtr;
 use crate::prelude::*;
 
-pub struct FilterDescriptor(pub(crate) cudnnFilterDescriptor_t);
-impl FilterDescriptor {
+pub struct FilterDescriptor<
+    T,
+    const C_OUT: usize,
+    const C_IN: usize,
+    const H: usize,
+    const W: usize,
+> {
+    descriptor: cudnnFilterDescriptor_t,
+    data_type:  PhantomData<T>,
+}
+impl<T: TensorDataType, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize>
+    FilterDescriptor<T, C_OUT, C_IN, H, W>
+{
     pub fn create() -> CudaCudnnResult<Self> {
-        let mut descriptor = MaybeUninit::uninit();
-        unsafe {
+        let descriptor = unsafe {
+            let mut descriptor = MaybeUninit::uninit();
             cudnnCreateFilterDescriptor(descriptor.as_mut_ptr()).result()?;
-            Ok(Self(descriptor.assume_init()))
+            descriptor.assume_init()
+        };
+        unsafe {
+            cudnnSetFilter4dDescriptor(
+                descriptor,
+                T::get_data_type(),
+                T::get_tensor_format(),
+                C_OUT as _,
+                C_IN as _,
+                H as _,
+                W as _,
+            )
+            .result()?;
         }
+        Ok(Self {
+            descriptor,
+            data_type: PhantomData,
+        })
     }
 }
-impl Drop for FilterDescriptor {
+impl<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> Drop
+    for FilterDescriptor<T, C_OUT, C_IN, H, W>
+{
     fn drop(&mut self) {
-        unsafe { cudnnDestroyFilterDescriptor(self.0) }
+        unsafe { cudnnDestroyFilterDescriptor(self.descriptor) }
             .result()
             .unwrap();
     }
 }
 pub struct Filter<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> {
-    pub(crate) descriptor: Rc<FilterDescriptor>,
-    pub(crate) data: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>,
+    descriptor: Rc<FilterDescriptor<T, C_OUT, C_IN, H, W>>,
+    data: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>,
 }
 impl<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> Clone
     for Filter<T, C_OUT, C_IN, H, W>
@@ -42,29 +73,36 @@ impl<T: TensorDataType, const C_OUT: usize, const C_IN: usize, const H: usize, c
 where
     [(); W * H * C_IN * C_OUT]:,
 {
+    #[inline(always)]
+    pub fn get_descriptor(&self) -> cudnnFilterDescriptor_t {
+        self.descriptor.descriptor
+    }
+
+    #[inline(always)]
+    pub fn get_data_ptr(&self) -> *const c_void {
+        self.data.t_cuda.cu_device_ptr as *const _
+    }
+
+    #[inline(always)]
+    pub fn get_data_ptr_mut(&self) -> *mut c_void {
+        self.data.t_cuda.cu_device_ptr as *mut _
+    }
+
+    #[inline(always)]
+    pub fn get_data(&self) -> CudaCudnnResult<Rc<[[[[T; W]; H]; C_IN]; C_OUT]>> {
+        self.data.clone().into_host().into_cuda_cudnn_result()
+    }
+
     pub fn create(allocation: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>) -> CudaCudnnResult<Self> {
-        let descriptor = Rc::new(FilterDescriptor::create()?);
-        unsafe {
-            cudnnSetFilter4dDescriptor(
-                descriptor.0,
-                T::get_data_type(),
-                T::get_tensor_format(),
-                C_OUT as _,
-                C_IN as _,
-                H as _,
-                W as _,
-            )
-            .result()?;
-        }
         Ok(Self {
-            descriptor,
+            descriptor: Rc::new(FilterDescriptor::create()?),
             data: allocation,
         })
     }
 
     pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
         Self::create(CudaRc {
-            t_cuda: Rc::new(CudaUniquePtr::alloc(device).into_cuda_cudnn_result()?),
+            t_cuda: Rc::new(CudaUniquePtr::alloc(device)?),
             t_host: None,
         })
     }
@@ -73,7 +111,7 @@ where
         device: &Rc<CudaDevice>,
         value: [[[[T; W]; H]; C_IN]; C_OUT],
     ) -> CudaCudnnResult<Self> {
-        Self::create(device.take(Rc::new(value)).into_cuda_cudnn_result()?)
+        Self::create(device.take(Rc::new(value))?)
     }
 }
 
@@ -81,42 +119,7 @@ where
 mod tests {
     use alloc::rc::Rc;
 
-    use crate::cudnn::sys::*;
     use crate::prelude::*;
-
-    #[test]
-    fn test_create_descriptor() {
-        let descriptor = Filter::<f64, 1, 2, 3, 4>::alloc_with(
-            &CudaDeviceBuilder::new(0).build().unwrap(),
-            [[[[1.0f64; 4]; 3]; 2]; 1],
-        )
-        .unwrap();
-        unsafe {
-            let mut data_type: cudnnDataType_t = std::mem::zeroed();
-            let mut data_format: cudnnTensorFormat_t = std::mem::zeroed();
-            let mut k: i32 = std::mem::zeroed();
-            let mut c: i32 = std::mem::zeroed();
-            let mut h: i32 = std::mem::zeroed();
-            let mut w: i32 = std::mem::zeroed();
-            cudnnGetFilter4dDescriptor(
-                descriptor.descriptor.0,
-                &mut data_type,
-                &mut data_format,
-                &mut k,
-                &mut c,
-                &mut h,
-                &mut w,
-            )
-            .result()
-            .unwrap();
-            assert_eq!(data_type, cudnnDataType_t::CUDNN_DATA_DOUBLE);
-            assert_eq!(data_format, cudnnTensorFormat_t::CUDNN_TENSOR_NCHW);
-            assert_eq!(k, 1);
-            assert_eq!(c, 2);
-            assert_eq!(h, 3);
-            assert_eq!(w, 4);
-        }
-    }
 
     #[test]
     fn test_create_filter() {
