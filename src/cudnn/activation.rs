@@ -40,13 +40,33 @@ impl_activation_mode!(Relu: CUDNN_ACTIVATION_RELU);
 impl_activation_mode!(Tanh: CUDNN_ACTIVATION_TANH);
 impl_activation_mode!(Elu: CUDNN_ACTIVATION_ELU);
 
-// TODO use const generic for ActivationMode?
-pub struct Activation<A>(ActivationDescriptor<A>);
+const NAN_PROPAGATION: cudnnNanPropagation_t = cudnnNanPropagation_t::CUDNN_PROPAGATE_NAN;
+pub struct Activation<A> {
+    descriptor:      cudnnActivationDescriptor_t,
+    activation_mode: PhantomData<A>,
+}
 impl<A: ActivationMode> Activation<A> {
     pub fn create() -> CudaCudnnResult<Self> {
-        Ok(Self(ActivationDescriptor::create()?))
+        let descriptor = unsafe {
+            let mut descriptor = MaybeUninit::uninit();
+            cudnnCreateActivationDescriptor(descriptor.as_mut_ptr()).result()?;
+            descriptor.assume_init()
+        };
+        unsafe {
+            cudnnSetActivationDescriptor(
+                descriptor,
+                A::get_activation_mode(),
+                NAN_PROPAGATION,
+                A::get_additional_parameter(),
+            )
+        }
+        .result()?;
+        Ok(Self {
+            descriptor,
+            activation_mode: PhantomData,
+        })
     }
-
+    
     pub fn forward<
         T: TensorDataType,
         const N: usize,
@@ -62,7 +82,7 @@ impl<A: ActivationMode> Activation<A> {
         unsafe {
             cudnnActivationForward(
                 cudnn_handle.get_handle(),
-                self.0.descriptor,
+                self.descriptor,
                 &T::ONE as *const _ as *const _,
                 input.get_descriptor(),
                 input.get_data_ptr(),
@@ -91,7 +111,7 @@ impl<A: ActivationMode> Activation<A> {
         unsafe {
             cudnnActivationBackward(
                 cudnn_handle.get_handle(),
-                self.0.descriptor,
+                self.descriptor,
                 &T::ONE as *const _ as *const _,
                 input.get_descriptor(),
                 input.get_data_ptr(),
@@ -107,35 +127,7 @@ impl<A: ActivationMode> Activation<A> {
         .result()
     }
 }
-
-const NAN_PROPAGATION: cudnnNanPropagation_t = cudnnNanPropagation_t::CUDNN_PROPAGATE_NAN;
-pub struct ActivationDescriptor<A> {
-    descriptor:      cudnnActivationDescriptor_t,
-    activation_mode: PhantomData<A>,
-}
-impl<A: ActivationMode> ActivationDescriptor<A> {
-    pub fn create() -> CudaCudnnResult<Self> {
-        let descriptor = unsafe {
-            let mut descriptor = MaybeUninit::uninit();
-            cudnnCreateActivationDescriptor(descriptor.as_mut_ptr()).result()?;
-            descriptor.assume_init()
-        };
-        unsafe {
-            cudnnSetActivationDescriptor(
-                descriptor,
-                A::get_activation_mode(),
-                NAN_PROPAGATION,
-                A::get_additional_parameter(),
-            )
-        }
-        .result()?;
-        Ok(Self {
-            descriptor,
-            activation_mode: PhantomData,
-        })
-    }
-}
-impl<A> Drop for ActivationDescriptor<A> {
+impl<A> Drop for Activation<A> {
     fn drop(&mut self) {
         unsafe { cudnnDestroyActivationDescriptor(self.descriptor) }
             .result()
