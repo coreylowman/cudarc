@@ -91,7 +91,7 @@ mod tests {
         let mut dw = unsafe { Filter::alloc_uninit(&cuda) }.unwrap().as_split();
 
         let convolution_forward =
-            Convolution2DForward::<f64, 5, 5, 0, 0, 1, 1, 1, 2, 1, 2, 2, 1, 1>::create(
+            Convolution2DForward::<f64, 5, 5, 0, 0, 1, 2, 1, 2, 2, 1, 1>::create(
                 x.0, filter.0, y.0,
             )
             .unwrap();

@@ -90,8 +90,17 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
 
     /// Creates a new [Tensor4D] by a [Tensor4DData] (so this creates a new
     /// [TensorDescriptor]).
-    pub fn create(allocation: Tensor4DData<T, N, C, H, W>) -> CudaCudnnResult<Self> {
-        Ok(Self::new(Rc::new(TensorDescriptor::create()?), allocation))
+    pub fn create(data: Tensor4DData<T, N, C, H, W>) -> CudaCudnnResult<Self> {
+        Ok(Self::new(Rc::new(TensorDescriptor::create()?), data))
+    }
+
+    /// Creates a new [Tensor4D] by a [CudaRc] (so this creates a new
+    /// [TensorDescriptor]).
+    pub fn create_with(allocation: CudaRc<DataType<T, N, C, H, W>>) -> CudaCudnnResult<Self> {
+        Ok(Self::new(
+            Rc::new(TensorDescriptor::create()?),
+            Tensor4DData::new(allocation),
+        ))
     }
 
     /// Creates a new [Tensor4D] by allocating new device memory on the
@@ -101,10 +110,10 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
     /// # Safety
     /// The data on this tensor should not be read until it is initialized.
     pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
-        Self::create(Tensor4DData::new(CudaRc {
+        Self::create_with(CudaRc {
             t_cuda: Rc::new(CudaUniquePtr::alloc(device)?),
             t_host: None,
-        }))
+        })
     }
 
     /// Creates a new [Tensor4D] by allocating new device memory on the
@@ -114,7 +123,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         device: &Rc<CudaDevice>,
         value: [[[[T; W]; H]; C]; N],
     ) -> CudaCudnnResult<Self> {
-        Self::create(Tensor4DData::new(device.take(Rc::new(value))?))
+        Self::create_with(device.take(Rc::new(value))?)
     }
 
     /// Creates a new [Tensor4D] by allocating new device memory on the
@@ -146,10 +155,40 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         .result()
     }
 
+    /// Scales all the data of this tensor with `value`.
+    ///
+    /// # See also
+    /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnScaleTensor>
+    pub fn scale(&self, cudnn_handle: &CudnnHandle, factor: &T) -> CudaCudnnResult<()> {
+        unsafe {
+            cudnnScaleTensor(
+                cudnn_handle.get_handle(),
+                self.get_descriptor(),
+                self.get_data_ptr_mut(),
+                factor as *const _ as *const _,
+            )
+        }
+        .result()
+    }
+
     /// The size of this tensor is known at compile time.
     pub const fn size(&self) -> usize {
         size_of::<T>() * N * C * H * W
     }
+}
+impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: usize>
+    Tensor4D<T, N, C, H, W>
+{
+    pub const fn get_numel(&self) -> u32 {
+        Self::NUMEL as _
+    }
+}
+impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: usize> NumElements
+    for Tensor4D<T, N, C, H, W>
+{
+    type Dtype = T;
+
+    const NUMEL: usize = T::NUMEL * N * C * H * W;
 }
 
 #[cfg(test)]

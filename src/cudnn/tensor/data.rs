@@ -37,6 +37,11 @@ impl<T, const N: usize, const C: usize, const H: usize, const W: usize>
     pub fn get_data_ptr_mut(&self) -> *mut c_void {
         self.0.t_cuda.cu_device_ptr as *mut _
     }
+
+    #[inline(always)]
+    pub fn get_data(&self) -> CudaRc<DataType<T, N, C, H, W>> {
+        self.0.clone()
+    }
 }
 impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
     Tensor4DData<T, N, C, H, W>

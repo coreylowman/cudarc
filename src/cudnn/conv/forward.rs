@@ -12,8 +12,6 @@ pub struct Convolution2DForward<
     const W: usize,
     const P_H: usize,
     const P_W: usize,
-    const V_S: usize,
-    const H_S: usize,
     const N: usize,
     const C_IN: usize,
     const C_OUT: usize,
@@ -44,8 +42,6 @@ impl<
         const W: usize,
         const P_H: usize,
         const P_W: usize,
-        const V_S: usize,
-        const H_S: usize,
         const N: usize,
         const C_IN: usize,
         const C_OUT: usize,
@@ -53,7 +49,7 @@ impl<
         const F_W: usize,
         const S_H: usize,
         const S_W: usize,
-    > Convolution2DForward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
+    > Convolution2DForward<T, H, W, P_H, P_W, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
 where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
@@ -113,8 +109,7 @@ where
             >,
         >,
         dx: Rc<TensorDescriptor<T, N, C_IN, H, W>>,
-    ) -> Convolution2DBackward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
-    {
+    ) -> Convolution2DBackward<T, H, W, P_H, P_W, N, C_IN, C_OUT, F_H, F_W, S_H, S_W> {
         Convolution2DBackward::create(self.descriptor.clone(), dy, Rc::clone(&self.filter), dx)
     }
 
@@ -131,8 +126,7 @@ where
                 { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
             >,
         >,
-    ) -> Convolution2DBackwardFilter<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
-    {
+    ) -> Convolution2DBackwardFilter<T, H, W, P_H, P_W, N, C_IN, C_OUT, F_H, F_W, S_H, S_W> {
         Convolution2DBackwardFilter::create(
             self.descriptor.clone(),
             Rc::clone(&self.filter),
@@ -147,8 +141,6 @@ impl<
         const W: usize,
         const P_H: usize,
         const P_W: usize,
-        const V_S: usize,
-        const H_S: usize,
         const N: usize,
         const C_IN: usize,
         const C_OUT: usize,
@@ -157,7 +149,7 @@ impl<
         const S_H: usize,
         const S_W: usize,
     > RequiresAlgorithmWithWorkspace<cudnnConvolutionFwdAlgoPerf_t>
-    for Convolution2DForward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
+    for Convolution2DForward<T, H, W, P_H, P_W, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
 where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,

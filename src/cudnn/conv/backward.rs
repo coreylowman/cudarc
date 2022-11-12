@@ -13,8 +13,6 @@ pub struct Convolution2DBackward<
     const W: usize,
     const P_H: usize,
     const P_W: usize,
-    const V_S: usize,
-    const H_S: usize,
     const N: usize,
     const C_IN: usize,
     const C_OUT: usize,
@@ -45,8 +43,6 @@ impl<
         const W: usize,
         const P_H: usize,
         const P_W: usize,
-        const V_S: usize,
-        const H_S: usize,
         const N: usize,
         const C_IN: usize,
         const C_OUT: usize,
@@ -54,7 +50,7 @@ impl<
         const F_W: usize,
         const S_H: usize,
         const S_W: usize,
-    > Convolution2DBackward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
+    > Convolution2DBackward<T, H, W, P_H, P_W, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
 where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
@@ -87,8 +83,6 @@ impl<
         const W: usize,
         const P_H: usize,
         const P_W: usize,
-        const V_S: usize,
-        const H_S: usize,
         const N: usize,
         const C_IN: usize,
         const C_OUT: usize,
@@ -97,7 +91,7 @@ impl<
         const S_H: usize,
         const S_W: usize,
     > RequiresAlgorithmWithWorkspace<cudnnConvolutionBwdDataAlgoPerf_t>
-    for Convolution2DBackward<T, H, W, P_H, P_W, V_S, H_S, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
+    for Convolution2DBackward<T, H, W, P_H, P_W, N, C_IN, C_OUT, F_H, F_W, S_H, S_W>
 where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,

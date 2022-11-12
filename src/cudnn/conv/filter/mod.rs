@@ -114,6 +114,10 @@ where
     ) -> CudaCudnnResult<Self> {
         Self::create(device.take(Rc::new(value))?)
     }
+
+    pub fn as_tensor(&self) -> CudaCudnnResult<Tensor4D<T, C_OUT, C_IN, H, W>> {
+        Tensor4D::create(self.data.clone())
+    }
 }
 
 

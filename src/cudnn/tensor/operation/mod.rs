@@ -66,6 +66,30 @@ impl<T: TensorDataType, O: TensorOperationMode> TensorOperation<T, O> {
         }
         .result()
     }
+
+    fn execute_op_in_place<const N: usize, const C: usize, const H: usize, const W: usize>(
+        &self,
+        cudnn_handle: &CudnnHandle,
+        a: &mut Tensor4D<T, N, C, H, W>,
+        b: &Tensor4D<T, N, C, H, W>,
+    ) -> CudaCudnnResult<()> {
+        unsafe {
+            cudnnOpTensor(
+                cudnn_handle.get_handle(),
+                self.descriptor.0,
+                &T::ONE as *const _ as *const _,
+                a.get_descriptor(),
+                a.get_data_ptr(),
+                &T::ONE as *const _ as *const _,
+                b.get_descriptor(),
+                b.get_data_ptr(),
+                &T::ZERO as *const _ as *const _,
+                a.get_descriptor(),
+                a.get_data_ptr_mut(),
+            )
+        }
+        .result()
+    }
 }
 /// A trait for single parameter [TensorOperationMode]s ([CudnnOperationSqrt]
 /// and [CudnnOperationNot]).
@@ -76,6 +100,12 @@ pub trait SingleParameterOp<T> {
         cudnn_handle: &CudnnHandle,
         a: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
+    ) -> CudaCudnnResult<()>;
+    /// Executes the [TensorOperation] on the tensor `a` in place.
+    fn execute_in_place<const N: usize, const C: usize, const H: usize, const W: usize>(
+        &self,
+        cudnn_handle: &CudnnHandle,
+        a: &mut Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()>;
 }
 /// A trait for multi parameter [TensorOperationMode]s (all except
@@ -88,6 +118,13 @@ pub trait MultiParameterOp<T> {
         a: &Tensor4D<T, N, C, H, W>,
         b: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
+    ) -> CudaCudnnResult<()>;
+    /// Executes the [TensorOperation] on the tensor `a` and `b` in place.
+    fn execute_in_place<const N: usize, const C: usize, const H: usize, const W: usize>(
+        &self,
+        cudnn_handle: &CudnnHandle,
+        a: &mut Tensor4D<T, N, C, H, W>,
+        b: &Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()>;
 }
 /// implements single and multi parameter [TensorOperation]s
@@ -103,6 +140,15 @@ macro_rules! impl_tensor_op_execution {
             ) -> CudaCudnnResult<()> {
                 self.execute_op(cudnn_handle, a, b, out)
             }
+
+            fn execute_in_place<const N: usize, const C: usize, const H: usize, const W: usize>(
+                &self,
+                cudnn_handle: &CudnnHandle,
+                a: &mut Tensor4D<T, N, C, H, W>,
+                b: &Tensor4D<T, N, C, H, W>,
+            ) -> CudaCudnnResult<()> {
+                self.execute_op_in_place(cudnn_handle, a, b)
+            }
         }
     };
     (@no_second_param: $tensor_op:ty) => {
@@ -114,6 +160,14 @@ macro_rules! impl_tensor_op_execution {
                 out: &mut Tensor4D<T, N, C, H, W>,
             ) -> CudaCudnnResult<()> {
                 self.execute_op(cudnn_handle, a, a, out)
+            }
+
+            fn execute_in_place<const N: usize, const C: usize, const H: usize, const W: usize>(
+                &self,
+                cudnn_handle: &CudnnHandle,
+                a: &mut Tensor4D<T, N, C, H, W>,
+            ) -> CudaCudnnResult<()> {
+                self.execute_op_in_place(cudnn_handle, a, unsafe { &*(a as *const _) })
             }
         }
     };
@@ -224,7 +278,6 @@ mod tests {
         let (cudnn, op, a, _, mut out) = get_information::<OperationNot>();
         op.execute(&cudnn, &a, &mut out).unwrap();
         let output = out.get_data().as_host().unwrap();
-        // TODO check if this is really right
         assert_eq!(output[0][0][0][0], 0.0);
         assert_eq!(output[0][0][0][1], -1.0);
         assert_eq!(output[0][0][0][2], 2.0);

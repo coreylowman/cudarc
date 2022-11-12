@@ -6,7 +6,7 @@ use crate::cudnn::sys::*;
 ///     - [OperationMin]:  Elementwise minimum.
 ///     - [OperationMax]:  Elementwise maximum.
 ///     - [OperationSqrt]: Elementwise square root; this only uses one tensor.
-///     - [OperationNot]:  Elementwise negation.
+///     - [OperationNot]:  Elementwise y = (1 - x); this only uses one tensor.
 pub trait TensorOperationMode {
     fn get_tensor_operation() -> cudnnOpTensorOp_t;
 }
