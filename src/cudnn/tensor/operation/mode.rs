@@ -1,12 +1,19 @@
 use crate::cudnn::sys::*;
 
-pub trait TensorOperation {
+/// A mode for a tensor operation. Currently supported modes are:
+///     - [OperationAdd]:  Elementwise addition.
+///     - [OperationMul]:  Elementwise multiplication.
+///     - [OperationMin]:  Elementwise minimum.
+///     - [OperationMax]:  Elementwise maximum.
+///     - [OperationSqrt]: Elementwise square root; this only uses one tensor.
+///     - [OperationNot]:  Elementwise negation.
+pub trait TensorOperationMode {
     fn get_tensor_operation() -> cudnnOpTensorOp_t;
 }
 macro_rules! impl_tensor_operation {
     ($type:ident : $name:ident) => {
         pub struct $type;
-        impl TensorOperation for $type {
+        impl TensorOperationMode for $type {
             fn get_tensor_operation() -> cudnnOpTensorOp_t {
                 cudnnOpTensorOp_t::$name
             }

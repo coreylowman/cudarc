@@ -12,7 +12,7 @@ use crate::prelude::*;
 
 pub struct Filter<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> {
     descriptor: Rc<FilterDescriptor<T, C_OUT, C_IN, H, W>>,
-    data: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>,
+    data: Tensor4DData<T, C_OUT, C_IN, H, W>,
 }
 impl<T, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize> Clone
     for Filter<T, C_OUT, C_IN, H, W>
@@ -41,23 +41,33 @@ where
 
     #[inline(always)]
     pub fn get_data_ptr(&self) -> *const c_void {
-        self.data.t_cuda.cu_device_ptr as *const _
+        self.data.get_data_ptr()
     }
 
     #[inline(always)]
     pub fn get_data_ptr_mut(&self) -> *mut c_void {
-        self.data.t_cuda.cu_device_ptr as *mut _
+        self.data.get_data_ptr_mut()
     }
 
     #[inline(always)]
-    pub fn get_data(&self) -> CudaCudnnResult<Rc<[[[[T; W]; H]; C_IN]; C_OUT]>> {
-        self.data.clone().into_host().into_cuda_cudnn_result()
+    pub fn get_data(&self) -> Tensor4DData<T, C_OUT, C_IN, H, W> {
+        self.data.clone()
+    }
+
+    #[inline(always)]
+    pub fn as_split(
+        &self,
+    ) -> (
+        Rc<FilterDescriptor<T, C_OUT, C_IN, H, W>>,
+        Tensor4DData<T, C_OUT, C_IN, H, W>,
+    ) {
+        (self.get_descriptor_rc(), self.get_data())
     }
 
     pub fn create(allocation: CudaRc<[[[[T; W]; H]; C_IN]; C_OUT]>) -> CudaCudnnResult<Self> {
         Ok(Self {
             descriptor: Rc::new(FilterDescriptor::create()?),
-            data: allocation,
+            data: Tensor4DData::new(allocation),
         })
     }
 
@@ -94,7 +104,7 @@ mod tests {
                 .unwrap(),
         )
         .unwrap();
-        let on_gpu = *f.get_data().unwrap();
+        let on_gpu = *f.get_data().as_host().unwrap();
         assert_eq!(data, on_gpu);
     }
 }

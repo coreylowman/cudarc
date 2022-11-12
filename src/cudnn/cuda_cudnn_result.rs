@@ -1,7 +1,13 @@
 use crate::prelude::*;
 
-/// This implements `From<CudaError>` and `From<CudnnError>` so using the
-/// `?`-operator coerces into `CudaCudnnError`.
+/// The default return type of all fallible cudnn operations. This has a
+/// [CudaCudnnError] as the Error type as some operations, like allocations,
+/// actually require cuda (and not cudnn) api calls which return a [CudaError]
+/// if an error occurred.
+pub type CudaCudnnResult<T> = Result<T, CudaCudnnError>;
+
+/// This either holds a [CudaError] or a [CudnnError]. Since `604007` this is
+/// the default return type of all cudnn functions.
 #[derive(Debug, Clone)]
 pub enum CudaCudnnError {
     CudaError(CudaError),
@@ -25,4 +31,3 @@ impl<T> IntoCudaCudnnResult<T> for Result<T, CudaError> {
         self.map_err(Into::into)
     }
 }
-pub type CudaCudnnResult<T> = Result<T, CudaCudnnError>;

@@ -120,7 +120,7 @@ mod tests {
         let activation = Activation::<Relu>::create().unwrap();
         activation.forward(&cudnn_handle, &x, &mut y).unwrap();
 
-        let out = y.get_data().unwrap();
+        let out = y.get_data().as_host().unwrap();
         assert!(out[0][0][0][0].is_nan());
         assert!((out[0][0][0][1] - 2.0).abs() < f64::EPSILON);
         assert!(out[1][0][0][0].abs() < f64::EPSILON);
@@ -129,7 +129,7 @@ mod tests {
             .backward(&cudnn_handle, &x, &dy, &y, &mut dx)
             .unwrap();
 
-        let out = dx.get_data().unwrap();
+        let out = dx.get_data().as_host().unwrap();
         // NANs aren't backpropagated
         assert!(out[0][0][0][0].abs() < f64::EPSILON);
         assert!((out[0][0][0][1] - 3.0).abs() < f64::EPSILON);

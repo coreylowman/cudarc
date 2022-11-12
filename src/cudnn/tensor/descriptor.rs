@@ -3,6 +3,14 @@ use crate::prelude::*;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 
+/// A descriptor to a tensor. This can be reused as all tensors are fully packed
+/// and in NCHW layout.
+///
+/// This destriptor is destroyed when it is dropped.
+///
+/// # See also
+/// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnTensorDescriptor_t>
+/// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyTensorDescriptor>
 pub struct TensorDescriptor<T, const N: usize, const C: usize, const H: usize, const W: usize> {
     descriptor: cudnnTensorDescriptor_t,
     data_type:  PhantomData<T>,
@@ -10,11 +18,18 @@ pub struct TensorDescriptor<T, const N: usize, const C: usize, const H: usize, c
 impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
     TensorDescriptor<T, N, C, H, W>
 {
+    /// The pointer to the descriptor.
     #[inline(always)]
     pub fn get_descriptor(&self) -> cudnnTensorDescriptor_t {
         self.descriptor
     }
 
+    /// Creates a new [TensorDescriptor] and sets it to `NCHW layout` with the
+    /// data type `T`.
+    ///
+    /// # See also
+    /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateTensorDescriptor>
+    /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensor4dDescriptor>
     pub fn create() -> CudaCudnnResult<Self> {
         let descriptor = unsafe {
             let mut descriptor = MaybeUninit::uninit();

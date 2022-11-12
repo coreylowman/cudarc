@@ -103,15 +103,15 @@ where
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
     [(); F_W * F_H * C_IN * C_OUT]:,
 {
-    type InputA = Tensor4D<
+    type InputA = Tensor4DData<
         T,
         N,
         C_OUT,
         { ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE },
         { ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE },
     >;
-    type InputB = Filter<T, C_OUT, C_IN, F_H, F_W>;
-    type Output = Tensor4D<T, N, C_IN, H, W>;
+    type InputB = Tensor4DData<T, C_OUT, C_IN, F_H, F_W>;
+    type Output = Tensor4DData<T, N, C_IN, H, W>;
 
     fn get_workspace_size(
         &self,
@@ -175,16 +175,16 @@ where
             cudnnConvolutionBackwardData(
                 cudnn_handle.get_handle(),
                 &T::ONE as *const _ as *const _,
-                filter.get_descriptor(),
+                self.filter.get_descriptor(),
                 filter.get_data_ptr(),
-                dy.get_descriptor(),
+                self.dy.get_descriptor(),
                 dy.get_data_ptr(),
                 self.descriptor.0,
                 algorithm.algo,
                 workspace_allocation as *mut _,
                 workspace_size,
                 &T::ZERO as *const _ as *const _,
-                dx.get_descriptor(),
+                self.dx.get_descriptor(),
                 dx.get_data_ptr_mut(),
             )
         }
