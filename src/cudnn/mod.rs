@@ -25,6 +25,7 @@ mod batch_normalization;
 mod conv;
 mod cuda_cudnn_result;
 mod result;
+mod pooling2d;
 #[allow(warnings)]
 mod sys;
 mod tensor;
@@ -35,3 +36,4 @@ pub use conv::*;
 pub use cuda_cudnn_result::*;
 pub use result::*;
 pub use tensor::*;
+pub use pooling2d::*;
