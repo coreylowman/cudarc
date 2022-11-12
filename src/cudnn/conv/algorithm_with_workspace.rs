@@ -5,6 +5,8 @@ use alloc::rc::Rc;
 use crate::driver::sys::{cuMemAllocAsync, cuMemFreeAsync, CUdeviceptr};
 use crate::prelude::*;
 
+/// A trait to get an algorithm `A` and allocate a workspace for a convolution
+/// operation (forward, backward, backward filter).
 pub trait RequiresAlgorithmWithWorkspace<A> {
     type InputA;
     type InputB;
@@ -16,6 +18,9 @@ pub trait RequiresAlgorithmWithWorkspace<A> {
         cudnn_handle: &CudnnHandle,
         algorithm: &A,
     ) -> CudaCudnnResult<usize>;
+    #[allow(clippy::too_many_arguments)]
+    /// Executes the convolution operation with the algorithm `A` from
+    /// `get_algorithm` and a workspace of size `get_workspace_size`.
     fn execute(
         &mut self,
         cudnn_handle: &CudnnHandle,
@@ -27,6 +32,9 @@ pub trait RequiresAlgorithmWithWorkspace<A> {
         output: &mut Self::Output,
     ) -> CudaCudnnResult<()>;
 }
+/// A wrapper around a type `T` implementing `RequiresAlgorithmWithWorkspace`.
+///
+/// This frees the workspace memory when this is dropped.
 pub struct AlgorithmWithWorkspace<A, T> {
     data: T,
     algorithm: A,
@@ -35,6 +43,8 @@ pub struct AlgorithmWithWorkspace<A, T> {
     device: Rc<CudaDevice>,
 }
 impl<A, T: RequiresAlgorithmWithWorkspace<A>> AlgorithmWithWorkspace<A, T> {
+    /// Creates a new [AlgorithmWithWorkspace]. This allocates enough workspace
+    /// for later use.
     pub fn create(
         cudnn_handle: &CudnnHandle,
         data: T,
@@ -56,6 +66,8 @@ impl<A, T: RequiresAlgorithmWithWorkspace<A>> AlgorithmWithWorkspace<A, T> {
         })
     }
 
+    /// Executes the convolution operation with the algorithm `A` from
+    /// `get_algorithm` and a workspace of size `get_workspace_size`.
     pub fn execute(
         &mut self,
         cudnn_handle: &CudnnHandle,

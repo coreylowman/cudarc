@@ -3,10 +3,10 @@ use crate::prelude::*;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 
-/// A descriptor to a tensor. This can be reused as all tensors are fully packed
+/// A descriptor of a tensor. This can be reused as all tensors are fully packed
 /// and in NCHW layout.
 ///
-/// This destriptor is destroyed when it is dropped.
+/// This descriptor is destroyed when it is dropped.
 ///
 /// # See also
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnTensorDescriptor_t>

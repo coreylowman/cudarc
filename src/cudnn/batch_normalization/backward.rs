@@ -7,13 +7,20 @@ pub struct BatchNormalizationBackward<
     const C: usize,
     const H: usize,
     const W: usize,
+    const PER_IMAGE: bool,
 > {
     dummy_diff:     Tensor4D<T, 1, C, 1, 1>,
     saved_mean:     Tensor4D<T, 1, C, 1, 1>,
     saved_variance: Tensor4D<T, 1, C, 1, 1>,
 }
-impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
-    BatchNormalizationBackward<T, N, C, H, W>
+impl<
+        T: TensorDataType,
+        const N: usize,
+        const C: usize,
+        const H: usize,
+        const W: usize,
+        const PER_IMAGE: bool,
+    > BatchNormalizationBackward<T, N, C, H, W, PER_IMAGE>
 {
     pub fn create(
         dummy_diff: Tensor4D<T, 1, C, 1, 1>,
@@ -37,7 +44,11 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         unsafe {
             cudnnBatchNormalizationBackward(
                 cudnn_handle.get_handle(),
-                MODE,
+                if PER_IMAGE {
+                    cudnnBatchNormMode_t::CUDNN_BATCHNORM_SPATIAL_PERSISTENT
+                } else {
+                    cudnnBatchNormMode_t::CUDNN_BATCHNORM_PER_ACTIVATION
+                },
                 &T::ONE as *const _ as *const _,
                 &T::ZERO as *const _ as *const _,
                 &T::ZERO as *const _ as *const _,

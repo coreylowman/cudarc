@@ -58,6 +58,11 @@ where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
 {
+    /// Creates a new [Convlution2DForward] by a [TensorDescriptor] of `x` and
+    /// `y` and the [FilterDescriptor] of `filter`.
+    ///
+    /// # See also
+    /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolution2dDescriptor>
     pub fn create(
         x: Rc<TensorDescriptor<T, N, C_IN, H, W>>,
         filter: Rc<FilterDescriptor<T, C_OUT, C_IN, F_H, F_W>>,
@@ -94,6 +99,8 @@ where
         })
     }
 
+    /// Creates a [Convolution2DBackward] of the same [ConvolutionDescriptor],
+    /// requiring the [TensorDescriptor] of `dy` and `dx`.
     pub fn get_backward(
         &self,
         dy: Rc<
@@ -111,6 +118,8 @@ where
         Convolution2DBackward::create(self.descriptor.clone(), dy, Rc::clone(&self.filter), dx)
     }
 
+    /// Creates a [Convolution2DBackwardFilter] of the same
+    /// [ConvolutionDescriptor], requiring the [TensorDescriptor] of `dy`.
     pub fn get_filter_backward(
         &self,
         dy: Rc<

@@ -1,12 +1,6 @@
 mod backward;
 mod forward;
 
-
-use crate::cudnn::sys::cudnnBatchNormMode_t;
-// TODO allow other batch norm
-pub(crate) const MODE: cudnnBatchNormMode_t =
-    cudnnBatchNormMode_t::CUDNN_BATCHNORM_SPATIAL_PERSISTENT;
-
 pub use backward::*;
 pub use forward::*;
 
@@ -23,10 +17,11 @@ mod tests {
         let mut dx = unsafe { Tensor4D::alloc_uninit(&device).unwrap() };
         let mut y = unsafe { Tensor4D::alloc_uninit(&device).unwrap() };
 
-        let forward = BatchNormalizationForward::create(&device, &cudnn_handle).unwrap();
+        let mut forward =
+            BatchNormalizationForwardPerImage::create(&device, &cudnn_handle).unwrap();
         let backward = forward.get_backward();
 
-        forward.execute(&cudnn_handle, &x, &mut y, 1.0).unwrap();
+        forward.train(&cudnn_handle, &x, &mut y).unwrap();
 
         assert_eq!(&*y.get_data().as_host().unwrap(), &[[[[1.0, -1.0]], [[
             1.0, -1.0

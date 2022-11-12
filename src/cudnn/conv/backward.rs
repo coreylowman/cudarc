@@ -59,7 +59,7 @@ where
     [(); ConvolutionOutput::<H, P_H, F_H, S_H>::SIZE]:,
     [(); ConvolutionOutput::<W, P_W, F_W, S_W>::SIZE]:,
 {
-    pub fn create(
+    pub(crate) fn create(
         descriptor: Rc<ConvolutionDescriptor>,
         dy: Rc<
             TensorDescriptor<

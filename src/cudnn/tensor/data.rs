@@ -4,9 +4,12 @@ use alloc::rc::Rc;
 
 use crate::prelude::*;
 
+pub type DataType<T, const N: usize, const C: usize, const H: usize, const W: usize> =
+    [[[[T; W]; H]; C]; N];
+
 /// The data of a Tensor with the size of `NxCxHxW`. This is just a [CudaRc].
 pub struct Tensor4DData<T, const N: usize, const C: usize, const H: usize, const W: usize>(
-    CudaRc<[[[[T; W]; H]; C]; N]>,
+    CudaRc<DataType<T, N, C, H, W>>,
 );
 impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Clone
     for Tensor4DData<T, N, C, H, W>
@@ -19,7 +22,7 @@ impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Clone
 impl<T, const N: usize, const C: usize, const H: usize, const W: usize>
     Tensor4DData<T, N, C, H, W>
 {
-    pub fn new(allocation: CudaRc<[[[[T; W]; H]; C]; N]>) -> Self {
+    pub fn new(allocation: CudaRc<DataType<T, N, C, H, W>>) -> Self {
         Self(allocation)
     }
 
@@ -41,7 +44,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
     /// The data of the device memory on the host memory (clones and then calls
     /// `into_host` on [CudaRc]).
     #[inline(always)]
-    pub fn as_host(&self) -> CudaCudnnResult<Rc<[[[[T; W]; H]; C]; N]>> {
+    pub fn as_host(&self) -> CudaCudnnResult<Rc<DataType<T, N, C, H, W>>> {
         self.0.clone().into_host().into_cuda_cudnn_result()
     }
 }
