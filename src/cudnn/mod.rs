@@ -24,7 +24,7 @@ mod activation;
 mod batch_normalization;
 mod conv;
 mod cuda_cudnn_result;
-mod cudnn_kernel_functions_names;
+mod custom_kernel_functions_names;
 mod pooling2d;
 mod result;
 #[allow(warnings)]
@@ -39,15 +39,14 @@ pub use pooling2d::*;
 pub use result::*;
 pub use tensor::*;
 
-use crate::cudarc::CudaDeviceBuilder;
-
-impl CudaDeviceBuilder {
+pub(crate) const CUSTOM_KERNEL_MODULE: &str = "custom_kernels";
+impl crate::cudarc::CudaDeviceBuilder {
     pub fn with_cudnn_modules(self) -> Self {
         self.with_ptx_from_file(
-            "cudnn_kernels",
+            CUSTOM_KERNEL_MODULE,
             // is this as efficient as including bytes (`include_bytes!`) on compile time
-            "src/cudnn/cudnn_kernels.ptx",
-            &cudnn_kernel_functions_names::FUNCTION_NAMES,
+            "src/cudnn/custom_kernels.ptx",
+            &custom_kernel_functions_names::FUNCTION_NAMES,
         )
     }
 }

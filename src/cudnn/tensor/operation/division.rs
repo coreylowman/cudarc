@@ -30,7 +30,7 @@ impl OperationDiv {
         unsafe {
             device.launch_cuda_function(
                 device
-                    .get_module("cudnn_kernels")
+                    .get_module(CUSTOM_KERNEL_MODULE)
                     .and_then(|m| m.get_fn(T::NAME))
                     .ok_or(CudaCudnnError::CudaError(CudaError(
                         crate::driver::sys::CUresult::CUDA_ERROR_NOT_FOUND,
@@ -63,7 +63,9 @@ mod tests {
         let b = Tensor4D::alloc_with(&device, [[[[3.0, 1.0, 1.5, 2.0, 0.0]]]]).unwrap();
         let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
 
-        OperationDiv.divide(&device, a.as_data(), b.as_data(), out.as_data_mut()).unwrap();
+        OperationDiv
+            .divide(&device, a.as_data(), b.as_data(), out.as_data_mut())
+            .unwrap();
 
         let data = out.get_data().as_host().unwrap()[0][0][0];
         assert!((data[0] - 1.0 / 3.0).abs() < f32::EPSILON);
@@ -84,7 +86,9 @@ mod tests {
         let b = Tensor4D::alloc_with(&device, [[[[3.0, 1.0, 1.5, 2.0, 0.0]]]]).unwrap();
         let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
 
-        OperationDiv.divide(&device, a.as_data(), b.as_data(), out.as_data_mut()).unwrap();
+        OperationDiv
+            .divide(&device, a.as_data(), b.as_data(), out.as_data_mut())
+            .unwrap();
 
         let data = out.get_data().as_host().unwrap()[0][0][0];
         assert!((data[0] - 1.0 / 3.0).abs() < f64::EPSILON);
