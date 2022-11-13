@@ -67,6 +67,18 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         self.data.clone()
     }
 
+    /// Returns a reference to the [Tensor4DData].
+    #[inline(always)]
+    pub fn as_data(&self) -> &Tensor4DData<T, N, C, H, W> {
+        &self.data
+    }
+
+    /// Returns a mutable reference to the [Tensor4DData].
+    #[inline(always)]
+    pub fn as_data_mut(&mut self) -> &mut Tensor4DData<T, N, C, H, W> {
+        &mut self.data
+    }
+
     /// Split the [Tensor4D] into a [TensorDescriptor] and a [Tensor4DData],
     /// after cloning them.
     #[inline(always)]

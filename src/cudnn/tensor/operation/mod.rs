@@ -1,7 +1,9 @@
 mod descriptor;
+mod division;
 mod mode;
 
 pub use descriptor::*;
+pub use division::*;
 pub use mode::*;
 
 use core::marker::PhantomData;

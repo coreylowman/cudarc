@@ -53,3 +53,17 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         self.0.clone().into_host().into_cuda_cudnn_result()
     }
 }
+impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: usize>
+    Tensor4DData<T, N, C, H, W>
+{
+    pub const fn get_numel(&self) -> u32 {
+        Self::NUMEL as _
+    }
+}
+impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: usize> NumElements
+    for Tensor4DData<T, N, C, H, W>
+{
+    type Dtype = T;
+
+    const NUMEL: usize = T::NUMEL * N * C * H * W;
+}
