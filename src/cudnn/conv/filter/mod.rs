@@ -93,6 +93,18 @@ where
     }
 
     /// Creates a new [Filter] by allocating new device memory on the
+    /// [Rc<CudaDevice>] initializing it with the value of `self.data`.
+    ///
+    /// This also uses the same descriptor (and thus increases the memory
+    /// count).
+    pub fn clone_into_new(&self, device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
+        Ok(Self::new(
+            Rc::clone(&self.descriptor),
+            self.data.clone_into_new(device)?,
+        ))
+    }
+
+    /// Creates a new [Filter] by allocating new device memory on the
     /// [Rc<CudaDevice>] **without** initializing it (this also creates a new
     /// [FilterDescriptor]).
     ///

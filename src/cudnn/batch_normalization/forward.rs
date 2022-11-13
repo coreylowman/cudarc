@@ -50,8 +50,9 @@ impl<
         let scale = Tensor4D::alloc_all_same(device, cudnn_handle, &T::ONE)?;
         let saved_mean = unsafe { Tensor4D::alloc_uninit(device) }?;
         let saved_variance = unsafe { Tensor4D::alloc_uninit(device) }?;
-        let running_mean = Tensor4D::alloc_all_same(device, cudnn_handle, &T::ZERO)?;
-        let running_variance = Tensor4D::alloc_all_same(device, cudnn_handle, &T::ONE)?;
+        // change this if bias and scale get overlapping tensors
+        let running_mean = bias.clone_into_new(device)?;
+        let running_variance = scale.clone_into_new(device)?;
         Ok(Self {
             bias,
             scale,

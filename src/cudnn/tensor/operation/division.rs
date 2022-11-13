@@ -49,6 +49,7 @@ impl OperationDiv {
         if f == T::ONE {
             return self.divide(device, a, b, out);
         }
+        // TODO use directly `T` as a parameter
         let factor = device.take(Rc::new(f))?;
         unsafe {
             device.launch_cuda_function(

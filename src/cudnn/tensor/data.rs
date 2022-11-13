@@ -2,6 +2,8 @@ use core::ffi::c_void;
 
 use alloc::rc::Rc;
 
+use crate::cudarc::CudaUniquePtr;
+use crate::driver::result::memcpy_dtod_async;
 use crate::prelude::*;
 
 pub type DataType<T, const N: usize, const C: usize, const H: usize, const W: usize> =
@@ -22,8 +24,40 @@ impl<T, const N: usize, const C: usize, const H: usize, const W: usize> Clone
 impl<T, const N: usize, const C: usize, const H: usize, const W: usize>
     Tensor4DData<T, N, C, H, W>
 {
+    /// Creates a new [Tensor4DData] by allocating new device memory on the
+    /// [Rc<CudaDevice>] **without** initializing it.
+    ///
+    /// # Safety
+    /// The data should not be read until it is initialized.
+    pub unsafe fn alloc_uninit(device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
+        Ok(Self(CudaRc {
+            t_cuda: Rc::new(CudaUniquePtr::alloc(device)?),
+            t_host: None,
+        }))
+    }
+
+    /// Creates a new [Tensor4DData] by allocating new device memory on the
+    /// [Rc<CudaDevice>] initializing it with the value of `self`.
+    pub fn clone_into_new(&self, device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
+        unsafe {
+            let new = Self::alloc_uninit(device)?;
+            memcpy_dtod_async::<DataType<T, N, C, H, W>>(
+                new.get_address(),
+                self.get_address(),
+                device.cu_stream,
+            )?;
+            Ok(new)
+        }
+    }
+
     pub fn new(allocation: CudaRc<DataType<T, N, C, H, W>>) -> Self {
         Self(allocation)
+    }
+
+    /// The address in device memory.
+    #[inline(always)]
+    pub fn get_address(&self) -> u64 {
+        self.0.t_cuda.cu_device_ptr
     }
 
     /// A pointer to the device memory.

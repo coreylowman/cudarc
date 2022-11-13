@@ -100,6 +100,18 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         Self { descriptor, data }
     }
 
+    /// Creates a new [Tensor4D] by allocating new device memory on the
+    /// [Rc<CudaDevice>] initializing it with the value of `self.data`.
+    ///
+    /// This also uses the same descriptor (and thus increases the memory
+    /// count).
+    pub fn clone_into_new(&self, device: &Rc<CudaDevice>) -> CudaCudnnResult<Self> {
+        Ok(Self::new(
+            Rc::clone(&self.descriptor),
+            self.data.clone_into_new(device)?,
+        ))
+    }
+
     /// Creates a new [Tensor4D] by a [Tensor4DData] (so this creates a new
     /// [TensorDescriptor]).
     pub fn create(data: Tensor4DData<T, N, C, H, W>) -> CudaCudnnResult<Self> {
