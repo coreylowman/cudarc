@@ -1,3 +1,6 @@
+use core::ops::Div;
+
+use crate::arrays::NumElements;
 use crate::cudarc::ValidAsZeroBits;
 
 use super::super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
@@ -17,7 +20,9 @@ use super::super::sys::{cudnnDataType_t, cudnnTensorFormat_t};
 ///
 /// # See also
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDataType_t>
-pub trait TensorDataType: ValidAsZeroBits + Clone {
+pub trait TensorDataType:
+    ValidAsZeroBits + PartialEq + Copy + Clone + NumElements + Div<Output = Self>
+{
     const ZERO: Self;
     const ONE: Self;
     const MAX: Self;

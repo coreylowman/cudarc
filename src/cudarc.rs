@@ -484,6 +484,18 @@ unsafe impl<T> IntoKernelParam for &CudaRc<T> {
     }
 }
 
+unsafe impl IntoKernelParam for *const std::ffi::c_void {
+    fn into_kernel_param(self) -> *mut std::ffi::c_void {
+        self as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl IntoKernelParam for *mut std::ffi::c_void {
+    fn into_kernel_param(self) -> *mut std::ffi::c_void {
+        self
+    }
+}
+
 macro_rules! impl_into_kernel_param {
     ($T:ty) => {
         unsafe impl IntoKernelParam for &$T {
@@ -541,6 +553,8 @@ impl_launch!([A, B], [0, 1]);
 impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
+impl_launch!([A, B, C, D, E, F], [0, 1, 2, 3, 4, 5]);
+impl_launch!([A, B, C, D, E, F, G], [0, 1, 2, 3, 4, 5, 6]);
 
 /// A builder for [CudaDevice].
 ///

@@ -1,10 +1,15 @@
 mod descriptor;
+#[macro_use]
+mod custom_operation;
 mod division;
 mod mode;
+mod trigonometry;
 
+pub use custom_operation::*;
 pub use descriptor::*;
 pub use division::*;
 pub use mode::*;
+pub use trigonometry::*;
 
 use core::ffi::c_void;
 use core::marker::PhantomData;
@@ -40,45 +45,77 @@ impl<T: TensorDataType, O: TensorOperationMode> TensorOperation<T, O> {
         })
     }
 }
-/// This trait only exists so other trait can have default methods. Might get
-/// removed in the future.
-pub trait _Operation<T> {
+pub trait Operation<T: TensorDataType, HANDLE> {
+    type Parameter;
+    type MetaType;
+
+    fn get_param_by_tensor<const N: usize, const C: usize, const H: usize, const W: usize>(
+        t: &Tensor4DData<T, N, C, H, W>,
+    ) -> *const Self::Parameter;
+    fn get_param_mut_by_tensor<const N: usize, const C: usize, const H: usize, const W: usize>(
+        t: &mut Tensor4DData<T, N, C, H, W>,
+    ) -> *mut Self::Parameter;
+    fn get_meta_type_by_tensor<const N: usize, const C: usize, const H: usize, const W: usize>(
+        t: &mut Tensor4D<T, N, C, H, W>,
+    ) -> Self::MetaType;
+
     /// # Safety
-    /// All pointers must be valid.
+    /// All pointers must be valid if used.
     #[allow(clippy::too_many_arguments)]
     unsafe fn execute_op(
         &self,
-        cudnn_handle: &CudnnHandle,
-        a_desc: cudnnTensorDescriptor_t,
-        a: *const c_void,
+        handle: &HANDLE,
+        meta: Self::MetaType,
+        a: *const Self::Parameter,
         a_scale: &T,
-        b: *const c_void,
+        b: *const Self::Parameter,
         b_scale: &T,
-        out: *mut c_void,
+        out: *mut Self::Parameter,
     ) -> CudaCudnnResult<()>;
 }
-impl<T: TensorDataType, O> _Operation<T> for TensorOperation<T, O> {
+impl<T: TensorDataType, O> Operation<T, CudnnHandle> for TensorOperation<T, O> {
+    type MetaType = cudnnTensorDescriptor_t;
+    type Parameter = c_void;
+
+    fn get_param_by_tensor<const N: usize, const C: usize, const H: usize, const W: usize>(
+        t: &Tensor4DData<T, N, C, H, W>,
+    ) -> *const Self::Parameter {
+        t.get_data_ptr()
+    }
+
+    fn get_param_mut_by_tensor<const N: usize, const C: usize, const H: usize, const W: usize>(
+        t: &mut Tensor4DData<T, N, C, H, W>,
+    ) -> *mut Self::Parameter {
+        t.get_data_ptr_mut()
+    }
+
+    fn get_meta_type_by_tensor<const N: usize, const C: usize, const H: usize, const W: usize>(
+        t: &mut Tensor4D<T, N, C, H, W>,
+    ) -> Self::MetaType {
+        t.get_descriptor()
+    }
+
     unsafe fn execute_op(
         &self,
         cudnn_handle: &CudnnHandle,
-        a_desc: cudnnTensorDescriptor_t,
-        a: *const c_void,
+        meta: Self::MetaType,
+        a: *const Self::Parameter,
         a_scale: &T,
-        b: *const c_void,
+        b: *const Self::Parameter,
         b_scale: &T,
-        out: *mut c_void,
+        out: *mut Self::Parameter,
     ) -> CudaCudnnResult<()> {
         cudnnOpTensor(
             cudnn_handle.get_handle(),
             self.descriptor.0,
             a_scale as *const _ as *const _,
-            a_desc,
+            meta,
             a,
             b_scale as *const _ as *const _,
-            a_desc,
+            meta,
             b,
             &T::ZERO as *const _ as *const _,
-            a_desc,
+            meta,
             out,
         )
         .result()
@@ -92,30 +129,31 @@ impl<T: TensorDataType, O> _Operation<T> for TensorOperation<T, O> {
 /// supports exactly one parameter.
 pub unsafe trait SingleParameterOp<
     T: TensorDataType,
+    HANDLE,
     const N: usize,
     const C: usize,
     const H: usize,
     const W: usize,
->: _Operation<T>
+>: Operation<T, HANDLE>
 {
     /// Executes the [TensorOperation] on the tensor `a`, scaling `a` with
     /// `scale` before running the operation.
     fn execute_with_scale(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &Tensor4D<T, N, C, H, W>,
         scale: &T,
         out: &mut Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()> {
         unsafe {
             self.execute_op(
-                cudnn_handle,
-                a.get_descriptor(),
-                a.get_data_ptr(),
+                handle,
+                Self::get_meta_type_by_tensor(out),
+                Self::get_param_by_tensor(a.get_data_ref()),
                 scale,
-                a.get_data_ptr(),
+                Self::get_param_by_tensor(a.get_data_ref()),
                 &T::ZERO,
-                out.get_data_ptr_mut(),
+                Self::get_param_mut_by_tensor(out.get_data_ref_mut()),
             )
         }
     }
@@ -124,19 +162,19 @@ pub unsafe trait SingleParameterOp<
     /// `a`), scaling `a` with `scale` before running the operation.
     fn execute_in_place_with_scale(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &mut Tensor4D<T, N, C, H, W>,
         scale: &T,
     ) -> CudaCudnnResult<()> {
         unsafe {
             self.execute_op(
-                cudnn_handle,
-                a.get_descriptor(),
-                a.get_data_ptr(),
+                handle,
+                Self::get_meta_type_by_tensor(a),
+                Self::get_param_by_tensor(a.get_data_ref()),
                 scale,
-                a.get_data_ptr(),
+                Self::get_param_by_tensor(a.get_data_ref()),
                 &T::ZERO,
-                a.get_data_ptr_mut(),
+                Self::get_param_mut_by_tensor(a.get_data_ref_mut()),
             )
         }
     }
@@ -144,21 +182,21 @@ pub unsafe trait SingleParameterOp<
     /// Executes the [TensorOperation] on the tensor `a`.
     fn execute(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()> {
-        self.execute_with_scale(cudnn_handle, a, &T::ONE, out)
+        self.execute_with_scale(handle, a, &T::ONE, out)
     }
 
     /// Executes the [TensorOperation] in place on the tensor `a` (overwriting
     /// `a`).
     fn execute_in_place(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &mut Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()> {
-        self.execute_in_place_with_scale(cudnn_handle, a, &T::ONE)
+        self.execute_in_place_with_scale(handle, a, &T::ONE)
     }
 }
 /// A trait for multi parameter [TensorOperationMode]s (except [OperationSqrt]
@@ -169,17 +207,18 @@ pub unsafe trait SingleParameterOp<
 /// supports exactly 2 parameters.
 pub unsafe trait MultiParameterOp<
     T: TensorDataType,
+    HANDLE,
     const N: usize,
     const C: usize,
     const H: usize,
     const W: usize,
->: _Operation<T>
+>: Operation<T, HANDLE>
 {
     /// Executes the [TensorOperation] on the tensor `a` and `b`, scaling `a`
     /// with `a_scale` and `b` with `b_scale before running the operation.
     fn execute_with_scale(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &Tensor4D<T, N, C, H, W>,
         a_scale: &T,
         b: &Tensor4D<T, N, C, H, W>,
@@ -188,13 +227,13 @@ pub unsafe trait MultiParameterOp<
     ) -> CudaCudnnResult<()> {
         unsafe {
             self.execute_op(
-                cudnn_handle,
-                a.get_descriptor(),
-                a.get_data_ptr(),
+                handle,
+                Self::get_meta_type_by_tensor(out),
+                Self::get_param_by_tensor(a.get_data_ref()),
                 a_scale,
-                b.get_data_ptr(),
+                Self::get_param_by_tensor(b.get_data_ref()),
                 b_scale,
-                out.get_data_ptr_mut(),
+                Self::get_param_mut_by_tensor(out.get_data_ref_mut()),
             )
         }
     }
@@ -204,7 +243,7 @@ pub unsafe trait MultiParameterOp<
     /// before running the operation.
     fn execute_in_place_with_scale(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &mut Tensor4D<T, N, C, H, W>,
         a_scale: &T,
         b: &Tensor4D<T, N, C, H, W>,
@@ -212,13 +251,13 @@ pub unsafe trait MultiParameterOp<
     ) -> CudaCudnnResult<()> {
         unsafe {
             self.execute_op(
-                cudnn_handle,
-                a.get_descriptor(),
-                a.get_data_ptr(),
+                handle,
+                Self::get_meta_type_by_tensor(a),
+                Self::get_param_by_tensor(a.get_data_ref()),
                 a_scale,
-                b.get_data_ptr(),
+                Self::get_param_by_tensor(b.get_data_ref()),
                 b_scale,
-                a.get_data_ptr_mut(),
+                Self::get_param_mut_by_tensor(a.get_data_ref_mut()),
             )
         }
     }
@@ -226,30 +265,30 @@ pub unsafe trait MultiParameterOp<
     /// Executes the [TensorOperation] on the tensor `a` and `b`.
     fn execute(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &Tensor4D<T, N, C, H, W>,
         b: &Tensor4D<T, N, C, H, W>,
         out: &mut Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()> {
-        self.execute_with_scale(cudnn_handle, a, &T::ONE, b, &T::ONE, out)
+        self.execute_with_scale(handle, a, &T::ONE, b, &T::ONE, out)
     }
 
     /// Executes the [TensorOperation] on the tensor `a` and `b` in place
     /// (overwriting `a`).
     fn execute_in_place(
         &self,
-        cudnn_handle: &CudnnHandle,
+        handle: &HANDLE,
         a: &mut Tensor4D<T, N, C, H, W>,
         b: &Tensor4D<T, N, C, H, W>,
     ) -> CudaCudnnResult<()> {
-        self.execute_in_place_with_scale(cudnn_handle, a, &T::ONE, b, &T::ONE)
+        self.execute_in_place_with_scale(handle, a, &T::ONE, b, &T::ONE)
     }
 }
 
 macro_rules! unsafe_impl_op {
     ($op:ty : $type:ident) => {
         unsafe impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
-            $type<T, N, C, H, W> for TensorOperation<T, $op>
+            $type<T, CudnnHandle, N, C, H, W> for TensorOperation<T, $op>
         {
         }
     };
