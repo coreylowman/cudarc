@@ -1,19 +1,70 @@
+use core::ops::Div;
+
 use alloc::rc::Rc;
 
 use crate::prelude::*;
 
-pub trait DivisionOperand: TensorDataType + NumElements {
-    const NAME: &'static str;
+pub trait DivisionOperand:
+    TensorDataType + Div<Output = Self> + Copy + PartialEq + NumElements
+where
+    for<'a> &'a Self: IntoKernelParam,
+{
+    const FUNCTION_NAME_NO_SCALE: &'static str;
+    const FUNCTION_NAME_WITH_SCALE: &'static str;
 }
-impl DivisionOperand for f32 {
-    const NAME: &'static str = "division_f32";
+macro_rules! impl_div_op {
+    ($type:ident) => {
+        impl DivisionOperand for $type {
+            const FUNCTION_NAME_NO_SCALE: &'static str = concat!("division_", stringify!($type));
+            const FUNCTION_NAME_WITH_SCALE: &'static str =
+                concat!("division_with_scale_", stringify!($type));
+        }
+    };
 }
-impl DivisionOperand for f64 {
-    const NAME: &'static str = "division_f64";
-}
+impl_div_op!(f32);
+impl_div_op!(f64);
 
 pub struct OperationDiv;
 impl OperationDiv {
+    pub fn divide_with_scale<
+        T: DivisionOperand,
+        const N: usize,
+        const C: usize,
+        const H: usize,
+        const W: usize,
+    >(
+        &self,
+        device: &Rc<CudaDevice>,
+        a: &Tensor4DData<T, N, C, H, W>,
+        a_scale: &T,
+        b: &Tensor4DData<T, N, C, H, W>,
+        b_scale: &T,
+        out: &mut Tensor4DData<T, N, C, H, W>,
+    ) -> CudaCudnnResult<()>
+    where
+        for<'a> &'a T: IntoKernelParam,
+    {
+        let numel = out.get_numel();
+        let f = *a_scale / *b_scale;
+        if f == T::ONE {
+            return self.divide(device, a, b, out);
+        }
+        let factor = device.take(Rc::new(f))?;
+        unsafe {
+            device.launch_cuda_function(
+                device
+                    .get_module(CUSTOM_KERNEL_MODULE)
+                    .and_then(|m| m.get_fn(T::FUNCTION_NAME_WITH_SCALE))
+                    .ok_or(CudaCudnnError::CudaError(CudaError(
+                        crate::driver::sys::CUresult::CUDA_ERROR_NOT_FOUND,
+                    )))?,
+                LaunchConfig::for_num_elems(numel),
+                (out, a, b, &factor, &numel),
+            )
+        }
+        .into_cuda_cudnn_result()
+    }
+
     pub fn divide<
         T: DivisionOperand,
         const N: usize,
@@ -26,13 +77,16 @@ impl OperationDiv {
         a: &Tensor4DData<T, N, C, H, W>,
         b: &Tensor4DData<T, N, C, H, W>,
         out: &mut Tensor4DData<T, N, C, H, W>,
-    ) -> CudaCudnnResult<()> {
+    ) -> CudaCudnnResult<()>
+    where
+        for<'a> &'a T: IntoKernelParam,
+    {
         let numel = out.get_numel();
         unsafe {
             device.launch_cuda_function(
                 device
                     .get_module(CUSTOM_KERNEL_MODULE)
-                    .and_then(|m| m.get_fn(T::NAME))
+                    .and_then(|m| m.get_fn(T::FUNCTION_NAME_NO_SCALE))
                     .ok_or(CudaCudnnError::CudaError(CudaError(
                         crate::driver::sys::CUresult::CUDA_ERROR_NOT_FOUND,
                     )))?,
@@ -60,7 +114,14 @@ mod tests {
         let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
 
         OperationDiv
-            .divide(&device, a.get_data_ref(), b.get_data_ref(), out.get_data_ref_mut())
+            .divide_with_scale(
+                &device,
+                a.get_data_ref(),
+                &1.0,
+                b.get_data_ref(),
+                &1.0,
+                out.get_data_ref_mut(),
+            )
             .unwrap();
 
         let data = out.get_data().as_host().unwrap()[0][0][0];
@@ -83,7 +144,12 @@ mod tests {
         let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
 
         OperationDiv
-            .divide(&device, a.get_data_ref(), b.get_data_ref(), out.get_data_ref_mut())
+            .divide(
+                &device,
+                a.get_data_ref(),
+                b.get_data_ref(),
+                out.get_data_ref_mut(),
+            )
             .unwrap();
 
         let data = out.get_data().as_host().unwrap()[0][0][0];
