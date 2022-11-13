@@ -60,7 +60,7 @@ mod tests {
         let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
 
         OperationDiv
-            .divide(&device, a.as_data(), b.as_data(), out.as_data_mut())
+            .divide(&device, a.get_data_ref(), b.get_data_ref(), out.get_data_ref_mut())
             .unwrap();
 
         let data = out.get_data().as_host().unwrap()[0][0][0];
@@ -83,7 +83,7 @@ mod tests {
         let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
 
         OperationDiv
-            .divide(&device, a.as_data(), b.as_data(), out.as_data_mut())
+            .divide(&device, a.get_data_ref(), b.get_data_ref(), out.get_data_ref_mut())
             .unwrap();
 
         let data = out.get_data().as_host().unwrap()[0][0][0];
