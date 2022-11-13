@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function print_done() {
-    echo -e "\x1b[32mDone!\x1b[39m"
+    echo -e "\x1b[32mDone!\x1b[m"
 }
 
 BASEDIR=$(dirname "$0")
@@ -23,7 +23,8 @@ sed -E "s/^$KERNEL_FUNCTION_START ([a-zA-Z0-9_]+)_f32(.*)$/$KERNEL_FUNCTION_STAR
 print_done
 
 echo -n "Removing new lines and comments ..."
-sed -Ei '/^(\/\/.*)?$/d' custom_kernels.cu
+sed -i '/^$/d' custom_kernels.cu
+sed -i '/^\/\/.*$/d' custom_kernels.cu
 print_done
 
 echo -n "Creating artifacts ..."
@@ -61,6 +62,6 @@ rm -rf artifacts
 print_done
 
 echo -n "Formatting custom_kernel_functions_names.rs ..."
-cargo fmt -- custom_kernel_functions_names.rs
+rustfmt custom_kernel_functions_names.rs
 echo -en "\x1b[1m"
 print_done

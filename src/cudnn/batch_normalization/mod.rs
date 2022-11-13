@@ -19,7 +19,7 @@ mod tests {
 
         let mut forward =
             BatchNormalizationForwardPerImage::create(&device, &cudnn_handle).unwrap();
-        let backward = forward.get_backward();
+        let mut backward = forward.get_backward();
 
         forward.train(&cudnn_handle, &x, &mut y).unwrap();
 

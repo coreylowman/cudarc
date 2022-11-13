@@ -57,7 +57,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
 
     /// A mutable pointer to the device memory.
     #[inline(always)]
-    pub fn get_data_ptr_mut(&self) -> *mut c_void {
+    pub fn get_data_ptr_mut(&mut self) -> *mut c_void {
         self.data.get_data_ptr_mut()
     }
 
@@ -146,7 +146,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         cudnn_handle: &CudnnHandle,
         value: &T,
     ) -> CudaCudnnResult<Self> {
-        let s = unsafe { Self::alloc_uninit(device) }?;
+        let mut s = unsafe { Self::alloc_uninit(device) }?;
         s.set_all(cudnn_handle, value)?;
         Ok(s)
     }
@@ -155,12 +155,12 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
     ///
     /// # See also
     /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensor>
-    pub fn set_all(&self, cudnn_handle: &CudnnHandle, value: &T) -> CudaCudnnResult<()> {
+    pub fn set_all(&mut self, cudnn_handle: &CudnnHandle, value: &T) -> CudaCudnnResult<()> {
         unsafe {
             cudnnSetTensor(
                 cudnn_handle.get_handle(),
                 self.get_descriptor(),
-                self.data.get_data_ptr_mut(),
+                self.get_data_ptr_mut(),
                 value as *const _ as *const _,
             )
         }
@@ -171,7 +171,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
     ///
     /// # See also
     /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnScaleTensor>
-    pub fn scale(&self, cudnn_handle: &CudnnHandle, factor: &T) -> CudaCudnnResult<()> {
+    pub fn scale(&mut self, cudnn_handle: &CudnnHandle, factor: &T) -> CudaCudnnResult<()> {
         unsafe {
             cudnnScaleTensor(
                 cudnn_handle.get_handle(),

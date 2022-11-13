@@ -27,6 +27,7 @@ impl OperationDiv {
         b: &Tensor4DData<T, N, C, H, W>,
         out: &mut Tensor4DData<T, N, C, H, W>,
     ) -> CudaCudnnResult<()> {
+        let numel = out.get_numel();
         unsafe {
             device.launch_cuda_function(
                 device
@@ -35,13 +36,8 @@ impl OperationDiv {
                     .ok_or(CudaCudnnError::CudaError(CudaError(
                         crate::driver::sys::CUresult::CUDA_ERROR_NOT_FOUND,
                     )))?,
-                LaunchConfig::for_num_elems(out.get_numel()),
-                (
-                    &mut *((&mut (out.get_data_ptr_mut() as u64)) as *mut u64),
-                    &*((&(a.get_data_ptr() as u64)) as *const u64),
-                    &*((&(b.get_data_ptr() as u64)) as *const u64),
-                    &out.get_numel(),
-                ),
+                LaunchConfig::for_num_elems(numel),
+                (out, a, b, &numel),
             )
         }
         .into_cuda_cudnn_result()

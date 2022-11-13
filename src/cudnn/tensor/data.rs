@@ -34,7 +34,7 @@ impl<T, const N: usize, const C: usize, const H: usize, const W: usize>
 
     /// A mutable pointer to the device memory.
     #[inline(always)]
-    pub fn get_data_ptr_mut(&self) -> *mut c_void {
+    pub fn get_data_ptr_mut(&mut self) -> *mut c_void {
         self.0.t_cuda.cu_device_ptr as *mut _
     }
 
@@ -66,4 +66,18 @@ impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: us
     type Dtype = T;
 
     const NUMEL: usize = T::NUMEL * N * C * H * W;
+}
+unsafe impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: usize>
+    IntoKernelParam for &Tensor4DData<T, N, C, H, W>
+{
+    fn into_kernel_param(self) -> *mut c_void {
+        (&self.0).into_kernel_param()
+    }
+}
+unsafe impl<T: NumElements, const N: usize, const C: usize, const H: usize, const W: usize>
+    IntoKernelParam for &mut Tensor4DData<T, N, C, H, W>
+{
+    fn into_kernel_param(self) -> *mut c_void {
+        (&mut self.0).into_kernel_param()
+    }
 }

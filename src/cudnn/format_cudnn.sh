@@ -2,7 +2,7 @@
 set -eu
 BASEDIR=$(dirname "$0")
 
-for filename in $BASEDIR/*.rs; do
+for filename in "$BASEDIR"/**.rs; do
     [ -e "$filename" ] || continue
     if [[ "${filename##*/}" == "sys.rs" ]]
     then

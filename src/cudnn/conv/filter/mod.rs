@@ -52,7 +52,7 @@ where
 
     /// A mutable pointer to the device memory.
     #[inline(always)]
-    pub fn get_data_ptr_mut(&self) -> *mut c_void {
+    pub fn get_data_ptr_mut(&mut self) -> *mut c_void {
         self.data.get_data_ptr_mut()
     }
 

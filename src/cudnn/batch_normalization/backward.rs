@@ -34,8 +34,10 @@ impl<
         }
     }
 
+    // removing this mut is ok if dummy_diff casts the immutable device pointer to a
+    // mutable one
     pub fn execute(
-        &self,
+        &mut self,
         cudnn_handle: &CudnnHandle,
         x: &Tensor4D<T, N, C, H, W>,
         dx: &mut Tensor4D<T, N, C, H, W>,
