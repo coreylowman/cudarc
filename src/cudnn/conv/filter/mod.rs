@@ -62,6 +62,18 @@ where
         self.data.clone()
     }
 
+    /// Returns a reference to the [Tensor4DData].
+    #[inline(always)]
+    pub fn get_data_ref(&self) -> &Tensor4DData<T, C_OUT, C_IN, H, W> {
+        &self.data
+    }
+
+    /// Returns a mutable reference to the [Tensor4DData].
+    #[inline(always)]
+    pub fn get_data_ref_mut(&mut self) -> &mut Tensor4DData<T, C_OUT, C_IN, H, W> {
+        &mut self.data
+    }
+
     /// Split the [Filter] into a [FilterDescriptor] and a [Tensor4DData],
     /// after cloning them.
     #[inline(always)]

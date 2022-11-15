@@ -11,6 +11,23 @@ use core::mem::MaybeUninit;
 use crate::cudnn::sys::*;
 use crate::prelude::*;
 
+pub type MaxPooling2D<
+    const F_H: usize,
+    const F_W: usize,
+    const P_H: usize,
+    const P_W: usize,
+    const S_H: usize,
+    const S_W: usize,
+> = Pooling2D<F_H, F_W, P_H, P_W, S_H, S_W, true>;
+pub type AvgPooling2D<
+    const F_H: usize,
+    const F_W: usize,
+    const P_H: usize,
+    const P_W: usize,
+    const S_H: usize,
+    const S_W: usize,
+> = Pooling2D<F_H, F_W, P_H, P_W, S_H, S_W, false>;
+
 pub struct Pooling2D<
     const F_H: usize,
     const F_W: usize,

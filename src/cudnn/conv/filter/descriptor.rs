@@ -43,7 +43,7 @@ impl<T: TensorDataType, const C_OUT: usize, const C_IN: usize, const H: usize, c
             cudnnSetFilter4dDescriptor(
                 descriptor,
                 T::get_data_type(),
-                T::get_tensor_format(),
+                TENSOR_FORMAT,
                 C_OUT as _,
                 C_IN as _,
                 H as _,

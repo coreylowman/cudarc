@@ -3,6 +3,8 @@ use crate::prelude::*;
 pub struct OperationDiv;
 impl_tensor_operation!(@multi_parameter OperationDiv: "division");
 
+// TODO UB if broadcasting
+
 #[cfg(test)]
 mod tests {
     use crate::prelude::*;
@@ -16,7 +18,7 @@ mod tests {
 
         let a = Tensor4D::alloc_with(&device, [[[[1.0, 2.0, 3.0, 4.0, f32::NAN]]]]).unwrap();
         let b = Tensor4D::alloc_with(&device, [[[[3.0, 1.0, 1.5, 2.0, 0.0]]]]).unwrap();
-        let mut out = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
+        let mut out = unsafe { Tensor4D::<_, 1, 1, 1, 5>::alloc_uninit(&device) }.unwrap();
 
         OperationDiv
             .execute_with_scale(&device, &a, &1.0, &b, &2.0, &mut out)

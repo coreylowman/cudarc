@@ -4,6 +4,7 @@
 //! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 #![no_std]
 #![feature(generic_const_exprs)]
+#![cfg_attr(test, feature(generic_arg_infer))]
 
 extern crate alloc;
 extern crate no_std_compat as std;

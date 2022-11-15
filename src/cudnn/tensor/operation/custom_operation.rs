@@ -126,24 +126,45 @@ macro_rules! impl_tensor_operation {
         }
         if_then_else! {
             if ($($t)?) {
-                impl_tensor_operation!(@unsafe_impl SingleParameterOp for $operation);
+                unsafe impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
+            SingleParameterOp<T, ::alloc::rc::Rc<CudaDevice>, N, C, H, W> for $operation where Self: KernelOperand<T>,
+            for<'a> &'a T: IntoKernelParam
+        {
+        }
             } else {
-                impl_tensor_operation!(@unsafe_impl MultiParameterOp for $operation);
+                unsafe impl<
+                T: TensorDataType,
+                const N_IN_OUT: usize,
+                const C_IN_OUT: usize,
+                const H_IN_OUT: usize,
+                const W_IN_OUT: usize,
+                const N_IN_B: usize,
+                const C_IN_B: usize,
+                const H_IN_B: usize,
+                const W_IN_B: usize,
+            >
+            MultiParameterOp<
+                T,
+                ::alloc::rc::Rc<CudaDevice>,
+                N_IN_OUT,
+                C_IN_OUT,
+                H_IN_OUT,
+                W_IN_OUT,
+                N_IN_B,
+                C_IN_B,
+                H_IN_B,
+                W_IN_B,
+            > for $operation
+        where
+            AssertEither<N_IN_OUT, N_IN_B, 1>: IsEither,
+            AssertEither<C_IN_OUT, C_IN_B, 1>: IsEither,
+            AssertEither<H_IN_OUT, H_IN_B, 1>: IsEither,
+            AssertEither<W_IN_OUT, W_IN_B, 1>: IsEither,
+            Self: KernelOperand<T>,
+            for<'a> &'a T: IntoKernelParam
+        {
+        }
             }
         }
     };
-    (@unsafe_impl $trait:ident for $target:ty) => {
-        unsafe impl<
-                T: TensorDataType,
-                const N: usize,
-                const C: usize,
-                const H: usize,
-                const W: usize,
-            > $trait<T, ::alloc::rc::Rc<CudaDevice>, N, C, H, W> for $target
-        where
-            Self: KernelOperand<T>,
-            for<'a> &'a T: IntoKernelParam,
-        {
-        }
-    }
 }

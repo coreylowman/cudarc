@@ -3,6 +3,7 @@ use crate::prelude::*;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 
+pub(crate) const TENSOR_FORMAT: cudnnTensorFormat_t = cudnnTensorFormat_t::CUDNN_TENSOR_NCHW;
 /// A descriptor of a tensor. This can be reused as all tensors are fully packed
 /// and in NCHW layout.
 ///
@@ -39,7 +40,7 @@ impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W:
         unsafe {
             cudnnSetTensor4dDescriptor(
                 descriptor,
-                T::get_tensor_format(),
+                TENSOR_FORMAT,
                 T::get_data_type(),
                 N as _,
                 C as _,

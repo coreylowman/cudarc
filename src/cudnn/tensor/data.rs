@@ -76,6 +76,16 @@ impl<T, const N: usize, const C: usize, const H: usize, const W: usize>
     pub fn get_data(&self) -> CudaRc<DataType<T, N, C, H, W>> {
         self.0.clone()
     }
+
+    #[inline(always)]
+    pub fn get_data_ref(&self) -> &CudaRc<DataType<T, N, C, H, W>> {
+        &self.0
+    }
+
+    #[inline(always)]
+    pub fn get_data_ref_mut(&mut self) -> &mut CudaRc<DataType<T, N, C, H, W>> {
+        &mut self.0
+    }
 }
 impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
     Tensor4DData<T, N, C, H, W>

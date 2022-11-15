@@ -1,14 +1,18 @@
 mod descriptor;
 #[macro_use]
 mod custom_operation;
+mod assert_either;
 mod division;
 mod mode;
+mod reduce;
 mod trigonometry;
 
+pub use assert_either::*;
 pub use custom_operation::*;
 pub use descriptor::*;
 pub use division::*;
 pub use mode::*;
+pub use reduce::*;
 pub use trigonometry::*;
 
 use core::ffi::c_void;
@@ -121,6 +125,7 @@ impl<T: TensorDataType, O> Operation<T, CudnnHandle> for TensorOperation<T, O> {
         .result()
     }
 }
+
 /// A trait for single parameter [TensorOperationMode]s ([OperationSqrt]
 /// and [OperationNot]).
 ///
@@ -208,22 +213,30 @@ pub unsafe trait SingleParameterOp<
 pub unsafe trait MultiParameterOp<
     T: TensorDataType,
     HANDLE,
-    const N: usize,
-    const C: usize,
-    const H: usize,
-    const W: usize,
->: Operation<T, HANDLE>
+    const N_IN_OUT: usize,
+    const C_IN_OUT: usize,
+    const H_IN_OUT: usize,
+    const W_IN_OUT: usize,
+    const N_IN_B: usize,
+    const C_IN_B: usize,
+    const H_IN_B: usize,
+    const W_IN_B: usize,
+>: Operation<T, HANDLE> where
+    AssertEither<N_IN_OUT, N_IN_B, 1>: IsEither,
+    AssertEither<C_IN_OUT, C_IN_B, 1>: IsEither,
+    AssertEither<H_IN_OUT, H_IN_B, 1>: IsEither,
+    AssertEither<W_IN_OUT, W_IN_B, 1>: IsEither,
 {
     /// Executes the [TensorOperation] on the tensor `a` and `b`, scaling `a`
     /// with `a_scale` and `b` with `b_scale before running the operation.
     fn execute_with_scale(
         &self,
         handle: &HANDLE,
-        a: &Tensor4D<T, N, C, H, W>,
+        a: &Tensor4D<T, N_IN_OUT, C_IN_OUT, H_IN_OUT, W_IN_OUT>,
         a_scale: &T,
-        b: &Tensor4D<T, N, C, H, W>,
+        b: &Tensor4D<T, N_IN_B, C_IN_B, H_IN_B, W_IN_B>,
         b_scale: &T,
-        out: &mut Tensor4D<T, N, C, H, W>,
+        out: &mut Tensor4D<T, N_IN_OUT, C_IN_OUT, H_IN_OUT, W_IN_OUT>,
     ) -> CudaCudnnResult<()> {
         unsafe {
             self.execute_op(
@@ -244,9 +257,9 @@ pub unsafe trait MultiParameterOp<
     fn execute_in_place_with_scale(
         &self,
         handle: &HANDLE,
-        a: &mut Tensor4D<T, N, C, H, W>,
+        a: &mut Tensor4D<T, N_IN_OUT, C_IN_OUT, H_IN_OUT, W_IN_OUT>,
         a_scale: &T,
-        b: &Tensor4D<T, N, C, H, W>,
+        b: &Tensor4D<T, N_IN_B, C_IN_B, H_IN_B, W_IN_B>,
         b_scale: &T,
     ) -> CudaCudnnResult<()> {
         unsafe {
@@ -266,9 +279,9 @@ pub unsafe trait MultiParameterOp<
     fn execute(
         &self,
         handle: &HANDLE,
-        a: &Tensor4D<T, N, C, H, W>,
-        b: &Tensor4D<T, N, C, H, W>,
-        out: &mut Tensor4D<T, N, C, H, W>,
+        a: &Tensor4D<T, N_IN_OUT, C_IN_OUT, H_IN_OUT, W_IN_OUT>,
+        b: &Tensor4D<T, N_IN_B, C_IN_B, H_IN_B, W_IN_B>,
+        out: &mut Tensor4D<T, N_IN_OUT, C_IN_OUT, H_IN_OUT, W_IN_OUT>,
     ) -> CudaCudnnResult<()> {
         self.execute_with_scale(handle, a, &T::ONE, b, &T::ONE, out)
     }
@@ -278,27 +291,59 @@ pub unsafe trait MultiParameterOp<
     fn execute_in_place(
         &self,
         handle: &HANDLE,
-        a: &mut Tensor4D<T, N, C, H, W>,
-        b: &Tensor4D<T, N, C, H, W>,
+        a: &mut Tensor4D<T, N_IN_OUT, C_IN_OUT, H_IN_OUT, W_IN_OUT>,
+        b: &Tensor4D<T, N_IN_B, C_IN_B, H_IN_B, W_IN_B>,
     ) -> CudaCudnnResult<()> {
         self.execute_in_place_with_scale(handle, a, &T::ONE, b, &T::ONE)
     }
 }
 
 macro_rules! unsafe_impl_op {
-    ($op:ty : $type:ident) => {
+    (@single_parameter $op:ty $(, $($additional:tt)+)?) => {
         unsafe impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
-            $type<T, CudnnHandle, N, C, H, W> for TensorOperation<T, $op>
+            SingleParameterOp<T, CudnnHandle, N, C, H, W> for TensorOperation<T, $op> $(where $($additional)+)?
+        {
+        }
+    };
+    (@multi_parameter $op:ty) => {
+        unsafe impl<
+                T: TensorDataType,
+                const N_IN_OUT: usize,
+                const C_IN_OUT: usize,
+                const H_IN_OUT: usize,
+                const W_IN_OUT: usize,
+                const N_IN_B: usize,
+                const C_IN_B: usize,
+                const H_IN_B: usize,
+                const W_IN_B: usize,
+            >
+            MultiParameterOp<
+                T,
+                CudnnHandle,
+                N_IN_OUT,
+                C_IN_OUT,
+                H_IN_OUT,
+                W_IN_OUT,
+                N_IN_B,
+                C_IN_B,
+                H_IN_B,
+                W_IN_B,
+            > for TensorOperation<T, $op>
+        where
+            AssertEither<N_IN_OUT, N_IN_B, 1>: IsEither,
+            AssertEither<C_IN_OUT, C_IN_B, 1>: IsEither,
+            AssertEither<H_IN_OUT, H_IN_B, 1>: IsEither,
+            AssertEither<W_IN_OUT, W_IN_B, 1>: IsEither,
         {
         }
     };
 }
-unsafe_impl_op!(OperationSqrt: SingleParameterOp);
-unsafe_impl_op!(OperationNot: SingleParameterOp);
-unsafe_impl_op!(OperationAdd: MultiParameterOp);
-unsafe_impl_op!(OperationMul: MultiParameterOp);
-unsafe_impl_op!(OperationMin: MultiParameterOp);
-unsafe_impl_op!(OperationMax: MultiParameterOp);
+unsafe_impl_op!(@single_parameter OperationSqrt);
+unsafe_impl_op!(@single_parameter OperationNot);
+unsafe_impl_op!(@multi_parameter OperationAdd);
+unsafe_impl_op!(@multi_parameter OperationMul);
+unsafe_impl_op!(@multi_parameter OperationMin);
+unsafe_impl_op!(@multi_parameter OperationMax);
 
 #[cfg(test)]
 mod tests {
