@@ -83,10 +83,10 @@ impl<
         const W_OUT: usize,
     > TensorReduction<O, T, N_IN, C_IN, H_IN, W_IN, N_OUT, C_OUT, H_OUT, W_OUT>
 where
-    AssertEither<N_OUT, N_IN, 1>: IsEither,
-    AssertEither<C_OUT, C_IN, 1>: IsEither,
-    AssertEither<H_OUT, H_IN, 1>: IsEither,
-    AssertEither<W_OUT, W_IN, 1>: IsEither,
+    AssertTrue<{ is_either(N_OUT, N_IN, 1) }>: ConstTrue,
+    AssertTrue<{ is_either(C_OUT, C_IN, 1) }>: ConstTrue,
+    AssertTrue<{ is_either(H_OUT, H_IN, 1) }>: ConstTrue,
+    AssertTrue<{ is_either(W_OUT, W_IN, 1) }>: ConstTrue,
 {
     pub fn create(
         device: Rc<CudaDevice>,

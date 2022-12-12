@@ -17,27 +17,8 @@ macro_rules! impl_kernel_op {
     };
 }
 
-/// if (<there are tokens>) {<expand to this>} else {<expand to this>}
-macro_rules! if_then_else {
-    (if ($($t:tt)+) {$($u:tt)*} else {$($e:tt)*}) => {
-        $($u)*
-    };
-    (if () {$($u:tt)*} else {$($e:tt)*}) => {
-        $($e)*
-    };
-}
-
-/// This implements a tensor operation for type `operation` with the cudnn base
-/// name `base` and additional trait bounds on. If this invocation starts with
-/// an `@<token>:`, then this will be a single
 macro_rules! impl_tensor_operation {
-    (@single_parameter $operation:ty: $base:tt) => {
-        impl_tensor_operation!(@ @single_parameter $operation: $base);
-    };
-    (@multi_parameter $operation:ty: $base:tt) => {
-        impl_tensor_operation!(@ $operation: $base);
-    };
-    (@ $(@ $t:tt)? $operation:ty : $base:literal) => {
+    ($operation:ty : $base:literal) => {
         impl_kernel_op!(f32: $operation, $base);
         impl_kernel_op!(f64: $operation, $base);
 
@@ -95,7 +76,7 @@ macro_rules! impl_tensor_operation {
                 b_scale: &T,
                 out: *mut Self::Parameter,
             ) -> CudaCudnnResult<()> {
-                let no_scale = a_scale == &T::ONE && b_scale == &T::ONE;
+                let no_scale = a_scale == &T::ONE;
                 let func = handle
                     .get_module(CUSTOM_KERNEL_MODULE)
                     .and_then(|m| {
@@ -110,61 +91,20 @@ macro_rules! impl_tensor_operation {
                     )))?;
                 let cfg = LaunchConfig::for_num_elems(numel);
                 if no_scale {
-                    let param = if_then_else!(if ($($t)?) {(out, a, &numel)} else {(out, a, b, &numel)});
-                    handle.launch_cuda_function(func, cfg, param)
+                    handle.launch_cuda_function(func, cfg, (out, a, &numel))
                 } else {
-                    let param_a_scale = handle.take(::alloc::rc::Rc::new(*a_scale))?;
-                    let param = if_then_else!(if ($($t)?) {(out, a, &param_a_scale, &numel)} else {(out, a, &param_a_scale, b, &handle.take(::alloc::rc::Rc::new(*b_scale))?, &numel)});
                     handle.launch_cuda_function(
                         func,
                         cfg,
-                        param,
+                        (out, a, &handle.take(::alloc::rc::Rc::new(*a_scale))?, &numel),
                     )
                 }
-                .into_cuda_cudnn_result()
+                .into_cuda_cudnn_result().unwrap();
+                Ok(())
             }
         }
-        if_then_else! {
-            if ($($t)?) {
                 unsafe impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
             SingleParameterOp<T, ::alloc::rc::Rc<CudaDevice>, N, C, H, W> for $operation where Self: KernelOperand<T>,
-            for<'a> &'a T: IntoKernelParam
-        {
-        }
-            } else {
-                unsafe impl<
-                T: TensorDataType,
-                const N_IN_OUT: usize,
-                const C_IN_OUT: usize,
-                const H_IN_OUT: usize,
-                const W_IN_OUT: usize,
-                const N_IN_B: usize,
-                const C_IN_B: usize,
-                const H_IN_B: usize,
-                const W_IN_B: usize,
-            >
-            MultiParameterOp<
-                T,
-                ::alloc::rc::Rc<CudaDevice>,
-                N_IN_OUT,
-                C_IN_OUT,
-                H_IN_OUT,
-                W_IN_OUT,
-                N_IN_B,
-                C_IN_B,
-                H_IN_B,
-                W_IN_B,
-            > for $operation
-        where
-            AssertEither<N_IN_OUT, N_IN_B, 1>: IsEither,
-            AssertEither<C_IN_OUT, C_IN_B, 1>: IsEither,
-            AssertEither<H_IN_OUT, H_IN_B, 1>: IsEither,
-            AssertEither<W_IN_OUT, W_IN_B, 1>: IsEither,
-            Self: KernelOperand<T>,
-            for<'a> &'a T: IntoKernelParam
-        {
-        }
-            }
-        }
+            for<'a> &'a T: IntoKernelParam {}
     };
 }

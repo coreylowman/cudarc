@@ -1,11 +1,9 @@
 use crate::prelude::*;
 
 pub struct OperationSin;
-impl_tensor_operation!(@single_parameter OperationSin: "sin");
+impl_tensor_operation!(OperationSin: "sin");
 pub struct OperationCos;
-impl_tensor_operation!(@single_parameter OperationCos: "cos");
-
-// TODO UB if broadcasting
+impl_tensor_operation!(OperationCos: "cos");
 
 #[cfg(test)]
 mod tests {

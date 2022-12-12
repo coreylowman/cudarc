@@ -6,7 +6,7 @@ use std::rc::Rc;
 pub struct Cpu;
 
 pub struct CpuRc<T> {
-    data:   Rc<T>,
+    data: Rc<T>,
     device: Rc<Cpu>,
 }
 
@@ -89,7 +89,7 @@ fn main() {
 
     let t: Tensor1D<3> = Tensor1D {
         rc: CpuRc {
-            data:   Rc::new([1.0, 2.0, 3.0]),
+            data: Rc::new([1.0, 2.0, 3.0]),
             device: cpu.clone(),
         },
     };

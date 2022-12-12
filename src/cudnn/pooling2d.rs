@@ -185,9 +185,10 @@ mod tests {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let cudnn_handle = CudnnHandle::create(&device).unwrap();
 
-        let input = Tensor4D::alloc_with(&device, [[[[1.0f64, 2.0, 3.0], [-1.0, 0.0, -1.0], [
-            0.0, 3.0, 5.0,
-        ]]]])
+        let input = Tensor4D::alloc_with(
+            &device,
+            [[[[1.0f64, 2.0, 3.0], [-1.0, 0.0, -1.0], [0.0, 3.0, 5.0]]]],
+        )
         .unwrap();
         let mut output = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
         let mut dx = unsafe { Tensor4D::alloc_uninit(&device) }.unwrap();
@@ -198,18 +199,18 @@ mod tests {
             .forward(&cudnn_handle, &input, &mut output)
             .unwrap();
 
-        assert_eq!(output.get_data().as_host().unwrap()[0][0], [[2.0, 3.0], [
-            3.0, 5.0
-        ]]);
+        assert_eq!(
+            output.get_data().as_host().unwrap()[0][0],
+            [[2.0, 3.0], [3.0, 5.0]]
+        );
 
         pooling2d
             .backward(&cudnn_handle, &input, &output, &output, &mut dx)
             .unwrap();
 
-        assert_eq!(dx.get_data().as_host().unwrap()[0][0], [
-            [0.0, 2.0, 3.0],
-            [0.0, 0.0, 0.0],
-            [0.0, 3.0, 5.0]
-        ]);
+        assert_eq!(
+            dx.get_data().as_host().unwrap()[0][0],
+            [[0.0, 2.0, 3.0], [0.0, 0.0, 0.0], [0.0, 3.0, 5.0]]
+        );
     }
 }

@@ -14,7 +14,7 @@ pub(crate) const TENSOR_FORMAT: cudnnTensorFormat_t = cudnnTensorFormat_t::CUDNN
 /// <https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyTensorDescriptor>
 pub struct TensorDescriptor<T, const N: usize, const C: usize, const H: usize, const W: usize> {
     descriptor: cudnnTensorDescriptor_t,
-    data_type:  PhantomData<T>,
+    data_type: PhantomData<T>,
 }
 impl<T: TensorDataType, const N: usize, const C: usize, const H: usize, const W: usize>
     TensorDescriptor<T, N, C, H, W>

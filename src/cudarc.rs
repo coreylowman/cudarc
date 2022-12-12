@@ -416,8 +416,9 @@ impl LaunchConfig {
     /// with 1 grid and n threads
     pub fn for_num_elems(n: u32) -> Self {
         Self {
-            grid_dim: (1, 1, 1),
-            block_dim: (n, 1, 1),
+            // round up
+            grid_dim: ((n + 1023) / 1024, 1, 1),
+            block_dim: (n.min(1024), 1, 1),
             shared_mem_bytes: 0,
         }
     }

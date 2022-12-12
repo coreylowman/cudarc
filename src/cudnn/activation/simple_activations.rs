@@ -6,7 +6,7 @@ use crate::prelude::*;
 
 const NAN_PROPAGATION: cudnnNanPropagation_t = cudnnNanPropagation_t::CUDNN_PROPAGATE_NAN;
 pub struct Activation<A> {
-    descriptor:      cudnnActivationDescriptor_t,
+    descriptor: cudnnActivationDescriptor_t,
     activation_mode: PhantomData<A>,
 }
 impl<A: ActivationMode> Activation<A> {

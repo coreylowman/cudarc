@@ -1,17 +1,18 @@
 mod descriptor;
 #[macro_use]
 mod custom_operation;
+#[macro_use]
 mod assert_either;
-mod division;
 mod mode;
+mod recip;
 mod reduce;
 mod trigonometry;
 
 pub use assert_either::*;
 pub use custom_operation::*;
 pub use descriptor::*;
-pub use division::*;
 pub use mode::*;
+pub use recip::*;
 pub use reduce::*;
 pub use trigonometry::*;
 
@@ -222,10 +223,10 @@ pub unsafe trait MultiParameterOp<
     const H_IN_B: usize,
     const W_IN_B: usize,
 >: Operation<T, HANDLE> where
-    AssertEither<N_IN_OUT, N_IN_B, 1>: IsEither,
-    AssertEither<C_IN_OUT, C_IN_B, 1>: IsEither,
-    AssertEither<H_IN_OUT, H_IN_B, 1>: IsEither,
-    AssertEither<W_IN_OUT, W_IN_B, 1>: IsEither,
+    AssertTrue<{ is_either(N_IN_B, N_IN_OUT, 1) }>: ConstTrue,
+    AssertTrue<{ is_either(C_IN_B, C_IN_OUT, 1) }>: ConstTrue,
+    AssertTrue<{ is_either(H_IN_B, H_IN_OUT, 1) }>: ConstTrue,
+    AssertTrue<{ is_either(W_IN_B, W_IN_OUT, 1) }>: ConstTrue,
 {
     /// Executes the [TensorOperation] on the tensor `a` and `b`, scaling `a`
     /// with `a_scale` and `b` with `b_scale before running the operation.
@@ -330,10 +331,10 @@ macro_rules! unsafe_impl_op {
                 W_IN_B,
             > for TensorOperation<T, $op>
         where
-            AssertEither<N_IN_OUT, N_IN_B, 1>: IsEither,
-            AssertEither<C_IN_OUT, C_IN_B, 1>: IsEither,
-            AssertEither<H_IN_OUT, H_IN_B, 1>: IsEither,
-            AssertEither<W_IN_OUT, W_IN_B, 1>: IsEither,
+            AssertTrue<{is_either(N_IN_B, N_IN_OUT, 1)}>: ConstTrue,
+            AssertTrue<{is_either(C_IN_B, C_IN_OUT, 1)}>: ConstTrue,
+            AssertTrue<{is_either(H_IN_B, H_IN_OUT, 1)}>: ConstTrue,
+            AssertTrue<{is_either(W_IN_B, W_IN_OUT, 1)}>: ConstTrue,
         {
         }
     };
@@ -359,14 +360,10 @@ mod tests {
         let cuda = CudaDeviceBuilder::new(0).build().unwrap();
         let cudnn = CudnnHandle::create(&cuda).unwrap();
         let op = TensorOperation::create().unwrap();
-        let a = Tensor4D::alloc_with(&cuda, [[[[
-            1.0,
-            2.0,
-            -1.0,
-            0.0,
-            f64::NAN,
-            f64::NEG_INFINITY,
-        ]]]])
+        let a = Tensor4D::alloc_with(
+            &cuda,
+            [[[[1.0, 2.0, -1.0, 0.0, f64::NAN, f64::NEG_INFINITY]]]],
+        )
         .unwrap();
         let b =
             Tensor4D::alloc_with(&cuda, [[[[3.0, 0.0, -2.0, f64::INFINITY, 0.0, 0.4]]]]).unwrap();

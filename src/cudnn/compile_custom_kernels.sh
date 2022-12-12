@@ -33,6 +33,7 @@ cd artifacts || return
 print_done
 
 echo -n "Generating custom_kernels.ptx file with nvcc..."
+nvcc --help > /dev/null
 nvcc -keep ../custom_kernels.cu > /dev/null 2> /dev/null
 print_done
 

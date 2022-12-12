@@ -17,7 +17,7 @@ pub struct FilterDescriptor<
     const W: usize,
 > {
     descriptor: cudnnFilterDescriptor_t,
-    data_type:  PhantomData<T>,
+    data_type: PhantomData<T>,
 }
 impl<T: TensorDataType, const C_OUT: usize, const C_IN: usize, const H: usize, const W: usize>
     FilterDescriptor<T, C_OUT, C_IN, H, W>

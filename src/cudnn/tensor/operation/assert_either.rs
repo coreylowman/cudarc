@@ -1,12 +1,15 @@
-pub struct AssertBool<const B: bool>;
+use const_panic::concat_assert;
+
+/// If an error points here, check for errors in other files of this dir (more info there)
+pub struct AssertTrue<const A: bool> {}
 pub trait ConstTrue {}
-impl ConstTrue for AssertBool<true> {}
-pub struct AssertEither<const A: usize, const B: usize, const C: usize>;
-pub trait IsEither {}
-const fn either<const A: usize, const B: usize, const C: usize>() -> bool {
-    A == B || A == C
-}
-impl<const A: usize, const B: usize, const C: usize> IsEither for AssertEither<A, B, C> where
-    AssertBool<{ either::<A, B, C>() }>: ConstTrue
-{
+impl ConstTrue for AssertTrue<true> {}
+
+#[track_caller]
+pub const fn is_either(a: usize, b: usize, c: usize) -> bool {
+    concat_assert! {
+        a == b || a == c,
+        "Dimension size `", a, "` must either be `", b, "` or `", c, "`"
+    };
+    a == b || a == c
 }

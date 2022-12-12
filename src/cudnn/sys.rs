@@ -4069,7 +4069,7 @@ pub type cudnnBackendDescriptor_t = *mut ::core::ffi::c_void;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudnnFractionStruct {
-    pub numerator:   i64,
+    pub numerator: i64,
     pub denominator: i64,
 }
 #[test]

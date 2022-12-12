@@ -44,7 +44,7 @@ impl crate::cudarc::CudaDeviceBuilder {
     pub fn with_cudnn_modules(self) -> Self {
         self.with_ptx_from_file(
             CUSTOM_KERNEL_MODULE,
-            // is this as efficient as including bytes (`include_bytes!`) on compile time
+            // is this as efficient as including bytes (`include_bytes!`) on compile time?
             "src/cudnn/custom_kernels.ptx",
             &custom_kernel_functions_names::FUNCTION_NAMES,
         )

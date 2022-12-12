@@ -144,7 +144,6 @@ where
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use alloc::rc::Rc;
