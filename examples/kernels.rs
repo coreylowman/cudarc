@@ -1,5 +1,7 @@
-use cudarc::{jit::*, prelude::*};
-use std::{marker::PhantomData, rc::Rc};
+use cudarc::jit::*;
+use cudarc::prelude::*;
+use std::marker::PhantomData;
+use std::rc::Rc;
 
 struct Cpu;
 
@@ -56,6 +58,7 @@ where
     Op: BinaryKernelOp,
 {
     type Err = CudaError;
+
     fn launch(&self, (out, inp, _): (&mut CudaRc<T>, &CudaRc<T>, Op)) -> Result<(), Self::Err> {
         let module = self.get_module(Op::NAME).unwrap();
         let f = module.get_fn("kernel").unwrap();
@@ -68,12 +71,13 @@ where
 pub struct SinOp;
 
 impl BinaryKernelOp for SinOp {
-    const NAME: &'static str = "SinOp";
     const CU_SRC: &'static str = "
 __device__ void op(float *out, const float *in) {
     *out = sin(*in);
 }
 ";
+    const NAME: &'static str = "SinOp";
+
     fn execute(&mut self, out: &mut f32, inp: &f32) {
         *out = inp.sin();
     }
@@ -82,12 +86,13 @@ __device__ void op(float *out, const float *in) {
 pub struct CosOp;
 
 impl BinaryKernelOp for CosOp {
-    const NAME: &'static str = "CosOp";
     const CU_SRC: &'static str = "
 __device__ void op(float *out, const float *in) {
     *out = cos(*in);
 }
 ";
+    const NAME: &'static str = "CosOp";
+
     fn execute(&mut self, out: &mut f32, inp: &f32) {
         *out = inp.cos();
     }
@@ -102,6 +107,7 @@ trait CompileKernel {
 impl<Op: BinaryKernelOp> CompileKernel for ForEach<Op> {
     type Compiled = Ptx;
     type Err = CompileError;
+
     fn compile() -> Result<Self::Compiled, Self::Err> {
         const CU_SRC: &str = "
 extern \"C\" __global__ void kernel(float *out, const float *inp, int numel) {{

@@ -26,6 +26,7 @@ std = [ "no-std-compat/std" ]
 
 [dependencies]
 no-std-compat = { version = "0.4.1", features = [ "alloc" ] }
+const_panic = "0.2.6"
 
 [build-dependencies]
 find_cuda_helper = "0.2.0"

@@ -156,12 +156,19 @@ pub use result::CudaError;
 ///
 /// Unfortunately, `&CudaRc<T>` can **still be mutated
 /// by the [CudaFunction]**.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CudaRc<T> {
     pub(crate) t_cuda: Rc<CudaUniquePtr<T>>,
     pub(crate) t_host: Option<Rc<T>>,
 }
-
+impl<T> Clone for CudaRc<T> {
+    fn clone(&self) -> Self {
+        Self {
+            t_cuda: Rc::clone(&self.t_cuda),
+            t_host: self.t_host.as_ref().map(Rc::clone)
+        }
+    }
+}
 impl<T> CudaRc<T> {
     /// Returns a reference to the underlying [CudaDevice]
     pub fn device(&self) -> &Rc<CudaDevice> {
@@ -224,7 +231,7 @@ impl<T> CudaUniquePtr<T> {
     ///
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
-    unsafe fn alloc(device: &Rc<CudaDevice>) -> Result<CudaUniquePtr<T>, CudaError> {
+    pub(crate) unsafe fn alloc(device: &Rc<CudaDevice>) -> Result<CudaUniquePtr<T>, CudaError> {
         let cu_device_ptr = result::malloc_async::<T>(device.cu_stream)?;
         Ok(CudaUniquePtr {
             cu_device_ptr,
@@ -409,8 +416,9 @@ impl LaunchConfig {
     /// with 1 grid and n threads
     pub fn for_num_elems(n: u32) -> Self {
         Self {
-            grid_dim: (1, 1, 1),
-            block_dim: (n, 1, 1),
+            // round up
+            grid_dim: ((n + 1023) / 1024, 1, 1),
+            block_dim: (n.min(1024), 1, 1),
             shared_mem_bytes: 0,
         }
     }
@@ -477,6 +485,18 @@ unsafe impl<T> IntoKernelParam for &CudaRc<T> {
     }
 }
 
+unsafe impl IntoKernelParam for *const std::ffi::c_void {
+    fn into_kernel_param(self) -> *mut std::ffi::c_void {
+        self as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl IntoKernelParam for *mut std::ffi::c_void {
+    fn into_kernel_param(self) -> *mut std::ffi::c_void {
+        self
+    }
+}
+
 macro_rules! impl_into_kernel_param {
     ($T:ty) => {
         unsafe impl IntoKernelParam for &$T {
@@ -534,6 +554,8 @@ impl_launch!([A, B], [0, 1]);
 impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
+impl_launch!([A, B, C, D, E, F], [0, 1, 2, 3, 4, 5]);
+impl_launch!([A, B, C, D, E, F, G], [0, 1, 2, 3, 4, 5, 6]);
 
 /// A builder for [CudaDevice].
 ///
