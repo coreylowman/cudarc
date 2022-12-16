@@ -164,6 +164,9 @@ pub struct CudaSlice<T> {
     pub(crate) host_buf: Option<Vec<T>>,
 }
 
+unsafe impl<T: Send> Send for CudaSlice<T> {}
+unsafe impl<T: Sync> Sync for CudaSlice<T> {}
+
 impl<T> CudaSlice<T> {
     /// Number of elements in the slice
     pub fn len(&self) -> usize {
@@ -220,6 +223,9 @@ pub struct CudaDevice {
     pub(crate) cu_stream: sys::CUstream,
     pub(crate) modules: BTreeMap<&'static str, CudaModule>,
 }
+
+unsafe impl Send for CudaDevice {}
+unsafe impl Sync for CudaDevice {}
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
@@ -315,7 +321,7 @@ impl CudaDevice {
         dst: &mut CudaSlice<T>,
     ) -> Result<(), CudaError> {
         assert_eq!(src.len(), dst.len());
-        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, &src, self.cu_stream) }?;
+        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.cu_stream) }?;
         self.synchronize()
     }
 
@@ -376,6 +382,9 @@ pub struct CudaModule {
     pub(crate) functions: BTreeMap<&'static str, CudaFunction>,
 }
 
+unsafe impl Send for CudaModule {}
+unsafe impl Sync for CudaModule {}
+
 impl CudaModule {
     /// Returns reference to function with `name`. If function
     /// was not already loaded into CudaModule, then `None`
@@ -390,6 +399,9 @@ impl CudaModule {
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
 }
+
+unsafe impl Send for CudaFunction {}
+unsafe impl Sync for CudaFunction {}
 
 /// Configuration for [result::launch_kernel]
 ///
@@ -533,6 +545,9 @@ impl_launch!([A, B], [0, 1]);
 impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
+impl_launch!([A, B, C, D, E, F], [0, 1, 2, 3, 4, 5]);
+impl_launch!([A, B, C, D, E, F, G], [0, 1, 2, 3, 4, 5, 6]);
+impl_launch!([A, B, C, D, E, F, G, H], [0, 1, 2, 3, 4, 5, 6, 7]);
 
 /// A builder for [CudaDevice].
 ///

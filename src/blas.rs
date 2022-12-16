@@ -19,6 +19,9 @@ pub struct CudaBlas {
     pub(crate) device: Arc<CudaDevice>,
 }
 
+unsafe impl Send for CudaBlas {}
+unsafe impl Sync for CudaBlas {}
+
 impl CudaBlas {
     /// Creates a new cublas handle and sets the stream to the `device`'s stream.
     pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
@@ -300,7 +303,7 @@ mod tests {
 
         let c_host = dev.sync_release(c_dev).unwrap();
         for i in 0..M {
-            assert!((c_host[i] - c[i]).abs() <= 1e-8);
+            assert!((c_host[i] - c[i]).abs() <= 1e-6);
         }
     }
 
