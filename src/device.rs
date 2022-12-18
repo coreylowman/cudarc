@@ -205,6 +205,13 @@ impl<T> Drop for CudaSlice<T> {
     }
 }
 
+impl<T: Clone + Default> TryFrom<CudaSlice<T>> for Vec<T> {
+    type Error = DriverError;
+    fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
+        value.device.clone().sync_release(value)
+    }
+}
+
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaModule]s.
 ///
@@ -285,8 +292,7 @@ impl CudaDevice {
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn take_async<T>(self: &Arc<Self>, src: Vec<T>) -> Result<CudaSlice<T>, DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
-        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, &src, self.cu_stream) }?;
-        dst.host_buf = Some(src);
+        self.copy_into_async(src, &mut dst)?;
         Ok(dst)
     }
 
@@ -323,6 +329,30 @@ impl CudaDevice {
         assert_eq!(src.len(), dst.len());
         unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.cu_stream) }?;
         self.synchronize()
+    }
+
+    /// Takes ownership of the host data and copies it to device data asynchronously.
+    ///
+    /// # Safety
+    ///
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn copy_into_async<T>(
+        self: &Arc<Self>,
+        src: Vec<T>,
+        dst: &mut CudaSlice<T>,
+    ) -> Result<(), DriverError> {
+        assert_eq!(src.len(), dst.len());
+        dst.host_buf = Some(src);
+        unsafe {
+            result::memcpy_htod_async(
+                dst.cu_device_ptr,
+                dst.host_buf.as_ref().unwrap(),
+                self.cu_stream,
+            )
+        }?;
+        Ok(())
     }
 
     /// Synchronously copies device memory into host memory
