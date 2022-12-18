@@ -18,23 +18,22 @@ use std::mem::{size_of, MaybeUninit};
 /// Wrapper around [sys::CUresult]. See
 /// nvidia's [CUresult docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TYPES.html#group__CUDA__TYPES_1gc6c391505e117393cc2558fff6bfc2e9)
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub struct CudaError(pub sys::CUresult);
+pub struct DriverError(pub sys::CUresult);
 
 impl sys::CUresult {
-    /// Transforms into a [Result] of [CudaError]
-    pub fn result(self) -> Result<(), CudaError> {
+    pub fn result(self) -> Result<(), DriverError> {
         match self {
             sys::CUresult::CUDA_SUCCESS => Ok(()),
-            _ => Err(CudaError(self)),
+            _ => Err(DriverError(self)),
         }
     }
 }
 
-impl CudaError {
+impl DriverError {
     /// Gets the name for this error.
     ///
     /// See [cuGetErrorName() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__ERROR.html#group__CUDA__ERROR_1g2c4ac087113652bb3d1f95bf2513c468)
-    pub fn error_name(&self) -> Result<&CStr, CudaError> {
+    pub fn error_name(&self) -> Result<&CStr, DriverError> {
         let mut err_str = MaybeUninit::uninit();
         unsafe {
             sys::cuGetErrorName(self.0, err_str.as_mut_ptr()).result()?;
@@ -45,7 +44,7 @@ impl CudaError {
     /// Gets the error string for this error.
     ///
     /// See [cuGetErrorString() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__ERROR.html#group__CUDA__ERROR_1g72758fcaf05b5c7fac5c25ead9445ada)
-    pub fn error_string(&self) -> Result<&CStr, CudaError> {
+    pub fn error_string(&self) -> Result<&CStr, DriverError> {
         let mut err_str = MaybeUninit::uninit();
         unsafe {
             sys::cuGetErrorString(self.0, err_str.as_mut_ptr()).result()?;
@@ -54,10 +53,10 @@ impl CudaError {
     }
 }
 
-impl std::fmt::Debug for CudaError {
+impl std::fmt::Debug for DriverError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let err_str = self.error_string().unwrap();
-        f.debug_tuple("CudaError")
+        f.debug_tuple("DriverError")
             .field(&self.0)
             .field(&err_str)
             .finish()
@@ -65,20 +64,20 @@ impl std::fmt::Debug for CudaError {
 }
 
 #[cfg(feature = "std")]
-impl std::fmt::Display for CudaError {
+impl std::fmt::Display for DriverError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for CudaError {}
+impl std::error::Error for DriverError {}
 
 /// Initializes the CUDA driver API.
 /// **MUST BE CALLED BEFORE ANYTHING ELSE**
 ///
 /// See [cuInit() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__INITIALIZE.html#group__CUDA__INITIALIZE_1g0a2f1517e1bd8502c7194c3a8c134bc3)
-pub fn init() -> Result<(), CudaError> {
+pub fn init() -> Result<(), DriverError> {
     unsafe { sys::cuInit(0).result() }
 }
 
@@ -87,13 +86,13 @@ pub mod device {
     //!
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE)
 
-    use super::{sys, CudaError};
+    use super::{sys, DriverError};
     use core::ffi::c_int;
     use std::mem::MaybeUninit;
 
     /// Get a device for a specific ordinal.
     /// See [cuDeviceGet() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8bdd1cc7201304b01357b8034f6587cb).
-    pub fn get(ordinal: c_int) -> Result<sys::CUdevice, CudaError> {
+    pub fn get(ordinal: c_int) -> Result<sys::CUdevice, DriverError> {
         let mut dev = MaybeUninit::uninit();
         unsafe {
             sys::cuDeviceGet(dev.as_mut_ptr(), ordinal).result()?;
@@ -103,7 +102,7 @@ pub mod device {
 
     /// Gets the number of available devices.
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g52b5ce05cb8c5fb6831b2c0ff2887c74)
-    pub fn get_count() -> Result<c_int, CudaError> {
+    pub fn get_count() -> Result<c_int, DriverError> {
         let mut count = MaybeUninit::uninit();
         unsafe {
             sys::cuDeviceGetCount(count.as_mut_ptr()).result()?;
@@ -117,7 +116,7 @@ pub mod device {
     ///
     /// # Safety
     /// Must be a device returned from [get].
-    pub unsafe fn total_mem(dev: sys::CUdevice) -> Result<usize, CudaError> {
+    pub unsafe fn total_mem(dev: sys::CUdevice) -> Result<usize, DriverError> {
         let mut bytes = MaybeUninit::uninit();
         sys::cuDeviceTotalMem_v2(bytes.as_mut_ptr(), dev).result()?;
         Ok(bytes.assume_init())
@@ -129,7 +128,7 @@ pub mod primary_ctx {
     //!
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__PRIMARY__CTX.html#group__CUDA__PRIMARY__CTX)
 
-    use super::{sys, CudaError};
+    use super::{sys, DriverError};
     use std::mem::MaybeUninit;
 
     /// Creates a primary context on the device and pushes it onto the primary context stack.
@@ -140,7 +139,7 @@ pub mod primary_ctx {
     /// # Safety
     ///
     /// This is only safe with a device that was returned from [super::device::get].
-    pub unsafe fn retain(dev: sys::CUdevice) -> Result<sys::CUcontext, CudaError> {
+    pub unsafe fn retain(dev: sys::CUdevice) -> Result<sys::CUcontext, DriverError> {
         let mut ctx = MaybeUninit::uninit();
         sys::cuDevicePrimaryCtxRetain(ctx.as_mut_ptr(), dev).result()?;
         Ok(ctx.assume_init())
@@ -153,7 +152,7 @@ pub mod primary_ctx {
     /// # Safety
     ///
     /// This is only safe with a device that was returned from [super::device::get].
-    pub unsafe fn release(dev: sys::CUdevice) -> Result<(), CudaError> {
+    pub unsafe fn release(dev: sys::CUdevice) -> Result<(), DriverError> {
         sys::cuDevicePrimaryCtxRelease_v2(dev).result()
     }
 }
@@ -163,7 +162,7 @@ pub mod ctx {
     //!
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX)
 
-    use super::{sys, CudaError};
+    use super::{sys, DriverError};
 
     /// Binds the specified CUDA context to the calling CPU thread.
     ///
@@ -174,7 +173,7 @@ pub mod ctx {
     /// This has weird behavior depending on the value of `ctx`. See cuda docs for more info.
     /// In general this should only be called with an already initialized context,
     /// and one that wasn't already freed.
-    pub unsafe fn set_current(ctx: sys::CUcontext) -> Result<(), CudaError> {
+    pub unsafe fn set_current(ctx: sys::CUcontext) -> Result<(), DriverError> {
         sys::cuCtxSetCurrent(ctx).result()
     }
 }
@@ -184,7 +183,7 @@ pub mod stream {
     //!
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM).
 
-    use super::{sys, CudaError};
+    use super::{sys, DriverError};
     use std::mem::MaybeUninit;
 
     /// The kind of stream to initialize.
@@ -222,7 +221,7 @@ pub mod stream {
     /// Creates a stream with the specified kind.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1ga581f0c5833e21ded8b5a56594e243f4)
-    pub fn create(kind: StreamKind) -> Result<sys::CUstream, CudaError> {
+    pub fn create(kind: StreamKind) -> Result<sys::CUstream, DriverError> {
         let mut stream = MaybeUninit::uninit();
         unsafe {
             sys::cuStreamCreate(stream.as_mut_ptr(), kind.flags() as u32).result()?;
@@ -238,7 +237,7 @@ pub mod stream {
     ///
     /// This should only be called with stream created by [create] and not already
     /// destroyed. This follows default stream semantics, see relevant cuda docs.
-    pub unsafe fn synchronize(stream: sys::CUstream) -> Result<(), CudaError> {
+    pub unsafe fn synchronize(stream: sys::CUstream) -> Result<(), DriverError> {
         sys::cuStreamSynchronize(stream).result()
     }
 
@@ -250,7 +249,7 @@ pub mod stream {
     ///
     /// This should only be called with stream created by [create] and not already
     /// destroyed. This follows default stream semantics, see relevant cuda docs.
-    pub unsafe fn destroy(stream: sys::CUstream) -> Result<(), CudaError> {
+    pub unsafe fn destroy(stream: sys::CUstream) -> Result<(), DriverError> {
         sys::cuStreamDestroy_v2(stream).result()
     }
 }
@@ -266,7 +265,7 @@ pub mod stream {
 pub unsafe fn malloc_async(
     stream: sys::CUstream,
     num_bytes: usize,
-) -> Result<sys::CUdeviceptr, CudaError> {
+) -> Result<sys::CUdeviceptr, DriverError> {
     let mut dev_ptr = MaybeUninit::uninit();
     sys::cuMemAllocAsync(dev_ptr.as_mut_ptr(), num_bytes, stream).result()?;
     Ok(dev_ptr.assume_init())
@@ -280,7 +279,7 @@ pub unsafe fn malloc_async(
 /// 1. The stream should be an already created stream.
 /// 2. The memory should have been allocated on this stream.
 /// 3. The memory should not have been freed already (double free)
-pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), CudaError> {
+pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), DriverError> {
     sys::cuMemFreeAsync(dptr, stream).result()
 }
 
@@ -297,7 +296,7 @@ pub unsafe fn memset_d8_async(
     uc: c_uchar,
     num_bytes: usize,
     stream: sys::CUstream,
-) -> Result<(), CudaError> {
+) -> Result<(), DriverError> {
     sys::cuMemsetD8Async(dptr, uc, num_bytes, stream).result()
 }
 
@@ -317,7 +316,7 @@ pub unsafe fn memcpy_htod_async<T>(
     dst: sys::CUdeviceptr,
     src: &[T],
     stream: sys::CUstream,
-) -> Result<(), CudaError> {
+) -> Result<(), DriverError> {
     sys::cuMemcpyHtoDAsync_v2(
         dst,
         src.as_ptr() as *const _,
@@ -342,7 +341,7 @@ pub unsafe fn memcpy_dtoh_async<T>(
     dst: &mut [T],
     src: sys::CUdeviceptr,
     stream: sys::CUstream,
-) -> Result<(), CudaError> {
+) -> Result<(), DriverError> {
     sys::cuMemcpyDtoHAsync_v2(
         dst.as_mut_ptr() as *mut _,
         src,
@@ -365,14 +364,14 @@ pub unsafe fn memcpy_dtod_async(
     src: sys::CUdeviceptr,
     num_bytes: usize,
     stream: sys::CUstream,
-) -> Result<(), CudaError> {
+) -> Result<(), DriverError> {
     sys::cuMemcpyDtoDAsync_v2(dst, src, num_bytes, stream).result()
 }
 
 /// Returns (free, total) memory in bytes.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g808f555540d0143a331cc42aa98835c0)
-pub fn mem_get_info() -> Result<(usize, usize), CudaError> {
+pub fn mem_get_info() -> Result<(usize, usize), DriverError> {
     let mut free = 0;
     let mut total = 0;
     unsafe { sys::cuMemGetInfo_v2(&mut free as *mut _, &mut total as *mut _) }.result()?;
@@ -384,7 +383,7 @@ pub mod module {
     //!
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE)
 
-    use super::{sys, CudaError};
+    use super::{sys, DriverError};
     use alloc::ffi::CString;
     use core::ffi::c_void;
     use std::mem::MaybeUninit;
@@ -392,7 +391,7 @@ pub mod module {
     /// Loads a compute module from a given file.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1g366093bd269dafd0af21f1c7d18115d3)
-    pub fn load(fname: CString) -> Result<sys::CUmodule, CudaError> {
+    pub fn load(fname: CString) -> Result<sys::CUmodule, DriverError> {
         let fname_ptr = fname.as_c_str().as_ptr();
         let mut module = MaybeUninit::uninit();
         unsafe {
@@ -412,7 +411,7 @@ pub mod module {
     ///
     /// # Safety
     /// The image must be properly formed pointer
-    pub unsafe fn load_data(image: *const c_void) -> Result<sys::CUmodule, CudaError> {
+    pub unsafe fn load_data(image: *const c_void) -> Result<sys::CUmodule, DriverError> {
         let mut module = MaybeUninit::uninit();
         sys::cuModuleLoadData(module.as_mut_ptr(), image).result()?;
         Ok(module.assume_init())
@@ -427,7 +426,7 @@ pub mod module {
     pub unsafe fn get_function(
         module: sys::CUmodule,
         name: CString,
-    ) -> Result<sys::CUfunction, CudaError> {
+    ) -> Result<sys::CUfunction, DriverError> {
         let name_ptr = name.as_c_str().as_ptr();
         let mut func = MaybeUninit::uninit();
         sys::cuModuleGetFunction(func.as_mut_ptr(), module, name_ptr).result()?;
@@ -440,7 +439,7 @@ pub mod module {
     ///
     /// # Safety
     /// `module` must not have be unloaded already.
-    pub unsafe fn unload(module: sys::CUmodule) -> Result<(), CudaError> {
+    pub unsafe fn unload(module: sys::CUmodule) -> Result<(), DriverError> {
         sys::cuModuleUnload(module).result()
     }
 }
@@ -465,7 +464,7 @@ pub unsafe fn launch_kernel(
     shared_mem_bytes: c_uint,
     stream: sys::CUstream,
     kernel_params: &mut [*mut c_void],
-) -> Result<(), CudaError> {
+) -> Result<(), DriverError> {
     sys::cuLaunchKernel(
         f,
         grid_dim.0,
