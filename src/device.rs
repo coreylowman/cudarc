@@ -128,7 +128,7 @@ use crate::jit::Ptx;
 use alloc::ffi::{CString, NulError};
 use std::{collections::BTreeMap, sync::Arc, vec::Vec};
 
-pub use result::CudaError;
+pub use result::DriverError;
 
 /// Contains a reference counted pointer to both
 /// device and host memory allocated for type `T`.
@@ -179,7 +179,7 @@ impl<T> CudaSlice<T> {
     }
 
     /// Allocates copy of self and schedules a device to device copy of memory.
-    pub fn clone_async(&self) -> Result<Self, CudaError> {
+    pub fn clone_async(&self) -> Result<Self, DriverError> {
         let dst = unsafe { self.device.alloc(self.len) }?;
         unsafe {
             result::memcpy_dtod_async(
@@ -251,7 +251,7 @@ impl CudaDevice {
     ///
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
-    unsafe fn alloc<T>(self: &Arc<Self>, len: usize) -> Result<CudaSlice<T>, CudaError> {
+    unsafe fn alloc<T>(self: &Arc<Self>, len: usize) -> Result<CudaSlice<T>, DriverError> {
         let cu_device_ptr = result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?;
         Ok(CudaSlice {
             cu_device_ptr,
@@ -270,7 +270,7 @@ impl CudaDevice {
     pub fn alloc_zeros_async<T: ValidAsZeroBits>(
         self: &Arc<Self>,
         len: usize,
-    ) -> Result<CudaSlice<T>, CudaError> {
+    ) -> Result<CudaSlice<T>, DriverError> {
         let dst = unsafe { self.alloc(len) }?;
         unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.cu_stream) }?;
         Ok(dst)
@@ -283,7 +283,7 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn take_async<T>(self: &Arc<Self>, src: Vec<T>) -> Result<CudaSlice<T>, CudaError> {
+    pub fn take_async<T>(self: &Arc<Self>, src: Vec<T>) -> Result<CudaSlice<T>, DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
         unsafe { result::memcpy_htod_async(dst.cu_device_ptr, &src, self.cu_stream) }?;
         dst.host_buf = Some(src);
@@ -298,7 +298,7 @@ impl CudaDevice {
     ///
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy<T>(self: &Arc<Self>, src: &[T]) -> Result<CudaSlice<T>, CudaError> {
+    pub fn sync_copy<T>(self: &Arc<Self>, src: &[T]) -> Result<CudaSlice<T>, DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
         self.sync_copy_into(src, &mut dst)?;
         Ok(dst)
@@ -319,7 +319,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         src: &[T],
         dst: &mut CudaSlice<T>,
-    ) -> Result<(), CudaError> {
+    ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
         unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.cu_stream) }?;
         self.synchronize()
@@ -338,7 +338,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         src: &CudaSlice<T>,
         dst: &mut [T],
-    ) -> Result<(), CudaError> {
+    ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
         unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr, self.cu_stream) }?;
         self.synchronize()
@@ -352,7 +352,7 @@ impl CudaDevice {
     pub fn sync_release<T: Clone + Default>(
         self: &Arc<Self>,
         mut src: CudaSlice<T>,
-    ) -> Result<Vec<T>, CudaError> {
+    ) -> Result<Vec<T>, DriverError> {
         let buf = src.host_buf.take();
         let mut buf = buf.unwrap_or_else(|| std::vec![Default::default(); src.len]);
         self.sync_copy_from(&src, &mut buf)?;
@@ -360,7 +360,7 @@ impl CudaDevice {
     }
 
     /// Synchronizes the stream.
-    pub fn synchronize(&self) -> Result<(), CudaError> {
+    pub fn synchronize(&self) -> Result<(), DriverError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
@@ -473,7 +473,7 @@ pub unsafe trait LaunchCudaFunction<Params> {
         func: &CudaFunction,
         cfg: LaunchConfig,
         params: Params,
-    ) -> Result<(), CudaError>;
+    ) -> Result<(), DriverError>;
 }
 
 unsafe impl<T> IntoKernelParam for &mut CudaSlice<T> {
@@ -525,7 +525,7 @@ unsafe impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for C
         func: &CudaFunction,
         cfg: LaunchConfig,
         args: ($($Vars, )*)
-    ) -> Result<(), CudaError> {
+    ) -> Result<(), DriverError> {
         let params = &mut [$(args.$Idx.into_kernel_param(), )*];
         result::launch_kernel(
             func.cu_function,
@@ -702,22 +702,22 @@ impl CudaDeviceBuilder {
 /// An error the occurs during [CudaDeviceBuilder::build]
 #[derive(Debug)]
 pub enum BuildError {
-    InitError(CudaError),
-    DeviceError(CudaError),
-    ContextError(CudaError),
-    StreamError(CudaError),
+    InitError(DriverError),
+    DeviceError(DriverError),
+    ContextError(DriverError),
+    StreamError(DriverError),
     PtxLoadingError {
         key: &'static str,
-        cuda: CudaError,
+        cuda: DriverError,
     },
     NvrtcLoadingError {
         key: &'static str,
-        cuda: CudaError,
+        cuda: DriverError,
     },
     GetFunctionError {
         key: &'static str,
         symbol: &'static str,
-        cuda: CudaError,
+        cuda: DriverError,
     },
     CStringError(NulError),
 }
