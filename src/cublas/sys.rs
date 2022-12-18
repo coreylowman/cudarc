@@ -291,7 +291,7 @@ extern "C" {
 extern "C" {
     pub fn cublasGetVersion_v2(
         handle: cublasHandle_t,
-        version: *mut ::std::os::raw::c_int,
+        version: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -323,403 +323,403 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 pub type cublasLogCallback =
-    ::core::option::Option<unsafe extern "C" fn(msg: *const ::std::os::raw::c_char)>;
+    ::core::option::Option<unsafe extern "C" fn(msg: *const core::ffi::c_char)>;
 extern "C" {
     pub fn cublasSnrm2_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f32,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDnrm2_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f64,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasScnrm2_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f32,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDznrm2_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f64,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSdot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         result: *mut f32,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDdot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         result: *mut f64,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCdotu_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         result: *mut cuComplex,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCdotc_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         result: *mut cuComplex,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZdotu_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         result: *mut cuDoubleComplex,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZdotc_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         result: *mut cuDoubleComplex,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSscal_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDscal_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCscal_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCsscal_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZscal_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZdscal_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSaxpy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDaxpy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCaxpy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZaxpy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasScopy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDcopy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCcopy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZcopy_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSswap_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDswap_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCswap_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZswap_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIsamax_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIdamax_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIcamax_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIzamax_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIsamin_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIdamin_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIcamin_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasIzamin_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
-        result: *mut ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSasum_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f32,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDasum_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f64,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasScasum_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f32,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDzasum_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         result: *mut f64,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSrot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         c: *const f32,
         s: *const f32,
     ) -> cublasStatus_t;
@@ -727,11 +727,11 @@ extern "C" {
 extern "C" {
     pub fn cublasDrot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         c: *const f64,
         s: *const f64,
     ) -> cublasStatus_t;
@@ -739,11 +739,11 @@ extern "C" {
 extern "C" {
     pub fn cublasCrot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         c: *const f32,
         s: *const cuComplex,
     ) -> cublasStatus_t;
@@ -751,11 +751,11 @@ extern "C" {
 extern "C" {
     pub fn cublasCsrot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         c: *const f32,
         s: *const f32,
     ) -> cublasStatus_t;
@@ -763,11 +763,11 @@ extern "C" {
 extern "C" {
     pub fn cublasZrot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         c: *const f64,
         s: *const cuDoubleComplex,
     ) -> cublasStatus_t;
@@ -775,11 +775,11 @@ extern "C" {
 extern "C" {
     pub fn cublasZdrot_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         c: *const f64,
         s: *const f64,
     ) -> cublasStatus_t;
@@ -823,22 +823,22 @@ extern "C" {
 extern "C" {
     pub fn cublasSrotm_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         param: *const f32,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDrotm_v2(
         handle: cublasHandle_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         param: *const f64,
     ) -> cublasStatus_t;
 }
@@ -866,136 +866,136 @@ extern "C" {
     pub fn cublasSgemv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f32,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDgemv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f64,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCgemv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuComplex,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZgemv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSgbmv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        kl: ::std::os::raw::c_int,
-        ku: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        kl: core::ffi::c_int,
+        ku: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f32,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDgbmv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        kl: ::std::os::raw::c_int,
-        ku: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        kl: core::ffi::c_int,
+        ku: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f64,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCgbmv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        kl: ::std::os::raw::c_int,
-        ku: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        kl: core::ffi::c_int,
+        ku: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuComplex,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZgbmv_v2(
         handle: cublasHandle_t,
         trans: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        kl: ::std::os::raw::c_int,
-        ku: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        kl: core::ffi::c_int,
+        ku: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1004,11 +1004,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1017,11 +1017,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1030,11 +1030,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1043,11 +1043,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1056,12 +1056,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1070,12 +1070,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1084,12 +1084,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1098,12 +1098,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1112,10 +1112,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const f32,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1124,10 +1124,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const f64,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1136,10 +1136,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const cuComplex,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1148,10 +1148,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const cuDoubleComplex,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1160,11 +1160,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1173,11 +1173,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1186,11 +1186,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1199,11 +1199,11 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1212,10 +1212,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const f32,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1224,10 +1224,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const f64,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1236,10 +1236,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const cuComplex,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1248,10 +1248,10 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         AP: *const cuDoubleComplex,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1260,12 +1260,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1274,12 +1274,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1288,12 +1288,12 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1302,388 +1302,388 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *mut cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSsymv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f32,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDsymv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f64,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCsymv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuComplex,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZsymv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasChemv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuComplex,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZhemv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSsbmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f32,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDsbmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f64,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasChbmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuComplex,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZhbmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSspmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         AP: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f32,
         y: *mut f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDspmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         AP: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const f64,
         y: *mut f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasChpmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         AP: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuComplex,
         y: *mut cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZhpmv_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         AP: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSger_v2(
         handle: cublasHandle_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDger_v2(
         handle: cublasHandle_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCgeru_v2(
         handle: cublasHandle_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCgerc_v2(
         handle: cublasHandle_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZgeru_v2(
         handle: cublasHandle_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZgerc_v2(
         handle: cublasHandle_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSsyr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         A: *mut f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDsyr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         A: *mut f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCsyr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         A: *mut cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZsyr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         A: *mut cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCher_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         A: *mut cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZher_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         A: *mut cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSspr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         AP: *mut f32,
     ) -> cublasStatus_t;
 }
@@ -1691,10 +1691,10 @@ extern "C" {
     pub fn cublasDspr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         AP: *mut f64,
     ) -> cublasStatus_t;
 }
@@ -1702,10 +1702,10 @@ extern "C" {
     pub fn cublasChpr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         AP: *mut cuComplex,
     ) -> cublasStatus_t;
 }
@@ -1713,10 +1713,10 @@ extern "C" {
     pub fn cublasZhpr_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         AP: *mut cuDoubleComplex,
     ) -> cublasStatus_t;
 }
@@ -1724,96 +1724,96 @@ extern "C" {
     pub fn cublasSsyr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasDsyr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCsyr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZsyr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasCher2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasZher2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         A: *mut cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
     pub fn cublasSspr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         x: *const f32,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f32,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         AP: *mut f32,
     ) -> cublasStatus_t;
 }
@@ -1821,12 +1821,12 @@ extern "C" {
     pub fn cublasDspr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         x: *const f64,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const f64,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         AP: *mut f64,
     ) -> cublasStatus_t;
 }
@@ -1834,12 +1834,12 @@ extern "C" {
     pub fn cublasChpr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         x: *const cuComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         AP: *mut cuComplex,
     ) -> cublasStatus_t;
 }
@@ -1847,12 +1847,12 @@ extern "C" {
     pub fn cublasZhpr2_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
-        n: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *const cuDoubleComplex,
-        incx: ::std::os::raw::c_int,
+        incx: core::ffi::c_int,
         y: *const cuDoubleComplex,
-        incy: ::std::os::raw::c_int,
+        incy: core::ffi::c_int,
         AP: *mut cuDoubleComplex,
     ) -> cublasStatus_t;
 }
@@ -1861,17 +1861,17 @@ extern "C" {
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f32,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f32,
         C: *mut f32,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1879,17 +1879,17 @@ extern "C" {
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f64,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f64,
         C: *mut f64,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1897,17 +1897,17 @@ extern "C" {
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuComplex,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1915,17 +1915,17 @@ extern "C" {
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1933,14 +1933,14 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         beta: *const f32,
         C: *mut f32,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1948,14 +1948,14 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         beta: *const f64,
         C: *mut f64,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1963,14 +1963,14 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         beta: *const cuComplex,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1978,14 +1978,14 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1993,14 +1993,14 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f32,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         beta: *const f32,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2008,14 +2008,14 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f64,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         beta: *const f64,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2023,16 +2023,16 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f32,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f32,
         C: *mut f32,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2040,16 +2040,16 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f64,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f64,
         C: *mut f64,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2057,16 +2057,16 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuComplex,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2074,16 +2074,16 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2091,16 +2091,16 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f32,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2108,16 +2108,16 @@ extern "C" {
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f64,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2125,16 +2125,16 @@ extern "C" {
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f32,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f32,
         C: *mut f32,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2142,16 +2142,16 @@ extern "C" {
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f64,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const f64,
         C: *mut f64,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2159,16 +2159,16 @@ extern "C" {
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuComplex,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2176,16 +2176,16 @@ extern "C" {
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2193,16 +2193,16 @@ extern "C" {
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuComplex,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2210,16 +2210,16 @@ extern "C" {
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2229,13 +2229,13 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *mut f32,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2245,13 +2245,13 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *mut f64,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2261,13 +2261,13 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *mut cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2277,13 +2277,13 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *mut cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2293,15 +2293,15 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f32,
         A: *const f32,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f32,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         C: *mut f32,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2311,15 +2311,15 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const f64,
         A: *const f64,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const f64,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         C: *mut f64,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2329,15 +2329,15 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuComplex,
         A: *const cuComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         C: *mut cuComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -2347,14 +2347,14 @@ extern "C" {
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
         diag: cublasDiagType_t,
-        m: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         A: *const cuDoubleComplex,
-        lda: ::std::os::raw::c_int,
+        lda: core::ffi::c_int,
         B: *const cuDoubleComplex,
-        ldb: ::std::os::raw::c_int,
+        ldb: core::ffi::c_int,
         C: *mut cuDoubleComplex,
-        ldc: ::std::os::raw::c_int,
+        ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
