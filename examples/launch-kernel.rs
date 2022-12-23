@@ -19,7 +19,7 @@ fn main() {
 
     let n = 3;
     let cfg = LaunchConfig::for_num_elems(n);
-    unsafe { dev.launch_async(f, cfg, (&mut b_dev, &a_dev, &n)) }.unwrap();
+    unsafe { dev.launch_async(f, cfg, (&mut b_dev, &a_dev, n as i32)) }.unwrap();
 
     let a_host_2 = dev.sync_release(a_dev).unwrap();
     let b_host = dev.sync_release(b_dev).unwrap();

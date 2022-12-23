@@ -126,7 +126,7 @@
 use crate::driver::{result, sys};
 use crate::jit::Ptx;
 use alloc::ffi::{CString, NulError};
-use std::{collections::BTreeMap, sync::Arc, vec::Vec};
+use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 
 pub use result::DriverError;
 
@@ -161,7 +161,7 @@ pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
     pub(crate) device: Arc<CudaDevice>,
-    pub(crate) host_buf: Option<Vec<T>>,
+    pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
 unsafe impl<T: Send> Send for CudaSlice<T> {}
@@ -205,7 +205,7 @@ impl<T> Drop for CudaSlice<T> {
     }
 }
 
-impl<T: Clone + Default> TryFrom<CudaSlice<T>> for Vec<T> {
+impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
         value.device.clone().sync_release(value)
@@ -290,7 +290,10 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn take_async<T>(self: &Arc<Self>, src: Vec<T>) -> Result<CudaSlice<T>, DriverError> {
+    pub fn take_async<T: Unpin>(
+        self: &Arc<Self>,
+        src: Vec<T>,
+    ) -> Result<CudaSlice<T>, DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
         self.copy_into_async(src, &mut dst)?;
         Ok(dst)
@@ -338,13 +341,13 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn copy_into_async<T>(
+    pub fn copy_into_async<T: Unpin>(
         self: &Arc<Self>,
         src: Vec<T>,
         dst: &mut CudaSlice<T>,
     ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
-        dst.host_buf = Some(src);
+        dst.host_buf = Some(Pin::new(src));
         unsafe {
             result::memcpy_htod_async(
                 dst.cu_device_ptr,
@@ -379,14 +382,14 @@ impl CudaDevice {
     ///
     /// # Safety
     /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_release<T: Clone + Default>(
+    pub fn sync_release<T: Clone + Default + Unpin>(
         self: &Arc<Self>,
         mut src: CudaSlice<T>,
     ) -> Result<Vec<T>, DriverError> {
         let buf = src.host_buf.take();
-        let mut buf = buf.unwrap_or_else(|| std::vec![Default::default(); src.len]);
+        let mut buf = buf.unwrap_or_else(|| Pin::new(std::vec![Default::default(); src.len]));
         self.sync_copy_from(&src, &mut buf)?;
-        Ok(buf)
+        Ok(Pin::into_inner(buf))
     }
 
     /// Synchronizes the stream.
@@ -481,6 +484,7 @@ pub unsafe trait IntoKernelParam {
 /// general, `Params` should impl [IntoKernelParam]
 ///
 /// # Safety
+///
 /// This is not safe really ever, because there's no garuntee that `Params`
 /// will work for any [CudaFunction] passed in. Great care should be taken
 /// to ensure that [CudaFunction] works with `Params` and that the correct
@@ -492,12 +496,45 @@ pub unsafe trait LaunchCudaFunction<Params> {
     /// Launches the [CudaFunction] with the corresponding `Params`.
     ///
     /// # Safety
+    ///
     /// This method is **very** unsafe.
+    ///
+    /// See cuda documentation notes on this as well:
+    /// https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#functions
+    ///
     /// 1. `params` can be changed regardless of `&` or `&mut` usage.
     /// 2. `params` will be changed at some later point after the
     /// function returns because the kernel is executed async.
     /// 3. There are no guaruntees that the `params`
     /// are the correct number/types/order for `func`.
+    /// 4. Specifying the wrong values for [LaunchConfig] can result
+    /// in accessing/modifying values past memory limits.
+    ///
+    /// ## Asynchronous mutation
+    ///
+    /// Since this library queues kernels to be launched on a single
+    /// stream, and really the only way to modify [CudaSlice] is through
+    /// kernels, mutating the same [CudaSlice] with multiple kernels
+    /// is safe. This is because each kernel is executed sequentially
+    /// on the stream.
+    ///
+    /// **Modifying a value on the host that is in used by a
+    /// kernel is undefined behavior.** But is hard to do
+    /// accidentally.
+    ///
+    /// Also for this reason, do not pass in any values to kernels
+    /// that can be modified on the host. This is the reason
+    /// [IntoKernelParam] is not implemented for rust primitive
+    /// references.
+    ///
+    /// ## Use after free
+    ///
+    /// Since the drop implementation for [CudaSlice] also occurs
+    /// on the device's single stream, any kernels launched before
+    /// the drop will complete before the value is actually freed.
+    ///
+    /// **If you launch a kernel or drop a value on a different stream
+    /// this may not hold**
     unsafe fn launch_async(
         &self,
         func: &CudaFunction,
@@ -507,12 +544,14 @@ pub unsafe trait LaunchCudaFunction<Params> {
 }
 
 unsafe impl<T> IntoKernelParam for &mut CudaSlice<T> {
+    #[inline(always)]
     fn into_kernel_param(self) -> *mut std::ffi::c_void {
         (&mut self.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
 unsafe impl<T> IntoKernelParam for &CudaSlice<T> {
+    #[inline(always)]
     fn into_kernel_param(self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
@@ -520,15 +559,10 @@ unsafe impl<T> IntoKernelParam for &CudaSlice<T> {
 
 macro_rules! impl_into_kernel_param {
     ($T:ty) => {
-        unsafe impl IntoKernelParam for &$T {
+        unsafe impl IntoKernelParam for $T {
+            #[inline(always)]
             fn into_kernel_param(self) -> *mut std::ffi::c_void {
-                self as *const $T as *mut std::ffi::c_void
-            }
-        }
-
-        unsafe impl IntoKernelParam for &mut $T {
-            fn into_kernel_param(self) -> *mut std::ffi::c_void {
-                self as *mut $T as *mut std::ffi::c_void
+                (&self) as *const $T as *mut std::ffi::c_void
             }
         }
     };
@@ -892,8 +926,8 @@ mod tests {
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
-    const SIN_CU: &str =
-        "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
+    const SIN_CU: &str = "
+extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
     size_t i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < numel) {
         out[i] = sin(inp[i]);
@@ -920,7 +954,7 @@ mod tests {
             dev.launch_async(
                 sin_kernel,
                 LaunchConfig::for_num_elems(10),
-                (&mut b_dev, &a_dev, &10usize),
+                (&mut b_dev, &a_dev, 10usize),
             )
             .unwrap();
         }
@@ -933,5 +967,142 @@ mod tests {
         }
 
         drop(a_dev);
+    }
+
+    const TEST_KERNELS: &str = "
+extern \"C\" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
+    assert(s_min == -128);
+    assert(s_max == 127);
+    assert(u_min == 0);
+    assert(u_max == 255);
+}
+
+extern \"C\" __global__ void int_16bit(signed short s_min, short s_max, unsigned short u_min, unsigned short u_max) {
+    assert(s_min == -32768);
+    assert(s_max == 32767);
+    assert(u_min == 0);
+    assert(u_max == 65535);
+}
+
+extern \"C\" __global__ void int_32bit(signed int s_min, int s_max, unsigned int u_min, unsigned int u_max) {
+    assert(s_min == -2147483648);
+    assert(s_max == 2147483647);
+    assert(u_min == 0);
+    assert(u_max == 4294967295);
+}
+
+extern \"C\" __global__ void int_64bit(signed long s_min, long s_max, unsigned long u_min, unsigned long u_max) {
+    assert(s_min == -9223372036854775808);
+    assert(s_max == 9223372036854775807);
+    assert(u_min == 0);
+    assert(u_max == 18446744073709551615);
+}
+
+extern \"C\" __global__ void floating(float f, double d) {
+    printf(\"%.10f %.20f\", f, d);
+    assert(fabs(f - 1.2345678) <= 1e-7);
+    assert(fabs(d - -10.123456789876543) <= 1e-16);
+}
+";
+
+    #[test]
+    fn test_launch_with_8bit() {
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx("tests", ptx, &["int_8bit"])
+            .build()
+            .unwrap();
+        let m = dev.get_module("tests").unwrap();
+        let f = m.get_fn("int_8bit").unwrap();
+        unsafe {
+            dev.launch_async(
+                f,
+                LaunchConfig::for_num_elems(1),
+                (i8::MIN, i8::MAX, u8::MIN, u8::MAX),
+            )
+        }
+        .unwrap();
+
+        dev.synchronize().unwrap();
+    }
+
+    #[test]
+    fn test_launch_with_16bit() {
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx("tests", ptx, &["int_16bit"])
+            .build()
+            .unwrap();
+        let m = dev.get_module("tests").unwrap();
+        let f = m.get_fn("int_16bit").unwrap();
+        unsafe {
+            dev.launch_async(
+                f,
+                LaunchConfig::for_num_elems(1),
+                (i16::MIN, i16::MAX, u16::MIN, u16::MAX),
+            )
+        }
+        .unwrap();
+        dev.synchronize().unwrap();
+    }
+
+    #[test]
+    fn test_launch_with_32bit() {
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx("tests", ptx, &["int_32bit"])
+            .build()
+            .unwrap();
+        let m = dev.get_module("tests").unwrap();
+        let f = m.get_fn("int_32bit").unwrap();
+        unsafe {
+            dev.launch_async(
+                f,
+                LaunchConfig::for_num_elems(1),
+                (i32::MIN, i32::MAX, u32::MIN, u32::MAX),
+            )
+        }
+        .unwrap();
+        dev.synchronize().unwrap();
+    }
+
+    #[test]
+    fn test_launch_with_64bit() {
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx("tests", ptx, &["int_64bit"])
+            .build()
+            .unwrap();
+        let m = dev.get_module("tests").unwrap();
+        let f = m.get_fn("int_64bit").unwrap();
+        unsafe {
+            dev.launch_async(
+                f,
+                LaunchConfig::for_num_elems(1),
+                (i64::MIN, i64::MAX, u64::MIN, u64::MAX),
+            )
+        }
+        .unwrap();
+        dev.synchronize().unwrap();
+    }
+
+    #[test]
+    fn test_launch_with_floats() {
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx("tests", ptx, &["floating"])
+            .build()
+            .unwrap();
+        let m = dev.get_module("tests").unwrap();
+        let f = m.get_fn("floating").unwrap();
+        unsafe {
+            dev.launch_async(
+                f,
+                LaunchConfig::for_num_elems(1),
+                (1.2345678f32, -10.123456789876543f64),
+            )
+        }
+        .unwrap();
+        dev.synchronize().unwrap();
     }
 }

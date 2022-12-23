@@ -100,7 +100,7 @@ mod tests {
     };
     use std::vec::Vec;
 
-    fn gen_uniform<T: ValidAsZeroBits + Clone + Default>(seed: u64, n: usize) -> Vec<T>
+    fn gen_uniform<T: ValidAsZeroBits + Clone + Default + Unpin>(seed: u64, n: usize) -> Vec<T>
     where
         sys::curandGenerator_t: UniformFill<T>,
     {
@@ -111,7 +111,7 @@ mod tests {
         dev.sync_release(a_dev).unwrap()
     }
 
-    fn gen_normal<T: ValidAsZeroBits + Clone + Default>(
+    fn gen_normal<T: ValidAsZeroBits + Clone + Default + Unpin>(
         seed: u64,
         n: usize,
         mean: T,
@@ -127,7 +127,7 @@ mod tests {
         dev.sync_release(a_dev).unwrap()
     }
 
-    fn gen_log_normal<T: ValidAsZeroBits + Clone + Default>(
+    fn gen_log_normal<T: ValidAsZeroBits + Clone + Default + Unpin>(
         seed: u64,
         n: usize,
         mean: T,
