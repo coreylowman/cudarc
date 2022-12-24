@@ -36,9 +36,9 @@
 //! assert_eq!(&a_host, &[0.0; 10]);
 //! ```
 //!
-//! ## Mutating device memory - CudaModule and CudaFunction
+//! ## Mutating device memory - [CudaFunction]
 //!
-//! See [LaunchCudaFunction] and [CudaFunction].
+//! See [LaunchAsync] and [CudaFunction].
 //!
 //! In order to mutate device data, you need to use cuda kernels.
 //!
@@ -49,19 +49,18 @@
 //! # use cudarc::jit::*;
 //! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! let device = CudaDeviceBuilder::new(0)
-//!     .with_ptx("module_key", ptx, &["my_function"])
+//!     .with_ptx(ptx, "module_name", &["my_function"])
 //!     .build()
 //!     .unwrap();
 //! ```
 //!
-//! Retrieve the module & function:
+//! Retrieve the function using the registered module name & actual function name:
 //! ```rust
 //! # use cudarc::device::*;
 //! # use cudarc::jit::*;
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
-//! # let device = CudaDeviceBuilder::new(0).with_ptx("module_key", ptx, &["my_function"]).build().unwrap();
-//! let module: &CudaModule = device.get_module("module_key").unwrap();
-//! let func: &CudaFunction = module.get_fn("my_function").unwrap();
+//! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_name", &["my_function"]).build().unwrap();
+//! let func: CudaFunction = device.get_func("module_name", "my_function").unwrap();
 //! ```
 //!
 //! Asynchronously execute the kernel:
@@ -69,15 +68,14 @@
 //! # use cudarc::device::*;
 //! # use cudarc::jit::*;
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
-//! # let device = CudaDeviceBuilder::new(0).with_ptx("module_key", ptx, &["my_function"]).build().unwrap();
-//! # let module: &CudaModule = device.get_module("module_key").unwrap();
-//! # let func: &CudaFunction = module.get_fn("my_function").unwrap();
+//! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
+//! # let func: CudaFunction = device.get_func("module_key", "my_function").unwrap();
 //! let mut a = device.alloc_zeros_async::<f32>(10).unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
-//! unsafe { device.launch_async(func, cfg, (&mut a,)) }.unwrap();
+//! unsafe { func.launch_async(cfg, (&mut a,)) }.unwrap();
 //! ```
 //!
-//! Note: Launching kernels is **extremely unsafe**. See [LaunchCudaFunction] for more info.
+//! Note: Launching kernels is **extremely unsafe**. See [LaunchAsync] for more info.
 //!
 //! # Safety
 //!
@@ -122,11 +120,20 @@
 //!
 //! At the moment, only a single stream is supported, and only the `*_async` methods
 //! in [crate::driver::result] are used.
+//!
+//! Another important aspect of this is ensuring that mutability in an async setting
+//! is sound, and something can't be freed while it's being used in a kernel.
 
 use crate::driver::{result, sys};
 use crate::jit::Ptx;
 use alloc::ffi::{CString, NulError};
-use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
+use std::{
+    collections::BTreeMap,
+    marker::Unpin,
+    pin::Pin,
+    sync::{Arc, RwLock},
+    vec::Vec,
+};
 
 pub use result::DriverError;
 
@@ -150,7 +157,7 @@ pub use result::DriverError;
 /// # Mutating device data
 ///
 /// This can only be done by launching kernels via
-/// [LaunchCudaFunction] which is implemented
+/// [LaunchAsync] which is implemented
 /// by [CudaDevice]. Pass `&mut CudaSlice<T>`
 /// if you want to mutate the rc, and `&CudaSlice<T>` otherwise.
 ///
@@ -171,6 +178,10 @@ impl<T> CudaSlice<T> {
     /// Number of elements in the slice
     pub fn len(&self) -> usize {
         self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
     }
 
     /// Size of the slice in bytes
@@ -213,7 +224,7 @@ impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
 }
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
-/// and [CudaModule]s.
+/// and [CudaFunction].
 ///
 /// **Must be created through [CudaDeviceBuilder].**
 ///
@@ -228,7 +239,7 @@ pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
     pub(crate) cu_primary_ctx: sys::CUcontext,
     pub(crate) cu_stream: sys::CUstream,
-    pub(crate) modules: BTreeMap<&'static str, CudaModule>,
+    pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -236,10 +247,11 @@ unsafe impl Sync for CudaDevice {}
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
-        for (_, module) in self.modules.iter() {
+        let modules = RwLock::get_mut(&mut self.modules).unwrap();
+        for (_, module) in modules.iter() {
             unsafe { result::module::unload(module.cu_module) }.unwrap();
         }
-        self.modules.clear();
+        modules.clear();
 
         let stream = std::mem::replace(&mut self.cu_stream, std::ptr::null_mut());
         if !stream.is_null() {
@@ -393,13 +405,58 @@ impl CudaDevice {
     }
 
     /// Synchronizes the stream.
-    pub fn synchronize(&self) -> Result<(), DriverError> {
+    pub fn synchronize(self: &Arc<Self>) -> Result<(), DriverError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
-    /// Return the module associated with `key`.
-    pub fn get_module(&self, key: &str) -> Option<&CudaModule> {
-        self.modules.get(key)
+    /// Whether a module and function are currently loaded into the device.
+    pub fn has_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> bool {
+        let modules = self.modules.read().unwrap();
+        modules
+            .get(module_name)
+            .map_or(false, |module| module.has_func(func_name))
+    }
+
+    /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
+    pub fn get_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> Option<CudaFunction> {
+        let modules = self.modules.read().unwrap();
+        modules
+            .get(module_name)
+            .and_then(|m| m.get_func(func_name))
+            .map(|cu_function| CudaFunction {
+                cu_function,
+                device: self.clone(),
+            })
+    }
+
+    /// Dynamically load a set of [CudaFunction] from a ptx file. See [CudaDeviceBuilder::with_ptx_from_file].
+    pub fn load_ptx_from_file(
+        self: &Arc<Self>,
+        ptx_path: &'static str,
+        module_name: &'static str,
+        func_names: &[&'static str],
+    ) -> Result<(), BuildError> {
+        let m = CudaDeviceBuilder::build_module_from_ptx_file(ptx_path, module_name, func_names)?;
+        {
+            let mut modules = self.modules.write().unwrap();
+            modules.insert(module_name, m);
+        }
+        Ok(())
+    }
+
+    /// Dynamically load a set of [CudaFunction] from a jit compiled ptx. See [CudaDeviceBuilder::with_ptx]
+    pub fn load_ptx(
+        self: &Arc<Self>,
+        ptx: Ptx,
+        module_name: &'static str,
+        func_names: &[&'static str],
+    ) -> Result<(), BuildError> {
+        let m = CudaDeviceBuilder::build_module_from_ptx(ptx, module_name, func_names)?;
+        {
+            let mut modules = self.modules.write().unwrap();
+            modules.insert(module_name, m);
+        }
+        Ok(())
     }
 }
 
@@ -410,9 +467,9 @@ impl CudaDevice {
 ///
 /// See [CudaDeviceBuilder] for how to construct these modules.
 #[derive(Debug)]
-pub struct CudaModule {
+pub(crate) struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
-    pub(crate) functions: BTreeMap<&'static str, CudaFunction>,
+    pub(crate) functions: BTreeMap<&'static str, sys::CUfunction>,
 }
 
 unsafe impl Send for CudaModule {}
@@ -422,15 +479,20 @@ impl CudaModule {
     /// Returns reference to function with `name`. If function
     /// was not already loaded into CudaModule, then `None`
     /// is returned.
-    pub fn get_fn(&self, name: &str) -> Option<&CudaFunction> {
-        self.functions.get(name)
+    pub(crate) fn get_func(&self, name: &str) -> Option<sys::CUfunction> {
+        self.functions.get(name).cloned()
+    }
+
+    pub(crate) fn has_func(&self, name: &str) -> bool {
+        self.functions.contains_key(name)
     }
 }
 
-/// Wrapper around [sys::CUfunction] to prevent it from being cloned.
-#[derive(Debug)]
+/// Wrapper around [sys::CUfunction]. Used by [LaunchAsync].
+#[derive(Debug, Clone)]
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
+    pub(crate) device: Arc<CudaDevice>,
 }
 
 unsafe impl Send for CudaFunction {}
@@ -478,7 +540,8 @@ pub unsafe trait IntoKernelParam {
     fn into_kernel_param(self) -> *mut std::ffi::c_void;
 }
 
-/// Can launch a [CudaFunction] with the corresponding generic type `Params`.
+/// Consumes a [CudaFunction] to execute asychronously on the device with
+/// params determined by generic parameter `Params`.
 ///
 /// This is impl'd multiple times for different number and types of params. In
 /// general, `Params` should impl [IntoKernelParam]
@@ -492,7 +555,9 @@ pub unsafe trait IntoKernelParam {
 ///
 /// Additionally, kernels can mutate data that is marked as immutable,
 /// such as `&CudaSlice<T>`.
-pub unsafe trait LaunchCudaFunction<Params> {
+///
+/// See [LaunchAsync::launch_async] for more details
+pub unsafe trait LaunchAsync<Params> {
     /// Launches the [CudaFunction] with the corresponding `Params`.
     ///
     /// # Safety
@@ -500,7 +565,7 @@ pub unsafe trait LaunchCudaFunction<Params> {
     /// This method is **very** unsafe.
     ///
     /// See cuda documentation notes on this as well:
-    /// https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#functions
+    /// <https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#functions>
     ///
     /// 1. `params` can be changed regardless of `&` or `&mut` usage.
     /// 2. `params` will be changed at some later point after the
@@ -535,12 +600,7 @@ pub unsafe trait LaunchCudaFunction<Params> {
     ///
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
-    unsafe fn launch_async(
-        &self,
-        func: &CudaFunction,
-        cfg: LaunchConfig,
-        params: Params,
-    ) -> Result<(), DriverError>;
+    unsafe fn launch_async(self, cfg: LaunchConfig, params: Params) -> Result<(), DriverError>;
 }
 
 unsafe impl<T> IntoKernelParam for &mut CudaSlice<T> {
@@ -583,20 +643,19 @@ impl_into_kernel_param!(f64);
 
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
-unsafe impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for CudaDevice {
+unsafe impl<$($Vars: IntoKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
     unsafe fn launch_async(
-        &self,
-        func: &CudaFunction,
+        self,
         cfg: LaunchConfig,
         args: ($($Vars, )*)
     ) -> Result<(), DriverError> {
         let params = &mut [$(args.$Idx.into_kernel_param(), )*];
         result::launch_kernel(
-            func.cu_function,
+            self.cu_function,
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.cu_stream,
+            self.device.cu_stream,
             params,
         )
     }
@@ -655,18 +714,18 @@ impl CudaDeviceBuilder {
 
     /// Adds a path to a precompiled `.ptx` file to be loaded as a module on the device.
     ///
-    /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_module()]
-    /// - `path` is a file
+    /// - `ptx_path` is a file
+    /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_func()]
     /// - `fn_names` is a slice of function names to load into the module during build.
     pub fn with_ptx_from_file(
         mut self,
+        ptx_path: &'static str,
         key: &'static str,
-        path: &'static str,
         fn_names: &[&'static str],
     ) -> Self {
         self.ptx_files.push(PtxFileConfig {
             key,
-            fname: path,
+            fname: ptx_path,
             fn_names: fn_names.to_vec(),
         });
         self
@@ -674,10 +733,10 @@ impl CudaDeviceBuilder {
 
     /// Add a [Ptx] compiled with nvrtc to be loaded as a module on the device.
     ///
-    /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_module()]
+    /// - `key` is a unique identifier used to access the module later on with [CudaDevice::get_func()]
     /// - `ptx` contains the compilex ptx
     /// - `fn_names` is a slice of function names to load into the module during build.
-    pub fn with_ptx(mut self, key: &'static str, ptx: Ptx, fn_names: &[&'static str]) -> Self {
+    pub fn with_ptx(mut self, ptx: Ptx, key: &'static str, fn_names: &[&'static str]) -> Self {
         self.ptxs.push(PtxConfig {
             key,
             ptx,
@@ -709,42 +768,61 @@ impl CudaDeviceBuilder {
         let mut modules = BTreeMap::new();
 
         for cu in self.ptx_files.drain(..) {
-            let name_c = CString::new(cu.fname).map_err(BuildError::CStringError)?;
-            let cu_module =
-                result::module::load(name_c).map_err(|e| BuildError::PtxLoadingError {
-                    key: cu.key,
-                    cuda: e,
-                })?;
-            let module = Self::build_module(cu.key, cu_module, &cu.fn_names)?;
-            modules.insert(cu.key, module);
+            modules.insert(
+                cu.key,
+                Self::build_module_from_ptx_file(cu.fname, cu.key, &cu.fn_names)?,
+            );
         }
 
         for ptx in self.ptxs.drain(..) {
-            let image = ptx.ptx.image.as_ptr() as *const _;
-            let cu_module = unsafe { result::module::load_data(image) }.map_err(|e| {
-                BuildError::NvrtcLoadingError {
-                    key: ptx.key,
-                    cuda: e,
-                }
-            })?;
-            let module = Self::build_module(ptx.key, cu_module, &ptx.fn_names)?;
-            modules.insert(ptx.key, module);
+            modules.insert(
+                ptx.key,
+                Self::build_module_from_ptx(ptx.ptx, ptx.key, &ptx.fn_names)?,
+            );
         }
 
         let device = CudaDevice {
             cu_device,
             cu_primary_ctx,
             cu_stream,
-            modules,
+            modules: RwLock::new(modules),
         };
         Ok(Arc::new(device))
     }
 
-    fn build_module(
+    fn build_module_from_ptx_file(
+        ptx_path: &'static str,
         key: &'static str,
-        cu_module: sys::CUmodule,
+        func_names: &[&'static str],
+    ) -> Result<CudaModule, BuildError> {
+        let name_c = CString::new(ptx_path).map_err(BuildError::CStringError)?;
+        let cu_module = result::module::load(name_c)
+            .map_err(|cuda| BuildError::PtxLoadingError { key, cuda })?;
+        let mut functions = BTreeMap::new();
+        for &fn_name in func_names.iter() {
+            let fn_name_c = CString::new(fn_name).map_err(BuildError::CStringError)?;
+            let cu_function = unsafe { result::module::get_function(cu_module, fn_name_c) }
+                .map_err(|e| BuildError::GetFunctionError {
+                    key,
+                    symbol: fn_name,
+                    cuda: e,
+                })?;
+            functions.insert(fn_name, cu_function);
+        }
+        Ok(CudaModule {
+            cu_module,
+            functions,
+        })
+    }
+
+    fn build_module_from_ptx(
+        ptx: Ptx,
+        key: &'static str,
         fn_names: &[&'static str],
     ) -> Result<CudaModule, BuildError> {
+        let image = ptx.image.as_ptr() as *const _;
+        let cu_module = unsafe { result::module::load_data(image) }
+            .map_err(|cuda| BuildError::NvrtcLoadingError { key, cuda })?;
         let mut functions = BTreeMap::new();
         for &fn_name in fn_names.iter() {
             let fn_name_c = CString::new(fn_name).map_err(BuildError::CStringError)?;
@@ -754,7 +832,7 @@ impl CudaDeviceBuilder {
                     symbol: fn_name,
                     cuda: e,
                 })?;
-            functions.insert(fn_name, CudaFunction { cu_function });
+            functions.insert(fn_name, cu_function);
         }
         Ok(CudaModule {
             cu_module,
@@ -875,6 +953,7 @@ mod tests {
     fn test_post_release_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let t = device.take_async(std::vec![1.0f32, 2.0, 3.0]).unwrap();
+        #[allow(clippy::redundant_clone)]
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
 
@@ -938,11 +1017,10 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     fn test_launch_with_mut_and_ref_cudarc() {
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
-            .with_ptx("sin", ptx, &["sin_kernel"])
+            .with_ptx(ptx, "sin", &["sin_kernel"])
             .build()
             .unwrap();
-        let m = dev.get_module("sin").unwrap();
-        let sin_kernel = m.get_fn("sin_kernel").unwrap();
+        let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
 
         let a_host = std::vec![-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
@@ -951,13 +1029,12 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         let mut b_dev = a_dev.clone();
 
         unsafe {
-            dev.launch_async(
-                sin_kernel,
+            sin_kernel.launch_async(
                 LaunchConfig::for_num_elems(10),
                 (&mut b_dev, &a_dev, 10usize),
             )
-            .unwrap();
         }
+        .unwrap();
 
         let b_host = dev.sync_release(b_dev).unwrap();
 
@@ -1009,14 +1086,12 @@ extern \"C\" __global__ void floating(float f, double d) {
     fn test_launch_with_8bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
-            .with_ptx("tests", ptx, &["int_8bit"])
+            .with_ptx(ptx, "tests", &["int_8bit"])
             .build()
             .unwrap();
-        let m = dev.get_module("tests").unwrap();
-        let f = m.get_fn("int_8bit").unwrap();
+        let f = dev.get_func("tests", "int_8bit").unwrap();
         unsafe {
-            dev.launch_async(
-                f,
+            f.launch_async(
                 LaunchConfig::for_num_elems(1),
                 (i8::MIN, i8::MAX, u8::MIN, u8::MAX),
             )
@@ -1030,14 +1105,12 @@ extern \"C\" __global__ void floating(float f, double d) {
     fn test_launch_with_16bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
-            .with_ptx("tests", ptx, &["int_16bit"])
+            .with_ptx(ptx, "tests", &["int_16bit"])
             .build()
             .unwrap();
-        let m = dev.get_module("tests").unwrap();
-        let f = m.get_fn("int_16bit").unwrap();
+        let f = dev.get_func("tests", "int_16bit").unwrap();
         unsafe {
-            dev.launch_async(
-                f,
+            f.launch_async(
                 LaunchConfig::for_num_elems(1),
                 (i16::MIN, i16::MAX, u16::MIN, u16::MAX),
             )
@@ -1050,14 +1123,12 @@ extern \"C\" __global__ void floating(float f, double d) {
     fn test_launch_with_32bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
-            .with_ptx("tests", ptx, &["int_32bit"])
+            .with_ptx(ptx, "tests", &["int_32bit"])
             .build()
             .unwrap();
-        let m = dev.get_module("tests").unwrap();
-        let f = m.get_fn("int_32bit").unwrap();
+        let f = dev.get_func("tests", "int_32bit").unwrap();
         unsafe {
-            dev.launch_async(
-                f,
+            f.launch_async(
                 LaunchConfig::for_num_elems(1),
                 (i32::MIN, i32::MAX, u32::MIN, u32::MAX),
             )
@@ -1070,14 +1141,12 @@ extern \"C\" __global__ void floating(float f, double d) {
     fn test_launch_with_64bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
-            .with_ptx("tests", ptx, &["int_64bit"])
+            .with_ptx(ptx, "tests", &["int_64bit"])
             .build()
             .unwrap();
-        let m = dev.get_module("tests").unwrap();
-        let f = m.get_fn("int_64bit").unwrap();
+        let f = dev.get_func("tests", "int_64bit").unwrap();
         unsafe {
-            dev.launch_async(
-                f,
+            f.launch_async(
                 LaunchConfig::for_num_elems(1),
                 (i64::MIN, i64::MAX, u64::MIN, u64::MAX),
             )
@@ -1090,14 +1159,12 @@ extern \"C\" __global__ void floating(float f, double d) {
     fn test_launch_with_floats() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
-            .with_ptx("tests", ptx, &["floating"])
+            .with_ptx(ptx, "tests", &["floating"])
             .build()
             .unwrap();
-        let m = dev.get_module("tests").unwrap();
-        let f = m.get_fn("floating").unwrap();
+        let f = dev.get_func("tests", "floating").unwrap();
         unsafe {
-            dev.launch_async(
-                f,
+            f.launch_async(
                 LaunchConfig::for_num_elems(1),
                 (1.2345678f32, -10.123456789876543f64),
             )
