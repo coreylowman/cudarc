@@ -113,9 +113,7 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
 
     let mut ptx_src: Vec<c_char> = Vec::with_capacity(size);
-    for _ in 0..size {
-        ptx_src.push(0);
-    }
+    ptx_src.resize(size, 0);
     sys::nvrtcGetPTX(prog, ptx_src.as_mut_ptr()).result()?;
     Ok(ptx_src)
 }
@@ -133,9 +131,7 @@ pub unsafe fn get_program_log(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, Nv
     sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
 
     let mut log_src: Vec<c_char> = Vec::with_capacity(size);
-    for _ in 0..size {
-        log_src.push(0);
-    }
+    log_src.resize(size, 0);
     sys::nvrtcGetProgramLog(prog, log_src.as_mut_ptr()).result()?;
     Ok(log_src)
 }
