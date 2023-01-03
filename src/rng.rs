@@ -4,7 +4,7 @@ use crate::curand::{result, sys};
 use crate::device::{CudaDevice, CudaSlice};
 use std::sync::Arc;
 
-/// Host side RNG that can fill [CudaRc] with random values.
+/// Host side RNG that can fill [CudaSlice] with random values.
 ///
 /// 1. Create:
 /// ```rust
@@ -45,7 +45,7 @@ impl CudaRng {
         unsafe { result::set_seed(self.gen, seed) }
     }
 
-    /// Fill the [CudaRc] with data from a `Uniform` distribution
+    /// Fill the [CudaSlice] with data from a `Uniform` distribution
     pub fn fill_with_uniform<T>(&self, t: &mut CudaSlice<T>) -> Result<(), result::CurandError>
     where
         sys::curandGenerator_t: result::UniformFill<T>,
@@ -53,7 +53,7 @@ impl CudaRng {
         unsafe { result::UniformFill::fill(self.gen, t.cu_device_ptr as *mut T, t.len()) }
     }
 
-    /// Fill the [CudaRc] with data from a `Normal(mean, std)` distribution.
+    /// Fill the [CudaSlice] with data from a `Normal(mean, std)` distribution.
     pub fn fill_with_normal<T>(
         &self,
         t: &mut CudaSlice<T>,
@@ -93,6 +93,8 @@ impl Drop for CudaRng {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::needless_range_loop)]
+
     use super::*;
     use crate::{
         curand::result::{LogNormalFill, NormalFill, UniformFill},
