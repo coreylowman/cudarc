@@ -19,7 +19,7 @@ pub mod rng;
 
 pub mod prelude {
     pub use crate::device::{
-        CudaDevice, CudaDeviceBuilder, CudaSlice, DriverError, IntoKernelParam, LaunchAsync,
+        AsKernelParam, CudaDevice, CudaDeviceBuilder, CudaSlice, DriverError, LaunchAsync,
         LaunchConfig, ValidAsZeroBits,
     };
 }
