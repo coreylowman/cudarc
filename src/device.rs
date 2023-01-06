@@ -536,15 +536,45 @@ impl LaunchConfig {
 ///
 /// Additionally, all the safety notices for [result::launch_kernel]
 /// apply here as well.
-pub unsafe trait IntoKernelParam {
-    fn into_kernel_param(self) -> *mut std::ffi::c_void;
+pub unsafe trait AsKernelParam {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        self as *const Self as *mut _
+    }
+}
+
+unsafe impl AsKernelParam for i8 {}
+unsafe impl AsKernelParam for i16 {}
+unsafe impl AsKernelParam for i32 {}
+unsafe impl AsKernelParam for i64 {}
+unsafe impl AsKernelParam for isize {}
+unsafe impl AsKernelParam for u8 {}
+unsafe impl AsKernelParam for u16 {}
+unsafe impl AsKernelParam for u32 {}
+unsafe impl AsKernelParam for u64 {}
+unsafe impl AsKernelParam for usize {}
+unsafe impl AsKernelParam for f32 {}
+unsafe impl AsKernelParam for f64 {}
+
+unsafe impl<T> AsKernelParam for &mut CudaSlice<T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl<T> AsKernelParam for &CudaSlice<T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
 }
 
 /// Consumes a [CudaFunction] to execute asychronously on the device with
 /// params determined by generic parameter `Params`.
 ///
 /// This is impl'd multiple times for different number and types of params. In
-/// general, `Params` should impl [IntoKernelParam]
+/// general, `Params` should impl [AsKernelParam]
 ///
 /// # Safety
 ///
@@ -589,7 +619,7 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// Also for this reason, do not pass in any values to kernels
     /// that can be modified on the host. This is the reason
-    /// [IntoKernelParam] is not implemented for rust primitive
+    /// [AsKernelParam] is not implemented for rust primitive
     /// references.
     ///
     /// ## Use after free
@@ -603,53 +633,15 @@ pub unsafe trait LaunchAsync<Params> {
     unsafe fn launch_async(self, cfg: LaunchConfig, params: Params) -> Result<(), DriverError>;
 }
 
-unsafe impl<T> IntoKernelParam for &mut CudaSlice<T> {
-    #[inline(always)]
-    fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        (&mut self.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
-unsafe impl<T> IntoKernelParam for &CudaSlice<T> {
-    #[inline(always)]
-    fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
-macro_rules! impl_into_kernel_param {
-    ($T:ty) => {
-        unsafe impl IntoKernelParam for $T {
-            #[inline(always)]
-            fn into_kernel_param(self) -> *mut std::ffi::c_void {
-                (&self) as *const $T as *mut std::ffi::c_void
-            }
-        }
-    };
-}
-
-impl_into_kernel_param!(i8);
-impl_into_kernel_param!(i16);
-impl_into_kernel_param!(i32);
-impl_into_kernel_param!(i64);
-impl_into_kernel_param!(isize);
-impl_into_kernel_param!(u8);
-impl_into_kernel_param!(u16);
-impl_into_kernel_param!(u32);
-impl_into_kernel_param!(u64);
-impl_into_kernel_param!(usize);
-impl_into_kernel_param!(f32);
-impl_into_kernel_param!(f64);
-
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
-unsafe impl<$($Vars: IntoKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
+unsafe impl<$($Vars: AsKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
     unsafe fn launch_async(
         self,
         cfg: LaunchConfig,
         args: ($($Vars, )*)
     ) -> Result<(), DriverError> {
-        let params = &mut [$(args.$Idx.into_kernel_param(), )*];
+        let params = &mut [$(args.$Idx.as_kernel_param(), )*];
         result::launch_kernel(
             self.cu_function,
             cfg.grid_dim,
@@ -1006,10 +998,10 @@ mod tests {
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let mut t = device.take_async([0.0f32; 1].to_vec()).unwrap();
+        let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = (&mut t).into_kernel_param();
+        let _ = (&t).as_kernel_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
@@ -1019,7 +1011,7 @@ mod tests {
         let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = (&t).into_kernel_param();
+        let _ = (&t).as_kernel_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
