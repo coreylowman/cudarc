@@ -399,7 +399,11 @@ impl CudaDevice {
         mut src: CudaSlice<T>,
     ) -> Result<Vec<T>, DriverError> {
         let buf = src.host_buf.take();
-        let mut buf = buf.unwrap_or_else(|| Pin::new(std::vec![Default::default(); src.len]));
+        let mut buf = buf.unwrap_or_else(|| {
+            let mut b = Vec::with_capacity(src.len);
+            b.resize(src.len, Default::default());
+            Pin::new(b)
+        });
         self.sync_copy_from(&src, &mut buf)?;
         Ok(Pin::into_inner(buf))
     }
@@ -936,7 +940,7 @@ mod tests {
     #[test]
     fn test_post_take_arc_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async(std::vec![0.0f32; 5]).unwrap();
+        let t = device.take_async([0.0f32; 5].to_vec()).unwrap();
         assert!(t.host_buf.is_some());
         assert_eq!(Arc::strong_count(&device), 2);
         drop(t);
@@ -946,7 +950,7 @@ mod tests {
     #[test]
     fn test_post_clone_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async(std::vec![0.0f64; 10]).unwrap();
+        let t = device.take_async([0.0f64; 10].to_vec()).unwrap();
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
         drop(t);
@@ -958,7 +962,7 @@ mod tests {
     #[test]
     fn test_post_clone_arc_slice_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = Arc::new(device.take_async(std::vec![0.0f64; 10]).unwrap());
+        let t = Arc::new(device.take_async([0.0f64; 10].to_vec()).unwrap());
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 2);
         drop(t);
@@ -970,7 +974,7 @@ mod tests {
     #[test]
     fn test_post_release_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async(std::vec![1.0f32, 2.0, 3.0]).unwrap();
+        let t = device.take_async([1.0f32, 2.0, 3.0].to_vec()).unwrap();
         #[allow(clippy::redundant_clone)]
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
@@ -989,7 +993,7 @@ mod tests {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let (free1, total1) = result::mem_get_info().unwrap();
 
-        let t = device.take_async(std::vec![0.0f32; 5]).unwrap();
+        let t = device.take_async([0.0f32; 5].to_vec()).unwrap();
         let (free2, total2) = result::mem_get_info().unwrap();
         assert_eq!(total1, total2);
         assert!(free2 < free1);
@@ -1006,7 +1010,7 @@ mod tests {
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let mut t = device.take_async(std::vec![0.0f32; 1]).unwrap();
+        let mut t = device.take_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
         let _ = (&mut t).into_kernel_param();
@@ -1016,7 +1020,7 @@ mod tests {
     #[test]
     fn test_ref_into_kernel_param_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async(std::vec![0.0f32; 1]).unwrap();
+        let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
         let _ = (&t).into_kernel_param();
@@ -1040,9 +1044,9 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             .unwrap();
         let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
 
-        let a_host = std::vec![-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
+        let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
-        let a_dev = dev.take_async(a_host.clone()).unwrap();
+        let a_dev = dev.take_async(a_host.clone().to_vec()).unwrap();
 
         let mut b_dev = a_dev.clone();
 
