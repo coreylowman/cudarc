@@ -126,14 +126,10 @@
 
 use crate::driver::{result, sys};
 use crate::jit::Ptx;
+
 use alloc::ffi::{CString, NulError};
-use std::{
-    collections::BTreeMap,
-    marker::Unpin,
-    pin::Pin,
-    sync::{Arc, RwLock},
-    vec::Vec,
-};
+use spin::RwLock;
+use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 
 pub use result::DriverError;
 
@@ -247,7 +243,7 @@ unsafe impl Sync for CudaDevice {}
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
-        let modules = RwLock::get_mut(&mut self.modules).unwrap();
+        let modules = RwLock::get_mut(&mut self.modules);
         for (_, module) in modules.iter() {
             unsafe { result::module::unload(module.cu_module) }.unwrap();
         }
@@ -415,7 +411,7 @@ impl CudaDevice {
 
     /// Whether a module and function are currently loaded into the device.
     pub fn has_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> bool {
-        let modules = self.modules.read().unwrap();
+        let modules = self.modules.read();
         modules
             .get(module_name)
             .map_or(false, |module| module.has_func(func_name))
@@ -423,7 +419,7 @@ impl CudaDevice {
 
     /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
     pub fn get_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> Option<CudaFunction> {
-        let modules = self.modules.read().unwrap();
+        let modules = self.modules.read();
         modules
             .get(module_name)
             .and_then(|m| m.get_func(func_name))
@@ -442,7 +438,7 @@ impl CudaDevice {
     ) -> Result<(), BuildError> {
         let m = CudaDeviceBuilder::build_module_from_ptx_file(ptx_path, module_name, func_names)?;
         {
-            let mut modules = self.modules.write().unwrap();
+            let mut modules = self.modules.write();
             modules.insert(module_name, m);
         }
         Ok(())
@@ -457,7 +453,7 @@ impl CudaDevice {
     ) -> Result<(), BuildError> {
         let m = CudaDeviceBuilder::build_module_from_ptx(ptx, module_name, func_names)?;
         {
-            let mut modules = self.modules.write().unwrap();
+            let mut modules = self.modules.write();
             modules.insert(module_name, m);
         }
         Ok(())
