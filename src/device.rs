@@ -833,9 +833,14 @@ impl CudaDeviceBuilder {
         key: &'static str,
         fn_names: &[&'static str],
     ) -> Result<CudaModule, BuildError> {
-        let image = ptx.image.as_ptr() as *const _;
-        let cu_module = unsafe { result::module::load_data(image) }
-            .map_err(|cuda| BuildError::NvrtcLoadingError { key, cuda })?;
+        let cu_module = match ptx {
+            Ptx::Image(image) => unsafe { result::module::load_data(image.as_ptr() as *const _) },
+            Ptx::Src(src) => {
+                let c_src = CString::new(src).unwrap();
+                unsafe { result::module::load_data(c_src.as_ptr() as *const _) }
+            }
+        }
+        .map_err(|cuda| BuildError::NvrtcLoadingError { key, cuda })?;
         let mut functions = BTreeMap::new();
         for &fn_name in fn_names.iter() {
             let fn_name_c = CString::new(fn_name).map_err(BuildError::CStringError)?;

@@ -10,8 +10,15 @@ use std::{borrow::ToOwned, string::String, vec::Vec};
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
 #[derive(Debug, Clone)]
-pub struct Ptx {
-    pub(crate) image: Vec<c_char>,
+pub enum Ptx {
+    Image(Vec<c_char>),
+    Src(String),
+}
+
+impl<S: Into<String>> From<S> for Ptx {
+    fn from(value: S) -> Self {
+        Self::Src(value.into())
+    }
 }
 
 /// Calls [compile_ptx_with_opts] with no options. `src` is the source string
@@ -72,7 +79,7 @@ impl Program {
 
         let image = unsafe { result::get_ptx(self.prog) }.map_err(CompileError::GetPtxError)?;
 
-        Ok(Ptx { image })
+        Ok(Ptx::Image(image))
     }
 }
 
@@ -194,7 +201,10 @@ mod tests {
             }
         }";
         let ptx = compile_ptx_with_opts(SRC, Default::default()).unwrap();
-        assert!(!ptx.image.is_empty());
+        match ptx {
+            Ptx::Image(i) => assert!(!i.is_empty()),
+            Ptx::Src(_) => unreachable!("Should be image"),
+        };
     }
 
     #[test]
