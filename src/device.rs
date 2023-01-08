@@ -518,9 +518,11 @@ impl LaunchConfig {
     /// A simple function to create launch configuration
     /// with 1 grid and n threads
     pub fn for_num_elems(n: u32) -> Self {
+        const NUM_THREADS: u32 = 1024;
+        let num_blocks = (n + NUM_THREADS - 1) / NUM_THREADS;
         Self {
-            grid_dim: (1, 1, 1),
-            block_dim: (n, 1, 1),
+            grid_dim: (num_blocks, 1, 1),
+            block_dim: (NUM_THREADS, 1, 1),
             shared_mem_bytes: 0,
         }
     }
@@ -1056,6 +1058,31 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         drop(a_dev);
     }
 
+    #[test]
+    fn test_large_launches() {
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx(ptx, "sin", &["sin_kernel"])
+            .build()
+            .unwrap();
+        for numel in [256, 512, 1024, 1280, 1536, 2048] {
+            let mut a = Vec::with_capacity(numel);
+            a.resize(numel, 1.0f32);
+
+            let a = dev.take_async(a).unwrap();
+            let mut b = dev.alloc_zeros_async::<f32>(numel).unwrap();
+
+            let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
+            let cfg = LaunchConfig::for_num_elems(numel as u32);
+            unsafe { sin_kernel.launch_async(cfg, (&mut b, &a, numel)) }.unwrap();
+
+            let b = dev.sync_release(b).unwrap();
+            for v in b {
+                assert_eq!(v, 0.841471);
+            }
+        }
+    }
+
     const TEST_KERNELS: &str = "
 extern \"C\" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
     assert(s_min == -128);
@@ -1086,7 +1113,6 @@ extern \"C\" __global__ void int_64bit(signed long s_min, long s_max, unsigned l
 }
 
 extern \"C\" __global__ void floating(float f, double d) {
-    printf(\"%.10f %.20f\", f, d);
     assert(fabs(f - 1.2345678) <= 1e-7);
     assert(fabs(d - -10.123456789876543) <= 1e-16);
 }
