@@ -268,9 +268,12 @@ pub mod stream {
 /// 1. The stream should be an already created stream.
 /// 2. The memory return by this is unset, which may be invalid for `T`.
 /// 3. All uses of this memory must be on the same stream.
-pub unsafe fn malloc_async<T>(stream: sys::CUstream) -> Result<sys::CUdeviceptr, CudaError> {
+pub unsafe fn malloc_async(
+    stream: sys::CUstream,
+    num_bytes: usize,
+) -> Result<sys::CUdeviceptr, CudaError> {
     let mut dev_ptr = MaybeUninit::uninit();
-    sys::cuMemAllocAsync(dev_ptr.as_mut_ptr(), size_of::<T>(), stream).result()?;
+    sys::cuMemAllocAsync(dev_ptr.as_mut_ptr(), num_bytes, stream).result()?;
     Ok(dev_ptr.assume_init())
 }
 
@@ -294,12 +297,13 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
 /// 1. The resulting memory pattern may not be valid for `T`.
 /// 2. The device pointer should not have been freed already (double free)
 /// 3. The stream should be the stream the memory was allocated on.
-pub unsafe fn memset_d8_async<T>(
+pub unsafe fn memset_d8_async(
     dptr: sys::CUdeviceptr,
     uc: c_uchar,
+    num_bytes: usize,
     stream: sys::CUstream,
 ) -> Result<(), CudaError> {
-    sys::cuMemsetD8Async(dptr, uc, size_of::<T>(), stream).result()
+    sys::cuMemsetD8Async(dptr, uc, num_bytes, stream).result()
 }
 
 /// Copies memory from Host to Device with stream ordered semantics.
@@ -313,12 +317,19 @@ pub unsafe fn memset_d8_async<T>(
 /// 1. `T` must be the type that device pointer was allocated with.
 /// 2. The device pointer should not have been freed already (double free)
 /// 3. The stream should be the stream the memory was allocated on.
+/// 4. `src` must not be moved
 pub unsafe fn memcpy_htod_async<T>(
     dst: sys::CUdeviceptr,
-    src: &T,
+    src: &[T],
     stream: sys::CUstream,
 ) -> Result<(), CudaError> {
-    sys::cuMemcpyHtoDAsync_v2(dst, src as *const T as *const _, size_of::<T>(), stream).result()
+    sys::cuMemcpyHtoDAsync_v2(
+        dst,
+        src.as_ptr() as *const _,
+        src.len() * size_of::<T>(),
+        stream,
+    )
+    .result()
 }
 
 /// Copies memory from Device to Host with stream ordered semantics.
@@ -333,11 +344,17 @@ pub unsafe fn memcpy_htod_async<T>(
 /// 2. The device pointer should not have been freed already (double free)
 /// 3. The stream should be the stream the memory was allocated on.
 pub unsafe fn memcpy_dtoh_async<T>(
-    dst: &mut T,
+    dst: &mut [T],
     src: sys::CUdeviceptr,
     stream: sys::CUstream,
 ) -> Result<(), CudaError> {
-    sys::cuMemcpyDtoHAsync_v2(dst as *mut T as *mut _, src, size_of::<T>(), stream).result()
+    sys::cuMemcpyDtoHAsync_v2(
+        dst.as_mut_ptr() as *mut _,
+        src,
+        dst.len() * size_of::<T>(),
+        stream,
+    )
+    .result()
 }
 
 /// Copies memory from Device to Device with stream ordered semantics.
@@ -348,12 +365,13 @@ pub unsafe fn memcpy_dtoh_async<T>(
 /// 1. `T` must be the type that BOTH device pointers were allocated with.
 /// 2. Neither device pointer should not have been freed already (double free)
 /// 3. The stream should be the stream the memory was allocated on.
-pub unsafe fn memcpy_dtod_async<T>(
+pub unsafe fn memcpy_dtod_async(
     dst: sys::CUdeviceptr,
     src: sys::CUdeviceptr,
+    num_bytes: usize,
     stream: sys::CUstream,
 ) -> Result<(), CudaError> {
-    sys::cuMemcpyDtoDAsync_v2(dst, src, size_of::<T>(), stream).result()
+    sys::cuMemcpyDtoDAsync_v2(dst, src, num_bytes, stream).result()
 }
 
 /// Returns (free, total) memory in bytes.

@@ -40,7 +40,7 @@ pub use result::*;
 pub use tensor::*;
 
 pub(crate) const CUSTOM_KERNEL_MODULE: &str = "custom_kernels";
-impl crate::cudarc::CudaDeviceBuilder {
+impl crate::device::CudaDeviceBuilder {
     pub fn with_cudnn_modules(self) -> Self {
         self.with_ptx_from_file(
             CUSTOM_KERNEL_MODULE,

@@ -2,7 +2,7 @@ use core::ffi::c_void;
 
 use alloc::rc::Rc;
 
-use crate::cudarc::CudaUniquePtr;
+use crate::cudnn::tensor::CudaUniquePtr;
 use crate::driver::result::memcpy_dtod_async;
 use crate::prelude::*;
 

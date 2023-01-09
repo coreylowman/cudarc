@@ -1,7 +1,7 @@
 use core::ops::Div;
 
 use crate::arrays::NumElements;
-use crate::cudarc::ValidAsZeroBits;
+use crate::prelude::ValidAsZeroBits;
 
 use super::super::sys::cudnnDataType_t;
 

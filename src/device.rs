@@ -1,4 +1,4 @@
-//! Safe abstractions over [crate::driver::result] provided by [CudaRc], [CudaDevice], [CudaDeviceBuilder], and more.
+//! Safe abstractions over [crate::driver::result] provided by [CudaSlice], [CudaDevice], [CudaDeviceBuilder], and more.
 //!
 //! # Usage
 //!
@@ -9,36 +9,43 @@
 //! let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! ```
 //!
-//! 2. Allocate device memory with host data with [CudaDevice::take()] or [CudaDevice::alloc_zeros()]
+//! 2. Allocate device memory with host data with [CudaDevice::take_async()], [CudaDevice::alloc_zeros_async()],
+//! or [CudaDevice::sync_copy()]
+//!
+//! You can also copy data to CudaSlice using [CudaDevice::sync_copy_into()]
+//!
+//! ```rust
+//! # use cudarc::prelude::*;
+//! # let device = CudaDeviceBuilder::new(0).build().unwrap();
+//! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
+//! let b_dev: CudaSlice<f32> = device.take_async(vec![0.0; 10]).unwrap();
+//! let c_dev: CudaSlice<f32> = device.sync_copy(&[1.0, 2.0, 3.0]).unwrap();
+//! ```
+//!
+//! 3. Transfer to host memory with [CudaDevice::sync_release()] or [CudaDevice::sync_copy_from()]
 //!
 //! ```rust
 //! # use cudarc::prelude::*;
 //! # use std::rc::Rc;
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
-//! let a_dev: CudaRc<[f32; 10]> = device.alloc_zeros::<[f32; 10]>().unwrap();
-//! let b_dev: CudaRc<f32> = device.take(Rc::new(0.0f32)).unwrap();
+//! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
+//! let mut a_buf: [f32; 10] = [1.0; 10];
+//! device.sync_copy_from(&a_dev, &mut a_buf);
+//! assert_eq!(a_buf, [0.0; 10]);
+//! let a_host: Vec<f32> = device.sync_release(a_dev).unwrap();
+//! assert_eq!(&a_host, &[0.0; 10]);
 //! ```
 //!
-//! 3. Mutate device memory with [LaunchCudaFunction] and [CudaFunction] (or [crate::rng::CudaRng]).
-//! 4. Transfer to host memory with [CudaRc::into_host()], [CudaRc::sync_release()], or you can just
-//! drop the [CudaRc].
+//! ## Mutating device memory - CudaModule and CudaFunction
 //!
-//! ```rust
-//! # use cudarc::prelude::*;
-//! # use std::rc::Rc;
-//! # let device = CudaDeviceBuilder::new(0).build().unwrap();
-//! let a_dev: CudaRc<[f32; 10]> = device.alloc_zeros::<[f32; 10]>().unwrap();
-//! let a_host: Rc<[f32; 10]> = a_dev.into_host().unwrap();
-//! ```
-//!
-//! ## CudaModule and CudaFunction
+//! See [LaunchCudaFunction] and [CudaFunction].
 //!
 //! In order to mutate device data, you need to use cuda kernels.
 //!
 //! Loading kernels is done with [CudaDeviceBuilder::with_ptx()]
 //! and [CudaDeviceBuilder::with_ptx_from_file()]:
 //! ```rust
-//! # use cudarc::cudarc::*;
+//! # use cudarc::device::*;
 //! # use cudarc::jit::*;
 //! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! let device = CudaDeviceBuilder::new(0)
@@ -49,7 +56,7 @@
 //!
 //! Retrieve the module & function:
 //! ```rust
-//! # use cudarc::cudarc::*;
+//! # use cudarc::device::*;
 //! # use cudarc::jit::*;
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx("module_key", ptx, &["my_function"]).build().unwrap();
@@ -59,23 +66,23 @@
 //!
 //! Asynchronously execute the kernel:
 //! ```rust
-//! # use cudarc::cudarc::*;
+//! # use cudarc::device::*;
 //! # use cudarc::jit::*;
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx("module_key", ptx, &["my_function"]).build().unwrap();
 //! # let module: &CudaModule = device.get_module("module_key").unwrap();
 //! # let func: &CudaFunction = module.get_fn("my_function").unwrap();
-//! let mut a = device.alloc_zeros::<[f32; 10]>().unwrap();
+//! let mut a = device.alloc_zeros_async::<f32>(10).unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
-//! unsafe { device.launch_cuda_function(func, cfg, (&mut a, )) }.unwrap();
+//! unsafe { device.launch_async(func, cfg, (&mut a,)) }.unwrap();
 //! ```
 //!
 //! Note: Launching kernels is **extremely unsafe**. See [LaunchCudaFunction] for more info.
 //!
 //! # Safety
 //!
-//! There are a number of aspects to this, but at a high level this API utilizes [std::rc::Rc] as well
-//! as proper management of resources.
+//! There are a number of aspects to this, but at a high level this API utilizes [std::sync::Arc] to
+//! control when [CudaDevice] can be dropped.
 //!
 //! ### Context/Stream lifetimes
 //!
@@ -91,8 +98,8 @@
 //!
 //! ### Device Data lifetimes
 //!
-//! The next part of safety is ensuring that [CudaRc] do not outlive
-//! the [CudaDevice]. For usability, each [CudaRc] owns an [Rc<CudaDevice>]
+//! The next part of safety is ensuring that [CudaSlice] do not outlive
+//! the [CudaDevice]. For usability, each [CudaSlice] owns an [`Arc<CudaDevice>`]
 //! to ensure the device stays alive.
 //!
 //! Additionally we don't want to double free any device pointers, so free is only
@@ -101,12 +108,11 @@
 //! ### Host and Device Data lifetimes
 //!
 //! Each device allocation can be associated with a host allocation. We want to ensure
-//! that these have the same lifetimes.
+//! that these have the same lifetimes *when copying data between them*.
 //!
-//! This is done in [CudaRc<T>], which owns both the (optional) host and device data.
-//! In order to initialize device data for a host allocation, you can call
-//! [CudaDevice::take()], and to reclaim (& sync) the host data, you can call
-//! [CudaRc::into_host()].
+//! This is done via the various copy methods. Methods that don't take ownership
+//! of the host data need to be executed synchronously, while the methods own the reference.
+//! Methods that do own the host data can be executed synchronously.
 //!
 //! ### Single stream operations
 //!
@@ -119,9 +125,8 @@
 
 use crate::driver::{result, sys};
 use crate::jit::Ptx;
-use alloc::alloc::{alloc_zeroed, Layout};
 use alloc::ffi::{CString, NulError};
-use std::{boxed::Box, collections::BTreeMap, marker::PhantomData, rc::Rc, vec::Vec};
+use std::{collections::BTreeMap, sync::Arc, vec::Vec};
 
 pub use result::CudaError;
 
@@ -135,132 +140,63 @@ pub use result::CudaError;
 /// a corresponding host memory, so the host memory is
 /// actually [Option].
 ///
-/// # Reference counting
-///
-/// When cloned it will increment reference counters
-/// instead of cloning actual data.
-///
 /// # Reclaiming host data
 ///
 /// To reclaim the host data for this device data,
-/// use [CudaRc::sync_release()] or [CudaRc::into_host()].
-/// These will both perform necessary synchronization to ensure
+/// use [CudaDevice::sync_release()]. This will
+/// perform necessary synchronization to ensure
 /// that the device data finishes copying over.
 ///
 /// # Mutating device data
 ///
 /// This can only be done by launching kernels via
 /// [LaunchCudaFunction] which is implemented
-/// by [CudaDevice]. Pass `&mut CudaRc<T>`
-/// if you want to mutate the rc, and `&CudaRc<T>` otherwise.
+/// by [CudaDevice]. Pass `&mut CudaSlice<T>`
+/// if you want to mutate the rc, and `&CudaSlice<T>` otherwise.
 ///
-/// Unfortunately, `&CudaRc<T>` can **still be mutated
+/// Unfortunately, `&CudaSlice<T>` can **still be mutated
 /// by the [CudaFunction]**.
 #[derive(Debug)]
-pub struct CudaRc<T> {
-    pub(crate) t_cuda: Rc<CudaUniquePtr<T>>,
-    pub(crate) t_host: Option<Rc<T>>,
-}
-impl<T> Clone for CudaRc<T> {
-    fn clone(&self) -> Self {
-        Self {
-            t_cuda: Rc::clone(&self.t_cuda),
-            t_host: self.t_host.as_ref().map(Rc::clone)
-        }
-    }
-}
-impl<T> CudaRc<T> {
-    /// Returns a reference to the underlying [CudaDevice]
-    pub fn device(&self) -> &Rc<CudaDevice> {
-        &self.t_cuda.device
-    }
-}
-
-impl<T: Clone> CudaRc<T> {
-    /// Copies device memory into host memory if it exists,
-    /// synchronizes the stream, and then returns the host data.
-    ///
-    /// Note: This decrements the reference count on the device memory,
-    /// so if there no other references to it, it will be freed.
-    pub fn sync_release(mut self) -> Result<Option<Rc<T>>, CudaError> {
-        self.t_cuda.device.clone().maybe_sync_host(&mut self)?;
-        Ok(self.t_host)
-    }
-
-    /// If the host data doesn't exist, allocates zerod memory
-    /// for the type. Then calls [Self::sync_release] and unwraps
-    /// the option.
-    ///
-    /// Note: This decrements the reference count on the device memory,
-    /// so if there no other references to it, it will be freed.
-    ///
-    /// # Safety
-    /// Even though this allocates zerod memory for `T`
-    /// and `T` is not necessarily [ValidAsZeroBits], it
-    /// is safe since the device memory is valid for T.
-    pub fn into_host(mut self) -> Result<Rc<T>, CudaError> {
-        self.t_host.get_or_insert_with(|| {
-            let layout = Layout::new::<T>();
-            unsafe {
-                let ptr = alloc_zeroed(layout) as *mut T;
-                Box::from_raw(ptr).into()
-            }
-        });
-        self.sync_release().map(Option::unwrap)
-    }
-}
-
-/// Wrapper around [sys::CUdeviceptr] that also contains a [Rc<CudaDevice>].
-/// This helps with safety because it:
-/// 1. Ensures that the device pointer is associated with the type `T` it was created with
-/// 2. Makes the CudaDevice stay alive as long as this object lives
-/// 3. impl [Drop] to properly free resources with the device's stream.
-/// 4. impl [Clone] as actually doing a device allocation instead of cloning the
-/// device pointer.
-///
-/// This can only be created by [CudaDevice::alloc].
-#[derive(Debug)]
-pub(crate) struct CudaUniquePtr<T> {
+pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
-    pub(crate) device: Rc<CudaDevice>,
-    marker: PhantomData<*const T>,
+    pub(crate) len: usize,
+    pub(crate) device: Arc<CudaDevice>,
+    pub(crate) host_buf: Option<Vec<T>>,
 }
 
-impl<T> CudaUniquePtr<T> {
-    /// Allocates device memory and increments the reference counter to [CudaDevice].
-    ///
-    /// # Safety
-    /// This is unsafe because the device memory is unset after this call.
-    pub(crate) unsafe fn alloc(device: &Rc<CudaDevice>) -> Result<CudaUniquePtr<T>, CudaError> {
-        let cu_device_ptr = result::malloc_async::<T>(device.cu_stream)?;
-        Ok(CudaUniquePtr {
-            cu_device_ptr,
-            device: device.clone(),
-            marker: PhantomData,
-        })
+impl<T> CudaSlice<T> {
+    /// Number of elements in the slice
+    pub fn len(&self) -> usize {
+        self.len
     }
 
-    /// Allocates new memory for type `T` and schedules a device to device copy of memory.
-    fn dup(&self) -> Result<CudaUniquePtr<T>, CudaError> {
-        let alloc = unsafe { Self::alloc(&self.device) }?;
+    /// Size of the slice in bytes
+    pub fn num_bytes(&self) -> usize {
+        self.len * std::mem::size_of::<T>()
+    }
+
+    /// Allocates copy of self and schedules a device to device copy of memory.
+    pub fn clone_async(&self) -> Result<Self, CudaError> {
+        let dst = unsafe { self.device.alloc(self.len) }?;
         unsafe {
-            result::memcpy_dtod_async::<T>(
-                alloc.cu_device_ptr,
+            result::memcpy_dtod_async(
+                dst.cu_device_ptr,
                 self.cu_device_ptr,
+                self.num_bytes(),
                 self.device.cu_stream,
             )
         }?;
-        Ok(alloc)
+        Ok(dst)
     }
 }
 
-impl<T> Clone for CudaUniquePtr<T> {
+impl<T> Clone for CudaSlice<T> {
     fn clone(&self) -> Self {
-        self.dup().unwrap()
+        self.clone_async().unwrap()
     }
 }
 
-impl<T> Drop for CudaUniquePtr<T> {
+impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         unsafe { result::free_async(self.cu_device_ptr, self.device.cu_stream) }.unwrap();
     }
@@ -275,7 +211,7 @@ impl<T> Drop for CudaUniquePtr<T> {
 /// 1. impl [Drop] to call all the corresponding resource cleanup methods
 /// 2. Doesn't impl clone, so you can't have multiple device pointers
 /// hanging around.
-/// 3. Any allocations enforce that self is an [Rc], meaning no allocation
+/// 3. Any allocations enforce that self is an [Arc], meaning no allocation
 /// can outlive the [CudaDevice]
 #[derive(Debug)]
 pub struct CudaDevice {
@@ -305,60 +241,120 @@ impl Drop for CudaDevice {
 }
 
 impl CudaDevice {
+    /// Allocates device memory and increments the reference counter of [CudaDevice].
+    ///
+    /// # Safety
+    /// This is unsafe because the device memory is unset after this call.
+    unsafe fn alloc<T>(self: &Arc<Self>, len: usize) -> Result<CudaSlice<T>, CudaError> {
+        let cu_device_ptr = result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?;
+        Ok(CudaSlice {
+            cu_device_ptr,
+            len,
+            device: self.clone(),
+            host_buf: None,
+        })
+    }
+
     /// Allocates device memory with no associated host memory, and memsets
     /// the device memory to all 0s.
     ///
     /// # Safety
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
-    /// 2. Self is [Rc<Self>], and this method increments the rc for self
-    pub fn alloc_zeros<T: ValidAsZeroBits>(self: &Rc<Self>) -> Result<CudaRc<T>, CudaError> {
-        let alloc = unsafe { CudaUniquePtr::alloc(self) }?;
-        unsafe { result::memset_d8_async::<T>(alloc.cu_device_ptr, 0, self.cu_stream) }?;
-        Ok(CudaRc {
-            t_cuda: Rc::new(alloc),
-            t_host: None,
-        })
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn alloc_zeros_async<T: ValidAsZeroBits>(
+        self: &Arc<Self>,
+        len: usize,
+    ) -> Result<CudaSlice<T>, CudaError> {
+        let dst = unsafe { self.alloc(len) }?;
+        unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.cu_stream) }?;
+        Ok(dst)
     }
 
-    /// Takes ownership of `host_data`, and does an async allocation and async copy of the
-    /// host data to device.
+    /// Takes ownership of the host data and copies it to device data asynchronously.
     ///
     /// # Safety
-    /// 1. This takes ownership of host data, meaning any asynchronous copies from host
-    /// data are safe because they are behind this struct. Since host data is an Rc,
-    /// any mutations by another ref will not mutate this data.
-    /// 2. The device memory is valid because the host memory is valid.
-    /// 3. Self is [Rc<Self>], and this method increments the rc for self
-    pub fn take<T>(self: &Rc<Self>, host_data: Rc<T>) -> Result<CudaRc<T>, CudaError> {
-        let alloc = unsafe { CudaUniquePtr::alloc(self) }?;
-        unsafe {
-            result::memcpy_htod_async(alloc.cu_device_ptr, host_data.as_ref(), self.cu_stream)
-        }?;
-        Ok(CudaRc {
-            t_cuda: Rc::new(alloc),
-            t_host: Some(host_data),
-        })
+    ///
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn take_async<T>(self: &Arc<Self>, src: Vec<T>) -> Result<CudaSlice<T>, CudaError> {
+        let mut dst = unsafe { self.alloc(src.len()) }?;
+        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, &src, self.cu_stream) }?;
+        dst.host_buf = Some(src);
+        Ok(dst)
     }
 
-    /// If host data exists, schedules a device to host copy and then synchronizes
+    /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
     ///
-    /// Note: This will clone the host data if there is more than 1 reference to it.
-    pub(crate) fn maybe_sync_host<T: Clone>(&self, t: &mut CudaRc<T>) -> Result<(), CudaError> {
-        if let Some(host_data) = &mut t.t_host {
-            unsafe {
-                result::memcpy_dtoh_async(
-                    Rc::make_mut(host_data),
-                    t.t_cuda.cu_device_ptr,
-                    self.cu_stream,
-                )
-            }?;
-            self.synchronize()?;
-        }
-        Ok(())
+    /// If you want an asynchronous copy, see [CudaDevice::take_async()].
+    ///
+    /// # Safety
+    ///
+    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn sync_copy<T>(self: &Arc<Self>, src: &[T]) -> Result<CudaSlice<T>, CudaError> {
+        let mut dst = unsafe { self.alloc(src.len()) }?;
+        self.sync_copy_into(src, &mut dst)?;
+        Ok(dst)
+    }
+
+    /// Synchronously copies data from `src` into the new allocation.
+    ///
+    /// If you want an asynchronous copy, see [CudaDevice::take_async()].
+    ///
+    /// # Panics
+    ///
+    /// If the lengths of slices are not equal, this method panics.
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn sync_copy_into<T>(
+        self: &Arc<Self>,
+        src: &[T],
+        dst: &mut CudaSlice<T>,
+    ) -> Result<(), CudaError> {
+        assert_eq!(src.len(), dst.len());
+        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, &src, self.cu_stream) }?;
+        self.synchronize()
+    }
+
+    /// Synchronously copies device memory into host memory
+    ///
+    /// # Panics
+    ///
+    /// If the lengths of slices are not equal, this method panics.
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `dst` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn sync_copy_from<T>(
+        self: &Arc<Self>,
+        src: &CudaSlice<T>,
+        dst: &mut [T],
+    ) -> Result<(), CudaError> {
+        assert_eq!(src.len(), dst.len());
+        unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr, self.cu_stream) }?;
+        self.synchronize()
+    }
+
+    /// De-allocates `src` and converts it into it's host value. You can just drop the slice if you don't
+    /// need the host data.
+    ///
+    /// # Safety
+    /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn sync_release<T: Clone + Default>(
+        self: &Arc<Self>,
+        mut src: CudaSlice<T>,
+    ) -> Result<Vec<T>, CudaError> {
+        let buf = src.host_buf.take();
+        let mut buf = buf.unwrap_or_else(|| std::vec![Default::default(); src.len]);
+        self.sync_copy_from(&src, &mut buf)?;
+        Ok(buf)
     }
 
     /// Synchronizes the stream.
-    pub(crate) fn synchronize(&self) -> Result<(), CudaError> {
+    pub fn synchronize(&self) -> Result<(), CudaError> {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
@@ -416,9 +412,8 @@ impl LaunchConfig {
     /// with 1 grid and n threads
     pub fn for_num_elems(n: u32) -> Self {
         Self {
-            // round up
-            grid_dim: ((n + 1023) / 1024, 1, 1),
-            block_dim: (n.min(1024), 1, 1),
+            grid_dim: (1, 1, 1),
+            block_dim: (n, 1, 1),
             shared_mem_bytes: 0,
         }
     }
@@ -449,22 +444,19 @@ pub unsafe trait IntoKernelParam {
 /// to ensure that [CudaFunction] works with `Params` and that the correct
 /// parameters have `&mut` in front of them.
 ///
-/// **Make sure that any mutable [CudaRc] are passed with `&mut CudaRc`,
-/// to ensure that the ref count is correctly maintained**
+/// Additionally, kernels can mutate data that is marked as immutable,
+/// such as `&CudaSlice<T>`.
 pub unsafe trait LaunchCudaFunction<Params> {
     /// Launches the [CudaFunction] with the corresponding `Params`.
-    ///
-    /// **Make sure that any mutable [CudaRc] are passed with `&mut CudaRc`,
-    /// to ensure that the ref count is correctly maintained**
     ///
     /// # Safety
     /// This method is **very** unsafe.
     /// 1. `params` can be changed regardless of `&` or `&mut` usage.
-    /// 2. `params` will be changed at some later point even after the
-    /// function returns due to async
+    /// 2. `params` will be changed at some later point after the
+    /// function returns because the kernel is executed async.
     /// 3. There are no guaruntees that the `params`
     /// are the correct number/types/order for `func`.
-    unsafe fn launch_cuda_function(
+    unsafe fn launch_async(
         &self,
         func: &CudaFunction,
         cfg: LaunchConfig,
@@ -472,28 +464,15 @@ pub unsafe trait LaunchCudaFunction<Params> {
     ) -> Result<(), CudaError>;
 }
 
-unsafe impl<T> IntoKernelParam for &mut CudaRc<T> {
+unsafe impl<T> IntoKernelParam for &mut CudaSlice<T> {
     fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        let ptr = Rc::make_mut(&mut self.t_cuda);
-        (&mut ptr.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
+        (&mut self.cu_device_ptr) as *mut sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-unsafe impl<T> IntoKernelParam for &CudaRc<T> {
+unsafe impl<T> IntoKernelParam for &CudaSlice<T> {
     fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        (&self.t_cuda.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
-unsafe impl IntoKernelParam for *const std::ffi::c_void {
-    fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        self as *mut std::ffi::c_void
-    }
-}
-
-unsafe impl IntoKernelParam for *mut std::ffi::c_void {
-    fn into_kernel_param(self) -> *mut std::ffi::c_void {
-        self
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
@@ -529,7 +508,7 @@ impl_into_kernel_param!(f64);
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
 unsafe impl<$($Vars: IntoKernelParam),*> LaunchCudaFunction<($($Vars, )*)> for CudaDevice {
-    unsafe fn launch_cuda_function(
+    unsafe fn launch_async(
         &self,
         func: &CudaFunction,
         cfg: LaunchConfig,
@@ -554,8 +533,6 @@ impl_launch!([A, B], [0, 1]);
 impl_launch!([A, B, C], [0, 1, 2]);
 impl_launch!([A, B, C, D], [0, 1, 2, 3]);
 impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
-impl_launch!([A, B, C, D, E, F], [0, 1, 2, 3, 4, 5]);
-impl_launch!([A, B, C, D, E, F, G], [0, 1, 2, 3, 4, 5, 6]);
 
 /// A builder for [CudaDevice].
 ///
@@ -634,7 +611,7 @@ impl CudaDeviceBuilder {
     /// 1. Initializes cuda with [result::init]
     /// 2. Creates the device/primary ctx, and stream
     /// 3. Uses nvrtc to compile and the modules & functions
-    pub fn build(mut self) -> Result<Rc<CudaDevice>, BuildError> {
+    pub fn build(mut self) -> Result<Arc<CudaDevice>, BuildError> {
         result::init().map_err(BuildError::InitError)?;
 
         let cu_device =
@@ -681,7 +658,7 @@ impl CudaDeviceBuilder {
             cu_stream,
             modules,
         };
-        Ok(Rc::new(device))
+        Ok(Arc::new(device))
     }
 
     fn build_module(
@@ -766,68 +743,68 @@ mod tests {
     use crate::jit::compile_ptx_with_opts;
 
     use super::*;
-    use std::rc::Rc;
 
     #[test]
-    fn test_post_build_rc_count() {
+    fn test_post_build_arc_count() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        assert_eq!(Rc::strong_count(&device), 1);
+        assert_eq!(Arc::strong_count(&device), 1);
     }
 
     #[test]
-    fn test_post_alloc_rc_counts() {
+    fn test_post_alloc_arc_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.alloc_zeros::<f32>().unwrap();
-        assert!(t.t_host.is_none());
-        assert_eq!(Rc::strong_count(&device), 2);
-        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
+        let t = device.alloc_zeros_async::<f32>(1).unwrap();
+        assert!(t.host_buf.is_none());
+        assert_eq!(Arc::strong_count(&device), 2);
     }
 
     #[test]
-    fn test_post_take_rc_counts() {
+    fn test_post_take_arc_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take(Rc::new(0.0f32)).unwrap();
-        assert!(t.t_host.is_some());
-        assert_eq!(Rc::strong_count(&device), 2);
-        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
-        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
+        let t = device.take_async(std::vec![0.0f32; 5]).unwrap();
+        assert!(t.host_buf.is_some());
+        assert_eq!(Arc::strong_count(&device), 2);
         drop(t);
-        assert_eq!(Rc::strong_count(&device), 1);
+        assert_eq!(Arc::strong_count(&device), 1);
     }
 
     #[test]
-    fn test_post_clone_rc_counts() {
+    fn test_post_clone_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let t = device.take_async(std::vec![0.0f64; 10]).unwrap();
         let r = t.clone();
-        assert_eq!(Rc::strong_count(&device), 2);
-        assert_eq!(Rc::strong_count(&t.t_cuda), 2);
-        assert_eq!(Rc::strong_count(&r.t_cuda), 2);
-        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
-        assert_eq!(r.t_host.as_ref().map(Rc::strong_count).unwrap(), 2);
+        assert_eq!(Arc::strong_count(&device), 3);
         drop(t);
-        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Arc::strong_count(&device), 2);
         drop(r);
-        assert_eq!(Rc::strong_count(&device), 1);
+        assert_eq!(Arc::strong_count(&device), 1);
     }
 
     #[test]
-    fn test_post_into_host_counts() {
+    fn test_post_clone_arc_slice_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let t = Arc::new(device.take_async(std::vec![0.0f64; 10]).unwrap());
         let r = t.clone();
+        assert_eq!(Arc::strong_count(&device), 2);
+        drop(t);
+        assert_eq!(Arc::strong_count(&device), 2);
+        drop(r);
+        assert_eq!(Arc::strong_count(&device), 1);
+    }
 
-        // NOTE: into_host mutates host data, which makes a different Rc
-        let r_host = r.into_host().unwrap();
-        assert_eq!(Rc::strong_count(&device), 2);
-        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
-        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
-        assert_eq!(Rc::strong_count(&r_host), 1);
+    #[test]
+    fn test_post_release_counts() {
+        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let t = device.take_async(std::vec![1.0f32, 2.0, 3.0]).unwrap();
+        let r = t.clone();
+        assert_eq!(Arc::strong_count(&device), 3);
+
+        let r_host = device.sync_release(r).unwrap();
+        assert_eq!(&r_host, &[1.0, 2.0, 3.0]);
+        assert_eq!(Arc::strong_count(&device), 2);
 
         drop(r_host);
-        assert_eq!(Rc::strong_count(&device), 2);
-        assert_eq!(Rc::strong_count(&t.t_cuda), 1);
-        assert_eq!(t.t_host.as_ref().map(Rc::strong_count).unwrap(), 1);
+        assert_eq!(Arc::strong_count(&device), 2);
     }
 
     #[test]
@@ -836,7 +813,7 @@ mod tests {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let (free1, total1) = result::mem_get_info().unwrap();
 
-        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let t = device.take_async(std::vec![0.0f32; 5]).unwrap();
         let (free2, total2) = result::mem_get_info().unwrap();
         assert_eq!(total1, total2);
         assert!(free2 < free1);
@@ -853,21 +830,21 @@ mod tests {
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let mut t = device.take(Rc::new(0.0f32)).unwrap();
+        let mut t = device.take_async(std::vec![0.0f32; 1]).unwrap();
         let _r = t.clone();
-        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Arc::strong_count(&device), 3);
         let _ = (&mut t).into_kernel_param();
-        assert_eq!(Rc::strong_count(&device), 3);
+        assert_eq!(Arc::strong_count(&device), 3);
     }
 
     #[test]
     fn test_ref_into_kernel_param_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take(Rc::new(0.0f32)).unwrap();
+        let t = device.take_async(std::vec![0.0f32; 1]).unwrap();
         let _r = t.clone();
-        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Arc::strong_count(&device), 3);
         let _ = (&t).into_kernel_param();
-        assert_eq!(Rc::strong_count(&device), 2);
+        assert_eq!(Arc::strong_count(&device), 3);
     }
 
     const SIN_CU: &str =
@@ -888,20 +865,14 @@ mod tests {
         let m = dev.get_module("sin").unwrap();
         let sin_kernel = m.get_fn("sin_kernel").unwrap();
 
-        let a_host = Rc::new([-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]);
-        assert_eq!(Rc::strong_count(&a_host), 1);
+        let a_host = std::vec![-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
-        let a_dev = dev.take(a_host.clone()).unwrap();
-        assert_eq!(Rc::strong_count(&a_host), 2);
-        assert_eq!(Rc::strong_count(&a_dev.t_cuda), 1);
+        let a_dev = dev.take_async(a_host.clone()).unwrap();
 
         let mut b_dev = a_dev.clone();
-        assert_eq!(Rc::strong_count(&a_host), 3);
-        assert_eq!(Rc::strong_count(&a_dev.t_cuda), 2);
-        assert_eq!(Rc::strong_count(&b_dev.t_cuda), 2);
 
         unsafe {
-            dev.launch_cuda_function(
+            dev.launch_async(
                 sin_kernel,
                 LaunchConfig::for_num_elems(10),
                 (&mut b_dev, &a_dev, &10usize),
@@ -909,19 +880,13 @@ mod tests {
             .unwrap();
         }
 
-        assert_eq!(Rc::strong_count(&a_host), 3);
-        assert_eq!(Rc::strong_count(&a_dev.t_cuda), 1);
-        assert_eq!(Rc::strong_count(&b_dev.t_cuda), 1);
+        let b_host = dev.sync_release(b_dev).unwrap();
 
-        let b_host = b_dev.into_host().unwrap();
-        assert_eq!(Rc::strong_count(&a_host), 2);
-
-        let expected = a_host.map(f32::sin);
-        for i in 0..10 {
-            assert!((b_host[i] - expected[i]).abs() <= 1e-6);
+        for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
+            let expected = a_i.sin();
+            assert!((b_i - expected).abs() <= 1e-6);
         }
 
         drop(a_dev);
-        assert_eq!(Rc::strong_count(&a_host), 1);
     }
 }

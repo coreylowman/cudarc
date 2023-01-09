@@ -1,6 +1,5 @@
 use core::mem::MaybeUninit;
 
-use crate::cudarc::CudaDevice;
 use crate::prelude::*;
 
 use super::sys::*;
