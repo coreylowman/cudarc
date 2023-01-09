@@ -5,4 +5,5 @@ fn main() {
     println!("cargo:rustc-link-lib=dylib=cudart");
     println!("cargo:rustc-link-lib=dylib=cublas");
     println!("cargo:rustc-link-lib=dylib=cublasLt");
+    println!("cargo:rustc-link-lib=dylib=cudnn");
 }
