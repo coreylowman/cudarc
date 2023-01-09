@@ -23,5 +23,4 @@ pub mod prelude {
         AsKernelParam, CudaDevice, CudaDeviceBuilder, CudaSlice, DriverError, LaunchAsync,
         LaunchConfig, ValidAsZeroBits,
     };
-    pub use crate::cudnn::*;
 }
