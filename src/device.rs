@@ -219,6 +219,58 @@ impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     }
 }
 
+pub struct CudaView<'a, T> {
+    slice: &'a CudaSlice<T>,
+    ptr: sys::CUdeviceptr,
+    len: usize,
+}
+
+pub struct CudaViewMut<'a, T> {
+    slice: &'a mut CudaSlice<T>,
+    ptr: sys::CUdeviceptr,
+    len: usize,
+}
+
+impl<T> CudaSlice<T> {
+    pub fn view(&self) -> CudaView<'_, T> {
+        CudaView {
+            ptr: self.cu_device_ptr,
+            len: self.len,
+            slice: self,
+        }
+    }
+
+    pub fn view_mut(&mut self) -> CudaViewMut<'_, T> {
+        CudaViewMut {
+            ptr: self.cu_device_ptr,
+            len: self.len,
+            slice: self,
+        }
+    }
+}
+
+impl<'a, T> CudaView<'a, T> {
+    pub fn add(&'a self, count: usize) -> CudaView<'a, T> {
+        assert!(count < self.len);
+        CudaView {
+            slice: self.slice,
+            ptr: self.ptr + (count as u64),
+            len: self.len - count,
+        }
+    }
+}
+
+impl<'a, T> CudaViewMut<'a, T> {
+    pub fn add(&'a mut self, count: usize) -> CudaViewMut<'a, T> {
+        assert!(count < self.len);
+        CudaViewMut {
+            slice: self.slice,
+            ptr: self.ptr + (count as u64),
+            len: self.len - count,
+        }
+    }
+}
+
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
 ///
@@ -569,6 +621,20 @@ unsafe impl<T> AsKernelParam for &CudaSlice<T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl<'a, T> AsKernelParam for CudaView<'a, T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl<'a, T> AsKernelParam for CudaViewMut<'a, T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
