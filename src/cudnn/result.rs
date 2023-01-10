@@ -2,6 +2,8 @@
 
 use core::mem::MaybeUninit;
 
+use alloc::sync::Arc;
+
 use crate::device::CudaDevice;
 
 use super::sys::*;
@@ -32,32 +34,36 @@ impl std::fmt::Display for CudnnError {
 impl std::error::Error for CudnnError {}
 
 // No sync because of https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#thread-safety
-pub struct CudnnHandle(pub(crate) cudnnHandle_t);
+pub struct CudnnHandle {
+    pub(crate) handle: cudnnHandle_t,
+    pub(crate) device: Arc<CudaDevice>,
+}
 impl CudnnHandle {
-    pub fn create(device: &CudaDevice) -> CudnnResult<Self> {
+    pub fn create(device: Arc<CudaDevice>) -> CudnnResult<Self> {
         let mut handle = MaybeUninit::uninit();
         unsafe {
             cudnnCreate(handle.as_mut_ptr()).result()?;
             let handle = handle.assume_init();
             cudnnSetStream(handle, device.cu_stream as *mut _).result()?;
-            Ok(Self(handle))
+            Ok(Self { handle, device })
         }
     }
 }
 impl Drop for CudnnHandle {
     fn drop(&mut self) {
-        unsafe { cudnnDestroy(self.0).result().unwrap() };
+        unsafe { cudnnDestroy(self.handle).result().unwrap() };
     }
 }
 
 #[cfg(test)]
 mod tests {
+
     use crate::device::CudaDeviceBuilder;
 
     use super::CudnnHandle;
 
     #[test]
     fn create_and_drop() {
-        let _handle = CudnnHandle::create(&CudaDeviceBuilder::new(0).build().unwrap()).unwrap();
+        let _handle = CudnnHandle::create(CudaDeviceBuilder::new(0).build().unwrap()).unwrap();
     }
 }
