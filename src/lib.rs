@@ -10,6 +10,7 @@ extern crate no_std_compat as std;
 
 pub mod blas;
 pub mod cublas;
+pub mod cudnn;
 pub mod curand;
 pub mod device;
 pub mod driver;
