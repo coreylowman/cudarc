@@ -138,10 +138,16 @@ pub enum cudaDataType_t {
     CUDA_C_64I = 25,
     CUDA_R_64U = 26,
     CUDA_C_64U = 27,
-    CUDA_R_8F_E4M3 = 28,
-    CUDA_R_8F_E5M2 = 29,
 }
 pub use self::cudaDataType_t as cudaDataType;
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum libraryPropertyType_t {
+    MAJOR_VERSION = 0,
+    MINOR_VERSION = 1,
+    PATCH_LEVEL = 2,
+}
+pub use self::libraryPropertyType_t as libraryPropertyType;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasStatus_t {
@@ -295,6 +301,15 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasGetProperty(
+        type_: libraryPropertyType,
+        value: *mut core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetCudartVersion() -> usize;
+}
+extern "C" {
     pub fn cublasSetWorkspace_v2(
         handle: cublasHandle_t,
         workspace: *mut ::core::ffi::c_void,
@@ -322,8 +337,161 @@ extern "C" {
         mode: cublasPointerMode_t,
     ) -> cublasStatus_t;
 }
+extern "C" {
+    pub fn cublasGetAtomicsMode(
+        handle: cublasHandle_t,
+        mode: *mut cublasAtomicsMode_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetAtomicsMode(
+        handle: cublasHandle_t,
+        mode: cublasAtomicsMode_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetMathMode(handle: cublasHandle_t, mode: *mut cublasMath_t) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetMathMode(handle: cublasHandle_t, mode: cublasMath_t) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetSmCountTarget(
+        handle: cublasHandle_t,
+        smCountTarget: *mut core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetSmCountTarget(
+        handle: cublasHandle_t,
+        smCountTarget: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetStatusName(status: cublasStatus_t) -> *const core::ffi::c_char;
+}
+extern "C" {
+    pub fn cublasGetStatusString(status: cublasStatus_t) -> *const core::ffi::c_char;
+}
 pub type cublasLogCallback =
     ::core::option::Option<unsafe extern "C" fn(msg: *const core::ffi::c_char)>;
+extern "C" {
+    pub fn cublasLoggerConfigure(
+        logIsOn: core::ffi::c_int,
+        logToStdOut: core::ffi::c_int,
+        logToStdErr: core::ffi::c_int,
+        logFileName: *const core::ffi::c_char,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetLoggerCallback(userCallback: cublasLogCallback) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetLoggerCallback(userCallback: *mut cublasLogCallback) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetVector(
+        n: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        incx: core::ffi::c_int,
+        devicePtr: *mut ::core::ffi::c_void,
+        incy: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetVector(
+        n: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        incx: core::ffi::c_int,
+        y: *mut ::core::ffi::c_void,
+        incy: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetMatrix(
+        rows: core::ffi::c_int,
+        cols: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        A: *const ::core::ffi::c_void,
+        lda: core::ffi::c_int,
+        B: *mut ::core::ffi::c_void,
+        ldb: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetMatrix(
+        rows: core::ffi::c_int,
+        cols: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        A: *const ::core::ffi::c_void,
+        lda: core::ffi::c_int,
+        B: *mut ::core::ffi::c_void,
+        ldb: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetVectorAsync(
+        n: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        hostPtr: *const ::core::ffi::c_void,
+        incx: core::ffi::c_int,
+        devicePtr: *mut ::core::ffi::c_void,
+        incy: core::ffi::c_int,
+        stream: cudaStream_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetVectorAsync(
+        n: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        devicePtr: *const ::core::ffi::c_void,
+        incx: core::ffi::c_int,
+        hostPtr: *mut ::core::ffi::c_void,
+        incy: core::ffi::c_int,
+        stream: cudaStream_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSetMatrixAsync(
+        rows: core::ffi::c_int,
+        cols: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        A: *const ::core::ffi::c_void,
+        lda: core::ffi::c_int,
+        B: *mut ::core::ffi::c_void,
+        ldb: core::ffi::c_int,
+        stream: cudaStream_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGetMatrixAsync(
+        rows: core::ffi::c_int,
+        cols: core::ffi::c_int,
+        elemSize: core::ffi::c_int,
+        A: *const ::core::ffi::c_void,
+        lda: core::ffi::c_int,
+        B: *mut ::core::ffi::c_void,
+        ldb: core::ffi::c_int,
+        stream: cudaStream_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasXerbla(srName: *const core::ffi::c_char, info: core::ffi::c_int);
+}
+extern "C" {
+    pub fn cublasNrm2Ex(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        result: *mut ::core::ffi::c_void,
+        resultType: cudaDataType,
+        executionType: cudaDataType,
+    ) -> cublasStatus_t;
+}
 extern "C" {
     pub fn cublasSnrm2_v2(
         handle: cublasHandle_t,
@@ -358,6 +526,36 @@ extern "C" {
         x: *const cuDoubleComplex,
         incx: core::ffi::c_int,
         result: *mut f64,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDotEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *const ::core::ffi::c_void,
+        yType: cudaDataType,
+        incy: core::ffi::c_int,
+        result: *mut ::core::ffi::c_void,
+        resultType: cudaDataType,
+        executionType: cudaDataType,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDotcEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *const ::core::ffi::c_void,
+        yType: cudaDataType,
+        incy: core::ffi::c_int,
+        result: *mut ::core::ffi::c_void,
+        resultType: cudaDataType,
+        executionType: cudaDataType,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -427,6 +625,18 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasScalEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        alpha: *const ::core::ffi::c_void,
+        alphaType: cudaDataType,
+        x: *mut ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        executionType: cudaDataType,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasSscal_v2(
         handle: cublasHandle_t,
         n: core::ffi::c_int,
@@ -481,6 +691,21 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasAxpyEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        alpha: *const ::core::ffi::c_void,
+        alphaType: cudaDataType,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *mut ::core::ffi::c_void,
+        yType: cudaDataType,
+        incy: core::ffi::c_int,
+        executiontype: cudaDataType,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasSaxpy_v2(
         handle: cublasHandle_t,
         n: core::ffi::c_int,
@@ -521,6 +746,18 @@ extern "C" {
         x: *const cuDoubleComplex,
         incx: core::ffi::c_int,
         y: *mut cuDoubleComplex,
+        incy: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCopyEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *mut ::core::ffi::c_void,
+        yType: cudaDataType,
         incy: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
@@ -605,6 +842,18 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasSwapEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *mut ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *mut ::core::ffi::c_void,
+        yType: cudaDataType,
+        incy: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasIsamax_v2(
         handle: cublasHandle_t,
         n: core::ffi::c_int,
@@ -636,6 +885,16 @@ extern "C" {
         handle: cublasHandle_t,
         n: core::ffi::c_int,
         x: *const cuDoubleComplex,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasIamaxEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
         incx: core::ffi::c_int,
         result: *mut core::ffi::c_int,
     ) -> cublasStatus_t;
@@ -674,6 +933,28 @@ extern "C" {
         x: *const cuDoubleComplex,
         incx: core::ffi::c_int,
         result: *mut core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasIaminEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        result: *mut core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasAsumEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *const ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        result: *mut ::core::ffi::c_void,
+        resultType: cudaDataType,
+        executiontype: cudaDataType,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -785,6 +1066,22 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasRotEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *mut ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *mut ::core::ffi::c_void,
+        yType: cudaDataType,
+        incy: core::ffi::c_int,
+        c: *const ::core::ffi::c_void,
+        s: *const ::core::ffi::c_void,
+        csType: cudaDataType,
+        executiontype: cudaDataType,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasSrotg_v2(
         handle: cublasHandle_t,
         a: *mut f32,
@@ -821,6 +1118,18 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasRotgEx(
+        handle: cublasHandle_t,
+        a: *mut ::core::ffi::c_void,
+        b: *mut ::core::ffi::c_void,
+        abType: cudaDataType,
+        c: *mut ::core::ffi::c_void,
+        s: *mut ::core::ffi::c_void,
+        csType: cudaDataType,
+        executiontype: cudaDataType,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasSrotm_v2(
         handle: cublasHandle_t,
         n: core::ffi::c_int,
@@ -843,6 +1152,21 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasRotmEx(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        x: *mut ::core::ffi::c_void,
+        xType: cudaDataType,
+        incx: core::ffi::c_int,
+        y: *mut ::core::ffi::c_void,
+        yType: cudaDataType,
+        incy: core::ffi::c_int,
+        param: *const ::core::ffi::c_void,
+        paramType: cudaDataType,
+        executiontype: cudaDataType,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasSrotmg_v2(
         handle: cublasHandle_t,
         d1: *mut f32,
@@ -860,6 +1184,22 @@ extern "C" {
         x1: *mut f64,
         y1: *const f64,
         param: *mut f64,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasRotmgEx(
+        handle: cublasHandle_t,
+        d1: *mut ::core::ffi::c_void,
+        d1Type: cudaDataType,
+        d2: *mut ::core::ffi::c_void,
+        d2Type: cudaDataType,
+        x1: *mut ::core::ffi::c_void,
+        x1Type: cudaDataType,
+        y1: *const ::core::ffi::c_void,
+        y1Type: cudaDataType,
+        param: *mut ::core::ffi::c_void,
+        paramType: cudaDataType,
+        executiontype: cudaDataType,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1857,6 +2197,154 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasSgemvBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f32,
+        Aarray: *const *const f32,
+        lda: core::ffi::c_int,
+        xarray: *const *const f32,
+        incx: core::ffi::c_int,
+        beta: *const f32,
+        yarray: *const *mut f32,
+        incy: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgemvBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f64,
+        Aarray: *const *const f64,
+        lda: core::ffi::c_int,
+        xarray: *const *const f64,
+        incx: core::ffi::c_int,
+        beta: *const f64,
+        yarray: *const *mut f64,
+        incy: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemvBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuComplex,
+        Aarray: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        xarray: *const *const cuComplex,
+        incx: core::ffi::c_int,
+        beta: *const cuComplex,
+        yarray: *const *mut cuComplex,
+        incy: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgemvBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        Aarray: *const *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        xarray: *const *const cuDoubleComplex,
+        incx: core::ffi::c_int,
+        beta: *const cuDoubleComplex,
+        yarray: *const *mut cuDoubleComplex,
+        incy: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgemvStridedBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const f32,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        x: *const f32,
+        incx: core::ffi::c_int,
+        stridex: core::ffi::c_longlong,
+        beta: *const f32,
+        y: *mut f32,
+        incy: core::ffi::c_int,
+        stridey: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgemvStridedBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f64,
+        A: *const f64,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        x: *const f64,
+        incx: core::ffi::c_int,
+        stridex: core::ffi::c_longlong,
+        beta: *const f64,
+        y: *mut f64,
+        incy: core::ffi::c_int,
+        stridey: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemvStridedBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        x: *const cuComplex,
+        incx: core::ffi::c_int,
+        stridex: core::ffi::c_longlong,
+        beta: *const cuComplex,
+        y: *mut cuComplex,
+        incy: core::ffi::c_int,
+        stridey: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgemvStridedBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        x: *const cuDoubleComplex,
+        incx: core::ffi::c_int,
+        stridex: core::ffi::c_longlong,
+        beta: *const cuDoubleComplex,
+        y: *mut cuDoubleComplex,
+        incy: core::ffi::c_int,
+        stridey: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasSgemm_v2(
         handle: cublasHandle_t,
         transa: cublasOperation_t,
@@ -1911,6 +2399,45 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasCgemm3m(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        B: *const cuComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemm3mEx(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        B: *const ::core::ffi::c_void,
+        Btype: cudaDataType,
+        ldb: core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasZgemm_v2(
         handle: cublasHandle_t,
         transa: cublasOperation_t,
@@ -1926,6 +2453,111 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgemm3m(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        B: *const cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuDoubleComplex,
+        C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgemmEx(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        B: *const ::core::ffi::c_void,
+        Btype: cudaDataType,
+        ldb: core::ffi::c_int,
+        beta: *const f32,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGemmEx(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const ::core::ffi::c_void,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        B: *const ::core::ffi::c_void,
+        Btype: cudaDataType,
+        ldb: core::ffi::c_int,
+        beta: *const ::core::ffi::c_void,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+        computeType: cublasComputeType_t,
+        algo: cublasGemmAlgo_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemmEx(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        B: *const ::core::ffi::c_void,
+        Btype: cudaDataType,
+        ldb: core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasUint8gemmBias(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        transc: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        A: *const core::ffi::c_uchar,
+        A_bias: core::ffi::c_int,
+        lda: core::ffi::c_int,
+        B: *const core::ffi::c_uchar,
+        B_bias: core::ffi::c_int,
+        ldb: core::ffi::c_int,
+        C: *mut core::ffi::c_uchar,
+        C_bias: core::ffi::c_int,
+        ldc: core::ffi::c_int,
+        C_mult: core::ffi::c_int,
+        C_shift: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
 extern "C" {
@@ -1989,6 +2621,40 @@ extern "C" {
     ) -> cublasStatus_t;
 }
 extern "C" {
+    pub fn cublasCsyrkEx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCsyrk3mEx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
     pub fn cublasCherk_v2(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
@@ -2015,6 +2681,40 @@ extern "C" {
         lda: core::ffi::c_int,
         beta: *const f64,
         C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCherkEx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        beta: *const f32,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCherk3mEx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        beta: *const f32,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
         ldc: core::ffi::c_int,
     ) -> cublasStatus_t;
 }
@@ -2105,6 +2805,108 @@ extern "C" {
 }
 extern "C" {
     pub fn cublasZher2k_v2(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        B: *const cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        beta: *const f64,
+        C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSsyrkx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const f32,
+        lda: core::ffi::c_int,
+        B: *const f32,
+        ldb: core::ffi::c_int,
+        beta: *const f32,
+        C: *mut f32,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDsyrkx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f64,
+        A: *const f64,
+        lda: core::ffi::c_int,
+        B: *const f64,
+        ldb: core::ffi::c_int,
+        beta: *const f64,
+        C: *mut f64,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCsyrkx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        B: *const cuComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZsyrkx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        B: *const cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuDoubleComplex,
+        C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCherkx(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        B: *const cuComplex,
+        ldb: core::ffi::c_int,
+        beta: *const f32,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZherkx(
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2356,5 +3158,849 @@ extern "C" {
         ldb: core::ffi::c_int,
         C: *mut cuDoubleComplex,
         ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgemmBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f32,
+        Aarray: *const *const f32,
+        lda: core::ffi::c_int,
+        Barray: *const *const f32,
+        ldb: core::ffi::c_int,
+        beta: *const f32,
+        Carray: *const *mut f32,
+        ldc: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgemmBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f64,
+        Aarray: *const *const f64,
+        lda: core::ffi::c_int,
+        Barray: *const *const f64,
+        ldb: core::ffi::c_int,
+        beta: *const f64,
+        Carray: *const *mut f64,
+        ldc: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemmBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        Aarray: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        Barray: *const *const cuComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuComplex,
+        Carray: *const *mut cuComplex,
+        ldc: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemm3mBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        Aarray: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        Barray: *const *const cuComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuComplex,
+        Carray: *const *mut cuComplex,
+        ldc: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgemmBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        Aarray: *const *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        Barray: *const *const cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        beta: *const cuDoubleComplex,
+        Carray: *const *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGemmBatchedEx(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const ::core::ffi::c_void,
+        Aarray: *const *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        Barray: *const *const ::core::ffi::c_void,
+        Btype: cudaDataType,
+        ldb: core::ffi::c_int,
+        beta: *const ::core::ffi::c_void,
+        Carray: *const *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+        computeType: cublasComputeType_t,
+        algo: cublasGemmAlgo_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasGemmStridedBatchedEx(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const ::core::ffi::c_void,
+        A: *const ::core::ffi::c_void,
+        Atype: cudaDataType,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        B: *const ::core::ffi::c_void,
+        Btype: cudaDataType,
+        ldb: core::ffi::c_int,
+        strideB: core::ffi::c_longlong,
+        beta: *const ::core::ffi::c_void,
+        C: *mut ::core::ffi::c_void,
+        Ctype: cudaDataType,
+        ldc: core::ffi::c_int,
+        strideC: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+        computeType: cublasComputeType_t,
+        algo: cublasGemmAlgo_t,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgemmStridedBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const f32,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        B: *const f32,
+        ldb: core::ffi::c_int,
+        strideB: core::ffi::c_longlong,
+        beta: *const f32,
+        C: *mut f32,
+        ldc: core::ffi::c_int,
+        strideC: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgemmStridedBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const f64,
+        A: *const f64,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        B: *const f64,
+        ldb: core::ffi::c_int,
+        strideB: core::ffi::c_longlong,
+        beta: *const f64,
+        C: *mut f64,
+        ldc: core::ffi::c_int,
+        strideC: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemmStridedBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        B: *const cuComplex,
+        ldb: core::ffi::c_int,
+        strideB: core::ffi::c_longlong,
+        beta: *const cuComplex,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+        strideC: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgemm3mStridedBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        B: *const cuComplex,
+        ldb: core::ffi::c_int,
+        strideB: core::ffi::c_longlong,
+        beta: *const cuComplex,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+        strideC: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgemmStridedBatched(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        k: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        strideA: core::ffi::c_longlong,
+        B: *const cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        strideB: core::ffi::c_longlong,
+        beta: *const cuDoubleComplex,
+        C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+        strideC: core::ffi::c_longlong,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgeam(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const f32,
+        lda: core::ffi::c_int,
+        beta: *const f32,
+        B: *const f32,
+        ldb: core::ffi::c_int,
+        C: *mut f32,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgeam(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f64,
+        A: *const f64,
+        lda: core::ffi::c_int,
+        beta: *const f64,
+        B: *const f64,
+        ldb: core::ffi::c_int,
+        C: *mut f64,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgeam(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        beta: *const cuComplex,
+        B: *const cuComplex,
+        ldb: core::ffi::c_int,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgeam(
+        handle: cublasHandle_t,
+        transa: cublasOperation_t,
+        transb: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        beta: *const cuDoubleComplex,
+        B: *const cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgetrfBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *mut f32,
+        lda: core::ffi::c_int,
+        P: *mut core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgetrfBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *mut f64,
+        lda: core::ffi::c_int,
+        P: *mut core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgetrfBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *mut cuComplex,
+        lda: core::ffi::c_int,
+        P: *mut core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgetrfBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *mut cuDoubleComplex,
+        lda: core::ffi::c_int,
+        P: *mut core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgetriBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const f32,
+        lda: core::ffi::c_int,
+        P: *const core::ffi::c_int,
+        C: *const *mut f32,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgetriBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const f64,
+        lda: core::ffi::c_int,
+        P: *const core::ffi::c_int,
+        C: *const *mut f64,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgetriBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        P: *const core::ffi::c_int,
+        C: *const *mut cuComplex,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgetriBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        P: *const core::ffi::c_int,
+        C: *const *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgetrsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *const f32,
+        lda: core::ffi::c_int,
+        devIpiv: *const core::ffi::c_int,
+        Barray: *const *mut f32,
+        ldb: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgetrsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *const f64,
+        lda: core::ffi::c_int,
+        devIpiv: *const core::ffi::c_int,
+        Barray: *const *mut f64,
+        ldb: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgetrsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        devIpiv: *const core::ffi::c_int,
+        Barray: *const *mut cuComplex,
+        ldb: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgetrsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        devIpiv: *const core::ffi::c_int,
+        Barray: *const *mut cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasStrsmBatched(
+        handle: cublasHandle_t,
+        side: cublasSideMode_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        diag: cublasDiagType_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f32,
+        A: *const *const f32,
+        lda: core::ffi::c_int,
+        B: *const *mut f32,
+        ldb: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDtrsmBatched(
+        handle: cublasHandle_t,
+        side: cublasSideMode_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        diag: cublasDiagType_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const f64,
+        A: *const *const f64,
+        lda: core::ffi::c_int,
+        B: *const *mut f64,
+        ldb: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCtrsmBatched(
+        handle: cublasHandle_t,
+        side: cublasSideMode_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        diag: cublasDiagType_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        B: *const *mut cuComplex,
+        ldb: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZtrsmBatched(
+        handle: cublasHandle_t,
+        side: cublasSideMode_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        diag: cublasDiagType_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        B: *const *mut cuDoubleComplex,
+        ldb: core::ffi::c_int,
+        batchCount: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSmatinvBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const f32,
+        lda: core::ffi::c_int,
+        Ainv: *const *mut f32,
+        lda_inv: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDmatinvBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const f64,
+        lda: core::ffi::c_int,
+        Ainv: *const *mut f64,
+        lda_inv: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCmatinvBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const cuComplex,
+        lda: core::ffi::c_int,
+        Ainv: *const *mut cuComplex,
+        lda_inv: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZmatinvBatched(
+        handle: cublasHandle_t,
+        n: core::ffi::c_int,
+        A: *const *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        Ainv: *const *mut cuDoubleComplex,
+        lda_inv: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgeqrfBatched(
+        handle: cublasHandle_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        Aarray: *const *mut f32,
+        lda: core::ffi::c_int,
+        TauArray: *const *mut f32,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgeqrfBatched(
+        handle: cublasHandle_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        Aarray: *const *mut f64,
+        lda: core::ffi::c_int,
+        TauArray: *const *mut f64,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgeqrfBatched(
+        handle: cublasHandle_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        Aarray: *const *mut cuComplex,
+        lda: core::ffi::c_int,
+        TauArray: *const *mut cuComplex,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgeqrfBatched(
+        handle: cublasHandle_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        Aarray: *const *mut cuDoubleComplex,
+        lda: core::ffi::c_int,
+        TauArray: *const *mut cuDoubleComplex,
+        info: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSgelsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *mut f32,
+        lda: core::ffi::c_int,
+        Carray: *const *mut f32,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        devInfoArray: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDgelsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *mut f64,
+        lda: core::ffi::c_int,
+        Carray: *const *mut f64,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        devInfoArray: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCgelsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *mut cuComplex,
+        lda: core::ffi::c_int,
+        Carray: *const *mut cuComplex,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        devInfoArray: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZgelsBatched(
+        handle: cublasHandle_t,
+        trans: cublasOperation_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        nrhs: core::ffi::c_int,
+        Aarray: *const *mut cuDoubleComplex,
+        lda: core::ffi::c_int,
+        Carray: *const *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+        info: *mut core::ffi::c_int,
+        devInfoArray: *mut core::ffi::c_int,
+        batchSize: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasSdgmm(
+        handle: cublasHandle_t,
+        mode: cublasSideMode_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        A: *const f32,
+        lda: core::ffi::c_int,
+        x: *const f32,
+        incx: core::ffi::c_int,
+        C: *mut f32,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDdgmm(
+        handle: cublasHandle_t,
+        mode: cublasSideMode_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        A: *const f64,
+        lda: core::ffi::c_int,
+        x: *const f64,
+        incx: core::ffi::c_int,
+        C: *mut f64,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCdgmm(
+        handle: cublasHandle_t,
+        mode: cublasSideMode_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        x: *const cuComplex,
+        incx: core::ffi::c_int,
+        C: *mut cuComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZdgmm(
+        handle: cublasHandle_t,
+        mode: cublasSideMode_t,
+        m: core::ffi::c_int,
+        n: core::ffi::c_int,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        x: *const cuDoubleComplex,
+        incx: core::ffi::c_int,
+        C: *mut cuDoubleComplex,
+        ldc: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasStpttr(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        AP: *const f32,
+        A: *mut f32,
+        lda: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDtpttr(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        AP: *const f64,
+        A: *mut f64,
+        lda: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCtpttr(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        AP: *const cuComplex,
+        A: *mut cuComplex,
+        lda: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZtpttr(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        AP: *const cuDoubleComplex,
+        A: *mut cuDoubleComplex,
+        lda: core::ffi::c_int,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasStrttp(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        A: *const f32,
+        lda: core::ffi::c_int,
+        AP: *mut f32,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasDtrttp(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        A: *const f64,
+        lda: core::ffi::c_int,
+        AP: *mut f64,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasCtrttp(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        A: *const cuComplex,
+        lda: core::ffi::c_int,
+        AP: *mut cuComplex,
+    ) -> cublasStatus_t;
+}
+extern "C" {
+    pub fn cublasZtrttp(
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        n: core::ffi::c_int,
+        A: *const cuDoubleComplex,
+        lda: core::ffi::c_int,
+        AP: *mut cuDoubleComplex,
     ) -> cublasStatus_t;
 }
