@@ -77,6 +77,41 @@
 //!
 //! Note: Launching kernels is **extremely unsafe**. See [LaunchAsync] for more info.
 //!
+//! ## Sub slices of [CudaSlice]
+//!
+//! For some operations, it is necessary to only operate on a small part of a single [CudaSlice].
+//! For example, the slice may represent a batch of items, and you want to run separate kernels
+//! on each of the items in the batch.
+//!
+//! Use [CudaSlice::try_slice()] and [CudaSlice::try_slice_mut()] for this. The returned
+//! views ([CudaView] and [CudaViewMut] hold references to the owning [CudaSlice],
+//! so rust's ownership system handles safety here.
+//!
+//! These view structs can be used with [CudaFunction], however instead of passing them by
+//! reference, you pass ownership of them to the kernel launch. This is to ensure they
+//! *are only used once*. If you want to re-use them you can use the same original slice
+//! to create another view.
+//!
+//! ```rust
+//! # use cudarc::device::*;
+//! # use cudarc::jit::*;
+//! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
+//! let mut a: CudaSlice<f32> = device.alloc_zeros_async::<f32>(3 * 10).unwrap();
+//! for i_batch in 0..3 {
+//!     let a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
+//!     let f: CudaFunction = device.get_func("module_key", "my_function").unwrap();
+//!     let cfg = LaunchConfig::for_num_elems(10);
+//!     unsafe { f.launch_async(cfg, (a_sub_view,)) }.unwrap();
+//! }
+//! ```
+//!
+//! #### A note on implementation
+//!
+//! It would be possible to re-use [CudaSlice] itself for sub-slices, however that would involve adding
+//! another structure underneath the hood that is wrapped in an [Arc] to minimize data cloning. Overall
+//! it seemed more complex than the current implementation.
+//!
 //! # Safety
 //!
 //! There are a number of aspects to this, but at a high level this API utilizes [std::sync::Arc] to
@@ -219,54 +254,59 @@ impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     }
 }
 
+/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()],
+/// which implements [AsKernelParam] for use with kernels.
+///
+/// See module docstring for more details.
+#[allow(unused)]
 pub struct CudaView<'a, T> {
     slice: &'a CudaSlice<T>,
     ptr: sys::CUdeviceptr,
-    len: usize,
 }
 
+/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()],
+/// which implements [AsKernelParam] for use with kernels.
+///
+/// See module docstring for more details.
+#[allow(unused)]
 pub struct CudaViewMut<'a, T> {
     slice: &'a mut CudaSlice<T>,
     ptr: sys::CUdeviceptr,
-    len: usize,
 }
 
 impl<T> CudaSlice<T> {
-    pub fn view(&self) -> CudaView<'_, T> {
-        CudaView {
-            ptr: self.cu_device_ptr,
-            len: self.len,
-            slice: self,
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `range.start >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn try_slice(&self, range: std::ops::RangeFrom<usize>) -> Option<CudaView<'_, T>> {
+        if range.start < self.len {
+            Some(CudaView {
+                ptr: self.cu_device_ptr + (range.start * std::mem::size_of::<T>()) as u64,
+                slice: self,
+            })
+        } else {
+            None
         }
     }
 
-    pub fn view_mut(&mut self) -> CudaViewMut<'_, T> {
-        CudaViewMut {
-            ptr: self.cu_device_ptr,
-            len: self.len,
-            slice: self,
-        }
-    }
-}
-
-impl<'a, T> CudaView<'a, T> {
-    pub fn add(&'a self, count: usize) -> CudaView<'a, T> {
-        assert!(count < self.len);
-        CudaView {
-            slice: self.slice,
-            ptr: self.ptr + (count as u64),
-            len: self.len - count,
-        }
-    }
-}
-
-impl<'a, T> CudaViewMut<'a, T> {
-    pub fn add(&'a mut self, count: usize) -> CudaViewMut<'a, T> {
-        assert!(count < self.len);
-        CudaViewMut {
-            slice: self.slice,
-            ptr: self.ptr + (count as u64),
-            len: self.len - count,
+    /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `offset >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn try_slice_mut(
+        &mut self,
+        range: std::ops::RangeFrom<usize>,
+    ) -> Option<CudaViewMut<'_, T>> {
+        if range.start < self.len {
+            Some(CudaViewMut {
+                ptr: self.cu_device_ptr + (range.start * std::mem::size_of::<T>()) as u64,
+                slice: self,
+            })
+        } else {
+            None
         }
     }
 }
@@ -1147,6 +1187,36 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
                 assert_eq!(v, 0.841471);
             }
         }
+    }
+
+    #[test]
+    fn test_launch_with_views() {
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx(ptx, "sin", &["sin_kernel"])
+            .build()
+            .unwrap();
+
+        let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
+        let a_dev = dev.take_async(a_host.clone().to_vec()).unwrap();
+        let mut b_dev = a_dev.clone();
+
+        for i in 0..5 {
+            let a_sub = a_dev.try_slice(i * 2..).unwrap();
+            let b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
+            let f = dev.get_func("sin", "sin_kernel").unwrap();
+            unsafe { f.launch_async(LaunchConfig::for_num_elems(2), (b_sub, a_sub, 2usize)) }
+                .unwrap();
+        }
+
+        let b_host = dev.sync_release(b_dev).unwrap();
+
+        for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
+            let expected = a_i.sin();
+            assert!((b_i - expected).abs() <= 1e-6);
+        }
+
+        drop(a_dev);
     }
 
     const TEST_KERNELS: &str = "
