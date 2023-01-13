@@ -24,6 +24,8 @@ impl std::fmt::Display for CublasError {
 #[cfg(feature = "std")]
 impl std::error::Error for CublasError {}
 
+/// Creates a handle to the cuBLAS library. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublascreate)
 pub fn create_handle() -> Result<sys::cublasHandle_t, CublasError> {
     let mut handle = MaybeUninit::uninit();
     unsafe {
@@ -32,10 +34,22 @@ pub fn create_handle() -> Result<sys::cublasHandle_t, CublasError> {
     }
 }
 
+/// Destroys a handle previously created with [create_handle()]. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasdestroy)
+///
+/// # Safety
+///
+/// `handle` must not have been freed already.
 pub unsafe fn destroy_handle(handle: sys::cublasHandle_t) -> Result<(), CublasError> {
     sys::cublasDestroy_v2(handle).result()
 }
 
+/// Sets the stream cuBLAS will use. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublassetstream)
+///
+/// # Safety
+///
+/// `handle` and `stream` must be valid.
 pub unsafe fn set_stream(
     handle: sys::cublasHandle_t,
     stream: sys::cudaStream_t,
@@ -43,6 +57,15 @@ pub unsafe fn set_stream(
     sys::cublasSetStream_v2(handle, stream).result()
 }
 
+/// Single precision matrix vector multiplication. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemv)
+///
+/// # Safety
+///
+/// - `a`, `x`, and `y` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn sgemv(
     handle: sys::cublasHandle_t,
     trans: sys::cublasOperation_t,
@@ -60,6 +83,15 @@ pub unsafe fn sgemv(
     sys::cublasSgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
+/// Double precision matrix vector multiplication. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemv)
+///
+/// # Safety
+///
+/// - `a`, `x`, and `y` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn dgemv(
     handle: sys::cublasHandle_t,
     trans: sys::cublasOperation_t,
@@ -77,6 +109,15 @@ pub unsafe fn dgemv(
     sys::cublasDgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
+/// Single precision matmul. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn sgemm(
     handle: sys::cublasHandle_t,
     transa: sys::cublasOperation_t,
@@ -99,6 +140,15 @@ pub unsafe fn sgemm(
     .result()
 }
 
+/// Double precision matmul. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn dgemm(
     handle: sys::cublasHandle_t,
     transa: sys::cublasOperation_t,
