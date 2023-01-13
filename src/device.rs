@@ -87,10 +87,7 @@
 //! views ([CudaView] and [CudaViewMut] hold references to the owning [CudaSlice],
 //! so rust's ownership system handles safety here.
 //!
-//! These view structs can be used with [CudaFunction], however instead of passing them by
-//! reference, you pass ownership of them to the kernel launch. This is to ensure they
-//! *are only used once*. If you want to re-use them you can use the same original slice
-//! to create another view.
+//! These view structs can be used with [CudaFunction].
 //!
 //! ```rust
 //! # use cudarc::device::*;
@@ -99,10 +96,10 @@
 //! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
 //! let mut a: CudaSlice<f32> = device.alloc_zeros_async::<f32>(3 * 10).unwrap();
 //! for i_batch in 0..3 {
-//!     let a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
+//!     let mut a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
 //!     let f: CudaFunction = device.get_func("module_key", "my_function").unwrap();
 //!     let cfg = LaunchConfig::for_num_elems(10);
-//!     unsafe { f.launch_async(cfg, (a_sub_view,)) }.unwrap();
+//!     unsafe { f.launch_async(cfg, (&mut a_sub_view,)) }.unwrap();
 //! }
 //! ```
 //!
@@ -308,6 +305,40 @@ impl<T> CudaSlice<T> {
         } else {
             None
         }
+    }
+}
+
+/// Abstraction over [CudaSlice]/[CudaView]
+pub trait DevicePtr<T> {
+    fn device_ptr(&self) -> &sys::CUdeviceptr;
+}
+
+impl<T> DevicePtr<T> for CudaSlice<T> {
+    fn device_ptr(&self) -> &sys::CUdeviceptr {
+        &self.cu_device_ptr
+    }
+}
+
+impl<'a, T> DevicePtr<T> for CudaView<'a, T> {
+    fn device_ptr(&self) -> &sys::CUdeviceptr {
+        &self.ptr
+    }
+}
+
+/// Abstraction over [CudaSlice]/[CudaViewMut]
+pub trait DevicePtrMut<T> {
+    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr;
+}
+
+impl<T> DevicePtrMut<T> for CudaSlice<T> {
+    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
+        &mut self.cu_device_ptr
+    }
+}
+
+impl<'a, T> DevicePtrMut<T> for CudaView<'a, T> {
+    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
+        &mut self.ptr
     }
 }
 
@@ -664,14 +695,14 @@ unsafe impl<T> AsKernelParam for &CudaSlice<T> {
     }
 }
 
-unsafe impl<'a, T> AsKernelParam for CudaView<'a, T> {
+unsafe impl<'a, T> AsKernelParam for &CudaView<'a, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-unsafe impl<'a, T> AsKernelParam for CudaViewMut<'a, T> {
+unsafe impl<'a, T> AsKernelParam for &mut CudaViewMut<'a, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
@@ -1203,9 +1234,9 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
         for i in 0..5 {
             let a_sub = a_dev.try_slice(i * 2..).unwrap();
-            let b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
+            let mut b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
             let f = dev.get_func("sin", "sin_kernel").unwrap();
-            unsafe { f.launch_async(LaunchConfig::for_num_elems(2), (b_sub, a_sub, 2usize)) }
+            unsafe { f.launch_async(LaunchConfig::for_num_elems(2), (&mut b_sub, &a_sub, 2usize)) }
                 .unwrap();
         }
 
