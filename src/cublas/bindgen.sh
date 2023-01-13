@@ -3,7 +3,7 @@ set -exu
 
 bindgen \
   --whitelist-type="^cublas.*" \
-  --whitelist-function="^cublas.*_v2" \
+  --whitelist-function="^cublas.*" \
   --default-enum-style=rust \
   --no-doc-comments \
   --with-derive-default \
