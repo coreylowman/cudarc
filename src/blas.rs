@@ -3,7 +3,7 @@
 
 use crate::cublas::{result, result::CublasError, sys};
 use crate::device::{CudaDevice, DevicePtr, DevicePtrMut};
-use core::ffi::c_int;
+use core::ffi::{c_int, c_longlong};
 use std::sync::Arc;
 
 /// Wrapper around [sys::cublasHandle_t]
@@ -134,9 +134,19 @@ pub struct GemmConfig<T> {
     pub ldc: c_int,
 }
 
-/// Matrix matrix multiplication with elements of type `T`
+/// Configuration for [Gemm] strided batched call
+pub struct StridedBatchedConfig<T> {
+    pub gemm: GemmConfig<T>,
+    pub batch_size: c_int,
+    pub stride_a: c_longlong,
+    pub stride_b: c_longlong,
+    pub stride_c: c_longlong,
+}
+
+/// Matrix matrix multiplication with elements of type `T`.
 pub trait Gemm<T> {
-    /// Matrix matrix multiplication
+    /// Matrix matrix multiplication. See
+    /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
     ///
     /// # Safety
     /// This is unsafe because improper arguments may lead to invalid
@@ -144,6 +154,20 @@ pub trait Gemm<T> {
     unsafe fn gemm_async<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
         &self,
         cfg: GemmConfig<T>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError>;
+
+    /// Batched matrix multiplication with stride support on batch dimension. See
+    /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemmstridedbatched)
+    ///
+    /// # Safety
+    /// This is unsafe because improper arguments may lead to invalid
+    /// memory accesses.
+    unsafe fn gemm_strided_batched_async<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
+        &self,
+        cfg: StridedBatchedConfig<T>,
         a: &A,
         b: &B,
         c: &mut C,
@@ -175,6 +199,39 @@ impl Gemm<f32> for CudaBlas {
             cfg.ldc,
         )
     }
+
+    unsafe fn gemm_strided_batched_async<
+        A: DevicePtr<f32>,
+        B: DevicePtr<f32>,
+        C: DevicePtrMut<f32>,
+    >(
+        &self,
+        cfg: StridedBatchedConfig<f32>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError> {
+        result::sgemm_strided_batched(
+            self.handle,
+            cfg.gemm.transa,
+            cfg.gemm.transb,
+            cfg.gemm.m,
+            cfg.gemm.n,
+            cfg.gemm.k,
+            (&cfg.gemm.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.gemm.lda,
+            cfg.stride_a,
+            *b.device_ptr() as *const _,
+            cfg.gemm.ldb,
+            cfg.stride_b,
+            (&cfg.gemm.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.gemm.ldc,
+            cfg.stride_c,
+            cfg.batch_size,
+        )
+    }
 }
 
 impl Gemm<f64> for CudaBlas {
@@ -200,6 +257,39 @@ impl Gemm<f64> for CudaBlas {
             (&cfg.beta) as *const _,
             *c.device_ptr_mut() as *mut _,
             cfg.ldc,
+        )
+    }
+
+    unsafe fn gemm_strided_batched_async<
+        A: DevicePtr<f64>,
+        B: DevicePtr<f64>,
+        C: DevicePtrMut<f64>,
+    >(
+        &self,
+        cfg: StridedBatchedConfig<f64>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError> {
+        result::dgemm_strided_batched(
+            self.handle,
+            cfg.gemm.transa,
+            cfg.gemm.transb,
+            cfg.gemm.m,
+            cfg.gemm.n,
+            cfg.gemm.k,
+            (&cfg.gemm.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.gemm.lda,
+            cfg.stride_a,
+            *b.device_ptr() as *const _,
+            cfg.gemm.ldb,
+            cfg.stride_b,
+            (&cfg.gemm.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.gemm.ldc,
+            cfg.stride_c,
+            cfg.batch_size,
         )
     }
 }
