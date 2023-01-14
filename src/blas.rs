@@ -2,8 +2,8 @@
 #![allow(clippy::too_many_arguments)]
 
 use crate::cublas::{result, result::CublasError, sys};
-use crate::device::{CudaDevice, CudaSlice};
-use core::ffi::c_int;
+use crate::device::{CudaDevice, DevicePtr, DevicePtrMut};
+use core::ffi::{c_int, c_longlong};
 use std::sync::Arc;
 
 /// Wrapper around [sys::cublasHandle_t]
@@ -42,6 +42,18 @@ impl Drop for CudaBlas {
     }
 }
 
+/// Configuration for [Gemv]
+pub struct GemvConfig<T> {
+    pub trans: sys::cublasOperation_t,
+    pub m: c_int,
+    pub n: c_int,
+    pub alpha: T,
+    pub lda: c_int,
+    pub incx: c_int,
+    pub beta: T,
+    pub incy: c_int,
+}
+
 /// Matrix vector multiplication with elements of type `T`
 pub trait Gemv<T> {
     /// Matrix vector multiplication.
@@ -49,179 +61,235 @@ pub trait Gemv<T> {
     /// # Safety
     /// This is unsafe because improper arguments may lead to invalid
     /// memory accesses.
-    unsafe fn gemv_async(
+    unsafe fn gemv_async<A: DevicePtr<T>, X: DevicePtr<T>, Y: DevicePtrMut<T>>(
         &self,
-        trans: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        alpha: T,
-        a: &CudaSlice<T>,
-        lda: c_int,
-        x: &CudaSlice<T>,
-        incx: c_int,
-        beta: T,
-        y: &mut CudaSlice<T>,
-        incy: c_int,
+        cfg: GemvConfig<T>,
+        a: &A,
+        x: &X,
+        y: &mut Y,
     ) -> Result<(), CublasError>;
 }
 
 impl Gemv<f32> for CudaBlas {
-    unsafe fn gemv_async(
+    unsafe fn gemv_async<A: DevicePtr<f32>, X: DevicePtr<f32>, Y: DevicePtrMut<f32>>(
         &self,
-        trans: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        alpha: f32,
-        a: &CudaSlice<f32>,
-        lda: c_int,
-        x: &CudaSlice<f32>,
-        incx: c_int,
-        beta: f32,
-        y: &mut CudaSlice<f32>,
-        incy: c_int,
+        cfg: GemvConfig<f32>,
+        a: &A,
+        x: &X,
+        y: &mut Y,
     ) -> Result<(), CublasError> {
         result::sgemv(
             self.handle,
-            trans,
-            m,
-            n,
-            (&alpha) as *const _,
-            a.cu_device_ptr as *const _,
-            lda,
-            x.cu_device_ptr as *const _,
-            incx,
-            (&beta) as *const _,
-            y.cu_device_ptr as *mut _,
-            incy,
+            cfg.trans,
+            cfg.m,
+            cfg.n,
+            (&cfg.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.lda,
+            *x.device_ptr() as *const _,
+            cfg.incx,
+            (&cfg.beta) as *const _,
+            *y.device_ptr_mut() as *mut _,
+            cfg.incy,
         )
     }
 }
 
 impl Gemv<f64> for CudaBlas {
-    unsafe fn gemv_async(
+    unsafe fn gemv_async<A: DevicePtr<f64>, X: DevicePtr<f64>, Y: DevicePtrMut<f64>>(
         &self,
-        trans: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        alpha: f64,
-        a: &CudaSlice<f64>,
-        lda: c_int,
-        x: &CudaSlice<f64>,
-        incx: c_int,
-        beta: f64,
-        y: &mut CudaSlice<f64>,
-        incy: c_int,
+        cfg: GemvConfig<f64>,
+        a: &A,
+        x: &X,
+        y: &mut Y,
     ) -> Result<(), CublasError> {
         result::dgemv(
             self.handle,
-            trans,
-            m,
-            n,
-            (&alpha) as *const _,
-            a.cu_device_ptr as *const _,
-            lda,
-            x.cu_device_ptr as *const _,
-            incx,
-            (&beta) as *const _,
-            y.cu_device_ptr as *mut _,
-            incy,
+            cfg.trans,
+            cfg.m,
+            cfg.n,
+            (&cfg.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.lda,
+            *x.device_ptr() as *const _,
+            cfg.incx,
+            (&cfg.beta) as *const _,
+            *y.device_ptr_mut() as *mut _,
+            cfg.incy,
         )
     }
 }
 
-/// Matrix matrix multiplication with elements of type `T`
+/// Configuration for [Gemm]
+pub struct GemmConfig<T> {
+    pub transa: sys::cublasOperation_t,
+    pub transb: sys::cublasOperation_t,
+    pub m: c_int,
+    pub n: c_int,
+    pub k: c_int,
+    pub alpha: T,
+    pub lda: c_int,
+    pub ldb: c_int,
+    pub beta: T,
+    pub ldc: c_int,
+}
+
+/// Configuration for [Gemm] strided batched call
+pub struct StridedBatchedConfig<T> {
+    pub gemm: GemmConfig<T>,
+    pub batch_size: c_int,
+    pub stride_a: c_longlong,
+    pub stride_b: c_longlong,
+    pub stride_c: c_longlong,
+}
+
+/// Matrix matrix multiplication with elements of type `T`.
 pub trait Gemm<T> {
-    /// Matrix matrix multiplication
+    /// Matrix matrix multiplication. See
+    /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
     ///
     /// # Safety
     /// This is unsafe because improper arguments may lead to invalid
     /// memory accesses.
-    unsafe fn gemm_async(
+    unsafe fn gemm_async<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
         &self,
-        transa: sys::cublasOperation_t,
-        transb: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        k: c_int,
-        alpha: T,
-        a: &CudaSlice<T>,
-        lda: c_int,
-        b: &CudaSlice<T>,
-        ldb: c_int,
-        beta: T,
-        c: &mut CudaSlice<T>,
-        ldc: c_int,
+        cfg: GemmConfig<T>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError>;
+
+    /// Batched matrix multiplication with stride support on batch dimension. See
+    /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemmstridedbatched)
+    ///
+    /// # Safety
+    /// This is unsafe because improper arguments may lead to invalid
+    /// memory accesses.
+    unsafe fn gemm_strided_batched_async<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
+        &self,
+        cfg: StridedBatchedConfig<T>,
+        a: &A,
+        b: &B,
+        c: &mut C,
     ) -> Result<(), CublasError>;
 }
 
 impl Gemm<f32> for CudaBlas {
-    unsafe fn gemm_async(
+    unsafe fn gemm_async<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
         &self,
-        transa: sys::cublasOperation_t,
-        transb: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        k: c_int,
-        alpha: f32,
-        a: &CudaSlice<f32>,
-        lda: c_int,
-        b: &CudaSlice<f32>,
-        ldb: c_int,
-        beta: f32,
-        c: &mut CudaSlice<f32>,
-        ldc: c_int,
+        cfg: GemmConfig<f32>,
+        a: &A,
+        b: &B,
+        c: &mut C,
     ) -> Result<(), CublasError> {
         result::sgemm(
             self.handle,
-            transa,
-            transb,
-            m,
-            n,
-            k,
-            (&alpha) as *const _,
-            a.cu_device_ptr as *const _,
-            lda,
-            b.cu_device_ptr as *const _,
-            ldb,
-            (&beta) as *const _,
-            c.cu_device_ptr as *mut _,
-            ldc,
+            cfg.transa,
+            cfg.transb,
+            cfg.m,
+            cfg.n,
+            cfg.k,
+            (&cfg.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.lda,
+            *b.device_ptr() as *const _,
+            cfg.ldb,
+            (&cfg.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.ldc,
+        )
+    }
+
+    unsafe fn gemm_strided_batched_async<
+        A: DevicePtr<f32>,
+        B: DevicePtr<f32>,
+        C: DevicePtrMut<f32>,
+    >(
+        &self,
+        cfg: StridedBatchedConfig<f32>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError> {
+        result::sgemm_strided_batched(
+            self.handle,
+            cfg.gemm.transa,
+            cfg.gemm.transb,
+            cfg.gemm.m,
+            cfg.gemm.n,
+            cfg.gemm.k,
+            (&cfg.gemm.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.gemm.lda,
+            cfg.stride_a,
+            *b.device_ptr() as *const _,
+            cfg.gemm.ldb,
+            cfg.stride_b,
+            (&cfg.gemm.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.gemm.ldc,
+            cfg.stride_c,
+            cfg.batch_size,
         )
     }
 }
 
 impl Gemm<f64> for CudaBlas {
-    unsafe fn gemm_async(
+    unsafe fn gemm_async<A: DevicePtr<f64>, B: DevicePtr<f64>, C: DevicePtrMut<f64>>(
         &self,
-        transa: sys::cublasOperation_t,
-        transb: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        k: c_int,
-        alpha: f64,
-        a: &CudaSlice<f64>,
-        lda: c_int,
-        b: &CudaSlice<f64>,
-        ldb: c_int,
-        beta: f64,
-        c: &mut CudaSlice<f64>,
-        ldc: c_int,
+        cfg: GemmConfig<f64>,
+        a: &A,
+        b: &B,
+        c: &mut C,
     ) -> Result<(), CublasError> {
         result::dgemm(
             self.handle,
-            transa,
-            transb,
-            m,
-            n,
-            k,
-            (&alpha) as *const _,
-            a.cu_device_ptr as *const _,
-            lda,
-            b.cu_device_ptr as *const _,
-            ldb,
-            (&beta) as *const _,
-            c.cu_device_ptr as *mut _,
-            ldc,
+            cfg.transa,
+            cfg.transb,
+            cfg.m,
+            cfg.n,
+            cfg.k,
+            (&cfg.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.lda,
+            *b.device_ptr() as *const _,
+            cfg.ldb,
+            (&cfg.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.ldc,
+        )
+    }
+
+    unsafe fn gemm_strided_batched_async<
+        A: DevicePtr<f64>,
+        B: DevicePtr<f64>,
+        C: DevicePtrMut<f64>,
+    >(
+        &self,
+        cfg: StridedBatchedConfig<f64>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError> {
+        result::dgemm_strided_batched(
+            self.handle,
+            cfg.gemm.transa,
+            cfg.gemm.transb,
+            cfg.gemm.m,
+            cfg.gemm.n,
+            cfg.gemm.k,
+            (&cfg.gemm.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.gemm.lda,
+            cfg.stride_a,
+            *b.device_ptr() as *const _,
+            cfg.gemm.ldb,
+            cfg.stride_b,
+            (&cfg.gemm.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.gemm.ldc,
+            cfg.stride_c,
+            cfg.batch_size,
         )
     }
 }
@@ -299,17 +367,19 @@ mod tests {
         let mut c_dev = dev.alloc_zeros_async(M).unwrap();
         unsafe {
             blas.gemv_async(
-                sys::cublasOperation_t::CUBLAS_OP_T,
-                N as i32,
-                M as i32,
-                1.0,
+                GemvConfig {
+                    trans: sys::cublasOperation_t::CUBLAS_OP_T,
+                    m: N as i32,
+                    n: M as i32,
+                    alpha: 1.0,
+                    lda: N as i32,
+                    incx: 1,
+                    beta: 0.0,
+                    incy: 1,
+                },
                 &a_dev,
-                N as i32,
                 &b_dev,
-                1,
-                0.0,
                 &mut c_dev,
-                1,
             )
         }
         .unwrap();
@@ -356,17 +426,19 @@ mod tests {
         let mut c_dev = dev.alloc_zeros_async(M).unwrap();
         unsafe {
             blas.gemv_async(
-                sys::cublasOperation_t::CUBLAS_OP_T,
-                N as i32,
-                M as i32,
-                1.0,
+                GemvConfig {
+                    trans: sys::cublasOperation_t::CUBLAS_OP_T,
+                    m: N as i32,
+                    n: M as i32,
+                    alpha: 1.0,
+                    lda: N as i32,
+                    incx: 1,
+                    beta: 0.0,
+                    incy: 1,
+                },
                 &a_dev,
-                N as i32,
                 &b_dev,
-                1,
-                0.0,
                 &mut c_dev,
-                1,
             )
         }
         .unwrap();
@@ -414,19 +486,21 @@ mod tests {
         let mut c_dev = dev.alloc_zeros_async::<f32>(M * N).unwrap();
         unsafe {
             blas.gemm_async(
-                sys::cublasOperation_t::CUBLAS_OP_N,
-                sys::cublasOperation_t::CUBLAS_OP_N,
-                N as i32,
-                M as i32,
-                K as i32,
-                1.0,
+                GemmConfig {
+                    transa: sys::cublasOperation_t::CUBLAS_OP_N,
+                    transb: sys::cublasOperation_t::CUBLAS_OP_N,
+                    m: N as i32,
+                    n: M as i32,
+                    k: K as i32,
+                    alpha: 1.0,
+                    lda: N as i32,
+                    ldb: K as i32,
+                    beta: 0.0,
+                    ldc: N as i32,
+                },
                 &b_dev,
-                N as i32,
                 &a_dev,
-                K as i32,
-                0.0,
                 &mut c_dev,
-                N as i32,
             )
         }
         .unwrap();
@@ -476,19 +550,21 @@ mod tests {
         let mut c_dev = dev.alloc_zeros_async::<f64>(M * N).unwrap();
         unsafe {
             blas.gemm_async(
-                sys::cublasOperation_t::CUBLAS_OP_N,
-                sys::cublasOperation_t::CUBLAS_OP_N,
-                N as i32,
-                M as i32,
-                K as i32,
-                1.0,
+                GemmConfig {
+                    transa: sys::cublasOperation_t::CUBLAS_OP_N,
+                    transb: sys::cublasOperation_t::CUBLAS_OP_N,
+                    m: N as i32,
+                    n: M as i32,
+                    k: K as i32,
+                    alpha: 1.0,
+                    lda: N as i32,
+                    ldb: K as i32,
+                    beta: 0.0,
+                    ldc: N as i32,
+                },
                 &b_dev,
-                N as i32,
                 &a_dev,
-                K as i32,
-                0.0,
                 &mut c_dev,
-                N as i32,
             )
         }
         .unwrap();

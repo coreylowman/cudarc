@@ -1,5 +1,5 @@
 use super::sys;
-use core::ffi::c_int;
+use core::ffi::{c_int, c_longlong};
 use core::mem::MaybeUninit;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -167,6 +167,78 @@ pub unsafe fn dgemm(
 ) -> Result<(), CublasError> {
     sys::cublasDgemm_v2(
         handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+    )
+    .result()
+}
+
+/// Single precision batched matmul. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemmstridedbatched)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn sgemm_strided_batched(
+    handle: sys::cublasHandle_t,
+    transa: sys::cublasOperation_t,
+    transb: sys::cublasOperation_t,
+    m: c_int,
+    n: c_int,
+    k: c_int,
+    alpha: *const f32,
+    a: *const f32,
+    lda: c_int,
+    stride_a: c_longlong,
+    b: *const f32,
+    ldb: c_int,
+    stride_b: c_longlong,
+    beta: *const f32,
+    c: *mut f32,
+    ldc: c_int,
+    stride_c: c_longlong,
+    batch_size: c_int,
+) -> Result<(), CublasError> {
+    sys::cublasSgemmStridedBatched(
+        handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
+        stride_c, batch_size,
+    )
+    .result()
+}
+
+/// Double precision batched matmul. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemmstridedbatched)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn dgemm_strided_batched(
+    handle: sys::cublasHandle_t,
+    transa: sys::cublasOperation_t,
+    transb: sys::cublasOperation_t,
+    m: c_int,
+    n: c_int,
+    k: c_int,
+    alpha: *const f64,
+    a: *const f64,
+    lda: c_int,
+    stride_a: c_longlong,
+    b: *const f64,
+    ldb: c_int,
+    stride_b: c_longlong,
+    beta: *const f64,
+    c: *mut f64,
+    ldc: c_int,
+    stride_c: c_longlong,
+    batch_size: c_int,
+) -> Result<(), CublasError> {
+    sys::cublasDgemmStridedBatched(
+        handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
+        stride_c, batch_size,
     )
     .result()
 }
