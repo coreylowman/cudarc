@@ -1,8 +1,8 @@
 //! Safe abstractions around [crate::cublas::result] for doing gemm and gemv.
 #![allow(clippy::too_many_arguments)]
 
-use crate::cublas::{result, result::CublasError, sys};
-use crate::device::{CudaDevice, DevicePtr, DevicePtrMut};
+use super::{result, result::CublasError, sys};
+use crate::driver::{CudaDevice, DevicePtr, DevicePtrMut};
 use core::ffi::{c_int, c_longlong};
 use std::sync::Arc;
 
@@ -299,7 +299,7 @@ mod tests {
     #![allow(clippy::needless_range_loop)]
 
     use super::*;
-    use crate::device::CudaDeviceBuilder;
+    use crate::driver::CudaDeviceBuilder;
 
     fn gemv_truth<T, const M: usize, const N: usize>(
         alpha: T,

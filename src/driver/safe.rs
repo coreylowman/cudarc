@@ -45,8 +45,7 @@
 //! Loading kernels is done with [CudaDeviceBuilder::with_ptx()]
 //! and [CudaDeviceBuilder::with_ptx_from_file()]:
 //! ```rust
-//! # use cudarc::device::*;
-//! # use cudarc::jit::*;
+//! # use cudarc::{driver::*, nvrtc::*};
 //! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! let device = CudaDeviceBuilder::new(0)
 //!     .with_ptx(ptx, "module_name", &["my_function"])
@@ -56,8 +55,7 @@
 //!
 //! Retrieve the function using the registered module name & actual function name:
 //! ```rust
-//! # use cudarc::device::*;
-//! # use cudarc::jit::*;
+//! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_name", &["my_function"]).build().unwrap();
 //! let func: CudaFunction = device.get_func("module_name", "my_function").unwrap();
@@ -65,8 +63,7 @@
 //!
 //! Asynchronously execute the kernel:
 //! ```rust
-//! # use cudarc::device::*;
-//! # use cudarc::jit::*;
+//! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
 //! # let func: CudaFunction = device.get_func("module_key", "my_function").unwrap();
@@ -90,8 +87,7 @@
 //! These view structs can be used with [CudaFunction].
 //!
 //! ```rust
-//! # use cudarc::device::*;
-//! # use cudarc::jit::*;
+//! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
 //! let mut a: CudaSlice<f32> = device.alloc_zeros_async::<f32>(3 * 10).unwrap();
@@ -156,8 +152,8 @@
 //! Another important aspect of this is ensuring that mutability in an async setting
 //! is sound, and something can't be freed while it's being used in a kernel.
 
-use crate::driver::{result, sys};
-use crate::jit::Ptx;
+use super::{result, sys};
+use crate::nvrtc::Ptx;
 
 use alloc::ffi::{CString, NulError};
 use spin::RwLock;
@@ -1046,7 +1042,7 @@ unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
 
 #[cfg(test)]
 mod tests {
-    use crate::jit::compile_ptx_with_opts;
+    use crate::nvrtc::compile_ptx_with_opts;
 
     use super::*;
 

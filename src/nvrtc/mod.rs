@@ -1,9 +1,9 @@
 //! Wrappers around the [Nvidia Runtime Compilation (nvrtc) API](https://docs.nvidia.com/cuda/nvrtc/index.html),
-//! in two levels: [result], and [sys]. See [crate::jit] for safe wrapper.
-//!
-//! 1. [result] thin wrapper around [sys] to return [Result<_, result::NvrtcError>]
-//! 2. [sys] the raw bindings
+//! in three levels. See crate documentation for description of each.
 
 pub mod result;
+pub mod safe;
 #[allow(warnings)]
 pub mod sys;
+
+pub use safe::*;

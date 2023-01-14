@@ -1,20 +1,20 @@
 //! Safe abstractions around [crate::curand::result] with [CudaRng].
 
-use crate::curand::{result, sys};
-use crate::device::{CudaDevice, CudaSlice};
+use super::{result, sys};
+use crate::driver::{CudaDevice, CudaSlice};
 use std::sync::Arc;
 
 /// Host side RNG that can fill [CudaSlice] with random values.
 ///
 /// 1. Create:
 /// ```rust
-/// # use cudarc::{prelude::*, rng::*};
+/// # use cudarc::{prelude::*, curand::*};
 /// let device = CudaDeviceBuilder::new(0).build().unwrap();
 /// let rng = CudaRng::new(0, device).unwrap();
 /// ```
 /// 2. Fill device memory:
 /// ```rust
-/// # use cudarc::{prelude::*, rng::*};
+/// # use cudarc::{prelude::*, curand::*};
 /// # let device = CudaDeviceBuilder::new(0).build().unwrap();
 /// # let rng = CudaRng::new(0, device.clone()).unwrap();
 /// let mut a_dev = device.alloc_zeros_async::<f32>(10).unwrap();

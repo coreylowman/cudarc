@@ -2,7 +2,8 @@
 //!
 //! Call [compile_ptx()] or [compile_ptx_with_opts()].
 
-use crate::nvrtc::{result, sys};
+use super::{result, sys};
+
 use alloc::ffi::CString;
 use core::ffi::{c_char, CStr};
 use std::{borrow::ToOwned, string::String, vec::Vec};
@@ -26,7 +27,7 @@ impl<S: Into<String>> From<S> for Ptx {
 ///
 /// Example:
 /// ```rust
-/// # use cudarc::jit::*;
+/// # use cudarc::nvrtc::*;
 /// let ptx = compile_ptx("extern \"C\" __global__ void kernel() { }").unwrap();
 /// ```
 pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
@@ -37,7 +38,7 @@ pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
 ///
 /// Example:
 /// ```rust
-/// # use cudarc::jit::*;
+/// # use cudarc::nvrtc::*;
 /// let opts = CompileOptions {
 ///     ftz: Some(true),
 ///     maxrregcount: Some(10),
@@ -138,7 +139,7 @@ impl std::error::Error for CompileError {}
 ///
 /// Example:
 /// ```rust
-/// # use cudarc::jit::*;
+/// # use cudarc::nvrtc::*;
 /// // "--ftz=true" will be passed to the compiler
 /// let opts = CompileOptions {
 ///     ftz: Some(true),
