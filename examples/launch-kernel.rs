@@ -1,4 +1,4 @@
-use cudarc::device::{CudaDeviceBuilder, LaunchAsync, LaunchConfig};
+use cudarc::driver::{CudaDeviceBuilder, LaunchAsync, LaunchConfig};
 
 fn main() {
     let dev = CudaDeviceBuilder::new(0)

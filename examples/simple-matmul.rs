@@ -1,5 +1,5 @@
-use cudarc::device::{CudaDeviceBuilder, LaunchAsync, LaunchConfig};
-use cudarc::jit::{compile_ptx, CompileError};
+use cudarc::driver::{CudaDeviceBuilder, LaunchAsync, LaunchConfig};
+use cudarc::nvrtc::{compile_ptx, CompileError};
 
 const PTX_SRC: &str = "
 extern \"C\" __global__ void matmul(float* A, float* B, float* C, int N) {
