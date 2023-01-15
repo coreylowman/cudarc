@@ -332,7 +332,7 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
     }
 }
 
-impl<'a, T> DevicePtrMut<T> for CudaView<'a, T> {
+impl<'a, T> DevicePtrMut<T> for CudaViewMut<'a, T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
         &mut self.ptr
     }
