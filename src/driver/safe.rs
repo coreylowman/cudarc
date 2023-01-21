@@ -156,6 +156,7 @@ use super::{result, sys};
 use crate::nvrtc::Ptx;
 
 use alloc::ffi::{CString, NulError};
+use core::ops::{Bound, RangeBounds};
 use spin::RwLock;
 use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 
@@ -215,7 +216,7 @@ impl<T> CudaSlice<T> {
 
     /// Allocates copy of self and schedules a device to device copy of memory.
     pub fn clone_async(&self) -> Result<Self, DriverError> {
-        let dst = unsafe { self.device.alloc(self.len) }?;
+        let dst = unsafe { self.device.alloc_async(self.len) }?;
         unsafe {
             result::memcpy_dtod_async(
                 dst.cu_device_ptr,
@@ -247,6 +248,32 @@ impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     }
 }
 
+trait RangeHelper<T: PartialOrd> {
+    fn inclusive_start(&self, valid: &impl RangeBounds<T>) -> Option<T>;
+    fn inclusive_end(&self, valid: &impl RangeBounds<T>) -> Option<T>;
+    fn bounds(&self, valid: impl RangeBounds<T>) -> Option<(T, T)> {
+        self.inclusive_start(&valid).and_then(|s| self.inclusive_end(&valid).and_then(|e| (s <= e).then_some((s, e))))
+    }
+}
+impl<R: RangeBounds<usize>> RangeHelper<usize> for R {
+    fn inclusive_start(&self, valid: &impl RangeBounds<usize>) -> Option<usize> {
+        match self.start_bound() {
+            Bound::Included(n) if valid.contains(n) => Some(*n),
+            Bound::Excluded(n) if n < &usize::MAX && valid.contains(&(*n + 1)) => Some(*n + 1),
+            Bound::Unbounded => valid.inclusive_start(&(0..=usize::MAX)),
+            _ => None,
+        }
+    }
+    fn inclusive_end(&self, valid: &impl RangeBounds<usize>) -> Option<usize> {
+        match self.end_bound() {
+            Bound::Included(n) if valid.contains(n) => Some(*n),
+            Bound::Excluded(n) if n > &0 && valid.contains(&(*n - 1)) => Some(*n - 1),
+            Bound::Unbounded => valid.inclusive_end(&(0..=usize::MAX)),
+            _ => None,
+        }
+    }
+}
+
 /// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()],
 /// which implements [AsKernelParam] for use with kernels.
 ///
@@ -255,6 +282,7 @@ impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
 pub struct CudaView<'a, T> {
     slice: &'a CudaSlice<T>,
     ptr: sys::CUdeviceptr,
+    len: usize,
 }
 
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()],
@@ -265,6 +293,7 @@ pub struct CudaView<'a, T> {
 pub struct CudaViewMut<'a, T> {
     slice: &'a mut CudaSlice<T>,
     ptr: sys::CUdeviceptr,
+    len: usize,
 }
 
 impl<T> CudaSlice<T> {
@@ -273,15 +302,12 @@ impl<T> CudaSlice<T> {
     /// Returns `None` if `range.start >= self.len`
     ///
     /// See module docstring for example
-    pub fn try_slice(&self, range: std::ops::RangeFrom<usize>) -> Option<CudaView<'_, T>> {
-        if range.start < self.len {
-            Some(CudaView {
-                ptr: self.cu_device_ptr + (range.start * std::mem::size_of::<T>()) as u64,
-                slice: self,
-            })
-        } else {
-            None
-        }
+    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaView {
+            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            slice: self,
+            len: 1 + end - start,
+        })
     }
 
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
@@ -291,16 +317,13 @@ impl<T> CudaSlice<T> {
     /// See module docstring for example
     pub fn try_slice_mut(
         &mut self,
-        range: std::ops::RangeFrom<usize>,
+        range: impl RangeBounds<usize>
     ) -> Option<CudaViewMut<'_, T>> {
-        if range.start < self.len {
-            Some(CudaViewMut {
-                ptr: self.cu_device_ptr + (range.start * std::mem::size_of::<T>()) as u64,
-                slice: self,
-            })
-        } else {
-            None
-        }
+        range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            slice: self,
+            len: 1 + end - start,
+        })
     }
 }
 
@@ -385,7 +408,10 @@ impl CudaDevice {
     ///
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
-    unsafe fn alloc<T>(self: &Arc<Self>, len: usize) -> Result<CudaSlice<T>, DriverError> {
+    pub unsafe fn alloc_async<T>(
+        self: &Arc<Self>,
+        len: usize,
+    ) -> Result<CudaSlice<T>, DriverError> {
         let cu_device_ptr = result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?;
         Ok(CudaSlice {
             cu_device_ptr,
@@ -405,7 +431,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, DriverError> {
-        let dst = unsafe { self.alloc(len) }?;
+        let dst = unsafe { self.alloc_async(len) }?;
         unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.cu_stream) }?;
         Ok(dst)
     }
@@ -421,7 +447,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         src: Vec<T>,
     ) -> Result<CudaSlice<T>, DriverError> {
-        let mut dst = unsafe { self.alloc(src.len()) }?;
+        let mut dst = unsafe { self.alloc_async(src.len()) }?;
         self.copy_into_async(src, &mut dst)?;
         Ok(dst)
     }
@@ -435,7 +461,7 @@ impl CudaDevice {
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn sync_copy<T>(self: &Arc<Self>, src: &[T]) -> Result<CudaSlice<T>, DriverError> {
-        let mut dst = unsafe { self.alloc(src.len()) }?;
+        let mut dst = unsafe { self.alloc_async(src.len()) }?;
         self.sync_copy_into(src, &mut dst)?;
         Ok(dst)
     }
@@ -487,6 +513,9 @@ impl CudaDevice {
 
     /// Synchronously copies device memory into host memory
     ///
+    /// Use [`sync_copy_into_vec`] if you need [`Vec<T>`] and can't provide
+    /// a correctly sized slice.
+    ///
     /// # Panics
     ///
     /// If the lengths of slices are not equal, this method panics.
@@ -502,6 +531,25 @@ impl CudaDevice {
         assert_eq!(src.len(), dst.len());
         unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr, self.cu_stream) }?;
         self.synchronize()
+    }
+
+    /// Synchronously copies device memory into host memory.
+    /// Unlike [`sync_copy_from`] this returns a [`Vec<T>`].
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn sync_copy_into_vec<T>(
+        self: &Arc<Self>,
+        src: &CudaSlice<T>,
+    ) -> Result<Vec<T>, DriverError> {
+        let mut dst = Vec::with_capacity(src.len());
+        unsafe {
+            dst.set_len(src.len());
+            result::memcpy_dtoh_async(dst.as_mut_slice(), src.cu_device_ptr, self.cu_stream)
+        }?;
+        self.synchronize()?;
+        Ok(dst)
     }
 
     /// De-allocates `src` and converts it into it's host value. You can just drop the slice if you don't
@@ -1039,6 +1087,32 @@ unsafe impl ValidAsZeroBits for usize {}
 unsafe impl ValidAsZeroBits for f32 {}
 unsafe impl ValidAsZeroBits for f64 {}
 unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
+/// Implement `ValidAsZeroBits` for tuples if all elements are `ValidAsZeroBits`,
+///
+/// e.g.:
+/// ```no_run
+/// impl_tuples!(A, B, C)
+/// => impl_tuples!(@ A, B, C) + impl_tuples!(B, C)
+/// => impl_tuples!(@ B, C) + impl_tuples!(C)
+/// => impl_tuples!(@ C)
+/// ```
+///
+/// # Note
+/// This will also implement `ValidAsZeroBits` for a tuple with one element
+macro_rules! impl_tuples {
+    ($t:tt) => {
+        impl_tuples!(@ $t);
+    };
+    // the $l is in front of the reptition to prevent parsing ambiguities
+    ($l:tt $(,$t:tt)+) => {
+        impl_tuples!($($t),+);
+        impl_tuples!(@ $l $(,$t)+);
+    };
+    (@ $($t:tt),+) => {
+        unsafe impl<$($t: ValidAsZeroBits,)+> ValidAsZeroBits for ($($t,)+) {}
+    };
+}
+impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
@@ -1217,6 +1291,16 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     }
 
     #[test]
+    fn test_bounds_helper() {
+        assert_eq!((..2usize).bounds(0..=usize::MAX), Some((0, 1)));
+        assert_eq!((1..2usize).bounds(..=usize::MAX), Some((1, 1)));
+        assert_eq!((..).bounds(1..10), Some((1, 9)));
+        assert_eq!((2..=2usize).bounds(0..=usize::MAX), Some((2, 2)));
+        assert_eq!((2..=2usize).bounds(0..=1), None);
+        assert_eq!((2..2usize).bounds(0..=usize::MAX), None);
+    }
+
+    #[test]
     fn test_launch_with_views() {
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
@@ -1230,7 +1314,9 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
         for i in 0..5 {
             let a_sub = a_dev.try_slice(i * 2..).unwrap();
+            assert_eq!(a_sub.len, 10 - 2 * i);
             let mut b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
+            assert_eq!(b_sub.len, 10 - 2 * i);
             let f = dev.get_func("sin", "sin_kernel").unwrap();
             unsafe { f.launch_async(LaunchConfig::for_num_elems(2), (&mut b_sub, &a_sub, 2usize)) }
                 .unwrap();
