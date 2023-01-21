@@ -1026,6 +1026,7 @@ impl std::error::Error for BuildError {}
 /// Not all types are valid when all bits are set to 0.
 /// Be very sure when implementing this trait!
 pub unsafe trait ValidAsZeroBits {}
+unsafe impl ValidAsZeroBits for bool {}
 unsafe impl ValidAsZeroBits for i8 {}
 unsafe impl ValidAsZeroBits for i16 {}
 unsafe impl ValidAsZeroBits for i32 {}
