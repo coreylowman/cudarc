@@ -1,7 +1,7 @@
 //! Safe abstractions around [crate::curand::result] with [CudaRng].
 
 use super::{result, sys};
-use crate::driver::{CudaDevice, CudaSlice};
+use crate::driver::{CudaDevice, CudaSlice, GetDevice};
 use std::sync::Arc;
 
 /// Host side RNG that can fill [CudaSlice] with random values.
@@ -46,7 +46,10 @@ impl CudaRng {
     }
 
     /// Fill the [CudaSlice] with data from a `Uniform` distribution
-    pub fn fill_with_uniform<T>(&self, t: &mut CudaSlice<T>) -> Result<(), result::CurandError>
+    pub fn fill_with_uniform<T, D: GetDevice>(
+        &self,
+        t: &mut CudaSlice<T, D>,
+    ) -> Result<(), result::CurandError>
     where
         sys::curandGenerator_t: result::UniformFill<T>,
     {
@@ -54,9 +57,9 @@ impl CudaRng {
     }
 
     /// Fill the [CudaSlice] with data from a `Normal(mean, std)` distribution.
-    pub fn fill_with_normal<T>(
+    pub fn fill_with_normal<T, D: GetDevice>(
         &self,
-        t: &mut CudaSlice<T>,
+        t: &mut CudaSlice<T, D>,
         mean: T,
         std: T,
     ) -> Result<(), result::CurandError>
@@ -67,9 +70,9 @@ impl CudaRng {
     }
 
     /// Fill the `CudaRc` with data from a `LogNormal(mean, std)` distribution.
-    pub fn fill_with_log_normal<T>(
+    pub fn fill_with_log_normal<T, D: GetDevice>(
         &self,
-        t: &mut CudaSlice<T>,
+        t: &mut CudaSlice<T, D>,
         mean: T,
         std: T,
     ) -> Result<(), result::CurandError>

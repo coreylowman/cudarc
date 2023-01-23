@@ -189,17 +189,17 @@ pub use result::DriverError;
 /// Unfortunately, `&CudaSlice<T>` can **still be mutated
 /// by the [CudaFunction]**.
 #[derive(Debug)]
-pub struct CudaSlice<T> {
+pub struct CudaSlice<T, D: GetDevice> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) device: Arc<CudaDevice>,
+    pub(crate) device: D,
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
-unsafe impl<T: Send> Send for CudaSlice<T> {}
-unsafe impl<T: Sync> Sync for CudaSlice<T> {}
+unsafe impl<T: Send, D: GetDevice> Send for CudaSlice<T, D> {}
+unsafe impl<T: Sync, D: GetDevice> Sync for CudaSlice<T, D> {}
 
-impl<T> CudaSlice<T> {
+impl<T, D: GetDevice> CudaSlice<T, D> {
     /// Number of elements in the slice
     pub fn len(&self) -> usize {
         self.len
@@ -215,35 +215,67 @@ impl<T> CudaSlice<T> {
     }
 
     /// Allocates copy of self and schedules a device to device copy of memory.
-    pub fn clone_async(&self) -> Result<Self, DriverError> {
-        let dst = unsafe { self.device.alloc_async(self.len) }?;
+    pub fn clone_async(&self) -> Result<CudaSlice<T, Arc<CudaDevice>>, DriverError> {
+        let dst = unsafe { self.device.get_device().alloc_async(self.len) }?;
         unsafe {
             result::memcpy_dtod_async(
                 dst.cu_device_ptr,
                 self.cu_device_ptr,
                 self.num_bytes(),
-                self.device.cu_stream,
+                self.device.get_device().cu_stream,
             )
         }?;
         Ok(dst)
     }
 }
+pub trait GetDevice {
+    const OWNS_DEVICE: bool;
 
-impl<T> Clone for CudaSlice<T> {
+    fn get_device(&self) -> &Arc<CudaDevice>;
+}
+impl GetDevice for Arc<CudaDevice> {
+    const OWNS_DEVICE: bool = true;
+
+    fn get_device(&self) -> &Arc<CudaDevice> {
+        self
+    }
+}
+impl<D: GetDevice> GetDevice for &D {
+    const OWNS_DEVICE: bool = false;
+
+    fn get_device(&self) -> &Arc<CudaDevice> {
+        (*self).get_device()
+    }
+}
+impl<D: GetDevice> GetDevice for &mut D {
+    const OWNS_DEVICE: bool = false;
+
+    fn get_device(&self) -> &Arc<CudaDevice> {
+        (**self).get_device()
+    }
+}
+
+impl<T> Clone for CudaSlice<T, Arc<CudaDevice>> {
+    /// Use [`clone_async`] if you want to clone a sliced [`CudaSlice`].
     fn clone(&self) -> Self {
         self.clone_async().unwrap()
     }
 }
 
-impl<T> Drop for CudaSlice<T> {
+// Can't use specialized drops, so some "lame" runtime checking is required.
+// Also see: <https://github.com/rust-lang/rust/issues/8142>
+impl<T, D: GetDevice> Drop for CudaSlice<T, D> {
     fn drop(&mut self) {
-        unsafe { result::free_async(self.cu_device_ptr, self.device.cu_stream) }.unwrap();
+        if D::OWNS_DEVICE {
+            unsafe { result::free_async(self.cu_device_ptr, self.device.get_device().cu_stream) }
+                .unwrap();
+        }
     }
 }
 
-impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
+impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T, Arc<CudaDevice>>> for Vec<T> {
     type Error = DriverError;
-    fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
+    fn try_from(value: CudaSlice<T, Arc<CudaDevice>>) -> Result<Self, Self::Error> {
         value.device.clone().sync_release(value)
     }
 }
@@ -252,7 +284,10 @@ trait RangeHelper<T: PartialOrd> {
     fn inclusive_start(&self, valid: &impl RangeBounds<T>) -> Option<T>;
     fn inclusive_end(&self, valid: &impl RangeBounds<T>) -> Option<T>;
     fn bounds(&self, valid: impl RangeBounds<T>) -> Option<(T, T)> {
-        self.inclusive_start(&valid).and_then(|s| self.inclusive_end(&valid).and_then(|e| (s <= e).then_some((s, e))))
+        self.inclusive_start(&valid).and_then(|s| {
+            self.inclusive_end(&valid)
+                .and_then(|e| (s <= e).then_some((s, e)))
+        })
     }
 }
 impl<R: RangeBounds<usize>> RangeHelper<usize> for R {
@@ -273,40 +308,18 @@ impl<R: RangeBounds<usize>> RangeHelper<usize> for R {
         }
     }
 }
-
-/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()],
-/// which implements [AsKernelParam] for use with kernels.
-///
-/// See module docstring for more details.
-#[allow(unused)]
-pub struct CudaView<'a, T> {
-    slice: &'a CudaSlice<T>,
-    ptr: sys::CUdeviceptr,
-    len: usize,
-}
-
-/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()],
-/// which implements [AsKernelParam] for use with kernels.
-///
-/// See module docstring for more details.
-#[allow(unused)]
-pub struct CudaViewMut<'a, T> {
-    slice: &'a mut CudaSlice<T>,
-    ptr: sys::CUdeviceptr,
-    len: usize,
-}
-
-impl<T> CudaSlice<T> {
+impl<T, D: GetDevice> CudaSlice<T, D> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `range.start >= self.len`
     ///
     /// See module docstring for example
-    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaView {
-            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            slice: self,
+    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaSlice<T, &D>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaSlice {
+            cu_device_ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            device: &self.device,
             len: 1 + end - start,
+            host_buf: None,
         })
     }
 
@@ -317,12 +330,13 @@ impl<T> CudaSlice<T> {
     /// See module docstring for example
     pub fn try_slice_mut(
         &mut self,
-        range: impl RangeBounds<usize>
-    ) -> Option<CudaViewMut<'_, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
-            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            slice: self,
+        range: impl RangeBounds<usize>,
+    ) -> Option<CudaSlice<T, &mut D>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaSlice {
+            cu_device_ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            device: &mut self.device,
             len: 1 + end - start,
+            host_buf: None,
         })
     }
 }
@@ -332,34 +346,34 @@ pub trait DevicePtr<T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr;
 }
 
-impl<T> DevicePtr<T> for CudaSlice<T> {
+impl<T, D: GetDevice> DevicePtr<T> for CudaSlice<T, D> {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.cu_device_ptr
     }
 }
 
-impl<'a, T> DevicePtr<T> for CudaView<'a, T> {
-    fn device_ptr(&self) -> &sys::CUdeviceptr {
-        &self.ptr
-    }
-}
+// impl<'a, T> DevicePtr<T> for CudaView<'a, T> {
+//     fn device_ptr(&self) -> &sys::CUdeviceptr {
+//         &self.ptr
+//     }
+// }
 
 /// Abstraction over [CudaSlice]/[CudaViewMut]
 pub trait DevicePtrMut<T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr;
 }
 
-impl<T> DevicePtrMut<T> for CudaSlice<T> {
+impl<T, D: GetDevice> DevicePtrMut<T> for CudaSlice<T, D> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
         &mut self.cu_device_ptr
     }
 }
 
-impl<'a, T> DevicePtrMut<T> for CudaViewMut<'a, T> {
-    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
-        &mut self.ptr
-    }
-}
+// impl<'a, T> DevicePtrMut<T> for CudaViewMut<'a, T> {
+//     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
+//         &mut self.ptr
+//     }
+// }
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
@@ -411,7 +425,7 @@ impl CudaDevice {
     pub unsafe fn alloc_async<T>(
         self: &Arc<Self>,
         len: usize,
-    ) -> Result<CudaSlice<T>, DriverError> {
+    ) -> Result<CudaSlice<T, Arc<CudaDevice>>, DriverError> {
         let cu_device_ptr = result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?;
         Ok(CudaSlice {
             cu_device_ptr,
@@ -430,7 +444,7 @@ impl CudaDevice {
     pub fn alloc_zeros_async<T: ValidAsZeroBits>(
         self: &Arc<Self>,
         len: usize,
-    ) -> Result<CudaSlice<T>, DriverError> {
+    ) -> Result<CudaSlice<T, Arc<CudaDevice>>, DriverError> {
         let dst = unsafe { self.alloc_async(len) }?;
         unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.cu_stream) }?;
         Ok(dst)
@@ -446,7 +460,7 @@ impl CudaDevice {
     pub fn take_async<T: Unpin>(
         self: &Arc<Self>,
         src: Vec<T>,
-    ) -> Result<CudaSlice<T>, DriverError> {
+    ) -> Result<CudaSlice<T, Arc<CudaDevice>>, DriverError> {
         let mut dst = unsafe { self.alloc_async(src.len()) }?;
         self.copy_into_async(src, &mut dst)?;
         Ok(dst)
@@ -460,7 +474,10 @@ impl CudaDevice {
     ///
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy<T>(self: &Arc<Self>, src: &[T]) -> Result<CudaSlice<T>, DriverError> {
+    pub fn sync_copy<T>(
+        self: &Arc<Self>,
+        src: &[T],
+    ) -> Result<CudaSlice<T, Arc<CudaDevice>>, DriverError> {
         let mut dst = unsafe { self.alloc_async(src.len()) }?;
         self.sync_copy_into(src, &mut dst)?;
         Ok(dst)
@@ -477,10 +494,10 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_into<T>(
+    pub fn sync_copy_into<T, D: GetDevice>(
         self: &Arc<Self>,
         src: &[T],
-        dst: &mut CudaSlice<T>,
+        dst: &mut CudaSlice<T, D>,
     ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
         unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.cu_stream) }?;
@@ -494,10 +511,10 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn copy_into_async<T: Unpin>(
+    pub fn copy_into_async<T: Unpin, D: GetDevice>(
         self: &Arc<Self>,
         src: Vec<T>,
-        dst: &mut CudaSlice<T>,
+        dst: &mut CudaSlice<T, D>,
     ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
         dst.host_buf = Some(Pin::new(src));
@@ -523,9 +540,9 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_from<T>(
+    pub fn sync_copy_from<T, D: GetDevice>(
         self: &Arc<Self>,
-        src: &CudaSlice<T>,
+        src: &CudaSlice<T, D>,
         dst: &mut [T],
     ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
@@ -539,9 +556,9 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_into_vec<T>(
+    pub fn sync_copy_into_vec<T, D: GetDevice>(
         self: &Arc<Self>,
-        src: &CudaSlice<T>,
+        src: &CudaSlice<T, D>,
     ) -> Result<Vec<T>, DriverError> {
         let mut dst = Vec::with_capacity(src.len());
         unsafe {
@@ -557,9 +574,9 @@ impl CudaDevice {
     ///
     /// # Safety
     /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_release<T: Clone + Default + Unpin>(
+    pub fn sync_release<T: Clone + Default + Unpin, D: GetDevice>(
         self: &Arc<Self>,
-        mut src: CudaSlice<T>,
+        mut src: CudaSlice<T, D>,
     ) -> Result<Vec<T>, DriverError> {
         let buf = src.host_buf.take();
         let mut buf = buf.unwrap_or_else(|| {
@@ -725,33 +742,33 @@ unsafe impl AsKernelParam for usize {}
 unsafe impl AsKernelParam for f32 {}
 unsafe impl AsKernelParam for f64 {}
 
-unsafe impl<T> AsKernelParam for &mut CudaSlice<T> {
+unsafe impl<T, D: GetDevice> AsKernelParam for &mut CudaSlice<T, D> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-unsafe impl<T> AsKernelParam for &CudaSlice<T> {
+unsafe impl<T, D: GetDevice> AsKernelParam for &CudaSlice<T, D> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-unsafe impl<'a, T> AsKernelParam for &CudaView<'a, T> {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
+// unsafe impl<'a, T> AsKernelParam for &CudaView<'a, T> {
+//     #[inline(always)]
+//     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+//         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+//     }
+// }
 
-unsafe impl<'a, T> AsKernelParam for &mut CudaViewMut<'a, T> {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
+// unsafe impl<'a, T> AsKernelParam for &mut CudaViewMut<'a, T> {
+//     #[inline(always)]
+//     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+//         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+//     }
+// }
 
 /// Consumes a [CudaFunction] to execute asychronously on the device with
 /// params determined by generic parameter `Params`.
@@ -1117,6 +1134,8 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
+    use core::mem::ManuallyDrop;
+
     use crate::nvrtc::compile_ptx_with_opts;
 
     use super::*;
@@ -1302,6 +1321,74 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     }
 
     #[test]
+    fn test_slicing() {
+        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+
+        // Note: this is unsafe and SHOULDN'T be done in "normal" code.
+        // Manual drop since this CAN'T be deallocated on the GPU (drop deallocates the slice).
+        let mut main_slice = ManuallyDrop::new(CudaSlice::<u8, _> {
+            cu_device_ptr: 1,
+            device: dev.clone(),
+            host_buf: None,
+            len: 10,
+        });
+
+        {
+            let mut slice_mut = main_slice.try_slice_mut(1..3).unwrap();
+            assert_eq!(slice_mut.cu_device_ptr, 2);
+            assert!(Arc::ptr_eq(&slice_mut.device.get_device(), &dev));
+            assert!(slice_mut.host_buf.is_none());
+            assert_eq!(slice_mut.len, 2);
+
+            let slice_mut_mut = slice_mut.try_slice_mut(..=0).unwrap();
+            assert_eq!(slice_mut_mut.cu_device_ptr, 2);
+            assert!(Arc::ptr_eq(&slice_mut_mut.device.get_device(), &dev));
+            assert!(slice_mut_mut.host_buf.is_none());
+            assert_eq!(slice_mut_mut.len, 1);
+
+            // totally useless, just to test range
+            let slice_mut_mut_ref = slice_mut_mut.try_slice(..).unwrap();
+            assert_eq!(slice_mut_mut_ref.cu_device_ptr, 2);
+            assert!(Arc::ptr_eq(&slice_mut_mut_ref.device.get_device(), &dev));
+            assert!(slice_mut_mut_ref.host_buf.is_none());
+            assert_eq!(slice_mut_mut_ref.len, 1);
+        }
+
+        {
+            let slice_ref = main_slice.try_slice(7..).unwrap();
+            assert_eq!(slice_ref.cu_device_ptr, 8);
+            assert!(Arc::ptr_eq(&slice_ref.device.get_device(), &dev));
+            assert!(slice_ref.host_buf.is_none());
+            assert_eq!(slice_ref.len, 3);
+
+            let slice_ref_ref = slice_ref.try_slice(..=1).unwrap();
+            assert_eq!(slice_ref_ref.cu_device_ptr, 8);
+            assert!(Arc::ptr_eq(&slice_ref_ref.device.get_device(), &dev));
+            assert!(slice_ref_ref.host_buf.is_none());
+            assert_eq!(slice_ref_ref.len, 2);
+
+            let slice_ref_ref_ref = slice_ref_ref.try_slice(1..).unwrap();
+            assert_eq!(slice_ref_ref_ref.cu_device_ptr, 9);
+            assert!(Arc::ptr_eq(&slice_ref_ref_ref.device.get_device(), &dev));
+            assert!(slice_ref_ref_ref.host_buf.is_none());
+            assert_eq!(slice_ref_ref_ref.len, 1);
+
+            // totally useless, just to test range
+            let slice_ref_ref_ref_ref1 = slice_ref_ref_ref.try_slice(..).unwrap();
+            assert_eq!(slice_ref_ref_ref_ref1.cu_device_ptr, 9);
+            assert!(Arc::ptr_eq(
+                &slice_ref_ref_ref_ref1.device.get_device(),
+                &dev
+            ));
+            assert!(slice_ref_ref_ref_ref1.host_buf.is_none());
+            assert_eq!(slice_ref_ref_ref_ref1.len, 1);
+
+            // test range and multiple slices on same slice
+            assert!(slice_ref_ref_ref.try_slice(1..).is_none());
+        }
+    }
+
+    #[test]
     fn test_launch_with_views() {
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
         let dev = CudaDeviceBuilder::new(0)
@@ -1334,28 +1421,28 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     }
 
     const TEST_KERNELS: &str = "
-extern \"C\" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
+extern \"C\" __global__ void int_8bit(signed char s_min, signed char s_max, unsigned char u_min, unsigned char u_max) {
     assert(s_min == -128);
     assert(s_max == 127);
     assert(u_min == 0);
     assert(u_max == 255);
 }
 
-extern \"C\" __global__ void int_16bit(signed short s_min, short s_max, unsigned short u_min, unsigned short u_max) {
+extern \"C\" __global__ void int_16bit(signed short s_min, signed short s_max, unsigned short u_min, unsigned short u_max) {
     assert(s_min == -32768);
     assert(s_max == 32767);
     assert(u_min == 0);
     assert(u_max == 65535);
 }
 
-extern \"C\" __global__ void int_32bit(signed int s_min, int s_max, unsigned int u_min, unsigned int u_max) {
+extern \"C\" __global__ void int_32bit(signed int s_min, signed int s_max, unsigned int u_min, unsigned int u_max) {
     assert(s_min == -2147483648);
     assert(s_max == 2147483647);
     assert(u_min == 0);
     assert(u_max == 4294967295);
 }
 
-extern \"C\" __global__ void int_64bit(signed long s_min, long s_max, unsigned long u_min, unsigned long u_max) {
+extern \"C\" __global__ void int_64bit(signed long long s_min, signed long long s_max, unsigned long long u_min, unsigned long long u_max) {
     assert(s_min == -9223372036854775808);
     assert(s_max == 9223372036854775807);
     assert(u_min == 0);
