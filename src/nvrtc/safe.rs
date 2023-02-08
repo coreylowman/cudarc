@@ -146,7 +146,7 @@ impl std::error::Error for CompileError {}
 ///     ..Default::default()
 /// };
 /// ```
-#[derive(Clone, Copy, Debug, Default, Hash, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Hash, PartialEq, Eq)]
 pub struct CompileOptions {
     pub ftz: Option<bool>,
     pub prec_sqrt: Option<bool>,
@@ -154,6 +154,8 @@ pub struct CompileOptions {
     pub fmad: Option<bool>,
     pub use_fast_math: Option<bool>,
     pub maxrregcount: Option<usize>,
+    pub include_paths: Vec<String>,
+    pub arch: Option<&'static str>,
 }
 
 impl CompileOptions {
@@ -182,6 +184,14 @@ impl CompileOptions {
 
         if let Some(count) = self.maxrregcount {
             options.push(alloc::format!("--maxrregcount={count}"));
+        }
+
+        for path in self.include_paths {
+            options.push(alloc::format!("--include-path={path}"));
+        }
+
+        if let Some(arch) = self.arch {
+            options.push(alloc::format!("--gpu-architecture={arch}"))
         }
 
         options

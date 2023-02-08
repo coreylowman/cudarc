@@ -109,6 +109,38 @@ pub unsafe fn dgemv(
     sys::cublasDgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
+#[cfg(feature = "f16")]
+/// Half precision matmul. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn hgemm(
+    handle: sys::cublasHandle_t,
+    transa: sys::cublasOperation_t,
+    transb: sys::cublasOperation_t,
+    m: c_int,
+    n: c_int,
+    k: c_int,
+    alpha: *const half::f16,
+    a: *const half::f16,
+    lda: c_int,
+    b: *const half::f16,
+    ldb: c_int,
+    beta: *const half::f16,
+    c: *mut half::f16,
+    ldc: c_int,
+) -> Result<(), CublasError> {
+    super::half::cublasHgemm(
+        handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+    )
+    .result()
+}
+
 /// Single precision matmul. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
 ///
@@ -167,6 +199,43 @@ pub unsafe fn dgemm(
 ) -> Result<(), CublasError> {
     sys::cublasDgemm_v2(
         handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+    )
+    .result()
+}
+
+#[cfg(feature = "f16")]
+/// Half precision batched matmul. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemmstridedbatched)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn hgemm_strided_batched(
+    handle: sys::cublasHandle_t,
+    transa: sys::cublasOperation_t,
+    transb: sys::cublasOperation_t,
+    m: c_int,
+    n: c_int,
+    k: c_int,
+    alpha: *const half::f16,
+    a: *const half::f16,
+    lda: c_int,
+    stride_a: c_longlong,
+    b: *const half::f16,
+    ldb: c_int,
+    stride_b: c_longlong,
+    beta: *const half::f16,
+    c: *mut half::f16,
+    ldc: c_int,
+    stride_c: c_longlong,
+    batch_size: c_int,
+) -> Result<(), CublasError> {
+    super::half::cublasHgemmStridedBatched(
+        handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
+        stride_c, batch_size,
     )
     .result()
 }

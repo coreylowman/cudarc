@@ -726,6 +726,10 @@ unsafe impl AsKernelParam for u64 {}
 unsafe impl AsKernelParam for usize {}
 unsafe impl AsKernelParam for f32 {}
 unsafe impl AsKernelParam for f64 {}
+#[cfg(feature = "f16")]
+unsafe impl AsKernelParam for half::f16 {}
+#[cfg(feature = "f16")]
+unsafe impl AsKernelParam for half::bf16 {}
 
 unsafe impl<T> AsKernelParam for &mut CudaSlice<T> {
     #[inline(always)]
@@ -1089,6 +1093,10 @@ unsafe impl ValidAsZeroBits for u64 {}
 unsafe impl ValidAsZeroBits for usize {}
 unsafe impl ValidAsZeroBits for f32 {}
 unsafe impl ValidAsZeroBits for f64 {}
+#[cfg(feature = "f16")]
+unsafe impl ValidAsZeroBits for half::f16 {}
+#[cfg(feature = "f16")]
+unsafe impl ValidAsZeroBits for half::bf16 {}
 unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
 /// Implement `ValidAsZeroBits` for tuples if all elements are `ValidAsZeroBits`,
 ///
@@ -1447,6 +1455,44 @@ extern \"C\" __global__ void floating(float f, double d) {
             f.launch_async(
                 LaunchConfig::for_num_elems(1),
                 (1.2345678f32, -10.123456789876543f64),
+            )
+        }
+        .unwrap();
+        dev.synchronize().unwrap();
+    }
+
+    #[cfg(feature = "f16")]
+    const HALF_KERNELS: &str = "
+#include \"cuda_fp16.h\"
+
+extern \"C\" __global__ void halfs(__half h) {
+    assert(__habs(h - __float2half(1.234)) <= __float2half(1e-4));
+}
+";
+
+    #[cfg(feature = "f16")]
+    #[test]
+    fn test_launch_with_half() {
+        use crate::nvrtc::CompileOptions;
+
+        let ptx = compile_ptx_with_opts(
+            HALF_KERNELS,
+            CompileOptions {
+                include_paths: std::vec!["/usr/include".into()],
+                arch: Some("compute_53"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx(ptx, "tests", &["halfs"])
+            .build()
+            .unwrap();
+        let f = dev.get_func("tests", "halfs").unwrap();
+        unsafe {
+            f.launch_async(
+                LaunchConfig::for_num_elems(1),
+                (half::f16::from_f32(1.234),),
             )
         }
         .unwrap();

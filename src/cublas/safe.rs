@@ -177,6 +177,70 @@ pub trait Gemm<T> {
     ) -> Result<(), CublasError>;
 }
 
+#[cfg(feature = "f16")]
+impl Gemm<half::f16> for CudaBlas {
+    unsafe fn gemm_async<
+        A: DevicePtr<half::f16>,
+        B: DevicePtr<half::f16>,
+        C: DevicePtrMut<half::f16>,
+    >(
+        &self,
+        cfg: GemmConfig<half::f16>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError> {
+        result::hgemm(
+            self.handle,
+            cfg.transa,
+            cfg.transb,
+            cfg.m,
+            cfg.n,
+            cfg.k,
+            (&cfg.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.lda,
+            *b.device_ptr() as *const _,
+            cfg.ldb,
+            (&cfg.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.ldc,
+        )
+    }
+    unsafe fn gemm_strided_batched_async<
+        A: DevicePtr<half::f16>,
+        B: DevicePtr<half::f16>,
+        C: DevicePtrMut<half::f16>,
+    >(
+        &self,
+        cfg: StridedBatchedConfig<half::f16>,
+        a: &A,
+        b: &B,
+        c: &mut C,
+    ) -> Result<(), CublasError> {
+        result::hgemm_strided_batched(
+            self.handle,
+            cfg.gemm.transa,
+            cfg.gemm.transb,
+            cfg.gemm.m,
+            cfg.gemm.n,
+            cfg.gemm.k,
+            (&cfg.gemm.alpha) as *const _,
+            *a.device_ptr() as *const _,
+            cfg.gemm.lda,
+            cfg.stride_a,
+            *b.device_ptr() as *const _,
+            cfg.gemm.ldb,
+            cfg.stride_b,
+            (&cfg.gemm.beta) as *const _,
+            *c.device_ptr_mut() as *mut _,
+            cfg.gemm.ldc,
+            cfg.stride_c,
+            cfg.batch_size,
+        )
+    }
+}
+
 impl Gemm<f32> for CudaBlas {
     unsafe fn gemm_async<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
         &self,
@@ -449,6 +513,84 @@ mod tests {
         let c_host = dev.sync_release(c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-8);
+        }
+    }
+
+    #[cfg(feature = "f16")]
+    #[test]
+    fn test_hgemm() {
+        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let blas = CudaBlas::new(dev.clone()).unwrap();
+        const M: usize = 3;
+        const K: usize = 4;
+        const N: usize = 5;
+        let a: [[half::f16; K]; M] = [
+            [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
+            [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
+            [-1.6661372, -0.4568837, -0.9043474, 0.39125723],
+        ]
+        .map(|r| r.map(half::f16::from_f32));
+        let b: [[half::f16; N]; K] = [
+            [1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938],
+            [1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096],
+            [1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629],
+            [3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792],
+        ]
+        .map(|r| r.map(half::f16::from_f32));
+        let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
+        gemm_truth(
+            half::f16::from_f32(1.0),
+            &a,
+            &b,
+            half::f16::from_f32(0.0),
+            &mut c,
+        );
+
+        #[rustfmt::skip]
+        let a_dev = dev.sync_copy::<half::f16>(&[
+            -0.5944882, 1.8055636, 0.52204555, -0.00397902,
+            -0.38346434, -0.38013917, 0.4198623, -0.22479166,
+            -1.6661372, -0.4568837, -0.9043474, 0.39125723,
+        ].map(half::f16::from_f32)).unwrap();
+        #[rustfmt::skip]
+        let b_dev = dev.sync_copy::<half::f16>(&[
+            1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
+            1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
+            1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
+            3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
+        ].map(half::f16::from_f32)).unwrap();
+        let mut c_dev = dev.alloc_zeros_async::<half::f16>(M * N).unwrap();
+        unsafe {
+            blas.gemm_async(
+                GemmConfig {
+                    transa: sys::cublasOperation_t::CUBLAS_OP_N,
+                    transb: sys::cublasOperation_t::CUBLAS_OP_N,
+                    m: N as i32,
+                    n: M as i32,
+                    k: K as i32,
+                    alpha: half::f16::from_f32(1.0),
+                    lda: N as i32,
+                    ldb: K as i32,
+                    beta: half::f16::from_f32(0.0),
+                    ldc: N as i32,
+                },
+                &b_dev,
+                &a_dev,
+                &mut c_dev,
+            )
+        }
+        .unwrap();
+
+        let c_host = dev.sync_release(c_dev).unwrap();
+        for m in 0..M {
+            for n in 0..N {
+                let found = c_host[m * N + n];
+                let expected = c[m][n];
+                assert!(
+                    (found - expected) <= half::f16::from_f32(1e-2),
+                    "found={found:?}, expected={expected:?}"
+                );
+            }
         }
     }
 
