@@ -1,3 +1,5 @@
+#[cfg(feature = "f16")]
+pub mod half;
 pub mod result;
 pub mod safe;
 #[allow(warnings)]
