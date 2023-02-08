@@ -20,10 +20,3 @@ pub mod cublas;
 pub mod curand;
 pub mod driver;
 pub mod nvrtc;
-
-pub mod prelude {
-    pub use crate::driver::{
-        AsKernelParam, CudaDevice, CudaDeviceBuilder, CudaSlice, DriverError, LaunchAsync,
-        LaunchConfig, ValidAsZeroBits,
-    };
-}

@@ -8,13 +8,13 @@ use std::sync::Arc;
 ///
 /// 1. Create:
 /// ```rust
-/// # use cudarc::{prelude::*, curand::*};
+/// # use cudarc::{driver::*, curand::*};
 /// let device = CudaDeviceBuilder::new(0).build().unwrap();
 /// let rng = CudaRng::new(0, device).unwrap();
 /// ```
 /// 2. Fill device memory:
 /// ```rust
-/// # use cudarc::{prelude::*, curand::*};
+/// # use cudarc::{driver::*, curand::*};
 /// # let device = CudaDeviceBuilder::new(0).build().unwrap();
 /// # let rng = CudaRng::new(0, device.clone()).unwrap();
 /// let mut a_dev = device.alloc_zeros_async::<f32>(10).unwrap();
@@ -98,7 +98,7 @@ mod tests {
     use super::*;
     use crate::{
         curand::result::{LogNormalFill, NormalFill, UniformFill},
-        prelude::*,
+        driver::*,
     };
     use std::vec::Vec;
 
