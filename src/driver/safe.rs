@@ -5,7 +5,7 @@
 //! 1. Instantiate a [CudaDevice] with [CudaDeviceBuilder]:
 //!
 //! ```rust
-//! # use cudarc::prelude::*;
+//! # use cudarc::driver::*;
 //! let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! ```
 //!
@@ -15,7 +15,7 @@
 //! You can also copy data to CudaSlice using [CudaDevice::sync_copy_into()]
 //!
 //! ```rust
-//! # use cudarc::prelude::*;
+//! # use cudarc::driver::*;
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
 //! let b_dev: CudaSlice<f32> = device.take_async(vec![0.0; 10]).unwrap();
@@ -25,7 +25,7 @@
 //! 3. Transfer to host memory with [CudaDevice::sync_release()] or [CudaDevice::sync_copy_from()]
 //!
 //! ```rust
-//! # use cudarc::prelude::*;
+//! # use cudarc::driver::*;
 //! # use std::rc::Rc;
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
