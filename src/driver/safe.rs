@@ -682,8 +682,10 @@ pub struct LaunchConfig {
 }
 
 impl LaunchConfig {
-    /// A simple function to create launch configuration
-    /// with 1 grid and n threads
+    /// Creates a [LaunchConfig] with:
+    /// - block_dim == `1024`
+    /// - grid_dim == `(n - 1023) / 1024`
+    /// - shared_mem_bytes == `0`
     pub fn for_num_elems(n: u32) -> Self {
         const NUM_THREADS: u32 = 1024;
         let num_blocks = (n + NUM_THREADS - 1) / NUM_THREADS;
