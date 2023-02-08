@@ -252,7 +252,10 @@ trait RangeHelper<T: PartialOrd> {
     fn inclusive_start(&self, valid: &impl RangeBounds<T>) -> Option<T>;
     fn inclusive_end(&self, valid: &impl RangeBounds<T>) -> Option<T>;
     fn bounds(&self, valid: impl RangeBounds<T>) -> Option<(T, T)> {
-        self.inclusive_start(&valid).and_then(|s| self.inclusive_end(&valid).and_then(|e| (s <= e).then_some((s, e))))
+        self.inclusive_start(&valid).and_then(|s| {
+            self.inclusive_end(&valid)
+                .and_then(|e| (s <= e).then_some((s, e)))
+        })
     }
 }
 impl<R: RangeBounds<usize>> RangeHelper<usize> for R {
@@ -315,10 +318,7 @@ impl<T> CudaSlice<T> {
     /// Returns `None` if `offset >= self.len`
     ///
     /// See module docstring for example
-    pub fn try_slice_mut(
-        &mut self,
-        range: impl RangeBounds<usize>
-    ) -> Option<CudaViewMut<'_, T>> {
+    pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             slice: self,
