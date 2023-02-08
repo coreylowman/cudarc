@@ -104,7 +104,7 @@ mod tests {
 
     fn gen_uniform<T: ValidAsZeroBits + Clone + Default + Unpin>(seed: u64, n: usize) -> Vec<T>
     where
-        sys::curandGenerator_t: UniformFill<T>,
+        super::sys::curandGenerator_t: UniformFill<T>,
     {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
         let mut a_dev = dev.alloc_zeros_async::<T>(n).unwrap();
@@ -120,7 +120,7 @@ mod tests {
         std: T,
     ) -> Vec<T>
     where
-        sys::curandGenerator_t: NormalFill<T>,
+        super::sys::curandGenerator_t: NormalFill<T>,
     {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
         let mut a_dev = dev.alloc_zeros_async::<T>(n).unwrap();
@@ -136,7 +136,7 @@ mod tests {
         std: T,
     ) -> Vec<T>
     where
-        sys::curandGenerator_t: LogNormalFill<T>,
+        super::sys::curandGenerator_t: LogNormalFill<T>,
     {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
         let mut a_dev = dev.alloc_zeros_async::<T>(n).unwrap();

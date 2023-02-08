@@ -1092,14 +1092,6 @@ unsafe impl ValidAsZeroBits for f64 {}
 unsafe impl<T: ValidAsZeroBits, const M: usize> ValidAsZeroBits for [T; M] {}
 /// Implement `ValidAsZeroBits` for tuples if all elements are `ValidAsZeroBits`,
 ///
-/// e.g.:
-/// ```no_run
-/// impl_tuples!(A, B, C)
-/// => impl_tuples!(@ A, B, C) + impl_tuples!(B, C)
-/// => impl_tuples!(@ B, C) + impl_tuples!(C)
-/// => impl_tuples!(@ C)
-/// ```
-///
 /// # Note
 /// This will also implement `ValidAsZeroBits` for a tuple with one element
 macro_rules! impl_tuples {
