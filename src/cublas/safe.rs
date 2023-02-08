@@ -43,6 +43,7 @@ impl Drop for CudaBlas {
 }
 
 /// Configuration for [Gemv]
+#[derive(Debug, Copy, Clone)]
 pub struct GemvConfig<T> {
     pub trans: sys::cublasOperation_t,
     pub m: c_int,
@@ -121,6 +122,7 @@ impl Gemv<f64> for CudaBlas {
 }
 
 /// Configuration for [Gemm]
+#[derive(Debug, Copy, Clone)]
 pub struct GemmConfig<T> {
     pub transa: sys::cublasOperation_t,
     pub transb: sys::cublasOperation_t,
@@ -135,6 +137,7 @@ pub struct GemmConfig<T> {
 }
 
 /// Configuration for [Gemm] strided batched call
+#[derive(Debug, Copy, Clone)]
 pub struct StridedBatchedConfig<T> {
     pub gemm: GemmConfig<T>,
     pub batch_size: c_int,
