@@ -108,6 +108,7 @@ pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError>
 /// # Safety
 ///
 /// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
+#[allow(clippy::slow_vector_initialization)]
 pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
@@ -126,6 +127,7 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError
 /// # Safety
 ///
 /// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
+#[allow(clippy::slow_vector_initialization)]
 pub unsafe fn get_program_log(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
     sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
