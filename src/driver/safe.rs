@@ -288,6 +288,22 @@ pub struct CudaView<'a, T> {
     len: usize,
 }
 
+impl<'a, T> CudaView<'a, T> {
+    /// Number of elements in the slice
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    /// Size of the slice in bytes
+    pub fn num_bytes(&self) -> usize {
+        self.len * std::mem::size_of::<T>()
+    }
+}
+
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()],
 /// which implements [AsKernelParam] for use with kernels.
 ///
@@ -297,6 +313,22 @@ pub struct CudaViewMut<'a, T> {
     slice: &'a mut CudaSlice<T>,
     ptr: sys::CUdeviceptr,
     len: usize,
+}
+
+impl<'a, T> CudaViewMut<'a, T> {
+    /// Number of elements in the slice
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    /// Size of the slice in bytes
+    pub fn num_bytes(&self) -> usize {
+        self.len * std::mem::size_of::<T>()
+    }
 }
 
 impl<T> CudaSlice<T> {
@@ -330,11 +362,15 @@ impl<T> CudaSlice<T> {
 /// Abstraction over [CudaSlice]/[CudaView]
 pub trait DevicePtr<T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr;
+    fn len(&self) -> usize;
 }
 
 impl<T> DevicePtr<T> for CudaSlice<T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.cu_device_ptr
+    }
+    fn len(&self) -> usize {
+        self.len
     }
 }
 
@@ -342,22 +378,35 @@ impl<'a, T> DevicePtr<T> for CudaView<'a, T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.ptr
     }
+    fn len(&self) -> usize {
+        self.len
+    }
 }
 
 /// Abstraction over [CudaSlice]/[CudaViewMut]
 pub trait DevicePtrMut<T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr;
+    fn len(&self) -> usize;
+    fn num_bytes(&self) -> usize {
+        self.len() * std::mem::size_of::<T>()
+    }
 }
 
 impl<T> DevicePtrMut<T> for CudaSlice<T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
         &mut self.cu_device_ptr
     }
+    fn len(&self) -> usize {
+        self.len
+    }
 }
 
 impl<'a, T> DevicePtrMut<T> for CudaViewMut<'a, T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
         &mut self.ptr
+    }
+    fn len(&self) -> usize {
+        self.len
     }
 }
 
@@ -450,6 +499,33 @@ impl CudaDevice {
         let mut dst = unsafe { self.alloc_async(src.len()) }?;
         self.copy_into_async(src, &mut dst)?;
         Ok(dst)
+    }
+
+    /// Device to device copy (safe version of [result::memcpy_dtod_async]).
+    ///
+    /// # Panics
+    ///
+    /// If the length of the two values are different
+    ///
+    /// # Safety
+    /// 1. We are guarunteed that `src` and `dst` are pointers to the same underlying
+    ///     type `T`
+    /// 2. Since they are both references, they can't have been freed
+    /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn device_copy_async<T, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
+        self: &Arc<Self>,
+        src: &Src,
+        dst: &mut Dst,
+    ) -> Result<(), DriverError> {
+        assert_eq!(src.len(), dst.len());
+        unsafe {
+            result::memcpy_dtod_async(
+                *dst.device_ptr_mut(),
+                *src.device_ptr(),
+                src.len() * std::mem::size_of::<T>(),
+                self.cu_stream,
+            )
+        }
     }
 
     /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
@@ -1301,6 +1377,32 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         assert_eq!((2..=2usize).bounds(0..=usize::MAX), Some((2, 2)));
         assert_eq!((2..=2usize).bounds(0..=1), None);
         assert_eq!((2..2usize).bounds(0..=usize::MAX), None);
+    }
+
+    #[test]
+    fn test_device_copy_to_views() {
+        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+
+        let smalls = [
+            dev.take_async(std::vec![-1.0f32, -0.8]).unwrap(),
+            dev.take_async(std::vec![-0.6, -0.4]).unwrap(),
+            dev.take_async(std::vec![-0.2, 0.0]).unwrap(),
+            dev.take_async(std::vec![0.2, 0.4]).unwrap(),
+            dev.take_async(std::vec![0.6, 0.8]).unwrap(),
+        ];
+        let mut big = dev.alloc_zeros_async::<f32>(10).unwrap();
+
+        let mut offset = 0;
+        for small in smalls.iter() {
+            let mut sub = big.try_slice_mut(offset..offset + small.len()).unwrap();
+            dev.device_copy_async(small, &mut sub).unwrap();
+            offset += small.len();
+        }
+
+        assert_eq!(
+            dev.sync_release(big).unwrap(),
+            [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
+        );
     }
 
     #[test]
