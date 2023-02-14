@@ -24,6 +24,7 @@ keywords = [
 default = [ "std", "f16" ]
 f16 = [ "half" ]
 std = [ "no-std-compat/std"]
+ci-check = []
 
 [dependencies]
 spin = { version = "0.9.4", features = ["rwlock"], default-features = false }
