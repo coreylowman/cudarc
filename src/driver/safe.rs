@@ -363,6 +363,12 @@ impl<T> CudaSlice<T> {
 pub trait DevicePtr<T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr;
     fn len(&self) -> usize;
+    fn num_bytes(&self) -> usize {
+        self.len() * std::mem::size_of::<T>()
+    }
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl<T> DevicePtr<T> for CudaSlice<T> {
@@ -389,6 +395,9 @@ pub trait DevicePtrMut<T> {
     fn len(&self) -> usize;
     fn num_bytes(&self) -> usize {
         self.len() * std::mem::size_of::<T>()
+    }
+    fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
