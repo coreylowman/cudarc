@@ -1031,10 +1031,6 @@ impl CudaDeviceBuilder {
 
         unsafe { result::ctx::set_current(cu_primary_ctx) }.map_err(BuildError::ContextError)?;
 
-        // stream initialization
-        let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)
-            .map_err(BuildError::StreamError)?;
-
         let mut modules = BTreeMap::new();
 
         for cu in self.ptx_files.drain(..) {
@@ -1054,7 +1050,7 @@ impl CudaDeviceBuilder {
         let device = CudaDevice {
             cu_device,
             cu_primary_ctx,
-            cu_stream,
+            cu_stream: std::ptr::null_mut(),
             modules: RwLock::new(modules),
         };
         Ok(Arc::new(device))
