@@ -1122,8 +1122,8 @@ impl CudaDeviceBuilder {
 }
 
 /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then profiler_start() has no effect.
-/// ```
-/// use cudarc::profiler;
+/// ```rust
+/// use cudarc::driver::{profiler_start, profiler_stop};
 ///
 /// profiler_start()?;
 /// // Hotpath
