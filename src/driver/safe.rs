@@ -1121,6 +1121,27 @@ impl CudaDeviceBuilder {
     }
 }
 
+/// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then profiler_start() has no effect.
+/// ```
+/// use cudarc::profiler;
+///
+/// profiler_start()?;
+/// // Hotpath
+/// profiler_stop()?;
+/// // Now check your results
+/// // nsys profile -c cudaProfilerApi /path/to/bin
+/// // And this will profile only the hotpath.
+/// ```
+///
+pub fn profiler_start() -> Result<(), DriverError> {
+    unsafe { sys::cuProfilerStart() }.result()
+}
+
+/// Disables profile collection by the active profiling tool for the current context. If profiling is already disabled, then profiler_stop() has no effect.
+pub fn profiler_stop() -> Result<(), DriverError> {
+    unsafe { sys::cuProfilerStop() }.result()
+}
+
 /// An error the occurs during [CudaDeviceBuilder::build]
 #[derive(Debug)]
 pub enum BuildError {
