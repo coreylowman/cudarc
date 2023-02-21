@@ -20,4 +20,3 @@ pub mod cublas;
 pub mod curand;
 pub mod driver;
 pub mod nvrtc;
-pub mod profiler;
