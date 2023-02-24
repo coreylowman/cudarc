@@ -142,15 +142,22 @@
 //!
 //! ### Single stream operations
 //!
-//! The next part of safety is ensuring that:
-//! 1. The null stream is not used
-//! 2. Data isnt mutated by more than 1 stream at a time.
+//! The next part of safety is ensuring that all operations happen on a single stream.
+//! This ensures that data isn't mutated by more than 1 stream at a time, and also
+//! ensures data isn't used before allocated, or used after free.
 //!
 //! At the moment, only a single stream is supported, and only the `*_async` methods
 //! in [crate::driver::result] are used.
 //!
 //! Another important aspect of this is ensuring that mutability in an async setting
 //! is sound, and something can't be freed while it's being used in a kernel.
+//!
+//! Unfortunately, it also is inefficient to keep all `free()` operations on the
+//! same stream as actual work.
+//!
+//! To this end [CudaDevice] actual has a 2nd stream, where it places all `free()`
+//! operations. These are synchronized with the main stream using the [result::event]
+//! module and [result::stream::wait_event].
 
 use super::{result, sys};
 use crate::nvrtc::Ptx;
@@ -222,7 +229,7 @@ impl<T> CudaSlice<T> {
                 dst.cu_device_ptr,
                 self.cu_device_ptr,
                 self.num_bytes(),
-                self.device.cu_stream,
+                self.device.stream,
             )
         }?;
         Ok(dst)
@@ -237,7 +244,24 @@ impl<T> Clone for CudaSlice<T> {
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        unsafe { result::free_async(self.cu_device_ptr, self.device.cu_stream) }.unwrap();
+        unsafe {
+            // 1. record the current state of cu_stream on the event.
+            result::event::record(self.device.event, self.device.stream).unwrap();
+
+            // 2. make dealloc_stream wait for the event to be marked as complete.
+            result::stream::wait_event(
+                self.device.free_stream,
+                self.device.event,
+                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+            )
+            .unwrap();
+
+            // 3. add a free operation to the dealloc stream.
+            // Since we just made dealloc_stream wait on the event, which is synchronized
+            // on the device stream, that means this free will not occur until all currently
+            // existing jobs on the stream execute.
+            result::free_async(self.cu_device_ptr, self.device.free_stream).unwrap();
+        }
     }
 }
 
@@ -434,7 +458,12 @@ impl<'a, T> DevicePtrMut<T> for CudaViewMut<'a, T> {
 pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
     pub(crate) cu_primary_ctx: sys::CUcontext,
-    pub(crate) cu_stream: sys::CUstream,
+    /// The stream that all work is executed on.
+    pub(crate) stream: sys::CUstream,
+    /// A stream that only contains free_async calls so they don't block the `stream`.
+    pub(crate) free_stream: sys::CUstream,
+    /// Used to synchronize `free_stream` & `stream`
+    pub(crate) event: sys::CUevent,
     pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
 }
 
@@ -449,9 +478,19 @@ impl Drop for CudaDevice {
         }
         modules.clear();
 
-        let stream = std::mem::replace(&mut self.cu_stream, std::ptr::null_mut());
+        let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
         if !stream.is_null() {
             unsafe { result::stream::destroy(stream) }.unwrap();
+        }
+
+        let stream = std::mem::replace(&mut self.free_stream, std::ptr::null_mut());
+        if !stream.is_null() {
+            unsafe { result::stream::destroy(stream) }.unwrap();
+        }
+
+        let event = std::mem::replace(&mut self.event, std::ptr::null_mut());
+        if !event.is_null() {
+            unsafe { result::event::destroy(event) }.unwrap();
         }
 
         let ctx = std::mem::replace(&mut self.cu_primary_ctx, std::ptr::null_mut());
@@ -470,7 +509,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, DriverError> {
-        let cu_device_ptr = result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?;
+        let cu_device_ptr = result::malloc_async(self.stream, len * std::mem::size_of::<T>())?;
         Ok(CudaSlice {
             cu_device_ptr,
             len,
@@ -490,7 +529,7 @@ impl CudaDevice {
         len: usize,
     ) -> Result<CudaSlice<T>, DriverError> {
         let dst = unsafe { self.alloc_async(len) }?;
-        unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.cu_stream) }?;
+        unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.stream) }?;
         Ok(dst)
     }
 
@@ -532,7 +571,7 @@ impl CudaDevice {
                 *dst.device_ptr_mut(),
                 *src.device_ptr(),
                 src.len() * std::mem::size_of::<T>(),
-                self.cu_stream,
+                self.stream,
             )
         }
     }
@@ -568,7 +607,7 @@ impl CudaDevice {
         dst: &mut CudaSlice<T>,
     ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
-        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.cu_stream) }?;
+        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.stream) }?;
         self.synchronize()
     }
 
@@ -590,7 +629,7 @@ impl CudaDevice {
             result::memcpy_htod_async(
                 dst.cu_device_ptr,
                 dst.host_buf.as_ref().unwrap(),
-                self.cu_stream,
+                self.stream,
             )
         }?;
         Ok(())
@@ -614,7 +653,7 @@ impl CudaDevice {
         dst: &mut [T],
     ) -> Result<(), DriverError> {
         assert_eq!(src.len(), dst.len());
-        unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr, self.cu_stream) }?;
+        unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr, self.stream) }?;
         self.synchronize()
     }
 
@@ -631,7 +670,7 @@ impl CudaDevice {
         let mut dst = Vec::with_capacity(src.len());
         unsafe {
             dst.set_len(src.len());
-            result::memcpy_dtoh_async(dst.as_mut_slice(), src.cu_device_ptr, self.cu_stream)
+            result::memcpy_dtoh_async(dst.as_mut_slice(), src.cu_device_ptr, self.stream)
         }?;
         self.synchronize()?;
         Ok(dst)
@@ -658,7 +697,7 @@ impl CudaDevice {
 
     /// Synchronizes the stream.
     pub fn synchronize(self: &Arc<Self>) -> Result<(), DriverError> {
-        unsafe { result::stream::synchronize(self.cu_stream) }
+        unsafe { result::stream::synchronize(self.stream) }
     }
 
     /// Whether a module and function are currently loaded into the device.
@@ -921,7 +960,7 @@ unsafe impl<$($Vars: AsKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFuncti
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.device.cu_stream,
+            self.device.stream,
             params,
         )
     }
@@ -1040,6 +1079,12 @@ impl CudaDeviceBuilder {
 
         unsafe { result::ctx::set_current(cu_primary_ctx) }.map_err(BuildError::ContextError)?;
 
+        let free_stream = result::stream::create(result::stream::StreamKind::NonBlocking)
+            .map_err(BuildError::StreamError)?;
+
+        let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)
+            .map_err(BuildError::DeviceError)?;
+
         let mut modules = BTreeMap::new();
 
         for cu in self.ptx_files.drain(..) {
@@ -1059,7 +1104,9 @@ impl CudaDeviceBuilder {
         let device = CudaDevice {
             cu_device,
             cu_primary_ctx,
-            cu_stream: std::ptr::null_mut(),
+            stream: std::ptr::null_mut(),
+            free_stream,
+            event,
             modules: RwLock::new(modules),
         };
         Ok(Arc::new(device))
