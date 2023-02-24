@@ -252,6 +252,20 @@ pub mod stream {
     pub unsafe fn destroy(stream: sys::CUstream) -> Result<(), DriverError> {
         sys::cuStreamDestroy_v2(stream).result()
     }
+
+    /// Make a compute stream wait on an event.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g6a898b652dfc6aa1d5c8d97062618b2f)
+    ///
+    /// # Safety
+    /// 1. Both stream and event must not have been freed already
+    pub unsafe fn wait_event(
+        stream: sys::CUstream,
+        event: sys::CUevent,
+        flags: sys::CUevent_wait_flags,
+    ) -> Result<(), DriverError> {
+        sys::cuStreamWaitEvent(stream, event, flags as u32).result()
+    }
 }
 
 /// Allocates memory with stream ordered semantics.
@@ -441,6 +455,61 @@ pub mod module {
     /// `module` must not have be unloaded already.
     pub unsafe fn unload(module: sys::CUmodule) -> Result<(), DriverError> {
         sys::cuModuleUnload(module).result()
+    }
+}
+
+pub mod event {
+    use super::{sys, DriverError};
+    use std::mem::MaybeUninit;
+
+    /// Creates an event.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g450687e75f3ff992fe01662a43d9d3db)
+    pub fn create(flags: sys::CUevent_flags) -> Result<sys::CUevent, DriverError> {
+        let mut event = MaybeUninit::uninit();
+        unsafe {
+            sys::cuEventCreate(event.as_mut_ptr(), flags as u32).result()?;
+            Ok(event.assume_init())
+        }
+    }
+
+    /// Records an event.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g95424d3be52c4eb95d83861b70fb89d1)
+    ///
+    /// # Safety
+    /// This function is unsafe because event can be a null event, in which case
+    pub unsafe fn record(event: sys::CUevent, stream: sys::CUstream) -> Result<(), DriverError> {
+        unsafe { sys::cuEventRecord(event, stream).result() }
+    }
+
+    /// Computes the elapsed time (in milliseconds) between two events.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1gdfb1178807353bbcaa9e245da497cf97)
+    /// # Safety
+    /// 1. Events must have been created by [create]
+    /// 2. They should be on the same stream
+    /// 3. They must not have been destroyed.
+    pub unsafe fn elapsed(start: sys::CUevent, end: sys::CUevent) -> Result<f32, DriverError> {
+        let mut ms: f32 = 0.0;
+        unsafe {
+            sys::cuEventElapsedTime((&mut ms) as *mut _, start, end).result()?;
+        }
+        Ok(ms)
+    }
+
+    /// Destroys an event.
+    ///
+    /// > An event may be destroyed before it is complete (i.e., while cuEventQuery() would return CUDA_ERROR_NOT_READY).
+    /// > In this case, the call does not block on completion of the event,
+    /// > and any associated resources will automatically be released asynchronously at completion.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g593ec73a8ec5a5fc031311d3e4dca1ef)
+    ///
+    /// # Safety
+    /// 1. Event must not have been freed already
+    pub unsafe fn destroy(event: sys::CUevent) -> Result<(), DriverError> {
+        sys::cuEventDestroy_v2(event).result()
     }
 }
 
