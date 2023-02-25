@@ -28,7 +28,7 @@ impl CudaBlas {
     pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
         let handle = result::create_handle()?;
         let blas = Self { handle, device };
-        unsafe { result::set_stream(handle, blas.device.cu_stream as *mut _) }?;
+        unsafe { result::set_stream(handle, blas.device.stream as *mut _) }?;
         Ok(blas)
     }
 }
