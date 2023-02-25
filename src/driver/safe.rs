@@ -528,9 +528,21 @@ impl CudaDevice {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, DriverError> {
-        let dst = unsafe { self.alloc_async(len) }?;
-        unsafe { result::memset_d8_async(dst.cu_device_ptr, 0, dst.num_bytes(), self.stream) }?;
+        let mut dst = unsafe { self.alloc_async(len) }?;
+        self.memset_zeros_async(&mut dst)?;
         Ok(dst)
+    }
+
+    /// Sets all memory to 0 asynchronously.
+    ///
+    /// # Safety
+    /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn memset_zeros_async<T: ValidAsZeroBits, Dst: DevicePtrMut<T>>(
+        self: &Arc<Self>,
+        dst: &mut Dst,
+    ) -> Result<(), DriverError> {
+        unsafe { result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream) }
     }
 
     /// Takes ownership of the host data and copies it to device data asynchronously.
@@ -842,11 +854,13 @@ unsafe impl AsKernelParam for i8 {}
 unsafe impl AsKernelParam for i16 {}
 unsafe impl AsKernelParam for i32 {}
 unsafe impl AsKernelParam for i64 {}
+unsafe impl AsKernelParam for i128 {}
 unsafe impl AsKernelParam for isize {}
 unsafe impl AsKernelParam for u8 {}
 unsafe impl AsKernelParam for u16 {}
 unsafe impl AsKernelParam for u32 {}
 unsafe impl AsKernelParam for u64 {}
+unsafe impl AsKernelParam for u128 {}
 unsafe impl AsKernelParam for usize {}
 unsafe impl AsKernelParam for f32 {}
 unsafe impl AsKernelParam for f64 {}
