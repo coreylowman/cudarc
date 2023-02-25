@@ -1248,11 +1248,13 @@ unsafe impl ValidAsZeroBits for i8 {}
 unsafe impl ValidAsZeroBits for i16 {}
 unsafe impl ValidAsZeroBits for i32 {}
 unsafe impl ValidAsZeroBits for i64 {}
+unsafe impl ValidAsZeroBits for i128 {}
 unsafe impl ValidAsZeroBits for isize {}
 unsafe impl ValidAsZeroBits for u8 {}
 unsafe impl ValidAsZeroBits for u16 {}
 unsafe impl ValidAsZeroBits for u32 {}
 unsafe impl ValidAsZeroBits for u64 {}
+unsafe impl ValidAsZeroBits for u128 {}
 unsafe impl ValidAsZeroBits for usize {}
 unsafe impl ValidAsZeroBits for f32 {}
 unsafe impl ValidAsZeroBits for f64 {}
