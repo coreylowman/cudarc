@@ -801,6 +801,48 @@ pub struct CudaFunction {
 unsafe impl Send for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
+impl CudaFunction {
+    #[inline]
+    unsafe fn launch_async_impl(
+        self,
+        cfg: LaunchConfig,
+        params: &mut [*mut std::ffi::c_void],
+    ) -> Result<(), DriverError> {
+        result::launch_kernel(
+            self.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.device.stream,
+            params,
+        )
+    }
+
+    #[inline]
+    unsafe fn par_launch_async_impl(
+        self,
+        cfg: LaunchConfig,
+        params: &mut [*mut std::ffi::c_void],
+    ) -> Result<(), DriverError> {
+        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+        result::launch_kernel(
+            self.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            stream,
+            params,
+        )?;
+        result::event::record(self.device.event, stream)?;
+        result::stream::wait_event(
+            self.device.stream,
+            self.device.event,
+            sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+        )?;
+        result::stream::destroy(stream)
+    }
+}
+
 /// Configuration for [result::launch_kernel]
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1gb8f3dc3031b40da29d5f9a7139e52e15)
@@ -958,6 +1000,17 @@ pub unsafe trait LaunchAsync<Params> {
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
     unsafe fn launch_async(self, cfg: LaunchConfig, params: Params) -> Result<(), DriverError>;
+
+    /// Launch the function on a stream concurrent to the device's default
+    /// work stream. The default work stream is blocked on completion of this kernel.
+    ///
+    /// # Safety
+    /// This method is even more unsafe than [LaunchAsync::launch_async], all the same rules apply,
+    /// except now things are executing in parallel to each other.
+    ///
+    /// That means that if any of the kernels modify the same memory location, you'll get race
+    /// conditions or potentially undefined behavior.
+    unsafe fn par_launch_async(self, cfg: LaunchConfig, params: Params) -> Result<(), DriverError>;
 }
 
 macro_rules! impl_launch {
@@ -969,14 +1022,16 @@ unsafe impl<$($Vars: AsKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFuncti
         args: ($($Vars, )*)
     ) -> Result<(), DriverError> {
         let params = &mut [$(args.$Idx.as_kernel_param(), )*];
-        result::launch_kernel(
-            self.cu_function,
-            cfg.grid_dim,
-            cfg.block_dim,
-            cfg.shared_mem_bytes,
-            self.device.stream,
-            params,
-        )
+        self.launch_async_impl(cfg, params)
+    }
+
+    unsafe fn par_launch_async(
+        self,
+        cfg: LaunchConfig,
+        args: ($($Vars, )*)
+    ) -> Result<(), DriverError> {
+        let params = &mut [$(args.$Idx.as_kernel_param(), )*];
+        self.par_launch_async_impl(cfg, params)
     }
 }
     };
