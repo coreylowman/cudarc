@@ -775,12 +775,14 @@ impl CudaDevice {
 /// dev.par_launch_kernel(&stream, ...)?; // 2
 /// dev.launch_kernel(...)?; // 3
 /// drop(stream); // 4
+/// dev.launch_kernel(...) // 5
 /// ```
 ///
 /// - 1 will launch on the default work stream
 /// - 2 will launch concurrently to 1 on `&stream`,
 /// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
 /// - 4 will place a streamWaitEvent(`&stream`) on default work stream
+/// - 5 will happen on the default stream **after the default stream waits for 2**
 #[derive(Debug)]
 pub struct CudaStream {
     pub stream: sys::CUstream,
