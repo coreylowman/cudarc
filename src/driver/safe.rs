@@ -649,7 +649,7 @@ impl CudaDevice {
 
     /// Synchronously copies device memory into host memory
     ///
-    /// Use [`sync_copy_into_vec`] if you need [`Vec<T>`] and can't provide
+    /// Use [`CudaDevice::sync_copy_into_vec`] if you need [`Vec<T>`] and can't provide
     /// a correctly sized slice.
     ///
     /// # Panics
@@ -670,7 +670,7 @@ impl CudaDevice {
     }
 
     /// Synchronously copies device memory into host memory.
-    /// Unlike [`sync_copy_from`] this returns a [`Vec<T>`].
+    /// Unlike [`CudaDevice::sync_copy_from`] this returns a [`Vec<T>`].
     ///
     /// # Safety
     /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
@@ -763,6 +763,58 @@ impl CudaDevice {
     }
 }
 
+/// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
+/// upon the completion of this streams work.
+///
+/// Create with [CudaDevice::auto_joining_stream].
+///
+/// The synchronization happens in **code order**. E.g.
+/// ```ignore
+/// let stream = dev.auto_joining_stream()?;
+/// dev.launch_kernel(...)?; // 1
+/// dev.par_launch_kernel(&stream, ...)?; // 2
+/// dev.launch_kernel(...)?; // 3
+/// drop(stream); // 4
+/// ```
+///
+/// - 1 will launch on the default work stream
+/// - 2 will launch concurrently to 1 on `&stream`,
+/// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
+/// - 4 will place a streamWaitEvent(`&stream`) on default work stream
+#[derive(Debug)]
+pub struct CudaStream {
+    pub stream: sys::CUstream,
+    device: Arc<CudaDevice>,
+}
+
+impl CudaDevice {
+    /// Allocates a new stream that can execute kernels concurrently to the default stream.
+    ///
+    /// Note that the stream places a streamWaitEvent on the default stream on [Drop].
+    pub fn auto_joining_stream(self: &Arc<Self>) -> Result<CudaStream, DriverError> {
+        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+        Ok(CudaStream {
+            stream,
+            device: self.clone(),
+        })
+    }
+}
+
+impl Drop for CudaStream {
+    fn drop(&mut self) {
+        unsafe {
+            result::event::record(self.device.event, self.stream).unwrap();
+            result::stream::wait_event(
+                self.device.stream,
+                self.device.event,
+                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+            )
+            .unwrap();
+            result::stream::destroy(self.stream).unwrap();
+        }
+    }
+}
+
 /// Wrapper around [sys::CUmodule] that also contains
 /// the loaded [CudaFunction] associated with this module.
 ///
@@ -821,25 +873,18 @@ impl CudaFunction {
     #[inline]
     unsafe fn par_launch_async_impl(
         self,
+        stream: &CudaStream,
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
     ) -> Result<(), DriverError> {
-        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         result::launch_kernel(
             self.cu_function,
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            stream,
+            stream.stream,
             params,
-        )?;
-        result::event::record(self.device.event, stream)?;
-        result::stream::wait_event(
-            self.device.stream,
-            self.device.event,
-            sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-        )?;
-        result::stream::destroy(stream)
+        )
     }
 }
 
@@ -1002,7 +1047,7 @@ pub unsafe trait LaunchAsync<Params> {
     unsafe fn launch_async(self, cfg: LaunchConfig, params: Params) -> Result<(), DriverError>;
 
     /// Launch the function on a stream concurrent to the device's default
-    /// work stream. The default work stream is blocked on completion of this kernel.
+    /// work stream.
     ///
     /// # Safety
     /// This method is even more unsafe than [LaunchAsync::launch_async], all the same rules apply,
@@ -1010,7 +1055,12 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// That means that if any of the kernels modify the same memory location, you'll get race
     /// conditions or potentially undefined behavior.
-    unsafe fn par_launch_async(self, cfg: LaunchConfig, params: Params) -> Result<(), DriverError>;
+    unsafe fn par_launch_async(
+        self,
+        stream: &CudaStream,
+        cfg: LaunchConfig,
+        params: Params,
+    ) -> Result<(), DriverError>;
 }
 
 macro_rules! impl_launch {
@@ -1027,11 +1077,12 @@ unsafe impl<$($Vars: AsKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFuncti
 
     unsafe fn par_launch_async(
         self,
+        stream: &CudaStream,
         cfg: LaunchConfig,
         args: ($($Vars, )*)
     ) -> Result<(), DriverError> {
         let params = &mut [$(args.$Idx.as_kernel_param(), )*];
-        self.par_launch_async_impl(cfg, params)
+        self.par_launch_async_impl(stream, cfg, params)
     }
 }
     };

@@ -2,7 +2,7 @@
 #![allow(clippy::too_many_arguments)]
 
 use super::{result, result::CublasError, sys};
-use crate::driver::{CudaDevice, DevicePtr, DevicePtrMut};
+use crate::driver::{CudaDevice, CudaStream, DevicePtr, DevicePtrMut};
 use core::ffi::{c_int, c_longlong};
 use std::sync::Arc;
 
@@ -30,6 +30,19 @@ impl CudaBlas {
         let blas = Self { handle, device };
         unsafe { result::set_stream(handle, blas.device.stream as *mut _) }?;
         Ok(blas)
+    }
+
+    /// Sets the handle's current to either the stream specified, or the device's default work
+    /// stream.
+    ///
+    /// # Safety
+    /// This is unsafe because you can end up scheduling multiple concurrent kernels that all
+    /// write to the same memory address.
+    pub unsafe fn set_stream(&self, opt_stream: Option<&CudaStream>) -> Result<(), CublasError> {
+        match opt_stream {
+            Some(s) => result::set_stream(self.handle, s.stream as *mut _),
+            None => result::set_stream(self.handle, self.device.stream as *mut _),
+        }
     }
 }
 
