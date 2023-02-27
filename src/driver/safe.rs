@@ -770,14 +770,15 @@ impl CudaDevice {
 ///
 /// The synchronization happens in **code order**. E.g.
 /// ```ignore
-/// let stream = dev.auto_joining_stream()?;
-/// dev.launch_kernel(...)?; // 1
-/// dev.par_launch_kernel(&stream, ...)?; // 2
-/// dev.launch_kernel(...)?; // 3
+/// let stream = dev.auto_joining_stream()?; // 0
+/// dev.launch_async(...)?; // 1
+/// dev.par_launch_async(&stream, ...)?; // 2
+/// dev.launch_async(...)?; // 3
 /// drop(stream); // 4
-/// dev.launch_kernel(...) // 5
+/// dev.launch_async(...) // 5
 /// ```
 ///
+/// - 0 will place a streamWaitEvent(default work stream) on the new stream
 /// - 1 will launch on the default work stream
 /// - 2 will launch concurrently to 1 on `&stream`,
 /// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
@@ -792,13 +793,29 @@ pub struct CudaStream {
 impl CudaDevice {
     /// Allocates a new stream that can execute kernels concurrently to the default stream.
     ///
-    /// Note that the stream places a streamWaitEvent on the default stream on [Drop].
+    /// This stream synchronizes in the following way:
+    /// 1. On creation it adds a wait for any existing work on the default work stream to complete
+    /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
     pub fn auto_joining_stream(self: &Arc<Self>) -> Result<CudaStream, DriverError> {
         let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+        unsafe {
+            result::event::record(self.event, self.stream)?;
+            result::stream::wait_event(
+                stream,
+                self.event,
+                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+            )?;
+        }
         Ok(CudaStream {
             stream,
             device: self.clone(),
         })
+    }
+
+    /// Forces [CudaStream] to drop, causing the default work stream to block on `streams` completion.
+    #[allow(unused_variables)]
+    pub fn join_async(self: &Arc<Self>, stream: CudaStream) -> Result<(), DriverError> {
+        Ok(())
     }
 }
 
