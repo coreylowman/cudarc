@@ -1392,6 +1392,8 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
+    use std::time::Instant;
+
     use crate::nvrtc::compile_ptx_with_opts;
 
     use super::*;
@@ -1796,5 +1798,59 @@ extern \"C\" __global__ void halfs(__half h) {
         }
         .unwrap();
         dev.synchronize().unwrap();
+    }
+
+    const SLOW_KERNELS: &str = "
+extern \"C\" __global__ void slow_worker(const float *data, const size_t len, float *out) {
+    float tmp = 0.0;
+    for(size_t i = 0; i < 1000000; i++) {
+        tmp += data[i % len];
+    }
+    *out = tmp;
+}
+";
+
+    #[test]
+    fn test_par_launch() -> Result<(), DriverError> {
+        let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
+        let dev = CudaDeviceBuilder::new(0)
+            .with_ptx(ptx, "tests", &["slow_worker"])
+            .build()
+            .unwrap();
+        let slice = dev.alloc_zeros_async::<f32>(1000)?;
+        let mut a = dev.alloc_zeros_async::<f32>(1)?;
+        let mut b = dev.alloc_zeros_async::<f32>(1)?;
+        let cfg = LaunchConfig::for_num_elems(1);
+
+        let start = Instant::now();
+        {
+            // launch two kernels on the default stream
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch_async(cfg, (&slice, slice.len(), &mut a))? };
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch_async(cfg, (&slice, slice.len(), &mut b))? };
+            dev.synchronize()?;
+        }
+        let double_launch_s = start.elapsed().as_secs_f64();
+
+        let start = Instant::now();
+        {
+            // create a new stream & launch them concurrently
+            let stream = dev.auto_joining_stream()?;
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch_async(cfg, (&slice, slice.len(), &mut a))? };
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.par_launch_async(&stream, cfg, (&slice, slice.len(), &mut b))? };
+            dev.synchronize()?;
+        }
+        let par_launch_s = start.elapsed().as_secs_f64();
+
+        assert!(
+            (double_launch_s - 2.0 * par_launch_s).abs() < 20.0 / 1000.0,
+            "par={:?} dbl={:?}",
+            par_launch_s,
+            double_launch_s
+        );
+        Ok(())
     }
 }
