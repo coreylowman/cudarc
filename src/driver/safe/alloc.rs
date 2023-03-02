@@ -207,13 +207,13 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn htod_sync_copy_into<T: DeviceRepr>(
+    pub fn htod_sync_copy_into<T: DeviceRepr, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         src: &[T],
-        dst: &mut CudaSlice<T>,
+        dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.stream) }?;
+        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
         self.synchronize()
     }
 
@@ -246,13 +246,13 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn dtoh_sync_copy_into<T: DeviceRepr>(
+    pub fn dtoh_sync_copy_into<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
-        src: &CudaSlice<T>,
+        src: &Src,
         dst: &mut [T],
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr, self.stream) }?;
+        unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
         self.synchronize()
     }
 
