@@ -1,6 +1,6 @@
 use crate::driver::{result, sys};
 
-use super::device_ptr::DeviceSlice;
+use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 
 use core::ops::{Bound, RangeBounds};
 use spin::RwLock;
@@ -30,7 +30,7 @@ pub struct CudaDevice {
     pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
 }
 
-unsafe impl Send for CudaDevice {}
+unsafe impl DeviceRepr for CudaDevice {}
 unsafe impl Sync for CudaDevice {}
 
 impl Drop for CudaDevice {
@@ -97,7 +97,7 @@ pub struct CudaSlice<T> {
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
-unsafe impl<T: Send> Send for CudaSlice<T> {}
+unsafe impl<T: DeviceRepr> DeviceRepr for CudaSlice<T> {}
 unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
@@ -123,7 +123,7 @@ impl<T> Drop for CudaSlice<T> {
     }
 }
 
-impl<T> CudaSlice<T> {
+impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
     pub fn clone_async(&self) -> Result<Self, result::DriverError> {
         let dst = unsafe { self.device.alloc_async(self.len) }?;
@@ -139,13 +139,13 @@ impl<T> CudaSlice<T> {
     }
 }
 
-impl<T> Clone for CudaSlice<T> {
+impl<T: DeviceRepr> Clone for CudaSlice<T> {
     fn clone(&self) -> Self {
         self.clone_async().unwrap()
     }
 }
 
-impl<T: Clone + Default + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
+impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
         value.device.clone().sync_release(value)
@@ -164,7 +164,7 @@ pub(crate) struct CudaModule {
     pub(crate) functions: BTreeMap<&'static str, sys::CUfunction>,
 }
 
-unsafe impl Send for CudaModule {}
+unsafe impl DeviceRepr for CudaModule {}
 unsafe impl Sync for CudaModule {}
 
 /// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
@@ -174,7 +174,7 @@ pub struct CudaFunction {
     pub(crate) device: Arc<CudaDevice>,
 }
 
-unsafe impl Send for CudaFunction {}
+unsafe impl DeviceRepr for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
 /// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
