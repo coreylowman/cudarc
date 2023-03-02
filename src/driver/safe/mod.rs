@@ -1,8 +1,8 @@
-//! Safe abstractions over [crate::driver::result] provided by [CudaSlice], [CudaDevice], [CudaDeviceBuilder], and more.
+//! Safe abstractions over [crate::driver::result] provided by [CudaSlice], [CudaDevice], [CudaStream], and more.
 //!
 //! # Usage
 //!
-//! 1. Instantiate a [CudaDevice] with [CudaDeviceBuilder]:
+//! 1. Instantiate a [CudaDevice]:
 //!
 //! ```rust
 //! # use cudarc::driver::*;
@@ -43,22 +43,21 @@
 //!
 //! In order to mutate device data, you need to use cuda kernels.
 //!
-//! Loading kernels is done with [CudaDeviceBuilder::with_ptx()]
-//! and [CudaDeviceBuilder::with_ptx_from_file()]:
+//! Loading kernels is done with [CudaDevice::load_ptx()]
+//! and [CudaDevice::load_ptx_from_file()]:
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
 //! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
-//! let device = CudaDevice::new(0)
-//!     .with_ptx(ptx, "module_name", &["my_function"])
-//!     
-//!     .unwrap();
+//! let device = CudaDevice::new(0).unwrap();
+//! device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! ```
 //!
 //! Retrieve the function using the registered module name & actual function name:
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
-//! # let device = CudaDevice::new(0).with_ptx(ptx, "module_name", &["my_function"]).unwrap();
+//! # let device = CudaDevice::new(0).unwrap();
+//! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! let func: CudaFunction = device.get_func("module_name", "my_function").unwrap();
 //! ```
 //!
@@ -66,7 +65,8 @@
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
-//! # let device = CudaDevice::new(0).with_ptx(ptx, "module_key", &["my_function"]).unwrap();
+//! # let device = CudaDevice::new(0).unwrap();
+//! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! # let func: CudaFunction = device.get_func("module_key", "my_function").unwrap();
 //! let mut a = device.alloc_zeros::<f32>(10).unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
@@ -90,11 +90,12 @@
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
-//! # let device = CudaDevice::new(0).with_ptx(ptx, "module_key", &["my_function"]).unwrap();
+//! # let device = CudaDevice::new(0).unwrap();
+//! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! let mut a: CudaSlice<f32> = device.alloc_zeros::<f32>(3 * 10).unwrap();
 //! for i_batch in 0..3 {
 //!     let mut a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
-//!     let f: CudaFunction = device.get_func("module_key", "my_function").unwrap();
+//!     let f: CudaFunction = device.get_func("module_name", "my_function").unwrap();
 //!     let cfg = LaunchConfig::for_num_elems(10);
 //!     unsafe { f.launch(cfg, (&mut a_sub_view,)) }.unwrap();
 //! }

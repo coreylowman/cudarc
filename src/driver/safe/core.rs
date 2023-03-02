@@ -182,8 +182,6 @@ impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
 /// the loaded [CudaFunction] associated with this module.
 ///
 /// See [CudaModule::get_fn()] for retrieving function handles.
-///
-/// See [CudaDeviceBuilder] for how to construct these modules.
 #[derive(Debug)]
 pub(crate) struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
