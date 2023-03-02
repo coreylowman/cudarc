@@ -148,17 +148,18 @@
 //! This ensures that data isn't mutated by more than 1 stream at a time, and also
 //! ensures data isn't used before allocated, or used after free.
 //!
-//! At the moment, only a single stream is supported, and only the `*_async` methods
-//! in [crate::driver::result] are used.
-//!
 //! Another important aspect of this is ensuring that mutability in an async setting
 //! is sound, and something can't be freed while it's being used in a kernel.
 //!
-//! Unfortunately, it also is inefficient to keep all `free()` operations on the
-//! same stream as actual work.
+//! To this end every operation by default happens on the same stream.
 //!
-//! To this end [CudaDevice] actual has a 2nd stream, where it places all `free()`
-//! operations. These are synchronized with the main stream using the [crate::driver::result::event]
+//! Multi stream is supported via [CudaStream], however it automatically
+//! synchronizes with the main stream on creation & on drop. It is still possible
+//! to be unsafe in a multi stream context though.
+//!
+//! [CudaDevice] actually has a 2nd stream, where it places all `free()`
+//! operations as well. This is transparent to the user, and are synchronized
+//! with the main stream using the [crate::driver::result::event]
 //! module and [crate::driver::result::stream::wait_event].
 
 pub(crate) mod alloc;

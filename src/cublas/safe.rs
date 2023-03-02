@@ -75,7 +75,7 @@ pub trait Gemv<T> {
     /// # Safety
     /// This is unsafe because improper arguments may lead to invalid
     /// memory accesses.
-    unsafe fn gemv_async<A: DevicePtr<T>, X: DevicePtr<T>, Y: DevicePtrMut<T>>(
+    unsafe fn gemv<A: DevicePtr<T>, X: DevicePtr<T>, Y: DevicePtrMut<T>>(
         &self,
         cfg: GemvConfig<T>,
         a: &A,
@@ -85,7 +85,7 @@ pub trait Gemv<T> {
 }
 
 impl Gemv<f32> for CudaBlas {
-    unsafe fn gemv_async<A: DevicePtr<f32>, X: DevicePtr<f32>, Y: DevicePtrMut<f32>>(
+    unsafe fn gemv<A: DevicePtr<f32>, X: DevicePtr<f32>, Y: DevicePtrMut<f32>>(
         &self,
         cfg: GemvConfig<f32>,
         a: &A,
@@ -110,7 +110,7 @@ impl Gemv<f32> for CudaBlas {
 }
 
 impl Gemv<f64> for CudaBlas {
-    unsafe fn gemv_async<A: DevicePtr<f64>, X: DevicePtr<f64>, Y: DevicePtrMut<f64>>(
+    unsafe fn gemv<A: DevicePtr<f64>, X: DevicePtr<f64>, Y: DevicePtrMut<f64>>(
         &self,
         cfg: GemvConfig<f64>,
         a: &A,
@@ -167,7 +167,7 @@ pub trait Gemm<T> {
     /// # Safety
     /// This is unsafe because improper arguments may lead to invalid
     /// memory accesses.
-    unsafe fn gemm_async<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
+    unsafe fn gemm<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
         &self,
         cfg: GemmConfig<T>,
         a: &A,
@@ -181,7 +181,7 @@ pub trait Gemm<T> {
     /// # Safety
     /// This is unsafe because improper arguments may lead to invalid
     /// memory accesses.
-    unsafe fn gemm_strided_batched_async<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
+    unsafe fn gemm_strided_batched<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
         &self,
         cfg: StridedBatchedConfig<T>,
         a: &A,
@@ -192,11 +192,7 @@ pub trait Gemm<T> {
 
 #[cfg(feature = "f16")]
 impl Gemm<half::f16> for CudaBlas {
-    unsafe fn gemm_async<
-        A: DevicePtr<half::f16>,
-        B: DevicePtr<half::f16>,
-        C: DevicePtrMut<half::f16>,
-    >(
+    unsafe fn gemm<A: DevicePtr<half::f16>, B: DevicePtr<half::f16>, C: DevicePtrMut<half::f16>>(
         &self,
         cfg: GemmConfig<half::f16>,
         a: &A,
@@ -220,7 +216,7 @@ impl Gemm<half::f16> for CudaBlas {
             cfg.ldc,
         )
     }
-    unsafe fn gemm_strided_batched_async<
+    unsafe fn gemm_strided_batched<
         A: DevicePtr<half::f16>,
         B: DevicePtr<half::f16>,
         C: DevicePtrMut<half::f16>,
@@ -255,7 +251,7 @@ impl Gemm<half::f16> for CudaBlas {
 }
 
 impl Gemm<f32> for CudaBlas {
-    unsafe fn gemm_async<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
+    unsafe fn gemm<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
         &self,
         cfg: GemmConfig<f32>,
         a: &A,
@@ -280,11 +276,7 @@ impl Gemm<f32> for CudaBlas {
         )
     }
 
-    unsafe fn gemm_strided_batched_async<
-        A: DevicePtr<f32>,
-        B: DevicePtr<f32>,
-        C: DevicePtrMut<f32>,
-    >(
+    unsafe fn gemm_strided_batched<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
         &self,
         cfg: StridedBatchedConfig<f32>,
         a: &A,
@@ -315,7 +307,7 @@ impl Gemm<f32> for CudaBlas {
 }
 
 impl Gemm<f64> for CudaBlas {
-    unsafe fn gemm_async<A: DevicePtr<f64>, B: DevicePtr<f64>, C: DevicePtrMut<f64>>(
+    unsafe fn gemm<A: DevicePtr<f64>, B: DevicePtr<f64>, C: DevicePtrMut<f64>>(
         &self,
         cfg: GemmConfig<f64>,
         a: &A,
@@ -340,11 +332,7 @@ impl Gemm<f64> for CudaBlas {
         )
     }
 
-    unsafe fn gemm_strided_batched_async<
-        A: DevicePtr<f64>,
-        B: DevicePtr<f64>,
-        C: DevicePtrMut<f64>,
-    >(
+    unsafe fn gemm_strided_batched<A: DevicePtr<f64>, B: DevicePtr<f64>, C: DevicePtrMut<f64>>(
         &self,
         cfg: StridedBatchedConfig<f64>,
         a: &A,
@@ -446,7 +434,7 @@ mod tests {
         let b_dev = dev.htod_sync_copy(&b).unwrap();
         let mut c_dev = dev.alloc_zeros(M).unwrap();
         unsafe {
-            blas.gemv_async(
+            blas.gemv(
                 GemvConfig {
                     trans: sys::cublasOperation_t::CUBLAS_OP_T,
                     m: N as i32,
@@ -505,7 +493,7 @@ mod tests {
         let b_dev = dev.htod_sync_copy(&b).unwrap();
         let mut c_dev = dev.alloc_zeros(M).unwrap();
         unsafe {
-            blas.gemv_async(
+            blas.gemv(
                 GemvConfig {
                     trans: sys::cublasOperation_t::CUBLAS_OP_T,
                     m: N as i32,
@@ -574,7 +562,7 @@ mod tests {
         ].map(half::f16::from_f32)).unwrap();
         let mut c_dev = dev.alloc_zeros::<half::f16>(M * N).unwrap();
         unsafe {
-            blas.gemm_async(
+            blas.gemm(
                 GemmConfig {
                     transa: sys::cublasOperation_t::CUBLAS_OP_N,
                     transb: sys::cublasOperation_t::CUBLAS_OP_N,
@@ -643,7 +631,7 @@ mod tests {
         ]).unwrap();
         let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
-            blas.gemm_async(
+            blas.gemm(
                 GemmConfig {
                     transa: sys::cublasOperation_t::CUBLAS_OP_N,
                     transb: sys::cublasOperation_t::CUBLAS_OP_N,
@@ -707,7 +695,7 @@ mod tests {
         ]).unwrap();
         let mut c_dev = dev.alloc_zeros::<f64>(M * N).unwrap();
         unsafe {
-            blas.gemm_async(
+            blas.gemm(
                 GemmConfig {
                     transa: sys::cublasOperation_t::CUBLAS_OP_N,
                     transb: sys::cublasOperation_t::CUBLAS_OP_N,
