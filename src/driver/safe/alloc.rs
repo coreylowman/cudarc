@@ -20,6 +20,7 @@ pub unsafe trait DeviceRepr {
     }
 }
 
+unsafe impl DeviceRepr for bool {}
 unsafe impl DeviceRepr for i8 {}
 unsafe impl DeviceRepr for i16 {}
 unsafe impl DeviceRepr for i32 {}
