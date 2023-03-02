@@ -1,8 +1,7 @@
 use crate::driver::{result, sys};
 
-use super::core::{
-    CudaDevice, CudaFunction, CudaModule, CudaSlice, CudaStream, CudaView, CudaViewMut,
-};
+use super::alloc::DeviceRepr;
+use super::core::{CudaDevice, CudaFunction, CudaModule, CudaStream};
 
 use std::sync::Arc;
 
@@ -108,75 +107,11 @@ impl LaunchConfig {
     }
 }
 
-/// Something that can be turned into a parameter for
-/// [result::launch_kernel].
-///
-/// # Safety
-///
-/// This is unsafe because it can take any type and
-/// turn it into a mutable pointer.
-///
-/// Additionally, all the safety notices for [result::launch_kernel]
-/// apply here as well.
-pub unsafe trait AsKernelParam {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        self as *const Self as *mut _
-    }
-}
-
-unsafe impl AsKernelParam for i8 {}
-unsafe impl AsKernelParam for i16 {}
-unsafe impl AsKernelParam for i32 {}
-unsafe impl AsKernelParam for i64 {}
-unsafe impl AsKernelParam for i128 {}
-unsafe impl AsKernelParam for isize {}
-unsafe impl AsKernelParam for u8 {}
-unsafe impl AsKernelParam for u16 {}
-unsafe impl AsKernelParam for u32 {}
-unsafe impl AsKernelParam for u64 {}
-unsafe impl AsKernelParam for u128 {}
-unsafe impl AsKernelParam for usize {}
-unsafe impl AsKernelParam for f32 {}
-unsafe impl AsKernelParam for f64 {}
-#[cfg(feature = "f16")]
-unsafe impl AsKernelParam for half::f16 {}
-#[cfg(feature = "f16")]
-unsafe impl AsKernelParam for half::bf16 {}
-
-unsafe impl<T> AsKernelParam for &mut CudaSlice<T> {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
-unsafe impl<T> AsKernelParam for &CudaSlice<T> {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
-unsafe impl<'a, T> AsKernelParam for &CudaView<'a, T> {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
-unsafe impl<'a, T> AsKernelParam for &mut CudaViewMut<'a, T> {
-    #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
-    }
-}
-
 /// Consumes a [CudaFunction] to execute asychronously on the device with
 /// params determined by generic parameter `Params`.
 ///
 /// This is impl'd multiple times for different number and types of params. In
-/// general, `Params` should impl [AsKernelParam]
+/// general, `Params` should impl [DeviceRepr]
 ///
 /// # Safety
 ///
@@ -210,8 +145,8 @@ pub unsafe trait LaunchAsync<Params> {
     /// ## Asynchronous mutation
     ///
     /// Since this library queues kernels to be launched on a single
-    /// stream, and really the only way to modify [CudaSlice] is through
-    /// kernels, mutating the same [CudaSlice] with multiple kernels
+    /// stream, and really the only way to modify [crate::driver::CudaSlice] is through
+    /// kernels, mutating the same [crate::driver::CudaSlice] with multiple kernels
     /// is safe. This is because each kernel is executed sequentially
     /// on the stream.
     ///
@@ -221,12 +156,12 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// Also for this reason, do not pass in any values to kernels
     /// that can be modified on the host. This is the reason
-    /// [AsKernelParam] is not implemented for rust primitive
+    /// [DeviceRepr] is not implemented for rust primitive
     /// references.
     ///
     /// ## Use after free
     ///
-    /// Since the drop implementation for [CudaSlice] also occurs
+    /// Since the drop implementation for [crate::driver::CudaSlice] also occurs
     /// on the device's single stream, any kernels launched before
     /// the drop will complete before the value is actually freed.
     ///
@@ -257,7 +192,7 @@ pub unsafe trait LaunchAsync<Params> {
 
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
-unsafe impl<$($Vars: AsKernelParam),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
+unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
     unsafe fn launch_async(
         self,
         cfg: LaunchConfig,
@@ -319,7 +254,7 @@ mod tests {
         let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = (&t).as_kernel_param();
+        let _ = t.as_kernel_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
@@ -329,7 +264,7 @@ mod tests {
         let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = (&t).as_kernel_param();
+        let _ = t.as_kernel_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 

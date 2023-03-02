@@ -1,16 +1,78 @@
-use crate::driver::result;
+use crate::driver::{result, sys};
 
-use super::core::{CudaDevice, CudaSlice};
+use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut};
 use super::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
 
 use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
+
+/// Something that can be copied to device memory and
+/// turned into a parameter for [result::launch_kernel].
+///
+/// # Safety
+///
+/// This is unsafe because a struct should likely
+/// be `#[repr(C)]` to be represented in cuda memory,
+/// and not all types are valid.
+pub unsafe trait DeviceRepr {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        self as *const Self as *mut _
+    }
+}
+
+unsafe impl DeviceRepr for i8 {}
+unsafe impl DeviceRepr for i16 {}
+unsafe impl DeviceRepr for i32 {}
+unsafe impl DeviceRepr for i64 {}
+unsafe impl DeviceRepr for i128 {}
+unsafe impl DeviceRepr for isize {}
+unsafe impl DeviceRepr for u8 {}
+unsafe impl DeviceRepr for u16 {}
+unsafe impl DeviceRepr for u32 {}
+unsafe impl DeviceRepr for u64 {}
+unsafe impl DeviceRepr for u128 {}
+unsafe impl DeviceRepr for usize {}
+unsafe impl DeviceRepr for f32 {}
+unsafe impl DeviceRepr for f64 {}
+#[cfg(feature = "f16")]
+unsafe impl DeviceRepr for half::f16 {}
+#[cfg(feature = "f16")]
+unsafe impl DeviceRepr for half::bf16 {}
+
+unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaSlice<T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl<T: DeviceRepr> DeviceRepr for &CudaSlice<T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl<'a, T: DeviceRepr> DeviceRepr for &CudaView<'a, T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
+
+unsafe impl<'a, T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'a, T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+}
 
 impl CudaDevice {
     /// Allocates device memory and increments the reference counter of [CudaDevice].
     ///
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
-    pub unsafe fn alloc_async<T>(
+    pub unsafe fn alloc_async<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
@@ -29,7 +91,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn alloc_zeros_async<T: ValidAsZeroBits>(
+    pub fn alloc_zeros_async<T: ValidAsZeroBits + DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
@@ -43,7 +105,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn memset_zeros_async<T: ValidAsZeroBits, Dst: DevicePtrMut<T>>(
+    pub fn memset_zeros_async<T: ValidAsZeroBits + DeviceRepr, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
@@ -57,7 +119,7 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn take_async<T: Unpin>(
+    pub fn take_async<T: Unpin + DeviceRepr>(
         self: &Arc<Self>,
         src: Vec<T>,
     ) -> Result<CudaSlice<T>, result::DriverError> {
@@ -77,7 +139,7 @@ impl CudaDevice {
     ///     type `T`
     /// 2. Since they are both references, they can't have been freed
     /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn device_copy_async<T, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
+    pub fn device_copy_async<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         src: &Src,
         dst: &mut Dst,
@@ -101,7 +163,10 @@ impl CudaDevice {
     ///
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy<T>(self: &Arc<Self>, src: &[T]) -> Result<CudaSlice<T>, result::DriverError> {
+    pub fn sync_copy<T: DeviceRepr>(
+        self: &Arc<Self>,
+        src: &[T],
+    ) -> Result<CudaSlice<T>, result::DriverError> {
         let mut dst = unsafe { self.alloc_async(src.len()) }?;
         self.sync_copy_into(src, &mut dst)?;
         Ok(dst)
@@ -118,7 +183,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_into<T>(
+    pub fn sync_copy_into<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &[T],
         dst: &mut CudaSlice<T>,
@@ -135,7 +200,7 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn copy_into_async<T: Unpin>(
+    pub fn copy_into_async<T: DeviceRepr + Unpin>(
         self: &Arc<Self>,
         src: Vec<T>,
         dst: &mut CudaSlice<T>,
@@ -164,7 +229,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_from<T>(
+    pub fn sync_copy_from<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &CudaSlice<T>,
         dst: &mut [T],
@@ -180,7 +245,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_into_vec<T>(
+    pub fn sync_copy_into_vec<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {
@@ -198,7 +263,7 @@ impl CudaDevice {
     ///
     /// # Safety
     /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_release<T: Clone + Default + Unpin>(
+    pub fn sync_release<T: Clone + Default + DeviceRepr + Unpin>(
         self: &Arc<Self>,
         mut src: CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {

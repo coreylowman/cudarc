@@ -167,11 +167,11 @@ pub(crate) mod device_ptr;
 pub(crate) mod launch;
 pub(crate) mod profile;
 
-pub use self::alloc::ValidAsZeroBits;
+pub use self::alloc::{DeviceRepr, ValidAsZeroBits};
 pub use self::build::{BuildError, CudaDeviceBuilder};
 pub use self::core::{CudaDevice, CudaFunction, CudaSlice, CudaStream, CudaView, CudaViewMut};
 pub use self::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
-pub use self::launch::{AsKernelParam, LaunchAsync, LaunchConfig};
+pub use self::launch::{LaunchAsync, LaunchConfig};
 pub use self::profile::{profiler_start, profiler_stop};
 
 pub use crate::driver::result::DriverError;
