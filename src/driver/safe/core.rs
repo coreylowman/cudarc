@@ -76,7 +76,7 @@ impl Drop for CudaDevice {
 /// # Reclaiming host data
 ///
 /// To reclaim the host data for this device data,
-/// use [CudaDevice::sync_release()]. This will
+/// use [CudaDevice::reclaim()]. This will
 /// perform necessary synchronization to ensure
 /// that the device data finishes copying over.
 ///
@@ -148,7 +148,7 @@ impl<T: DeviceRepr> Clone for CudaSlice<T> {
 impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
-        value.device.clone().sync_release(value)
+        value.device.clone().reclaim(value)
     }
 }
 

@@ -9,20 +9,21 @@
 //! let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! ```
 //!
-//! 2. Allocate device memory with host data with [CudaDevice::take_async()], [CudaDevice::alloc_zeros_async()],
-//! or [CudaDevice::sync_copy()]
+//! 2. Allocate device memory with host data with [CudaDevice::copy_htod_async()], [CudaDevice::alloc_zeros_async()],
+//! or [CudaDevice::copy_htod_sync()].
 //!
-//! You can also copy data to CudaSlice using [CudaDevice::sync_copy_into()]
+//! You can also copy data to CudaSlice using [CudaDevice::copy_into_htod_sync()]
 //!
 //! ```rust
 //! # use cudarc::driver::*;
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
-//! let b_dev: CudaSlice<f32> = device.take_async(vec![0.0; 10]).unwrap();
-//! let c_dev: CudaSlice<f32> = device.sync_copy(&[1.0, 2.0, 3.0]).unwrap();
+//! let b_dev: CudaSlice<f32> = device.copy_htod_async(vec![0.0; 10]).unwrap();
+//! let c_dev: CudaSlice<f32> = device.copy_htod_sync(&[1.0, 2.0, 3.0]).unwrap();
 //! ```
 //!
-//! 3. Transfer to host memory with [CudaDevice::sync_release()] or [CudaDevice::sync_copy_from()]
+//! 3. Transfer to host memory with [CudaDevice::reclaim()], [CudaDevice::copy_dtoh_sync()],
+//! or [CudaDevice::copy_into_dtoh_sync()]
 //!
 //! ```rust
 //! # use cudarc::driver::*;
@@ -30,9 +31,9 @@
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
 //! let mut a_buf: [f32; 10] = [1.0; 10];
-//! device.sync_copy_from(&a_dev, &mut a_buf);
+//! device.copy_into_dtoh_sync(&a_dev, &mut a_buf);
 //! assert_eq!(a_buf, [0.0; 10]);
-//! let a_host: Vec<f32> = device.sync_release(a_dev).unwrap();
+//! let a_host: Vec<f32> = device.reclaim(a_dev).unwrap();
 //! assert_eq!(&a_host, &[0.0; 10]);
 //! ```
 //!

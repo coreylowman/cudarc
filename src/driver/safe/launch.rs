@@ -251,7 +251,7 @@ mod tests {
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
+        let t = device.copy_htod_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
         let _ = t.as_kernel_param();
@@ -261,7 +261,7 @@ mod tests {
     #[test]
     fn test_ref_into_kernel_param_inc_rc() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async([0.0f32; 1].to_vec()).unwrap();
+        let t = device.copy_htod_async([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
         let _ = t.as_kernel_param();
@@ -287,7 +287,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
-        let a_dev = dev.take_async(a_host.clone().to_vec()).unwrap();
+        let a_dev = dev.copy_htod_async(a_host.clone().to_vec()).unwrap();
 
         let mut b_dev = a_dev.clone();
 
@@ -299,7 +299,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         }
         .unwrap();
 
-        let b_host = dev.sync_release(b_dev).unwrap();
+        let b_host = dev.reclaim(b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
@@ -320,14 +320,14 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             let mut a = Vec::with_capacity(numel);
             a.resize(numel, 1.0f32);
 
-            let a = dev.take_async(a).unwrap();
+            let a = dev.copy_htod_async(a).unwrap();
             let mut b = dev.alloc_zeros_async::<f32>(numel).unwrap();
 
             let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
             let cfg = LaunchConfig::for_num_elems(numel as u32);
             unsafe { sin_kernel.launch_async(cfg, (&mut b, &a, numel)) }.unwrap();
 
-            let b = dev.sync_release(b).unwrap();
+            let b = dev.reclaim(b).unwrap();
             for v in b {
                 assert_eq!(v, 0.841471);
             }
@@ -343,7 +343,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             .unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
-        let a_dev = dev.take_async(a_host.clone().to_vec()).unwrap();
+        let a_dev = dev.copy_htod_async(a_host.clone().to_vec()).unwrap();
         let mut b_dev = a_dev.clone();
 
         for i in 0..5 {
@@ -356,7 +356,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
                 .unwrap();
         }
 
-        let b_host = dev.sync_release(b_dev).unwrap();
+        let b_host = dev.reclaim(b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
