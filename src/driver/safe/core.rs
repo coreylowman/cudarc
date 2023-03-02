@@ -125,23 +125,16 @@ impl<T> Drop for CudaSlice<T> {
 
 impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
-    pub fn clone_async(&self) -> Result<Self, result::DriverError> {
-        let dst = unsafe { self.device.alloc(self.len) }?;
-        unsafe {
-            result::memcpy_dtod_async(
-                dst.cu_device_ptr,
-                self.cu_device_ptr,
-                self.num_bytes(),
-                self.device.stream,
-            )
-        }?;
+    pub fn try_clone(&self) -> Result<Self, result::DriverError> {
+        let mut dst = unsafe { self.device.alloc(self.len) }?;
+        self.device.dtod_copy(self, &mut dst)?;
         Ok(dst)
     }
 }
 
 impl<T: DeviceRepr> Clone for CudaSlice<T> {
     fn clone(&self) -> Self {
-        self.clone_async().unwrap()
+        self.try_clone().unwrap()
     }
 }
 
@@ -185,11 +178,11 @@ unsafe impl Sync for CudaFunction {}
 /// The synchronization happens in **code order**. E.g.
 /// ```ignore
 /// let stream = dev.auto_joining_stream()?; // 0
-/// dev.launch_async(...)?; // 1
-/// dev.par_launch_async(&stream, ...)?; // 2
-/// dev.launch_async(...)?; // 3
+/// dev.launch(...)?; // 1
+/// dev.launch_on_stream(&stream, ...)?; // 2
+/// dev.launch(...)?; // 3
 /// drop(stream); // 4
-/// dev.launch_async(...) // 5
+/// dev.launch(...) // 5
 /// ```
 ///
 /// - 0 will place a streamWaitEvent(default work stream) on the new stream
