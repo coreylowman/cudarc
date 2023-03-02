@@ -250,7 +250,7 @@ mod tests {
         let t = device.htod_copy([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = t.as_kernel_param();
+        let _ = (&t).as_kernel_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
@@ -260,7 +260,7 @@ mod tests {
         let t = device.htod_copy([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = t.as_kernel_param();
+        let _ = (&t).as_kernel_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 

@@ -30,7 +30,7 @@ pub struct CudaDevice {
     pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
 }
 
-unsafe impl DeviceRepr for CudaDevice {}
+unsafe impl Send for CudaDevice {}
 unsafe impl Sync for CudaDevice {}
 
 impl Drop for CudaDevice {
@@ -97,7 +97,7 @@ pub struct CudaSlice<T> {
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
-unsafe impl<T: DeviceRepr> DeviceRepr for CudaSlice<T> {}
+unsafe impl<T: Send> Send for CudaSlice<T> {}
 unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
@@ -164,7 +164,7 @@ pub(crate) struct CudaModule {
     pub(crate) functions: BTreeMap<&'static str, sys::CUfunction>,
 }
 
-unsafe impl DeviceRepr for CudaModule {}
+unsafe impl Send for CudaModule {}
 unsafe impl Sync for CudaModule {}
 
 /// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
@@ -174,7 +174,7 @@ pub struct CudaFunction {
     pub(crate) device: Arc<CudaDevice>,
 }
 
-unsafe impl DeviceRepr for CudaFunction {}
+unsafe impl Send for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
 /// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
