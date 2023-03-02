@@ -181,7 +181,7 @@ impl CudaDevice {
 
     /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
     ///
-    /// If you want an asynchronous copy, see [CudaDevice::copy_htod_async()].
+    /// If you want an asynchronous copy, see [CudaDevice::htod_copy()].
     ///
     /// # Safety
     ///
@@ -198,7 +198,7 @@ impl CudaDevice {
 
     /// Synchronously copies data from `src` into the new allocation.
     ///
-    /// If you want an asynchronous copy, see [CudaDevice::copy_htod_async()].
+    /// If you want an asynchronous copy, see [CudaDevice::htod_copy()].
     ///
     /// # Panics
     ///
@@ -218,7 +218,7 @@ impl CudaDevice {
     }
 
     /// Synchronously copies device memory into host memory.
-    /// Unlike [`CudaDevice::copy_into_dtoh_sync`] this returns a [`Vec<T>`].
+    /// Unlike [`CudaDevice::dtoh_copy_into_sync`] this returns a [`Vec<T>`].
     ///
     /// # Safety
     /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
@@ -236,7 +236,7 @@ impl CudaDevice {
 
     /// Synchronously copies device memory into host memory
     ///
-    /// Use [`CudaDevice::copy_dtoh_sync`] if you need [`Vec<T>`] and can't provide
+    /// Use [`CudaDevice::dtoh_copy_sync`] if you need [`Vec<T>`] and can't provide
     /// a correctly sized slice.
     ///
     /// # Panics

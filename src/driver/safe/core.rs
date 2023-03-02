@@ -76,7 +76,7 @@ impl Drop for CudaDevice {
 /// # Reclaiming host data
 ///
 /// To reclaim the host data for this device data,
-/// use [CudaDevice::reclaim()]. This will
+/// use [CudaDevice::reclaim_sync()]. This will
 /// perform necessary synchronization to ensure
 /// that the device data finishes copying over.
 ///
