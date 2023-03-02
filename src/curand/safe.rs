@@ -1,7 +1,7 @@
 //! Safe abstractions around [crate::curand::result] with [CudaRng].
 
 use super::{result, sys};
-use crate::driver::{CudaDevice, CudaSlice};
+use crate::driver::{CudaDevice, CudaSlice, DeviceSlice};
 use std::sync::Arc;
 
 /// Host side RNG that can fill [CudaSlice] with random values.
