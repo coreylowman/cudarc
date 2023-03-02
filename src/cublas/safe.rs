@@ -439,12 +439,12 @@ mod tests {
         gemv_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.sync_copy(&[
+        let a_dev = dev.htod_sync_copy(&[
             0.9314776, 0.10300648, -0.620774, 1.527075, 0.0259804,
             0.16820757, -0.94463515, -1.3850101, 1.0600523, 1.5124008,
         ]).unwrap();
-        let b_dev = dev.sync_copy(&b).unwrap();
-        let mut c_dev = dev.alloc_zeros_async(M).unwrap();
+        let b_dev = dev.htod_sync_copy(&b).unwrap();
+        let mut c_dev = dev.alloc_zeros(M).unwrap();
         unsafe {
             blas.gemv_async(
                 GemvConfig {
@@ -464,7 +464,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_release(c_dev).unwrap();
+        let c_host = dev.sync_reclaim(c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-6);
         }
@@ -492,7 +492,7 @@ mod tests {
         gemv_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.sync_copy(&[
+        let a_dev = dev.htod_sync_copy(&[
             0.96151888, -0.36771390, 0.94069099,
             2.20621538, -0.16479775, -1.78425562,
             0.41080803, -0.56567699, -0.72781092,
@@ -502,8 +502,8 @@ mod tests {
             -1.84258616, 0.24096519, -0.04563522,
             -0.53364468, -1.07902217, 0.46823528,
         ]).unwrap();
-        let b_dev = dev.sync_copy(&b).unwrap();
-        let mut c_dev = dev.alloc_zeros_async(M).unwrap();
+        let b_dev = dev.htod_sync_copy(&b).unwrap();
+        let mut c_dev = dev.alloc_zeros(M).unwrap();
         unsafe {
             blas.gemv_async(
                 GemvConfig {
@@ -523,7 +523,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_release(c_dev).unwrap();
+        let c_host = dev.sync_reclaim(c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-8);
         }
@@ -560,19 +560,19 @@ mod tests {
         );
 
         #[rustfmt::skip]
-        let a_dev = dev.sync_copy::<half::f16>(&[
+        let a_dev = dev.htod_sync_copy::<half::f16>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
             -1.6661372, -0.4568837, -0.9043474, 0.39125723,
         ].map(half::f16::from_f32)).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.sync_copy::<half::f16>(&[
+        let b_dev = dev.htod_sync_copy::<half::f16>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ].map(half::f16::from_f32)).unwrap();
-        let mut c_dev = dev.alloc_zeros_async::<half::f16>(M * N).unwrap();
+        let mut c_dev = dev.alloc_zeros::<half::f16>(M * N).unwrap();
         unsafe {
             blas.gemm_async(
                 GemmConfig {
@@ -594,7 +594,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_release(c_dev).unwrap();
+        let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
@@ -629,19 +629,19 @@ mod tests {
         gemm_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.sync_copy::<f32>(&[
+        let a_dev = dev.htod_sync_copy::<f32>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
             -1.6661372, -0.4568837, -0.9043474, 0.39125723,
         ]).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.sync_copy::<f32>(&[
+        let b_dev = dev.htod_sync_copy::<f32>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
-        let mut c_dev = dev.alloc_zeros_async::<f32>(M * N).unwrap();
+        let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
             blas.gemm_async(
                 GemmConfig {
@@ -663,7 +663,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_release(c_dev).unwrap();
+        let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 assert!((c_host[m * N + n] - c[m][n]) <= 1e-6);
@@ -693,19 +693,19 @@ mod tests {
         gemm_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.sync_copy::<f64>(&[
+        let a_dev = dev.htod_sync_copy::<f64>(&[
             -0.70925030, -1.01357541, -0.64827034,
             2.18493467, -0.61584842, -1.43844327,
             -1.34792593, 0.68840750, -0.48057214,
             1.22180992, 1.16245157, 0.01253436,
         ]).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.sync_copy::<f64>(&[
+        let b_dev = dev.htod_sync_copy::<f64>(&[
             -0.72735474, 1.35931170,
             1.71798307, -0.13296247,
             0.26855612, -1.95189980,
         ]).unwrap();
-        let mut c_dev = dev.alloc_zeros_async::<f64>(M * N).unwrap();
+        let mut c_dev = dev.alloc_zeros::<f64>(M * N).unwrap();
         unsafe {
             blas.gemm_async(
                 GemmConfig {
@@ -727,7 +727,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_release(c_dev).unwrap();
+        let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 assert!((c_host[m * N + n] - c[m][n]) <= 1e-10);

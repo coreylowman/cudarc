@@ -72,7 +72,7 @@ impl CudaDevice {
     ///
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
-    pub unsafe fn alloc_async<T: DeviceRepr>(
+    pub unsafe fn alloc<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
@@ -91,12 +91,12 @@ impl CudaDevice {
     /// # Safety
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn alloc_zeros_async<T: ValidAsZeroBits + DeviceRepr>(
+    pub fn alloc_zeros<T: ValidAsZeroBits + DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
-        let mut dst = unsafe { self.alloc_async(len) }?;
-        self.memset_zeros_async(&mut dst)?;
+        let mut dst = unsafe { self.alloc(len) }?;
+        self.memset_zeros(&mut dst)?;
         Ok(dst)
     }
 
@@ -105,27 +105,11 @@ impl CudaDevice {
     /// # Safety
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn memset_zeros_async<T: ValidAsZeroBits + DeviceRepr, Dst: DevicePtrMut<T>>(
+    pub fn memset_zeros<T: ValidAsZeroBits + DeviceRepr, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         unsafe { result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream) }
-    }
-
-    /// Takes ownership of the host data and copies it to device data asynchronously.
-    ///
-    /// # Safety
-    ///
-    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
-    ///    after this will take place after the data has been successfully copied.
-    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn take_async<T: Unpin + DeviceRepr>(
-        self: &Arc<Self>,
-        src: Vec<T>,
-    ) -> Result<CudaSlice<T>, result::DriverError> {
-        let mut dst = unsafe { self.alloc_async(src.len()) }?;
-        self.copy_into_async(src, &mut dst)?;
-        Ok(dst)
     }
 
     /// Device to device copy (safe version of [result::memcpy_dtod_async]).
@@ -139,7 +123,7 @@ impl CudaDevice {
     ///     type `T`
     /// 2. Since they are both references, they can't have been freed
     /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn device_copy_async<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
+    pub fn dtod_copy<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         src: &Src,
         dst: &mut Dst,
@@ -155,42 +139,20 @@ impl CudaDevice {
         }
     }
 
-    /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
-    ///
-    /// If you want an asynchronous copy, see [CudaDevice::take_async()].
+    /// Takes ownership of the host data and copies it to device data asynchronously.
     ///
     /// # Safety
     ///
-    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy<T: DeviceRepr>(
+    pub fn htod_copy<T: Unpin + DeviceRepr>(
         self: &Arc<Self>,
-        src: &[T],
+        src: Vec<T>,
     ) -> Result<CudaSlice<T>, result::DriverError> {
-        let mut dst = unsafe { self.alloc_async(src.len()) }?;
-        self.sync_copy_into(src, &mut dst)?;
+        let mut dst = unsafe { self.alloc(src.len()) }?;
+        self.htod_copy_into(src, &mut dst)?;
         Ok(dst)
-    }
-
-    /// Synchronously copies data from `src` into the new allocation.
-    ///
-    /// If you want an asynchronous copy, see [CudaDevice::take_async()].
-    ///
-    /// # Panics
-    ///
-    /// If the lengths of slices are not equal, this method panics.
-    ///
-    /// # Safety
-    /// 1. Since this function doesn't own `src` it is executed synchronously.
-    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_into<T: DeviceRepr>(
-        self: &Arc<Self>,
-        src: &[T],
-        dst: &mut CudaSlice<T>,
-    ) -> Result<(), result::DriverError> {
-        assert_eq!(src.len(), dst.len());
-        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.stream) }?;
-        self.synchronize()
     }
 
     /// Takes ownership of the host data and copies it to device data asynchronously.
@@ -200,7 +162,7 @@ impl CudaDevice {
     /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn copy_into_async<T: DeviceRepr + Unpin>(
+    pub fn htod_copy_into<T: DeviceRepr + Unpin>(
         self: &Arc<Self>,
         src: Vec<T>,
         dst: &mut CudaSlice<T>,
@@ -217,9 +179,64 @@ impl CudaDevice {
         Ok(())
     }
 
+    /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
+    ///
+    /// If you want an asynchronous copy, see [CudaDevice::htod_copy()].
+    ///
+    /// # Safety
+    ///
+    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn htod_sync_copy<T: DeviceRepr>(
+        self: &Arc<Self>,
+        src: &[T],
+    ) -> Result<CudaSlice<T>, result::DriverError> {
+        let mut dst = unsafe { self.alloc(src.len()) }?;
+        self.htod_sync_copy_into(src, &mut dst)?;
+        Ok(dst)
+    }
+
+    /// Synchronously copies data from `src` into the new allocation.
+    ///
+    /// If you want an asynchronous copy, see [CudaDevice::htod_copy()].
+    ///
+    /// # Panics
+    ///
+    /// If the lengths of slices are not equal, this method panics.
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn htod_sync_copy_into<T: DeviceRepr>(
+        self: &Arc<Self>,
+        src: &[T],
+        dst: &mut CudaSlice<T>,
+    ) -> Result<(), result::DriverError> {
+        assert_eq!(src.len(), dst.len());
+        unsafe { result::memcpy_htod_async(dst.cu_device_ptr, src, self.stream) }?;
+        self.synchronize()
+    }
+
+    /// Synchronously copies device memory into host memory.
+    /// Unlike [`CudaDevice::dtoh_sync_copy_into`] this returns a [`Vec<T>`].
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[allow(clippy::uninit_vec)]
+    pub fn dtoh_sync_copy<T: DeviceRepr>(
+        self: &Arc<Self>,
+        src: &CudaSlice<T>,
+    ) -> Result<Vec<T>, result::DriverError> {
+        let mut dst = Vec::with_capacity(src.len());
+        unsafe { dst.set_len(src.len()) };
+        self.dtoh_sync_copy_into(src, &mut dst)?;
+        Ok(dst)
+    }
+
     /// Synchronously copies device memory into host memory
     ///
-    /// Use [`CudaDevice::sync_copy_into_vec`] if you need [`Vec<T>`] and can't provide
+    /// Use [`CudaDevice::dtoh_sync_copy`] if you need [`Vec<T>`] and can't provide
     /// a correctly sized slice.
     ///
     /// # Panics
@@ -229,7 +246,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_from<T: DeviceRepr>(
+    pub fn dtoh_sync_copy_into<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &CudaSlice<T>,
         dst: &mut [T],
@@ -239,31 +256,12 @@ impl CudaDevice {
         self.synchronize()
     }
 
-    /// Synchronously copies device memory into host memory.
-    /// Unlike [`CudaDevice::sync_copy_from`] this returns a [`Vec<T>`].
-    ///
-    /// # Safety
-    /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
-    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_copy_into_vec<T: DeviceRepr>(
-        self: &Arc<Self>,
-        src: &CudaSlice<T>,
-    ) -> Result<Vec<T>, result::DriverError> {
-        let mut dst = Vec::with_capacity(src.len());
-        unsafe {
-            dst.set_len(src.len());
-            result::memcpy_dtoh_async(dst.as_mut_slice(), src.cu_device_ptr, self.stream)
-        }?;
-        self.synchronize()?;
-        Ok(dst)
-    }
-
-    /// De-allocates `src` and converts it into it's host value. You can just drop the slice if you don't
-    /// need the host data.
+    /// Synchronously de-allocates `src` and converts it into it's host value.
+    /// You can just [drop] the slice if you don't need the host data.
     ///
     /// # Safety
     /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn sync_release<T: Clone + Default + DeviceRepr + Unpin>(
+    pub fn sync_reclaim<T: Clone + Default + DeviceRepr + Unpin>(
         self: &Arc<Self>,
         mut src: CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {
@@ -273,7 +271,7 @@ impl CudaDevice {
             b.resize(src.len, Default::default());
             Pin::new(b)
         });
-        self.sync_copy_from(&src, &mut buf)?;
+        self.dtoh_sync_copy_into(&src, &mut buf)?;
         Ok(Pin::into_inner(buf))
     }
 
@@ -344,7 +342,7 @@ mod tests {
     #[test]
     fn test_post_alloc_arc_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.alloc_zeros_async::<f32>(1).unwrap();
+        let t = device.alloc_zeros::<f32>(1).unwrap();
         assert!(t.host_buf.is_none());
         assert_eq!(Arc::strong_count(&device), 2);
     }
@@ -352,7 +350,7 @@ mod tests {
     #[test]
     fn test_post_take_arc_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async([0.0f32; 5].to_vec()).unwrap();
+        let t = device.htod_copy([0.0f32; 5].to_vec()).unwrap();
         assert!(t.host_buf.is_some());
         assert_eq!(Arc::strong_count(&device), 2);
         drop(t);
@@ -362,7 +360,7 @@ mod tests {
     #[test]
     fn test_post_clone_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async([0.0f64; 10].to_vec()).unwrap();
+        let t = device.htod_copy([0.0f64; 10].to_vec()).unwrap();
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
         drop(t);
@@ -374,7 +372,7 @@ mod tests {
     #[test]
     fn test_post_clone_arc_slice_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = Arc::new(device.take_async::<f64>([0.0; 10].to_vec()).unwrap());
+        let t = Arc::new(device.htod_copy::<f64>([0.0; 10].to_vec()).unwrap());
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 2);
         drop(t);
@@ -386,12 +384,12 @@ mod tests {
     #[test]
     fn test_post_release_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = device.take_async([1.0f32, 2.0, 3.0].to_vec()).unwrap();
+        let t = device.htod_copy([1.0f32, 2.0, 3.0].to_vec()).unwrap();
         #[allow(clippy::redundant_clone)]
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
 
-        let r_host = device.sync_release(r).unwrap();
+        let r_host = device.sync_reclaim(r).unwrap();
         assert_eq!(&r_host, &[1.0, 2.0, 3.0]);
         assert_eq!(Arc::strong_count(&device), 2);
 
@@ -405,7 +403,7 @@ mod tests {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
         let (free1, total1) = result::mem_get_info().unwrap();
 
-        let t = device.take_async([0.0f32; 5].to_vec()).unwrap();
+        let t = device.htod_copy([0.0f32; 5].to_vec()).unwrap();
         let (free2, total2) = result::mem_get_info().unwrap();
         assert_eq!(total1, total2);
         assert!(free2 < free1);

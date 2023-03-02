@@ -38,9 +38,9 @@ fn main() -> Result<(), CompileError> {
     let b_host = [1.0f32, 2.0, 3.0, 4.0];
     let mut c_host = [0.0f32; 4];
 
-    let a_dev = dev.sync_copy(&a_host).unwrap();
-    let b_dev = dev.sync_copy(&b_host).unwrap();
-    let mut c_dev = dev.sync_copy(&c_host).unwrap();
+    let a_dev = dev.htod_sync_copy(&a_host).unwrap();
+    let b_dev = dev.htod_sync_copy(&b_host).unwrap();
+    let mut c_dev = dev.htod_sync_copy(&c_host).unwrap();
 
     println!("Copied in {:?}", start.elapsed());
 
@@ -49,9 +49,9 @@ fn main() -> Result<(), CompileError> {
         grid_dim: (1, 1, 1),
         shared_mem_bytes: 0,
     };
-    unsafe { f.launch_async(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }.unwrap();
+    unsafe { f.launch(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }.unwrap();
 
-    dev.sync_copy_from(&c_dev, &mut c_host).unwrap();
+    dev.dtoh_sync_copy_into(&c_dev, &mut c_host).unwrap();
     println!("Found {:?} in {:?}", c_host, start.elapsed());
     Ok(())
 }

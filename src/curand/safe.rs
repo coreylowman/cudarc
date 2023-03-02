@@ -17,7 +17,7 @@ use std::sync::Arc;
 /// # use cudarc::{driver::*, curand::*};
 /// # let device = CudaDeviceBuilder::new(0).build().unwrap();
 /// # let rng = CudaRng::new(0, device.clone()).unwrap();
-/// let mut a_dev = device.alloc_zeros_async::<f32>(10).unwrap();
+/// let mut a_dev = device.alloc_zeros::<f32>(10).unwrap();
 /// rng.fill_with_uniform(&mut a_dev).unwrap();
 /// ```
 ///
@@ -110,10 +110,10 @@ mod tests {
         super::sys::curandGenerator_t: UniformFill<T>,
     {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
-        let mut a_dev = dev.alloc_zeros_async::<T>(n).unwrap();
+        let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_uniform(&mut a_dev).unwrap();
-        dev.sync_release(a_dev).unwrap()
+        dev.sync_reclaim(a_dev).unwrap()
     }
 
     fn gen_normal<T: ValidAsZeroBits + Clone + Default + Unpin + DeviceRepr>(
@@ -126,10 +126,10 @@ mod tests {
         super::sys::curandGenerator_t: NormalFill<T>,
     {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
-        let mut a_dev = dev.alloc_zeros_async::<T>(n).unwrap();
+        let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_normal(&mut a_dev, mean, std).unwrap();
-        dev.sync_release(a_dev).unwrap()
+        dev.sync_reclaim(a_dev).unwrap()
     }
 
     fn gen_log_normal<T: ValidAsZeroBits + Clone + Default + Unpin + DeviceRepr>(
@@ -142,10 +142,10 @@ mod tests {
         super::sys::curandGenerator_t: LogNormalFill<T>,
     {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
-        let mut a_dev = dev.alloc_zeros_async::<T>(n).unwrap();
+        let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_log_normal(&mut a_dev, mean, std).unwrap();
-        dev.sync_release(a_dev).unwrap()
+        dev.sync_reclaim(a_dev).unwrap()
     }
 
     #[test]
@@ -154,7 +154,7 @@ mod tests {
         assert_eq!(Arc::strong_count(&dev), 1);
         let a_rng = CudaRng::new(0, dev.clone()).unwrap();
         assert_eq!(Arc::strong_count(&dev), 2);
-        let a_dev = dev.alloc_zeros_async::<f32>(10).unwrap();
+        let a_dev = dev.alloc_zeros::<f32>(10).unwrap();
         assert_eq!(Arc::strong_count(&dev), 3);
         drop(a_rng);
         assert_eq!(Arc::strong_count(&dev), 2);
@@ -166,7 +166,7 @@ mod tests {
     fn test_seed_reproducible() {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
 
-        let mut a_dev = dev.alloc_zeros_async::<f32>(10).unwrap();
+        let mut a_dev = dev.alloc_zeros::<f32>(10).unwrap();
         let mut b_dev = a_dev.clone();
 
         let a_rng = CudaRng::new(0, dev.clone()).unwrap();
@@ -175,8 +175,8 @@ mod tests {
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
         b_rng.fill_with_uniform(&mut b_dev).unwrap();
 
-        let a_host = dev.sync_release(a_dev).unwrap();
-        let b_host = dev.sync_release(b_dev).unwrap();
+        let a_host = dev.sync_reclaim(a_dev).unwrap();
+        let b_host = dev.sync_reclaim(b_dev).unwrap();
         assert_eq!(a_host, b_host);
     }
 
@@ -184,7 +184,7 @@ mod tests {
     fn test_different_seeds_neq() {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
 
-        let mut a_dev = dev.alloc_zeros_async::<f32>(10).unwrap();
+        let mut a_dev = dev.alloc_zeros::<f32>(10).unwrap();
         let mut b_dev = a_dev.clone();
 
         let a_rng = CudaRng::new(0, dev.clone()).unwrap();
@@ -193,8 +193,8 @@ mod tests {
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
         b_rng.fill_with_uniform(&mut b_dev).unwrap();
 
-        let a_host = dev.sync_release(a_dev).unwrap();
-        let b_host = dev.sync_release(b_dev).unwrap();
+        let a_host = dev.sync_reclaim(a_dev).unwrap();
+        let b_host = dev.sync_reclaim(b_dev).unwrap();
         assert_ne!(a_host, b_host);
     }
 

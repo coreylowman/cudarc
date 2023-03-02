@@ -30,7 +30,7 @@ pub struct CudaDevice {
     pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
 }
 
-unsafe impl DeviceRepr for CudaDevice {}
+unsafe impl Send for CudaDevice {}
 unsafe impl Sync for CudaDevice {}
 
 impl Drop for CudaDevice {
@@ -76,7 +76,7 @@ impl Drop for CudaDevice {
 /// # Reclaiming host data
 ///
 /// To reclaim the host data for this device data,
-/// use [CudaDevice::sync_release()]. This will
+/// use [CudaDevice::sync_reclaim()]. This will
 /// perform necessary synchronization to ensure
 /// that the device data finishes copying over.
 ///
@@ -97,7 +97,7 @@ pub struct CudaSlice<T> {
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
-unsafe impl<T: DeviceRepr> DeviceRepr for CudaSlice<T> {}
+unsafe impl<T: Send> Send for CudaSlice<T> {}
 unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
@@ -125,30 +125,23 @@ impl<T> Drop for CudaSlice<T> {
 
 impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
-    pub fn clone_async(&self) -> Result<Self, result::DriverError> {
-        let dst = unsafe { self.device.alloc_async(self.len) }?;
-        unsafe {
-            result::memcpy_dtod_async(
-                dst.cu_device_ptr,
-                self.cu_device_ptr,
-                self.num_bytes(),
-                self.device.stream,
-            )
-        }?;
+    pub fn try_clone(&self) -> Result<Self, result::DriverError> {
+        let mut dst = unsafe { self.device.alloc(self.len) }?;
+        self.device.dtod_copy(self, &mut dst)?;
         Ok(dst)
     }
 }
 
 impl<T: DeviceRepr> Clone for CudaSlice<T> {
     fn clone(&self) -> Self {
-        self.clone_async().unwrap()
+        self.try_clone().unwrap()
     }
 }
 
 impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
-        value.device.clone().sync_release(value)
+        value.device.clone().sync_reclaim(value)
     }
 }
 
@@ -164,7 +157,7 @@ pub(crate) struct CudaModule {
     pub(crate) functions: BTreeMap<&'static str, sys::CUfunction>,
 }
 
-unsafe impl DeviceRepr for CudaModule {}
+unsafe impl Send for CudaModule {}
 unsafe impl Sync for CudaModule {}
 
 /// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
@@ -174,7 +167,7 @@ pub struct CudaFunction {
     pub(crate) device: Arc<CudaDevice>,
 }
 
-unsafe impl DeviceRepr for CudaFunction {}
+unsafe impl Send for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
 /// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
@@ -185,11 +178,11 @@ unsafe impl Sync for CudaFunction {}
 /// The synchronization happens in **code order**. E.g.
 /// ```ignore
 /// let stream = dev.auto_joining_stream()?; // 0
-/// dev.launch_async(...)?; // 1
-/// dev.par_launch_async(&stream, ...)?; // 2
-/// dev.launch_async(...)?; // 3
+/// dev.launch(...)?; // 1
+/// dev.launch_on_stream(&stream, ...)?; // 2
+/// dev.launch(...)?; // 3
 /// drop(stream); // 4
-/// dev.launch_async(...) // 5
+/// dev.launch(...) // 5
 /// ```
 ///
 /// - 0 will place a streamWaitEvent(default work stream) on the new stream
@@ -258,6 +251,26 @@ pub struct CudaView<'a, T> {
     pub(crate) len: usize,
 }
 
+impl<T> CudaSlice<T> {
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `range.start >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'_, T> {
+        self.try_slice(range).unwrap()
+    }
+
+    /// Fallible version of [CudaSlice::slice]
+    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaView {
+            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            slice: self,
+            len: 1 + end - start,
+        })
+    }
+}
+
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
 ///
 /// See module docstring for more details.
@@ -269,24 +282,16 @@ pub struct CudaViewMut<'a, T> {
 }
 
 impl<T> CudaSlice<T> {
-    /// Creates a [CudaView] at the specified offset from the start of `self`.
-    ///
-    /// Returns `None` if `range.start >= self.len`
-    ///
-    /// See module docstring for example
-    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaView {
-            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            slice: self,
-            len: 1 + end - start,
-        })
-    }
-
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `offset >= self.len`
     ///
     /// See module docstring for example
+    pub fn slice_mut(&mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
+        self.try_slice_mut(range).unwrap()
+    }
+
+    /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
