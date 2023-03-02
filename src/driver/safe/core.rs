@@ -173,11 +173,11 @@ unsafe impl Sync for CudaFunction {}
 /// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
 /// upon the completion of this streams work.
 ///
-/// Create with [CudaDevice::auto_joining_stream].
+/// Create with [CudaDevice::fork_default_stream].
 ///
 /// The synchronization happens in **code order**. E.g.
 /// ```ignore
-/// let stream = dev.auto_joining_stream()?; // 0
+/// let stream = dev.fork_default_stream()?; // 0
 /// dev.launch(...)?; // 1
 /// dev.launch_on_stream(&stream, ...)?; // 2
 /// dev.launch(...)?; // 3
@@ -200,10 +200,12 @@ pub struct CudaStream {
 impl CudaDevice {
     /// Allocates a new stream that can execute kernels concurrently to the default stream.
     ///
+    /// The synchronization with default stream happens in **code order**. See [CudaStream] docstring.
+    ///
     /// This stream synchronizes in the following way:
     /// 1. On creation it adds a wait for any existing work on the default work stream to complete
     /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
-    pub fn auto_joining_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
+    pub fn fork_default_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
         let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         unsafe {
             result::event::record(self.event, self.stream)?;

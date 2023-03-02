@@ -562,7 +562,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let start = Instant::now();
         {
             // create a new stream & launch them concurrently
-            let stream = dev.auto_joining_stream()?;
+            let stream = dev.fork_default_stream()?;
             let f = dev.get_func("tests", "slow_worker").unwrap();
             unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
             let f = dev.get_func("tests", "slow_worker").unwrap();
