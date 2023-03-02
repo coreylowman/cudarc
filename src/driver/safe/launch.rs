@@ -123,7 +123,7 @@ impl LaunchConfig {
 /// Additionally, kernels can mutate data that is marked as immutable,
 /// such as `&CudaSlice<T>`.
 ///
-/// See [LaunchAsync::launch_async] for more details
+/// See [LaunchAsync::launch] for more details
 pub unsafe trait LaunchAsync<Params> {
     /// Launches the [CudaFunction] with the corresponding `Params`.
     ///
@@ -167,22 +167,18 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
-    unsafe fn launch_async(
-        self,
-        cfg: LaunchConfig,
-        params: Params,
-    ) -> Result<(), result::DriverError>;
+    unsafe fn launch(self, cfg: LaunchConfig, params: Params) -> Result<(), result::DriverError>;
 
     /// Launch the function on a stream concurrent to the device's default
     /// work stream.
     ///
     /// # Safety
-    /// This method is even more unsafe than [LaunchAsync::launch_async], all the same rules apply,
+    /// This method is even more unsafe than [LaunchAsync::launch], all the same rules apply,
     /// except now things are executing in parallel to each other.
     ///
     /// That means that if any of the kernels modify the same memory location, you'll get race
     /// conditions or potentially undefined behavior.
-    unsafe fn par_launch_async(
+    unsafe fn launch_on_stream(
         self,
         stream: &CudaStream,
         cfg: LaunchConfig,
@@ -193,7 +189,7 @@ pub unsafe trait LaunchAsync<Params> {
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
 unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
-    unsafe fn launch_async(
+    unsafe fn launch(
         self,
         cfg: LaunchConfig,
         args: ($($Vars, )*)
@@ -202,7 +198,7 @@ unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction 
         self.launch_async_impl(cfg, params)
     }
 
-    unsafe fn par_launch_async(
+    unsafe fn launch_on_stream(
         self,
         stream: &CudaStream,
         cfg: LaunchConfig,
@@ -292,7 +288,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         let mut b_dev = a_dev.clone();
 
         unsafe {
-            sin_kernel.launch_async(
+            sin_kernel.launch(
                 LaunchConfig::for_num_elems(10),
                 (&mut b_dev, &a_dev, 10usize),
             )
@@ -325,7 +321,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
             let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
             let cfg = LaunchConfig::for_num_elems(numel as u32);
-            unsafe { sin_kernel.launch_async(cfg, (&mut b, &a, numel)) }.unwrap();
+            unsafe { sin_kernel.launch(cfg, (&mut b, &a, numel)) }.unwrap();
 
             let b = dev.reclaim_sync(b).unwrap();
             for v in b {
@@ -352,7 +348,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             let mut b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
             assert_eq!(b_sub.len, 10 - 2 * i);
             let f = dev.get_func("sin", "sin_kernel").unwrap();
-            unsafe { f.launch_async(LaunchConfig::for_num_elems(2), (&mut b_sub, &a_sub, 2usize)) }
+            unsafe { f.launch(LaunchConfig::for_num_elems(2), (&mut b_sub, &a_sub, 2usize)) }
                 .unwrap();
         }
 
@@ -410,7 +406,7 @@ extern \"C\" __global__ void floating(float f, double d) {
             .unwrap();
         let f = dev.get_func("tests", "int_8bit").unwrap();
         unsafe {
-            f.launch_async(
+            f.launch(
                 LaunchConfig::for_num_elems(1),
                 (i8::MIN, i8::MAX, u8::MIN, u8::MAX),
             )
@@ -429,7 +425,7 @@ extern \"C\" __global__ void floating(float f, double d) {
             .unwrap();
         let f = dev.get_func("tests", "int_16bit").unwrap();
         unsafe {
-            f.launch_async(
+            f.launch(
                 LaunchConfig::for_num_elems(1),
                 (i16::MIN, i16::MAX, u16::MIN, u16::MAX),
             )
@@ -447,7 +443,7 @@ extern \"C\" __global__ void floating(float f, double d) {
             .unwrap();
         let f = dev.get_func("tests", "int_32bit").unwrap();
         unsafe {
-            f.launch_async(
+            f.launch(
                 LaunchConfig::for_num_elems(1),
                 (i32::MIN, i32::MAX, u32::MIN, u32::MAX),
             )
@@ -465,7 +461,7 @@ extern \"C\" __global__ void floating(float f, double d) {
             .unwrap();
         let f = dev.get_func("tests", "int_64bit").unwrap();
         unsafe {
-            f.launch_async(
+            f.launch(
                 LaunchConfig::for_num_elems(1),
                 (i64::MIN, i64::MAX, u64::MIN, u64::MAX),
             )
@@ -483,7 +479,7 @@ extern \"C\" __global__ void floating(float f, double d) {
             .unwrap();
         let f = dev.get_func("tests", "floating").unwrap();
         unsafe {
-            f.launch_async(
+            f.launch(
                 LaunchConfig::for_num_elems(1),
                 (1.2345678f32, -10.123456789876543f64),
             )
@@ -521,7 +517,7 @@ extern \"C\" __global__ void halfs(__half h) {
             .unwrap();
         let f = dev.get_func("tests", "halfs").unwrap();
         unsafe {
-            f.launch_async(
+            f.launch(
                 LaunchConfig::for_num_elems(1),
                 (half::f16::from_f32(1.234),),
             )
@@ -556,9 +552,9 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         {
             // launch two kernels on the default stream
             let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch_async(cfg, (&slice, slice.len(), &mut a))? };
+            unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
             let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch_async(cfg, (&slice, slice.len(), &mut b))? };
+            unsafe { f.launch(cfg, (&slice, slice.len(), &mut b))? };
             dev.synchronize()?;
         }
         let double_launch_s = start.elapsed().as_secs_f64();
@@ -568,9 +564,9 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
             // create a new stream & launch them concurrently
             let stream = dev.auto_joining_stream()?;
             let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch_async(cfg, (&slice, slice.len(), &mut a))? };
+            unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
             let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.par_launch_async(&stream, cfg, (&slice, slice.len(), &mut b))? };
+            unsafe { f.launch_on_stream(&stream, cfg, (&slice, slice.len(), &mut b))? };
             dev.synchronize()?;
         }
         let par_launch_s = start.elapsed().as_secs_f64();

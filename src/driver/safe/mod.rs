@@ -70,7 +70,7 @@
 //! # let func: CudaFunction = device.get_func("module_key", "my_function").unwrap();
 //! let mut a = device.alloc_zeros::<f32>(10).unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
-//! unsafe { func.launch_async(cfg, (&mut a,)) }.unwrap();
+//! unsafe { func.launch(cfg, (&mut a,)) }.unwrap();
 //! ```
 //!
 //! Note: Launching kernels is **extremely unsafe**. See [LaunchAsync] for more info.
@@ -96,7 +96,7 @@
 //!     let mut a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
 //!     let f: CudaFunction = device.get_func("module_key", "my_function").unwrap();
 //!     let cfg = LaunchConfig::for_num_elems(10);
-//!     unsafe { f.launch_async(cfg, (&mut a_sub_view,)) }.unwrap();
+//!     unsafe { f.launch(cfg, (&mut a_sub_view,)) }.unwrap();
 //! }
 //! ```
 //!

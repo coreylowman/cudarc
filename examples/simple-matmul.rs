@@ -49,7 +49,7 @@ fn main() -> Result<(), CompileError> {
         grid_dim: (1, 1, 1),
         shared_mem_bytes: 0,
     };
-    unsafe { f.launch_async(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }.unwrap();
+    unsafe { f.launch(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }.unwrap();
 
     dev.dtoh_copy_into_sync(&c_dev, &mut c_host).unwrap();
     println!("Found {:?} in {:?}", c_host, start.elapsed());

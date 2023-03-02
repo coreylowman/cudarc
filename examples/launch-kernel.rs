@@ -15,7 +15,7 @@ fn main() -> Result<(), DriverError> {
 
     let n = 3;
     let cfg = LaunchConfig::for_num_elems(n);
-    unsafe { f.launch_async(cfg, (&mut b_dev, &a_dev, n as i32)) }?;
+    unsafe { f.launch(cfg, (&mut b_dev, &a_dev, n as i32)) }?;
 
     let a_host_2 = dev.reclaim_sync(a_dev)?;
     let b_host = dev.reclaim_sync(b_dev)?;
