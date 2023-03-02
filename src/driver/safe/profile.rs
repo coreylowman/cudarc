@@ -1,7 +1,7 @@
 use crate::driver::{result, sys};
 
 /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then profiler_start() has no effect.
-/// ```rust
+/// ```ignore
 /// use cudarc::driver::{profiler_start, profiler_stop};
 ///
 /// profiler_start()?;

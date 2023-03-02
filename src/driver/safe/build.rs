@@ -8,7 +8,8 @@ use spin::RwLock;
 use std::{collections::BTreeMap, sync::Arc, vec::Vec};
 
 impl CudaDevice {
-    /// Dynamically load a set of [CudaFunction] from a ptx file. See [CudaDeviceBuilder::with_ptx_from_file].
+    /// Dynamically load a set of [crate::driver::CudaFunction] from a ptx file.
+    /// See [crate::driver::CudaDeviceBuilder::with_ptx_from_file].
     pub fn load_ptx_from_file(
         self: &Arc<Self>,
         ptx_path: &'static str,
@@ -23,7 +24,8 @@ impl CudaDevice {
         Ok(())
     }
 
-    /// Dynamically load a set of [CudaFunction] from a jit compiled ptx. See [CudaDeviceBuilder::with_ptx]
+    /// Dynamically load a set of [crate::driver::CudaFunction] from a jit compiled ptx.
+    /// See [crate::driver::CudaDeviceBuilder::with_ptx]
     pub fn load_ptx(
         self: &Arc<Self>,
         ptx: Ptx,
@@ -253,6 +255,8 @@ impl std::error::Error for BuildError {}
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use crate::driver::DeviceSlice;
 
     #[test]
     fn test_device_copy_to_views() {

@@ -102,8 +102,8 @@
 //! #### A note on implementation
 //!
 //! It would be possible to re-use [CudaSlice] itself for sub-slices, however that would involve adding
-//! another structure underneath the hood that is wrapped in an [Arc] to minimize data cloning. Overall
-//! it seemed more complex than the current implementation.
+//! another structure underneath the hood that is wrapped in an [std::sync::Arc] to minimize data cloning.
+//! Overall it seemed more complex than the current implementation.
 //!
 //! # Safety
 //!
@@ -112,7 +112,8 @@
 //!
 //! ### Context/Stream lifetimes
 //!
-//! The first part of safety is ensuring that [sys::CUcontext], [sys::CUdevice], and [sys::CUstream] all
+//! The first part of safety is ensuring that [crate::driver::sys::CUcontext],
+//! [crate::driver::sys::CUdevice], and [crate::driver::sys::CUstream] all
 //! live the required amount of time (i.e. device outlives context, which outlives stream).
 //!
 //! This is accomplished by putting all of them inside one struct, the [CudaDevice]. There are other ways,
@@ -125,7 +126,7 @@
 //! ### Device Data lifetimes
 //!
 //! The next part of safety is ensuring that [CudaSlice] do not outlive
-//! the [CudaDevice]. For usability, each [CudaSlice] owns an [`Arc<CudaDevice>`]
+//! the [CudaDevice]. For usability, each [CudaSlice] owns an `Arc<CudaDevice>`
 //! to ensure the device stays alive.
 //!
 //! Additionally we don't want to double free any device pointers, so free is only
@@ -156,8 +157,8 @@
 //! same stream as actual work.
 //!
 //! To this end [CudaDevice] actual has a 2nd stream, where it places all `free()`
-//! operations. These are synchronized with the main stream using the [result::event]
-//! module and [result::stream::wait_event].
+//! operations. These are synchronized with the main stream using the [crate::driver::result::event]
+//! module and [crate::driver::result::stream::wait_event].
 
 pub(crate) mod alloc;
 pub(crate) mod build;

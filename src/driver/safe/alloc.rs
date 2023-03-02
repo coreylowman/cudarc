@@ -266,9 +266,7 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
-
-    use crate::nvrtc::compile_ptx_with_opts;
+    use crate::driver::CudaDeviceBuilder;
 
     use super::*;
 
@@ -311,7 +309,7 @@ mod tests {
     #[test]
     fn test_post_clone_arc_slice_counts() {
         let device = CudaDeviceBuilder::new(0).build().unwrap();
-        let t = Arc::new(device.take_async([0.0f64; 10].to_vec()).unwrap());
+        let t = Arc::new(device.take_async::<f64>([0.0; 10].to_vec()).unwrap());
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 2);
         drop(t);

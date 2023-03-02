@@ -9,7 +9,7 @@ use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
 ///
-/// **Must be created through [CudaDeviceBuilder].**
+/// **Must be created through [crate::driver::CudaDeviceBuilder].**
 ///
 /// # Safety
 /// 1. impl [Drop] to call all the corresponding resource cleanup methods
@@ -83,7 +83,7 @@ impl Drop for CudaDevice {
 /// # Mutating device data
 ///
 /// This can only be done by launching kernels via
-/// [LaunchAsync] which is implemented
+/// [crate::driver::LaunchAsync] which is implemented
 /// by [CudaDevice]. Pass `&mut CudaSlice<T>`
 /// if you want to mutate the rc, and `&CudaSlice<T>` otherwise.
 ///
@@ -167,7 +167,7 @@ pub(crate) struct CudaModule {
 unsafe impl Send for CudaModule {}
 unsafe impl Sync for CudaModule {}
 
-/// Wrapper around [sys::CUfunction]. Used by [LaunchAsync].
+/// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
 #[derive(Debug, Clone)]
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
@@ -248,8 +248,7 @@ impl Drop for CudaStream {
     }
 }
 
-/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()],
-/// which implements [AsKernelParam] for use with kernels.
+/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()].
 ///
 /// See module docstring for more details.
 #[allow(unused)]
@@ -259,8 +258,7 @@ pub struct CudaView<'a, T> {
     pub(crate) len: usize,
 }
 
-/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()],
-/// which implements [AsKernelParam] for use with kernels.
+/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
 ///
 /// See module docstring for more details.
 #[allow(unused)]

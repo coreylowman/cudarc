@@ -304,9 +304,12 @@ impl_launch!(
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
+    use std::{time::Instant, vec::Vec};
 
-    use crate::nvrtc::compile_ptx_with_opts;
+    use crate::{
+        driver::{CudaDeviceBuilder, DeviceSlice, DriverError},
+        nvrtc::compile_ptx_with_opts,
+    };
 
     use super::*;
 
