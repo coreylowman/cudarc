@@ -1,7 +1,7 @@
-use cudarc::driver::{CudaDeviceBuilder, CudaSlice, DriverError};
+use cudarc::driver::{CudaDevice, CudaSlice, DriverError};
 
 fn main() -> Result<(), DriverError> {
-    let dev = CudaDeviceBuilder::new(0).build().unwrap();
+    let dev = CudaDevice::new(0)?;
 
     // unsafe initialization of unset memory
     let _: CudaSlice<f32> = unsafe { dev.alloc::<f32>(10) }?;
