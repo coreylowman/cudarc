@@ -126,7 +126,7 @@ impl<T> Drop for CudaSlice<T> {
 impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
     pub fn clone_async(&self) -> Result<Self, result::DriverError> {
-        let dst = unsafe { self.device.alloc_async(self.len) }?;
+        let dst = unsafe { self.device.alloc(self.len) }?;
         unsafe {
             result::memcpy_dtod_async(
                 dst.cu_device_ptr,
@@ -148,7 +148,7 @@ impl<T: DeviceRepr> Clone for CudaSlice<T> {
 impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
-        value.device.clone().reclaim(value)
+        value.device.clone().reclaim_sync(value)
     }
 }
 

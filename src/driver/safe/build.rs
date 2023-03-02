@@ -263,23 +263,23 @@ mod tests {
         let dev = CudaDeviceBuilder::new(0).build().unwrap();
 
         let smalls = [
-            dev.copy_htod_async(std::vec![-1.0f32, -0.8]).unwrap(),
-            dev.copy_htod_async(std::vec![-0.6, -0.4]).unwrap(),
-            dev.copy_htod_async(std::vec![-0.2, 0.0]).unwrap(),
-            dev.copy_htod_async(std::vec![0.2, 0.4]).unwrap(),
-            dev.copy_htod_async(std::vec![0.6, 0.8]).unwrap(),
+            dev.htod_copy(std::vec![-1.0f32, -0.8]).unwrap(),
+            dev.htod_copy(std::vec![-0.6, -0.4]).unwrap(),
+            dev.htod_copy(std::vec![-0.2, 0.0]).unwrap(),
+            dev.htod_copy(std::vec![0.2, 0.4]).unwrap(),
+            dev.htod_copy(std::vec![0.6, 0.8]).unwrap(),
         ];
-        let mut big = dev.alloc_zeros_async::<f32>(10).unwrap();
+        let mut big = dev.alloc_zeros::<f32>(10).unwrap();
 
         let mut offset = 0;
         for small in smalls.iter() {
             let mut sub = big.try_slice_mut(offset..offset + small.len()).unwrap();
-            dev.copy_dtod_async(small, &mut sub).unwrap();
+            dev.dtod_copy(small, &mut sub).unwrap();
             offset += small.len();
         }
 
         assert_eq!(
-            dev.reclaim(big).unwrap(),
+            dev.reclaim_sync(big).unwrap(),
             [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
         );
     }

@@ -9,31 +9,31 @@
 //! let device = CudaDeviceBuilder::new(0).build().unwrap();
 //! ```
 //!
-//! 2. Allocate device memory with host data with [CudaDevice::copy_htod_async()], [CudaDevice::alloc_zeros_async()],
-//! or [CudaDevice::copy_htod_sync()].
+//! 2. Allocate device memory with host data with [CudaDevice::htod_copy()], [CudaDevice::alloc_zeros()],
+//! or [CudaDevice::htod_copy_sync()].
 //!
-//! You can also copy data to CudaSlice using [CudaDevice::copy_into_htod_sync()]
+//! You can also copy data to CudaSlice using [CudaDevice::htod_copy_into_sync()]
 //!
 //! ```rust
 //! # use cudarc::driver::*;
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
-//! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
-//! let b_dev: CudaSlice<f32> = device.copy_htod_async(vec![0.0; 10]).unwrap();
-//! let c_dev: CudaSlice<f32> = device.copy_htod_sync(&[1.0, 2.0, 3.0]).unwrap();
+//! let a_dev: CudaSlice<f32> = device.alloc_zeros(10).unwrap();
+//! let b_dev: CudaSlice<f32> = device.htod_copy(vec![0.0; 10]).unwrap();
+//! let c_dev: CudaSlice<f32> = device.htod_copy_sync(&[1.0, 2.0, 3.0]).unwrap();
 //! ```
 //!
-//! 3. Transfer to host memory with [CudaDevice::reclaim()], [CudaDevice::copy_dtoh_sync()],
-//! or [CudaDevice::copy_into_dtoh_sync()]
+//! 3. Transfer to host memory with [CudaDevice::reclaim_sync()], [CudaDevice::dtoh_copy_sync()],
+//! or [CudaDevice::dtoh_copy_into_sync()]
 //!
 //! ```rust
 //! # use cudarc::driver::*;
 //! # use std::rc::Rc;
 //! # let device = CudaDeviceBuilder::new(0).build().unwrap();
-//! let a_dev: CudaSlice<f32> = device.alloc_zeros_async(10).unwrap();
+//! let a_dev: CudaSlice<f32> = device.alloc_zeros(10).unwrap();
 //! let mut a_buf: [f32; 10] = [1.0; 10];
-//! device.copy_into_dtoh_sync(&a_dev, &mut a_buf);
+//! device.dtoh_copy_into_sync(&a_dev, &mut a_buf);
 //! assert_eq!(a_buf, [0.0; 10]);
-//! let a_host: Vec<f32> = device.reclaim(a_dev).unwrap();
+//! let a_host: Vec<f32> = device.reclaim_sync(a_dev).unwrap();
 //! assert_eq!(&a_host, &[0.0; 10]);
 //! ```
 //!
@@ -68,7 +68,7 @@
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
 //! # let func: CudaFunction = device.get_func("module_key", "my_function").unwrap();
-//! let mut a = device.alloc_zeros_async::<f32>(10).unwrap();
+//! let mut a = device.alloc_zeros::<f32>(10).unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
 //! unsafe { func.launch_async(cfg, (&mut a,)) }.unwrap();
 //! ```
@@ -91,7 +91,7 @@
 //! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDeviceBuilder::new(0).with_ptx(ptx, "module_key", &["my_function"]).build().unwrap();
-//! let mut a: CudaSlice<f32> = device.alloc_zeros_async::<f32>(3 * 10).unwrap();
+//! let mut a: CudaSlice<f32> = device.alloc_zeros::<f32>(3 * 10).unwrap();
 //! for i_batch in 0..3 {
 //!     let mut a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
 //!     let f: CudaFunction = device.get_func("module_key", "my_function").unwrap();

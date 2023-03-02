@@ -10,15 +10,15 @@ fn main() -> Result<(), DriverError> {
 
     let a_host = [1.0, 2.0, 3.0];
 
-    let a_dev = dev.copy_htod_async(a_host.into())?;
+    let a_dev = dev.htod_copy(a_host.into())?;
     let mut b_dev = a_dev.clone();
 
     let n = 3;
     let cfg = LaunchConfig::for_num_elems(n);
     unsafe { f.launch_async(cfg, (&mut b_dev, &a_dev, n as i32)) }?;
 
-    let a_host_2 = dev.reclaim(a_dev)?;
-    let b_host = dev.reclaim(b_dev)?;
+    let a_host_2 = dev.reclaim_sync(a_dev)?;
+    let b_host = dev.reclaim_sync(b_dev)?;
 
     println!("Found {:?}", b_host);
     println!("Expected {:?}", a_host.map(f32::sin));
