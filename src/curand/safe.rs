@@ -113,7 +113,7 @@ mod tests {
         let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_uniform(&mut a_dev).unwrap();
-        dev.reclaim_sync(a_dev).unwrap()
+        dev.sync_reclaim(a_dev).unwrap()
     }
 
     fn gen_normal<T: ValidAsZeroBits + Clone + Default + Unpin + DeviceRepr>(
@@ -129,7 +129,7 @@ mod tests {
         let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_normal(&mut a_dev, mean, std).unwrap();
-        dev.reclaim_sync(a_dev).unwrap()
+        dev.sync_reclaim(a_dev).unwrap()
     }
 
     fn gen_log_normal<T: ValidAsZeroBits + Clone + Default + Unpin + DeviceRepr>(
@@ -145,7 +145,7 @@ mod tests {
         let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_log_normal(&mut a_dev, mean, std).unwrap();
-        dev.reclaim_sync(a_dev).unwrap()
+        dev.sync_reclaim(a_dev).unwrap()
     }
 
     #[test]
@@ -175,8 +175,8 @@ mod tests {
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
         b_rng.fill_with_uniform(&mut b_dev).unwrap();
 
-        let a_host = dev.reclaim_sync(a_dev).unwrap();
-        let b_host = dev.reclaim_sync(b_dev).unwrap();
+        let a_host = dev.sync_reclaim(a_dev).unwrap();
+        let b_host = dev.sync_reclaim(b_dev).unwrap();
         assert_eq!(a_host, b_host);
     }
 
@@ -193,8 +193,8 @@ mod tests {
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
         b_rng.fill_with_uniform(&mut b_dev).unwrap();
 
-        let a_host = dev.reclaim_sync(a_dev).unwrap();
-        let b_host = dev.reclaim_sync(b_dev).unwrap();
+        let a_host = dev.sync_reclaim(a_dev).unwrap();
+        let b_host = dev.sync_reclaim(b_dev).unwrap();
         assert_ne!(a_host, b_host);
     }
 

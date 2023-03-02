@@ -13,18 +13,18 @@ fn main() -> Result<(), DriverError> {
     dev.htod_copy_into(vec![2.0; 10], &mut b)?;
 
     // if you want to use slices, you can do synchronous copy
-    dev.htod_copy_into_sync(&[3.0; 10], &mut b)?;
+    dev.htod_sync_copy_into(&[3.0; 10], &mut b)?;
 
     // you can transfer back using reclaim:
-    let mut a_host: Vec<f64> = dev.reclaim_sync(a)?;
+    let mut a_host: Vec<f64> = dev.sync_reclaim(a)?;
     assert_eq!(a_host, [0.0; 10]);
 
     // or copy back without losing ownership:
-    let b_host = dev.dtoh_copy_sync(&b)?;
+    let b_host = dev.dtoh_sync_copy(&b)?;
     assert_eq!(b_host, [3.0; 10]);
 
     // or use a slice
-    dev.dtoh_copy_into_sync(&b, &mut a_host)?;
+    dev.dtoh_sync_copy_into(&b, &mut a_host)?;
     assert_eq!(a_host, b_host);
 
     Ok(())

@@ -279,7 +279,7 @@ mod tests {
         }
 
         assert_eq!(
-            dev.reclaim_sync(big).unwrap(),
+            dev.sync_reclaim(big).unwrap(),
             [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
         );
     }

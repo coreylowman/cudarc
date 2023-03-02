@@ -295,7 +295,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         }
         .unwrap();
 
-        let b_host = dev.reclaim_sync(b_dev).unwrap();
+        let b_host = dev.sync_reclaim(b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
@@ -323,7 +323,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             let cfg = LaunchConfig::for_num_elems(numel as u32);
             unsafe { sin_kernel.launch(cfg, (&mut b, &a, numel)) }.unwrap();
 
-            let b = dev.reclaim_sync(b).unwrap();
+            let b = dev.sync_reclaim(b).unwrap();
             for v in b {
                 assert_eq!(v, 0.841471);
             }
@@ -352,7 +352,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
                 .unwrap();
         }
 
-        let b_host = dev.reclaim_sync(b_dev).unwrap();
+        let b_host = dev.sync_reclaim(b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();

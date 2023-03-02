@@ -187,12 +187,12 @@ impl CudaDevice {
     ///
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn htod_copy_sync<T: DeviceRepr>(
+    pub fn htod_sync_copy<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &[T],
     ) -> Result<CudaSlice<T>, result::DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
-        self.htod_copy_into_sync(src, &mut dst)?;
+        self.htod_sync_copy_into(src, &mut dst)?;
         Ok(dst)
     }
 
@@ -207,7 +207,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn htod_copy_into_sync<T: DeviceRepr>(
+    pub fn htod_sync_copy_into<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &[T],
         dst: &mut CudaSlice<T>,
@@ -218,25 +218,25 @@ impl CudaDevice {
     }
 
     /// Synchronously copies device memory into host memory.
-    /// Unlike [`CudaDevice::dtoh_copy_into_sync`] this returns a [`Vec<T>`].
+    /// Unlike [`CudaDevice::dtoh_sync_copy_into`] this returns a [`Vec<T>`].
     ///
     /// # Safety
     /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     #[allow(clippy::uninit_vec)]
-    pub fn dtoh_copy_sync<T: DeviceRepr>(
+    pub fn dtoh_sync_copy<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {
         let mut dst = Vec::with_capacity(src.len());
         unsafe { dst.set_len(src.len()) };
-        self.dtoh_copy_into_sync(src, &mut dst)?;
+        self.dtoh_sync_copy_into(src, &mut dst)?;
         Ok(dst)
     }
 
     /// Synchronously copies device memory into host memory
     ///
-    /// Use [`CudaDevice::dtoh_copy_sync`] if you need [`Vec<T>`] and can't provide
+    /// Use [`CudaDevice::dtoh_sync_copy`] if you need [`Vec<T>`] and can't provide
     /// a correctly sized slice.
     ///
     /// # Panics
@@ -246,7 +246,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Since this function doesn't own `dst` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn dtoh_copy_into_sync<T: DeviceRepr>(
+    pub fn dtoh_sync_copy_into<T: DeviceRepr>(
         self: &Arc<Self>,
         src: &CudaSlice<T>,
         dst: &mut [T],
@@ -261,7 +261,7 @@ impl CudaDevice {
     ///
     /// # Safety
     /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn reclaim_sync<T: Clone + Default + DeviceRepr + Unpin>(
+    pub fn sync_reclaim<T: Clone + Default + DeviceRepr + Unpin>(
         self: &Arc<Self>,
         mut src: CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {
@@ -271,7 +271,7 @@ impl CudaDevice {
             b.resize(src.len, Default::default());
             Pin::new(b)
         });
-        self.dtoh_copy_into_sync(&src, &mut buf)?;
+        self.dtoh_sync_copy_into(&src, &mut buf)?;
         Ok(Pin::into_inner(buf))
     }
 
@@ -389,7 +389,7 @@ mod tests {
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
 
-        let r_host = device.reclaim_sync(r).unwrap();
+        let r_host = device.sync_reclaim(r).unwrap();
         assert_eq!(&r_host, &[1.0, 2.0, 3.0]);
         assert_eq!(Arc::strong_count(&device), 2);
 

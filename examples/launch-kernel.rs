@@ -17,8 +17,8 @@ fn main() -> Result<(), DriverError> {
     let cfg = LaunchConfig::for_num_elems(n);
     unsafe { f.launch(cfg, (&mut b_dev, &a_dev, n as i32)) }?;
 
-    let a_host_2 = dev.reclaim_sync(a_dev)?;
-    let b_host = dev.reclaim_sync(b_dev)?;
+    let a_host_2 = dev.sync_reclaim(a_dev)?;
+    let b_host = dev.sync_reclaim(b_dev)?;
 
     println!("Found {:?}", b_host);
     println!("Expected {:?}", a_host.map(f32::sin));

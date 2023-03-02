@@ -13,7 +13,7 @@ fn main() -> Result<(), DriverError> {
     let _: CudaSlice<usize> = dev.htod_copy(vec![0; 10])?;
 
     // or finially, initialize with a slice. this is synchronous though.
-    let _: CudaSlice<u32> = dev.htod_copy_sync(&[1, 2, 3])?;
+    let _: CudaSlice<u32> = dev.htod_sync_copy(&[1, 2, 3])?;
 
     Ok(())
 }
