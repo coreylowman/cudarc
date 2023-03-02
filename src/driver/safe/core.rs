@@ -258,6 +258,26 @@ pub struct CudaView<'a, T> {
     pub(crate) len: usize,
 }
 
+impl<T> CudaSlice<T> {
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `range.start >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'_, T> {
+        self.try_slice(range).unwrap()
+    }
+
+    /// Fallible version of [CudaSlice::slice]
+    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaView {
+            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            slice: self,
+            len: 1 + end - start,
+        })
+    }
+}
+
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
 ///
 /// See module docstring for more details.
@@ -269,24 +289,16 @@ pub struct CudaViewMut<'a, T> {
 }
 
 impl<T> CudaSlice<T> {
-    /// Creates a [CudaView] at the specified offset from the start of `self`.
-    ///
-    /// Returns `None` if `range.start >= self.len`
-    ///
-    /// See module docstring for example
-    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaView {
-            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            slice: self,
-            len: 1 + end - start,
-        })
-    }
-
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `offset >= self.len`
     ///
     /// See module docstring for example
+    pub fn slice_mut(&mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
+        self.try_slice_mut(range).unwrap()
+    }
+
+    /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
