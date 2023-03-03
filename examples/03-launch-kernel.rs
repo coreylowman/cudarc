@@ -1,13 +1,16 @@
-use cudarc::driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig};
+use cudarc::{
+    driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig},
+    nvrtc::Ptx,
+};
 
 fn main() -> Result<(), DriverError> {
     let dev = CudaDevice::new(0)?;
 
     // You can load a function from a pre-compiled PTX like so:
-    dev.load_ptx_from_file("./examples/sin.ptx", &["sin_kernel"])?;
+    dev.load_ptx(Ptx::from_file("./examples/sin.ptx"), "sin", &["sin_kernel"])?;
 
     // and then retrieve the function with `get_func`
-    let f = dev.get_func("./examples/sin.ptx", "sin_kernel").unwrap();
+    let f = dev.get_func("sin", "sin_kernel").unwrap();
 
     let a_host = [1.0, 2.0, 3.0];
 
