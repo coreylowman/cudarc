@@ -1,5 +1,5 @@
-use cudarc::driver::{CudaDeviceBuilder, LaunchAsync, LaunchConfig};
-use cudarc::nvrtc::{compile_ptx, CompileError};
+use cudarc::driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig};
+use cudarc::nvrtc::compile_ptx;
 
 const PTX_SRC: &str = "
 extern \"C\" __global__ void matmul(float* A, float* B, float* C, int N) {
@@ -19,18 +19,16 @@ extern \"C\" __global__ void matmul(float* A, float* B, float* C, int N) {
 }
 ";
 
-fn main() -> Result<(), CompileError> {
+fn main() -> Result<(), DriverError> {
     let start = std::time::Instant::now();
 
     let ptx = compile_ptx(PTX_SRC).unwrap();
     println!("Compilation succeeded in {:?}", start.elapsed());
 
-    let dev = CudaDeviceBuilder::new(0)
-        .with_ptx(ptx, "matmul", &["matmul"])
-        .build()
-        .unwrap();
-    println!("Build in {:?}", start.elapsed());
+    let dev = CudaDevice::new(0)?;
+    println!("Built in {:?}", start.elapsed());
 
+    dev.load_ptx(ptx, "matmul", &["matmul"])?;
     let f = dev.get_func("matmul", "matmul").unwrap();
     println!("Loaded in {:?}", start.elapsed());
 
@@ -38,9 +36,9 @@ fn main() -> Result<(), CompileError> {
     let b_host = [1.0f32, 2.0, 3.0, 4.0];
     let mut c_host = [0.0f32; 4];
 
-    let a_dev = dev.htod_sync_copy(&a_host).unwrap();
-    let b_dev = dev.htod_sync_copy(&b_host).unwrap();
-    let mut c_dev = dev.htod_sync_copy(&c_host).unwrap();
+    let a_dev = dev.htod_sync_copy(&a_host)?;
+    let b_dev = dev.htod_sync_copy(&b_host)?;
+    let mut c_dev = dev.htod_sync_copy(&c_host)?;
 
     println!("Copied in {:?}", start.elapsed());
 
@@ -49,9 +47,9 @@ fn main() -> Result<(), CompileError> {
         grid_dim: (1, 1, 1),
         shared_mem_bytes: 0,
     };
-    unsafe { f.launch(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }.unwrap();
+    unsafe { f.launch(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }?;
 
-    dev.dtoh_sync_copy_into(&c_dev, &mut c_host).unwrap();
+    dev.dtoh_sync_copy_into(&c_dev, &mut c_host)?;
     println!("Found {:?} in {:?}", c_host, start.elapsed());
     Ok(())
 }

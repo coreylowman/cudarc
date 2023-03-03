@@ -9,13 +9,13 @@ use std::sync::Arc;
 /// 1. Create:
 /// ```rust
 /// # use cudarc::{driver::*, curand::*};
-/// let device = CudaDeviceBuilder::new(0).build().unwrap();
+/// let device = CudaDevice::new(0).unwrap();
 /// let rng = CudaRng::new(0, device).unwrap();
 /// ```
 /// 2. Fill device memory:
 /// ```rust
 /// # use cudarc::{driver::*, curand::*};
-/// # let device = CudaDeviceBuilder::new(0).build().unwrap();
+/// # let device = CudaDevice::new(0).unwrap();
 /// # let rng = CudaRng::new(0, device.clone()).unwrap();
 /// let mut a_dev = device.alloc_zeros::<f32>(10).unwrap();
 /// rng.fill_with_uniform(&mut a_dev).unwrap();
@@ -109,7 +109,7 @@ mod tests {
     where
         super::sys::curandGenerator_t: UniformFill<T>,
     {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_uniform(&mut a_dev).unwrap();
@@ -125,7 +125,7 @@ mod tests {
     where
         super::sys::curandGenerator_t: NormalFill<T>,
     {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_normal(&mut a_dev, mean, std).unwrap();
@@ -141,7 +141,7 @@ mod tests {
     where
         super::sys::curandGenerator_t: LogNormalFill<T>,
     {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let mut a_dev = dev.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, dev.clone()).unwrap();
         rng.fill_with_log_normal(&mut a_dev, mean, std).unwrap();
@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn test_rc_counts() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         assert_eq!(Arc::strong_count(&dev), 1);
         let a_rng = CudaRng::new(0, dev.clone()).unwrap();
         assert_eq!(Arc::strong_count(&dev), 2);
@@ -164,7 +164,7 @@ mod tests {
 
     #[test]
     fn test_seed_reproducible() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
 
         let mut a_dev = dev.alloc_zeros::<f32>(10).unwrap();
         let mut b_dev = a_dev.clone();
@@ -182,7 +182,7 @@ mod tests {
 
     #[test]
     fn test_different_seeds_neq() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
 
         let mut a_dev = dev.alloc_zeros::<f32>(10).unwrap();
         let mut b_dev = a_dev.clone();

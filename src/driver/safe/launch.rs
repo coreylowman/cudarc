@@ -238,7 +238,7 @@ mod tests {
     use std::{time::Instant, vec::Vec};
 
     use crate::{
-        driver::{CudaDeviceBuilder, DeviceSlice, DriverError},
+        driver::{DeviceSlice, DriverError},
         nvrtc::compile_ptx_with_opts,
     };
 
@@ -246,7 +246,7 @@ mod tests {
 
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = device.htod_copy([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_ref_into_kernel_param_inc_rc() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = device.htod_copy([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
@@ -275,10 +275,9 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     #[test]
     fn test_launch_with_mut_and_ref_cudarc() {
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "sin", &["sin_kernel"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
+
         let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
@@ -308,10 +307,8 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     #[test]
     fn test_large_launches() {
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "sin", &["sin_kernel"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
         for numel in [256, 512, 1024, 1280, 1536, 2048] {
             let mut a = Vec::with_capacity(numel);
             a.resize(numel, 1.0f32);
@@ -333,10 +330,8 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     #[test]
     fn test_launch_with_views() {
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "sin", &["sin_kernel"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
         let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
@@ -400,10 +395,8 @@ extern \"C\" __global__ void floating(float f, double d) {
     #[test]
     fn test_launch_with_8bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["int_8bit"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["int_8bit"]).unwrap();
         let f = dev.get_func("tests", "int_8bit").unwrap();
         unsafe {
             f.launch(
@@ -419,10 +412,8 @@ extern \"C\" __global__ void floating(float f, double d) {
     #[test]
     fn test_launch_with_16bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["int_16bit"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["int_16bit"]).unwrap();
         let f = dev.get_func("tests", "int_16bit").unwrap();
         unsafe {
             f.launch(
@@ -437,10 +428,8 @@ extern \"C\" __global__ void floating(float f, double d) {
     #[test]
     fn test_launch_with_32bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["int_32bit"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["int_32bit"]).unwrap();
         let f = dev.get_func("tests", "int_32bit").unwrap();
         unsafe {
             f.launch(
@@ -455,10 +444,8 @@ extern \"C\" __global__ void floating(float f, double d) {
     #[test]
     fn test_launch_with_64bit() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["int_64bit"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["int_64bit"]).unwrap();
         let f = dev.get_func("tests", "int_64bit").unwrap();
         unsafe {
             f.launch(
@@ -473,10 +460,8 @@ extern \"C\" __global__ void floating(float f, double d) {
     #[test]
     fn test_launch_with_floats() {
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["floating"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["floating"]).unwrap();
         let f = dev.get_func("tests", "floating").unwrap();
         unsafe {
             f.launch(
@@ -511,10 +496,8 @@ extern \"C\" __global__ void halfs(__half h) {
             },
         )
         .unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["halfs"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["halfs"]).unwrap();
         let f = dev.get_func("tests", "halfs").unwrap();
         unsafe {
             f.launch(
@@ -539,10 +522,8 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     #[test]
     fn test_par_launch() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
-        let dev = CudaDeviceBuilder::new(0)
-            .with_ptx(ptx, "tests", &["slow_worker"])
-            .build()
-            .unwrap();
+        let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["slow_worker"]).unwrap();
         let slice = dev.alloc_zeros::<f32>(1000)?;
         let mut a = dev.alloc_zeros::<f32>(1)?;
         let mut b = dev.alloc_zeros::<f32>(1)?;

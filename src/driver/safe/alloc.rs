@@ -330,19 +330,17 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
-    use crate::driver::CudaDeviceBuilder;
-
     use super::*;
 
     #[test]
     fn test_post_build_arc_count() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         assert_eq!(Arc::strong_count(&device), 1);
     }
 
     #[test]
     fn test_post_alloc_arc_counts() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = device.alloc_zeros::<f32>(1).unwrap();
         assert!(t.host_buf.is_none());
         assert_eq!(Arc::strong_count(&device), 2);
@@ -350,7 +348,7 @@ mod tests {
 
     #[test]
     fn test_post_take_arc_counts() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = device.htod_copy([0.0f32; 5].to_vec()).unwrap();
         assert!(t.host_buf.is_some());
         assert_eq!(Arc::strong_count(&device), 2);
@@ -360,7 +358,7 @@ mod tests {
 
     #[test]
     fn test_post_clone_counts() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = device.htod_copy([0.0f64; 10].to_vec()).unwrap();
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
@@ -372,7 +370,7 @@ mod tests {
 
     #[test]
     fn test_post_clone_arc_slice_counts() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = Arc::new(device.htod_copy::<f64>([0.0; 10].to_vec()).unwrap());
         let r = t.clone();
         assert_eq!(Arc::strong_count(&device), 2);
@@ -384,7 +382,7 @@ mod tests {
 
     #[test]
     fn test_post_release_counts() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let t = device.htod_copy([1.0f32, 2.0, 3.0].to_vec()).unwrap();
         #[allow(clippy::redundant_clone)]
         let r = t.clone();
@@ -401,7 +399,7 @@ mod tests {
     #[test]
     #[ignore = "must be executed by itself"]
     fn test_post_alloc_memory() {
-        let device = CudaDeviceBuilder::new(0).build().unwrap();
+        let device = CudaDevice::new(0).unwrap();
         let (free1, total1) = result::mem_get_info().unwrap();
 
         let t = device.htod_copy([0.0f32; 5].to_vec()).unwrap();
@@ -416,5 +414,31 @@ mod tests {
         assert_eq!(total2, total3);
         assert!(free3 > free2);
         assert_eq!(free3, free1);
+    }
+
+    #[test]
+    fn test_device_copy_to_views() {
+        let dev = CudaDevice::new(0).unwrap();
+
+        let smalls = [
+            dev.htod_copy(std::vec![-1.0f32, -0.8]).unwrap(),
+            dev.htod_copy(std::vec![-0.6, -0.4]).unwrap(),
+            dev.htod_copy(std::vec![-0.2, 0.0]).unwrap(),
+            dev.htod_copy(std::vec![0.2, 0.4]).unwrap(),
+            dev.htod_copy(std::vec![0.6, 0.8]).unwrap(),
+        ];
+        let mut big = dev.alloc_zeros::<f32>(10).unwrap();
+
+        let mut offset = 0;
+        for small in smalls.iter() {
+            let mut sub = big.try_slice_mut(offset..offset + small.len()).unwrap();
+            dev.dtod_copy(small, &mut sub).unwrap();
+            offset += small.len();
+        }
+
+        assert_eq!(
+            dev.sync_reclaim(big).unwrap(),
+            [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
+        );
     }
 }

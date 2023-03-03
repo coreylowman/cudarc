@@ -1,7 +1,7 @@
-use cudarc::driver::{CudaDeviceBuilder, CudaSlice, DriverError};
+use cudarc::driver::{CudaDevice, CudaSlice, DriverError};
 
 fn main() -> Result<(), DriverError> {
-    let dev = CudaDeviceBuilder::new(0).build().unwrap();
+    let dev = CudaDevice::new(0)?;
 
     let a: CudaSlice<f64> = dev.alloc_zeros::<f64>(10)?;
     let mut b = dev.alloc_zeros::<f64>(10)?;

@@ -9,7 +9,10 @@ use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
 ///
-/// **Must be created through [crate::driver::CudaDeviceBuilder].**
+/// ```rust
+/// # use cudarc::driver::CudaDevice;
+/// let dev = CudaDevice::new(0).unwrap();
+/// ```
 ///
 /// # Safety
 /// 1. impl [Drop] to call all the corresponding resource cleanup methods
@@ -32,6 +35,36 @@ pub struct CudaDevice {
 
 unsafe impl Send for CudaDevice {}
 unsafe impl Sync for CudaDevice {}
+
+impl CudaDevice {
+    /// Creates a new [CudaDevice] on device index `ordinal`.
+    pub fn new(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
+        result::init().unwrap();
+
+        let cu_device = result::device::get(ordinal as i32).unwrap();
+
+        // primary context initialization, can fail with OOM
+        let cu_primary_ctx = unsafe { result::primary_ctx::retain(cu_device) }?;
+
+        unsafe { result::ctx::set_current(cu_primary_ctx) }.unwrap();
+
+        // can fail with OOM
+        let free_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+
+        // can fail with OOM
+        let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
+
+        let device = CudaDevice {
+            cu_device,
+            cu_primary_ctx,
+            stream: std::ptr::null_mut(),
+            free_stream,
+            event,
+            modules: RwLock::new(BTreeMap::new()),
+        };
+        Ok(Arc::new(device))
+    }
+}
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
@@ -149,8 +182,6 @@ impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
 /// the loaded [CudaFunction] associated with this module.
 ///
 /// See [CudaModule::get_fn()] for retrieving function handles.
-///
-/// See [CudaDeviceBuilder] for how to construct these modules.
 #[derive(Debug)]
 pub(crate) struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,

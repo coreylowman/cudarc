@@ -367,7 +367,6 @@ mod tests {
     #![allow(clippy::needless_range_loop)]
 
     use super::*;
-    use crate::driver::CudaDeviceBuilder;
 
     fn gemv_truth<T, const M: usize, const N: usize>(
         alpha: T,
@@ -413,7 +412,7 @@ mod tests {
 
     #[test]
     fn test_sgemv() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let blas = CudaBlas::new(dev.clone()).unwrap();
         const M: usize = 2;
         const N: usize = 5;
@@ -460,7 +459,7 @@ mod tests {
 
     #[test]
     fn test_dgemv() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let blas = CudaBlas::new(dev.clone()).unwrap();
         const M: usize = 8;
         const N: usize = 3;
@@ -520,7 +519,7 @@ mod tests {
     #[cfg(feature = "f16")]
     #[test]
     fn test_hgemm() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let blas = CudaBlas::new(dev.clone()).unwrap();
         const M: usize = 3;
         const K: usize = 4;
@@ -597,7 +596,7 @@ mod tests {
 
     #[test]
     fn test_sgemm() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let blas = CudaBlas::new(dev.clone()).unwrap();
         const M: usize = 3;
         const K: usize = 4;
@@ -661,7 +660,7 @@ mod tests {
 
     #[test]
     fn test_dgemm() {
-        let dev = CudaDeviceBuilder::new(0).build().unwrap();
+        let dev = CudaDevice::new(0).unwrap();
         let blas = CudaBlas::new(dev.clone()).unwrap();
         const M: usize = 4;
         const K: usize = 3;
