@@ -24,6 +24,11 @@ use cudarc::cublas::{safe, result, sys};
 use cudarc::curand::{safe, result, sys};
 ```
 
+where:
+1. `sys` is the raw ffi apis generated with bindgen
+2. `result` is a very small wrapper around sys to return `Result` from each function
+3. `safe` is a wrapper around result/sys to provide safe abstractions
+
 *Heavily recommend sticking with safe APIs*
 
 # API Preview
