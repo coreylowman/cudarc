@@ -67,7 +67,7 @@
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let device = CudaDevice::new(0).unwrap();
 //! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
-//! # let func: CudaFunction = device.get_func("module_key", "my_function").unwrap();
+//! # let func: CudaFunction = device.get_func("module_name", "my_function").unwrap();
 //! let mut a = device.alloc_zeros::<f32>(10).unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
 //! unsafe { func.launch(cfg, (&mut a,)) }.unwrap();

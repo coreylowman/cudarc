@@ -11,7 +11,7 @@ use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 ///
 /// ```rust
 /// # use cudarc::driver::CudaDevice;
-/// let dev: Arc<CudaDevice> = CudaDevice::new(0).unwrap();
+/// let dev = CudaDevice::new(0).unwrap();
 /// ```
 ///
 /// # Safety
