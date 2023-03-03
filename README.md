@@ -9,14 +9,38 @@ Safe abstractions over:
 **Pre-alpha state**, expect breaking changes and not all cuda functions
 contain a safe wrapper. **Contributions welcome for any that aren't included!**
 
+# Design
+
+Goals are:
+1. As safe as possible (there will still be a lot of unsafe due to ffi & async)
+2. As ergonomic as possible
+3. Allow mixing of high level `safe` apis, with low level `sys` apis
+
+To that end there are three levels to each wrapper (by default the safe api is exported):
+```rust
+use cudarc::driver::{safe, result, sys};
+use cudarc::nvrtc::{safe, result, sys};
+use cudarc::cublas::{safe, result, sys};
+use cudarc::curand::{safe, result, sys};
+```
+
+*Heavily recommend sticking with safe APIs*
+
+# API Preview
+
+It's easy to create a new device and transfer data to the gpu:
+
 ```rust
 let dev = cudarc::driver::CudaDevice::new(0)?;
 
 // allocate buffers
 let inp = dev.htod_copy(vec![1.0f32; 100])?;
 let mut out = dev.alloc_zeros::<f32>(100)?;
+```
 
-// compile our kernel
+You can also use the nvrtc api to compile kernels at runtime:
+
+```rust
 let ptx = cudarc::nvrtc::compile_ptx("
 extern \"C\" __global__ void sin_kernel(float *out, const float *inp, const size_t numel) {
     unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -25,15 +49,22 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, const size
     }
 }")?;
 
-// load it into the device
+// and dynamically load it into the device
 dev.load_ptx(ptx, "my_module", &["sin_kernel"])?;
+```
 
-// launch it!
+`cudarc` provides a very simple interface to launch kernels, tuples
+are the arguments!
+
+```rust
 let sin_kernel = dev.get_func("my_module", "sin_kernel").unwrap();
 let cfg = LaunchConfig::for_num_elems(100);
 unsafe { sin_kernel.launch(cfg, (&mut out, &inp, 100usize)) }?;
+```
 
-// and finally copy back to host
+And of course it's easy to copy things back to host after you're done:
+
+```rust
 let out_host: Vec<f32> = dev.dtoh_sync_copy(&out)?;
 assert_eq!(out_host, [1.0; 100].map(f32::sin));
 ```
