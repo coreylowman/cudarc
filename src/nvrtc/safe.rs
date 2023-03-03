@@ -11,7 +11,7 @@ use std::{borrow::ToOwned, path::PathBuf, string::String, vec::Vec};
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
 ///
-/// Can also be created from a
+/// Can also be created from a [Ptx::from_file] and [Ptx::from_src]
 #[derive(Debug, Clone)]
 pub struct Ptx(pub(crate) PtxKind);
 
@@ -28,15 +28,21 @@ impl Ptx {
     }
 }
 
+impl<S: Into<String>> From<S> for Ptx {
+    fn from(value: S) -> Self {
+        Self::from_src(value)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) enum PtxKind {
     /// An image created by [compile_ptx]
     Image(Vec<c_char>),
 
-    /// A ptx that is contained in
+    /// Content of a pre compiled ptx file
     Src(String),
 
-    /// A ptx that is contained in a file
+    /// Path to a compiled ptx
     File(PathBuf),
 }
 
