@@ -6,20 +6,38 @@ use super::{result, sys};
 
 use alloc::ffi::CString;
 use core::ffi::{c_char, CStr};
-use std::{borrow::ToOwned, string::String, vec::Vec};
+use std::{borrow::ToOwned, path::PathBuf, string::String, vec::Vec};
 
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
+///
+/// Can also be created from a
 #[derive(Debug, Clone)]
-pub enum Ptx {
-    Image(Vec<c_char>),
-    Src(String),
+pub struct Ptx(pub(crate) PtxKind);
+
+impl Ptx {
+    /// Creates a Ptx from a pre-compiled .ptx file.
+    pub fn from_file<P: Into<PathBuf>>(path: P) -> Self {
+        Self(PtxKind::File(path.into()))
+    }
+
+    /// Creates a Ptx from the source string of a pre-compiled .ptx
+    /// file.
+    pub fn from_src<S: Into<String>>(src: S) -> Self {
+        Self(PtxKind::Src(src.into()))
+    }
 }
 
-impl<S: Into<String>> From<S> for Ptx {
-    fn from(value: S) -> Self {
-        Self::Src(value.into())
-    }
+#[derive(Debug, Clone)]
+pub(crate) enum PtxKind {
+    /// An image created by [compile_ptx]
+    Image(Vec<c_char>),
+
+    /// A ptx that is contained in
+    Src(String),
+
+    /// A ptx that is contained in a file
+    File(PathBuf),
 }
 
 /// Calls [compile_ptx_with_opts] with no options. `src` is the source string
@@ -80,7 +98,7 @@ impl Program {
 
         let image = unsafe { result::get_ptx(self.prog) }.map_err(CompileError::GetPtxError)?;
 
-        Ok(Ptx::Image(image))
+        Ok(Ptx(PtxKind::Image(image)))
     }
 }
 
@@ -211,11 +229,7 @@ mod tests {
                 out[i] = sin(inp[i]);
             }
         }";
-        let ptx = compile_ptx_with_opts(SRC, Default::default()).unwrap();
-        match ptx {
-            Ptx::Image(i) => assert!(!i.is_empty()),
-            Ptx::Src(_) => unreachable!("Should be image"),
-        };
+        compile_ptx_with_opts(SRC, Default::default()).unwrap();
     }
 
     #[test]

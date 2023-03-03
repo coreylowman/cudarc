@@ -44,7 +44,6 @@
 //! In order to mutate device data, you need to use cuda kernels.
 //!
 //! Loading kernels is done with [CudaDevice::load_ptx()]
-//! and [CudaDevice::load_ptx_from_file()]:
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
 //! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
