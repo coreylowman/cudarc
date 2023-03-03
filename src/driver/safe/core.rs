@@ -255,7 +255,7 @@ impl CudaDevice {
     /// Forces [CudaStream] to drop, causing the default work stream to block on `streams` completion.
     /// **This is asynchronous with respect to the host.**
     #[allow(unused_variables)]
-    pub fn join(self: &Arc<Self>, stream: CudaStream) -> Result<(), result::DriverError> {
+    pub fn wait_for(self: &Arc<Self>, stream: CudaStream) -> Result<(), result::DriverError> {
         Ok(())
     }
 }

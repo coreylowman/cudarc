@@ -26,7 +26,7 @@ fn main() -> Result<(), DriverError> {
     // and we must join with the default work stream in order for copies
     // to work corrently.
     // NOTE: this is actually async with respect to the host!
-    dev.join(stream)?;
+    dev.wait_for(stream)?;
 
     let a_host_2 = dev.sync_reclaim(a_dev)?;
     let b_host = dev.sync_reclaim(b_dev)?;
