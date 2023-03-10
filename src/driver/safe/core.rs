@@ -237,21 +237,37 @@ impl CudaDevice {
     /// Forces [CudaStream] to drop, causing the default work stream to block on `streams` completion.
     /// **This is asynchronous with respect to the host.**
     #[allow(unused_variables)]
-    pub fn wait_for(self: &Arc<Self>, stream: CudaStream) -> Result<(), result::DriverError> {
-        Ok(())
+    pub fn wait_for(self: &Arc<Self>, stream: &CudaStream) -> Result<(), result::DriverError> {
+        unsafe {
+            result::event::record(self.event, stream.stream)?;
+            result::stream::wait_event(
+                self.stream,
+                self.event,
+                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+            )
+        }
+    }
+}
+
+impl CudaStream {
+    /// Record's the current default streams workload, and then causes `self`
+    /// to wait for the default stream to finish that recorded workload.
+    pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
+        unsafe {
+            result::event::record(self.device.event, self.device.stream)?;
+            result::stream::wait_event(
+                self.stream,
+                self.device.event,
+                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+            )
+        }
     }
 }
 
 impl Drop for CudaStream {
     fn drop(&mut self) {
+        self.device.wait_for(self).unwrap();
         unsafe {
-            result::event::record(self.device.event, self.stream).unwrap();
-            result::stream::wait_event(
-                self.device.stream,
-                self.device.event,
-                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-            )
-            .unwrap();
             result::stream::destroy(self.stream).unwrap();
         }
     }

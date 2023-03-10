@@ -554,6 +554,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
             unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
             let f = dev.get_func("tests", "slow_worker").unwrap();
             unsafe { f.launch_on_stream(&stream, cfg, (&slice, slice.len(), &mut b))? };
+            dev.wait_for(&stream)?;
             dev.synchronize()?;
         }
         let par_launch_s = start.elapsed().as_secs_f64();
