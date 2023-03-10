@@ -18,7 +18,11 @@ extern crate alloc;
 #[cfg(feature = "no-std")]
 extern crate no_std_compat as std;
 
+#[cfg(feature = "cublas")]
 pub mod cublas;
+#[cfg(feature = "curand")]
 pub mod curand;
+#[cfg(feature = "driver")]
 pub mod driver;
+#[cfg(feature = "nvrtc")]
 pub mod nvrtc;

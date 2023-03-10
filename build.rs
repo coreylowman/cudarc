@@ -17,11 +17,17 @@ fn link_cuda() {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
 
+    #[cfg(feature = "driver")]
     println!("cargo:rustc-link-lib=dylib=cuda");
+    #[cfg(feature = "driver")]
     println!("cargo:rustc-link-lib=dylib=cudart");
+    #[cfg(feature = "nvrtc")]
     println!("cargo:rustc-link-lib=dylib=nvrtc");
+    #[cfg(feature = "curand")]
     println!("cargo:rustc-link-lib=dylib=curand");
+    #[cfg(feature = "cublas")]
     println!("cargo:rustc-link-lib=dylib=cublas");
+    #[cfg(feature = "cublas")]
     println!("cargo:rustc-link-lib=dylib=cublasLt");
 }
 

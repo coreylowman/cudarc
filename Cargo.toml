@@ -21,10 +21,14 @@ keywords = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["std"]
+default = ["std", "driver", "nvrtc", "cublas", "curand"]
+nvrtc = []
+driver = ["nvrtc"]
+cublas = []
+curand = []
 std = []
-f16 = ["dep:half"]
 no-std = ["no-std-compat/std", "dep:spin"]
+f16 = ["dep:half"]
 ci-check = []
 
 [dependencies]
