@@ -7,6 +7,7 @@ fn main() {
     link_cuda();
 }
 
+#[allow(unused)]
 fn link_cuda() {
     println!("cargo:rerun-if-env-changed=CUDA_ROOT");
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
