@@ -31,9 +31,7 @@ pub struct CudaDevice {
     pub(crate) cu_primary_ctx: sys::CUcontext,
     /// The stream that all work is executed on.
     pub(crate) stream: sys::CUstream,
-    /// A stream that only contains free_async calls so they don't block the `stream`.
-    pub(crate) free_stream: sys::CUstream,
-    /// Used to synchronize `free_stream` & `stream`
+    /// Used to synchronize with stream
     pub(crate) event: sys::CUevent,
     pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
 }
@@ -54,16 +52,12 @@ impl CudaDevice {
         unsafe { result::ctx::set_current(cu_primary_ctx) }.unwrap();
 
         // can fail with OOM
-        let free_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
-
-        // can fail with OOM
         let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
 
         let device = CudaDevice {
             cu_device,
             cu_primary_ctx,
             stream: std::ptr::null_mut(),
-            free_stream,
             event,
             modules: RwLock::new(BTreeMap::new()),
         };
@@ -83,11 +77,6 @@ impl Drop for CudaDevice {
         modules.clear();
 
         let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
-        if !stream.is_null() {
-            unsafe { result::stream::destroy(stream) }.unwrap();
-        }
-
-        let stream = std::mem::replace(&mut self.free_stream, std::ptr::null_mut());
         if !stream.is_null() {
             unsafe { result::stream::destroy(stream) }.unwrap();
         }
@@ -144,22 +133,7 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         unsafe {
-            // 1. record the current state of cu_stream on the event.
-            result::event::record(self.device.event, self.device.stream).unwrap();
-
-            // 2. make dealloc_stream wait for the event to be marked as complete.
-            result::stream::wait_event(
-                self.device.free_stream,
-                self.device.event,
-                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-            )
-            .unwrap();
-
-            // 3. add a free operation to the dealloc stream.
-            // Since we just made dealloc_stream wait on the event, which is synchronized
-            // on the device stream, that means this free will not occur until all currently
-            // existing jobs on the stream execute.
-            result::free_async(self.cu_device_ptr, self.device.free_stream).unwrap();
+            result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
         }
     }
 }
