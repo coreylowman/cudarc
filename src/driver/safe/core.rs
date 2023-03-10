@@ -219,19 +219,12 @@ impl CudaDevice {
     /// 1. On creation it adds a wait for any existing work on the default work stream to complete
     /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
     pub fn fork_default_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
-        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
-        unsafe {
-            result::event::record(self.event, self.stream)?;
-            result::stream::wait_event(
-                stream,
-                self.event,
-                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-            )?;
-        }
-        Ok(CudaStream {
-            stream,
+        let stream = CudaStream {
+            stream: result::stream::create(result::stream::StreamKind::NonBlocking)?,
             device: self.clone(),
-        })
+        };
+        stream.wait_for_default()?;
+        Ok(stream)
     }
 
     /// Forces [CudaStream] to drop, causing the default work stream to block on `streams` completion.
