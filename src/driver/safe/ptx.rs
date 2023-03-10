@@ -5,7 +5,7 @@ use crate::{
 
 use super::core::{CudaDevice, CudaModule};
 
-use alloc::ffi::CString;
+use std::ffi::CString;
 use std::{collections::BTreeMap, sync::Arc};
 
 impl CudaDevice {
@@ -43,8 +43,11 @@ impl CudaDevice {
             cu_module,
             functions,
         };
+        #[allow(unused_mut)]
         {
             let mut modules = self.modules.write();
+            #[cfg(not(feature = "no-std"))]
+            let mut modules = modules.unwrap();
             modules.insert(module_name, module);
         }
         Ok(())

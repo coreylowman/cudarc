@@ -1,12 +1,11 @@
 //! A thin wrapper around [sys] providing [Result]s with [NvrtcError].
 
 use super::sys;
-use alloc::ffi::CString;
 use core::{
     ffi::{c_char, c_int, CStr},
     mem::MaybeUninit,
 };
-use std::vec::Vec;
+use std::{ffi::CString, vec::Vec};
 
 /// Wrapper around [sys::nvrtcResult]. See
 /// [nvrtcResult docs](https://docs.nvidia.com/cuda/nvrtc/index.html#group__error_1g31e41ef222c0ea75b4c48f715b3cd9f0)

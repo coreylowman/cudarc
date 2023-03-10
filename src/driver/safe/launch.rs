@@ -9,6 +9,9 @@ impl CudaDevice {
     /// Whether a module and function are currently loaded into the device.
     pub fn has_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> bool {
         let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
+
         modules
             .get(module_name)
             .map_or(false, |module| module.has_func(func_name))
@@ -17,6 +20,9 @@ impl CudaDevice {
     /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
     pub fn get_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> Option<CudaFunction> {
         let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
+
         modules
             .get(module_name)
             .and_then(|m| m.get_func(func_name))

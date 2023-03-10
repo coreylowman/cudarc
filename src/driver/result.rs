@@ -398,8 +398,8 @@ pub mod module {
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE)
 
     use super::{sys, DriverError};
-    use alloc::ffi::CString;
     use core::ffi::c_void;
+    use std::ffi::CString;
     use std::mem::MaybeUninit;
 
     /// Loads a compute module from a given file.
