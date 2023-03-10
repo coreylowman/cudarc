@@ -47,6 +47,7 @@ fn libs(root: PathBuf) -> Vec<PathBuf> {
         "lib/x86_64",
         "lib64",
         "lib64/stubs",
+        "targets/x86_64-linux",
         "targets/x86_64-linux/lib",
         "targets/x86_64-linux/lib/stubs",
     ]
