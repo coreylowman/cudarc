@@ -3,7 +3,12 @@ use crate::driver::{result, sys};
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 
 use core::ops::{Bound, RangeBounds};
+
+#[cfg(feature = "no-std")]
 use spin::RwLock;
+#[cfg(not(feature = "no-std"))]
+use std::sync::RwLock;
+
 use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
@@ -69,6 +74,9 @@ impl CudaDevice {
 impl Drop for CudaDevice {
     fn drop(&mut self) {
         let modules = RwLock::get_mut(&mut self.modules);
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
+
         for (_, module) in modules.iter() {
             unsafe { result::module::unload(module.cu_module) }.unwrap();
         }

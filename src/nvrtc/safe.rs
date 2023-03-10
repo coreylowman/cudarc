@@ -4,8 +4,8 @@
 
 use super::{result, sys};
 
-use alloc::ffi::CString;
 use core::ffi::{c_char, CStr};
+use std::ffi::CString;
 use std::{borrow::ToOwned, path::PathBuf, string::String, vec::Vec};
 
 /// An opaque structure representing a compiled PTX program
@@ -187,19 +187,19 @@ impl CompileOptions {
         let mut options: Vec<String> = Vec::new();
 
         if let Some(v) = self.ftz {
-            options.push(alloc::format!("--ftz={v}"));
+            options.push(std::format!("--ftz={v}"));
         }
 
         if let Some(v) = self.prec_sqrt {
-            options.push(alloc::format!("--prec-sqrt={v}"));
+            options.push(std::format!("--prec-sqrt={v}"));
         }
 
         if let Some(v) = self.prec_div {
-            options.push(alloc::format!("--prec-div={v}"));
+            options.push(std::format!("--prec-div={v}"));
         }
 
         if let Some(v) = self.fmad {
-            options.push(alloc::format!("--fmad={v}"));
+            options.push(std::format!("--fmad={v}"));
         }
 
         if let Some(true) = self.use_fast_math {
@@ -207,15 +207,15 @@ impl CompileOptions {
         }
 
         if let Some(count) = self.maxrregcount {
-            options.push(alloc::format!("--maxrregcount={count}"));
+            options.push(std::format!("--maxrregcount={count}"));
         }
 
         for path in self.include_paths {
-            options.push(alloc::format!("--include-path={path}"));
+            options.push(std::format!("--include-path={path}"));
         }
 
         if let Some(arch) = self.arch {
-            options.push(alloc::format!("--gpu-architecture={arch}"))
+            options.push(std::format!("--gpu-architecture={arch}"))
         }
 
         options

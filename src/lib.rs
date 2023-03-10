@@ -11,9 +11,11 @@
 //!
 //! Each module exports the safe API, and exposes each level if you want to use a different one.
 
-#![no_std]
+#![cfg_attr(feature = "no-std", no_std)]
 
+#[cfg(feature = "no-std")]
 extern crate alloc;
+#[cfg(feature = "no-std")]
 extern crate no_std_compat as std;
 
 pub mod cublas;
