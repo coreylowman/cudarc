@@ -156,11 +156,6 @@
 //! Multi stream is supported via [CudaStream], however it automatically
 //! synchronizes with the main stream on creation & on drop. It is still possible
 //! to be unsafe in a multi stream context though.
-//!
-//! [CudaDevice] actually has a 2nd stream, where it places all `free()`
-//! operations as well. This is transparent to the user, and are synchronized
-//! with the main stream using the [crate::driver::result::event]
-//! module and [crate::driver::result::stream::wait_event].
 
 pub(crate) mod alloc;
 pub(crate) mod core;
