@@ -20,6 +20,9 @@ keywords = [
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[package.metadata.docs.rs]
+features = ["ci-check", "f16"]
+
 [features]
 default = ["std", "driver", "nvrtc", "cublas", "curand"]
 nvrtc = []
