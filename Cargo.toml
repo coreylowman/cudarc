@@ -24,10 +24,11 @@ keywords = [
 features = ["ci-check", "f16"]
 
 [features]
-default = ["std", "driver", "nvrtc", "cublas", "curand"]
+default = ["std", "driver", "nvrtc", "cublas", "cudnn", "curand"]
 nvrtc = []
 driver = ["nvrtc"]
 cublas = []
+cudnn = []
 curand = []
 std = []
 no-std = ["no-std-compat/std", "dep:spin"]
