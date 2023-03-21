@@ -29,6 +29,10 @@ fn link_cuda() {
     println!("cargo:rustc-link-lib=dylib=cublas");
     #[cfg(feature = "cublas")]
     println!("cargo:rustc-link-lib=dylib=cublasLt");
+    #[cfg(feature = "cudnn")]
+    println!("cargo:rustc-link-search=native={}", std::env::var("CUDNN_LIB").expect("Failed to read environmental variable `CUDNN_LIB`. Set `CUDNN_LIB` to `path/to/cudnn/lib`."));
+    #[cfg(feature = "cudnn")]
+    println!("cargo:rustc-link-lib=dylib=cudnn");
 }
 
 fn root() -> Option<PathBuf> {
