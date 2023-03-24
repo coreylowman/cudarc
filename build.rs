@@ -20,15 +20,29 @@ fn link_cuda() {
     #[cfg(feature = "driver")]
     println!("cargo:rustc-link-lib=dylib=cuda");
     #[cfg(feature = "driver")]
-    println!("cargo:rustc-link-lib=dylib=cudart");
+    println!("cargo:rustc-link-lib=static=cudart_static");
     #[cfg(feature = "nvrtc")]
     println!("cargo:rustc-link-lib=dylib=nvrtc");
     #[cfg(feature = "curand")]
     println!("cargo:rustc-link-lib=dylib=curand");
-    #[cfg(feature = "cublas")]
-    println!("cargo:rustc-link-lib=dylib=cublas");
-    #[cfg(feature = "cublas")]
-    println!("cargo:rustc-link-lib=dylib=cublasLt");
+
+    println!("cargo:rerun-if-env-changed=STATIC");
+    let is_static = std::env::var("STATIC").unwrap_or_else(|_| "0".to_string()) == "1";
+
+    if is_static {
+        #[cfg(feature = "cublas")]
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+        #[cfg(feature = "cublas")]
+        println!("cargo:rustc-link-lib=static=cublas_static");
+        #[cfg(feature = "cublas")]
+        println!("cargo:rustc-link-lib=static=cublasLt_static");
+    } else {
+        #[cfg(feature = "cublas")]
+        println!("cargo:rustc-link-lib=dylib=cublas");
+        #[cfg(feature = "cublas")]
+        println!("cargo:rustc-link-lib=dylib=cublasLt");
+    }
+
     #[cfg(feature = "cudnn")]
     println!("cargo:rustc-link-search=native={}", std::env::var("CUDNN_LIB").expect("Failed to read environmental variable `CUDNN_LIB`. Set `CUDNN_LIB` to `path/to/cudnn/lib`."));
     #[cfg(feature = "cudnn")]
