@@ -47,6 +47,12 @@ impl<'a, T> DevicePtr<T> for CudaView<'a, T> {
     }
 }
 
+impl<'a, T> DevicePtr<T> for CudaViewMut<'a, T> {
+    fn device_ptr(&self) -> &sys::CUdeviceptr {
+        &self.ptr
+    }
+}
+
 /// Abstraction over [CudaSlice]/[CudaViewMut]
 pub trait DevicePtrMut<T>: DeviceSlice<T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr;
