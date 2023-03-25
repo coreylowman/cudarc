@@ -300,13 +300,11 @@ pub unsafe fn malloc_async(
 pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), DriverError> {
     #[cfg(feature = "alloc_async")]
     {
-        println!("ASYNC");
         sys::cuMemFreeAsync(dptr, stream).result()
     }
 
     #[cfg(not(feature = "alloc_async"))]
     {
-        println!("SYNC");
         sys::cuMemFree_v2(dptr).result()
     }
 }
