@@ -47,7 +47,7 @@ impl CudaModule {
 }
 
 impl CudaFunction {
-    #[inline]
+    #[inline(always)]
     unsafe fn launch_async_impl(
         self,
         cfg: LaunchConfig,
@@ -63,7 +63,7 @@ impl CudaFunction {
         )
     }
 
-    #[inline]
+    #[inline(always)]
     unsafe fn par_launch_async_impl(
         self,
         stream: &CudaStream,
@@ -195,6 +195,7 @@ pub unsafe trait LaunchAsync<Params> {
 macro_rules! impl_launch {
     ([$($Vars:tt),*], [$($Idx:tt),*]) => {
 unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
+    #[inline(always)]
     unsafe fn launch(
         self,
         cfg: LaunchConfig,
@@ -204,6 +205,7 @@ unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction 
         self.launch_async_impl(cfg, params)
     }
 
+    #[inline(always)]
     unsafe fn launch_on_stream(
         self,
         stream: &CudaStream,
