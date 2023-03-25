@@ -21,6 +21,7 @@ use std::mem::{size_of, MaybeUninit};
 pub struct DriverError(pub sys::CUresult);
 
 impl sys::CUresult {
+    #[inline]
     pub fn result(self) -> Result<(), DriverError> {
         match self {
             sys::CUresult::CUDA_SUCCESS => Ok(()),
@@ -526,6 +527,7 @@ pub mod event {
 /// 3. All parameters used for this kernel should have been allocated by stream (I think?)
 /// 4. The cuda kernel has mutable access to every parameter, that means every parameter
 /// can change at a later point after callign this function. *Even non-mutable references*.
+#[inline]
 pub unsafe fn launch_kernel(
     f: sys::CUfunction,
     grid_dim: (c_uint, c_uint, c_uint),
