@@ -34,6 +34,7 @@ std = []
 no-std = ["no-std-compat/std", "dep:spin"]
 f16 = ["dep:half"]
 ci-check = []
+static-linking=[]
 
 [dependencies]
 spin = { version = "0.9.4", optional = true, features = ["rwlock"], default-features = false }
