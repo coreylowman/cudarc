@@ -281,7 +281,11 @@ pub unsafe fn malloc_async(
     num_bytes: usize,
 ) -> Result<sys::CUdeviceptr, DriverError> {
     let mut dev_ptr = MaybeUninit::uninit();
+    #[cfg(feature = "alloc_async")]
     sys::cuMemAllocAsync(dev_ptr.as_mut_ptr(), num_bytes, stream).result()?;
+
+    #[cfg(not(feature = "alloc_async"))]
+    sys::cuMemAlloc_v2(dev_ptr.as_mut_ptr(), num_bytes).result()?;
     Ok(dev_ptr.assume_init())
 }
 
@@ -294,7 +298,15 @@ pub unsafe fn malloc_async(
 /// 2. The memory should have been allocated on this stream.
 /// 3. The memory should not have been freed already (double free)
 pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), DriverError> {
-    sys::cuMemFreeAsync(dptr, stream).result()
+    #[cfg(feature = "alloc_async")]
+    {
+        sys::cuMemFreeAsync(dptr, stream).result()
+    }
+
+    #[cfg(not(feature = "alloc_async"))]
+    {
+        sys::cuMemFree_v2(dptr).result()
+    }
 }
 
 /// Sets device memory with stream ordered semantics.

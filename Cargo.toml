@@ -24,7 +24,7 @@ keywords = [
 features = ["ci-check", "f16"]
 
 [features]
-default = ["std", "driver", "nvrtc", "cublas", "curand"]
+default = ["std", "driver", "nvrtc", "cublas", "curand", "alloc_async"]
 nvrtc = []
 driver = ["nvrtc"]
 cublas = []
@@ -34,6 +34,7 @@ std = []
 no-std = ["no-std-compat/std", "dep:spin"]
 f16 = ["dep:half"]
 ci-check = []
+alloc_async = []
 
 [dependencies]
 spin = { version = "0.9.4", optional = true, features = ["rwlock"], default-features = false }
