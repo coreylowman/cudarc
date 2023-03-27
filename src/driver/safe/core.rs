@@ -291,7 +291,7 @@ impl<T> CudaSlice<T> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             slice: self,
-            len: 1 + end - start,
+            len: end - start,
         })
     }
 }
@@ -321,36 +321,36 @@ impl<T> CudaSlice<T> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             slice: self,
-            len: 1 + end - start,
+            len: end - start,
         })
     }
 }
 
-trait RangeHelper<T: PartialOrd> {
-    fn inclusive_start(&self, valid: &impl RangeBounds<T>) -> Option<T>;
-    fn inclusive_end(&self, valid: &impl RangeBounds<T>) -> Option<T>;
-    fn bounds(&self, valid: impl RangeBounds<T>) -> Option<(T, T)> {
-        self.inclusive_start(&valid).and_then(|s| {
-            self.inclusive_end(&valid)
-                .and_then(|e| (s <= e).then_some((s, e)))
-        })
+trait RangeHelper {
+    fn inclusive_start(&self, valid_start: usize) -> usize;
+    fn exclusive_end(&self, valid_end: usize) -> usize;
+    fn bounds(&self, valid: impl RangeHelper) -> Option<(usize, usize)> {
+        let vs = valid.inclusive_start(0);
+        let ve = valid.exclusive_end(usize::MAX);
+        let s = self.inclusive_start(vs);
+        let e = self.exclusive_end(ve);
+
+        (s >= vs && e <= ve && s <= e).then_some((s, e))
     }
 }
-impl<R: RangeBounds<usize>> RangeHelper<usize> for R {
-    fn inclusive_start(&self, valid: &impl RangeBounds<usize>) -> Option<usize> {
+impl<R: RangeBounds<usize>> RangeHelper for R {
+    fn inclusive_start(&self, valid_start: usize) -> usize {
         match self.start_bound() {
-            Bound::Included(n) if valid.contains(n) => Some(*n),
-            Bound::Excluded(n) if n < &usize::MAX && valid.contains(&(*n + 1)) => Some(*n + 1),
-            Bound::Unbounded => valid.inclusive_start(&(0..=usize::MAX)),
-            _ => None,
+            Bound::Included(n) => *n,
+            Bound::Excluded(n) => *n + 1,
+            Bound::Unbounded => valid_start,
         }
     }
-    fn inclusive_end(&self, valid: &impl RangeBounds<usize>) -> Option<usize> {
+    fn exclusive_end(&self, valid_end: usize) -> usize {
         match self.end_bound() {
-            Bound::Included(n) if valid.contains(n) => Some(*n),
-            Bound::Excluded(n) if n > &0 && valid.contains(&(*n - 1)) => Some(*n - 1),
-            Bound::Unbounded => valid.inclusive_end(&(0..=usize::MAX)),
-            _ => None,
+            Bound::Included(n) => *n + 1,
+            Bound::Excluded(n) => *n,
+            Bound::Unbounded => valid_end,
         }
     }
 }
@@ -361,11 +361,11 @@ mod tests {
 
     #[test]
     fn test_bounds_helper() {
-        assert_eq!((..2usize).bounds(0..=usize::MAX), Some((0, 1)));
-        assert_eq!((1..2usize).bounds(..=usize::MAX), Some((1, 1)));
-        assert_eq!((..).bounds(1..10), Some((1, 9)));
-        assert_eq!((2..=2usize).bounds(0..=usize::MAX), Some((2, 2)));
+        assert_eq!((..2usize).bounds(0..usize::MAX), Some((0, 2)));
+        assert_eq!((1..2usize).bounds(..usize::MAX), Some((1, 2)));
+        assert_eq!((..).bounds(1..10), Some((1, 10)));
+        assert_eq!((2..=2usize).bounds(0..usize::MAX), Some((2, 3)));
         assert_eq!((2..=2usize).bounds(0..=1), None);
-        assert_eq!((2..2usize).bounds(0..=usize::MAX), None);
+        assert_eq!((2..2usize).bounds(0..usize::MAX), Some((2, 2)));
     }
 }
