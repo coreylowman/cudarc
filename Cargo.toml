@@ -1,6 +1,6 @@
 [package]
 name = "cudarc"
-version = "0.9.1"
+version = "0.9.2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
@@ -28,11 +28,13 @@ default = ["std", "driver", "nvrtc", "cublas", "curand"]
 nvrtc = []
 driver = ["nvrtc"]
 cublas = []
+cudnn = []
 curand = []
 std = []
 no-std = ["no-std-compat/std", "dep:spin"]
 f16 = ["dep:half"]
 ci-check = []
+static-linking=[]
 
 [dependencies]
 spin = { version = "0.9.4", optional = true, features = ["rwlock"], default-features = false }

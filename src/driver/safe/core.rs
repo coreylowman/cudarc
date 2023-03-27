@@ -2,7 +2,10 @@ use crate::driver::{result, sys};
 
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 
-use core::ops::{Bound, RangeBounds};
+use core::{
+    marker::PhantomData,
+    ops::{Bound, RangeBounds},
+};
 
 #[cfg(feature = "no-std")]
 use spin::RwLock;
@@ -271,9 +274,10 @@ impl Drop for CudaStream {
 /// See module docstring for more details.
 #[allow(unused)]
 pub struct CudaView<'a, T> {
-    pub(crate) slice: &'a CudaSlice<T>,
+    pub(crate) root: &'a sys::CUdeviceptr,
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
+    marker: PhantomData<T>,
 }
 
 impl<T> CudaSlice<T> {
@@ -289,9 +293,26 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice]
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            root: &self.cu_device_ptr,
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            slice: self,
             len: end - start,
+            marker: PhantomData,
+        })
+    }
+
+    /// Reinterprets the slice of memory into a different type. `len` is the number
+    /// of elements of the new type `S` that are expected. If not enough bytes
+    /// are allocated in `self` for the view, then this returns `None`.
+    ///
+    /// # Safety
+    /// This is unsafe because not the memory for the view may not be a valid interpretation
+    /// for the type `S`.
+    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
+        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            root: &self.cu_device_ptr,
+            ptr: self.cu_device_ptr,
+            len,
+            marker: PhantomData,
         })
     }
 }
@@ -301,9 +322,10 @@ impl<T> CudaSlice<T> {
 /// See module docstring for more details.
 #[allow(unused)]
 pub struct CudaViewMut<'a, T> {
-    pub(crate) slice: &'a mut CudaSlice<T>,
+    pub(crate) root: &'a mut sys::CUdeviceptr,
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
+    marker: PhantomData<T>,
 }
 
 impl<T> CudaSlice<T> {
@@ -320,8 +342,25 @@ impl<T> CudaSlice<T> {
     pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            slice: self,
+            root: &mut self.cu_device_ptr,
             len: end - start,
+            marker: PhantomData,
+        })
+    }
+
+    /// Reinterprets the slice of memory into a different type. `len` is the number
+    /// of elements of the new type `S` that are expected. If not enough bytes
+    /// are allocated in `self` for the view, then this returns `None`.
+    ///
+    /// # Safety
+    /// This is unsafe because not the memory for the view may not be a valid interpretation
+    /// for the type `S`.
+    pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
+        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
+            ptr: self.cu_device_ptr,
+            root: &mut self.cu_device_ptr,
+            len,
+            marker: PhantomData,
         })
     }
 }
@@ -367,5 +406,15 @@ mod tests {
         assert_eq!((2..=2usize).bounds(0..usize::MAX), Some((2, 3)));
         assert_eq!((2..=2usize).bounds(0..=1), None);
         assert_eq!((2..2usize).bounds(0..usize::MAX), Some((2, 2)));
+    }
+
+    #[test]
+    fn test_transmutes() {
+        let dev = CudaDevice::new(0).unwrap();
+        let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+        assert!(unsafe { slice.transmute::<f32>(25) }.is_some());
+        assert!(unsafe { slice.transmute::<f32>(26) }.is_none());
+        assert!(unsafe { slice.transmute_mut::<f32>(25) }.is_some());
+        assert!(unsafe { slice.transmute_mut::<f32>(26) }.is_none());
     }
 }
