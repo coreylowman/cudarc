@@ -365,7 +365,7 @@ impl<T> CudaSlice<T> {
     }
 }
 
-trait RangeHelper {
+trait RangeHelper: RangeBounds<usize> {
     fn inclusive_start(&self, valid_start: usize) -> usize;
     fn exclusive_end(&self, valid_end: usize) -> usize;
     fn bounds(&self, valid: impl RangeHelper) -> Option<(usize, usize)> {
@@ -374,7 +374,10 @@ trait RangeHelper {
         let s = self.inclusive_start(vs);
         let e = self.exclusive_end(ve);
 
-        (s >= vs && e <= ve && s <= e).then_some((s, e))
+        let inside = s >= vs && e <= ve;
+        let valid = s < e || (s == e && !matches!(self.end_bound(), Bound::Included(_)));
+
+        (inside && valid).then_some((s, e))
     }
 }
 impl<R: RangeBounds<usize>> RangeHelper for R {
@@ -406,6 +409,8 @@ mod tests {
         assert_eq!((2..=2usize).bounds(0..usize::MAX), Some((2, 3)));
         assert_eq!((2..=2usize).bounds(0..=1), None);
         assert_eq!((2..2usize).bounds(0..usize::MAX), Some((2, 2)));
+        assert_eq!((1..0usize).bounds(0..usize::MAX), None);
+        assert_eq!((1..=0usize).bounds(0..usize::MAX), None);
     }
 
     #[test]
