@@ -17,7 +17,7 @@ impl CudaDevice {
     pub fn load_ptx(
         self: &Arc<Self>,
         ptx: Ptx,
-        module_name: &'static str,
+        module_name: &str,
         func_names: &[&'static str],
     ) -> Result<(), result::DriverError> {
         let cu_module = match ptx.0 {
@@ -48,7 +48,7 @@ impl CudaDevice {
             let mut modules = self.modules.write();
             #[cfg(not(feature = "no-std"))]
             let mut modules = modules.unwrap();
-            modules.insert(module_name, module);
+            modules.insert(module_name.into(), module);
         }
         Ok(())
     }

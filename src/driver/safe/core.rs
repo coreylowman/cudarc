@@ -36,7 +36,7 @@ pub struct CudaDevice {
     pub(crate) stream: sys::CUstream,
     /// Used to synchronize with stream
     pub(crate) event: sys::CUevent,
-    pub(crate) modules: RwLock<BTreeMap<&'static str, CudaModule>>,
+    pub(crate) modules: RwLock<BTreeMap<String, CudaModule>>,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -402,6 +402,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(clippy::reversed_empty_ranges)]
     fn test_bounds_helper() {
         assert_eq!((..2usize).bounds(0..usize::MAX), Some((0, 2)));
         assert_eq!((1..2usize).bounds(..usize::MAX), Some((1, 2)));
