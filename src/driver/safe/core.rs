@@ -317,6 +317,27 @@ impl<T> CudaSlice<T> {
     }
 }
 
+impl<'a, T> CudaView<'a, T> {
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `range.start >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
+        self.try_slice(range).unwrap()
+    }
+
+    /// Fallible version of [CudaView::slice]
+    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaView {
+            root: self.root,
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            marker: PhantomData,
+        })
+    }
+}
+
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
 ///
 /// See module docstring for more details.
@@ -360,6 +381,49 @@ impl<T> CudaSlice<T> {
             ptr: self.cu_device_ptr,
             root: &mut self.cu_device_ptr,
             len,
+            marker: PhantomData,
+        })
+    }
+}
+
+impl<'a, T> CudaViewMut<'a, T> {
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `range.start >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
+        self.try_slice(range).unwrap()
+    }
+
+    /// Fallible version of [CudaViewMut::slice]
+    pub fn try_slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaView {
+            root: self.root,
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            marker: PhantomData,
+        })
+    }
+
+    /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
+    ///
+    /// Returns `None` if `offset >= self.len`
+    ///
+    /// See module docstring for example
+    pub fn slice_mut<'b: 'a>(&'b mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'a, T> {
+        self.try_slice_mut(range).unwrap()
+    }
+
+    /// Fallible version of [CudaViewMut::slice_mut]
+    pub fn try_slice_mut<'b: 'a>(
+        &'b mut self,
+        range: impl RangeBounds<usize>,
+    ) -> Option<CudaViewMut<'a, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            root: self.root,
+            len: end - start,
             marker: PhantomData,
         })
     }
