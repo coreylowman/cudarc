@@ -272,7 +272,7 @@ impl Drop for CudaStream {
 /// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()].
 ///
 /// See module docstring for more details.
-#[allow(unused)]
+#[derive(Debug)]
 pub struct CudaView<'a, T> {
     pub(crate) root: &'a sys::CUdeviceptr,
     pub(crate) ptr: sys::CUdeviceptr,
@@ -341,7 +341,7 @@ impl<'a, T> CudaView<'a, T> {
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
 ///
 /// See module docstring for more details.
-#[allow(unused)]
+#[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
     pub(crate) root: &'a mut sys::CUdeviceptr,
     pub(crate) ptr: sys::CUdeviceptr,
