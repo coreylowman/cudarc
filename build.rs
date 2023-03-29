@@ -17,6 +17,10 @@ fn link_cuda() {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
 
+    if let Ok(cudnn_dir) = std::env::var("CUDNN_LIB") {
+        println!("cargo:rustc-link-search=native={}", cudnn_dir);
+    }
+
     #[cfg(feature = "driver")]
     println!("cargo:rustc-link-lib=dylib=cuda");
     #[cfg(feature = "nvrtc")]
@@ -41,8 +45,6 @@ fn link_cuda() {
         println!("cargo:rustc-link-lib=dylib=cublasLt");
     }
 
-    #[cfg(feature = "cudnn")]
-    println!("cargo:rustc-link-search=native={}", std::env::var("CUDNN_LIB").expect("Failed to read environmental variable `CUDNN_LIB`. Set `CUDNN_LIB` to `path/to/cudnn/lib`."));
     #[cfg(feature = "cudnn")]
     println!("cargo:rustc-link-lib=dylib=cudnn");
 }
