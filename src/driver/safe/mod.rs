@@ -163,6 +163,7 @@ pub(crate) mod device_ptr;
 pub(crate) mod launch;
 pub(crate) mod profile;
 pub(crate) mod ptx;
+pub(crate) mod threading;
 
 pub use self::alloc::{DeviceRepr, ValidAsZeroBits};
 pub use self::core::{CudaDevice, CudaFunction, CudaSlice, CudaStream, CudaView, CudaViewMut};
