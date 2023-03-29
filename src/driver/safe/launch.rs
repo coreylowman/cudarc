@@ -117,7 +117,20 @@ impl LaunchConfig {
 /// params determined by generic parameter `Params`.
 ///
 /// This is impl'd multiple times for different number and types of params. In
-/// general, `Params` should impl [DeviceRepr]
+/// general, `Params` should impl [DeviceRepr].
+///
+/// ```ignore
+/// # use cudarc::driver::*;
+/// # let dev = CudaDevice::new(0).unwrap();
+/// let my_kernel: CudaFunction = dev.get_func("my_module", "my_kernel").unwrap();
+/// let cfg: LaunchConfig = LaunchConfig {
+///     grid_dim: (1, 1, 1),
+///     block_dim: (1, 1, 1),
+///     shared_mem_bytes: 0,
+/// };
+/// let params = (1i32, 2u64, 3usize);
+/// unsafe { my_kernel.launch(cfg, params) }.unwrap();
+/// ```
 ///
 /// # Safety
 ///
