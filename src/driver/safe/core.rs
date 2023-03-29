@@ -270,9 +270,7 @@ impl Drop for CudaStream {
 }
 
 /// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()].
-///
-/// See module docstring for more details.
-#[allow(unused)]
+#[derive(Debug)]
 pub struct CudaView<'a, T> {
     pub(crate) root: &'a sys::CUdeviceptr,
     pub(crate) ptr: sys::CUdeviceptr,
@@ -284,8 +282,6 @@ impl<T> CudaSlice<T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `range.start >= self.len`
-    ///
-    /// See module docstring for example
     pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'_, T> {
         self.try_slice(range).unwrap()
     }
@@ -321,8 +317,6 @@ impl<'a, T> CudaView<'a, T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `range.start >= self.len`
-    ///
-    /// See module docstring for example
     pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
         self.try_slice(range).unwrap()
     }
@@ -339,9 +333,7 @@ impl<'a, T> CudaView<'a, T> {
 }
 
 /// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
-///
-/// See module docstring for more details.
-#[allow(unused)]
+#[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
     pub(crate) root: &'a mut sys::CUdeviceptr,
     pub(crate) ptr: sys::CUdeviceptr,
@@ -353,8 +345,6 @@ impl<T> CudaSlice<T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `offset >= self.len`
-    ///
-    /// See module docstring for example
     pub fn slice_mut(&mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
         self.try_slice_mut(range).unwrap()
     }
@@ -390,8 +380,6 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `range.start >= self.len`
-    ///
-    /// See module docstring for example
     pub fn slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
         self.try_slice(range).unwrap()
     }
@@ -409,8 +397,6 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Returns `None` if `offset >= self.len`
-    ///
-    /// See module docstring for example
     pub fn slice_mut<'b: 'a>(&'b mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'a, T> {
         self.try_slice_mut(range).unwrap()
     }

@@ -85,7 +85,7 @@ impl CudaFunction {
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1gb8f3dc3031b40da29d5f9a7139e52e15)
 /// for description of each parameter.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct LaunchConfig {
     /// (width, height, depth) of grid in blocks
     pub grid_dim: (u32, u32, u32),
@@ -117,7 +117,20 @@ impl LaunchConfig {
 /// params determined by generic parameter `Params`.
 ///
 /// This is impl'd multiple times for different number and types of params. In
-/// general, `Params` should impl [DeviceRepr]
+/// general, `Params` should impl [DeviceRepr].
+///
+/// ```ignore
+/// # use cudarc::driver::*;
+/// # let dev = CudaDevice::new(0).unwrap();
+/// let my_kernel: CudaFunction = dev.get_func("my_module", "my_kernel").unwrap();
+/// let cfg: LaunchConfig = LaunchConfig {
+///     grid_dim: (1, 1, 1),
+///     block_dim: (1, 1, 1),
+///     shared_mem_bytes: 0,
+/// };
+/// let params = (1i32, 2u64, 3usize);
+/// unsafe { my_kernel.launch(cfg, params) }.unwrap();
+/// ```
 ///
 /// # Safety
 ///

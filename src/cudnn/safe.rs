@@ -3,17 +3,18 @@ use super::{result, result::CudnnError, sys};
 use crate::driver::{CudaDevice, CudaStream};
 use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct Cudnn {
     pub(crate) handle: sys::cudnnHandle_t,
     pub(crate) device: Arc<CudaDevice>,
 }
+
 impl Cudnn {
     /// Creates a new cudnn handle and sets the stream to the `device`'s stream.
     pub fn new(device: Arc<CudaDevice>) -> Result<Self, CudnnError> {
         let handle = result::create_handle()?;
-        let blas = Self { handle, device };
-        unsafe { result::set_stream(handle, blas.device.stream as *mut _) }?;
-        Ok(blas)
+        unsafe { result::set_stream(handle, device.stream as *mut _) }?;
+        Ok(Self { handle, device })
     }
 
     /// Sets the handle's current to either the stream specified, or the device's default work
