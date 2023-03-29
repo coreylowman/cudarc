@@ -164,6 +164,7 @@ pub mod ctx {
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX)
 
     use super::{sys, DriverError};
+    use std::mem::MaybeUninit;
 
     /// Binds the specified CUDA context to the calling CPU thread.
     ///
@@ -176,6 +177,22 @@ pub mod ctx {
     /// and one that wasn't already freed.
     pub unsafe fn set_current(ctx: sys::CUcontext) -> Result<(), DriverError> {
         sys::cuCtxSetCurrent(ctx).result()
+    }
+
+    /// Returns the CUDA context bound to the calling CPU thread if there is one.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g8f13165846b73750693640fb3e8380d0)
+    pub fn get_current() -> Result<Option<sys::CUcontext>, DriverError> {
+        let mut ctx = MaybeUninit::uninit();
+        unsafe {
+            sys::cuCtxGetCurrent(ctx.as_mut_ptr()).result()?;
+            let ctx: sys::CUcontext = ctx.assume_init();
+            if ctx.is_null() {
+                Ok(None)
+            } else {
+                Ok(Some(ctx))
+            }
+        }
     }
 }
 
