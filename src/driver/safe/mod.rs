@@ -106,6 +106,11 @@
 //! another structure underneath the hood that is wrapped in an [std::sync::Arc] to minimize data cloning.
 //! Overall it seemed more complex than the current implementation.
 //!
+//! # Multi threading
+//!
+//! In order to use a [CudaDevice] on multiple threads, you must call [CudaDevice::bind_to_thread] on
+//! each thread **before you use the device**.
+//!
 //! # Safety
 //!
 //! There are a number of aspects to this, but at a high level this API utilizes [std::sync::Arc] to
