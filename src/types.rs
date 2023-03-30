@@ -1,17 +1,17 @@
-//! Exposes [CudaType] which maps between rust type names
+//! Exposes [CudaTypeName] which maps between rust type names
 //! and the corresponding cuda kernel type names.
 //!
 //! For example, `f32` in rust corresponds to `float` in a cuda
 //! kernel.
 
-/// Maps a rust type to it's corresponding [CudaType::NAME] in cuda c++ land.
-pub trait CudaType {
+/// Maps a rust type to it's corresponding [CudaTypeName::NAME] in cuda c++ land.
+pub trait CudaTypeName {
     const NAME: &'static str;
 }
 
 macro_rules! cuda_type {
     ($RustTy:ty, $CudaTy:expr) => {
-        impl CudaType for $RustTy {
+        impl CudaTypeName for $RustTy {
             const NAME: &'static str = $CudaTy;
         }
     };
