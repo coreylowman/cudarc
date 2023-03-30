@@ -22,6 +22,7 @@ cuda_type!(i8, "char");
 cuda_type!(i16, "short");
 cuda_type!(i32, "int");
 cuda_type!(i64, "long");
+cuda_type!(isize, "int64_t");
 cuda_type!(u8, "unsigned char");
 cuda_type!(u16, "unsigned short");
 cuda_type!(u32, "unsigned int");
