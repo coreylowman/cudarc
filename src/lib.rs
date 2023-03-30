@@ -86,3 +86,5 @@ pub mod curand;
 pub mod driver;
 #[cfg(feature = "nvrtc")]
 pub mod nvrtc;
+
+pub mod types;
