@@ -1,5 +1,3 @@
-// No sync because of https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#thread-safety
-
 use crate::{
     cudnn::{result, result::CudnnError, sys},
     driver::{CudaDevice, CudaStream},
@@ -7,6 +5,9 @@ use crate::{
 
 use std::{marker::PhantomData, sync::Arc};
 
+/// A handle to cuDNN.
+///
+/// This type is not send/sync because of https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#thread-safety
 #[derive(Debug)]
 pub struct Cudnn {
     pub(crate) handle: sys::cudnnHandle_t,
@@ -15,10 +16,10 @@ pub struct Cudnn {
 
 impl Cudnn {
     /// Creates a new cudnn handle and sets the stream to the `device`'s stream.
-    pub fn new(device: Arc<CudaDevice>) -> Result<Self, CudnnError> {
+    pub fn new(device: Arc<CudaDevice>) -> Result<Arc<Self>, CudnnError> {
         let handle = result::create_handle()?;
         unsafe { result::set_stream(handle, device.stream as *mut _) }?;
-        Ok(Self { handle, device })
+        Ok(Arc::new(Self { handle, device }))
     }
 
     /// Sets the handle's current to either the stream specified, or the device's default work
@@ -69,6 +70,10 @@ cudnn_dtype!(i64, CUDNN_DATA_INT64);
 cudnn_dtype!(u8, CUDNN_DATA_UINT8);
 cudnn_dtype!(bool, CUDNN_DATA_BOOLEAN);
 
+/// A descriptor of a tensor. Create with:
+/// 1. [`Cudnn::create_4d_tensor()`]
+/// 2. [`Cudnn::create_4d_tensor_ex()`]
+/// 3. [`Cudnn::create_nd_tensor()`]
 #[derive(Debug)]
 pub struct TensorDescriptor<T> {
     pub(crate) desc: sys::cudnnTensorDescriptor_t,
@@ -78,7 +83,24 @@ pub struct TensorDescriptor<T> {
 }
 
 impl Cudnn {
-    pub fn create_tensor4d<T: CudnnDataType>(
+    /// Creates a 4d tensor descriptor.
+    pub fn create_4d_tensor<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        format: sys::cudnnTensorFormat_t,
+        dims: [std::ffi::c_int; 4],
+    ) -> Result<TensorDescriptor<T>, CudnnError> {
+        let desc = result::create_tensor_descriptor()?;
+        let desc = TensorDescriptor {
+            desc,
+            handle: self.clone(),
+            marker: PhantomData,
+        };
+        unsafe { result::set_tensor4d_descriptor(desc.desc, format, T::DATA_TYPE, dims) }?;
+        Ok(desc)
+    }
+
+    /// Creates a 4d tensor descriptor.
+    pub fn create_4d_tensor_ex<T: CudnnDataType>(
         self: &Arc<Cudnn>,
         dims: [std::ffi::c_int; 4],
         strides: [std::ffi::c_int; 4],
@@ -93,11 +115,13 @@ impl Cudnn {
         Ok(desc)
     }
 
-    pub fn create_tensornd<T: CudnnDataType>(
+    /// Creates an nd (at LEAST 4d) tensor descriptor.
+    pub fn create_nd_tensor<T: CudnnDataType>(
         self: &Arc<Cudnn>,
         dims: &[std::ffi::c_int],
         strides: &[std::ffi::c_int],
     ) -> Result<TensorDescriptor<T>, CudnnError> {
+        assert!(dims.len() >= 4);
         assert_eq!(dims.len(), strides.len());
         let desc = result::create_tensor_descriptor()?;
         let desc = TensorDescriptor {
@@ -124,17 +148,5 @@ impl<T> Drop for TensorDescriptor<T> {
         if !desc.is_null() {
             unsafe { result::destroy_tensor_descriptor(desc) }.unwrap()
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::driver::CudaDevice;
-
-    use super::Cudnn;
-
-    #[test]
-    fn create_and_drop() {
-        let _handle = Cudnn::new(CudaDevice::new(0).unwrap()).unwrap();
     }
 }

@@ -19,3 +19,90 @@ pub use self::conv::{
     Conv2dBackwardData, Conv2dBackwardFilter, Conv2dDescriptor, Conv2dForward, FilterDescriptor,
 };
 pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
+pub use super::result::CudnnError;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{cudnn, driver::CudaDevice};
+
+    #[test]
+    fn test_create_descriptors() -> Result<(), CudnnError> {
+        let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
+        let _ = cudnn.create_4d_tensor_ex::<f32>([1, 2, 3, 4], [24, 12, 4, 1])?;
+        let _ = cudnn.create_nd_tensor::<f64>(&[1, 2, 3, 4, 5, 6], &[720, 360, 120, 30, 6, 1])?;
+        let _ = cudnn.create_4d_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [3, 3, 3, 3],
+        )?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_conv_pick_algorithms() -> Result<(), CudnnError> {
+        let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
+
+        let conv = cudnn.create_conv2d::<f32>(
+            [0; 2],
+            [1; 2],
+            [1; 2],
+            cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
+        )?;
+        let x = cudnn.create_4d_tensor::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [100, 128, 224, 224],
+        )?;
+        let filter = cudnn.create_4d_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [256, 128, 3, 3],
+        )?;
+        let y = cudnn.create_4d_tensor::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [100, 256, 222, 222],
+        )?;
+
+        {
+            let op = Conv2dForward {
+                conv: &conv,
+                x: &x,
+                w: &filter,
+                y: &y,
+            };
+            let algo = op.pick_algorithm()?;
+            assert_eq!(
+                algo,
+                cudnn::sys::cudnnConvolutionFwdAlgo_t::CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_PRECOMP_GEMM
+            );
+        }
+
+        {
+            let op = Conv2dBackwardData {
+                conv: &conv,
+                dx: &x,
+                w: &filter,
+                dy: &y,
+            };
+            let algo = op.pick_algorithm()?;
+            assert_eq!(
+                algo,
+                cudnn::sys::cudnnConvolutionBwdDataAlgo_t::CUDNN_CONVOLUTION_BWD_DATA_ALGO_1
+            );
+        }
+
+        {
+            let op = Conv2dBackwardFilter {
+                conv: &conv,
+                x: &x,
+                dw: &filter,
+                dy: &y,
+            };
+            let algo = op.pick_algorithm()?;
+            assert_eq!(
+                algo,
+                cudnn::sys::cudnnConvolutionBwdFilterAlgo_t::CUDNN_CONVOLUTION_BWD_FILTER_ALGO_1
+            );
+        }
+
+        Ok(())
+    }
+}

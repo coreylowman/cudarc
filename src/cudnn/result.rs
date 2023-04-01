@@ -92,6 +92,17 @@ pub fn create_tensor_descriptor() -> Result<sys::cudnnTensorDescriptor_t, CudnnE
 
 /// # Safety
 /// TODO
+pub unsafe fn set_tensor4d_descriptor(
+    tensor_desc: sys::cudnnTensorDescriptor_t,
+    format: sys::cudnnTensorFormat_t,
+    data_type: sys::cudnnDataType_t,
+    [n, c, h, w]: [std::ffi::c_int; 4],
+) -> Result<(), CudnnError> {
+    sys::cudnnSetTensor4dDescriptor(tensor_desc, format, data_type, n, c, h, w).result()
+}
+
+/// # Safety
+/// TODO
 pub unsafe fn set_tensor4d_descriptor_ex(
     tensor_desc: sys::cudnnTensorDescriptor_t,
     data_type: sys::cudnnDataType_t,
