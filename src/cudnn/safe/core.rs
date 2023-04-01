@@ -44,6 +44,7 @@ impl Drop for Cudnn {
     }
 }
 
+/// Maps a rust type to a [sys::cudnnDataType_t]
 pub trait CudnnDataType {
     const DATA_TYPE: sys::cudnnDataType_t;
 }

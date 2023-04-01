@@ -29,6 +29,26 @@ impl std::fmt::Display for CudnnError {
 #[cfg(feature = "std")]
 impl std::error::Error for CudnnError {}
 
+pub fn get_version() -> usize {
+    unsafe { sys::cudnnGetVersion() }
+}
+
+pub fn get_cudart_version() -> usize {
+    unsafe { sys::cudnnGetCudartVersion() }
+}
+
+pub fn version_check() -> Result<(), CudnnError> {
+    unsafe {
+        sys::cudnnAdvInferVersionCheck().result()?;
+        sys::cudnnAdvTrainVersionCheck().result()?;
+        sys::cudnnCnnInferVersionCheck().result()?;
+        sys::cudnnCnnTrainVersionCheck().result()?;
+        sys::cudnnOpsInferVersionCheck().result()?;
+        sys::cudnnOpsTrainVersionCheck().result()?;
+    }
+    Ok(())
+}
+
 /// Creates a handle to the cuDNN library. See
 /// [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreate)
 pub fn create_handle() -> Result<sys::cudnnHandle_t, CudnnError> {
@@ -70,6 +90,8 @@ pub fn create_tensor_descriptor() -> Result<sys::cudnnTensorDescriptor_t, CudnnE
     }
 }
 
+/// # Safety
+/// TODO
 pub unsafe fn set_tensor4d_descriptor_ex(
     tensor_desc: sys::cudnnTensorDescriptor_t,
     data_type: sys::cudnnDataType_t,
@@ -91,6 +113,8 @@ pub unsafe fn set_tensor4d_descriptor_ex(
     .result()
 }
 
+/// # Safety
+/// TODO
 pub unsafe fn set_tensornd_descriptor(
     tensor_desc: sys::cudnnTensorDescriptor_t,
     data_type: sys::cudnnDataType_t,
@@ -101,6 +125,8 @@ pub unsafe fn set_tensornd_descriptor(
     sys::cudnnSetTensorNdDescriptor(tensor_desc, data_type, num_dims, dims, strides).result()
 }
 
+/// # Safety
+/// TODO
 pub unsafe fn destroy_tensor_descriptor(
     desc: sys::cudnnTensorDescriptor_t,
 ) -> Result<(), CudnnError> {
@@ -115,6 +141,8 @@ pub fn create_filter_descriptor() -> Result<sys::cudnnFilterDescriptor_t, CudnnE
     }
 }
 
+/// # Safety
+/// TODO
 pub unsafe fn set_filter4d_descriptor(
     filter_desc: sys::cudnnFilterDescriptor_t,
     data_type: sys::cudnnDataType_t,
@@ -124,6 +152,8 @@ pub unsafe fn set_filter4d_descriptor(
     sys::cudnnSetFilter4dDescriptor(filter_desc, data_type, format, k, c, h, w).result()
 }
 
+/// # Safety
+/// TODO
 pub unsafe fn destroy_filter_descriptor(
     desc: sys::cudnnFilterDescriptor_t,
 ) -> Result<(), CudnnError> {
@@ -138,6 +168,9 @@ pub fn create_convolution_descriptor() -> Result<sys::cudnnConvolutionDescriptor
     }
 }
 
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn set_convolution2d_descriptor(
     conv_desc: sys::cudnnConvolutionDescriptor_t,
     pad_h: ::std::os::raw::c_int,
@@ -163,12 +196,17 @@ pub unsafe fn set_convolution2d_descriptor(
     .result()
 }
 
+/// # Safety
+/// TODO
 pub unsafe fn destroy_convolution_descriptor(
     desc: sys::cudnnConvolutionDescriptor_t,
 ) -> Result<(), CudnnError> {
     sys::cudnnDestroyConvolutionDescriptor(desc).result()
 }
 
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn get_convolution_forward_algorithm(
     handle: sys::cudnnHandle_t,
     src: sys::cudnnTensorDescriptor_t,
@@ -193,6 +231,8 @@ pub unsafe fn get_convolution_forward_algorithm(
 }
 
 /// Returns size in **bytes**
+/// # Safety
+/// TODO
 pub unsafe fn get_convolution_forward_workspace_size(
     handle: sys::cudnnHandle_t,
     x: sys::cudnnTensorDescriptor_t,
@@ -215,6 +255,9 @@ pub unsafe fn get_convolution_forward_workspace_size(
     Ok(size_in_bytes[0])
 }
 
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_forward(
     handle: sys::cudnnHandle_t,
     alpha: *const ::core::ffi::c_void,
@@ -248,6 +291,9 @@ pub unsafe fn convolution_forward(
     .result()
 }
 
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn get_convolution_backward_data_algorithm(
     handle: sys::cudnnHandle_t,
     w_desc: sys::cudnnFilterDescriptor_t,
@@ -272,6 +318,8 @@ pub unsafe fn get_convolution_backward_data_algorithm(
 }
 
 /// Returns size in **bytes**
+/// # Safety
+/// TODO
 pub unsafe fn get_convolution_backward_data_workspace_size(
     handle: sys::cudnnHandle_t,
     w_desc: sys::cudnnFilterDescriptor_t,
@@ -293,7 +341,9 @@ pub unsafe fn get_convolution_backward_data_workspace_size(
     .result()?;
     Ok(size_in_bytes[0])
 }
-
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_backward_data(
     handle: sys::cudnnHandle_t,
     alpha: *const ::core::ffi::c_void,
@@ -327,6 +377,9 @@ pub unsafe fn convolution_backward_data(
     .result()
 }
 
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn get_convolution_backward_filter_algorithm(
     handle: sys::cudnnHandle_t,
     src_desc: sys::cudnnTensorDescriptor_t,
@@ -351,6 +404,8 @@ pub unsafe fn get_convolution_backward_filter_algorithm(
 }
 
 /// Returns size in **bytes**
+/// # Safety
+/// TODO
 pub unsafe fn get_convolution_backward_filter_workspace_size(
     handle: sys::cudnnHandle_t,
     x_desc: sys::cudnnTensorDescriptor_t,
@@ -373,6 +428,9 @@ pub unsafe fn get_convolution_backward_filter_workspace_size(
     Ok(size_in_bytes[0])
 }
 
+/// # Safety
+/// TODO
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_backward_filter(
     handle: sys::cudnnHandle_t,
     alpha: *const ::core::ffi::c_void,

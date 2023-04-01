@@ -50,12 +50,9 @@ pub struct Conv2dDescriptor<T> {
 impl Cudnn {
     pub fn create_conv2d<T: CudnnDataType>(
         self: &Arc<Cudnn>,
-        pad_h: std::ffi::c_int,
-        pad_w: std::ffi::c_int,
-        stride_h: std::ffi::c_int,
-        stride_w: std::ffi::c_int,
-        dilation_h: std::ffi::c_int,
-        dilation_w: std::ffi::c_int,
+        [pad_h, pad_w]: [std::ffi::c_int; 2],
+        [stride_h, stride_w]: [std::ffi::c_int; 2],
+        [dilation_h, dilation_w]: [std::ffi::c_int; 2],
         mode: sys::cudnnConvolutionMode_t,
     ) -> Result<Conv2dDescriptor<T>, CudnnError> {
         let desc = result::create_convolution_descriptor()?;
@@ -91,21 +88,22 @@ impl<T> Drop for Conv2dDescriptor<T> {
 }
 
 #[derive(Debug)]
-pub struct Conv2dForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
-    pub conv: &'a Conv2dDescriptor<C>,
-    pub img: &'a TensorDescriptor<X>,
-    pub filter: &'a FilterDescriptor<X>,
-    pub y: &'a TensorDescriptor<Y>,
+pub struct Conv2dForward<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
+    pub conv: Conv2dDescriptor<C>,
+    pub img: TensorDescriptor<X>,
+    pub filter: FilterDescriptor<X>,
+    pub y: TensorDescriptor<Y>,
 }
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a, X, C, Y> {
-    /// Generics:
-    /// - `MAX_NUM_CHOICES` - number of algorithms to look at
-    pub fn pick_algorithm<const MAX_NUM_CHOICES: usize>(
-        &self,
-    ) -> Result<sys::cudnnConvolutionFwdAlgo_t, CudnnError> {
-        let mut returned_count = [0; MAX_NUM_CHOICES];
-        let mut perf_results = [Default::default(); MAX_NUM_CHOICES];
+impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<X, C, Y> {
+    pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionFwdAlgo_t, CudnnError> {
+        const NUM_ALGOS: usize = 8;
+        assert_eq!(
+            sys::cudnnConvolutionFwdAlgo_t::CUDNN_CONVOLUTION_FWD_ALGO_COUNT as u32,
+            NUM_ALGOS as u32
+        );
+        let mut returned_count = [0; 1];
+        let mut perf_results = [Default::default(); NUM_ALGOS];
         unsafe {
             result::get_convolution_forward_algorithm(
                 self.conv.handle.handle,
@@ -113,7 +111,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
                 self.filter.desc,
                 self.conv.desc,
                 self.y.desc,
-                MAX_NUM_CHOICES as std::ffi::c_int,
+                NUM_ALGOS as std::ffi::c_int,
                 returned_count.as_mut_ptr(),
                 perf_results.as_mut_ptr(),
             )
@@ -140,14 +138,15 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
         }
     }
 
+    /// # Safety
+    /// TODO
     pub unsafe fn launch<Workspace, Img, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionFwdAlgo_t,
         workspace: Option<&mut Workspace>,
-        alpha: Y,
+        (alpha, beta): (Y, Y),
         img: &Img,
         filter: &Filter,
-        beta: Y,
         y: &mut Dst,
     ) -> Result<(), CudnnError>
     where
@@ -186,13 +185,14 @@ pub struct Conv2dBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDa
 }
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardData<'a, X, C, Y> {
-    /// Generics:
-    /// - `MAX_NUM_CHOICES` - number of algorithms to look at
-    pub fn pick_algorithm<const MAX_NUM_CHOICES: usize>(
-        &self,
-    ) -> Result<sys::cudnnConvolutionBwdDataAlgo_t, CudnnError> {
-        let mut returned_count = [0; MAX_NUM_CHOICES];
-        let mut perf_results = [Default::default(); MAX_NUM_CHOICES];
+    pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionBwdDataAlgo_t, CudnnError> {
+        const NUM_ALGOS: usize = 6;
+        assert_eq!(
+            sys::cudnnConvolutionBwdDataAlgo_t::CUDNN_CONVOLUTION_BWD_DATA_ALGO_COUNT as u32,
+            NUM_ALGOS as u32
+        );
+        let mut returned_count = [0; 1];
+        let mut perf_results = [Default::default(); NUM_ALGOS];
         unsafe {
             result::get_convolution_backward_data_algorithm(
                 self.conv.handle.handle,
@@ -200,7 +200,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardDat
                 self.dy.desc,
                 self.conv.desc,
                 self.dx.desc,
-                MAX_NUM_CHOICES as std::ffi::c_int,
+                NUM_ALGOS as std::ffi::c_int,
                 returned_count.as_mut_ptr(),
                 perf_results.as_mut_ptr(),
             )
@@ -227,14 +227,15 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardDat
         }
     }
 
+    /// # Safety
+    /// TODO
     pub unsafe fn launch<Workspace, Img, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionBwdDataAlgo_t,
         workspace: Option<&mut Workspace>,
-        alpha: Y,
+        (alpha, beta): (Y, Y),
         dx: &mut Img,
         filter: &Filter,
-        beta: Y,
         dy: &Dst,
     ) -> Result<(), CudnnError>
     where
@@ -273,13 +274,14 @@ pub struct Conv2dBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: Cudnn
 }
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFilter<'a, X, C, Y> {
-    /// Generics:
-    /// - `MAX_NUM_CHOICES` - number of algorithms to look at
-    pub fn pick_algorithm<const MAX_NUM_CHOICES: usize>(
-        &self,
-    ) -> Result<sys::cudnnConvolutionBwdFilterAlgo_t, CudnnError> {
-        let mut returned_count = [0; MAX_NUM_CHOICES];
-        let mut perf_results = [Default::default(); MAX_NUM_CHOICES];
+    pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionBwdFilterAlgo_t, CudnnError> {
+        const NUM_ALGOS: usize = 7;
+        assert_eq!(
+            sys::cudnnConvolutionBwdFilterAlgo_t::CUDNN_CONVOLUTION_BWD_FILTER_ALGO_COUNT as u32,
+            NUM_ALGOS as u32
+        );
+        let mut returned_count = [0; 1];
+        let mut perf_results = [Default::default(); NUM_ALGOS];
         unsafe {
             result::get_convolution_backward_filter_algorithm(
                 self.conv.handle.handle,
@@ -287,7 +289,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFil
                 self.dy.desc,
                 self.conv.desc,
                 self.dfilter.desc,
-                MAX_NUM_CHOICES as std::ffi::c_int,
+                NUM_ALGOS as std::ffi::c_int,
                 returned_count.as_mut_ptr(),
                 perf_results.as_mut_ptr(),
             )
@@ -314,14 +316,15 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFil
         }
     }
 
+    /// # Safety
+    /// TODO
     pub unsafe fn launch<Workspace, Img, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionBwdFilterAlgo_t,
         workspace: Option<&mut Workspace>,
-        alpha: Y,
+        (alpha, beta): (Y, Y),
         x: &Img,
         dfilter: &mut Filter,
-        beta: Y,
         dy: &Dst,
     ) -> Result<(), CudnnError>
     where
