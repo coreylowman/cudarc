@@ -17,3 +17,7 @@ jobs:
         with:
           command: check
           args: --features ci-check
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --no-default-features --features ci-check,no-std,cudnn,cublas,nvrtc,driver,curand

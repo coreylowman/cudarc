@@ -2,9 +2,10 @@ use crate::driver::{result, sys};
 
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 
-use core::{
+use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
+    string::String,
 };
 
 #[cfg(feature = "no-std")]

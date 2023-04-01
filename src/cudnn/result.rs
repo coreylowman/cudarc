@@ -29,14 +29,22 @@ impl std::fmt::Display for CudnnError {
 #[cfg(feature = "std")]
 impl std::error::Error for CudnnError {}
 
+/// This function returns the version number of the cuDNN library. It returns the CUDNN_VERSION defined present in the cudnn.h header file.
+///
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetVersion)
 pub fn get_version() -> usize {
     unsafe { sys::cudnnGetVersion() }
 }
 
+/// The same version of a given cuDNN library can be compiled against different CUDA toolkit versions.
+/// This routine returns the CUDA toolkit version that the currently used cuDNN library has been compiled against.
+///
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetCudartVersion)
 pub fn get_cudart_version() -> usize {
     unsafe { sys::cudnnGetCudartVersion() }
 }
 
+/// Runs all *VersionCheck functions.
 pub fn version_check() -> Result<(), CudnnError> {
     unsafe {
         sys::cudnnAdvInferVersionCheck().result()?;
@@ -82,6 +90,8 @@ pub unsafe fn set_stream(
     sys::cudnnSetStream(handle, stream).result()
 }
 
+/// Allocates a new tensor descriptor.
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateTensorDescriptor)
 pub fn create_tensor_descriptor() -> Result<sys::cudnnTensorDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
@@ -90,8 +100,11 @@ pub fn create_tensor_descriptor() -> Result<sys::cudnnTensorDescriptor_t, CudnnE
     }
 }
 
+/// Sets data on a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensor4dDescriptor)
+///
 /// # Safety
-/// TODO
+/// `tensor_desc` must have been created with [create_tensor_descriptor], and
+/// NOT freed by [destroy_tensor_descriptor]
 pub unsafe fn set_tensor4d_descriptor(
     tensor_desc: sys::cudnnTensorDescriptor_t,
     format: sys::cudnnTensorFormat_t,
@@ -101,8 +114,11 @@ pub unsafe fn set_tensor4d_descriptor(
     sys::cudnnSetTensor4dDescriptor(tensor_desc, format, data_type, n, c, h, w).result()
 }
 
+/// Sets data on a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensor4dDescriptorEx)
+///
 /// # Safety
-/// TODO
+/// `tensor_desc` must have been created with [create_tensor_descriptor], and
+/// NOT freed by [destroy_tensor_descriptor]
 pub unsafe fn set_tensor4d_descriptor_ex(
     tensor_desc: sys::cudnnTensorDescriptor_t,
     data_type: sys::cudnnDataType_t,
@@ -124,8 +140,11 @@ pub unsafe fn set_tensor4d_descriptor_ex(
     .result()
 }
 
+/// Sets data on a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensorNdDescriptor)
+///
 /// # Safety
-/// TODO
+/// `tensor_desc` must have been created with [create_tensor_descriptor], and
+/// NOT freed by [destroy_tensor_descriptor]
 pub unsafe fn set_tensornd_descriptor(
     tensor_desc: sys::cudnnTensorDescriptor_t,
     data_type: sys::cudnnDataType_t,
@@ -136,14 +155,17 @@ pub unsafe fn set_tensornd_descriptor(
     sys::cudnnSetTensorNdDescriptor(tensor_desc, data_type, num_dims, dims, strides).result()
 }
 
+/// Destroys a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyTensorDescriptor)
+///
 /// # Safety
-/// TODO
+/// `desc` must NOT have been freed already.
 pub unsafe fn destroy_tensor_descriptor(
     desc: sys::cudnnTensorDescriptor_t,
 ) -> Result<(), CudnnError> {
     sys::cudnnDestroyTensorDescriptor(desc).result()
 }
 
+/// Creates a filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateFilterDescriptor)
 pub fn create_filter_descriptor() -> Result<sys::cudnnFilterDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
@@ -152,8 +174,11 @@ pub fn create_filter_descriptor() -> Result<sys::cudnnFilterDescriptor_t, CudnnE
     }
 }
 
+/// Sets data on a pre allocated filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetFilter4dDescriptor)
+///
 /// # Safety
-/// TODO
+/// `filter_desc` must be have been allocated with [create_filter_descriptor]
+/// and NOT already freed by [destroy_filter_descriptor].
 pub unsafe fn set_filter4d_descriptor(
     filter_desc: sys::cudnnFilterDescriptor_t,
     data_type: sys::cudnnDataType_t,
@@ -163,14 +188,17 @@ pub unsafe fn set_filter4d_descriptor(
     sys::cudnnSetFilter4dDescriptor(filter_desc, data_type, format, k, c, h, w).result()
 }
 
+/// Destroys a filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyFilterDescriptor)
+///
 /// # Safety
-/// TODO
+/// `desc` must NOT have already been freed.
 pub unsafe fn destroy_filter_descriptor(
     desc: sys::cudnnFilterDescriptor_t,
 ) -> Result<(), CudnnError> {
     sys::cudnnDestroyFilterDescriptor(desc).result()
 }
 
+/// Allocates a convolution descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateConvolutionDescriptor).
 pub fn create_convolution_descriptor() -> Result<sys::cudnnConvolutionDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
@@ -179,17 +207,20 @@ pub fn create_convolution_descriptor() -> Result<sys::cudnnConvolutionDescriptor
     }
 }
 
+/// Sets data on a conv descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolution2dDescriptor)
+///
 /// # Safety
-/// TODO
+/// `conv_desc` must have been allocated by [create_convolution_descriptor]
+/// and NOT freed by [destroy_convolution_descriptor].
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn set_convolution2d_descriptor(
     conv_desc: sys::cudnnConvolutionDescriptor_t,
-    pad_h: ::std::os::raw::c_int,
-    pad_w: ::std::os::raw::c_int,
-    u: ::std::os::raw::c_int,
-    v: ::std::os::raw::c_int,
-    dilation_h: ::std::os::raw::c_int,
-    dilation_w: ::std::os::raw::c_int,
+    pad_h: std::ffi::c_int,
+    pad_w: std::ffi::c_int,
+    u: std::ffi::c_int,
+    v: std::ffi::c_int,
+    dilation_h: std::ffi::c_int,
+    dilation_w: std::ffi::c_int,
     mode: sys::cudnnConvolutionMode_t,
     compute_type: sys::cudnnDataType_t,
 ) -> Result<(), CudnnError> {
@@ -207,16 +238,20 @@ pub unsafe fn set_convolution2d_descriptor(
     .result()
 }
 
+/// Destroys a descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyConvolutionDescriptor).
 /// # Safety
-/// TODO
+/// `desc` must NOT have been already freed.
 pub unsafe fn destroy_convolution_descriptor(
     desc: sys::cudnnConvolutionDescriptor_t,
 ) -> Result<(), CudnnError> {
     sys::cudnnDestroyConvolutionDescriptor(desc).result()
 }
 
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionForwardAlgorithm_v7)
+///
 /// # Safety
-/// TODO
+/// - All handles & descriptors must still be allocated.
+/// - The pointers must point to valid memory.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn get_convolution_forward_algorithm(
     handle: sys::cudnnHandle_t,
@@ -224,8 +259,8 @@ pub unsafe fn get_convolution_forward_algorithm(
     filter: sys::cudnnFilterDescriptor_t,
     conv: sys::cudnnConvolutionDescriptor_t,
     dest: sys::cudnnTensorDescriptor_t,
-    requested_algo_count: ::std::os::raw::c_int,
-    returned_algo_count: *mut ::std::os::raw::c_int,
+    requested_algo_count: std::ffi::c_int,
+    returned_algo_count: *mut std::ffi::c_int,
     perf_results: *mut sys::cudnnConvolutionFwdAlgoPerf_t,
 ) -> Result<(), CudnnError> {
     sys::cudnnGetConvolutionForwardAlgorithm_v7(
@@ -241,9 +276,10 @@ pub unsafe fn get_convolution_forward_algorithm(
     .result()
 }
 
-/// Returns size in **bytes**
+/// Returns size in **bytes**. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionForwardWorkspaceSize)
 /// # Safety
-/// TODO
+/// - All handles & descriptors must still be allocated.
+/// - The pointers must point to valid memory.
 pub unsafe fn get_convolution_forward_workspace_size(
     handle: sys::cudnnHandle_t,
     x: sys::cudnnTensorDescriptor_t,
@@ -266,8 +302,14 @@ pub unsafe fn get_convolution_forward_workspace_size(
     Ok(size_in_bytes[0])
 }
 
+/// Launch the conv forward kernel.
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnConvolutionForward).
+///
 /// # Safety
-/// TODO
+/// - handles and descriptors must still be allocated
+/// - all pointers must be valid data pointers
+/// - the format of descriptors should match the data allocated
+///   in the pointers.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_forward(
     handle: sys::cudnnHandle_t,
@@ -302,8 +344,11 @@ pub unsafe fn convolution_forward(
     .result()
 }
 
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardDataAlgorithm_v7)
+///
 /// # Safety
-/// TODO
+/// - All handles & descriptors must still be allocated.
+/// - The pointers must point to valid memory.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn get_convolution_backward_data_algorithm(
     handle: sys::cudnnHandle_t,
@@ -328,9 +373,10 @@ pub unsafe fn get_convolution_backward_data_algorithm(
     .result()
 }
 
-/// Returns size in **bytes**
+/// Returns size in **bytes**. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardDataWorkspaceSize)
 /// # Safety
-/// TODO
+/// - All handles & descriptors must still be allocated.
+/// - The pointers must point to valid memory.
 pub unsafe fn get_convolution_backward_data_workspace_size(
     handle: sys::cudnnHandle_t,
     w_desc: sys::cudnnFilterDescriptor_t,
@@ -352,8 +398,15 @@ pub unsafe fn get_convolution_backward_data_workspace_size(
     .result()?;
     Ok(size_in_bytes[0])
 }
+
+/// Launch the backward data kernel.
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnConvolutionBackwardData).
+///
 /// # Safety
-/// TODO
+/// - handles and descriptors must still be allocated
+/// - all pointers must be valid data pointers
+/// - the format of descriptors should match the data allocated
+///   in the pointers.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_backward_data(
     handle: sys::cudnnHandle_t,
@@ -388,8 +441,11 @@ pub unsafe fn convolution_backward_data(
     .result()
 }
 
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardFilterAlgorithm_v7)
+///
 /// # Safety
-/// TODO
+/// - All handles & descriptors must still be allocated.
+/// - The pointers must point to valid memory.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn get_convolution_backward_filter_algorithm(
     handle: sys::cudnnHandle_t,
@@ -414,9 +470,11 @@ pub unsafe fn get_convolution_backward_filter_algorithm(
     .result()
 }
 
-/// Returns size in **bytes**
+/// Returns size in **bytes**.
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardFilterWorkspaceSize)
 /// # Safety
-/// TODO
+/// - All handles & descriptors must still be allocated.
+/// - The pointers must point to valid memory.
 pub unsafe fn get_convolution_backward_filter_workspace_size(
     handle: sys::cudnnHandle_t,
     x_desc: sys::cudnnTensorDescriptor_t,
@@ -439,8 +497,14 @@ pub unsafe fn get_convolution_backward_filter_workspace_size(
     Ok(size_in_bytes[0])
 }
 
+/// Launch the backward data kernel.
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnConvolutionBackwardFilter).
+///
 /// # Safety
-/// TODO
+/// - handles and descriptors must still be allocated
+/// - all pointers must be valid data pointers
+/// - the format of descriptors should match the data allocated
+///   in the pointers.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_backward_filter(
     handle: sys::cudnnHandle_t,
