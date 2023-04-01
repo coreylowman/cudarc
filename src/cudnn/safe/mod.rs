@@ -1,7 +1,7 @@
 //! Safe wrappers around cuDNN.
 //!
-//! 1. Allocate tensor descriptors with [`Cudnn::create_tensor4d()`]
-//! 2. Allocate filter descriptors with [`Cudnn::create_filter4d()`]
+//! 1. Allocate tensor descriptors with [`Cudnn::create_4d_tensor()`]
+//! 2. Allocate filter descriptors with [`Cudnn::create_4d_filter()`]
 //! 3. Allocate conv descriptors with [`Cudnn::create_conv2d()`]
 //! 4. Instantiate one of the following algorithms with the descriptors:
 //!     a. [`Conv2dForward`]

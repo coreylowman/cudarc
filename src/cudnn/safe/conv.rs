@@ -6,7 +6,7 @@ use crate::{
 
 use std::{marker::PhantomData, sync::Arc};
 
-/// A descriptor of the filters for conv2d operation. Create with [`Cudnn::create_filter4d()`]
+/// A descriptor of the filters for conv2d operation. Create with [`Cudnn::create_4d_filter()`]
 #[derive(Debug)]
 pub struct FilterDescriptor<T> {
     pub(crate) desc: sys::cudnnFilterDescriptor_t,
