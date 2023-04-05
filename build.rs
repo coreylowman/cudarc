@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
@@ -13,12 +13,19 @@ fn link_cuda() {
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
     println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
 
-    for path in libs(root().expect("Cuda root not found")) {
-        println!("cargo:rustc-link-search=native={}", path.display());
-    }
+    let candidates: Vec<PathBuf> = root_candidates().collect();
 
-    if let Ok(cudnn_dir) = std::env::var("CUDNN_LIB") {
-        println!("cargo:rustc-link-search=native={}", cudnn_dir);
+    let toolkit_root = root_candidates()
+        .find(|path| path.join("include").join("cuda.h").is_file())
+        .unwrap_or_else(|| {
+            panic!(
+                "Unable to find `include/cuda.h` under any of: {:?}. Set the `CUDA_ROOT` environment variable to `$CUDA_ROOT/include/cuda.h` to override path.",
+                candidates
+            )
+        });
+
+    for path in lib_candidates(&toolkit_root) {
+        println!("cargo:rustc-link-search=native={}", path.display());
     }
 
     #[cfg(feature = "driver")]
@@ -46,30 +53,54 @@ fn link_cuda() {
     }
 
     #[cfg(feature = "cudnn")]
+    {
+        let cudnn_root = root_candidates()
+            .find(|path| path.join("include").join("cudnn.h").is_file())
+            .unwrap_or_else(|| {
+                panic!(
+                    "Unable to find `include/cudnn.h` under any of: {:?}. Set the `CUDNN_LIB` environment variable to `$CUDNN_LIB/include/cudnn.h` to override path.",
+                    candidates
+                )
+            });
+
+        for path in lib_candidates(&cudnn_root) {
+            println!("cargo:rustc-link-search=native={}", path.display());
+        }
+    }
+    #[cfg(feature = "cudnn")]
     println!("cargo:rustc-link-lib=dylib=cudnn");
 }
 
-fn root() -> Option<PathBuf> {
-    let env_vars = ["CUDA_PATH", "CUDA_ROOT", "CUDA_TOOLKIT_ROOT_DIR"];
+fn root_candidates() -> impl Iterator<Item = PathBuf> {
+    let env_vars = [
+        "CUDA_PATH",
+        "CUDA_ROOT",
+        "CUDA_TOOLKIT_ROOT_DIR",
+        "CUDNN_LIB",
+    ];
+    let env_vars = env_vars
+        .into_iter()
+        .map(std::env::var)
+        .filter_map(Result::ok);
+
     let roots = [
+        "/usr",
         "/usr/local/cuda",
         "/opt/cuda",
         "/usr/lib/cuda",
         "C:/Program Files/NVIDIA GPU Computing Toolkit",
         "C:/CUDA",
     ];
-
-    let env_vars = env_vars.iter().map(std::env::var).filter_map(Result::ok);
-    let roots = roots.iter().cloned().map(Into::into);
-    let mut candidates = env_vars.chain(roots).map(Into::<PathBuf>::into);
-    candidates.find(|path| path.join("include").join("cuda.h").is_file())
+    let roots = roots.into_iter().map(Into::into);
+    env_vars.chain(roots).map(Into::<PathBuf>::into)
 }
 
-fn libs(root: PathBuf) -> Vec<PathBuf> {
+fn lib_candidates(root: &Path) -> Vec<PathBuf> {
     [
         "lib/x64",
         "lib/Win32",
         "lib/x86_64",
+        "lib/x86_64-linux-gnu",
         "lib64",
         "lib64/stubs",
         "targets/x86_64-linux",
