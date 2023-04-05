@@ -538,3 +538,127 @@ pub unsafe fn convolution_backward_filter(
     )
     .result()
 }
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateReduceTensorDescriptor).
+pub fn create_reduce_tensor_descriptor() -> Result<sys::cudnnReduceTensorDescriptor_t, CudnnError> {
+    let mut handle = MaybeUninit::uninit();
+    unsafe {
+        sys::cudnnCreateReduceTensorDescriptor(handle.as_mut_ptr()).result()?;
+        Ok(handle.assume_init())
+    }
+}
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetReduceTensorDescriptor)
+///
+/// # Safety
+/// All the descriptors must be allocated properly and not have been destroyed.
+pub unsafe fn set_reduce_tensor_descriptor(
+    tensor_desc: sys::cudnnReduceTensorDescriptor_t,
+    tensor_op: sys::cudnnReduceTensorOp_t,
+    tensor_comp_type: sys::cudnnDataType_t,
+    tensor_nan_opt: sys::cudnnNanPropagation_t,
+    tensor_indices: sys::cudnnReduceTensorIndices_t,
+    tensor_indices_type: sys::cudnnIndicesType_t,
+) -> Result<(), CudnnError> {
+    sys::cudnnSetReduceTensorDescriptor(
+        tensor_desc,
+        tensor_op,
+        tensor_comp_type,
+        tensor_nan_opt,
+        tensor_indices,
+        tensor_indices_type,
+    )
+    .result()
+}
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyReduceTensorDescriptor).
+///
+/// # Safety
+/// Descriptor must not have been freed already.
+pub unsafe fn destroy_reduce_tensor_descriptor(
+    tensor_desc: sys::cudnnReduceTensorDescriptor_t,
+) -> Result<(), CudnnError> {
+    sys::cudnnDestroyReduceTensorDescriptor(tensor_desc).result()
+}
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetReductionIndicesSize)
+///
+/// # Safety
+/// Handle and descriptor must be valid (properly allocated and not freed already).
+pub unsafe fn get_reduction_indices_size(
+    handle: sys::cudnnHandle_t,
+    reduce_tensor_desc: sys::cudnnReduceTensorDescriptor_t,
+    a_desc: sys::cudnnTensorDescriptor_t,
+    c_desc: sys::cudnnTensorDescriptor_t,
+) -> Result<usize, CudnnError> {
+    let mut size_in_bytes = [0];
+    sys::cudnnGetReductionIndicesSize(
+        handle,
+        reduce_tensor_desc,
+        a_desc,
+        c_desc,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
+    Ok(size_in_bytes[0])
+}
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetReductionWorkspaceSize)
+///
+/// # Safety
+/// Handle and descriptors must be properly allocated and not freed already.
+pub unsafe fn get_reduction_workspace_size(
+    handle: sys::cudnnHandle_t,
+    reduce_tensor_desc: sys::cudnnReduceTensorDescriptor_t,
+    a_desc: sys::cudnnTensorDescriptor_t,
+    c_desc: sys::cudnnTensorDescriptor_t,
+) -> Result<usize, CudnnError> {
+    let mut size_in_bytes = [0];
+    sys::cudnnGetReductionWorkspaceSize(
+        handle,
+        reduce_tensor_desc,
+        a_desc,
+        c_desc,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
+    Ok(size_in_bytes[0])
+}
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnReduceTensor)
+///
+/// # Safety
+/// - All data must be properly allocated and not freed.
+/// - The descriptors must be the same data type as the pointers
+/// - Misuse of this function could result in out of bounds memory accesses.
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn reduce_tensor(
+    handle: sys::cudnnHandle_t,
+    reduce_tensor_desc: sys::cudnnReduceTensorDescriptor_t,
+    indices: *mut std::ffi::c_void,
+    indices_size_in_bytes: usize,
+    workspace: *mut std::ffi::c_void,
+    workspace_size_in_bytes: usize,
+    alpha: *const std::ffi::c_void,
+    a_desc: sys::cudnnTensorDescriptor_t,
+    a: *const std::ffi::c_void,
+    beta: *const std::ffi::c_void,
+    c_desc: sys::cudnnTensorDescriptor_t,
+    c: *mut std::ffi::c_void,
+) -> Result<(), CudnnError> {
+    sys::cudnnReduceTensor(
+        handle,
+        reduce_tensor_desc,
+        indices,
+        indices_size_in_bytes,
+        workspace,
+        workspace_size_in_bytes,
+        alpha,
+        a_desc,
+        a,
+        beta,
+        c_desc,
+        c,
+    )
+    .result()
+}
