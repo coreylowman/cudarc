@@ -19,7 +19,8 @@ fn link_cuda() {
         .find(|path| path.join("include").join("cuda.h").is_file())
         .unwrap_or_else(|| {
             panic!(
-                "Unable to find `include/cuda.h` under any of: {:?}",
+                "Unable to find `include/cuda.h` under any of: {:?}.
+Set the `CUDA_ROOT` environment variable to `$CUDA_ROOT/include/cuda.h` to override path.",
                 candidates
             )
         });
@@ -58,7 +59,8 @@ fn link_cuda() {
             .find(|path| path.join("include").join("cudnn.h").is_file())
             .unwrap_or_else(|| {
                 panic!(
-                    "Unable to find `include/cudnn.h` under any of: {:?}",
+                    "Unable to find `include/cudnn.h` under any of: {:?}.
+Set the `CUDNN_LIB` environment variable to `$CUDNN_LIB/include/cudnn.h` to override path.",
                     candidates
                 )
             });
