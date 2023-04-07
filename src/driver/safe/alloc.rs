@@ -68,6 +68,44 @@ unsafe impl<'a, T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'a, T> {
     }
 }
 
+impl<T> CudaSlice<T> {
+    /// Takes ownership of the underlying [sys::CUdeviceptr]. **It is up
+    /// to the owner to free this value**.
+    ///
+    /// Drops the underlying host_buf if there is one.
+    pub fn leak(mut self) -> sys::CUdeviceptr {
+        if let Some(host_buf) = std::mem::take(&mut self.host_buf) {
+            drop(host_buf);
+        }
+        let ptr = self.cu_device_ptr;
+        std::mem::forget(self);
+        ptr
+    }
+}
+
+impl CudaDevice {
+    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
+    /// [`CudaSlice::leak()`].
+    ///
+    /// # Safety
+    /// - `cu_device_ptr` must be a valid allocation
+    /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
+    /// - The memory may not be valid for type `T`, so some sort of memset operation
+    ///   should be called on the memory.
+    pub unsafe fn upgrade_device_ptr<T>(
+        self: &Arc<Self>,
+        cu_device_ptr: sys::CUdeviceptr,
+        len: usize,
+    ) -> CudaSlice<T> {
+        CudaSlice {
+            cu_device_ptr,
+            len,
+            device: self.clone(),
+            host_buf: None,
+        }
+    }
+}
+
 impl CudaDevice {
     /// Allocates device memory and increments the reference counter of [CudaDevice].
     ///
