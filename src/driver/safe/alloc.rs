@@ -479,4 +479,21 @@ mod tests {
             [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
         );
     }
+
+    #[test]
+    fn test_leak_and_upgrade() {
+        let dev = CudaDevice::new(0).unwrap();
+
+        let a = dev
+            .htod_copy(std::vec![1.0f32, 2.0, 3.0, 4.0, 5.0])
+            .unwrap();
+
+        let ptr = a.leak();
+        let b = unsafe { dev.upgrade_device_ptr::<f32>(ptr, 3) };
+        assert_eq!(dev.dtoh_sync_copy(&b).unwrap(), &[1.0, 2.0, 3.0]);
+
+        let ptr = b.leak();
+        let c = unsafe { dev.upgrade_device_ptr::<f32>(ptr, 5) };
+        assert_eq!(dev.dtoh_sync_copy(&c).unwrap(), &[1.0, 2.0, 3.0, 4.0, 5.0]);
+    }
 }
