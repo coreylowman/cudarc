@@ -142,6 +142,13 @@ impl<T> Drop for CudaSlice<T> {
     }
 }
 
+impl<T> CudaSlice<T> {
+    /// Get a clone of the underlying [CudaDevice].
+    pub fn device(&self) -> Arc<CudaDevice> {
+        self.device.clone()
+    }
+}
+
 impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
     pub fn try_clone(&self) -> Result<Self, result::DriverError> {
