@@ -81,17 +81,6 @@ impl<T> CudaSlice<T> {
         std::mem::forget(self);
         ptr
     }
-
-    /// Empties this mutable object (allocates a new )
-    pub fn replace_with_empty(&mut self) -> Self {
-        let null = CudaSlice {
-            cu_device_ptr: unsafe { result::malloc_async(self.device.stream, 0) }.unwrap(),
-            len: 0,
-            device: self.device.clone(),
-            host_buf: None,
-        };
-        std::mem::replace(self, null)
-    }
 }
 
 impl CudaDevice {
@@ -118,6 +107,17 @@ impl CudaDevice {
 }
 
 impl CudaDevice {
+    /// Allocates an empty [CudaSlice] with 0 length.
+    pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
+        let cu_device_ptr = unsafe { result::malloc_async(self.stream, 0) }?;
+        Ok(CudaSlice {
+            cu_device_ptr,
+            len: 0,
+            device: self.clone(),
+            host_buf: None,
+        })
+    }
+
     /// Allocates device memory and increments the reference counter of [CudaDevice].
     ///
     /// # Safety
