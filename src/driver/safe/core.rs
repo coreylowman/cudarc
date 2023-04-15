@@ -38,6 +38,7 @@ pub struct CudaDevice {
     /// Used to synchronize with stream
     pub(crate) event: sys::CUevent,
     pub(crate) modules: RwLock<BTreeMap<String, CudaModule>>,
+    pub(crate) ordinal: usize,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -64,8 +65,14 @@ impl CudaDevice {
             stream: std::ptr::null_mut(),
             event,
             modules: RwLock::new(BTreeMap::new()),
+            ordinal,
         };
         Ok(Arc::new(device))
+    }
+
+    /// Get the `ordinal` index of this [CudaDevice].
+    pub fn ordinal(&self) -> usize {
+        self.ordinal
     }
 }
 
