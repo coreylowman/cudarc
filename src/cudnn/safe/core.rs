@@ -58,9 +58,9 @@ macro_rules! cudnn_dtype {
     };
 }
 
-#[cfg(feature = "half")]
+#[cfg(feature = "f16")]
 cudnn_dtype!(half::f16, CUDNN_DATA_HALF);
-#[cfg(feature = "half")]
+#[cfg(feature = "f16")]
 cudnn_dtype!(half::bf16, CUDNN_DATA_BFLOAT16);
 cudnn_dtype!(f32, CUDNN_DATA_FLOAT);
 cudnn_dtype!(f64, CUDNN_DATA_DOUBLE);
