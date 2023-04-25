@@ -48,20 +48,28 @@ impl Drop for Cudnn {
 /// Maps a rust type to a [sys::cudnnDataType_t]
 pub trait CudnnDataType {
     const DATA_TYPE: sys::cudnnDataType_t;
+
+    /// Certain CUDNN data types have a scaling parameter (usually called alpha/beta)
+    /// that is a different type. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#scaling-parameters)
+    /// for more info, but basically f16 has a scalar of f32.
+    type Scalar;
+
+    /// Converts the type into the scaling parameter type. See [Self::Scalar].
+    fn into_scaling_parameter(self) -> Self::Scalar;
 }
 
 macro_rules! cudnn_dtype {
     ($RustTy:ty, $CudnnTy:tt) => {
         impl CudnnDataType for $RustTy {
             const DATA_TYPE: sys::cudnnDataType_t = sys::cudnnDataType_t::$CudnnTy;
+            type Scalar = Self;
+            fn into_scaling_parameter(self) -> Self::Scalar {
+                self
+            }
         }
     };
 }
 
-#[cfg(feature = "f16")]
-cudnn_dtype!(half::f16, CUDNN_DATA_HALF);
-#[cfg(feature = "f16")]
-cudnn_dtype!(half::bf16, CUDNN_DATA_BFLOAT16);
 cudnn_dtype!(f32, CUDNN_DATA_FLOAT);
 cudnn_dtype!(f64, CUDNN_DATA_DOUBLE);
 cudnn_dtype!(i8, CUDNN_DATA_INT8);
@@ -69,6 +77,23 @@ cudnn_dtype!(i32, CUDNN_DATA_INT32);
 cudnn_dtype!(i64, CUDNN_DATA_INT64);
 cudnn_dtype!(u8, CUDNN_DATA_UINT8);
 cudnn_dtype!(bool, CUDNN_DATA_BOOLEAN);
+
+#[cfg(feature = "f16")]
+impl CudnnDataType for half::f16 {
+    const DATA_TYPE: sys::cudnnDataType_t = sys::cudnnDataType_t::CUDNN_DATA_HALF;
+    type Scalar = f32;
+    fn into_scaling_parameter(self) -> Self::Scalar {
+        self.to_f32()
+    }
+}
+#[cfg(feature = "f16")]
+impl CudnnDataType for half::bf16 {
+    const DATA_TYPE: sys::cudnnDataType_t = sys::cudnnDataType_t::CUDNN_DATA_BFLOAT16;
+    type Scalar = f32;
+    fn into_scaling_parameter(self) -> Self::Scalar {
+        self.to_f32()
+    }
+}
 
 /// A descriptor of a tensor. Create with:
 /// 1. [`Cudnn::create_4d_tensor()`]

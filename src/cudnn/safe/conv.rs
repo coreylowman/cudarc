@@ -89,6 +89,14 @@ impl Cudnn {
     }
 }
 
+impl<T> Conv2dDescriptor<T> {
+    /// Set's the math type for this convolution. Refer to [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionMathType)
+    /// for more information.
+    pub fn set_math_type(&mut self, math_type: sys::cudnnMathType_t) -> Result<(), CudnnError> {
+        unsafe { result::set_convolution_math_type(self.desc, math_type) }
+    }
+}
+
 impl<T> Drop for Conv2dDescriptor<T> {
     fn drop(&mut self) {
         let desc = std::mem::replace(&mut self.desc, std::ptr::null_mut());
@@ -190,9 +198,11 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
             ),
             None => (0, std::ptr::null_mut()),
         };
+        let alpha = alpha.into_scaling_parameter();
+        let beta = beta.into_scaling_parameter();
         result::convolution_forward(
             self.conv.handle.handle,
-            (&alpha) as *const Y as *const std::ffi::c_void,
+            (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
             *img.device_ptr() as *const X as *const std::ffi::c_void,
             self.w.desc,
@@ -201,7 +211,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
             algo,
             workspace_ptr,
             num_bytes,
-            (&beta) as *const Y as *const std::ffi::c_void,
+            (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.y.desc,
             *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
         )
@@ -300,9 +310,11 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardDat
             ),
             None => (0, std::ptr::null_mut()),
         };
+        let alpha = alpha.into_scaling_parameter();
+        let beta = beta.into_scaling_parameter();
         result::convolution_backward_data(
             self.conv.handle.handle,
-            (&alpha) as *const Y as *const std::ffi::c_void,
+            (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.w.desc,
             *filter.device_ptr() as *const X as *const std::ffi::c_void,
             self.dy.desc,
@@ -311,7 +323,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardDat
             algo,
             workspace_ptr,
             num_bytes,
-            (&beta) as *const Y as *const std::ffi::c_void,
+            (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.dx.desc,
             *dx.device_ptr_mut() as *mut X as *mut std::ffi::c_void,
         )
@@ -406,9 +418,11 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFil
         let (num_bytes, workspace_ptr) = workspace
             .map(|x| (x.num_bytes(), *x.device_ptr_mut() as *mut std::ffi::c_void))
             .unwrap_or((0, std::ptr::null_mut()));
+        let alpha = alpha.into_scaling_parameter();
+        let beta = beta.into_scaling_parameter();
         result::convolution_backward_filter(
             self.conv.handle.handle,
-            (&alpha) as *const _ as *const std::ffi::c_void,
+            (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
             *x.device_ptr() as *const _,
             self.dy.desc,
@@ -417,7 +431,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFil
             algo,
             workspace_ptr,
             num_bytes,
-            (&beta) as *const _ as *const std::ffi::c_void,
+            (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.dw.desc,
             *dfilter.device_ptr_mut() as *mut _,
         )
