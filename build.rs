@@ -24,6 +24,11 @@ fn link_cuda() {
             )
         });
 
+    println!(
+        "cargo:rustc-env=CUDA_INCLUDE_DIR={}",
+        toolkit_root.join("include").join("cuda.h").display()
+    );
+
     for path in lib_candidates(&toolkit_root) {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
