@@ -97,6 +97,7 @@ fn root_candidates() -> impl Iterator<Item = PathBuf> {
 
 fn lib_candidates(root: &Path) -> Vec<PathBuf> {
     [
+        "lib",
         "lib/x64",
         "lib/Win32",
         "lib/x86_64",
