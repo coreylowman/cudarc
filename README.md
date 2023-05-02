@@ -1,5 +1,7 @@
 # cudarc: minimal and safe api over the cuda toolkit
 
+[![](https://dcbadge.vercel.app/api/server/AtUhGqBDP5)](https://discord.gg/AtUhGqBDP5)
+
 Checkout cudarc on [crates.io](https://crates.io/crates/cudarc) and [docs.rs](https://docs.rs/cudarc/latest/cudarc/).
 
 Safe abstractions over:
