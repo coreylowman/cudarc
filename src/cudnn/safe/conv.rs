@@ -95,6 +95,12 @@ impl<T> Conv2dDescriptor<T> {
     pub fn set_math_type(&mut self, math_type: sys::cudnnMathType_t) -> Result<(), CudnnError> {
         unsafe { result::set_convolution_math_type(self.desc, math_type) }
     }
+
+    /// Set's the group count for this convolution. Refer to [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionGroupCount)
+    /// for more information.
+    pub fn set_group_count(&mut self, group_count: i32) -> Result<(), CudnnError> {
+        unsafe { result::set_convolution_group_count(self.desc, group_count) }
+    }
 }
 
 impl<T> Drop for Conv2dDescriptor<T> {
