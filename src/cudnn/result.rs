@@ -238,7 +238,7 @@ pub unsafe fn set_convolution2d_descriptor(
     .result()
 }
 
-/// Set See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionMathType).
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionMathType).
 /// # Safety
 /// `desc` must NOT have been freed already
 pub unsafe fn set_convolution_math_type(
@@ -246,6 +246,16 @@ pub unsafe fn set_convolution_math_type(
     math_type: sys::cudnnMathType_t,
 ) -> Result<(), CudnnError> {
     sys::cudnnSetConvolutionMathType(desc, math_type).result()
+}
+
+/// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionGroupCount)
+/// # Safety
+/// `desc` must NOT have been freed already
+pub unsafe fn set_convolution_group_count(
+    desc: sys::cudnnConvolutionDescriptor_t,
+    group_count: i32,
+) -> Result<(), CudnnError> {
+    sys::cudnnSetConvolutionGroupCount(desc, group_count).result()
 }
 
 /// Destroys a descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyConvolutionDescriptor).
