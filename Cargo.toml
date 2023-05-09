@@ -37,6 +37,6 @@ ci-check = []
 static-linking=[]
 
 [dependencies]
-spin = { version = "0.9.4", optional = true, features = ["rwlock"], default-features = false }
+spin = { version = "0.9.8", optional = true, features = ["rwlock"], default-features = false }
 no-std-compat = { version = "0.4.1", optional = true, features = [ "alloc" ] }
 half = { version = "2.2.1", optional = true, default-features = false, features = [] }
