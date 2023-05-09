@@ -74,6 +74,43 @@ impl CudaDevice {
     pub fn ordinal(&self) -> usize {
         self.ordinal
     }
+
+    /// Get the underlying [sys::CUdevice] of this [CudaDevice].
+    ///
+    /// # Safety
+    /// While this function is marked as safe, actually using the
+    /// returned object is unsafe.
+    ///
+    /// **You must not free/release the device pointer**, as it is still
+    /// owned by the [CudaDevice].
+    pub fn cu_device(&self) -> &sys::CUdevice {
+        &self.cu_device
+    }
+
+    /// Get the underlying [sys::CUcontext] of this [CudaDevice].
+    ///
+    /// # Safety
+    /// While this function is marked as safe, actually using the
+    /// returned object is unsafe.
+    ///
+    /// **You must not free/release the context pointer**, as it is still
+    /// owned by the [CudaDevice].
+    pub fn cu_primary_ctx(&self) -> &sys::CUcontext {
+        &self.cu_primary_ctx
+    }
+
+    /// Get the underlying [sys::CUstream] that this [CudaDevice] executes
+    /// all of its work on.
+    ///
+    /// # Safety
+    /// While this function is marked as safe, actually using the
+    /// returned object is unsafe.
+    ///
+    /// **You must not free/release the stream pointer**, as it is still
+    /// owned by the [CudaDevice].
+    pub fn cu_stream(&self) -> &sys::CUstream {
+        &self.stream
+    }
 }
 
 impl Drop for CudaDevice {
