@@ -1,3 +1,4 @@
+#![cfg(feature = "nightly")]// nightly only due to experimental features (also improves linting linter)
 #![feature(abi_ptx)]        // emitting ptx (unstable)
 #![feature(stdsimd)]        // simd instructions (unstable)
 #![no_std]                  // CUDA compatibility
