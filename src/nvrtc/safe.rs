@@ -222,6 +222,51 @@ impl CompileOptions {
     }
 }
 
+pub struct RustPtx {
+    kernel_path: PathBuf,
+}
+
+use std::process::Command;
+impl RustPtx {
+    pub fn new(kernel_path: PathBuf) -> RustPtx {
+        RustPtx { kernel_path }
+    }
+
+    pub fn build_ptx(&self) -> Result<PathBuf, String> {
+        let mut ptx_path = self.kernel_path.clone();
+        ptx_path.set_extension("ptx");
+        
+        let manifest_path = self.kernel_path.clone()
+            .parent().unwrap()
+            .parent().unwrap()
+            .join("Cargo.toml");
+
+        let output = Command::new("cargo")
+            .arg("+nightly")
+            .arg("rustc")
+            .arg("--manifest-path")
+            .arg(manifest_path)
+            .arg("--lib")
+            .arg("--target")
+            .arg("nvptx64-nvidia-cuda")
+            .arg("--release")
+            .arg("--")
+            .arg("--emit")
+            .arg("asm")
+            .output()
+            .map_err(|e| format!("Failed to execute command: {}", e))?;
+
+        if output.status.success() {
+            Ok(ptx_path)
+        } else {
+            Err(format!(
+                "Failed to build PTX file: {}",
+                String::from_utf8_lossy(&output.stderr)
+            ))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
