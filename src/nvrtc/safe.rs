@@ -264,7 +264,7 @@ impl TryFrom<PathBuf> for PtxCrateKind {
 
         // if value = path/to/project/ containing Cargo.toml
         if value.join("Cargo.toml").exists() {
-            Ok( Self::Cargo { project_dir: value.into() } )
+            Ok( Self::Cargo { project_dir: value } )
         } else {
             Err(format!("{value:?}/Cargo.toml missing"))
         }
@@ -300,7 +300,11 @@ impl PtxCrate {
         let kernel_path: PathBuf = kernel_path.as_ref().into();
         let mut rust_ptx: Self = kernel_path.try_into()?;
         rust_ptx.build_ptx()?;
-        Ok(rust_ptx.ptx_files().unwrap().clone())
+        Ok(rust_ptx.take_kernels().unwrap())
+    }
+
+    pub fn take_kernels(self) -> Option<Vec<Ptx>> {
+        self.kernels
     }
     
     pub fn ptx_files(&self) -> Option<&Vec<Ptx>> {

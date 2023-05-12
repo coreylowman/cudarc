@@ -1,4 +1,4 @@
-use std::path::{PathBuf, Path};
+use std::path::PathBuf;
 
 use cudarc::{
     driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig},
