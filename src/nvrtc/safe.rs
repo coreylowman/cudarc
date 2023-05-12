@@ -249,7 +249,7 @@ impl TryFrom<PathBuf> for PtxCrateKind {
                         if manifest.exists() {
                             return Ok( Self::Cargo { project_dir: project_dir.into() } )
                         } else {
-                            todo!()
+                            return Ok(Self::Standalone { standalone: value })
                         }
                     } else {
                         return Err(format!("could not find parent of {src:?}"))
