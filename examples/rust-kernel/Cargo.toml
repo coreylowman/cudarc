@@ -8,5 +8,5 @@ edition = "2021"
 [lib]
 name = "kernel"
 path = "src/lib.rs"
-build = "cargo +nightly rustc --lib --target nvptx64-nvidia-cuda --release -- --emit asm"
+# build = "cargo +nightly rustc --lib --target nvptx64-nvidia-cuda --release -- --emit asm"
 crate-type = ["cdylib"]

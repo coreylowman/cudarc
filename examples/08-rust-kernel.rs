@@ -1,17 +1,26 @@
+use std::path::PathBuf;
+
 use cudarc::{
     driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig},
-    nvrtc::{Ptx, RustPtx},
+    nvrtc::PtxCrate,
 };
 
 fn main() -> Result<(), DriverError> {
     let dev = CudaDevice::new(0)?;
 
-    let rust_ptx = RustPtx::new("examples/rust-kernel/src/lib.rs".into());
+    let kernel: PathBuf = "examples/rust-kernel/src/lib.rs".into();
+    let rust_ptx: Result<PtxCrate, _> = kernel.try_into();
+    
+    let mut rust_ptx = rust_ptx.unwrap();
+    
     rust_ptx.build_ptx().unwrap();
+    
+    let kernels = rust_ptx.ptx_files().unwrap();
+    let kernel = kernels.first().unwrap();
 
     // You can load a function from a pre-compiled PTX like so:
     println!("loading...");
-    dev.load_ptx(Ptx::from_file("examples/rust-kernel/target/nvptx64-nvidia-cuda/release/kernel.ptx"), "kernel", &["kernel"])?;
+    dev.load_ptx(kernel.clone(), "kernel", &["kernel"])?;
     println!("loaded!");
 
     // and then retrieve the function with `get_func`
@@ -34,6 +43,8 @@ fn main() -> Result<(), DriverError> {
     println!("b_host {b_host:?}");
     
     println!("a_host_2 {a_host_2:?}");
+
+    println!("cleaned successfully? {:?}", rust_ptx.clean());
     
     Ok(())
 }
