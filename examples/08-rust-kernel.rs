@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
 use cudarc::{
     driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig},
@@ -8,17 +8,13 @@ use cudarc::{
 fn main() -> Result<(), DriverError> {
     let dev = CudaDevice::new(0)?;
 
-    let kernel: PathBuf = "examples/rust-kernel/src/lib.rs".into();
-    let rust_ptx: Result<PtxCrate, _> = kernel.try_into();
-    
-    let mut rust_ptx = rust_ptx.unwrap();
-    
-    rust_ptx.build_ptx().unwrap();
-    
-    let kernels = rust_ptx.ptx_files().unwrap();
+    // use compile_crate_to_ptx to build and rust kernels in pure rust
+    // uses experimental ABI_PTX
+    let kernel_path: PathBuf = "examples/rust-kernel/src/lib.rs".into();
+    let kernels = PtxCrate::compile_crate_to_ptx(&kernel_path).unwrap();
     let kernel = kernels.first().unwrap();
 
-    // You can load a function from a pre-compiled PTX like so:
+    // load the ptx file...
     println!("loading...");
     dev.load_ptx(kernel.clone(), "kernel", &["kernel"])?;
     println!("loaded!");
@@ -39,12 +35,14 @@ fn main() -> Result<(), DriverError> {
     let b_host = dev.sync_reclaim(b_dev.clone())?;
 
     println!("a_host {a_host:?}");
-    
     println!("b_host {b_host:?}");
-    
     println!("a_host_2 {a_host_2:?}");
-
-    println!("cleaned successfully? {:?}", rust_ptx.clean());
     
+    // we can also manage and clean up the build ptx files with a PtxCrate
+    let mut rust_ptx: PtxCrate = kernel_path.try_into().unwrap();
+    rust_ptx.build_ptx().unwrap();
+    let _kernel = rust_ptx.ptx_files().unwrap().first().unwrap();
+    println!("cleaned successfully? {:?}", rust_ptx.clean());
+
     Ok(())
 }

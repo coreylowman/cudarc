@@ -7,6 +7,7 @@ use super::{result, sys};
 use core::ffi::{c_char, CStr};
 use std::ffi::CString;
 use std::fs;
+use std::path::Path;
 use std::{borrow::ToOwned, path::PathBuf, string::String, vec::Vec};
 
 /// An opaque structure representing a compiled PTX program
@@ -276,6 +277,13 @@ pub struct PtxCrate {
     kernels: Option<Vec<Ptx>>,
 }
 
+impl TryInto<Vec<Ptx>> for PtxCrate {
+    type Error = String;
+    fn try_into(self) -> Result<Vec<Ptx>, Self::Error> {
+        self.kernels.ok_or("kernels not built".into())
+    }
+}
+
 impl TryFrom<PathBuf> for PtxCrate {
     type Error = String;
 
@@ -287,6 +295,14 @@ impl TryFrom<PathBuf> for PtxCrate {
 
 use std::process::Command;
 impl PtxCrate {
+    
+    pub fn compile_crate_to_ptx<S: AsRef<Path>>(kernel_path: S) -> Result<Vec<Ptx>, String> {
+        let kernel_path: PathBuf = kernel_path.as_ref().into();
+        let mut rust_ptx: Self = kernel_path.try_into()?;
+        rust_ptx.build_ptx()?;
+        Ok(rust_ptx.ptx_files().unwrap().clone())
+    }
+    
     pub fn ptx_files(&self) -> Option<&Vec<Ptx>> {
         self.kernels.as_ref()
     }
@@ -303,6 +319,7 @@ impl PtxCrate {
                     .output()
                     .map_err(|e| format!("Failed to execute command: {}", e))?;
                 if output.status.success() {
+                    self.kernels = None;
                     Ok(())
                 } else {
                     Err(format!(
