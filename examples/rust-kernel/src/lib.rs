@@ -4,7 +4,7 @@
 
 use core::arch::nvptx::*;   // access to thread id, etc
 
-#[panic_handler]            // CUDA compatibility (required?)
+#[panic_handler]
 fn my_panic(_: &core::panic::PanicInfo) -> ! {
     loop {}
 }
@@ -16,7 +16,8 @@ fn my_panic(_: &core::panic::PanicInfo) -> ! {
 */
 
 #[no_mangle]
-pub unsafe extern "ptx-kernel" fn kernel(array: *mut i32, size: u32) {
+pub unsafe extern "ptx-kernel" fn square_kernel(input: *const f32, output: *mut f32, size: u32) {
+    /* https://doc.rust-lang.org/stable/core/arch/nvptx/index.html */
     let thread_id: i32 = _thread_idx_x();
     let block_id: i32 = _block_idx_x();
     let grid_dim: i32 = _grid_dim_x();
@@ -24,14 +25,13 @@ pub unsafe extern "ptx-kernel" fn kernel(array: *mut i32, size: u32) {
     
     let index = thread_id as usize;
     if index < size as usize {
-        let value: i32 = device(thread_id, block_id, n_threads, grid_dim);
-        *array.offset(index as isize) = value;
+        let value = square_device(*input.offset(index as isize));
+        *output.offset(index as isize) = value;
     }
 }
 
-// an ordinary (no_std?) Rust fn that calculates using only thread info
-pub fn device(thread_id: i32, block_id: i32, n_threads: i32, grid_dim: i32) -> i32 {
+// a no_std fn
+pub fn square_device(num: f32) -> f32 {
     // your device function implementation
-    // use tid, ctaid, ntid, and nctaid to determine what to write to the array
-    thread_id + block_id + n_threads + grid_dim + 100000
+    num * num
 }

@@ -16,20 +16,20 @@ fn main() -> Result<(), DriverError> {
 
     // load the ptx file...
     println!("loading...");
-    dev.load_ptx(kernel.clone(), "kernel", &["kernel"])?;
+    dev.load_ptx(kernel.clone(), "rust_kernel", &["square_kernel"])?;
     println!("loaded!");
 
     // and then retrieve the function with `get_func`
-    let f = dev.get_func("kernel", "kernel").unwrap();
+    let f = dev.get_func("rust_kernel", "square_kernel").unwrap();
 
-    let a_host = [1, 2, 3];
+    let a_host = [1.0f32, 2., 3.];
 
     let a_dev = dev.htod_copy(a_host.into())?;
     let mut b_dev = a_dev.clone();
 
     let n = 3;
     let cfg = LaunchConfig::for_num_elems(n);
-    unsafe { f.launch(cfg, (&mut b_dev, n as i32)) }?;
+    unsafe { f.launch(cfg, (&a_dev, &mut b_dev, n as i32)) }?;
 
     let a_host_2 = dev.sync_reclaim(a_dev.clone())?;
     let b_host = dev.sync_reclaim(b_dev.clone())?;
