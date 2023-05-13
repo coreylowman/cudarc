@@ -227,37 +227,45 @@ impl CompileOptions {
 #[derive(Debug)]
 pub enum PtxCrateKind {
     Cargo{ project_dir: PathBuf },      // rust ptx project dir w/ Cargo.toml & kernel(s) in src/lib.rs
-    Standalone{standalone: PathBuf },    // todo!("standalone rs file compiled with rustc")
+    Standalone{ standalone: PathBuf },  // todo!("standalone rs file compiled with rustc")
 }
 
 impl TryFrom<PathBuf> for PtxCrateKind {
     type Error = String;
 
     fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
+        if !value.exists() {
+            return Err(format!("{value:?} does not exist"))
+        }
+        
         // if value = path/to/files
         if let Some(name) = value
             .file_name()
             .map(|name| name.to_str())
         {
             match name {
-                Some("Cargo.toml") =>   // value = path/to/project/Cargo.toml
+                // value = path/to/project/Cargo.toml
+                Some("Cargo.toml") =>
                     return Ok( Self::Cargo { project_dir: value.parent().unwrap().into() } ),
-                Some("lib.rs") => {     // value = path/to/project/src/lib.rs
+                // value = path/to/project/src/lib.rs
+                Some("lib.rs") => {
                     let src = value.parent().unwrap();
                     if let Some(project_dir) = src.parent() {
                         let manifest = project_dir.join("Cargo.toml");
                         if manifest.exists() {
                             return Ok( Self::Cargo { project_dir: project_dir.into() } )
                         } else {
-                            return Ok(Self::Standalone { standalone: value })
+                            return Ok( Self::Standalone { standalone: value })
                         }
                     } else {
                         return Err(format!("could not find parent of {src:?}"))
                     }
                 },
-                Some(name) =>     // value = path/to/project/unsupported_name
+                // value = path/to/project/unsupported_name
+                Some(name) =>
                     return Err(format!("unsupported file name: {name}")),
-                None =>                 // name.to_str() failed to parse as unicode
+                // name.to_str() failed to parse as unicode
+                None =>
                     return Err(format!("failed to parse {name:?} as valid unicode"))
             }
         }
@@ -384,7 +392,8 @@ impl PtxCrate {
                     ))
                 }       
             },
-            PtxCrateKind::Standalone { standalone: _ } => todo!("standalone rs -> ptx"),
+            PtxCrateKind::Standalone { standalone: _standalone } =>
+                todo!("standalone rs -> ptx"),
         }
     }
 }
