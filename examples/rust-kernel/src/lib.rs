@@ -2,6 +2,8 @@
 #![feature(stdsimd)]        // simd instructions (unstable)
 #![no_std]                  // CUDA compatibility
 
+mod device;
+
 use core::arch::nvptx::*;   // access to thread id, etc
 
 #[panic_handler]
@@ -25,13 +27,7 @@ pub unsafe extern "ptx-kernel" fn square_kernel(input: *const f32, output: *mut 
     
     let index = thread_id as usize;
     if index < size as usize {
-        let value = square_device(*input.offset(index as isize));
+        let value = device::square(*input.offset(index as isize));
         *output.offset(index as isize) = value;
     }
-}
-
-// a no_std fn
-pub fn square_device(num: f32) -> f32 {
-    // your device function implementation
-    num * num
 }
