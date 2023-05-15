@@ -9,6 +9,7 @@ use std::ffi::CString;
 use std::fs;
 use std::path::Path;
 use std::{borrow::ToOwned, path::PathBuf, string::String, vec::Vec};
+use std::process::Command;
 
 /// An opaque structure representing a compiled PTX program
 /// output from [compile_ptx()] or [compile_ptx_with_opts()].
@@ -225,9 +226,9 @@ impl CompileOptions {
 }
 
 #[derive(Debug)]
-pub enum PtxCrateKind {
+enum PtxCrateKind {
     Cargo{ project_dir: PathBuf },      // rust ptx project dir w/ Cargo.toml & kernel(s) in src/lib.rs
-    Standalone{ standalone: PathBuf },  // todo!("standalone rs file compiled with rustc")
+    _Standalone{ standalone: PathBuf },  // todo!("standalone rs file compiled with rustc")
 }
 
 impl TryFrom<PathBuf> for PtxCrateKind {
@@ -255,7 +256,8 @@ impl TryFrom<PathBuf> for PtxCrateKind {
                         if manifest.exists() {
                             return Ok( Self::Cargo { project_dir: project_dir.into() } )
                         } else {
-                            return Ok( Self::Standalone { standalone: value })
+                            return Err("standalone RS to PTX not supported".to_string())
+                            // return Ok( Self::Standalone { standalone: value })
                         }
                     } else {
                         return Err(format!("could not find parent of {src:?}"))
@@ -301,9 +303,50 @@ impl TryFrom<PathBuf> for PtxCrate {
     }
 }
 
-use std::process::Command;
+/// `PtxCrate` provides methods to compile a Rust crate to CUDA PTX code,
+/// as well as to extract and manipulate the resulting PTX kernels.
+/// It requires a path to the Rust crate containing the kernel to be compiled.
+///
+/// # Examples
+///
+/// ```
+/// use std::convert::TryInto;
+/// use ptx_builder::{PtxCrate, Ptx};
+/// use std::path::PathBuf;
+///
+/// let kernel_path: PathBuf = "examples/rust-kernel/src/lib.rs".into();
+/// let mut rust_ptx: PtxCrate = kernel_path.try_into().unwrap();
+/// rust_ptx.build_ptx().unwrap();
+/// let _kernel: &Ptx = rust_ptx.peek_kernels().unwrap().first().unwrap();
+/// println!("Cleaned successfully? {:?}", rust_ptx.clean());
+/// ```
 impl PtxCrate {
     
+    /// Compiles a Rust crate at the specified path into PTX code and returns a vector of `Ptx` objects.
+    ///
+    /// # Arguments
+    ///
+    /// * `kernel_path` - The path to the Rust crate to be compiled.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` object containing either a vector of `Ptx` objects representing the compiled kernels
+    /// from the Rust crate, or an error message as a `String` if the compilation process failed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ptx_builder::{PtxCrate, Ptx};
+    /// use std::path::PathBuf;
+    ///
+    /// /* alternatively, 
+    ///     let kernel_path: PathBuf = "examples/rust-kernel/".into();
+    ///     let kernel_path: PathBuf = "examples/rust-kernel/Cargo.toml".into();
+    /// */
+    /// let kernel_path: PathBuf = "examples/rust-kernel/src/lib.rs".into();
+    /// let kernels: Vec<Ptx> = PtxCrate::compile_crate_to_ptx(&kernel_path).unwrap();
+    /// let kernel = kernels.first().unwrap();
+    /// ```
     pub fn compile_crate_to_ptx<S: AsRef<Path>>(kernel_path: S) -> Result<Vec<Ptx>, String> {
         let kernel_path: PathBuf = kernel_path.as_ref().into();
         let mut rust_ptx: Self = kernel_path.try_into()?;
@@ -311,19 +354,39 @@ impl PtxCrate {
         Ok(rust_ptx.take_kernels().unwrap())
     }
 
+    /// Takes ownership of the PTX kernels stored in this `PtxCrate`.
+    ///
+    /// # Returns
+    ///
+    /// An `Option` containing a reference to a vector of `Ptx` objects if the `PtxCrate` contains
+    /// any PTX kernels. If the `PtxCrate` has not been built or has been cleaned, `None` is returned.
     pub fn take_kernels(self) -> Option<Vec<Ptx>> {
         self.kernels
     }
     
-    pub fn ptx_files(&self) -> Option<&Vec<Ptx>> {
+    /// Returns a reference to the PTX kernels stored in this `PtxCrate`.
+    ///
+    /// # Returns
+    ///
+    /// An `Option` containing a reference to a vector of `Ptx` objects if the `PtxCrate` contains
+    /// any PTX kernels. If the `PtxCrate` has not been built or has been cleaned, `None` is returned.
+    pub fn peek_kernels(&self) -> Option<&Vec<Ptx>> {
         self.kernels.as_ref()
     }
 
+    /// Removes any compiled PTX kernels from this `PtxCrate`.
+    ///
+    /// # Returns
+    ///
+    /// An `Ok(())` value if the operation succeeds.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if there is a problem cleaning the `PtxCrate`.
     pub fn clean(&mut self) -> Result<(), String> {
         match &self.project {
             PtxCrateKind::Cargo { project_dir } => {
                 let manifest_path = project_dir.join("Cargo.toml");
-
                 let output = Command::new("cargo")
                     .arg("clean")
                     .arg("--manifest-path")
@@ -340,11 +403,26 @@ impl PtxCrate {
                     ))
                 }
             },
-            PtxCrateKind::Standalone { standalone: _standalone } => todo!("rm -rf target/ ?"),
+            PtxCrateKind::_Standalone { standalone: _standalone } => 
+                Err("standalone RS to PTX not supported".to_string()), //todo!("rm -rf target/ ?"),
         }
     }
     
-    pub fn build_ptx(&mut self) -> Result<(), String> {
+    /// Builds the PTX code for the currently set kernels.
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - A mutable reference to the `PtxCrate` instance.
+    ///
+    /// # Returns
+    ///
+    /// Returns a reference to a vector of `Ptx` instances containing the compiled PTX code
+    /// for the kernels if the build is successful, otherwise an error message as a `String`.
+    ///
+    /// # Errors
+    ///
+    /// This method will return an error if the build process fails.
+    pub fn build_ptx(&mut self) -> Result<&Vec<Ptx>, String> {
         match &self.project {
             PtxCrateKind::Cargo { project_dir } => {
                 let manifest_path = project_dir.join("Cargo.toml");
@@ -379,7 +457,7 @@ impl PtxCrate {
                         })
                         .collect();
                         self.kernels = Some(ptx_files);
-                        Ok(())
+                        Ok(self.peek_kernels().unwrap())
                     } else {
                         Err(format!(
                             "Could not find {ptx_path:?}"
@@ -392,7 +470,7 @@ impl PtxCrate {
                     ))
                 }       
             },
-            PtxCrateKind::Standalone { standalone: _standalone } =>
+            PtxCrateKind::_Standalone { standalone: _standalone } =>
                 todo!("standalone rs -> ptx"),
         }
     }

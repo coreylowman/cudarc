@@ -67,7 +67,7 @@ fn main() -> Result<(), DriverError> {
     // we can also manage and clean up the build ptx files with a PtxCrate
     let mut rust_ptx: PtxCrate = kernel_path.try_into().unwrap();
     rust_ptx.build_ptx().unwrap();
-    let _kernel = rust_ptx.ptx_files().unwrap().first().unwrap();
+    let _kernel: &Ptx = rust_ptx.peek_kernels().unwrap().first().unwrap();
     println!("cleaned successfully? {:?}", rust_ptx.clean());
 
     Ok(())
