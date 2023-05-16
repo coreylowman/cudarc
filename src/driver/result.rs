@@ -136,6 +136,9 @@ pub mod occupancy {
     /// Returns dynamic shared memory available per block when launching numBlocks blocks on SM.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1gae02af6a9df9e1bbd51941af631bce69)
+    ///
+    /// # Safety
+    /// Function must exist.
     pub unsafe fn available_dynamic_shared_mem_per_block(
         f: sys::CUfunction,
         num_blocks: c_int,
@@ -157,6 +160,9 @@ pub mod occupancy {
     /// Returns occupancy of a function.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1gcc6e1094d05cba2cee17fe33ddd04a98)
+    ///
+    /// # Safety
+    /// Function must exist.
     pub unsafe fn max_active_block_per_multiprocessor(
         f: sys::CUfunction,
         block_size: c_int,
@@ -178,6 +184,9 @@ pub mod occupancy {
     /// Returns occupancy of a function.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1g8f1da4d4983e5c3025447665423ae2c2)
+    ///
+    /// # Safety
+    /// Function must exist. No invalid flags.
     pub unsafe fn max_active_block_per_multiprocessor_with_flags(
         f: sys::CUfunction,
         block_size: c_int,
@@ -203,6 +212,9 @@ pub mod occupancy {
     /// Returns (min_grid_size, block_size)
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1gf179c4ab78962a8468e41c3f57851f03)
+    ///
+    /// # Safety
+    /// Function must exist and the shared memory function must be correct.  No invalid flags.
     pub unsafe fn max_potential_block_size(
         f: sys::CUfunction,
         block_size_to_dynamic_smem_size: sys::CUoccupancyB2DSize,
@@ -230,6 +242,9 @@ pub mod occupancy {
     /// Returns (min_grid_size, block_size)
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1g04c0bb65630f82d9b99a5ca0203ee5aa)
+    ///
+    /// # Safety
+    /// Function must exist and the shared memory function must be correct.  No invalid flags.
     pub unsafe fn max_potential_block_size_with_flags(
         f: sys::CUfunction,
         block_size_to_dynamic_smem_size: sys::CUoccupancyB2DSize,
