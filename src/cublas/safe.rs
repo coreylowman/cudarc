@@ -199,21 +199,28 @@ impl Gemm<half::f16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        result::hgemm(
+        let alpha: f32 = cfg.alpha.to_f32();
+        let beta: f32 = cfg.beta.to_f32();
+        result::gemm_ex(
             self.handle,
             cfg.transa,
             cfg.transb,
             cfg.m,
             cfg.n,
             cfg.k,
-            (&cfg.alpha) as *const _,
+            (&alpha) as *const f32 as *const _,
             *a.device_ptr() as *const _,
+            sys::cudaDataType_t::CUDA_R_16F,
             cfg.lda,
             *b.device_ptr() as *const _,
+            sys::cudaDataType_t::CUDA_R_16F,
             cfg.ldb,
-            (&cfg.beta) as *const _,
+            (&beta) as *const f32 as *const _,
             *c.device_ptr_mut() as *mut _,
+            sys::cudaDataType_t::CUDA_R_16F,
             cfg.ldc,
+            sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
+            sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
         )
     }
     unsafe fn gemm_strided_batched<
@@ -227,25 +234,32 @@ impl Gemm<half::f16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        result::hgemm_strided_batched(
+        let alpha: f32 = cfg.gemm.alpha.to_f32();
+        let beta: f32 = cfg.gemm.beta.to_f32();
+        result::gemm_strided_batched_ex(
             self.handle,
             cfg.gemm.transa,
             cfg.gemm.transb,
             cfg.gemm.m,
             cfg.gemm.n,
             cfg.gemm.k,
-            (&cfg.gemm.alpha) as *const _,
+            (&alpha) as *const f32 as *const _,
             *a.device_ptr() as *const _,
+            sys::cudaDataType_t::CUDA_R_16F,
             cfg.gemm.lda,
             cfg.stride_a,
             *b.device_ptr() as *const _,
+            sys::cudaDataType_t::CUDA_R_16F,
             cfg.gemm.ldb,
             cfg.stride_b,
-            (&cfg.gemm.beta) as *const _,
+            (&beta) as *const f32 as *const _,
             *c.device_ptr_mut() as *mut _,
+            sys::cudaDataType_t::CUDA_R_16F,
             cfg.gemm.ldc,
             cfg.stride_c,
             cfg.batch_size,
+            sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
+            sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
         )
     }
 }
