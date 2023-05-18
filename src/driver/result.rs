@@ -568,3 +568,80 @@ pub unsafe fn launch_kernel(
     )
     .result()
 }
+
+pub mod external_memory {
+    use std::mem::MaybeUninit;
+
+    use super::{sys, DriverError};
+
+    #[cfg(unix)]
+    pub unsafe fn import_external_memory_opaque_fd(
+        fd: std::os::fd::RawFd,
+        size: u64,
+    ) -> Result<sys::CUexternalMemory, DriverError> {
+        let mut external_memory = MaybeUninit::uninit();
+        let handle_description = sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC {
+            type_: sys::CUexternalMemoryHandleType::CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD,
+            handle: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 { fd },
+            size,
+            ..Default::default()
+        };
+        unsafe { sys::cuImportExternalMemory(external_memory.as_mut_ptr(), &handle_description) }
+            .result()?;
+        Ok(external_memory.assume_init())
+    }
+
+    #[cfg(windows)]
+    pub unsafe fn import_external_memory_opaque_win32(
+        handle: std::os::windows::io::RawHandle,
+        size: u64,
+    ) -> Result<sys::CUexternalMemory, DriverError> {
+        let mut external_memory = MaybeUninit::uninit();
+        let handle_description = sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC {
+            type_: sys::CUexternalMemoryHandleType::CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32,
+            handle: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 {
+                win32: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
+                    handle,
+                    name: std::ptr::null(),
+                },
+            },
+            size,
+            ..Default::default()
+        };
+        unsafe { sys::cuImportExternalMemory(external_memory.as_mut_ptr(), &handle_description) }
+            .result()?;
+        Ok(external_memory.assume_init())
+    }
+
+    pub unsafe fn destroy_external_memory(
+        external_memory: sys::CUexternalMemory,
+    ) -> Result<(), DriverError> {
+        unsafe { sys::cuDestroyExternalMemory(external_memory) }.result()
+    }
+
+    pub unsafe fn get_mapped_buffer(
+        external_memory: sys::CUexternalMemory,
+        offset: u64,
+        size: u64,
+    ) -> Result<sys::CUdeviceptr, DriverError> {
+        let mut device_ptr = MaybeUninit::uninit();
+        let buffer_description = sys::CUDA_EXTERNAL_MEMORY_BUFFER_DESC {
+            offset,
+            size,
+            ..Default::default()
+        };
+        unsafe {
+            sys::cuExternalMemoryGetMappedBuffer(
+                device_ptr.as_mut_ptr(),
+                external_memory,
+                &buffer_description,
+            )
+        }
+        .result()?;
+        Ok(device_ptr.assume_init())
+    }
+
+    pub unsafe fn memory_free(device_ptr: sys::CUdeviceptr) -> Result<(), DriverError> {
+        unsafe { sys::cuMemFree_v2(device_ptr) }.result()
+    }
+}
