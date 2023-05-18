@@ -1,4 +1,4 @@
-use core::marker::PhantomData;
+use core::{marker::PhantomData, mem::ManuallyDrop};
 use std::fs::File;
 use std::ops::Range;
 use std::sync::Arc;
@@ -31,7 +31,7 @@ impl CudaDevice {
             external_memory,
             size,
             _device: self.clone(),
-            _file: file,
+            _file: ManuallyDrop::new(file),
         })
     }
 }
@@ -40,7 +40,7 @@ pub struct ExternalMemory {
     external_memory: sys::CUexternalMemory,
     size: u64,
     _device: Arc<CudaDevice>,
-    _file: std::fs::File,
+    _file: ManuallyDrop<File>,
 }
 
 impl Drop for ExternalMemory {
@@ -49,8 +49,10 @@ impl Drop for ExternalMemory {
         // From CUDA docs, when successfully importing UNIX file descriptor:
         // Ownership of the file descriptor is transferred to the CUDA driver when the handle is imported successfully.
         // Performing any operations on the file descriptor after it is imported results in undefined behavior.
-        #[cfg(unix)]
-        core::mem::forget(self._file);
+        #[cfg(not(unix))]
+        unsafe {
+            ManuallyDrop::<File>::drop(&mut self._file)
+        };
     }
 }
 
