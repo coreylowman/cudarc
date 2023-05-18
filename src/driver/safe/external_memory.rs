@@ -7,6 +7,10 @@ use super::{CudaDevice, DevicePtr, DeviceSlice};
 use crate::driver::{result, sys, DriverError};
 
 impl CudaDevice {
+    /// Import external memory from a [`File`].
+    ///
+    /// # Safety
+    /// `size` must be the size of the external memory.
     #[cfg(any(unix, windows))]
     pub unsafe fn import_external_memory(
         self: &Arc<Self>,
@@ -51,11 +55,21 @@ impl Drop for ExternalMemory {
 }
 
 impl ExternalMemory {
-    pub fn map_all(&self) -> Result<MappedBuffer<'_>, DriverError> {
+    /// Map the whole external memory to get mapped buffer.
+    pub fn map_all(&mut self) -> Result<MappedBuffer<'_>, DriverError> {
         self.map_range(0..self.size as usize)
     }
 
-    pub fn map_range(&self, range: Range<usize>) -> Result<MappedBuffer<'_>, DriverError> {
+    /// Map a range of the external memory to a mapped buffer.
+    ///
+    /// Only one mapped buffer is allowed at a time.
+    /// This is more restrictive than it necessarily needs to be,
+    /// but it makes enforcing safety easier.
+    ///
+    /// # Panics
+    /// This function will panic if the range is invalid,
+    /// such as when the start or end is larger than the size.
+    pub fn map_range(&mut self, range: Range<usize>) -> Result<MappedBuffer<'_>, DriverError> {
         assert!(range.start as u64 <= self.size);
         assert!(range.end as u64 <= self.size);
         let device_ptr = unsafe {
@@ -76,7 +90,7 @@ impl ExternalMemory {
 pub struct MappedBuffer<'a> {
     device_ptr: sys::CUdeviceptr,
     len: usize,
-    _marker: PhantomData<&'a ExternalMemory>,
+    _marker: PhantomData<&'a mut ExternalMemory>,
 }
 
 impl Drop for MappedBuffer<'_> {
