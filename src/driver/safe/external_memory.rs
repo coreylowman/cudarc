@@ -36,6 +36,11 @@ impl CudaDevice {
     }
 }
 
+/// An abstraction for imported external memory.
+///
+/// This struct can be created via [`CudaDevice::import_external_memory`].
+/// The imported external memory will be destroyed when this struct is dropped.
+#[derive(Debug)]
 pub struct ExternalMemory {
     external_memory: sys::CUexternalMemory,
     size: u64,
@@ -89,6 +94,11 @@ impl ExternalMemory {
     }
 }
 
+/// An abstraction for a mapped buffer for some external memory.
+///
+/// This struct can be created via [`ExternalMemory::map_range`] or [`ExternalMemory::map_all`].
+/// The underlying mapped buffer will be freed when this struct is dropped.
+#[derive(Debug)]
 pub struct MappedBuffer<'a> {
     device_ptr: sys::CUdeviceptr,
     len: usize,
