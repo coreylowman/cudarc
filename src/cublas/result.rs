@@ -320,6 +320,7 @@ pub unsafe fn dgemm_strided_batched(
 /// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
 /// - `alpha` and `beta` can be pointers to host memory, but must be not null
 /// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn gemm_ex(
     handle: sys::cublasHandle_t,
     transa: sys::cublasOperation_t,
