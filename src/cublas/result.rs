@@ -1,5 +1,5 @@
 use super::sys;
-use core::ffi::{c_int, c_longlong};
+use core::ffi::{c_int, c_longlong, c_void};
 use core::mem::MaybeUninit;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -308,6 +308,122 @@ pub unsafe fn dgemm_strided_batched(
     sys::cublasDgemmStridedBatched(
         handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
         stride_c, batch_size,
+    )
+    .result()
+}
+
+/// Matmul with data types specified as parameters. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasgemmex)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn gemm_ex(
+    handle: sys::cublasHandle_t,
+    transa: sys::cublasOperation_t,
+    transb: sys::cublasOperation_t,
+    m: c_int,
+    n: c_int,
+    k: c_int,
+    alpha: *const c_void,
+    a: *const c_void,
+    a_type: sys::cudaDataType,
+    lda: c_int,
+    b: *const c_void,
+    b_type: sys::cudaDataType,
+    ldb: c_int,
+    beta: *const c_void,
+    c: *mut c_void,
+    c_type: sys::cudaDataType,
+    ldc: c_int,
+    compute_type: sys::cublasComputeType_t,
+    algo: sys::cublasGemmAlgo_t,
+) -> Result<(), CublasError> {
+    sys::cublasGemmEx(
+        handle,
+        transa,
+        transb,
+        m,
+        n,
+        k,
+        alpha,
+        a,
+        a_type,
+        lda,
+        b,
+        b_type,
+        ldb,
+        beta,
+        c,
+        c_type,
+        ldc,
+        compute_type,
+        algo,
+    )
+    .result()
+}
+
+/// Strided batched matmul with data types specified as parameters. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasgemmstridedbatchedex)
+///
+/// # Safety
+///
+/// - `a`, `b`, and `c` must be valid device pointers that have not been freed.
+/// - `alpha` and `beta` can be pointers to host memory, but must be not null
+/// - the strides and sizes must be sized correctly
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn gemm_strided_batched_ex(
+    handle: sys::cublasHandle_t,
+    transa: sys::cublasOperation_t,
+    transb: sys::cublasOperation_t,
+    m: c_int,
+    n: c_int,
+    k: c_int,
+    alpha: *const c_void,
+    a: *const c_void,
+    a_type: sys::cudaDataType,
+    lda: c_int,
+    stride_a: c_longlong,
+    b: *const c_void,
+    b_type: sys::cudaDataType,
+    ldb: c_int,
+    stride_b: c_longlong,
+    beta: *const c_void,
+    c: *mut c_void,
+    c_type: sys::cudaDataType,
+    ldc: c_int,
+    stride_c: c_longlong,
+    batch_count: c_int,
+    compute_type: sys::cublasComputeType_t,
+    algo: sys::cublasGemmAlgo_t,
+) -> Result<(), CublasError> {
+    sys::cublasGemmStridedBatchedEx(
+        handle,
+        transa,
+        transb,
+        m,
+        n,
+        k,
+        alpha,
+        a,
+        a_type,
+        lda,
+        stride_a,
+        b,
+        b_type,
+        ldb,
+        stride_b,
+        beta,
+        c,
+        c_type,
+        ldc,
+        stride_c,
+        batch_count,
+        compute_type,
+        algo,
     )
     .result()
 }
