@@ -10,7 +10,7 @@ impl CudaDevice {
     /// Import external memory from a [`File`].
     ///
     /// # Safety
-    /// `size` must be the size of the external memory.
+    /// `size` must be the size of the external memory in bytes.
     #[cfg(any(unix, windows))]
     pub unsafe fn import_external_memory(
         self: &Arc<Self>,
@@ -51,10 +51,20 @@ pub struct ExternalMemory {
 impl Drop for ExternalMemory {
     fn drop(&mut self) {
         unsafe { result::external_memory::destroy_external_memory(self.external_memory) }.unwrap();
-        // From CUDA docs, when successfully importing UNIX file descriptor:
-        // Ownership of the file descriptor is transferred to the CUDA driver when the handle is imported successfully.
-        // Performing any operations on the file descriptor after it is imported results in undefined behavior.
-        #[cfg(not(unix))]
+
+        // From [CUDA docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735),
+        // when successfully importing UNIX file descriptor:
+        //
+        // > Ownership of the file descriptor is transferred to the CUDA driver when the handle is imported successfully.
+        // > Performing any operations on the file descriptor after it is imported results in undefined behavior.
+        //
+        // On the other hand, on Windows:
+        //
+        // > Ownership of this handle is not transferred to CUDA after the import operation,
+        // > so the application must release the handle using the appropriate system call.
+        //
+        // Therefore, we manually drop the file when we are on Windows.
+        #[cfg(windows)]
         unsafe {
             ManuallyDrop::<File>::drop(&mut self._file)
         };

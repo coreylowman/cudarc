@@ -587,6 +587,8 @@ pub mod external_memory {
 
     /// Imports an external memory object, in this case an OpaqueFd.
     ///
+    /// The memory should be destroyed using [`destroy_external_memory`].
+    ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735)
     ///
     /// # Safety
@@ -608,6 +610,8 @@ pub mod external_memory {
     }
 
     /// Imports an external memory object, in this case an OpaqueWin32 handle.
+    ///
+    /// The memory should be destroyed using [`destroy_external_memory`].
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735)
     ///
@@ -639,8 +643,8 @@ pub mod external_memory {
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g1b586dda86565617e7e0883b956c7052)
     ///
     /// # Safety
-    /// - Any mapped buffers onto this object must already be freed.
-    /// - The external memory must only be destroyed once.
+    /// 1. Any mapped buffers onto this object must already be freed.
+    /// 2. The external memory must only be destroyed once.
     pub unsafe fn destroy_external_memory(
         external_memory: sys::CUexternalMemory,
     ) -> Result<(), DriverError> {
@@ -648,6 +652,8 @@ pub mod external_memory {
     }
 
     /// Maps a buffer onto an imported memory object.
+    ///
+    /// The buffer must be freed using [`memory_free`].
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1gb9fec33920400c70961b4e33d838da91)
     ///
