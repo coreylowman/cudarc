@@ -653,7 +653,7 @@ pub mod external_memory {
 
     /// Maps a buffer onto an imported memory object.
     ///
-    /// The buffer must be freed using [`memory_free`].
+    /// The buffer must be freed using [`memory_free`](super::memory_free).
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1gb9fec33920400c70961b4e33d838da91)
     ///
