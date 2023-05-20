@@ -107,7 +107,7 @@ pub struct MappedBuffer<'a> {
 
 impl Drop for MappedBuffer<'_> {
     fn drop(&mut self) {
-        unsafe { result::external_memory::memory_free(self.device_ptr) }.unwrap()
+        unsafe { result::memory_free(self.device_ptr) }.unwrap()
     }
 }
 

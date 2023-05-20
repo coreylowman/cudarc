@@ -315,6 +315,17 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
     sys::cuMemFreeAsync(dptr, stream).result()
 }
 
+/// Frees device memory.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g89b3f154e17cc89b6eea277dbdf5c93a)
+///
+/// # Safety
+/// 1. Memory must only be freed once.
+/// 2. All async accesses to this pointer must have been completed.
+pub unsafe fn memory_free(device_ptr: sys::CUdeviceptr) -> Result<(), DriverError> {
+    sys::cuMemFree_v2(device_ptr).result()
+}
+
 /// Sets device memory with stream ordered semantics.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gaef08a7ccd61112f94e82f2b30d43627)
@@ -660,16 +671,5 @@ pub mod external_memory {
         )
         .result()?;
         Ok(device_ptr.assume_init())
-    }
-
-    /// Frees device memory.
-    ///
-    /// see [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g89b3f154e17cc89b6eea277dbdf5c93a)
-    ///
-    /// # Safety
-    /// - Memory must only be freed once.
-    /// - All async accesses to this pointer must have been completed.
-    pub unsafe fn memory_free(device_ptr: sys::CUdeviceptr) -> Result<(), DriverError> {
-        sys::cuMemFree_v2(device_ptr).result()
     }
 }
