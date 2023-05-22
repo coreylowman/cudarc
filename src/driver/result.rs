@@ -315,6 +315,17 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
     sys::cuMemFreeAsync(dptr, stream).result()
 }
 
+/// Frees device memory.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g89b3f154e17cc89b6eea277dbdf5c93a)
+///
+/// # Safety
+/// 1. Memory must only be freed once.
+/// 2. All async accesses to this pointer must have been completed.
+pub unsafe fn memory_free(device_ptr: sys::CUdeviceptr) -> Result<(), DriverError> {
+    sys::cuMemFree_v2(device_ptr).result()
+}
+
 /// Sets device memory with stream ordered semantics.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gaef08a7ccd61112f94e82f2b30d43627)
@@ -567,4 +578,104 @@ pub unsafe fn launch_kernel(
         std::ptr::null_mut(),
     )
     .result()
+}
+
+pub mod external_memory {
+    use std::mem::MaybeUninit;
+
+    use super::{sys, DriverError};
+
+    /// Imports an external memory object, in this case an OpaqueFd.
+    ///
+    /// The memory should be destroyed using [`destroy_external_memory`].
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735)
+    ///
+    /// # Safety
+    /// `size` must be the size of the size of the memory object in bytes.
+    #[cfg(unix)]
+    pub unsafe fn import_external_memory_opaque_fd(
+        fd: std::os::fd::RawFd,
+        size: u64,
+    ) -> Result<sys::CUexternalMemory, DriverError> {
+        let mut external_memory = MaybeUninit::uninit();
+        let handle_description = sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC {
+            type_: sys::CUexternalMemoryHandleType::CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD,
+            handle: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 { fd },
+            size,
+            ..Default::default()
+        };
+        sys::cuImportExternalMemory(external_memory.as_mut_ptr(), &handle_description).result()?;
+        Ok(external_memory.assume_init())
+    }
+
+    /// Imports an external memory object, in this case an OpaqueWin32 handle.
+    ///
+    /// The memory should be destroyed using [`destroy_external_memory`].
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735)
+    ///
+    /// # Safety
+    /// `size` must be the size of the size of the memory object in bytes.
+    #[cfg(windows)]
+    pub unsafe fn import_external_memory_opaque_win32(
+        handle: std::os::windows::io::RawHandle,
+        size: u64,
+    ) -> Result<sys::CUexternalMemory, DriverError> {
+        let mut external_memory = MaybeUninit::uninit();
+        let handle_description = sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC {
+            type_: sys::CUexternalMemoryHandleType::CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32,
+            handle: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 {
+                win32: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1__bindgen_ty_1 {
+                    handle,
+                    name: std::ptr::null(),
+                },
+            },
+            size,
+            ..Default::default()
+        };
+        sys::cuImportExternalMemory(external_memory.as_mut_ptr(), &handle_description).result()?;
+        Ok(external_memory.assume_init())
+    }
+
+    /// Destroys an external memory object.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g1b586dda86565617e7e0883b956c7052)
+    ///
+    /// # Safety
+    /// 1. Any mapped buffers onto this object must already be freed.
+    /// 2. The external memory must only be destroyed once.
+    pub unsafe fn destroy_external_memory(
+        external_memory: sys::CUexternalMemory,
+    ) -> Result<(), DriverError> {
+        sys::cuDestroyExternalMemory(external_memory).result()
+    }
+
+    /// Maps a buffer onto an imported memory object.
+    ///
+    /// The buffer must be freed using [`memory_free`](super::memory_free).
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1gb9fec33920400c70961b4e33d838da91)
+    ///
+    /// # Safety
+    /// Mapped buffers may overlap.
+    pub unsafe fn get_mapped_buffer(
+        external_memory: sys::CUexternalMemory,
+        offset: u64,
+        size: u64,
+    ) -> Result<sys::CUdeviceptr, DriverError> {
+        let mut device_ptr = MaybeUninit::uninit();
+        let buffer_description = sys::CUDA_EXTERNAL_MEMORY_BUFFER_DESC {
+            offset,
+            size,
+            ..Default::default()
+        };
+        sys::cuExternalMemoryGetMappedBuffer(
+            device_ptr.as_mut_ptr(),
+            external_memory,
+            &buffer_description,
+        )
+        .result()?;
+        Ok(device_ptr.assume_init())
+    }
 }
