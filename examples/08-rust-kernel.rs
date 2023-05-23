@@ -2,7 +2,7 @@ use std::{path::PathBuf, array};
 
 use cudarc::{
     driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig},
-    nvrtc::{Ptx, PtxCrate},
+    nvrtc::{Ptx, PtxCrate, compile_crate_to_ptx},
 };
 
 use std::time::Instant;
@@ -13,7 +13,7 @@ fn main() -> Result<(), DriverError> {
     // use compile_crate_to_ptx to build kernels in pure Rust
     // uses experimental ABI_PTX
     let kernel_path: PathBuf = "examples/rust-kernel/src/lib.rs".into();
-    let kernels: Vec<Ptx> = PtxCrate::compile_crate_to_ptx(&kernel_path).unwrap();
+    let kernels: Vec<Ptx> = compile_crate_to_ptx(&kernel_path).unwrap();
     let kernel = kernels.first().unwrap();
 
     // load the ptx file...

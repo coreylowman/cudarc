@@ -225,83 +225,39 @@ impl CompileOptions {
     }
 }
 
-#[derive(Debug)]
-enum PtxCrateKind {
-    Cargo{ project_dir: PathBuf },      // rust ptx project dir w/ Cargo.toml & kernel(s) in src/lib.rs
-    _Standalone{ standalone: PathBuf },  // todo!("standalone rs file compiled with rustc")
+    
+/// Compiles a Rust crate at the specified path into PTX code and returns a vector of `Ptx` objects.
+///
+/// # Arguments
+///
+/// * `kernel_path` - The path to the Rust crate to be compiled.
+///
+/// # Returns
+///
+/// A `Result` object containing either a vector of `Ptx` objects representing the compiled kernels
+/// from the Rust crate, or an error message as a `String` if the compilation process failed.
+///
+/// # Examples
+///
+/// ```
+/// use ptx_builder::{PtxCrate, Ptx};
+/// use std::path::PathBuf;
+///
+/// /* alternatively, 
+///     let kernel_path: PathBuf = "examples/rust-kernel/".into();
+///     let kernel_path: PathBuf = "examples/rust-kernel/Cargo.toml".into();
+/// */
+/// let kernel_path: PathBuf = "examples/rust-kernel/src/lib.rs".into();
+/// let kernels: Vec<Ptx> = PtxCrate::compile_crate_to_ptx(&kernel_path).unwrap();
+/// let kernel = kernels.first().unwrap();
+/// ```
+pub fn compile_crate_to_ptx<S: AsRef<Path>>(kernel_path: S) -> Result<Vec<Ptx>, String> {
+    let kernel_path: PathBuf = kernel_path.as_ref().into();
+    let mut rust_ptx: PtxCrate = kernel_path.try_into()?;
+    rust_ptx.build_ptx()?;
+    Ok(rust_ptx.take_kernels().unwrap())
 }
 
-impl TryFrom<PathBuf> for PtxCrateKind {
-    type Error = String;
-
-    fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
-        if !value.exists() {
-            return Err(format!("{value:?} does not exist"))
-        }
-        
-        // if value = path/to/files
-        if let Some(name) = value
-            .file_name()
-            .map(|name| name.to_str())
-        {
-            match name {
-                // value = path/to/project/Cargo.toml
-                Some("Cargo.toml") =>
-                    return Ok( Self::Cargo { project_dir: value.parent().unwrap().into() } ),
-                // value = path/to/project/src/lib.rs
-                Some("lib.rs") => {
-                    let src = value.parent().unwrap();
-                    if let Some(project_dir) = src.parent() {
-                        let manifest = project_dir.join("Cargo.toml");
-                        if manifest.exists() {
-                            return Ok( Self::Cargo { project_dir: project_dir.into() } )
-                        } else {
-                            return Err("standalone RS to PTX not supported".to_string())
-                            // return Ok( Self::Standalone { standalone: value })
-                        }
-                    } else {
-                        return Err(format!("could not find parent of {src:?}"))
-                    }
-                },
-                // value = path/to/project/unsupported_name
-                Some(name) =>
-                    return Err(format!("unsupported file name: {name}")),
-                // name.to_str() failed to parse as unicode
-                None =>
-                    return Err(format!("failed to parse {name:?} as valid unicode"))
-            }
-        }
-
-        // if value = path/to/project/ containing Cargo.toml
-        if value.join("Cargo.toml").exists() {
-            Ok( Self::Cargo { project_dir: value } )
-        } else {
-            Err(format!("{value:?}/Cargo.toml missing"))
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct PtxCrate {
-    project: PtxCrateKind,
-    kernels: Option<Vec<Ptx>>,
-}
-
-impl TryInto<Vec<Ptx>> for PtxCrate {
-    type Error = String;
-    fn try_into(self) -> Result<Vec<Ptx>, Self::Error> {
-        self.kernels.ok_or("kernels not built".into())
-    }
-}
-
-impl TryFrom<PathBuf> for PtxCrate {
-    type Error = String;
-
-    fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
-        let project = value.try_into()?;
-        Ok(PtxCrate { project, kernels: None })
-    }
-}
 
 /// `PtxCrate` provides methods to compile a Rust crate to CUDA PTX code,
 /// as well as to extract and manipulate the resulting PTX kernels.
@@ -320,40 +276,69 @@ impl TryFrom<PathBuf> for PtxCrate {
 /// let _kernel: &Ptx = rust_ptx.peek_kernels().unwrap().first().unwrap();
 /// println!("Cleaned successfully? {:?}", rust_ptx.clean());
 /// ```
-impl PtxCrate {
-    
-    /// Compiles a Rust crate at the specified path into PTX code and returns a vector of `Ptx` objects.
-    ///
-    /// # Arguments
-    ///
-    /// * `kernel_path` - The path to the Rust crate to be compiled.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` object containing either a vector of `Ptx` objects representing the compiled kernels
-    /// from the Rust crate, or an error message as a `String` if the compilation process failed.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ptx_builder::{PtxCrate, Ptx};
-    /// use std::path::PathBuf;
-    ///
-    /// /* alternatively, 
-    ///     let kernel_path: PathBuf = "examples/rust-kernel/".into();
-    ///     let kernel_path: PathBuf = "examples/rust-kernel/Cargo.toml".into();
-    /// */
-    /// let kernel_path: PathBuf = "examples/rust-kernel/src/lib.rs".into();
-    /// let kernels: Vec<Ptx> = PtxCrate::compile_crate_to_ptx(&kernel_path).unwrap();
-    /// let kernel = kernels.first().unwrap();
-    /// ```
-    pub fn compile_crate_to_ptx<S: AsRef<Path>>(kernel_path: S) -> Result<Vec<Ptx>, String> {
-        let kernel_path: PathBuf = kernel_path.as_ref().into();
-        let mut rust_ptx: Self = kernel_path.try_into()?;
-        rust_ptx.build_ptx()?;
-        Ok(rust_ptx.take_kernels().unwrap())
-    }
+#[derive(Debug)]
+pub struct PtxCrate {
+    project_dir: PathBuf,
+    kernels: Option<Vec<Ptx>>,
+}
 
+impl TryInto<Vec<Ptx>> for PtxCrate {
+    type Error = String;
+    fn try_into(self) -> Result<Vec<Ptx>, Self::Error> {
+        self.kernels.ok_or("kernels not built".into())
+    }
+}
+
+impl TryFrom<PathBuf> for PtxCrate {
+    type Error = String;
+
+    fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
+        if !value.exists() {
+            return Err(format!("{value:?} does not exist"))
+        }
+        
+        // if value = path/to/files
+        if let Some(name) = value
+            .file_name()
+            .map(|name| name.to_str())
+        {
+            let project_dir = match name {
+                // value = path/to/project/Cargo.toml
+                Some("Cargo.toml") =>
+                    value.parent(),
+                // value = path/to/project/src/lib.rs
+                Some("lib.rs") => {
+                    let src = value.parent().ok_or("err")?;
+                    if let Some(project_dir) = src.parent() {
+                        let manifest = project_dir.join("Cargo.toml");
+                        if manifest.exists() {
+                            project_dir.into()
+                        } else {
+                            return Err("missing Cargo.toml".to_string())
+                        }
+                    } else {
+                        return Err(format!("could not find parent of {src:?}"))
+                    }
+                },
+                // value = path/to/project/unsupported_name
+                Some(name) =>
+                    return Err(format!("unsupported file name: {name}")),
+                // name.to_str() failed to parse as unicode
+                None =>
+                    return Err(format!("failed to parse {name:?} as valid unicode"))
+            };
+            return Ok(Self { project_dir: project_dir.unwrap().into(), kernels: None })
+        }
+
+        // if value = path/to/project/ containing Cargo.toml
+        if value.join("Cargo.toml").exists() {
+            Ok(PtxCrate { project_dir: value, kernels: None } )
+        } else {
+            Err(format!("{value:?}/Cargo.toml missing"))
+        }
+    }
+}
+impl PtxCrate {
     /// Takes ownership of the PTX kernels stored in this `PtxCrate`.
     ///
     /// # Returns
@@ -384,27 +369,21 @@ impl PtxCrate {
     ///
     /// Returns an error if there is a problem cleaning the `PtxCrate`.
     pub fn clean(&mut self) -> Result<(), String> {
-        match &self.project {
-            PtxCrateKind::Cargo { project_dir } => {
-                let manifest_path = project_dir.join("Cargo.toml");
-                let output = Command::new("cargo")
-                    .arg("clean")
-                    .arg("--manifest-path")
-                    .arg(manifest_path)
-                    .output()
-                    .map_err(|e| format!("Failed to execute command: {}", e))?;
-                if output.status.success() {
-                    self.kernels = None;
-                    Ok(())
-                } else {
-                    Err(format!(
-                        "Failed to build PTX file: {}",
-                        String::from_utf8_lossy(&output.stderr)
-                    ))
-                }
-            },
-            PtxCrateKind::_Standalone { standalone: _standalone } => 
-                Err("standalone RS to PTX not supported".to_string()), //todo!("rm -rf target/ ?"),
+        let manifest_path = self.project_dir.join("Cargo.toml");
+        let output = Command::new("cargo")
+            .arg("clean")
+            .arg("--manifest-path")
+            .arg(manifest_path)
+            .output()
+            .map_err(|e| format!("Failed to execute command: {}", e))?;
+        if output.status.success() {
+            self.kernels = None;
+            Ok(())
+        } else {
+            Err(format!(
+                "Failed to build PTX file: {}",
+                String::from_utf8_lossy(&output.stderr)
+            ))
         }
     }
     
@@ -423,56 +402,49 @@ impl PtxCrate {
     ///
     /// This method will return an error if the build process fails.
     pub fn build_ptx(&mut self) -> Result<&Vec<Ptx>, String> {
-        match &self.project {
-            PtxCrateKind::Cargo { project_dir } => {
-                let manifest_path = project_dir.join("Cargo.toml");
+        let manifest_path = self.project_dir.join("Cargo.toml");
+        let output = Command::new("cargo")
+            .arg("+nightly")
+            .arg("rustc")
+            .arg("--manifest-path")
+            .arg(manifest_path)
+            .arg("--lib")
+            .arg("--target")
+            .arg("nvptx64-nvidia-cuda")
+            .arg("--release")
+            .arg("--")
+            .arg("--emit")
+            .arg("asm")
+            .output()
+            .map_err(|e| format!("Failed to execute command: {}", e))?;
 
-                let output = Command::new("cargo")
-                    .arg("+nightly")
-                    .arg("rustc")
-                    .arg("--manifest-path")
-                    .arg(manifest_path)
-                    .arg("--lib")
-                    .arg("--target")
-                    .arg("nvptx64-nvidia-cuda")
-                    .arg("--release")
-                    .arg("--")
-                    .arg("--emit")
-                    .arg("asm")
-                    .output()
-                    .map_err(|e| format!("Failed to execute command: {}", e))?;
-
-                if output.status.success() {
-                    let ptx_path = project_dir.join("target/nvptx64-nvidia-cuda/release");
-                    if ptx_path.exists() {
-                        let ptx_files: Vec<Ptx> = fs::read_dir(ptx_path)
-                        .map_err(|e| e.to_string())?
-                        .filter_map(|entry| {
-                            let path = entry.unwrap().path();
-                            if let Some("ptx") = path.extension().and_then(|ext| ext.to_str()) {
-                                Some(Ptx::from_file(path))
-                            } else {
-                                None
-                            }
-                        })
-                        .collect();
-                        self.kernels = Some(ptx_files);
-                        Ok(self.peek_kernels().unwrap())
+        if output.status.success() {
+            let ptx_path = self.project_dir.join("target/nvptx64-nvidia-cuda/release");
+            if ptx_path.exists() {
+                let ptx_files: Vec<Ptx> = fs::read_dir(ptx_path)
+                .map_err(|e| e.to_string())?
+                .filter_map(|entry| {
+                    let path = entry.unwrap().path();
+                    if let Some("ptx") = path.extension().and_then(|ext| ext.to_str()) {
+                        Some(Ptx::from_file(path))
                     } else {
-                        Err(format!(
-                            "Could not find {ptx_path:?}"
-                        ))
+                        None
                     }
-                } else {
-                    Err(format!(
-                        "Failed to build PTX file: {}",
-                        String::from_utf8_lossy(&output.stderr)
-                    ))
-                }       
-            },
-            PtxCrateKind::_Standalone { standalone: _standalone } =>
-                todo!("standalone rs -> ptx"),
-        }
+                })
+                .collect();
+                self.kernels = Some(ptx_files);
+                Ok(self.peek_kernels().unwrap())
+            } else {
+                Err(format!(
+                    "Could not find {ptx_path:?}"
+                ))
+            }
+        } else {
+            Err(format!(
+                "Failed to build PTX file: {}",
+                String::from_utf8_lossy(&output.stderr)
+            ))
+        }       
     }
 }
 
