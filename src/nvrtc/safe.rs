@@ -6,7 +6,8 @@ use super::{result, sys};
 
 use core::ffi::{c_char, CStr};
 use std::ffi::CString;
-use std::fs;
+use std::{fs, fs::File};
+use std::io::Read;
 use std::path::Path;
 use std::{borrow::ToOwned, path::PathBuf, string::String, vec::Vec};
 use std::process::Command;
@@ -426,7 +427,12 @@ impl PtxCrate {
                 .filter_map(|entry| {
                     let path = entry.unwrap().path();
                     if let Some("ptx") = path.extension().and_then(|ext| ext.to_str()) {
-                        Some(Ptx::from_file(path))
+                        let mut src = String::new();
+                        File::open(path)
+                            .unwrap()
+                            .read_to_string(&mut src)
+                            .unwrap();
+                        Some(Ptx::from_src(src))
                     } else {
                         None
                     }
