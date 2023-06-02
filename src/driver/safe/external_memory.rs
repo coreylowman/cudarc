@@ -1,4 +1,4 @@
-use core::{marker::PhantomData, mem::ManuallyDrop};
+use core::mem::ManuallyDrop;
 use std::fs::File;
 use std::ops::Range;
 use std::sync::Arc;
@@ -73,8 +73,9 @@ impl Drop for ExternalMemory {
 
 impl ExternalMemory {
     /// Map the whole external memory to get mapped buffer.
-    pub fn map_all(&mut self) -> Result<MappedBuffer<'_>, DriverError> {
-        self.map_range(0..self.size as usize)
+    pub fn map_all(self) -> Result<MappedBuffer, DriverError> {
+        let size = self.size as usize;
+        self.map_range(0..size)
     }
 
     /// Map a range of the external memory to a mapped buffer.
@@ -86,7 +87,7 @@ impl ExternalMemory {
     /// # Panics
     /// This function will panic if the range is invalid,
     /// such as when the start or end is larger than the size.
-    pub fn map_range(&mut self, range: Range<usize>) -> Result<MappedBuffer<'_>, DriverError> {
+    pub fn map_range(self, range: Range<usize>) -> Result<MappedBuffer, DriverError> {
         assert!(range.start as u64 <= self.size);
         assert!(range.end as u64 <= self.size);
         let device_ptr = unsafe {
@@ -99,7 +100,7 @@ impl ExternalMemory {
         Ok(MappedBuffer {
             device_ptr,
             len: range.len(),
-            _marker: PhantomData,
+            _external_memory: self,
         })
     }
 }
@@ -109,25 +110,25 @@ impl ExternalMemory {
 /// This struct can be created via [`ExternalMemory::map_range`] or [`ExternalMemory::map_all`].
 /// The underlying mapped buffer will be freed when this struct is dropped.
 #[derive(Debug)]
-pub struct MappedBuffer<'a> {
+pub struct MappedBuffer {
     device_ptr: sys::CUdeviceptr,
     len: usize,
-    _marker: PhantomData<&'a mut ExternalMemory>,
+    _external_memory: ExternalMemory,
 }
 
-impl Drop for MappedBuffer<'_> {
+impl Drop for MappedBuffer {
     fn drop(&mut self) {
         unsafe { result::memory_free(self.device_ptr) }.unwrap()
     }
 }
 
-impl DeviceSlice<u8> for MappedBuffer<'_> {
+impl DeviceSlice<u8> for MappedBuffer {
     fn len(&self) -> usize {
         self.len
     }
 }
 
-impl DevicePtr<u8> for MappedBuffer<'_> {
+impl DevicePtr<u8> for MappedBuffer {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.device_ptr
     }
