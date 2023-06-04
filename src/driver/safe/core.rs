@@ -111,6 +111,11 @@ impl CudaDevice {
     pub fn cu_stream(&self) -> &sys::CUstream {
         &self.stream
     }
+
+    /// Get the value of the specified attribute of this [CudaDevice].
+    pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
+        Ok(unsafe { result::device::get_attribute(self.cu_device, attrib) }?)
+    }
 }
 
 impl Drop for CudaDevice {
