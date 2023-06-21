@@ -13,7 +13,7 @@
 
 use super::sys;
 use core::ffi::{c_uchar, c_uint, c_void, CStr};
-use std::mem::{size_of, MaybeUninit};
+use std::mem::MaybeUninit;
 
 /// Wrapper around [sys::CUresult]. See
 /// nvidia's [CUresult docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TYPES.html#group__CUDA__TYPES_1gc6c391505e117393cc2558fff6bfc2e9)
@@ -378,7 +378,7 @@ pub unsafe fn memcpy_htod_async<T>(
     sys::cuMemcpyHtoDAsync_v2(
         dst,
         src.as_ptr() as *const _,
-        src.len() * size_of::<T>(),
+        std::mem::size_of_val(src),
         stream,
     )
     .result()
@@ -403,7 +403,7 @@ pub unsafe fn memcpy_dtoh_async<T>(
     sys::cuMemcpyDtoHAsync_v2(
         dst.as_mut_ptr() as *mut _,
         src,
-        dst.len() * size_of::<T>(),
+        std::mem::size_of_val(dst),
         stream,
     )
     .result()
