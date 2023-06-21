@@ -122,6 +122,21 @@ pub mod device {
         sys::cuDeviceTotalMem_v2(bytes.as_mut_ptr(), dev).result()?;
         Ok(bytes.assume_init())
     }
+
+    /// Get an attribute of a device.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8c6e2c7b5c7c8b7e6f7f4c2b7f6d9c5d)
+    ///
+    /// # Safety
+    /// Must be a device returned from [get].
+    pub unsafe fn get_attribute(
+        dev: sys::CUdevice,
+        attrib: sys::CUdevice_attribute,
+    ) -> Result<i32, DriverError> {
+        let mut value = MaybeUninit::uninit();
+        sys::cuDeviceGetAttribute(value.as_mut_ptr(), attrib, dev).result()?;
+        Ok(value.assume_init())
+    }
 }
 
 pub mod primary_ctx {
