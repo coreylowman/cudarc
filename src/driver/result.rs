@@ -139,6 +139,152 @@ pub mod device {
     }
 }
 
+pub mod occupancy {
+
+    use core::{
+        ffi::{c_int, c_uint},
+        mem::MaybeUninit,
+    };
+
+    use super::{sys, DriverError};
+
+    /// Returns dynamic shared memory available per block when launching numBlocks blocks on SM.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1gae02af6a9df9e1bbd51941af631bce69)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn available_dynamic_shared_mem_per_block(
+        f: sys::CUfunction,
+        num_blocks: c_int,
+        block_size: c_int,
+    ) -> Result<usize, DriverError> {
+        let mut dynamic_smem_size = MaybeUninit::uninit();
+        unsafe {
+            sys::cuOccupancyAvailableDynamicSMemPerBlock(
+                dynamic_smem_size.as_mut_ptr(),
+                f,
+                num_blocks,
+                block_size,
+            )
+            .result()?;
+        }
+        Ok(dynamic_smem_size.assume_init())
+    }
+
+    /// Returns occupancy of a function.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1gcc6e1094d05cba2cee17fe33ddd04a98)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn max_active_block_per_multiprocessor(
+        f: sys::CUfunction,
+        block_size: c_int,
+        dynamic_smem_size: usize,
+    ) -> Result<i32, DriverError> {
+        let mut num_blocks = MaybeUninit::uninit();
+        unsafe {
+            sys::cuOccupancyMaxActiveBlocksPerMultiprocessor(
+                num_blocks.as_mut_ptr(),
+                f,
+                block_size,
+                dynamic_smem_size,
+            )
+            .result()?;
+        }
+        Ok(num_blocks.assume_init())
+    }
+
+    /// Returns occupancy of a function.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1g8f1da4d4983e5c3025447665423ae2c2)
+    ///
+    /// # Safety
+    /// Function must exist. No invalid flags.
+    pub unsafe fn max_active_block_per_multiprocessor_with_flags(
+        f: sys::CUfunction,
+        block_size: c_int,
+        dynamic_smem_size: usize,
+        flags: c_uint,
+    ) -> Result<i32, DriverError> {
+        let mut num_blocks = MaybeUninit::uninit();
+        unsafe {
+            sys::cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+                num_blocks.as_mut_ptr(),
+                f,
+                block_size,
+                dynamic_smem_size,
+                flags,
+            )
+            .result()?;
+        }
+        Ok(num_blocks.assume_init())
+    }
+
+    /// Suggest a launch configuration with reasonable occupancy.
+    ///
+    /// Returns (min_grid_size, block_size)
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1gf179c4ab78962a8468e41c3f57851f03)
+    ///
+    /// # Safety
+    /// Function must exist and the shared memory function must be correct.  No invalid flags.
+    pub unsafe fn max_potential_block_size(
+        f: sys::CUfunction,
+        block_size_to_dynamic_smem_size: sys::CUoccupancyB2DSize,
+        dynamic_smem_size: usize,
+        block_size_limit: c_int,
+    ) -> Result<(i32, i32), DriverError> {
+        let mut min_grid_size = MaybeUninit::uninit();
+        let mut block_size = MaybeUninit::uninit();
+        unsafe {
+            sys::cuOccupancyMaxPotentialBlockSize(
+                min_grid_size.as_mut_ptr(),
+                block_size.as_mut_ptr(),
+                f,
+                block_size_to_dynamic_smem_size,
+                dynamic_smem_size,
+                block_size_limit,
+            )
+            .result()?;
+        }
+        Ok((min_grid_size.assume_init(), block_size.assume_init()))
+    }
+
+    /// Suggest a launch configuration with reasonable occupancy.
+    ///
+    /// Returns (min_grid_size, block_size)
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__OCCUPANCY.html#group__CUDA__OCCUPANCY_1g04c0bb65630f82d9b99a5ca0203ee5aa)
+    ///
+    /// # Safety
+    /// Function must exist and the shared memory function must be correct.  No invalid flags.
+    pub unsafe fn max_potential_block_size_with_flags(
+        f: sys::CUfunction,
+        block_size_to_dynamic_smem_size: sys::CUoccupancyB2DSize,
+        dynamic_smem_size: usize,
+        block_size_limit: c_int,
+        flags: c_uint,
+    ) -> Result<(i32, i32), DriverError> {
+        let mut min_grid_size = MaybeUninit::uninit();
+        let mut block_size = MaybeUninit::uninit();
+        unsafe {
+            sys::cuOccupancyMaxPotentialBlockSizeWithFlags(
+                min_grid_size.as_mut_ptr(),
+                block_size.as_mut_ptr(),
+                f,
+                block_size_to_dynamic_smem_size,
+                dynamic_smem_size,
+                block_size_limit,
+                flags,
+            )
+            .result()?;
+        }
+        Ok((min_grid_size.assume_init(), block_size.assume_init()))
+    }
+}
+
 pub mod primary_ctx {
     //! Primary context management functions (`cuDevicePrimaryCtx*`).
     //!
