@@ -192,7 +192,9 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         unsafe {
-            result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
+            // Make this non panicking. The device
+            // might already have been dropped
+            result::free_async(self.cu_device_ptr, self.device.stream).ok();
         }
     }
 }
@@ -327,8 +329,6 @@ impl Drop for CudaStream {
     fn drop(&mut self) {
         self.device.wait_for(self).unwrap();
         unsafe {
-            // Make this non panicking. The device
-            // might already have been dropped
             result::stream::destroy(self.stream).unwrap();
         }
     }
@@ -548,8 +548,8 @@ mod tests {
         let dev0 = CudaDevice::new(0).unwrap();
         let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
         let dev1 = CudaDevice::new(1).unwrap();
-        drop(dev1);
         drop(slice);
+        drop(dev1);
         drop(dev0);
     }
 }
