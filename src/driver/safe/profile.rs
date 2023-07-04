@@ -4,15 +4,20 @@ use crate::driver::{result, sys};
 pub struct Profiler {}
 
 impl Profiler {
-    /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then profiler_start() has no effect.
+    /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then Profiler::new() has no effect.
+    /// More info in [Cuda docs](https://docs.nvidia.com/cuda/profiler-users-guide/)
     /// ```no_run
     /// use cudarc::driver::{Profiler};
+    /// # use cudarc::driver::result;
     ///
+    /// # fn run() -> Result<(), result::DriverError>{
     /// {
     /// let profiler = Profiler::new()?;
     /// // Hotpath
     /// // Profiler stops on drop
     /// }
+    /// # Ok(())
+    /// # }
     /// // Now check your results
     /// // nsys profile -c cudaProfilerApi /path/to/bin
     /// // And this will profile only the hotpath.
@@ -31,14 +36,18 @@ impl Drop for Profiler {
 }
 
 /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then profiler_start() has no effect.
+/// More info in [Cuda docs](https://docs.nvidia.com/cuda/profiler-users-guide/)
 /// For RAII version see [`Profiler::new`].
 /// ```no_run
 /// use cudarc::driver::{profiler_start, profiler_stop};
+/// # use cudarc::driver::result;
 ///
+/// # fn run() -> Result<(), result::DriverError>{
 /// profiler_start()?;
 /// // Hotpath
 /// profiler_stop()?;
-/// }
+/// # Ok(())
+/// # }
 /// // Now check your results
 /// // nsys profile -c cudaProfilerApi /path/to/bin
 /// // And this will profile only the hotpath.
