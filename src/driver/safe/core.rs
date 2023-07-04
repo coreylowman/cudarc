@@ -72,7 +72,7 @@ impl CudaDevice {
 
     pub fn count() -> Result<i32, result::DriverError> {
         result::init().unwrap();
-        Ok(result::device::get_count()?.into())
+        result::device::get_count()
     }
 
     /// Get the `ordinal` index of this [CudaDevice].
