@@ -14,6 +14,6 @@ pub use self::core::{CudaDevice, CudaFunction, CudaSlice, CudaStream, CudaView, 
 pub use self::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
 pub use self::external_memory::{ExternalMemory, MappedBuffer};
 pub use self::launch::{LaunchAsync, LaunchConfig};
-pub use self::profile::{profiler_start, profiler_stop};
+pub use self::profile::{profiler_start, profiler_stop, Profiler};
 
 pub use crate::driver::result::DriverError;
