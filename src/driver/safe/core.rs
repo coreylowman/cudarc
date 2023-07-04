@@ -75,6 +75,12 @@ impl CudaDevice {
         self.ordinal
     }
 
+    /// Get the number of available GPUs
+    pub fn count() -> Result<i32, result::DriverError> {
+        result::init().unwrap();
+        result::device::get_count()
+    }
+
     /// Get the underlying [sys::CUdevice] of this [CudaDevice].
     ///
     /// # Safety
@@ -321,6 +327,8 @@ impl Drop for CudaStream {
     fn drop(&mut self) {
         self.device.wait_for(self).unwrap();
         unsafe {
+            // Make this non panicking. The device
+            // might already have been dropped
             result::stream::destroy(self.stream).unwrap();
         }
     }
@@ -529,5 +537,19 @@ mod tests {
         assert!(unsafe { slice.transmute::<f32>(26) }.is_none());
         assert!(unsafe { slice.transmute_mut::<f32>(25) }.is_some());
         assert!(unsafe { slice.transmute_mut::<f32>(26) }.is_none());
+    }
+
+    #[test]
+    fn drop_order() {
+        let n = CudaDevice::count().unwrap();
+        if n < 2 {
+            return;
+        }
+        let dev0 = CudaDevice::new(0).unwrap();
+        let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
+        let dev1 = CudaDevice::new(1).unwrap();
+        drop(dev1);
+        drop(slice);
+        drop(dev0);
     }
 }
