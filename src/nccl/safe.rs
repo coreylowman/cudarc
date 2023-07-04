@@ -10,7 +10,7 @@ pub struct Comm {
     pub device: Arc<CudaDevice>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Id {
     id: sys::ncclUniqueId,
 }
@@ -49,29 +49,6 @@ impl Drop for Comm {
     }
 }
 
-pub fn init_device_comms(devices: Vec<Arc<CudaDevice>>) -> Result<Vec<Comm>, result::NcclError> {
-    let mut comms = vec![std::ptr::null_mut() as *mut sys::ncclComm; devices.len()];
-    let device_ordinals = devices
-        .iter()
-        .map(|x| x.ordinal as i32)
-        .collect::<Vec<i32>>();
-    let comms: Vec<_> = unsafe {
-        result::comm_init_all(
-            comms.as_mut_ptr(),
-            devices.len() as i32,
-            device_ordinals.as_ptr(),
-        )?;
-        comms
-    };
-    let zipped = comms.iter().zip(devices.iter());
-    Ok(zipped
-        .map(|(comm, device)| Comm {
-            comm: *comm,
-            device: device.clone(),
-        })
-        .collect())
-}
-
 pub trait NcclType {
     fn as_nccl_type() -> sys::ncclDataType_t;
 }
@@ -99,12 +76,7 @@ define_nccl_type!(char, sys::ncclDataType_t::ncclUint8);
 impl Comm {
     fn from_rank(device: Arc<CudaDevice>, ranks: usize, id: Id) -> Result<Self, result::NcclError> {
         let mut comm = MaybeUninit::uninit();
-        unsafe {
-            // result::group_start()?;
-        }
-
         let rank = device.ordinal;
-        println!("{rank}/{ranks} {id:?} {:?}", comm);
 
         let comm = unsafe {
             result::comm_init_rank(
@@ -115,10 +87,6 @@ impl Comm {
             )?;
             comm.assume_init()
         };
-        println!("Comm {:?}", comm);
-        unsafe {
-            // result::group_end()?;
-        }
         Ok(Self { comm, device })
     }
 }
@@ -280,53 +248,24 @@ mod tests {
     fn test_all_reduce() {
         let mut threads = vec![];
         let n = 2;
-        println!("Entering test");
         let n_devices = CudaDevice::count().unwrap() as usize;
+        let id = Id::new().unwrap();
         for i in 0..n_devices {
-            println!("Created id");
             threads.push(std::thread::spawn(move || {
-                let id = Id::new().unwrap();
                 let dev = CudaDevice::new(i).unwrap();
-
-                println!("Creating comm {i}");
                 let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
-                println!("Created comm {i}");
-                let slice = dev.htod_copy(vec![(i as f32) * 1.0; n]).unwrap();
+                let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
                 let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
                 comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
                     .unwrap();
 
                 let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
 
-                assert_eq!(out, &[3.0, 3.0]);
+                assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
             }));
         }
         for t in threads {
             t.join().unwrap()
         }
     }
-
-    // #[test]
-    // fn test_all_reduce2() {
-    //     let n_devices = 2;
-    //     let devs: Vec<_> = (0..n_devices)
-    //         .map(|i| CudaDevice::new(i).unwrap())
-    //         .collect();
-    //     let comms = init_device_comms(devs.clone()).unwrap();
-    //     for i in 0..n_devices {
-    //         // let dev = &devs[i];
-    //         let dev = CudaDevice::new(i).unwrap();
-    //         let comm = &comms[i];
-    //         let slice = dev
-    //             .htod_copy(vec![(i as f64) * 1.0, (i as f64) * 1.0])
-    //             .unwrap();
-    //         let mut slice_receive = dev.alloc_zeros::<f64>(2).unwrap();
-    //         comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
-    //             .unwrap();
-
-    //         let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
-
-    //         assert_eq!(out, &[3.0, 3.0]);
-    //     }
-    // }
 }

@@ -253,6 +253,7 @@ pub unsafe fn group_start() -> Result<NcclStatus, NcclError> {
 mod tests {
     use super::*;
     use crate::driver::CudaDevice;
+    use std::ffi::c_void;
 
     #[test]
     fn single_thread() {
@@ -270,42 +271,15 @@ mod tests {
             recvslices.push(slice);
             devs.push(dev);
         }
-        // let devs: Vec<_> = (0..n_devices)
-        //     .map(|i| CudaDevice::new(i).unwrap())
-        //     .collect();
-        // let sendslices: Vec<_> = devs
-        //     .iter()
-        //     .enumerate()
-        //     .map(|(i, dev)| {
-        //         let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
-        //         slice
-        //     })
-        //     .collect();
-        // let mut recvslices: Vec<_> = devs
-        //     .iter()
-        //     .map(|dev| {
-        //         let slice = dev.alloc_zeros::<f32>(n).unwrap();
-        //         slice
-        //     })
-        //     .collect();
-        // let streams: Vec<crate::driver::safe::CudaStream> = devs
-        //     .iter()
-        //     .map(|dev| dev.fork_default_stream().unwrap())
-        //     .collect();
         let mut comms = vec![std::ptr::null_mut(); n_devices];
         let ordinals: Vec<_> = devs.iter().map(|d| d.ordinal as i32).collect();
-        // todo!("Comms {comms:?}");
         unsafe {
             comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr()).unwrap();
 
-            use std::ffi::c_void;
             group_start().unwrap();
             for i in 0..n_devices {
+                // Very important to set the cuda context to this device.
                 let dev = CudaDevice::new(i).unwrap();
-                println!(
-                    "Addr {:?} - {:?}",
-                    sendslices[i].cu_device_ptr, recvslices[i].cu_device_ptr
-                );
                 all_reduce(
                     sendslices[i].cu_device_ptr as *const c_void,
                     recvslices[i].cu_device_ptr as *mut c_void,
@@ -314,19 +288,56 @@ mod tests {
                     sys::ncclRedOp_t::ncclSum,
                     comms[i],
                     dev.stream as sys::cudaStream_t,
-                    // streams[i].stream as sys::cudaStream_t,
                 )
                 .unwrap();
             }
             group_end().unwrap();
-            devs[0].synchronize().unwrap();
         }
-        // devs[0].synchronize();
-        // recvslices[0].device.synchronize().unwrap();
-        for (i, (recv, dev)) in recvslices.iter().zip(devs.iter()).enumerate() {
+        for (i, recv) in recvslices.iter().enumerate() {
+            // Get the current device context
             let dev = CudaDevice::new(i).unwrap();
             let out = dev.dtoh_sync_copy(recv).unwrap();
             assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
+        }
+    }
+
+    #[test]
+    fn multi_thread() {
+        let n_devices = CudaDevice::count().unwrap() as usize;
+
+        let n = 2;
+        let comm_id = unsafe { get_uniqueid().unwrap() };
+        let threads: Vec<_> = (0..n_devices)
+            .map(|i| {
+                let n_devices = n_devices.clone();
+                std::thread::spawn(move || {
+                    let dev = CudaDevice::new(i).unwrap();
+                    let sendslice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let recvslice = dev.alloc_zeros::<f32>(n).unwrap();
+                    let mut comm = MaybeUninit::uninit();
+                    unsafe {
+                        comm_init_rank(comm.as_mut_ptr(), n_devices as i32, comm_id, i as i32)
+                            .unwrap();
+
+                        let comm = comm.assume_init();
+                        use std::ffi::c_void;
+                        all_reduce(
+                            sendslice.cu_device_ptr as *const c_void,
+                            recvslice.cu_device_ptr as *mut c_void,
+                            n,
+                            sys::ncclDataType_t::ncclFloat32,
+                            sys::ncclRedOp_t::ncclSum,
+                            comm,
+                            dev.stream as sys::cudaStream_t,
+                            // streams[i].stream as sys::cudaStream_t,
+                        )
+                        .unwrap();
+                    }
+                })
+            })
+            .collect();
+        for t in threads {
+            t.join().unwrap();
         }
     }
 }

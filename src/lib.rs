@@ -90,16 +90,3 @@ pub mod nccl;
 pub mod nvrtc;
 
 pub mod types;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::driver::safe::CudaDevice;
-    #[test]
-    fn dummy() {
-        let dev0 = CudaDevice::new(0).unwrap();
-        let dev1 = CudaDevice::new(1).unwrap();
-        let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
-        let out = dev0.dtoh_sync_copy(&slice).unwrap();
-    }
-}
