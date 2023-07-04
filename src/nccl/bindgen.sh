@@ -12,5 +12,5 @@ bindgen \
   --with-derive-hash \
   --with-derive-ord \
   --use-core \
-  wrapper.h -- -I/usr/local/cuda/include \
+  wrapper.h -- -I/usr/local/cuda/include -I/usr/lib/gcc/x86_64-linux-gnu/12/include/ \
   > sys.rs

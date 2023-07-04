@@ -5,10 +5,17 @@ use std::mem::MaybeUninit;
 
 /// Wrapper around [sys::ncclResult_t].
 /// See [NCCL docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/types.html?highlight=ncclresult_t#ncclresult-t)
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct NcclError(pub sys::ncclResult_t);
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+// #[cfg(feature = "std")]
+impl std::fmt::Debug for NcclError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "NcclError")
+    }
+}
+
+#[derive(Clone, PartialEq, Eq)]
 pub enum NcclStatus {
     Success,
     InProgress,
@@ -27,12 +34,12 @@ impl sys::ncclResult_t {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::fmt::Display for NcclError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
-    }
-}
+// #[cfg(feature = "std")]
+// impl std::fmt::Display for NcclError {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(f, "{self:?}")
+//     }
+// }
 
 pub unsafe fn comm_finalize(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
     unsafe { sys::ncclCommFinalize(comm).result() }
@@ -235,9 +242,91 @@ pub unsafe fn recv(
     unsafe { sys::ncclRecv(recvbuff, count, datatype, peer, comm, stream).result() }
 }
 pub unsafe fn group_end() -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclGroupStart().result() }
+    unsafe { sys::ncclGroupEnd().result() }
 }
 
 pub unsafe fn group_start() -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclGroupEnd().result() }
+    unsafe { sys::ncclGroupStart().result() }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::driver::CudaDevice;
+
+    #[test]
+    fn single_thread() {
+        let n_devices = CudaDevice::count().unwrap() as usize;
+        let n = 2;
+
+        let mut devs = vec![];
+        let mut sendslices = vec![];
+        let mut recvslices = vec![];
+        for i in 0..n_devices {
+            let dev = CudaDevice::new(i).unwrap();
+            let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+            sendslices.push(slice);
+            let slice = dev.alloc_zeros::<f32>(n).unwrap();
+            recvslices.push(slice);
+            devs.push(dev);
+        }
+        // let devs: Vec<_> = (0..n_devices)
+        //     .map(|i| CudaDevice::new(i).unwrap())
+        //     .collect();
+        // let sendslices: Vec<_> = devs
+        //     .iter()
+        //     .enumerate()
+        //     .map(|(i, dev)| {
+        //         let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+        //         slice
+        //     })
+        //     .collect();
+        // let mut recvslices: Vec<_> = devs
+        //     .iter()
+        //     .map(|dev| {
+        //         let slice = dev.alloc_zeros::<f32>(n).unwrap();
+        //         slice
+        //     })
+        //     .collect();
+        // let streams: Vec<crate::driver::safe::CudaStream> = devs
+        //     .iter()
+        //     .map(|dev| dev.fork_default_stream().unwrap())
+        //     .collect();
+        let mut comms = vec![std::ptr::null_mut(); n_devices];
+        let ordinals: Vec<_> = devs.iter().map(|d| d.ordinal as i32).collect();
+        // todo!("Comms {comms:?}");
+        unsafe {
+            comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr()).unwrap();
+
+            use std::ffi::c_void;
+            group_start().unwrap();
+            for i in 0..n_devices {
+                let dev = CudaDevice::new(i).unwrap();
+                println!(
+                    "Addr {:?} - {:?}",
+                    sendslices[i].cu_device_ptr, recvslices[i].cu_device_ptr
+                );
+                all_reduce(
+                    sendslices[i].cu_device_ptr as *const c_void,
+                    recvslices[i].cu_device_ptr as *mut c_void,
+                    n,
+                    sys::ncclDataType_t::ncclFloat32,
+                    sys::ncclRedOp_t::ncclSum,
+                    comms[i],
+                    dev.stream as sys::cudaStream_t,
+                    // streams[i].stream as sys::cudaStream_t,
+                )
+                .unwrap();
+            }
+            group_end().unwrap();
+            devs[0].synchronize().unwrap();
+        }
+        // devs[0].synchronize();
+        // recvslices[0].device.synchronize().unwrap();
+        for (i, (recv, dev)) in recvslices.iter().zip(devs.iter()).enumerate() {
+            let dev = CudaDevice::new(i).unwrap();
+            let out = dev.dtoh_sync_copy(recv).unwrap();
+            assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
+        }
+    }
 }

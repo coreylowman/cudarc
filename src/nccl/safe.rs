@@ -1,11 +1,25 @@
 use super::{result, sys};
 use crate::driver::{CudaDevice, CudaSlice};
+use std::mem::MaybeUninit;
 use std::ptr;
 use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct Comm {
     comm: sys::ncclComm_t,
     pub device: Arc<CudaDevice>,
+}
+
+#[derive(Debug)]
+pub struct Id {
+    id: sys::ncclUniqueId,
+}
+
+impl Id {
+    pub fn new() -> Result<Self, result::NcclError> {
+        let id = unsafe { result::get_uniqueid()? };
+        Ok(Self { id })
+    }
 }
 
 pub enum ReduceOp {
@@ -36,18 +50,19 @@ impl Drop for Comm {
 }
 
 pub fn init_device_comms(devices: Vec<Arc<CudaDevice>>) -> Result<Vec<Comm>, result::NcclError> {
-    let mut comms = Vec::<sys::ncclComm_t>::with_capacity(devices.len());
+    let mut comms = vec![std::ptr::null_mut() as *mut sys::ncclComm; devices.len()];
     let device_ordinals = devices
         .iter()
         .map(|x| x.ordinal as i32)
         .collect::<Vec<i32>>();
-    unsafe {
+    let comms: Vec<_> = unsafe {
         result::comm_init_all(
             comms.as_mut_ptr(),
             devices.len() as i32,
             device_ordinals.as_ptr(),
         )?;
-    }
+        comms
+    };
     let zipped = comms.iter().zip(devices.iter());
     Ok(zipped
         .map(|(comm, device)| Comm {
@@ -80,6 +95,33 @@ define_nccl_type!(u8, sys::ncclDataType_t::ncclUint8);
 define_nccl_type!(u32, sys::ncclDataType_t::ncclUint32);
 define_nccl_type!(u64, sys::ncclDataType_t::ncclUint64);
 define_nccl_type!(char, sys::ncclDataType_t::ncclUint8);
+
+impl Comm {
+    fn from_rank(device: Arc<CudaDevice>, ranks: usize, id: Id) -> Result<Self, result::NcclError> {
+        let mut comm = MaybeUninit::uninit();
+        unsafe {
+            // result::group_start()?;
+        }
+
+        let rank = device.ordinal;
+        println!("{rank}/{ranks} {id:?} {:?}", comm);
+
+        let comm = unsafe {
+            result::comm_init_rank(
+                comm.as_mut_ptr(),
+                ranks.try_into().expect("Ranks cannot be casted to i32"),
+                id.id,
+                rank.try_into().expect("Rank cannot be cast to i32"),
+            )?;
+            comm.assume_init()
+        };
+        println!("Comm {:?}", comm);
+        unsafe {
+            // result::group_end()?;
+        }
+        Ok(Self { comm, device })
+    }
+}
 
 impl Comm {
     pub fn send<T: NcclType>(
@@ -181,7 +223,7 @@ impl Comm {
         sendbuff: &CudaSlice<T>,
         recvbuff: &mut CudaSlice<T>,
         reduce_op: &ReduceOp,
-        root: i32
+        root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             result::reduce(
@@ -228,4 +270,63 @@ macro_rules! group {
             result::group_end().unwrap();
         }
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_all_reduce() {
+        let mut threads = vec![];
+        let n = 2;
+        println!("Entering test");
+        let n_devices = CudaDevice::count().unwrap() as usize;
+        for i in 0..n_devices {
+            println!("Created id");
+            threads.push(std::thread::spawn(move || {
+                let id = Id::new().unwrap();
+                let dev = CudaDevice::new(i).unwrap();
+
+                println!("Creating comm {i}");
+                let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
+                println!("Created comm {i}");
+                let slice = dev.htod_copy(vec![(i as f32) * 1.0; n]).unwrap();
+                let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+                comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+                    .unwrap();
+
+                let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+
+                assert_eq!(out, &[3.0, 3.0]);
+            }));
+        }
+        for t in threads {
+            t.join().unwrap()
+        }
+    }
+
+    // #[test]
+    // fn test_all_reduce2() {
+    //     let n_devices = 2;
+    //     let devs: Vec<_> = (0..n_devices)
+    //         .map(|i| CudaDevice::new(i).unwrap())
+    //         .collect();
+    //     let comms = init_device_comms(devs.clone()).unwrap();
+    //     for i in 0..n_devices {
+    //         // let dev = &devs[i];
+    //         let dev = CudaDevice::new(i).unwrap();
+    //         let comm = &comms[i];
+    //         let slice = dev
+    //             .htod_copy(vec![(i as f64) * 1.0, (i as f64) * 1.0])
+    //             .unwrap();
+    //         let mut slice_receive = dev.alloc_zeros::<f64>(2).unwrap();
+    //         comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+    //             .unwrap();
+
+    //         let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+
+    //         assert_eq!(out, &[3.0, 3.0]);
+    //     }
+    // }
 }
