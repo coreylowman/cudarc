@@ -1,5 +1,6 @@
 use crate::driver::{result, sys};
 
+#[derive(Default)]
 pub struct Profiler {}
 
 impl Profiler {
@@ -26,12 +27,6 @@ impl Drop for Profiler {
     fn drop(&mut self) {
         // We don't want to panic on drop.
         profiler_stop().ok();
-    }
-}
-
-impl Default for Profiler {
-    fn default() -> Self {
-        Self {}
     }
 }
 
