@@ -17,6 +17,8 @@ impl CudaDevice {
         file: File,
         size: u64,
     ) -> Result<ExternalMemory, DriverError> {
+        self.bind_to_thread()?;
+
         #[cfg(unix)]
         let external_memory = unsafe {
             use std::os::fd::AsRawFd;
@@ -30,7 +32,7 @@ impl CudaDevice {
         Ok(ExternalMemory {
             external_memory,
             size,
-            _device: self.clone(),
+            device: self.clone(),
             _file: ManuallyDrop::new(file),
         })
     }
@@ -44,12 +46,14 @@ impl CudaDevice {
 pub struct ExternalMemory {
     external_memory: sys::CUexternalMemory,
     size: u64,
-    _device: Arc<CudaDevice>,
+    device: Arc<CudaDevice>,
     _file: ManuallyDrop<File>,
 }
 
 impl Drop for ExternalMemory {
     fn drop(&mut self) {
+        self.device.bind_to_thread().unwrap();
+
         unsafe { result::external_memory::destroy_external_memory(self.external_memory) }.unwrap();
 
         // From [CUDA docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735),
@@ -100,7 +104,7 @@ impl ExternalMemory {
         Ok(MappedBuffer {
             device_ptr,
             len: range.len(),
-            _external_memory: self,
+            external_memory: self,
         })
     }
 }
@@ -113,11 +117,12 @@ impl ExternalMemory {
 pub struct MappedBuffer {
     device_ptr: sys::CUdeviceptr,
     len: usize,
-    _external_memory: ExternalMemory,
+    external_memory: ExternalMemory,
 }
 
 impl Drop for MappedBuffer {
     fn drop(&mut self) {
+        self.external_memory.device.bind_to_thread().unwrap();
         unsafe { result::memory_free(self.device_ptr) }.unwrap()
     }
 }

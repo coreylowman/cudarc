@@ -20,6 +20,8 @@ impl CudaDevice {
         module_name: &str,
         func_names: &[&'static str],
     ) -> Result<(), result::DriverError> {
+        self.bind_to_thread()?;
+
         let cu_module = match ptx.0 {
             PtxKind::Image(image) => unsafe {
                 result::module::load_data(image.as_ptr() as *const _)

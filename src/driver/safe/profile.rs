@@ -1,5 +1,6 @@
 use crate::driver::{result, sys};
 
+/// Calls [profiler_start()] in [Profiler::new()], and [profiler_stop()] in [Drop].
 #[derive(Default)]
 pub struct Profiler {}
 
@@ -28,6 +29,7 @@ impl Profiler {
         Ok(Self {})
     }
 }
+
 impl Drop for Profiler {
     fn drop(&mut self) {
         // We don't want to panic on drop.

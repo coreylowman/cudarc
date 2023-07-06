@@ -120,6 +120,8 @@ impl CudaDevice {
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
+        self.bind_to_thread().unwrap();
+
         let modules = RwLock::get_mut(&mut self.modules);
         #[cfg(not(feature = "no-std"))]
         let modules = modules.unwrap();
@@ -185,6 +187,7 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
+        self.device.bind_to_thread().unwrap();
         unsafe {
             result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
         }
@@ -279,6 +282,7 @@ impl CudaDevice {
     /// 1. On creation it adds a wait for any existing work on the default work stream to complete
     /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
     pub fn fork_default_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
+        self.bind_to_thread()?;
         let stream = CudaStream {
             stream: result::stream::create(result::stream::StreamKind::NonBlocking)?,
             device: self.clone(),
@@ -291,6 +295,7 @@ impl CudaDevice {
     /// **This is asynchronous with respect to the host.**
     #[allow(unused_variables)]
     pub fn wait_for(self: &Arc<Self>, stream: &CudaStream) -> Result<(), result::DriverError> {
+        self.bind_to_thread()?;
         unsafe {
             result::event::record(self.event, stream.stream)?;
             result::stream::wait_event(
@@ -306,6 +311,7 @@ impl CudaStream {
     /// Record's the current default streams workload, and then causes `self`
     /// to wait for the default stream to finish that recorded workload.
     pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
         unsafe {
             result::event::record(self.device.event, self.device.stream)?;
             result::stream::wait_event(

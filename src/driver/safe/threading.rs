@@ -2,12 +2,10 @@ use super::{CudaDevice, DriverError};
 
 use crate::driver::result;
 
-use std::sync::Arc;
-
 impl CudaDevice {
     /// Binds the device to the calling thread. You must call this before
     /// using the device on a separate thread!
-    pub fn bind_to_thread(self: &Arc<Self>) -> Result<(), DriverError> {
+    pub fn bind_to_thread(&self) -> Result<(), DriverError> {
         unsafe { result::ctx::set_current(self.cu_primary_ctx) }
     }
 }
