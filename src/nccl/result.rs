@@ -45,7 +45,7 @@ pub unsafe fn comm_finalize(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclErr
     unsafe { sys::ncclCommFinalize(comm).result() }
 }
 
-pub unsafe fn comm_destry(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
+pub unsafe fn comm_destroy(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
     unsafe { sys::ncclCommDestroy(comm).result() }
 }
 
