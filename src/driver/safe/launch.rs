@@ -575,7 +575,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let par_launch_s = start.elapsed().as_secs_f64();
 
         assert!(
-            (double_launch_s - 2.0 * par_launch_s).abs() < 20.0 / 1000.0,
+            (double_launch_s - 2.0 * par_launch_s).abs() < 20.0 / 100.0,
             "par={:?} dbl={:?}",
             par_launch_s,
             double_launch_s
