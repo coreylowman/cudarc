@@ -53,6 +53,7 @@ impl CudaFunction {
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
     ) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
         result::launch_kernel(
             self.cu_function,
             cfg.grid_dim,
@@ -70,6 +71,7 @@ impl CudaFunction {
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
     ) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
         result::launch_kernel(
             self.cu_function,
             cfg.grid_dim,

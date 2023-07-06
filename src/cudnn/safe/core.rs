@@ -17,6 +17,7 @@ pub struct Cudnn {
 impl Cudnn {
     /// Creates a new cudnn handle and sets the stream to the `device`'s stream.
     pub fn new(device: Arc<CudaDevice>) -> Result<Arc<Self>, CudnnError> {
+        device.bind_to_thread().unwrap();
         let handle = result::create_handle()?;
         unsafe { result::set_stream(handle, device.stream as *mut _) }?;
         Ok(Arc::new(Self { handle, device }))

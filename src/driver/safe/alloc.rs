@@ -109,6 +109,7 @@ impl CudaDevice {
 impl CudaDevice {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
+        self.bind_to_thread()?;
         let cu_device_ptr = unsafe { result::malloc_async(self.stream, 0) }?;
         Ok(CudaSlice {
             cu_device_ptr,
@@ -126,6 +127,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
+        self.bind_to_thread()?;
         let cu_device_ptr = result::malloc_async(self.stream, len * std::mem::size_of::<T>())?;
         Ok(CudaSlice {
             cu_device_ptr,
@@ -159,6 +161,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
+        self.bind_to_thread()?;
         unsafe { result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream) }
     }
 
@@ -179,6 +182,7 @@ impl CudaDevice {
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
+        self.bind_to_thread()?;
         unsafe {
             result::memcpy_dtod_async(
                 *dst.device_ptr_mut(),
@@ -219,6 +223,7 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         dst.host_buf = Some(Pin::new(src));
+        self.bind_to_thread()?;
         unsafe {
             result::memcpy_htod_async(
                 dst.cu_device_ptr,
@@ -263,6 +268,7 @@ impl CudaDevice {
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
+        self.bind_to_thread()?;
         unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
         self.synchronize()
     }
@@ -302,6 +308,7 @@ impl CudaDevice {
         dst: &mut [T],
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
+        self.bind_to_thread()?;
         unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
         self.synchronize()
     }
@@ -327,6 +334,7 @@ impl CudaDevice {
 
     /// Synchronizes the stream.
     pub fn synchronize(self: &Arc<Self>) -> Result<(), result::DriverError> {
+        self.bind_to_thread()?;
         unsafe { result::stream::synchronize(self.stream) }
     }
 }
@@ -506,5 +514,25 @@ mod tests {
         let ptr = b.leak();
         let c = unsafe { dev.upgrade_device_ptr::<f32>(ptr, 5) };
         assert_eq!(dev.dtoh_sync_copy(&c).unwrap(), &[1.0, 2.0, 3.0, 4.0, 5.0]);
+    }
+
+    /// See https://github.com/coreylowman/cudarc/issues/160
+    #[test]
+    fn test_slice_is_freed_with_correct_context() {
+        let dev0 = CudaDevice::new(0).unwrap();
+        let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
+        let dev1 = CudaDevice::new(1).unwrap();
+        drop(dev1);
+        drop(dev0);
+        drop(slice);
+    }
+
+    /// See https://github.com/coreylowman/cudarc/issues/161
+    #[test]
+    fn test_copy_uses_correct_context() {
+        let dev0 = CudaDevice::new(0).unwrap();
+        let _dev1 = CudaDevice::new(1).unwrap();
+        let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
+        let _out = dev0.dtoh_sync_copy(&slice).unwrap();
     }
 }

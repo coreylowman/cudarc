@@ -33,6 +33,7 @@ pub struct CudaRng {
 impl CudaRng {
     /// Constructs the RNG with the given `seed`. Requires the stream from [CudaDevice] to submit kernels.
     pub fn new(seed: u64, device: Arc<CudaDevice>) -> Result<Self, result::CurandError> {
+        device.bind_to_thread().unwrap();
         let gen = result::create_generator()?;
         let mut rng = Self { gen, device };
         rng.set_seed(seed)?;

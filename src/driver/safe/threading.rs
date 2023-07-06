@@ -2,12 +2,10 @@ use super::{CudaDevice, DriverError};
 
 use crate::driver::result;
 
-use std::sync::Arc;
-
 impl CudaDevice {
     /// Binds the device to the calling thread. You must call this before
     /// using the device on a separate thread!
-    pub fn bind_to_thread(self: &Arc<Self>) -> Result<(), DriverError> {
+    pub fn bind_to_thread(&self) -> Result<(), DriverError> {
         unsafe { result::ctx::set_current(self.cu_primary_ctx) }
     }
 }
@@ -31,19 +29,6 @@ mod tests {
             dev2.bind_to_thread()?;
             dev2.alloc_zeros::<f32>(10)
         });
-
-        let _: crate::driver::CudaSlice<f32> = thread1.join().unwrap().unwrap();
-        let _: crate::driver::CudaSlice<f32> = thread2.join().unwrap().unwrap();
-    }
-
-    #[test]
-    #[should_panic = "DriverError(CUDA_ERROR_INVALID_CONTEXT"]
-    fn test_threading_fails() {
-        let dev1 = CudaDevice::new(0).unwrap();
-        let dev2 = dev1.clone();
-
-        let thread1 = thread::spawn(move || dev1.alloc_zeros::<f32>(10));
-        let thread2 = thread::spawn(move || dev2.alloc_zeros::<f32>(10));
 
         let _: crate::driver::CudaSlice<f32> = thread1.join().unwrap().unwrap();
         let _: crate::driver::CudaSlice<f32> = thread2.join().unwrap().unwrap();
