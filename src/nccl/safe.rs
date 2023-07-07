@@ -2,7 +2,9 @@ use super::{result, sys};
 use crate::driver::{CudaDevice, CudaSlice};
 use std::mem::MaybeUninit;
 use std::ptr;
-use std::sync::Arc;
+use std::{sync::Arc, vec, vec::Vec};
+
+pub use result::{group_end, group_start};
 
 #[derive(Debug)]
 pub struct Comm {
@@ -74,6 +76,72 @@ define_nccl_type!(u64, sys::ncclDataType_t::ncclUint64);
 define_nccl_type!(char, sys::ncclDataType_t::ncclUint8);
 
 impl Comm {
+    /// Primitive to create new communication link on a single thread.
+    /// ```
+    /// # use cudarc::driver::safe::{CudaDevice};
+    /// # use cudarc::nccl::safe::{Comm, ReduceOp, group_start, group_end};
+    /// let n = 2;
+    /// let n_devices = CudaDevice::count().unwrap() as usize;
+    /// let devices : Vec<_> = (0..n_devices).flat_map(CudaDevice::new).collect();
+    /// let comms = Comm::from_devices(devices).unwrap();
+    /// group_start().unwrap();
+    /// (0..n_devices).map(|i| {
+    ///     let comm = &comms[i];
+    ///     let dev = comm.device();
+    ///     let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+    ///     let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+    ///     comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+    ///         .unwrap();
+
+    /// });
+    /// group_start().unwrap();
+    /// ```
+    pub fn from_devices(devices: Vec<Arc<CudaDevice>>) -> Result<Vec<Self>, result::NcclError> {
+        let n_devices = devices.len();
+        let mut comms = vec![std::ptr::null_mut(); n_devices];
+        let ordinals: Vec<_> = devices.iter().map(|d| d.ordinal as i32).collect();
+        unsafe {
+            result::comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr())?;
+        }
+
+        let comms: Vec<Self> = comms
+            .into_iter()
+            .zip(devices.iter().cloned())
+            .map(|(comm, device)| Self { comm, device })
+            .collect();
+
+        Ok(comms)
+    }
+
+    pub fn device(&self) -> Arc<CudaDevice> {
+        self.device.clone()
+    }
+
+    /// Primitive to create new communication link on each thread/process.
+    /// ```
+    /// # use cudarc::driver::safe::{CudaDevice};
+    /// # use cudarc::nccl::safe::{Comm, Id, ReduceOp};
+    /// let n = 2;
+    /// let n_devices = CudaDevice::count().unwrap() as usize;
+    /// let id = Id::new().unwrap();
+    /// let threads: Vec<_> = (0..n_devices).map(|i| {
+    ///     std::thread::spawn(move || {
+    ///         let dev = CudaDevice::new(i).unwrap();
+    ///         let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
+    ///         let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+    ///         let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+    ///         comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+    ///             .unwrap();
+
+    ///         let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+
+    ///         assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
+    ///     })
+    /// }).collect();
+    /// for t in threads {
+    ///     t.join().unwrap()
+    /// }
+    /// ```
     pub fn from_rank(
         device: Arc<CudaDevice>,
         world_size: usize,
@@ -252,24 +320,27 @@ mod tests {
 
     #[test]
     fn test_all_reduce() {
-        let mut threads = vec![];
         let n = 2;
         let n_devices = CudaDevice::count().unwrap() as usize;
         let id = Id::new().unwrap();
-        for i in 0..n_devices {
-            threads.push(std::thread::spawn(move || {
-                let dev = CudaDevice::new(i).unwrap();
-                let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
-                let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
-                let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
-                comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
-                    .unwrap();
+        let threads: Vec<_> = (0..n_devices)
+            .map(|i| {
+                println!("III {i}");
+                std::thread::spawn(move || {
+                    println!("Within thread {i}");
+                    let dev = CudaDevice::new(i).unwrap();
+                    let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
+                    let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+                    comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+                        .unwrap();
 
-                let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+                    let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
 
-                assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
-            }));
-        }
+                    assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
+                })
+            })
+            .collect();
         for t in threads {
             t.join().unwrap()
         }

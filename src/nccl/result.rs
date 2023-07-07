@@ -343,7 +343,7 @@ mod tests {
         let n_devices = CudaDevice::count().unwrap() as usize;
 
         let n = 2;
-        let comm_id = unsafe { get_uniqueid().unwrap() };
+        let comm_id = get_uniqueid().unwrap();
         let threads: Vec<_> = (0..n_devices)
             .map(|i| {
                 let n_devices = n_devices.clone();
@@ -366,7 +366,6 @@ mod tests {
                             sys::ncclRedOp_t::ncclSum,
                             comm,
                             dev.stream as sys::cudaStream_t,
-                            // streams[i].stream as sys::cudaStream_t,
                         )
                         .unwrap();
                     }
