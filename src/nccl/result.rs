@@ -8,7 +8,6 @@ use std::mem::MaybeUninit;
 #[derive(Clone, PartialEq, Eq)]
 pub struct NcclError(pub sys::ncclResult_t);
 
-#[cfg(feature = "std")]
 impl std::fmt::Debug for NcclError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "NcclError")
