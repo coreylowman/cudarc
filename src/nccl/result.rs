@@ -4,11 +4,11 @@ use super::sys::{self, ncclCommSplit, ncclGetVersion, ncclRedOpCreatePreMulSum, 
 use std::mem::MaybeUninit;
 
 /// Wrapper around [sys::ncclResult_t].
-/// See [NCCL docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/types.html?highlight=ncclresult_t#ncclresult-t)
+/// See [NCCL docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/types.html?ncclresult-t)
 #[derive(Clone, PartialEq, Eq)]
 pub struct NcclError(pub sys::ncclResult_t);
 
-// #[cfg(feature = "std")]
+#[cfg(feature = "std")]
 impl std::fmt::Debug for NcclError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "NcclError")
@@ -34,31 +34,28 @@ impl sys::ncclResult_t {
     }
 }
 
-// #[cfg(feature = "std")]
-// impl std::fmt::Display for NcclError {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!(f, "{self:?}")
-//     }
-// }
-
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?c.ncclCommFinalize)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_finalize(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
     sys::ncclCommFinalize(comm).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommdestroy)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_destroy(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
     sys::ncclCommDestroy(comm).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommabort)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_abort(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
     sys::ncclCommAbort(comm).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommcount)
 pub fn get_nccl_version() -> Result<::core::ffi::c_int, NcclError> {
     let mut version: ::core::ffi::c_int = 0;
     unsafe {
@@ -67,6 +64,7 @@ pub fn get_nccl_version() -> Result<::core::ffi::c_int, NcclError> {
     Ok(version)
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclgetuniqueid)
 pub fn get_uniqueid() -> Result<sys::ncclUniqueId, NcclError> {
     let mut uniqueid = MaybeUninit::uninit();
     Ok(unsafe {
@@ -75,6 +73,7 @@ pub fn get_uniqueid() -> Result<sys::ncclUniqueId, NcclError> {
     })
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcomminitrankconfig)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_init_rank_config(
@@ -87,6 +86,7 @@ pub unsafe fn comm_init_rank_config(
     sys::ncclCommInitRankConfig(comm, nranks, comm_id, rank, config).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcomminitrank)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_init_rank(
@@ -98,6 +98,7 @@ pub unsafe fn comm_init_rank(
     sys::ncclCommInitRank(comm, nranks, comm_id, rank).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcomminitall)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_init_all(
@@ -108,6 +109,7 @@ pub unsafe fn comm_init_all(
     sys::ncclCommInitAll(comm, ndev, devlist).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommsplit)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_split(
@@ -120,6 +122,7 @@ pub unsafe fn comm_split(
     ncclCommSplit(comm, color, key, newcomm, config).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommcount)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_count(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, NcclError> {
@@ -128,6 +131,7 @@ pub unsafe fn comm_count(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, Nc
     Ok(count)
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommcudevice)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_cu_device(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, NcclError> {
@@ -136,6 +140,7 @@ pub unsafe fn comm_cu_device(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int
     Ok(device)
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommuserrank)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn comm_user_rank(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, NcclError> {
@@ -144,6 +149,7 @@ pub unsafe fn comm_user_rank(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int
     Ok(rank)
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/ops.html?c.ncclRedOpCreatePreMulSum)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn reduce_op_create_pre_mul_sum(
@@ -156,15 +162,17 @@ pub unsafe fn reduce_op_create_pre_mul_sum(
     ncclRedOpCreatePreMulSum(op, scalar, datatype, residence, comm).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/ops.html?ncclredopdestroy)
 /// # Safety
 /// User is in charge of sending valid pointers.
-pub unsafe fn reduce_op_destory(
+pub unsafe fn reduce_op_destroy(
     op: sys::ncclRedOp_t,
     comm: sys::ncclComm_t,
 ) -> Result<NcclStatus, NcclError> {
     ncclRedOpDestroy(op, comm).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/colls.html?ncclreduce)
 /// # Safety
 /// User is in charge of sending valid pointers.
 #[allow(clippy::too_many_arguments)]
@@ -181,19 +189,7 @@ pub unsafe fn reduce(
     sys::ncclReduce(sendbuff, recvbuff, count, datatype, op, root, comm, stream).result()
 }
 
-/// # Safety
-/// User is in charge of sending valid pointers.
-pub unsafe fn bcast(
-    buff: *mut ::core::ffi::c_void,
-    count: usize,
-    datatype: sys::ncclDataType_t,
-    root: ::core::ffi::c_int,
-    comm: sys::ncclComm_t,
-    stream: sys::cudaStream_t,
-) -> Result<NcclStatus, NcclError> {
-    sys::ncclBcast(buff, count, datatype, root, comm, stream).result()
-}
-
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/colls.html?ncclbroadcast)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn broadcast(
@@ -208,6 +204,7 @@ pub unsafe fn broadcast(
     sys::ncclBroadcast(sendbuff, recvbuff, count, datatype, root, comm, stream).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/colls.html?ncclallreduce)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn all_reduce(
@@ -222,6 +219,7 @@ pub unsafe fn all_reduce(
     sys::ncclAllReduce(sendbuff, recvbuff, count, datatype, op, comm, stream).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/colls.html?ncclreducescatter)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn reduce_scatter(
@@ -236,6 +234,7 @@ pub unsafe fn reduce_scatter(
     sys::ncclReduceScatter(sendbuff, recvbuff, recvcount, datatype, op, comm, stream).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/colls.html?ncclallgather)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn all_gather(
@@ -249,6 +248,7 @@ pub unsafe fn all_gather(
     sys::ncclAllGather(sendbuff, recvbuff, sendcount, datatype, comm, stream).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/p2p.html?ncclsend)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn send(
@@ -262,6 +262,7 @@ pub unsafe fn send(
     sys::ncclSend(sendbuff, count, datatype, peer, comm, stream).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/p2p.html?ncclrecv)
 /// # Safety
 /// User is in charge of sending valid pointers.
 pub unsafe fn recv(
@@ -275,10 +276,12 @@ pub unsafe fn recv(
     sys::ncclRecv(recvbuff, count, datatype, peer, comm, stream).result()
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/group.html?c.ncclGroupEnd)
 pub fn group_end() -> Result<NcclStatus, NcclError> {
     unsafe { sys::ncclGroupEnd().result() }
 }
 
+/// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/group.html?ncclgroupstart)
 pub fn group_start() -> Result<NcclStatus, NcclError> {
     unsafe { sys::ncclGroupStart().result() }
 }
