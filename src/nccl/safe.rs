@@ -80,7 +80,10 @@ define_nccl_type!(u8, sys::ncclDataType_t::ncclUint8);
 define_nccl_type!(u32, sys::ncclDataType_t::ncclUint32);
 define_nccl_type!(u64, sys::ncclDataType_t::ncclUint64);
 define_nccl_type!(char, sys::ncclDataType_t::ncclUint8);
-
+#[cfg(feature = "f16")]
+define_nccl_type!(half::f16, sys::ncclDataType_t:: ncclFloat16);
+#[cfg(feature = "f16")]
+define_nccl_type!(half::bf16, sys::ncclDataType_t:: ncclBfloat16);
 impl Comm {
     /// Primitive to create new communication link on a single thread.
     /// ```
