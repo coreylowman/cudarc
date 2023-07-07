@@ -67,6 +67,8 @@ macro_rules! define_nccl_type {
     };
 }
 
+#[cfg(features = "f16")]
+define_nccl_type!(f16, sys::ncclDataType_t::ncclFloat16);
 define_nccl_type!(f32, sys::ncclDataType_t::ncclFloat32);
 define_nccl_type!(f64, sys::ncclDataType_t::ncclFloat64);
 define_nccl_type!(i8, sys::ncclDataType_t::ncclInt8);
