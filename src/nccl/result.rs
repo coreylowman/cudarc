@@ -41,34 +41,42 @@ impl sys::ncclResult_t {
 //     }
 // }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_finalize(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclCommFinalize(comm).result() }
+    sys::ncclCommFinalize(comm).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_destroy(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclCommDestroy(comm).result() }
+    sys::ncclCommDestroy(comm).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_abort(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclCommAbort(comm).result() }
+    sys::ncclCommAbort(comm).result()
 }
 
-pub unsafe fn get_nccl_version() -> Result<::core::ffi::c_int, NcclError> {
+pub fn get_nccl_version() -> Result<::core::ffi::c_int, NcclError> {
+    let mut version: ::core::ffi::c_int = 0;
     unsafe {
-        let mut version: ::core::ffi::c_int = 0;
         ncclGetVersion(&mut version).result()?;
-        return Ok(version);
     }
+    Ok(version)
 }
 
-pub unsafe fn get_uniqueid() -> Result<sys::ncclUniqueId, NcclError> {
-    unsafe {
-        let mut uniqueid = MaybeUninit::uninit();
+pub fn get_uniqueid() -> Result<sys::ncclUniqueId, NcclError> {
+    let mut uniqueid = MaybeUninit::uninit();
+    Ok(unsafe {
         sys::ncclGetUniqueId(uniqueid.as_mut_ptr()).result()?;
-        return Ok(uniqueid.assume_init());
-    }
+        uniqueid.assume_init()
+    })
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_init_rank_config(
     comm: *mut sys::ncclComm_t,
     nranks: ::core::ffi::c_int,
@@ -76,26 +84,32 @@ pub unsafe fn comm_init_rank_config(
     rank: ::core::ffi::c_int,
     config: *mut sys::ncclConfig_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclCommInitRankConfig(comm, nranks, comm_id, rank, config).result() }
+    sys::ncclCommInitRankConfig(comm, nranks, comm_id, rank, config).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_init_rank(
     comm: *mut sys::ncclComm_t,
     nranks: ::core::ffi::c_int,
     comm_id: sys::ncclUniqueId,
     rank: ::core::ffi::c_int,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclCommInitRank(comm, nranks, comm_id, rank).result() }
+    sys::ncclCommInitRank(comm, nranks, comm_id, rank).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_init_all(
     comm: *mut sys::ncclComm_t,
     ndev: ::core::ffi::c_int,
     devlist: *const ::core::ffi::c_int,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclCommInitAll(comm, ndev, devlist).result() }
+    sys::ncclCommInitAll(comm, ndev, devlist).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_split(
     comm: sys::ncclComm_t,
     color: ::core::ffi::c_int,
@@ -103,33 +117,35 @@ pub unsafe fn comm_split(
     newcomm: *mut sys::ncclComm_t,
     config: *mut sys::ncclConfig_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { ncclCommSplit(comm, color, key, newcomm, config).result() }
+    ncclCommSplit(comm, color, key, newcomm, config).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_count(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, NcclError> {
-    unsafe {
-        let mut count = 0;
-        sys::ncclCommCount(comm, &mut count).result()?;
-        Ok(count)
-    }
+    let mut count = 0;
+    sys::ncclCommCount(comm, &mut count).result()?;
+    Ok(count)
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_cu_device(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, NcclError> {
-    unsafe {
-        let mut device = 0;
-        sys::ncclCommCuDevice(comm, &mut device).result()?;
-        Ok(device)
-    }
+    let mut device = 0;
+    sys::ncclCommCuDevice(comm, &mut device).result()?;
+    Ok(device)
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn comm_user_rank(comm: sys::ncclComm_t) -> Result<::core::ffi::c_int, NcclError> {
-    unsafe {
-        let mut rank = 0;
-        sys::ncclCommUserRank(comm, &mut rank).result()?;
-        Ok(rank)
-    }
+    let mut rank = 0;
+    sys::ncclCommUserRank(comm, &mut rank).result()?;
+    Ok(rank)
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn reduce_op_create_pre_mul_sum(
     op: *mut sys::ncclRedOp_t,
     scalar: *mut ::core::ffi::c_void,
@@ -137,16 +153,21 @@ pub unsafe fn reduce_op_create_pre_mul_sum(
     residence: sys::ncclScalarResidence_t,
     comm: sys::ncclComm_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { ncclRedOpCreatePreMulSum(op, scalar, datatype, residence, comm).result() }
+    ncclRedOpCreatePreMulSum(op, scalar, datatype, residence, comm).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn reduce_op_destory(
     op: sys::ncclRedOp_t,
     comm: sys::ncclComm_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { ncclRedOpDestroy(op, comm).result() }
+    ncclRedOpDestroy(op, comm).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn reduce(
     sendbuff: *const ::core::ffi::c_void,
     recvbuff: *mut ::core::ffi::c_void,
@@ -157,9 +178,11 @@ pub unsafe fn reduce(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclReduce(sendbuff, recvbuff, count, datatype, op, root, comm, stream).result() }
+    sys::ncclReduce(sendbuff, recvbuff, count, datatype, op, root, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn bcast(
     buff: *mut ::core::ffi::c_void,
     count: usize,
@@ -168,9 +191,11 @@ pub unsafe fn bcast(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclBcast(buff, count, datatype, root, comm, stream).result() }
+    sys::ncclBcast(buff, count, datatype, root, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn broadcast(
     sendbuff: *const ::core::ffi::c_void,
     recvbuff: *mut ::core::ffi::c_void,
@@ -180,9 +205,11 @@ pub unsafe fn broadcast(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclBroadcast(sendbuff, recvbuff, count, datatype, root, comm, stream).result() }
+    sys::ncclBroadcast(sendbuff, recvbuff, count, datatype, root, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn all_reduce(
     sendbuff: *const ::core::ffi::c_void,
     recvbuff: *mut ::core::ffi::c_void,
@@ -192,9 +219,11 @@ pub unsafe fn all_reduce(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclAllReduce(sendbuff, recvbuff, count, datatype, op, comm, stream).result() }
+    sys::ncclAllReduce(sendbuff, recvbuff, count, datatype, op, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn reduce_scatter(
     sendbuff: *const ::core::ffi::c_void,
     recvbuff: *mut ::core::ffi::c_void,
@@ -204,11 +233,11 @@ pub unsafe fn reduce_scatter(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe {
-        sys::ncclReduceScatter(sendbuff, recvbuff, recvcount, datatype, op, comm, stream).result()
-    }
+    sys::ncclReduceScatter(sendbuff, recvbuff, recvcount, datatype, op, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn all_gather(
     sendbuff: *const ::core::ffi::c_void,
     recvbuff: *mut ::core::ffi::c_void,
@@ -217,9 +246,11 @@ pub unsafe fn all_gather(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclAllGather(sendbuff, recvbuff, sendcount, datatype, comm, stream).result() }
+    sys::ncclAllGather(sendbuff, recvbuff, sendcount, datatype, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn send(
     sendbuff: *const ::core::ffi::c_void,
     count: usize,
@@ -228,9 +259,11 @@ pub unsafe fn send(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclSend(sendbuff, count, datatype, peer, comm, stream).result() }
+    sys::ncclSend(sendbuff, count, datatype, peer, comm, stream).result()
 }
 
+/// # Safety
+/// User is in charge of sending valid pointers.
 pub unsafe fn recv(
     recvbuff: *mut ::core::ffi::c_void,
     count: usize,
@@ -239,13 +272,14 @@ pub unsafe fn recv(
     comm: sys::ncclComm_t,
     stream: sys::cudaStream_t,
 ) -> Result<NcclStatus, NcclError> {
-    unsafe { sys::ncclRecv(recvbuff, count, datatype, peer, comm, stream).result() }
+    sys::ncclRecv(recvbuff, count, datatype, peer, comm, stream).result()
 }
-pub unsafe fn group_end() -> Result<NcclStatus, NcclError> {
+
+pub fn group_end() -> Result<NcclStatus, NcclError> {
     unsafe { sys::ncclGroupEnd().result() }
 }
 
-pub unsafe fn group_start() -> Result<NcclStatus, NcclError> {
+pub fn group_start() -> Result<NcclStatus, NcclError> {
     unsafe { sys::ncclGroupStart().result() }
 }
 

@@ -17,7 +17,7 @@ pub struct Id {
 
 impl Id {
     pub fn new() -> Result<Self, result::NcclError> {
-        let id = unsafe { result::get_uniqueid()? };
+        let id = result::get_uniqueid()?;
         Ok(Self { id })
     }
 }
@@ -74,14 +74,20 @@ define_nccl_type!(u64, sys::ncclDataType_t::ncclUint64);
 define_nccl_type!(char, sys::ncclDataType_t::ncclUint8);
 
 impl Comm {
-    fn from_rank(device: Arc<CudaDevice>, ranks: usize, id: Id) -> Result<Self, result::NcclError> {
+    pub fn from_rank(
+        device: Arc<CudaDevice>,
+        world_size: usize,
+        id: Id,
+    ) -> Result<Self, result::NcclError> {
         let mut comm = MaybeUninit::uninit();
         let rank = device.ordinal;
 
         let comm = unsafe {
             result::comm_init_rank(
                 comm.as_mut_ptr(),
-                ranks.try_into().expect("Ranks cannot be casted to i32"),
+                world_size
+                    .try_into()
+                    .expect("World_size cannot be casted to i32"),
                 id.id,
                 rank.try_into().expect("Rank cannot be cast to i32"),
             )?;
@@ -179,7 +185,7 @@ impl Comm {
                 recvbuff.cu_device_ptr as *mut _,
                 sendbuff.len,
                 T::as_nccl_type(),
-                convert_to_nccl_reduce_op(&reduce_op),
+                convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
                 self.device.stream as *mut _,
             )
@@ -199,7 +205,7 @@ impl Comm {
                 recvbuff.cu_device_ptr as *mut _,
                 sendbuff.len,
                 T::as_nccl_type(),
-                convert_to_nccl_reduce_op(&reduce_op),
+                convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
                 self.device.stream as *mut _,
@@ -219,7 +225,7 @@ impl Comm {
                 recvbuff.cu_device_ptr as *mut _,
                 recvbuff.len,
                 T::as_nccl_type(),
-                convert_to_nccl_reduce_op(&reduce_op),
+                convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
                 self.device.stream as *mut _,
             )
