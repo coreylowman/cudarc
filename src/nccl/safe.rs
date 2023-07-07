@@ -9,7 +9,9 @@ pub use result::{group_end, group_start};
 #[derive(Debug)]
 pub struct Comm {
     comm: sys::ncclComm_t,
-    pub device: Arc<CudaDevice>,
+    device: Arc<CudaDevice>,
+    rank: usize,
+    world_size: usize,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -107,7 +109,13 @@ impl Comm {
         let comms: Vec<Self> = comms
             .into_iter()
             .zip(devices.iter().cloned())
-            .map(|(comm, device)| Self { comm, device })
+            .enumerate()
+            .map(|(rank, (comm, device))| Self {
+                comm,
+                device,
+                rank,
+                world_size: n_devices,
+            })
             .collect();
 
         Ok(comms)
@@ -115,6 +123,14 @@ impl Comm {
 
     pub fn device(&self) -> Arc<CudaDevice> {
         self.device.clone()
+    }
+
+    pub fn rank(&self) -> usize {
+        self.rank
+    }
+
+    pub fn world_size(&self) -> usize {
+        self.world_size
     }
 
     /// Primitive to create new communication link on each thread/process.
@@ -144,11 +160,11 @@ impl Comm {
     /// ```
     pub fn from_rank(
         device: Arc<CudaDevice>,
+        rank: usize,
         world_size: usize,
         id: Id,
     ) -> Result<Self, result::NcclError> {
         let mut comm = MaybeUninit::uninit();
-        let rank = device.ordinal;
 
         let comm = unsafe {
             result::comm_init_rank(
@@ -161,7 +177,12 @@ impl Comm {
             )?;
             comm.assume_init()
         };
-        Ok(Self { comm, device })
+        Ok(Self {
+            comm,
+            device,
+            rank,
+            world_size,
+        })
     }
 }
 
