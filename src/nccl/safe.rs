@@ -1,5 +1,7 @@
 use super::{result, sys};
 use crate::driver::{CudaDevice, CudaSlice};
+#[cfg(feature = "f16")]
+use half::f16;
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::{sync::Arc, vec, vec::Vec};
@@ -67,7 +69,7 @@ macro_rules! define_nccl_type {
     };
 }
 
-#[cfg(features = "f16")]
+#[cfg(feature = "f16")]
 define_nccl_type!(f16, sys::ncclDataType_t::ncclFloat16);
 define_nccl_type!(f32, sys::ncclDataType_t::ncclFloat32);
 define_nccl_type!(f64, sys::ncclDataType_t::ncclFloat64);
@@ -352,7 +354,7 @@ mod tests {
                 std::thread::spawn(move || {
                     println!("Within thread {i}");
                     let dev = CudaDevice::new(i).unwrap();
-                    let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
+                    let comm = Comm::from_rank(dev.clone(), i, n_devices, id).unwrap();
                     let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
                     let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
                     comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
