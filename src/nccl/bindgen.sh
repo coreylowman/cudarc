@@ -1,6 +1,6 @@
 #!/bin/bash
 set -exu
-
+BINDGEN_EXTRA_CLANG_ARGS="-D__CUDA_BF16_TYPES_EXIST__" \
 bindgen \
   --allowlist-type="^nccl.*" \
   --allowlist-var="^nccl.*" \

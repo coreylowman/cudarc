@@ -301,7 +301,8 @@ pub enum ncclDataType_t {
     ncclFloat16 = 6,
     ncclFloat32 = 7,
     ncclFloat64 = 8,
-    ncclNumTypes = 9,
+    ncclBfloat16 = 9,
+    ncclNumTypes = 10,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]

@@ -1,7 +1,5 @@
 use super::{result, sys};
 use crate::driver::{CudaDevice, CudaSlice};
-#[cfg(feature = "f16")]
-use half::f16;
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::{sync::Arc, vec, vec::Vec};
@@ -69,8 +67,6 @@ macro_rules! define_nccl_type {
     };
 }
 
-#[cfg(feature = "f16")]
-define_nccl_type!(f16, sys::ncclDataType_t::ncclFloat16);
 define_nccl_type!(f32, sys::ncclDataType_t::ncclFloat32);
 define_nccl_type!(f64, sys::ncclDataType_t::ncclFloat64);
 define_nccl_type!(i8, sys::ncclDataType_t::ncclInt8);
@@ -81,9 +77,9 @@ define_nccl_type!(u32, sys::ncclDataType_t::ncclUint32);
 define_nccl_type!(u64, sys::ncclDataType_t::ncclUint64);
 define_nccl_type!(char, sys::ncclDataType_t::ncclUint8);
 #[cfg(feature = "f16")]
-define_nccl_type!(half::f16, sys::ncclDataType_t:: ncclFloat16);
+define_nccl_type!(half::f16, sys::ncclDataType_t::ncclFloat16);
 #[cfg(feature = "f16")]
-define_nccl_type!(half::bf16, sys::ncclDataType_t:: ncclBfloat16);
+define_nccl_type!(half::bf16, sys::ncclDataType_t::ncclBfloat16);
 impl Comm {
     /// Primitive to create new communication link on a single thread.
     /// ```
