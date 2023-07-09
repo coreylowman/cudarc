@@ -91,6 +91,8 @@ define_nccl_type!(half::f16, sys::ncclDataType_t::ncclFloat16);
 define_nccl_type!(half::bf16, sys::ncclDataType_t::ncclBfloat16);
 impl Comm {
     /// Primitive to create new communication link on a single thread.
+    /// WARNING: You are likely to get limited throughput using a single core
+    /// to control multiple GPUs
     /// ```
     /// # use cudarc::driver::safe::{CudaDevice};
     /// # use cudarc::nccl::safe::{Comm, ReduceOp, group_start, group_end};
@@ -145,30 +147,33 @@ impl Comm {
         self.world_size
     }
 
-    /// Primitive to create new communication link on each thread/process.
+    /// Primitive to create new communication link on each process (threads are possible but not
+    /// recommended).
+    ///
+    /// WARNING: If using threads, uou are likely to get limited throughput using a single core
+    /// to control multiple GPUs. Cuda drivers effectively use a global mutex thrashing
+    /// performance on multi threaded multi GPU.
     /// ```
     /// # use cudarc::driver::safe::{CudaDevice};
     /// # use cudarc::nccl::safe::{Comm, Id, ReduceOp};
     /// let n = 2;
-    /// let n_devices = CudaDevice::count().unwrap() as usize;
+    /// let n_devices = 1; // This is to simplify this example.
+    /// // Spawn this only on rank 0
     /// let id = Id::new().unwrap();
-    /// let threads: Vec<_> = (0..n_devices).map(|i| {
-    ///     std::thread::spawn(move || {
-    ///         let dev = CudaDevice::new(i).unwrap();
-    ///         let comm = Comm::from_rank(dev.clone(), n_devices, id).unwrap();
-    ///         let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
-    ///         let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
-    ///         comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
-    ///             .unwrap();
+    /// // Send id.internal() to other ranks
+    /// // let id = Id::uninit(id.internal().clone()); on other ranks
+    ///
+    /// let rank = 0;
+    /// let dev = CudaDevice::new(rank).unwrap();
+    /// let comm = Comm::from_rank(dev.clone(), rank, n_devices, id).unwrap();
+    /// let slice = dev.htod_copy(vec![(rank + 1) as f32 * 1.0; n]).unwrap();
+    /// let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+    /// comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+    ///     .unwrap();
 
-    ///         let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+    /// let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
 
-    ///         assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
-    ///     })
-    /// }).collect();
-    /// for t in threads {
-    ///     t.join().unwrap()
-    /// }
+    /// assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
     /// ```
     pub fn from_rank(
         device: Arc<CudaDevice>,
