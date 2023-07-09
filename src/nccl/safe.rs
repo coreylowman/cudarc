@@ -24,6 +24,15 @@ impl Id {
         let id = result::get_uniqueid()?;
         Ok(Self { id })
     }
+
+    pub fn uninit(internal: [::core::ffi::c_char; 128usize]) -> Self {
+        let id = sys::ncclUniqueId { internal };
+        Self { id }
+    }
+
+    pub fn internal(&self) -> &[::core::ffi::c_char; 128usize] {
+        &self.id.internal
+    }
 }
 
 pub enum ReduceOp {
