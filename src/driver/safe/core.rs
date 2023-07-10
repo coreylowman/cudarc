@@ -70,6 +70,11 @@ impl CudaDevice {
         Ok(Arc::new(device))
     }
 
+    pub fn count() -> Result<i32, result::DriverError> {
+        result::init().unwrap();
+        result::device::get_count()
+    }
+
     /// Get the `ordinal` index of this [CudaDevice].
     pub fn ordinal(&self) -> usize {
         self.ordinal

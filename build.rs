@@ -34,6 +34,8 @@ fn link_cuda() {
     println!("cargo:rustc-link-lib=dylib=nvrtc");
     #[cfg(feature = "curand")]
     println!("cargo:rustc-link-lib=dylib=curand");
+    #[cfg(feature = "nccl")]
+    println!("cargo:rustc-link-lib=dylib=nccl");
 
     #[cfg(feature = "static-linking")]
     {
