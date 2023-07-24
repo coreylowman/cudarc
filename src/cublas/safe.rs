@@ -33,6 +33,11 @@ impl CudaBlas {
         Ok(blas)
     }
 
+    /// Returns a reference to the underlying cublas handle.
+    pub fn handle(&self) -> &sys::cublasHandle_t {
+        &self.handle
+    }
+
     /// Sets the handle's current to either the stream specified, or the device's default work
     /// stream.
     ///
