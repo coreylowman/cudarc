@@ -26,6 +26,20 @@ impl Ptx {
     pub fn from_src<S: Into<String>>(src: S) -> Self {
         Self(PtxKind::Src(src.into()))
     }
+
+    /// Get the compiled source as a string.
+    pub fn to_src(&self) -> String {
+        match &self.0 {
+            PtxKind::Image(bytes) => unsafe { CStr::from_ptr(bytes.as_ptr()) }
+                .to_str()
+                .expect("Unable to convert bytes to str.")
+                .to_string(),
+            PtxKind::Src(src) => src.clone(),
+            PtxKind::File(path) => {
+                std::fs::read_to_string(path).expect("Unable to read ptx from file.")
+            }
+        }
+    }
 }
 
 impl<S: Into<String>> From<S> for Ptx {
