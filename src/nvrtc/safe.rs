@@ -33,7 +33,7 @@ impl Ptx {
             PtxKind::Image(bytes) => unsafe { CStr::from_ptr(bytes.as_ptr()) }
                 .to_str()
                 .expect("Unable to convert bytes to str.")
-                .to_string(),
+                .to_owned(),
             PtxKind::Src(src) => src.clone(),
             PtxKind::File(path) => {
                 std::fs::read_to_string(path).expect("Unable to read ptx from file.")
