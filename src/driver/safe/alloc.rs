@@ -243,13 +243,17 @@ impl CudaDevice {
         assert_eq!(src.len(), dst.len());
         dst.host_buf = Some(Pin::new(src));
         self.bind_to_thread()?;
-        unsafe {
-            result::memcpy_htod_async(
-                dst.cu_device_ptr,
-                dst.host_buf.as_ref().unwrap(),
-                self.stream,
-            )
-        }?;
+        if self.is_async()? {
+            unsafe {
+                result::memcpy_htod_async(
+                    dst.cu_device_ptr,
+                    dst.host_buf.as_ref().unwrap(),
+                    self.stream,
+                )
+            }?
+        } else {
+            unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
+        }
         Ok(())
     }
 
@@ -288,7 +292,11 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.bind_to_thread()?;
-        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
+        if self.is_async()? {
+            unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
+        } else {
+            unsafe { result::memcpy_htod_sync(*dst.device_ptr_mut(), src) }?;
+        }
         self.synchronize()
     }
 
