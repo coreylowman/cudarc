@@ -526,6 +526,13 @@ pub unsafe fn memset_d8_async(
     sys::cuMemsetD8Async(dptr, uc, num_bytes, stream).result()
 }
 
+/// Sets device memory with stream ordered semantics.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g6e582bf866e9e2fb014297bfaf354d7b)
+///
+/// # Safety
+/// 1. The resulting memory pattern may not be valid for `T`.
+/// 2. The device pointer should not have been freed already (double free)
 pub unsafe fn memset_d8_sync(
     dptr: sys::CUdeviceptr,
     uc: c_uchar,
@@ -560,6 +567,15 @@ pub unsafe fn memcpy_htod_async<T>(
     .result()
 }
 
+/// Copies memory from Host to Device
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g4d32266788c440b0220b1a9ba5795169)
+///
+/// # Safety
+/// **This function is synchronous**///
+/// 1. `T` must be the type that device pointer was allocated with.
+/// 2. The device pointer should not have been freed already (double free)
+/// 3. `src` must not be moved
 pub unsafe fn memcpy_htod_sync<T>(dst: sys::CUdeviceptr, src: &[T]) -> Result<(), DriverError> {
     sys::cuMemcpyHtoD_v2(dst, src.as_ptr() as *const _, std::mem::size_of_val(src)).result()
 }
@@ -589,6 +605,15 @@ pub unsafe fn memcpy_dtoh_async<T>(
     .result()
 }
 
+/// Copies memory from Device to Host with stream ordered semantics.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g3480368ee0208a98f75019c9a8450893)
+///
+/// # Safety
+/// **This function is synchronous**
+///
+/// 1. `T` must be the type that device pointer was allocated with.
+/// 2. The device pointer should not have been freed already (double free)
 pub unsafe fn memcpy_dtoh_sync<T>(dst: &mut [T], src: sys::CUdeviceptr) -> Result<(), DriverError> {
     sys::cuMemcpyDtoH_v2(dst.as_mut_ptr() as *mut _, src, std::mem::size_of_val(dst)).result()
 }
@@ -610,6 +635,13 @@ pub unsafe fn memcpy_dtod_async(
     sys::cuMemcpyDtoDAsync_v2(dst, src, num_bytes, stream).result()
 }
 
+/// Copies memory from Device to Device
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g1725774abf8b51b91945f3336b778c8b)
+///
+/// # Safety
+/// 1. `T` must be the type that BOTH device pointers were allocated with.
+/// 2. Neither device pointer should not have been freed already (double free)
 pub unsafe fn memcpy_dtod_sync(
     dst: sys::CUdeviceptr,
     src: sys::CUdeviceptr,
