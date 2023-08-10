@@ -128,10 +128,15 @@ impl CudaDevice {
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
         self.bind_to_thread()?;
-        let value = unsafe { result::device::get_attribute(self.cu_device, sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED)?} ;
+        let value = unsafe {
+            result::device::get_attribute(
+                self.cu_device,
+                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
+            )?
+        };
         let cu_device_ptr = if value > 0 {
             result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
-        }else{
+        } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
         Ok(CudaSlice {

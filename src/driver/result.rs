@@ -464,9 +464,13 @@ pub unsafe fn malloc_async(
     Ok(dev_ptr.assume_init())
 }
 
-pub unsafe fn malloc_sync(
-    num_bytes: usize,
-) -> Result<sys::CUdeviceptr, DriverError> {
+/// Allocates memory
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gb82d2a09844a58dd9e744dc31e8aa467)
+///
+/// # Safety
+/// 1. The memory return by this is unset, which may be invalid for `T`.
+pub unsafe fn malloc_sync(num_bytes: usize) -> Result<sys::CUdeviceptr, DriverError> {
     let mut dev_ptr = MaybeUninit::uninit();
     sys::cuMemAlloc_v2(dev_ptr.as_mut_ptr(), num_bytes).result()?;
     Ok(dev_ptr.assume_init())
@@ -484,6 +488,12 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
     sys::cuMemFreeAsync(dptr, stream).result()
 }
 
+/// Allocates memory
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g89b3f154e17cc89b6eea277dbdf5c93a)
+///
+/// # Safety
+/// 1. The memory should have been allocated with malloc_sync
 pub unsafe fn free_sync(dptr: sys::CUdeviceptr) -> Result<(), DriverError> {
     sys::cuMemFree_v2(dptr).result()
 }
