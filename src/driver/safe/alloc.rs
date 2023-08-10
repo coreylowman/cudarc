@@ -110,7 +110,11 @@ impl CudaDevice {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
         self.bind_to_thread()?;
-        let cu_device_ptr = unsafe { result::malloc_async(self.stream, 0) }?;
+        let cu_device_ptr = if value > 0 {
+            result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
+        } else {
+            result::malloc_sync(len * std::mem::size_of::<T>())?
+        };
         Ok(CudaSlice {
             cu_device_ptr,
             len: 0,
