@@ -526,6 +526,14 @@ pub unsafe fn memset_d8_async(
     sys::cuMemsetD8Async(dptr, uc, num_bytes, stream).result()
 }
 
+pub unsafe fn memset_d8_sync(
+    dptr: sys::CUdeviceptr,
+    uc: c_uchar,
+    num_bytes: usize,
+) -> Result<(), DriverError> {
+    sys::cuMemsetD8_v2(dptr, uc, num_bytes).result()
+}
+
 /// Copies memory from Host to Device with stream ordered semantics.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g4d32266788c440b0220b1a9ba5795169)
@@ -581,6 +589,10 @@ pub unsafe fn memcpy_dtoh_async<T>(
     .result()
 }
 
+pub unsafe fn memcpy_dtoh_sync<T>(dst: &mut [T], src: sys::CUdeviceptr) -> Result<(), DriverError> {
+    sys::cuMemcpyDtoH_v2(dst.as_mut_ptr() as *mut _, src, std::mem::size_of_val(dst)).result()
+}
+
 /// Copies memory from Device to Device with stream ordered semantics.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g39ea09ba682b8eccc9c3e0c04319b5c8)
@@ -596,6 +608,14 @@ pub unsafe fn memcpy_dtod_async(
     stream: sys::CUstream,
 ) -> Result<(), DriverError> {
     sys::cuMemcpyDtoDAsync_v2(dst, src, num_bytes, stream).result()
+}
+
+pub unsafe fn memcpy_dtod_sync(
+    dst: sys::CUdeviceptr,
+    src: sys::CUdeviceptr,
+    num_bytes: usize,
+) -> Result<(), DriverError> {
+    sys::cuMemcpyDtoD_v2(dst, src, num_bytes).result()
 }
 
 /// Returns (free, total) memory in bytes.

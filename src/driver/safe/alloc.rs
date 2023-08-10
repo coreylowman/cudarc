@@ -181,7 +181,13 @@ impl CudaDevice {
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         self.bind_to_thread()?;
-        unsafe { result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream) }
+        if self.is_async()? {
+            unsafe {
+                result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream)
+            }
+        } else {
+            unsafe { result::memset_d8_sync(*dst.device_ptr_mut(), 0, dst.num_bytes()) }
+        }
     }
 
     /// Device to device copy (safe version of [result::memcpy_dtod_async]).
@@ -202,13 +208,23 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.bind_to_thread()?;
-        unsafe {
-            result::memcpy_dtod_async(
-                *dst.device_ptr_mut(),
-                *src.device_ptr(),
-                src.len() * std::mem::size_of::<T>(),
-                self.stream,
-            )
+        if self.is_async()? {
+            unsafe {
+                result::memcpy_dtod_async(
+                    *dst.device_ptr_mut(),
+                    *src.device_ptr(),
+                    src.len() * std::mem::size_of::<T>(),
+                    self.stream,
+                )
+            }
+        } else {
+            unsafe {
+                result::memcpy_dtod_sync(
+                    *dst.device_ptr_mut(),
+                    *src.device_ptr(),
+                    src.len() * std::mem::size_of::<T>(),
+                )
+            }
         }
     }
 
@@ -336,7 +352,11 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.bind_to_thread()?;
-        unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
+        if self.is_async()? {
+            unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
+        } else {
+            unsafe { result::memcpy_dtoh_sync(dst, *src.device_ptr()) }?;
+        }
         self.synchronize()
     }
 

@@ -197,7 +197,7 @@ impl<T> Drop for CudaSlice<T> {
             if self.device.is_async().unwrap() {
                 result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
             } else {
-                result::free_sync(self.cu_device_ptr).unwrap();
+                // result::free_sync(self.cu_device_ptr).unwrap();
             }
         }
     }
