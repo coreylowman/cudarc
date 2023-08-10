@@ -193,15 +193,8 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         self.device.bind_to_thread().unwrap();
-        let value = unsafe {
-            result::device::get_attribute(
-                self.device.cu_device,
-                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
-            )
-            .unwrap()
-        };
         unsafe {
-            if value > 0 {
+            if self.device.is_async().unwrap() {
                 result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
             } else {
                 result::free_sync(self.cu_device_ptr).unwrap();

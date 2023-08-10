@@ -107,13 +107,24 @@ impl CudaDevice {
 }
 
 impl CudaDevice {
+    pub fn is_async(self: &Arc<Self>) -> Result<bool, result::DriverError> {
+        let value = unsafe {
+            result::device::get_attribute(
+                self.cu_device,
+                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
+            )?
+        };
+        Ok(value > 0)
+    }
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
         self.bind_to_thread()?;
-        let cu_device_ptr = if value > 0 {
-            result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
-        } else {
-            result::malloc_sync(len * std::mem::size_of::<T>())?
+        let cu_device_ptr = unsafe {
+            if self.is_async()? {
+                result::malloc_async(self.stream, 0)?
+            } else {
+                result::malloc_sync(0)?
+            }
         };
         Ok(CudaSlice {
             cu_device_ptr,
@@ -132,13 +143,7 @@ impl CudaDevice {
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
         self.bind_to_thread()?;
-        let value = unsafe {
-            result::device::get_attribute(
-                self.cu_device,
-                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
-            )?
-        };
-        let cu_device_ptr = if value > 0 {
+        let cu_device_ptr = if self.is_async()? {
             result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
