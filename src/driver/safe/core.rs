@@ -39,6 +39,7 @@ pub struct CudaDevice {
     pub(crate) event: sys::CUevent,
     pub(crate) modules: RwLock<BTreeMap<String, CudaModule>>,
     pub(crate) ordinal: usize,
+    pub(crate) is_async: bool,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -59,6 +60,14 @@ impl CudaDevice {
         // can fail with OOM
         let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
 
+        let value = unsafe {
+            result::device::get_attribute(
+                cu_device,
+                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
+            )?
+        };
+        let is_async = value > 0;
+
         let device = CudaDevice {
             cu_device,
             cu_primary_ctx,
@@ -66,6 +75,7 @@ impl CudaDevice {
             event,
             modules: RwLock::new(BTreeMap::new()),
             ordinal,
+            is_async,
         };
         Ok(Arc::new(device))
     }
@@ -194,7 +204,11 @@ impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         self.device.bind_to_thread().unwrap();
         unsafe {
-            result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
+            if self.device.is_async {
+                result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
+            } else {
+                result::free_sync(self.cu_device_ptr).unwrap();
+            }
         }
     }
 }

@@ -110,7 +110,13 @@ impl CudaDevice {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
         self.bind_to_thread()?;
-        let cu_device_ptr = unsafe { result::malloc_async(self.stream, 0) }?;
+        let cu_device_ptr = unsafe {
+            if self.is_async {
+                result::malloc_async(self.stream, 0)?
+            } else {
+                result::malloc_sync(0)?
+            }
+        };
         Ok(CudaSlice {
             cu_device_ptr,
             len: 0,
@@ -128,7 +134,11 @@ impl CudaDevice {
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
         self.bind_to_thread()?;
-        let cu_device_ptr = result::malloc_async(self.stream, len * std::mem::size_of::<T>())?;
+        let cu_device_ptr = if self.is_async {
+            result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
+        } else {
+            result::malloc_sync(len * std::mem::size_of::<T>())?
+        };
         Ok(CudaSlice {
             cu_device_ptr,
             len,
@@ -162,7 +172,13 @@ impl CudaDevice {
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         self.bind_to_thread()?;
-        unsafe { result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream) }
+        if self.is_async {
+            unsafe {
+                result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream)
+            }
+        } else {
+            unsafe { result::memset_d8_sync(*dst.device_ptr_mut(), 0, dst.num_bytes()) }
+        }
     }
 
     /// Device to device copy (safe version of [result::memcpy_dtod_async]).
@@ -183,13 +199,23 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.bind_to_thread()?;
-        unsafe {
-            result::memcpy_dtod_async(
-                *dst.device_ptr_mut(),
-                *src.device_ptr(),
-                src.len() * std::mem::size_of::<T>(),
-                self.stream,
-            )
+        if self.is_async {
+            unsafe {
+                result::memcpy_dtod_async(
+                    *dst.device_ptr_mut(),
+                    *src.device_ptr(),
+                    src.len() * std::mem::size_of::<T>(),
+                    self.stream,
+                )
+            }
+        } else {
+            unsafe {
+                result::memcpy_dtod_sync(
+                    *dst.device_ptr_mut(),
+                    *src.device_ptr(),
+                    src.len() * std::mem::size_of::<T>(),
+                )
+            }
         }
     }
 
@@ -224,13 +250,17 @@ impl CudaDevice {
         assert_eq!(src.len(), dst.len());
         dst.host_buf = Some(Pin::new(src));
         self.bind_to_thread()?;
-        unsafe {
-            result::memcpy_htod_async(
-                dst.cu_device_ptr,
-                dst.host_buf.as_ref().unwrap(),
-                self.stream,
-            )
-        }?;
+        if self.is_async {
+            unsafe {
+                result::memcpy_htod_async(
+                    dst.cu_device_ptr,
+                    dst.host_buf.as_ref().unwrap(),
+                    self.stream,
+                )
+            }?
+        } else {
+            unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
+        }
         Ok(())
     }
 
@@ -269,7 +299,11 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.bind_to_thread()?;
-        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
+        if self.is_async {
+            unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
+        } else {
+            unsafe { result::memcpy_htod_sync(*dst.device_ptr_mut(), src) }?;
+        }
         self.synchronize()
     }
 
@@ -309,7 +343,11 @@ impl CudaDevice {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.bind_to_thread()?;
-        unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
+        if self.is_async {
+            unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
+        } else {
+            unsafe { result::memcpy_dtoh_sync(dst, *src.device_ptr()) }?;
+        }
         self.synchronize()
     }
 
