@@ -464,6 +464,14 @@ pub unsafe fn malloc_async(
     Ok(dev_ptr.assume_init())
 }
 
+pub unsafe fn malloc_sync(
+    num_bytes: usize,
+) -> Result<sys::CUdeviceptr, DriverError> {
+    let mut dev_ptr = MaybeUninit::uninit();
+    sys::cuMemAlloc_v2(dev_ptr.as_mut_ptr(), num_bytes).result()?;
+    Ok(dev_ptr.assume_init())
+}
+
 /// Frees memory with stream ordered semantics.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MALLOC__ASYNC.html#group__CUDA__MALLOC__ASYNC_1g41acf4131f672a2a75cd93d3241f10cf)
@@ -474,6 +482,10 @@ pub unsafe fn malloc_async(
 /// 3. The memory should not have been freed already (double free)
 pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), DriverError> {
     sys::cuMemFreeAsync(dptr, stream).result()
+}
+
+pub unsafe fn free_sync(dptr: sys::CUdeviceptr) -> Result<(), DriverError> {
+    sys::cuMemFree_v2(dptr).result()
 }
 
 /// Frees device memory.
