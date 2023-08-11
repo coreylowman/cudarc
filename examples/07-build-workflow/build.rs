@@ -17,7 +17,7 @@ fn main() {
     let code = "sm_86"; // For the same SM 8.6 (Ampere architecture).
 
     // build the cuda kernels
-    let cuda_src = PathBuf::from("cuda/kernels/my_struct_kernel.cu");
+    let cuda_src = PathBuf::from("src/cuda/kernels/my_struct_kernel.cu");
     let ptx_file = out_dir.join("my_struct_kernel.ptx");
 
     let nvcc_status = Command::new("nvcc")
@@ -41,7 +41,7 @@ fn main() {
     let bindings = bindgen::Builder::default()
         // The input header we would like to generate
         // bindings for.
-        .header("cuda/includes/wrapper.h")
+        .header("src/cuda/includes/wrapper.h")
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .parse_callbacks(Box::new(CargoCallbacks))
