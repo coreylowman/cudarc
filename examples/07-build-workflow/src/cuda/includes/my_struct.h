@@ -5,7 +5,7 @@
 struct MyStruct
 {
     /// example data containing fixed length array of floats
-    int data[4];
+    float data[4];
 };
 
 #endif // MY_STRUCT_H
