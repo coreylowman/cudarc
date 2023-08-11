@@ -557,6 +557,9 @@ mod tests {
     /// See https://github.com/coreylowman/cudarc/issues/160
     #[test]
     fn test_slice_is_freed_with_correct_context() {
+        if CudaDevice::count().unwrap() < 2 {
+            return;
+        }
         let dev0 = CudaDevice::new(0).unwrap();
         let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
         let dev1 = CudaDevice::new(1).unwrap();
@@ -568,6 +571,9 @@ mod tests {
     /// See https://github.com/coreylowman/cudarc/issues/161
     #[test]
     fn test_copy_uses_correct_context() {
+        if CudaDevice::count().unwrap() < 2 {
+            return;
+        }
         let dev0 = CudaDevice::new(0).unwrap();
         let _dev1 = CudaDevice::new(1).unwrap();
         let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
