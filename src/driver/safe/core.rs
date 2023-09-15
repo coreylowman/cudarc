@@ -14,7 +14,6 @@ use spin::RwLock;
 use std::sync::RwLock;
 
 use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
-use crate::driver;
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
@@ -285,7 +284,7 @@ impl CudaFunction {
         Ok(num_blocks as u32)
     }
 
-    pub fn occupancy_max_active_clusters(&self, config: driver::LaunchConfig, shared_mem_size: u32) -> Result<u32, result::DriverError> {
+    pub fn occupancy_max_active_clusters(&self, config: crate::driver::LaunchConfig, shared_mem_size: u32) -> Result<u32, result::DriverError> {
         let mut num_clusters: std::ffi::c_int = 0;
 
         let cfg = sys::CUlaunchConfig {
@@ -320,7 +319,7 @@ impl CudaFunction {
         Ok((min_grid_size as u32, block_size as u32))
     }
 
-    pub fn occupancy_max_potential_cluster_size(&self, config: driver::LaunchConfig, shared_mem_size: u32) -> Result<u32, result::DriverError> {
+    pub fn occupancy_max_potential_cluster_size(&self, config: crate::driver::LaunchConfig, shared_mem_size: u32) -> Result<u32, result::DriverError> {
         let mut cluster_size: std::ffi::c_int = 0;
 
         let cfg = sys::CUlaunchConfig {
