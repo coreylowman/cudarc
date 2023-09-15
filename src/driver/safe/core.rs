@@ -14,6 +14,7 @@ use spin::RwLock;
 use std::sync::RwLock;
 
 use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
+use crate::driver;
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
@@ -260,6 +261,87 @@ unsafe impl Sync for CudaModule {}
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
     pub(crate) device: Arc<CudaDevice>,
+}
+
+impl CudaFunction {
+    pub fn occupancy_available_dynamic_smem_per_block(&self, num_blocks: u32, block_size: u32) -> Result<usize, result::DriverError> {
+        let mut dynamic_smem_size: usize = 0;
+
+        unsafe {
+            sys::cuOccupancyAvailableDynamicSMemPerBlock(&mut dynamic_smem_size, self.cu_function, num_blocks as std::ffi::c_int, block_size as std::ffi::c_int).result()?
+        };
+
+        Ok(dynamic_smem_size)
+    }
+
+    pub fn occupancy_max_active_blocks_per_multiprocessor(&self, block_size: u32, dynamic_smem_size: usize, flags: Option<sys::CUoccupancy_flags_enum>) -> Result<u32, result::DriverError> {
+        let mut num_blocks: std::ffi::c_int = 0;
+        let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
+
+        unsafe {
+            sys::cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(&mut num_blocks, self.cu_function, block_size as std::ffi::c_int, dynamic_smem_size, flags as std::ffi::c_uint).result()?
+        };
+
+        Ok(num_blocks as u32)
+    }
+
+    pub fn occupancy_max_active_clusters(&self, config: driver::LaunchConfig, shared_mem_size: u32) -> Result<u32, result::DriverError> {
+        let mut num_clusters: std::ffi::c_int = 0;
+
+        let cfg = sys::CUlaunchConfig {
+            gridDimX: config.grid_dim.0,
+            gridDimY: config.grid_dim.1,
+            gridDimZ: config.grid_dim.2,
+            blockDimX: config.block_dim.0,
+            blockDimY: config.block_dim.1,
+            blockDimZ: config.block_dim.2,
+            sharedMemBytes: shared_mem_size as std::ffi::c_uint,
+            hStream: self.device.stream,
+            attrs: std::ptr::null_mut(),
+            numAttrs: 0
+        };
+
+        unsafe {
+            sys::cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg).result()?
+        };
+
+        Ok(num_clusters as u32)
+    }
+
+    pub fn occupancy_max_potential_block_size(&self, block_size_to_dynamic_smem_size: extern "C" fn(block_size: std::ffi::c_int) -> usize, dynamic_smem_size: usize, block_size_limit: u32, flags: Option<sys::CUoccupancy_flags_enum>) -> Result<(u32, u32), result::DriverError> {
+        let mut min_grid_size: std::ffi::c_int = 0;
+        let mut block_size: std::ffi::c_int = 0;
+        let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
+
+        unsafe {
+            sys::cuOccupancyMaxPotentialBlockSizeWithFlags(&mut min_grid_size, &mut block_size, self.cu_function, Some(block_size_to_dynamic_smem_size), dynamic_smem_size, block_size_limit as std::ffi::c_int, flags as std::ffi::c_uint).result()?
+        };
+
+        Ok((min_grid_size as u32, block_size as u32))
+    }
+
+    pub fn occupancy_max_potential_cluster_size(&self, config: driver::LaunchConfig, shared_mem_size: u32) -> Result<u32, result::DriverError> {
+        let mut cluster_size: std::ffi::c_int = 0;
+
+        let cfg = sys::CUlaunchConfig {
+            gridDimX: config.grid_dim.0,
+            gridDimY: config.grid_dim.1,
+            gridDimZ: config.grid_dim.2,
+            blockDimX: config.block_dim.0,
+            blockDimY: config.block_dim.1,
+            blockDimZ: config.block_dim.2,
+            sharedMemBytes: shared_mem_size as std::ffi::c_uint,
+            hStream: self.device.stream,
+            attrs: std::ptr::null_mut(),
+            numAttrs: 0
+        };
+
+        unsafe {
+            sys::cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg).result()?
+        };
+
+        Ok(cluster_size as u32)
+    }
 }
 
 unsafe impl Send for CudaFunction {}
