@@ -61,61 +61,6 @@ impl Drop for CudaBlas {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
-pub struct AxpyConfig<T> {
-    pub alpha: T,
-    pub n: c_int,
-    pub incx: c_int,
-    pub incy: c_int
-}
-
-pub trait Axpy<T> {
-    unsafe fn axpy<X: DevicePtr<T>, Y: DevicePtr<T>>(
-        &self,
-        cfg: AxpyConfig<T>,
-        x: &X,
-        y: &mut Y,
-    ) -> Result<(), CublasError>;
-}
-
-impl Axpy<f32> for CudaBlas {
-    unsafe fn axpy<X: DevicePtr<f32>, Y: DevicePtr<f32>>(
-        &self,
-        cfg: AxpyConfig<f32>,
-        x: &X,
-        y: &mut Y,
-    ) -> Result<(), CublasError> {
-        result::saxpy(
-            self.handle,
-            cfg.n,
-            (&cfg.alpha) as *const _,
-            *x.device_ptr() as *const _,
-            cfg.incx,
-            *y.device_ptr() as *mut _,
-            cfg.incy
-        )
-    }
-}
-
-impl Axpy<f64> for CudaBlas {
-    unsafe fn axpy<X: DevicePtr<f64>, Y: DevicePtr<f64>>(
-        &self,
-        cfg: AxpyConfig<f64>,
-        x: &X,
-        y: &mut Y,
-    ) -> Result<(), CublasError> {
-        result::daxpy(
-            self.handle,
-            cfg.n,
-            (&cfg.alpha) as *const _,
-            *x.device_ptr() as *const _,
-            cfg.incx,
-            *y.device_ptr() as *mut _,
-            cfg.incy
-        )
-    }
-}
-
 /// Configuration for [Gemv]
 #[derive(Debug, Copy, Clone)]
 pub struct GemvConfig<T> {
