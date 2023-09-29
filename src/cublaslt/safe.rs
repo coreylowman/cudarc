@@ -98,15 +98,15 @@ impl Matmul<f32> for CudaBlasLT {
         stream: CudaStream,
         a: &A, b: &B, c: &mut C,
     ) -> Result<(), CublasError> {
-        let (a_rows, a_cols, transa) = if cfg.transa {
-            (cfg.m, cfg.k, 1 as u32)
+        let (a_rows, a_cols) = if cfg.transa {
+            (cfg.k, cfg.m)
         } else {
-            (cfg.k, cfg.m, 0 as u32)
+            (cfg.m, cfg.k)
         };
-        let (b_rows, b_cols,transb) = if cfg.transb {
-            (cfg.k, cfg.n, 1 as u32)
+        let (b_rows, b_cols) = if cfg.transb {
+            (cfg.n, cfg.k)
         } else {
-            (cfg.n, cfg.k, 0 as u32)
+            (cfg.k, cfg.n)
         };
 
         let a_layout = result::create_matrix_layout(
@@ -136,21 +136,21 @@ impl Matmul<f32> for CudaBlasLT {
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
-            (&transa) as *const _ as *const _,
+            (&cfg.transa) as *const _ as *const _,
             mem::size_of::<u32>(),
         )?;
 
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
-            (&transb) as *const _ as *const _,
+            (&cfg.transb) as *const _ as *const _,
             mem::size_of::<u32>(),
         )?;
 
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT) as *const _  as *const _,
+            (&sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT) as *const _ as *const _,
             mem::size_of::<u32>(),
         )?;
 
@@ -197,6 +197,7 @@ impl Matmul<f32> for CudaBlasLT {
 mod tests {
     #![allow(clippy::needless_range_loop)]
 
+    use std::ffi::CString;
     use super::*;
 
     fn matmul_truth<T, const M: usize, const N: usize, const K: usize>(
@@ -225,51 +226,41 @@ mod tests {
 
     #[test]
     fn test_sgemm() {
+        unsafe { sys::cublasLtLoggerSetLevel(4).result().unwrap() };
+        unsafe { sys::cublasLtLoggerOpenFile(CString::new("log").unwrap().as_ptr()).result().unwrap() };
+
         let dev = CudaDevice::new(0).unwrap();
         let blas = CudaBlasLT::new().unwrap();
         let workspace = Workspace::new(dev.clone()).unwrap();
-        const M: usize = 4;
+        const M: usize = 3;
         const K: usize = 4;
-        const N: usize = 4;
-        // let a: [[f32; K]; M] = [
-        //     [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
-        //     [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
-        //     [-1.6661372, -0.4568837, -0.9043474, 0.39125723],
-        // ];
-        // let b: [[f32; N]; K] = [
-        //     [1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938],
-        //     [1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096],
-        //     [1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629],
-        //     [3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792],
-        // ];
+        const N: usize = 5;
         let a: [[f32; K]; M] = [
             [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
             [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
             [-1.6661372, -0.4568837, -0.9043474, 0.39125723],
-            [-1.6661372, -0.4568837, -0.9043474, 0.39125723],
         ];
         let b: [[f32; N]; K] = [
-            [1.1292169, -0.13450263, 0.62789696, -0.5685516],
-            [1.0585804, -0.39789402, 0.90205914, 0.989318],
-            [1.3412506, 0.3059701, -0.9714474, -0.36113533],
-            [3.4746711, -1.0930681, 0.16502666, -0.59988785],
+            [1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938],
+            [1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096],
+            [1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629],
+            [3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792],
         ];
         let mut c: [[f32; N]; M] = [[0.0; N]; M];
         matmul_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-            let a_dev = dev.htod_sync_copy::<f32>(&[
+        let a_dev = dev.htod_sync_copy::<f32>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
             -1.6661372, -0.4568837, -0.9043474, 0.39125723,
-            -1.6661372, -0.4568837, -0.9043474, 0.39125723,
         ]).unwrap();
         #[rustfmt::skip]
-            let b_dev = dev.htod_sync_copy::<f32>(&[
-            1.1292169, -0.13450263, 0.62789696, -0.5685516,
-            1.0585804, -0.39789402, 0.90205914, 0.989318,
-            1.3412506, 0.3059701, -0.9714474, -0.36113533,
-            3.4746711, -1.0930681, 0.16502666, -0.59988785,
+        let b_dev = dev.htod_sync_copy::<f32>(&[
+            1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
+            1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
+            1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
+            3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
         let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
@@ -298,7 +289,6 @@ mod tests {
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
-                println!("result: {}, gt: {}", c_host[m * N + n], c[m][n]);
                 assert!((c_host[m * N + n] - c[m][n]) <= 1e-6);
             }
         }
