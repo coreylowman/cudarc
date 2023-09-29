@@ -78,6 +78,8 @@ extern crate no_std_compat as std;
 
 #[cfg(feature = "cublas")]
 pub mod cublas;
+#[cfg(feature = "cublaslt")]
+pub mod cublaslt;
 #[cfg(feature = "cudnn")]
 pub mod cudnn;
 #[cfg(feature = "curand")]
