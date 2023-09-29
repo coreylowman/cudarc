@@ -1,7 +1,7 @@
 use super::sys;
+use crate::cublaslt::sys::cublasLtMatmulAlgo_t;
 use core::ffi::c_void;
 use core::mem::MaybeUninit;
-use crate::cublaslt::sys::cublasLtMatmulAlgo_t;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct CublasError(pub sys::cublasStatus_t);
@@ -47,10 +47,16 @@ pub unsafe fn destroy_handle(handle: sys::cublasLtHandle_t) -> Result<(), Cublas
 
 /// Creates a matrix layout descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatrixlayoutcreate)
-pub fn create_matrix_layout(matrix_type: sys::cudaDataType, rows: u64, cols: u64, ld: i64) -> Result<sys::cublasLtMatrixLayout_t, CublasError> {
+pub fn create_matrix_layout(
+    matrix_type: sys::cudaDataType,
+    rows: u64,
+    cols: u64,
+    ld: i64,
+) -> Result<sys::cublasLtMatrixLayout_t, CublasError> {
     let mut matrix_layout = MaybeUninit::uninit();
     unsafe {
-        sys::cublasLtMatrixLayoutCreate(matrix_layout.as_mut_ptr(), matrix_type, rows, cols, ld).result()?;
+        sys::cublasLtMatrixLayoutCreate(matrix_layout.as_mut_ptr(), matrix_type, rows, cols, ld)
+            .result()?;
         Ok(matrix_layout.assume_init())
     }
 }
@@ -61,16 +67,22 @@ pub fn create_matrix_layout(matrix_type: sys::cudaDataType, rows: u64, cols: u64
 /// # Safety
 ///
 /// `matrix_layout` must not have been freed already.
-pub unsafe fn destroy_matrix_layout(matrix_layout: sys::cublasLtMatrixLayout_t) -> Result<(), CublasError> {
+pub unsafe fn destroy_matrix_layout(
+    matrix_layout: sys::cublasLtMatrixLayout_t,
+) -> Result<(), CublasError> {
     sys::cublasLtMatrixLayoutDestroy(matrix_layout).result()
 }
 
 /// Creates a matrix multiply descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmuldesccreate)
-pub fn create_matmul_desc(compute_type: sys::cublasComputeType_t, scale_type: sys::cudaDataType) -> Result<sys::cublasLtMatmulDesc_t, CublasError> {
+pub fn create_matmul_desc(
+    compute_type: sys::cublasComputeType_t,
+    scale_type: sys::cudaDataType,
+) -> Result<sys::cublasLtMatmulDesc_t, CublasError> {
     let mut matmul_desc = MaybeUninit::uninit();
     unsafe {
-        sys::cublasLtMatmulDescCreate(matmul_desc.as_mut_ptr(), compute_type, scale_type).result()?;
+        sys::cublasLtMatmulDescCreate(matmul_desc.as_mut_ptr(), compute_type, scale_type)
+            .result()?;
         Ok(matmul_desc.assume_init())
     }
 }
@@ -78,7 +90,12 @@ pub fn create_matmul_desc(compute_type: sys::cublasComputeType_t, scale_type: sy
 /// Sets the value of the specified attribute belonging to a previously created matrix multiply
 /// descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmuldescsetattribute)
-pub unsafe fn set_matmul_desc_attribute(matmul_desc: sys::cublasLtMatmulDesc_t, attr: sys::cublasLtMatmulDescAttributes_t, buf: *const c_void, buf_size: usize) -> Result<(), CublasError> {
+pub unsafe fn set_matmul_desc_attribute(
+    matmul_desc: sys::cublasLtMatmulDesc_t,
+    attr: sys::cublasLtMatmulDescAttributes_t,
+    buf: *const c_void,
+    buf_size: usize,
+) -> Result<(), CublasError> {
     sys::cublasLtMatmulDescSetAttribute(matmul_desc, attr, buf, buf_size).result()
 }
 
@@ -88,7 +105,9 @@ pub unsafe fn set_matmul_desc_attribute(matmul_desc: sys::cublasLtMatmulDesc_t, 
 /// # Safety
 ///
 /// `matmul_desc` must not have been freed already.
-pub unsafe fn destroy_matmul_desc(matmul_desc: sys::cublasLtMatmulDesc_t) -> Result<(), CublasError> {
+pub unsafe fn destroy_matmul_desc(
+    matmul_desc: sys::cublasLtMatmulDesc_t,
+) -> Result<(), CublasError> {
     sys::cublasLtMatmulDescDestroy(matmul_desc).result()
 }
 
@@ -105,7 +124,12 @@ pub fn create_matmul_pref() -> Result<sys::cublasLtMatmulPreference_t, CublasErr
 /// Sets the value of the specified attribute belonging to a previously create matrix multiply
 /// preferences descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmulpreferencesetattribute)
-pub unsafe fn set_matmul_pref_attribute(matmul_pref: sys::cublasLtMatmulPreference_t, attr: sys::cublasLtMatmulPreferenceAttributes_t, buf: *const c_void, buf_size: usize) -> Result<(), CublasError> {
+pub unsafe fn set_matmul_pref_attribute(
+    matmul_pref: sys::cublasLtMatmulPreference_t,
+    attr: sys::cublasLtMatmulPreferenceAttributes_t,
+    buf: *const c_void,
+    buf_size: usize,
+) -> Result<(), CublasError> {
     sys::cublasLtMatmulPreferenceSetAttribute(matmul_pref, attr, buf, buf_size).result()
 }
 
@@ -116,7 +140,9 @@ pub unsafe fn set_matmul_pref_attribute(matmul_pref: sys::cublasLtMatmulPreferen
 /// # Safety
 ///
 /// `matmul_pref` must not have been freed already.
-pub unsafe fn destroy_matmul_pref(matmul_pref: sys::cublasLtMatmulPreference_t) -> Result<(), CublasError> {
+pub unsafe fn destroy_matmul_pref(
+    matmul_pref: sys::cublasLtMatmulPreference_t,
+) -> Result<(), CublasError> {
     sys::cublasLtMatmulPreferenceDestroy(matmul_pref).result()
 }
 
@@ -147,12 +173,15 @@ pub fn get_matmul_algo_heuristic(
             1, // only select the fastest algo
             matmul_heuristic.as_mut_ptr(),
             &mut algo_count,
-        ).result()?;
+        )
+        .result()?;
 
         // This should already be done by cublasLt
         // We make sure that this is the case for the `assume_init` below
         if algo_count == 0 {
-            return Err(CublasError(sys::cublasStatus_t::CUBLAS_STATUS_NOT_SUPPORTED));
+            return Err(CublasError(
+                sys::cublasStatus_t::CUBLAS_STATUS_NOT_SUPPORTED,
+            ));
         }
 
         let matmul_heuristic = matmul_heuristic.assume_init();
@@ -201,5 +230,6 @@ pub unsafe fn matmul(
         workspace,
         workspace_size,
         stream,
-    ).result()
+    )
+    .result()
 }
