@@ -124,7 +124,7 @@ pub trait Matmul<T>: MatmulShared {
         b: &I,
         c: &mut O,
         bias: Option<&I>,
-        act: Option<Activation>,
+        act: Option<&Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
             (cfg.k, cfg.m)
