@@ -1,10 +1,11 @@
 //! Safe abstractions around [crate::cublaslt::result] for doing matmul.
 
 use super::{result, result::CublasError, sys};
-use crate::driver::sys::CUdevice_attribute;
 use crate::driver::sys::CUstream;
+use crate::driver::sys::{CUdevice_attribute, CUdeviceptr_v2};
 use crate::driver::{CudaDevice, CudaSlice, DevicePtr, DevicePtrMut, DriverError};
 use core::mem;
+use std::println;
 use std::sync::Arc;
 
 /// Wrapper around [sys::cublasLtHandle_t]
@@ -65,6 +66,12 @@ impl Workspace {
     }
 }
 
+#[derive(Debug)]
+pub enum Activation {
+    Relu,
+    Gelu,
+}
+
 /// Configuration for [Matmul]
 #[derive(Debug, Copy, Clone)]
 pub struct MatmulConfig<T> {
@@ -90,6 +97,8 @@ pub trait Matmul<T> {
         a: &A,
         b: &B,
         c: &mut C,
+        bias: Option<&A>,
+        act: Option<Activation>,
     ) -> Result<(), CublasError>;
 }
 
@@ -102,6 +111,8 @@ impl Matmul<f32> for CudaBlasLT {
         a: &A,
         b: &B,
         c: &mut C,
+        bias: Option<&A>,
+        act: Option<Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
             (cfg.k, cfg.m)
@@ -140,11 +151,41 @@ impl Matmul<f32> for CudaBlasLT {
             mem::size_of::<u32>(),
         )?;
 
+        let epilogue = if let Some(bias) = bias {
+            let epilogue = act
+                .map(|act| match act {
+                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
+                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
+                })
+                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
+
+            println!("??? {:?}", a.device_ptr());
+            println!("??? {:?}", bias.device_ptr());
+
+            result::set_matmul_desc_attribute(
+                matmul_desc,
+                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
+                *bias.device_ptr() as *const _,
+                mem::size_of::<f32>(),
+            )?;
+
+            println!("rip");
+
+            epilogue
+        } else if let Some(act) = act {
+            match act {
+                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
+                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
+            }
+        } else {
+            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
+        };
+
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT) as *const _ as *const _,
-            mem::size_of::<u32>(),
+            (&epilogue) as *const _ as *const _,
+            mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
         )?;
 
         let matmul_pref = result::create_matmul_pref()?;
@@ -201,6 +242,8 @@ impl Matmul<half::f16> for CudaBlasLT {
         a: &A,
         b: &B,
         c: &mut C,
+        bias: Option<&A>,
+        act: Option<Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
             (cfg.k, cfg.m)
@@ -239,11 +282,35 @@ impl Matmul<half::f16> for CudaBlasLT {
             mem::size_of::<u32>(),
         )?;
 
+        let epilogue = if let Some(bias) = bias {
+            let epilogue = act
+                .map(|act| match act {
+                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
+                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
+                })
+                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
+
+            result::set_matmul_desc_attribute(
+                matmul_desc,
+                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
+                *bias.device_ptr() as *const _,
+                mem::size_of::<CUdeviceptr_v2>(),
+            )?;
+            epilogue
+        } else if let Some(act) = act {
+            match act {
+                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
+                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
+            }
+        } else {
+            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
+        };
+
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT) as *const _ as *const _,
-            mem::size_of::<u32>(),
+            (&epilogue) as *const _ as *const _,
+            mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
         )?;
 
         let matmul_pref = result::create_matmul_pref()?;
@@ -302,6 +369,8 @@ impl Matmul<half::bf16> for CudaBlasLT {
         a: &A,
         b: &B,
         c: &mut C,
+        bias: Option<&A>,
+        act: Option<Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
             (cfg.k, cfg.m)
@@ -348,11 +417,35 @@ impl Matmul<half::bf16> for CudaBlasLT {
             mem::size_of::<u32>(),
         )?;
 
+        let epilogue = if let Some(bias) = bias {
+            let epilogue = act
+                .map(|act| match act {
+                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
+                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
+                })
+                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
+
+            result::set_matmul_desc_attribute(
+                matmul_desc,
+                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
+                *bias.device_ptr() as *const _,
+                mem::size_of::<CUdeviceptr_v2>(),
+            )?;
+            epilogue
+        } else if let Some(act) = act {
+            match act {
+                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
+                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
+            }
+        } else {
+            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
+        };
+
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT) as *const _ as *const _,
-            mem::size_of::<u32>(),
+            (&epilogue) as *const _ as *const _,
+            mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
         )?;
 
         let matmul_pref = result::create_matmul_pref()?;
@@ -470,6 +563,11 @@ mod tests {
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
+        #[rustfmt::skip]
+        let bias_dev = dev.htod_sync_copy::<f32>(&[
+            1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
+        ]).unwrap();
+
         let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
             blas.matmul(
@@ -490,6 +588,8 @@ mod tests {
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
+                Some(&bias_dev),
+                None
             )
         }
         .unwrap();
@@ -569,12 +669,12 @@ mod tests {
         );
 
         #[rustfmt::skip]
-        let a_dev = dev.htod_sync_copy::<half::f16>(&[
+            let a_dev = dev.htod_sync_copy::<half::f16>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::f16::from_f32)).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.htod_sync_copy::<half::f16>(&[
+            let b_dev = dev.htod_sync_copy::<half::f16>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
@@ -600,6 +700,8 @@ mod tests {
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
+                None,
+                None,
             )
         }
         .unwrap();
@@ -617,12 +719,12 @@ mod tests {
         }
 
         #[rustfmt::skip]
-        let a_dev = dev.htod_sync_copy::<half::bf16>(&[
+            let a_dev = dev.htod_sync_copy::<half::bf16>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::bf16::from_f32)).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.htod_sync_copy::<half::bf16>(&[
+            let b_dev = dev.htod_sync_copy::<half::bf16>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
@@ -648,6 +750,8 @@ mod tests {
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
+                None,
+                None,
             )
         }
         .unwrap();
