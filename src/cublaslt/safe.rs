@@ -45,7 +45,6 @@ impl Drop for CudaBlasLT {
     }
 }
 
-
 #[derive(Debug, Clone)]
 pub struct Workspace {
     pub(crate) buffer: CudaSlice<u8>,
@@ -68,7 +67,7 @@ impl Workspace {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Activation {
     Relu,
     Gelu,
@@ -275,7 +274,7 @@ mod tests {
         beta: T,
         c: &mut [[T; N]; M],
     ) where
-        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output=T>,
+        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output = T>,
     {
         for m in 0..M {
             for n in 0..N {
@@ -358,7 +357,7 @@ mod tests {
                 None,
             )
         }
-            .unwrap();
+        .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -393,7 +392,7 @@ mod tests {
             [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
             [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
         ]
-            .map(|r| r.map(half::f16::from_f32));
+        .map(|r| r.map(half::f16::from_f32));
         let b: [[half::f16; N]; K] = [
             [
                 1.1292169,
@@ -428,7 +427,7 @@ mod tests {
                 0.39125723,
             ],
         ]
-            .map(|r| r.map(half::f16::from_f32));
+        .map(|r| r.map(half::f16::from_f32));
         let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
         matmul_truth(
             half::f16::from_f32(1.0),
@@ -473,7 +472,7 @@ mod tests {
                 None,
             )
         }
-            .unwrap();
+        .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -522,7 +521,7 @@ mod tests {
                 None,
             )
         }
-            .unwrap();
+        .unwrap();
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
