@@ -1,7 +1,7 @@
 //! Safe abstractions around [crate::cublaslt::result] for doing matmul.
 
 use super::{result, result::CublasError, sys};
-use crate::driver::sys::{CUdeviceptr, CUstream, CUdevice_attribute};
+use crate::driver::sys::{CUdevice_attribute, CUdeviceptr, CUstream};
 use crate::driver::{CudaDevice, CudaSlice, DevicePtr, DevicePtrMut, DriverError};
 use core::mem;
 use std::sync::Arc;
@@ -13,7 +13,9 @@ use std::sync::Arc;
 /// if feature `half` is activated
 #[derive(Debug)]
 pub struct CudaBlasLT {
-    pub(crate) handle: sys::cublasLtHandle_t,
+    handle: sys::cublasLtHandle_t,
+    workspace: Workspace,
+    device: Arc<CudaDevice>,
 }
 
 unsafe impl Send for CudaBlasLT {}
@@ -22,14 +24,15 @@ unsafe impl Sync for CudaBlasLT {}
 
 impl CudaBlasLT {
     /// Creates a new cublasLt handle.
-    pub fn new() -> Result<Self, CublasError> {
+    pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
         let handle = result::create_handle()?;
-        Ok(Self { handle })
-    }
+        let workspace = Workspace::new(device.clone()).unwrap();
 
-    /// Returns a reference to the underlying cublas handle.
-    pub fn handle(&self) -> &sys::cublasLtHandle_t {
-        &self.handle
+        Ok(Self {
+            handle,
+            workspace,
+            device,
+        })
     }
 }
 
@@ -41,6 +44,7 @@ impl Drop for CudaBlasLT {
         }
     }
 }
+
 
 #[derive(Debug, Clone)]
 pub struct Workspace {
@@ -72,40 +76,50 @@ pub enum Activation {
 
 /// Configuration for [Matmul]
 #[derive(Debug, Copy, Clone)]
-pub struct MatmulConfig<T> {
+pub struct MatmulConfig {
     pub transa: bool,
     pub transb: bool,
     pub m: u64,
     pub n: u64,
     pub k: u64,
-    pub alpha: T,
+    pub alpha: f32,
     pub lda: i64,
     pub ldb: i64,
-    pub beta: T,
+    pub beta: f32,
     pub ldc: i64,
 }
 
-/// Matrix matrix multiplication with elements of type `T`.
-pub trait Matmul<T> {
-    unsafe fn matmul<I: DevicePtr<T>, O: DevicePtrMut<T>>(
-        &self,
-        cfg: MatmulConfig<T>,
-        workspace: &mut Workspace,
-        stream: CUstream,
-        a: &I,
-        b: &I,
-        c: &mut O,
-        bias: Option<&I>,
-        act: Option<Activation>,
-    ) -> Result<(), CublasError>;
+pub trait MatmulShared {
+    fn handle(&self) -> &sys::cublasLtHandle_t;
+
+    fn workspace(&self) -> &Workspace;
+
+    fn stream(&self) -> &CUstream;
 }
 
-impl Matmul<f32> for CudaBlasLT {
-    unsafe fn matmul<I: DevicePtr<f32>, O: DevicePtrMut<f32>>(
+impl MatmulShared for CudaBlasLT {
+    fn handle(&self) -> &sys::cublasLtHandle_t {
+        &self.handle
+    }
+
+    fn workspace(&self) -> &Workspace {
+        &self.workspace
+    }
+
+    fn stream(&self) -> &CUstream {
+        &self.device.stream
+    }
+}
+
+/// Matrix matrix multiplication with elements of type `T`.
+pub trait Matmul<T>: MatmulShared {
+    fn matrix_type() -> sys::cudaDataType;
+
+    fn compute_type() -> sys::cublasComputeType_t;
+
+    unsafe fn matmul<I: DevicePtr<T>, O: DevicePtrMut<T>>(
         &self,
-        cfg: MatmulConfig<f32>,
-        workspace: &mut Workspace,
-        stream: CUstream,
+        cfg: MatmulConfig,
         a: &I,
         b: &I,
         c: &mut O,
@@ -123,17 +137,12 @@ impl Matmul<f32> for CudaBlasLT {
             (cfg.k, cfg.n)
         };
 
-        let a_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_32F, a_rows, a_cols, cfg.lda)?;
-        let b_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_32F, b_rows, b_cols, cfg.ldb)?;
-        let c_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_32F, cfg.m, cfg.n, cfg.ldc)?;
+        let a_layout = result::create_matrix_layout(Self::matrix_type(), a_rows, a_cols, cfg.lda)?;
+        let b_layout = result::create_matrix_layout(Self::matrix_type(), b_rows, b_cols, cfg.ldb)?;
+        let c_layout = result::create_matrix_layout(Self::matrix_type(), cfg.m, cfg.n, cfg.ldc)?;
 
-        let matmul_desc = result::create_matmul_desc(
-            sys::cublasComputeType_t::CUBLAS_COMPUTE_32F_FAST_TF32,
-            sys::cudaDataType_t::CUDA_R_32F,
-        )?;
+        let matmul_desc =
+            result::create_matmul_desc(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
 
         result::set_matmul_desc_attribute(
             matmul_desc,
@@ -185,12 +194,12 @@ impl Matmul<f32> for CudaBlasLT {
         result::set_matmul_pref_attribute(
             matmul_pref,
             sys::cublasLtMatmulPreferenceAttributes_t::CUBLASLT_MATMUL_PREF_MAX_WORKSPACE_BYTES,
-            (&workspace.size) as *const _ as *const _,
+            (&self.workspace().size) as *const _ as *const _,
             mem::size_of::<usize>(),
         )?;
 
         let heuristic = result::get_matmul_algo_heuristic(
-            self.handle,
+            *self.handle(),
             matmul_desc,
             a_layout,
             b_layout,
@@ -200,7 +209,7 @@ impl Matmul<f32> for CudaBlasLT {
         )?;
 
         result::matmul(
-            self.handle,
+            *self.handle(),
             matmul_desc,
             (&cfg.alpha) as *const _ as *const _,
             (&cfg.beta) as *const _ as *const _,
@@ -213,270 +222,42 @@ impl Matmul<f32> for CudaBlasLT {
             *c.device_ptr_mut() as *mut _,
             c_layout,
             (&heuristic.algo) as *const _,
-            workspace.buffer.device_ptr_mut() as *mut _ as *mut _,
-            workspace.size,
-            stream as *mut _,
+            *self.workspace().buffer.device_ptr() as *const CUdeviceptr as *mut _,
+            self.workspace().size,
+            *self.stream() as *mut _,
         )
+    }
+}
+
+impl Matmul<f32> for CudaBlasLT {
+    fn matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType_t::CUDA_R_32F
+    }
+
+    fn compute_type() -> sys::cublasComputeType_t {
+        sys::cublasComputeType_t::CUBLAS_COMPUTE_32F_FAST_TF32
     }
 }
 
 #[cfg(feature = "f16")]
 impl Matmul<half::f16> for CudaBlasLT {
-    unsafe fn matmul<
-        I: DevicePtr<half::f16>,
-        O: DevicePtrMut<half::f16>,
-    >(
-        &self,
-        cfg: MatmulConfig<half::f16>,
-        workspace: &mut Workspace,
-        stream: CUstream,
-        a: &I,
-        b: &I,
-        c: &mut O,
-        bias: Option<&I>,
-        act: Option<Activation>,
-    ) -> Result<(), CublasError> {
-        let (a_rows, a_cols) = if cfg.transa {
-            (cfg.k, cfg.m)
-        } else {
-            (cfg.m, cfg.k)
-        };
-        let (b_rows, b_cols) = if cfg.transb {
-            (cfg.n, cfg.k)
-        } else {
-            (cfg.k, cfg.n)
-        };
+    fn matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType_t::CUDA_R_16F
+    }
 
-        let a_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_16F, a_rows, a_cols, cfg.lda)?;
-        let b_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_16F, b_rows, b_cols, cfg.ldb)?;
-        let c_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_16F, cfg.m, cfg.n, cfg.ldc)?;
-
-        let matmul_desc = result::create_matmul_desc(
-            sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
-            sys::cudaDataType_t::CUDA_R_32F,
-        )?;
-
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
-            (&cfg.transa) as *const _ as *const _,
-            mem::size_of::<u32>(),
-        )?;
-
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
-            (&cfg.transb) as *const _ as *const _,
-            mem::size_of::<u32>(),
-        )?;
-
-        let epilogue = if let Some(bias) = bias {
-            let epilogue = act
-                .map(|act| match act {
-                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
-                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
-                })
-                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
-
-            result::set_matmul_desc_attribute(
-                matmul_desc,
-                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
-                bias.device_ptr() as *const CUdeviceptr as *const _,
-                mem::size_of::<CUdeviceptr>(),
-            )?;
-            epilogue
-        } else if let Some(act) = act {
-            match act {
-                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
-                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
-            }
-        } else {
-            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
-        };
-
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&epilogue) as *const _ as *const _,
-            mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
-        )?;
-
-        let matmul_pref = result::create_matmul_pref()?;
-
-        result::set_matmul_pref_attribute(
-            matmul_pref,
-            sys::cublasLtMatmulPreferenceAttributes_t::CUBLASLT_MATMUL_PREF_MAX_WORKSPACE_BYTES,
-            (&workspace.size) as *const _ as *const _,
-            mem::size_of::<usize>(),
-        )?;
-
-        let heuristic = result::get_matmul_algo_heuristic(
-            self.handle,
-            matmul_desc,
-            a_layout,
-            b_layout,
-            c_layout,
-            c_layout,
-            matmul_pref,
-        )?;
-
-        let alpha: f32 = cfg.alpha.to_f32();
-        let beta: f32 = cfg.beta.to_f32();
-        result::matmul(
-            self.handle,
-            matmul_desc,
-            (&alpha) as *const _ as *const _,
-            (&beta) as *const _ as *const _,
-            *a.device_ptr() as *const _,
-            a_layout,
-            *b.device_ptr() as *const _,
-            b_layout,
-            *c.device_ptr_mut() as *const _,
-            c_layout,
-            *c.device_ptr_mut() as *mut _,
-            c_layout,
-            (&heuristic.algo) as *const _,
-            workspace.buffer.device_ptr_mut() as *mut _ as *mut _,
-            workspace.size,
-            stream as *mut _,
-        )
+    fn compute_type() -> sys::cublasComputeType_t {
+        sys::cublasComputeType_t::CUBLAS_COMPUTE_32F
     }
 }
 
 #[cfg(feature = "f16")]
 impl Matmul<half::bf16> for CudaBlasLT {
-    unsafe fn matmul<
-        I: DevicePtr<half::bf16>,
-        O: DevicePtrMut<half::bf16>,
-    >(
-        &self,
-        cfg: MatmulConfig<half::bf16>,
-        workspace: &mut Workspace,
-        stream: CUstream,
-        a: &I,
-        b: &I,
-        c: &mut O,
-        bias: Option<&I>,
-        act: Option<Activation>,
-    ) -> Result<(), CublasError> {
-        let (a_rows, a_cols) = if cfg.transa {
-            (cfg.k, cfg.m)
-        } else {
-            (cfg.m, cfg.k)
-        };
-        let (b_rows, b_cols) = if cfg.transb {
-            (cfg.n, cfg.k)
-        } else {
-            (cfg.k, cfg.n)
-        };
+    fn matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType_t::CUDA_R_16BF
+    }
 
-        let a_layout = result::create_matrix_layout(
-            sys::cudaDataType_t::CUDA_R_16BF,
-            a_rows,
-            a_cols,
-            cfg.lda,
-        )?;
-        let b_layout = result::create_matrix_layout(
-            sys::cudaDataType_t::CUDA_R_16BF,
-            b_rows,
-            b_cols,
-            cfg.ldb,
-        )?;
-        let c_layout =
-            result::create_matrix_layout(sys::cudaDataType_t::CUDA_R_16BF, cfg.m, cfg.n, cfg.ldc)?;
-
-        let matmul_desc = result::create_matmul_desc(
-            sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
-            sys::cudaDataType_t::CUDA_R_32F,
-        )?;
-
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
-            (&cfg.transa) as *const _ as *const _,
-            mem::size_of::<u32>(),
-        )?;
-
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
-            (&cfg.transb) as *const _ as *const _,
-            mem::size_of::<u32>(),
-        )?;
-
-        let epilogue = if let Some(bias) = bias {
-            let epilogue = act
-                .map(|act| match act {
-                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
-                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
-                })
-                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
-
-            result::set_matmul_desc_attribute(
-                matmul_desc,
-                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
-                bias.device_ptr() as *const CUdeviceptr as *const _,
-                mem::size_of::<CUdeviceptr>(),
-            )?;
-            epilogue
-        } else if let Some(act) = act {
-            match act {
-                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
-                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
-            }
-        } else {
-            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
-        };
-
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&epilogue) as *const _ as *const _,
-            mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
-        )?;
-
-        let matmul_pref = result::create_matmul_pref()?;
-
-        result::set_matmul_pref_attribute(
-            matmul_pref,
-            sys::cublasLtMatmulPreferenceAttributes_t::CUBLASLT_MATMUL_PREF_MAX_WORKSPACE_BYTES,
-            (&workspace.size) as *const _ as *const _,
-            mem::size_of::<usize>(),
-        )?;
-
-        let heuristic = result::get_matmul_algo_heuristic(
-            self.handle,
-            matmul_desc,
-            a_layout,
-            b_layout,
-            c_layout,
-            c_layout,
-            matmul_pref,
-        )?;
-
-        let alpha: f32 = cfg.alpha.to_f32();
-        let beta: f32 = cfg.beta.to_f32();
-        result::matmul(
-            self.handle,
-            matmul_desc,
-            (&alpha) as *const _ as *const _,
-            (&beta) as *const _ as *const _,
-            *a.device_ptr() as *const _,
-            a_layout,
-            *b.device_ptr() as *const _,
-            b_layout,
-            *c.device_ptr_mut() as *const _,
-            c_layout,
-            *c.device_ptr_mut() as *mut _,
-            c_layout,
-            (&heuristic.algo) as *const _,
-            workspace.buffer.device_ptr_mut() as *mut _ as *mut _,
-            workspace.size,
-            stream as *mut _,
-        )
+    fn compute_type() -> sys::cublasComputeType_t {
+        sys::cublasComputeType_t::CUBLAS_COMPUTE_32F
     }
 }
 
@@ -494,7 +275,7 @@ mod tests {
         beta: T,
         c: &mut [[T; N]; M],
     ) where
-        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output = T>,
+        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output=T>,
     {
         for m in 0..M {
             for n in 0..N {
@@ -521,8 +302,7 @@ mod tests {
         };
 
         let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlasLT::new().unwrap();
-        let mut workspace = Workspace::new(dev.clone()).unwrap();
+        let blas = CudaBlasLT::new(dev.clone()).unwrap();
         const M: usize = 3;
         const K: usize = 4;
         const N: usize = 5;
@@ -554,7 +334,7 @@ mod tests {
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
         #[rustfmt::skip]
-        let bias = dev.alloc_zeros::<f32>(N ).unwrap();
+            let bias = dev.alloc_zeros::<f32>(N).unwrap();
 
         let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
@@ -571,16 +351,14 @@ mod tests {
                     beta: 0.0,
                     ldc: N as i64,
                 },
-                &mut workspace,
-                dev.stream,
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
                 Some(&bias),
-                None
+                None,
             )
         }
-        .unwrap();
+            .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -607,8 +385,7 @@ mod tests {
         };
 
         let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlasLT::new().unwrap();
-        let mut workspace = Workspace::new(dev.clone()).unwrap();
+        let blas = CudaBlasLT::new(dev.clone()).unwrap();
         const M: usize = 2;
         const K: usize = 4;
         const N: usize = 6;
@@ -616,7 +393,7 @@ mod tests {
             [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
             [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
         ]
-        .map(|r| r.map(half::f16::from_f32));
+            .map(|r| r.map(half::f16::from_f32));
         let b: [[half::f16; N]; K] = [
             [
                 1.1292169,
@@ -651,7 +428,7 @@ mod tests {
                 0.39125723,
             ],
         ]
-        .map(|r| r.map(half::f16::from_f32));
+            .map(|r| r.map(half::f16::from_f32));
         let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
         matmul_truth(
             half::f16::from_f32(1.0),
@@ -673,7 +450,7 @@ mod tests {
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792, 0.39125723,
         ].map(half::f16::from_f32)).unwrap();
-        let bias = dev.alloc_zeros::<half::f16>(N ).unwrap();
+        let bias = dev.alloc_zeros::<half::f16>(N).unwrap();
         let mut c_dev = dev.alloc_zeros::<half::f16>(M * N).unwrap();
         unsafe {
             blas.matmul(
@@ -683,14 +460,12 @@ mod tests {
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
-                    alpha: half::f16::from_f32(1.0),
+                    alpha: 1.0,
                     lda: N as i64,
                     ldb: K as i64,
-                    beta: half::f16::from_f32(0.0),
+                    beta: 0.0,
                     ldc: N as i64,
                 },
-                &mut workspace,
-                dev.stream,
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
@@ -698,7 +473,7 @@ mod tests {
                 None,
             )
         }
-        .unwrap();
+            .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -724,7 +499,7 @@ mod tests {
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792, 0.39125723,
         ].map(half::bf16::from_f32)).unwrap();
-        let bias = dev.alloc_zeros::<half::bf16>(N ).unwrap();
+        let bias = dev.alloc_zeros::<half::bf16>(N).unwrap();
         let mut c_dev = dev.alloc_zeros::<half::bf16>(M * N).unwrap();
         unsafe {
             blas.matmul(
@@ -734,14 +509,12 @@ mod tests {
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
-                    alpha: half::bf16::from_f32(1.0),
+                    alpha: 1.0,
                     lda: N as i64,
                     ldb: K as i64,
-                    beta: half::bf16::from_f32(0.0),
+                    beta: 0.0,
                     ldc: N as i64,
                 },
-                &mut workspace,
-                dev.stream,
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
@@ -749,7 +522,7 @@ mod tests {
                 None,
             )
         }
-        .unwrap();
+            .unwrap();
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
