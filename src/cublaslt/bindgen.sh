@@ -1,4 +1,5 @@
 #!/bin/bash
+# Requires rust-bindgen 0.68.1 or superior
 set -exu
 BINDGEN_EXTRA_CLANG_ARGS="-D__CUDA_BF16_TYPES_EXIST__" \
 bindgen \

@@ -11,6 +11,9 @@ use std::sync::Arc;
 /// 1. Create with [CudaBlasLT::new()]
 /// 2. Execute matmul kernel with matmul. f32 is supported. f16 and bf16 are supported
 /// if feature `half` is activated
+///
+/// Note: This maintains a instance of [`Arc<CudaDevice>`], so will prevent the device
+/// from being dropped. Kernels will be launched on the device device default stream.
 #[derive(Debug)]
 pub struct CudaBlasLT {
     handle: sys::cublasLtHandle_t,
@@ -45,6 +48,11 @@ impl Drop for CudaBlasLT {
     }
 }
 
+/// User owned CublasLt workspace buffer.
+/// The workspace is initialised following the Nvidia recommendations:
+///
+/// 1. NVIDIA Hopper Architecture: 32 MiB
+/// 2. Other: 4 MiB
 #[derive(Debug, Clone)]
 pub struct Workspace {
     pub(crate) buffer: CudaSlice<u8>,
@@ -52,6 +60,7 @@ pub struct Workspace {
 }
 
 impl Workspace {
+    /// Creates a CublasLt workspace buffer on the provided device
     pub fn new(device: Arc<CudaDevice>) -> Result<Self, DriverError> {
         device.bind_to_thread()?;
 
@@ -67,10 +76,23 @@ impl Workspace {
     }
 }
 
+/// Available activation for kernel fusing in matmul
 #[derive(Debug, Clone)]
 pub enum Activation {
     Relu,
     Gelu,
+}
+
+/// [Matmul] super-trait
+pub trait MatmulShared {
+    /// Returns a reference to the underlying cublasLt handle.
+    fn handle(&self) -> &sys::cublasLtHandle_t;
+
+    /// Returns a reference to the underlying cublasLt workspace
+    fn workspace(&self) -> &Workspace;
+
+    /// Returns a reference to the underlying stream
+    fn stream(&self) -> &CUstream;
 }
 
 /// Configuration for [Matmul]
@@ -88,34 +110,20 @@ pub struct MatmulConfig {
     pub ldc: i64,
 }
 
-pub trait MatmulShared {
-    fn handle(&self) -> &sys::cublasLtHandle_t;
-
-    fn workspace(&self) -> &Workspace;
-
-    fn stream(&self) -> &CUstream;
-}
-
-impl MatmulShared for CudaBlasLT {
-    fn handle(&self) -> &sys::cublasLtHandle_t {
-        &self.handle
-    }
-
-    fn workspace(&self) -> &Workspace {
-        &self.workspace
-    }
-
-    fn stream(&self) -> &CUstream {
-        &self.device.stream
-    }
-}
-
 /// Matrix matrix multiplication with elements of type `T`.
 pub trait Matmul<T>: MatmulShared {
+    /// Underlying CUDA Type for `T`
     fn matrix_type() -> sys::cudaDataType;
 
+    /// Underlying CUDA Compute Type for `T`
     fn compute_type() -> sys::cublasComputeType_t;
 
+    /// Matrix matrix multiplication. See
+    /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmul)
+    ///
+    /// # Safety
+    /// This is unsafe because improper arguments may lead to invalid
+    /// memory accesses.
     unsafe fn matmul<I: DevicePtr<T>, O: DevicePtrMut<T>>(
         &self,
         cfg: MatmulConfig,
@@ -125,46 +133,56 @@ pub trait Matmul<T>: MatmulShared {
         bias: Option<&I>,
         act: Option<&Activation>,
     ) -> Result<(), CublasError> {
-        let (a_rows, a_cols) = if cfg.transa {
-            (cfg.k, cfg.m)
+        let (a_rows, a_cols, transa) = if cfg.transa {
+            (cfg.k, cfg.m, 1)
         } else {
-            (cfg.m, cfg.k)
+            (cfg.m, cfg.k, 0)
         };
-        let (b_rows, b_cols) = if cfg.transb {
-            (cfg.n, cfg.k)
+        let (b_rows, b_cols, transb) = if cfg.transb {
+            (cfg.n, cfg.k, 1)
         } else {
-            (cfg.k, cfg.n)
+            (cfg.k, cfg.n, 0)
         };
 
+        // Creates matrix layouts
         let a_layout = result::create_matrix_layout(Self::matrix_type(), a_rows, a_cols, cfg.lda)?;
         let b_layout = result::create_matrix_layout(Self::matrix_type(), b_rows, b_cols, cfg.ldb)?;
         let c_layout = result::create_matrix_layout(Self::matrix_type(), cfg.m, cfg.n, cfg.ldc)?;
 
+        // Matmul description
         let matmul_desc =
             result::create_matmul_desc(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
 
+        // Set transa
+        // 1 == T, 0 == N
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
-            (&cfg.transa) as *const _ as *const _,
+            (&transa) as *const _ as *const _,
             mem::size_of::<u32>(),
         )?;
 
+        // Set transb
+        // 1 == T, 0 == N
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
-            (&cfg.transb) as *const _ as *const _,
+            (&transb) as *const _ as *const _,
             mem::size_of::<u32>(),
         )?;
 
+        // Epilogue system can be leveraged to fuse add and activation operations
         let epilogue = if let Some(bias) = bias {
             let epilogue = act
                 .map(|act| match act {
+                    // Act + bias
                     Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
                     Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
                 })
+                // Only bias
                 .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
 
+            // Set bias CUdeviceptr in matmul_desc
             result::set_matmul_desc_attribute(
                 matmul_desc,
                 sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
@@ -173,14 +191,17 @@ pub trait Matmul<T>: MatmulShared {
             )?;
             epilogue
         } else if let Some(act) = act {
+            // Only Act
             match act {
                 Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
                 Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
             }
         } else {
+            // No epilogue
             sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
         };
 
+        // Set epilogue
         result::set_matmul_desc_attribute(
             matmul_desc,
             sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
@@ -188,8 +209,10 @@ pub trait Matmul<T>: MatmulShared {
             mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
         )?;
 
+        // Create matmul heuristic search preferences
         let matmul_pref = result::create_matmul_pref()?;
 
+        // Set workspace size
         result::set_matmul_pref_attribute(
             matmul_pref,
             sys::cublasLtMatmulPreferenceAttributes_t::CUBLASLT_MATMUL_PREF_MAX_WORKSPACE_BYTES,
@@ -197,6 +220,7 @@ pub trait Matmul<T>: MatmulShared {
             mem::size_of::<usize>(),
         )?;
 
+        // Get heuristic given Config, bias, act and workspace size
         let heuristic = result::get_matmul_algo_heuristic(
             *self.handle(),
             matmul_desc,
@@ -207,6 +231,7 @@ pub trait Matmul<T>: MatmulShared {
             matmul_pref,
         )?;
 
+        // Launch matmul kernel
         result::matmul(
             *self.handle(),
             matmul_desc,
@@ -225,6 +250,20 @@ pub trait Matmul<T>: MatmulShared {
             self.workspace().size,
             *self.stream() as *mut _,
         )
+    }
+}
+
+impl MatmulShared for CudaBlasLT {
+    fn handle(&self) -> &sys::cublasLtHandle_t {
+        &self.handle
+    }
+
+    fn workspace(&self) -> &Workspace {
+        &self.workspace
+    }
+
+    fn stream(&self) -> &CUstream {
+        &self.device.stream
     }
 }
 

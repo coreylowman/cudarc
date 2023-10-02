@@ -15,6 +15,7 @@
 //! | --- | --- | --- | --- |
 //! | driver | [driver::safe] | [driver::result] | [driver::sys] |
 //! | cublas | [cublas::safe] | [cublas::result] | [cublas::sys] |
+//! | cublaslt | [cublaslt::safe] | [cublaslt::result] | [cublaslt::sys] |
 //! | nvrtc | [nvrtc::safe] | [nvrtc::result] | [nvrtc::sys] |
 //! | curand | [curand::safe] | [curand::result] | [curand::sys] |
 //! | cudnn | - | [cudnn::result] | [cudnn::sys] |
