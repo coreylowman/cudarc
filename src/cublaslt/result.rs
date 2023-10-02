@@ -176,8 +176,6 @@ pub fn get_matmul_algo_heuristic(
         )
         .result()?;
 
-        // This should already be done by cublasLt
-        // We make sure that this is the case for the `assume_init` below
         if algo_count == 0 {
             return Err(CublasError(
                 sys::cublasStatus_t::CUBLAS_STATUS_NOT_SUPPORTED,

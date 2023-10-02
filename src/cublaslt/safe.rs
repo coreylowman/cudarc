@@ -1,11 +1,9 @@
 //! Safe abstractions around [crate::cublaslt::result] for doing matmul.
 
 use super::{result, result::CublasError, sys};
-use crate::driver::sys::CUstream;
-use crate::driver::sys::{CUdevice_attribute, CUdeviceptr_v2};
+use crate::driver::sys::{CUdeviceptr, CUstream, CUdevice_attribute};
 use crate::driver::{CudaDevice, CudaSlice, DevicePtr, DevicePtrMut, DriverError};
 use core::mem;
-use std::println;
 use std::sync::Arc;
 
 /// Wrapper around [sys::cublasLtHandle_t]
@@ -37,7 +35,7 @@ impl CudaBlasLT {
 
 impl Drop for CudaBlasLT {
     fn drop(&mut self) {
-        let handle = std::mem::replace(&mut self.handle, std::ptr::null_mut());
+        let handle = mem::replace(&mut self.handle, std::ptr::null_mut());
         if !handle.is_null() {
             unsafe { result::destroy_handle(handle) }.unwrap();
         }
@@ -89,29 +87,29 @@ pub struct MatmulConfig<T> {
 
 /// Matrix matrix multiplication with elements of type `T`.
 pub trait Matmul<T> {
-    unsafe fn matmul<A: DevicePtr<T>, B: DevicePtr<T>, C: DevicePtrMut<T>>(
+    unsafe fn matmul<I: DevicePtr<T>, O: DevicePtrMut<T>>(
         &self,
         cfg: MatmulConfig<T>,
         workspace: &mut Workspace,
         stream: CUstream,
-        a: &A,
-        b: &B,
-        c: &mut C,
-        bias: Option<&A>,
+        a: &I,
+        b: &I,
+        c: &mut O,
+        bias: Option<&I>,
         act: Option<Activation>,
     ) -> Result<(), CublasError>;
 }
 
 impl Matmul<f32> for CudaBlasLT {
-    unsafe fn matmul<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
+    unsafe fn matmul<I: DevicePtr<f32>, O: DevicePtrMut<f32>>(
         &self,
         cfg: MatmulConfig<f32>,
         workspace: &mut Workspace,
         stream: CUstream,
-        a: &A,
-        b: &B,
-        c: &mut C,
-        bias: Option<&A>,
+        a: &I,
+        b: &I,
+        c: &mut O,
+        bias: Option<&I>,
         act: Option<Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
@@ -159,18 +157,12 @@ impl Matmul<f32> for CudaBlasLT {
                 })
                 .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
 
-            println!("??? {:?}", a.device_ptr());
-            println!("??? {:?}", bias.device_ptr());
-
             result::set_matmul_desc_attribute(
                 matmul_desc,
                 sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
-                *bias.device_ptr() as *const _,
-                mem::size_of::<f32>(),
+                bias.device_ptr() as *const CUdeviceptr as *const _,
+                mem::size_of::<CUdeviceptr>(),
             )?;
-
-            println!("rip");
-
             epilogue
         } else if let Some(act) = act {
             match act {
@@ -231,18 +223,17 @@ impl Matmul<f32> for CudaBlasLT {
 #[cfg(feature = "f16")]
 impl Matmul<half::f16> for CudaBlasLT {
     unsafe fn matmul<
-        A: DevicePtr<half::f16>,
-        B: DevicePtr<half::f16>,
-        C: DevicePtrMut<half::f16>,
+        I: DevicePtr<half::f16>,
+        O: DevicePtrMut<half::f16>,
     >(
         &self,
         cfg: MatmulConfig<half::f16>,
         workspace: &mut Workspace,
         stream: CUstream,
-        a: &A,
-        b: &B,
-        c: &mut C,
-        bias: Option<&A>,
+        a: &I,
+        b: &I,
+        c: &mut O,
+        bias: Option<&I>,
         act: Option<Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
@@ -293,8 +284,8 @@ impl Matmul<half::f16> for CudaBlasLT {
             result::set_matmul_desc_attribute(
                 matmul_desc,
                 sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
-                *bias.device_ptr() as *const _,
-                mem::size_of::<CUdeviceptr_v2>(),
+                bias.device_ptr() as *const CUdeviceptr as *const _,
+                mem::size_of::<CUdeviceptr>(),
             )?;
             epilogue
         } else if let Some(act) = act {
@@ -358,18 +349,17 @@ impl Matmul<half::f16> for CudaBlasLT {
 #[cfg(feature = "f16")]
 impl Matmul<half::bf16> for CudaBlasLT {
     unsafe fn matmul<
-        A: DevicePtr<half::bf16>,
-        B: DevicePtr<half::bf16>,
-        C: DevicePtrMut<half::bf16>,
+        I: DevicePtr<half::bf16>,
+        O: DevicePtrMut<half::bf16>,
     >(
         &self,
         cfg: MatmulConfig<half::bf16>,
         workspace: &mut Workspace,
         stream: CUstream,
-        a: &A,
-        b: &B,
-        c: &mut C,
-        bias: Option<&A>,
+        a: &I,
+        b: &I,
+        c: &mut O,
+        bias: Option<&I>,
         act: Option<Activation>,
     ) -> Result<(), CublasError> {
         let (a_rows, a_cols) = if cfg.transa {
@@ -428,8 +418,8 @@ impl Matmul<half::bf16> for CudaBlasLT {
             result::set_matmul_desc_attribute(
                 matmul_desc,
                 sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
-                *bias.device_ptr() as *const _,
-                mem::size_of::<CUdeviceptr_v2>(),
+                bias.device_ptr() as *const CUdeviceptr as *const _,
+                mem::size_of::<CUdeviceptr>(),
             )?;
             epilogue
         } else if let Some(act) = act {
@@ -564,9 +554,7 @@ mod tests {
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
         #[rustfmt::skip]
-        let bias_dev = dev.htod_sync_copy::<f32>(&[
-            1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
-        ]).unwrap();
+        let bias = dev.alloc_zeros::<f32>(N ).unwrap();
 
         let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
@@ -588,7 +576,7 @@ mod tests {
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
-                Some(&bias_dev),
+                Some(&bias),
                 None
             )
         }
@@ -597,7 +585,12 @@ mod tests {
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
-                assert!((c_host[m * N + n] - c[m][n]) <= 1e-6);
+                let found = c_host[m * N + n];
+                let expected = c[m][n];
+                assert!(
+                    (found - expected) <= 1e-6,
+                    "found={found:?}, expected={expected:?}"
+                );
             }
         }
     }
@@ -680,6 +673,7 @@ mod tests {
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792, 0.39125723,
         ].map(half::f16::from_f32)).unwrap();
+        let bias = dev.alloc_zeros::<half::f16>(N ).unwrap();
         let mut c_dev = dev.alloc_zeros::<half::f16>(M * N).unwrap();
         unsafe {
             blas.matmul(
@@ -700,7 +694,7 @@ mod tests {
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
-                None,
+                Some(&bias),
                 None,
             )
         }
@@ -730,6 +724,7 @@ mod tests {
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792, 0.39125723,
         ].map(half::bf16::from_f32)).unwrap();
+        let bias = dev.alloc_zeros::<half::bf16>(N ).unwrap();
         let mut c_dev = dev.alloc_zeros::<half::bf16>(M * N).unwrap();
         unsafe {
             blas.matmul(
@@ -750,7 +745,7 @@ mod tests {
                 &b_dev,
                 &a_dev,
                 &mut c_dev,
-                None,
+                Some(&bias),
                 None,
             )
         }
