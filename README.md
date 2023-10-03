@@ -11,7 +11,7 @@ Safe abstractions over:
 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
-4. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
+5. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
 
 **Pre-alpha state**, expect breaking changes and not all cuda functions
 contain a safe wrapper. **Contributions welcome for any that aren't included!**
