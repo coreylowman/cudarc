@@ -314,9 +314,9 @@ impl CudaDevice {
     /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     #[allow(clippy::uninit_vec)]
-    pub fn dtoh_sync_copy<T: DeviceRepr>(
+    pub fn dtoh_sync_copy<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
-        src: &CudaSlice<T>,
+        src: &Src,
     ) -> Result<Vec<T>, result::DriverError> {
         let mut dst = Vec::with_capacity(src.len());
         unsafe { dst.set_len(src.len()) };
