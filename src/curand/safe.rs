@@ -46,6 +46,10 @@ impl CudaRng {
         unsafe { result::set_seed(self.gen, seed) }
     }
 
+    pub fn set_offset(&mut self, offset: u64) -> Result<(), result::CurandError> {
+        unsafe { result::set_offset(self.gen, offset) }
+    }
+
     /// Fill the [CudaSlice] with data from a `Uniform` distribution
     pub fn fill_with_uniform<T>(&self, t: &mut CudaSlice<T>) -> Result<(), result::CurandError>
     where
@@ -197,6 +201,26 @@ mod tests {
         let a_host = dev.sync_reclaim(a_dev).unwrap();
         let b_host = dev.sync_reclaim(b_dev).unwrap();
         assert_ne!(a_host, b_host);
+    }
+
+    #[test]
+    fn test_set_offset() {
+        let dev = CudaDevice::new(0).unwrap();
+
+        let mut a_dev = dev.alloc_zeros::<f32>(10).unwrap();
+        let mut a_rng = CudaRng::new(0, dev.clone()).unwrap();
+
+        a_rng.set_seed(42).unwrap();
+        a_rng.set_offset(0).unwrap();
+        a_rng.fill_with_uniform(&mut a_dev).unwrap();
+        let a_host = dev.sync_reclaim(a_dev.clone()).unwrap();
+
+        a_rng.set_seed(42).unwrap();
+        a_rng.set_offset(0).unwrap();
+        a_rng.fill_with_uniform(&mut a_dev).unwrap();
+        let b_host = dev.sync_reclaim(a_dev).unwrap();
+
+        assert_eq!(a_host, b_host);
     }
 
     const N: usize = 1000;

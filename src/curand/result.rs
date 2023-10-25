@@ -62,6 +62,16 @@ pub unsafe fn set_seed(generator: sys::curandGenerator_t, seed: u64) -> Result<(
     sys::curandSetPseudoRandomGeneratorSeed(generator, seed).result()
 }
 
+/// Set the offset value of the pseudo-random number generator.
+///
+/// See [cuRAND docs](https://docs.nvidia.com/cuda/curand/group__HOST.html#group__HOST_1gb21ba987f85486e552797206451b0939)
+///
+/// # Safety
+/// The generator must be allocated and not already freed.
+pub unsafe fn set_offset(generator: sys::curandGenerator_t, offset: u64) -> Result<(), CurandError> {
+    sys::curandSetGeneratorOffset(generator, offset).result()
+}
+
 /// Set the current stream for CURAND kernel launches.
 ///
 /// See [cuRAND docs](https://docs.nvidia.com/cuda/curand/group__HOST.html#group__HOST_1gc78c8d07c7acea4242e2a62bc41ff1f5)
