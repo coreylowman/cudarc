@@ -68,7 +68,10 @@ pub unsafe fn set_seed(generator: sys::curandGenerator_t, seed: u64) -> Result<(
 ///
 /// # Safety
 /// The generator must be allocated and not already freed.
-pub unsafe fn set_offset(generator: sys::curandGenerator_t, offset: u64) -> Result<(), CurandError> {
+pub unsafe fn set_offset(
+    generator: sys::curandGenerator_t,
+    offset: u64,
+) -> Result<(), CurandError> {
     sys::curandSetGeneratorOffset(generator, offset).result()
 }
 
