@@ -11,6 +11,7 @@ Safe abstractions over:
 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
+5. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
 
 **Pre-alpha state**, expect breaking changes and not all cuda functions
 contain a safe wrapper. **Contributions welcome for any that aren't included!**
@@ -27,6 +28,7 @@ To that end there are three levels to each wrapper (by default the safe api is e
 use cudarc::driver::{safe, result, sys};
 use cudarc::nvrtc::{safe, result, sys};
 use cudarc::cublas::{safe, result, sys};
+use cudarc::cublaslt::{safe, result, sys};
 use cudarc::curand::{safe, result, sys};
 ```
 

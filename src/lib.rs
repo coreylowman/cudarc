@@ -15,6 +15,7 @@
 //! | --- | --- | --- | --- |
 //! | driver | [driver::safe] | [driver::result] | [driver::sys] |
 //! | cublas | [cublas::safe] | [cublas::result] | [cublas::sys] |
+//! | cublaslt | [cublaslt::safe] | [cublaslt::result] | [cublaslt::sys] |
 //! | nvrtc | [nvrtc::safe] | [nvrtc::result] | [nvrtc::sys] |
 //! | curand | [curand::safe] | [curand::result] | [curand::sys] |
 //! | cudnn | - | [cudnn::result] | [cudnn::sys] |
@@ -78,6 +79,8 @@ extern crate no_std_compat as std;
 
 #[cfg(feature = "cublas")]
 pub mod cublas;
+#[cfg(feature = "cublaslt")]
+pub mod cublaslt;
 #[cfg(feature = "cudnn")]
 pub mod cudnn;
 #[cfg(feature = "curand")]
