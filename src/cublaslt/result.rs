@@ -64,6 +64,9 @@ pub fn create_matrix_layout(
 /// Sets the value of the specified attribute belonging to a previously created matrix layout
 /// descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatrixlayoutsetattribute)
+///
+/// # Safety
+/// `matrix_layout` must not have been freed already.
 pub unsafe fn set_matrix_layout_attribute(
     matrix_layout: sys::cublasLtMatrixLayout_t,
     attr: sys::cublasLtMatrixLayoutAttribute_t,
@@ -102,6 +105,9 @@ pub fn create_matmul_desc(
 /// Sets the value of the specified attribute belonging to a previously created matrix multiply
 /// descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmuldescsetattribute)
+///
+/// # Safety
+/// `matmul_desc` must not be freed already.
 pub unsafe fn set_matmul_desc_attribute(
     matmul_desc: sys::cublasLtMatmulDesc_t,
     attr: sys::cublasLtMatmulDescAttributes_t,
@@ -136,6 +142,9 @@ pub fn create_matmul_pref() -> Result<sys::cublasLtMatmulPreference_t, CublasErr
 /// Sets the value of the specified attribute belonging to a previously create matrix multiply
 /// preferences descriptor. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmulpreferencesetattribute)
+///
+/// # Safety
+/// `matmul_pref` must not have been freed already.
 pub unsafe fn set_matmul_pref_attribute(
     matmul_pref: sys::cublasLtMatmulPreference_t,
     attr: sys::cublasLtMatmulPreferenceAttributes_t,
@@ -161,7 +170,10 @@ pub unsafe fn destroy_matmul_pref(
 /// Retrieves the fastest possible algorithm for the matrix multiply operation function
 /// given input matrices A, B and C and the output matrix D. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmulalgogetheuristic)
-pub fn get_matmul_algo_heuristic(
+///
+/// # Safety
+/// All the parameters must not have been freed already & must be valid layouts for allocations.
+pub unsafe fn get_matmul_algo_heuristic(
     handle: sys::cublasLtHandle_t,
     matmul_desc: sys::cublasLtMatmulDesc_t,
     a_layout: sys::cublasLtMatrixLayout_t,
@@ -173,38 +185,40 @@ pub fn get_matmul_algo_heuristic(
     let mut matmul_heuristic = MaybeUninit::uninit();
     let mut algo_count = 0;
 
-    unsafe {
-        sys::cublasLtMatmulAlgoGetHeuristic(
-            handle,
-            matmul_desc,
-            a_layout,
-            b_layout,
-            c_layout,
-            d_layout,
-            matmul_pref,
-            1, // only select the fastest algo
-            matmul_heuristic.as_mut_ptr(),
-            &mut algo_count,
-        )
-        .result()?;
+    sys::cublasLtMatmulAlgoGetHeuristic(
+        handle,
+        matmul_desc,
+        a_layout,
+        b_layout,
+        c_layout,
+        d_layout,
+        matmul_pref,
+        1, // only select the fastest algo
+        matmul_heuristic.as_mut_ptr(),
+        &mut algo_count,
+    )
+    .result()?;
 
-        if algo_count == 0 {
-            return Err(CublasError(
-                sys::cublasStatus_t::CUBLAS_STATUS_NOT_SUPPORTED,
-            ));
-        }
-
-        let matmul_heuristic = matmul_heuristic.assume_init();
-        matmul_heuristic.state.result()?;
-
-        Ok(matmul_heuristic)
+    if algo_count == 0 {
+        return Err(CublasError(
+            sys::cublasStatus_t::CUBLAS_STATUS_NOT_SUPPORTED,
+        ));
     }
+
+    let matmul_heuristic = matmul_heuristic.assume_init();
+    matmul_heuristic.state.result()?;
+
+    Ok(matmul_heuristic)
 }
 
 /// Computes the matrix multiplication of matrics A and B to produce the output matrix D,
 /// according to the following operation: D = alpha*(A*B) + beta*(C)
 /// where A, B, and C are input matrices, and alpha and beta are input scalars. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatmul)
+///
+/// # Safety
+/// All the sys objects can't have been freed already.
+#[allow(clippy::too_many_arguments)]
 pub unsafe fn matmul(
     handle: sys::cublasLtHandle_t,
     matmul_desc: sys::cublasLtMatmulDesc_t,
