@@ -61,6 +61,18 @@ pub fn create_matrix_layout(
     }
 }
 
+/// Sets the value of the specified attribute belonging to a previously created matrix layout
+/// descriptor. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatrixlayoutsetattribute)
+pub unsafe fn set_matrix_layout_attribute(
+    matrix_layout: sys::cublasLtMatrixLayout_t,
+    attr: sys::cublasLtMatrixLayoutAttribute_t,
+    buf: *const c_void,
+    buf_size: usize,
+) -> Result<(), CublasError> {
+    sys::cublasLtMatrixLayoutSetAttribute(matrix_layout, attr, buf, buf_size).result()
+}
+
 /// Destroys a matrix layout previously created with [create_matrix_layout(...)]. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublasltmatrixlayoutdestroy)
 ///
