@@ -85,6 +85,69 @@ pub enum Activation {
     Gelu,
 }
 
+/// MatrixLayout helper type
+struct MatrixLayout {
+    handle: sys::cublasLtMatrixLayout_t,
+}
+
+impl MatrixLayout {
+    fn new(matrix_type: sys::cudaDataType, rows: u64, cols: u64, ld: i64) -> Result<Self, CublasError> {
+        let handle = result::create_matrix_layout(matrix_type, rows, cols, ld)?;
+        Ok(Self { handle })
+    }
+}
+
+impl Drop for MatrixLayout {
+    fn drop(&mut self) {
+        // panic on failure
+        unsafe { result::destroy_matrix_layout(self.handle).expect("Unable to destroy matrix layout") }
+    }
+}
+
+enum Matrix{
+    A,
+    B,
+    C
+}
+
+/// MatmulDesc helper type
+struct MatmulDesc {
+    handle: sys::cublasLtMatmulDesc_t,
+}
+
+impl MatmulDesc {
+    fn new(compute_type: sys::cublasComputeType_t, scale_type: sys::cudaDataType) -> Result<Self, CublasError> {
+        let handle = result::create_matmul_desc(compute_type, scale_type)?;
+        Ok(Self { handle })
+    }
+
+    fn set_transpose(&mut self, transpose: bool, matrix: Matrix) -> Result<(), CublasError> {
+        // Set transpose
+        // 1 == T, 0 == N
+        let transpose = transpose as i32;
+        let attr = match matrix {
+            Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
+            Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
+            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSC
+        };
+
+        unsafe {
+            result::set_matmul_desc_attribute(
+                self.handle,
+                attr,
+                (&transpose) as *const _ as *const _,
+                mem::size_of::<u32>(),
+            )
+        }
+    }
+}
+
+impl Drop for MatmulDesc {
+    fn drop(&mut self) {
+        unsafe { result::destroy_matmul_desc(self.handle).expect("Unable to destroy matmul desc")}
+    }
+}
+
 /// [Matmul] super-trait
 pub trait MatmulShared {
     /// Returns a reference to the underlying cublasLt handle.
@@ -380,7 +443,7 @@ mod tests {
         beta: T,
         c: &mut [[T; N]; M],
     ) where
-        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output = T>,
+        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output=T>,
     {
         for m in 0..M {
             for n in 0..N {
@@ -468,7 +531,7 @@ mod tests {
                 None,
             )
         }
-        .unwrap();
+            .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -503,7 +566,7 @@ mod tests {
             [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
             [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
         ]
-        .map(|r| r.map(half::f16::from_f32));
+            .map(|r| r.map(half::f16::from_f32));
         let b: [[half::f16; N]; K] = [
             [
                 1.1292169,
@@ -538,7 +601,7 @@ mod tests {
                 0.39125723,
             ],
         ]
-        .map(|r| r.map(half::f16::from_f32));
+            .map(|r| r.map(half::f16::from_f32));
         let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
         matmul_truth(
             half::f16::from_f32(1.0),
@@ -588,7 +651,7 @@ mod tests {
                 None,
             )
         }
-        .unwrap();
+            .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -642,7 +705,7 @@ mod tests {
                 None,
             )
         }
-        .unwrap();
+            .unwrap();
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
