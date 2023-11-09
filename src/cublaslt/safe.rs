@@ -91,23 +91,51 @@ struct MatrixLayout {
 }
 
 impl MatrixLayout {
-    fn new(matrix_type: sys::cudaDataType, rows: u64, cols: u64, ld: i64) -> Result<Self, CublasError> {
+    fn new(
+        matrix_type: sys::cudaDataType,
+        rows: u64,
+        cols: u64,
+        ld: i64,
+    ) -> Result<Self, CublasError> {
         let handle = result::create_matrix_layout(matrix_type, rows, cols, ld)?;
         Ok(Self { handle })
+    }
+
+    fn set_batch(&self, size: c_int, stride: i64) -> Result<(), CublasError> {
+        unsafe {
+            // Set batch size
+            set_matrix_layout_attribute(
+                self.handle,
+                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_BATCH_COUNT,
+                (&size) as *const _ as *const _,
+                mem::size_of::<c_int>(),
+            )?;
+            // Set batch stride
+            set_matrix_layout_attribute(
+                self.handle,
+                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_STRIDED_BATCH_OFFSET,
+                (&stride) as *const _ as *const _,
+                mem::size_of::<i64>(),
+            )?;
+        }
+        Ok(())
     }
 }
 
 impl Drop for MatrixLayout {
     fn drop(&mut self) {
         // panic on failure
-        unsafe { result::destroy_matrix_layout(self.handle).expect("Unable to destroy matrix layout") }
+        unsafe {
+            result::destroy_matrix_layout(self.handle).expect("Unable to destroy matrix layout")
+        }
     }
 }
 
-enum Matrix{
+enum Matrix {
     A,
     B,
-    C
+    #[allow(dead_code)]
+    C,
 }
 
 /// MatmulDesc helper type
@@ -116,19 +144,22 @@ struct MatmulDesc {
 }
 
 impl MatmulDesc {
-    fn new(compute_type: sys::cublasComputeType_t, scale_type: sys::cudaDataType) -> Result<Self, CublasError> {
+    fn new(
+        compute_type: sys::cublasComputeType_t,
+        scale_type: sys::cudaDataType,
+    ) -> Result<Self, CublasError> {
         let handle = result::create_matmul_desc(compute_type, scale_type)?;
         Ok(Self { handle })
     }
 
-    fn set_transpose(&mut self, transpose: bool, matrix: Matrix) -> Result<(), CublasError> {
+    fn set_transpose(&self, transpose: bool, matrix: Matrix) -> Result<(), CublasError> {
         // Set transpose
         // 1 == T, 0 == N
         let transpose = transpose as i32;
         let attr = match matrix {
             Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
             Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
-            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSC
+            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSC,
         };
 
         unsafe {
@@ -137,14 +168,108 @@ impl MatmulDesc {
                 attr,
                 (&transpose) as *const _ as *const _,
                 mem::size_of::<u32>(),
-            )
+            )?;
         }
+        Ok(())
+    }
+
+    // Epilogue system can be leveraged to fuse add and activation operations
+    fn set_epilogue(
+        &self,
+        act: Option<&Activation>,
+        bias_ptr: Option<&CUdeviceptr>,
+        stride_bias: Option<i64>,
+    ) -> Result<(), CublasError> {
+        let epilogue = if let Some(bias_ptr) = bias_ptr {
+            let epilogue = act
+                .map(|act| match act {
+                    // Act + bias
+                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
+                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
+                })
+                // Only bias
+                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
+
+            // Set bias CUdeviceptr in matmul_desc
+            unsafe {
+                result::set_matmul_desc_attribute(
+                    self.handle,
+                    sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
+                    bias_ptr as *const CUdeviceptr as *const _,
+                    mem::size_of::<CUdeviceptr>(),
+                )?;
+            }
+
+            if let Some(stride_bias) = stride_bias {
+                // Set bias batch stride
+                unsafe {
+                    result::set_matmul_desc_attribute(
+                        self.handle,
+                        sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_BATCH_STRIDE,
+                        (&stride_bias) as *const _ as *const _,
+                        mem::size_of::<i64>(),
+                    )?;
+                }
+            }
+            epilogue
+        } else if let Some(act) = act {
+            // Only Act
+            match act {
+                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
+                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
+            }
+        } else {
+            // No epilogue
+            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
+        };
+
+        // Set epilogue
+        unsafe {
+            result::set_matmul_desc_attribute(
+                self.handle,
+                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
+                (&epilogue) as *const _ as *const _,
+                mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
+            )?;
+        }
+        Ok(())
     }
 }
 
 impl Drop for MatmulDesc {
     fn drop(&mut self) {
-        unsafe { result::destroy_matmul_desc(self.handle).expect("Unable to destroy matmul desc")}
+        unsafe { result::destroy_matmul_desc(self.handle).expect("Unable to destroy matmul desc") }
+    }
+}
+
+/// MatmulPref helper type
+struct MatmulPref {
+    handle: sys::cublasLtMatmulPreference_t,
+}
+
+impl MatmulPref {
+    fn new() -> Result<Self, CublasError> {
+        let handle = result::create_matmul_pref()?;
+        Ok(Self { handle })
+    }
+
+    fn set_workspace_size(&self, size: usize) -> Result<(), CublasError> {
+        unsafe {
+            // Set workspace size
+            result::set_matmul_pref_attribute(
+                self.handle,
+                sys::cublasLtMatmulPreferenceAttributes_t::CUBLASLT_MATMUL_PREF_MAX_WORKSPACE_BYTES,
+                (&size) as *const _ as *const _,
+                mem::size_of::<usize>(),
+            )?;
+        }
+        Ok(())
+    }
+}
+
+impl Drop for MatmulPref {
+    fn drop(&mut self) {
+        unsafe { result::destroy_matmul_pref(self.handle).expect("Unable to destroy matmul pref") }
     }
 }
 
@@ -203,178 +328,75 @@ pub trait Matmul<T>: MatmulShared {
         bias: Option<&I>,
         act: Option<&Activation>,
     ) -> Result<(), CublasError> {
-        let (a_rows, a_cols, transa) = if cfg.transa {
-            (cfg.k, cfg.m, 1)
+        let (a_rows, a_cols) = if cfg.transa {
+            (cfg.k, cfg.m)
         } else {
-            (cfg.m, cfg.k, 0)
+            (cfg.m, cfg.k)
         };
-        let (b_rows, b_cols, transb) = if cfg.transb {
-            (cfg.n, cfg.k, 1)
+        let (b_rows, b_cols) = if cfg.transb {
+            (cfg.n, cfg.k)
         } else {
-            (cfg.k, cfg.n, 0)
+            (cfg.k, cfg.n)
         };
 
         // Creates matrix layouts
-        let a_layout = result::create_matrix_layout(Self::matrix_type(), a_rows, a_cols, cfg.lda)?;
+        let a_layout = MatrixLayout::new(Self::matrix_type(), a_rows, a_cols, cfg.lda)?;
         if let (Some(batch_size), Some(stride_a)) = (cfg.batch_size, cfg.stride_a) {
-            // Set batch size
-            set_matrix_layout_attribute(
-                a_layout,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_BATCH_COUNT,
-                (&batch_size) as *const _ as *const _,
-                mem::size_of::<c_int>(),
-            )?;
-            // Set batch stride
-            set_matrix_layout_attribute(
-                a_layout,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_STRIDED_BATCH_OFFSET,
-                (&stride_a) as *const _ as *const _,
-                mem::size_of::<i64>(),
-            )?;
+            a_layout.set_batch(batch_size, stride_a)?;
         }
 
-        let b_layout = result::create_matrix_layout(Self::matrix_type(), b_rows, b_cols, cfg.ldb)?;
+        let b_layout = MatrixLayout::new(Self::matrix_type(), b_rows, b_cols, cfg.ldb)?;
         if let (Some(batch_size), Some(stride_b)) = (cfg.batch_size, cfg.stride_b) {
-            // Set batch size
-            set_matrix_layout_attribute(
-                b_layout,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_BATCH_COUNT,
-                (&batch_size) as *const _ as *const _,
-                mem::size_of::<c_int>(),
-            )?;
-            // Set batch stride
-            set_matrix_layout_attribute(
-                b_layout,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_STRIDED_BATCH_OFFSET,
-                (&stride_b) as *const _ as *const _,
-                mem::size_of::<i64>(),
-            )?;
+            b_layout.set_batch(batch_size, stride_b)?;
         }
 
-        let c_layout = result::create_matrix_layout(Self::matrix_type(), cfg.m, cfg.n, cfg.ldc)?;
+        let c_layout = MatrixLayout::new(Self::matrix_type(), cfg.m, cfg.n, cfg.ldc)?;
         if let (Some(batch_size), Some(stride_c)) = (cfg.batch_size, cfg.stride_c) {
-            // Set batch size
-            set_matrix_layout_attribute(
-                c_layout,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_BATCH_COUNT,
-                (&batch_size) as *const _ as *const _,
-                mem::size_of::<c_int>(),
-            )?;
-            // Set batch stride
-            set_matrix_layout_attribute(
-                c_layout,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_STRIDED_BATCH_OFFSET,
-                (&stride_c) as *const _ as *const _,
-                mem::size_of::<i64>(),
-            )?;
+            c_layout.set_batch(batch_size, stride_c)?;
         }
 
         // Matmul description
-        let matmul_desc =
-            result::create_matmul_desc(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
+        let matmul_desc = MatmulDesc::new(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
 
         // Set transa
-        // 1 == T, 0 == N
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
-            (&transa) as *const _ as *const _,
-            mem::size_of::<u32>(),
-        )?;
-
+        matmul_desc.set_transpose(cfg.transa, Matrix::A)?;
         // Set transb
-        // 1 == T, 0 == N
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
-            (&transb) as *const _ as *const _,
-            mem::size_of::<u32>(),
-        )?;
+        matmul_desc.set_transpose(cfg.transb, Matrix::B)?;
 
         // Epilogue system can be leveraged to fuse add and activation operations
-        let epilogue = if let Some(bias) = bias {
-            let epilogue = act
-                .map(|act| match act {
-                    // Act + bias
-                    Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU_BIAS,
-                    Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU_BIAS,
-                })
-                // Only bias
-                .unwrap_or(sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_BIAS);
-
-            // Set bias CUdeviceptr in matmul_desc
-            result::set_matmul_desc_attribute(
-                matmul_desc,
-                sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_POINTER,
-                bias.device_ptr() as *const CUdeviceptr as *const _,
-                mem::size_of::<CUdeviceptr>(),
-            )?;
-
-            if let Some(stride_bias) = cfg.stride_bias {
-                // Set bias batch stride
-                result::set_matmul_desc_attribute(
-                    matmul_desc,
-                    sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_BIAS_BATCH_STRIDE,
-                    (&stride_bias) as *const _ as *const _,
-                    mem::size_of::<i64>(),
-                )?;
-            }
-            epilogue
-        } else if let Some(act) = act {
-            // Only Act
-            match act {
-                Activation::Relu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_RELU,
-                Activation::Gelu => sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_GELU,
-            }
-        } else {
-            // No epilogue
-            sys::cublasLtEpilogue_t::CUBLASLT_EPILOGUE_DEFAULT
-        };
-
-        // Set epilogue
-        result::set_matmul_desc_attribute(
-            matmul_desc,
-            sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
-            (&epilogue) as *const _ as *const _,
-            mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
-        )?;
+        matmul_desc.set_epilogue(act, bias.map(|b| b.device_ptr()), cfg.stride_bias)?;
 
         // Create matmul heuristic search preferences
-        let matmul_pref = result::create_matmul_pref()?;
+        let matmul_pref = MatmulPref::new()?;
 
         // Set workspace size
-        result::set_matmul_pref_attribute(
-            matmul_pref,
-            sys::cublasLtMatmulPreferenceAttributes_t::CUBLASLT_MATMUL_PREF_MAX_WORKSPACE_BYTES,
-            (&self.workspace().size) as *const _ as *const _,
-            mem::size_of::<usize>(),
-        )?;
+        matmul_pref.set_workspace_size(self.workspace().size)?;
 
         // Get heuristic given Config, bias, act and workspace size
         let heuristic = result::get_matmul_algo_heuristic(
             *self.handle(),
-            matmul_desc,
-            a_layout,
-            b_layout,
-            c_layout,
-            c_layout,
-            matmul_pref,
+            matmul_desc.handle,
+            a_layout.handle,
+            b_layout.handle,
+            c_layout.handle,
+            c_layout.handle,
+            matmul_pref.handle,
         )?;
 
         // Launch matmul kernel
         result::matmul(
             *self.handle(),
-            matmul_desc,
+            matmul_desc.handle,
             (&cfg.alpha) as *const _ as *const _,
             (&cfg.beta) as *const _ as *const _,
             *a.device_ptr() as *const _,
-            a_layout,
+            a_layout.handle,
             *b.device_ptr() as *const _,
-            b_layout,
+            b_layout.handle,
             *c.device_ptr_mut() as *const _,
-            c_layout,
+            c_layout.handle,
             *c.device_ptr_mut() as *mut _,
-            c_layout,
+            c_layout.handle,
             (&heuristic.algo) as *const _,
             *self.workspace().buffer.device_ptr() as *const CUdeviceptr as *mut _,
             self.workspace().size,
@@ -443,7 +465,7 @@ mod tests {
         beta: T,
         c: &mut [[T; N]; M],
     ) where
-        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output=T>,
+        T: Copy + Clone + std::ops::AddAssign + std::ops::MulAssign + std::ops::Mul<T, Output = T>,
     {
         for m in 0..M {
             for n in 0..N {
@@ -531,7 +553,7 @@ mod tests {
                 None,
             )
         }
-            .unwrap();
+        .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -566,7 +588,7 @@ mod tests {
             [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
             [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
         ]
-            .map(|r| r.map(half::f16::from_f32));
+        .map(|r| r.map(half::f16::from_f32));
         let b: [[half::f16; N]; K] = [
             [
                 1.1292169,
@@ -601,7 +623,7 @@ mod tests {
                 0.39125723,
             ],
         ]
-            .map(|r| r.map(half::f16::from_f32));
+        .map(|r| r.map(half::f16::from_f32));
         let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
         matmul_truth(
             half::f16::from_f32(1.0),
@@ -651,7 +673,7 @@ mod tests {
                 None,
             )
         }
-            .unwrap();
+        .unwrap();
 
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
@@ -705,7 +727,7 @@ mod tests {
                 None,
             )
         }
-            .unwrap();
+        .unwrap();
         let c_host = dev.sync_reclaim(c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
