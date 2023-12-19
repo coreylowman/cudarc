@@ -169,3 +169,7 @@ pub mod safe;
 pub mod sys;
 
 pub use safe::*;
+
+lazy_static::lazy_static! {
+    static ref DRIVER: sys::Driver = unsafe {sys::Driver::new(libloading::library_filename("cuda")).expect("Could not load cuda library")};
+}

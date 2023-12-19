@@ -28,8 +28,6 @@ fn link_cuda() {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
 
-    #[cfg(feature = "driver")]
-    println!("cargo:rustc-link-lib=dylib=cuda");
     #[cfg(feature = "nccl")]
     println!("cargo:rustc-link-lib=dylib=nccl");
 
@@ -57,8 +55,6 @@ fn link_cuda() {
     }
     #[cfg(not(feature = "static-linking"))]
     {
-        #[cfg(feature = "nvrtc")]
-        println!("cargo:rustc-link-lib=dylib=nvrtc");
         #[cfg(feature = "curand")]
         println!("cargo:rustc-link-lib=dylib=curand");
         #[cfg(feature = "cublas")]

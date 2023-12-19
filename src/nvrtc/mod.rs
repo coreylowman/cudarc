@@ -9,3 +9,7 @@ pub mod safe;
 pub mod sys;
 
 pub use safe::*;
+
+lazy_static::lazy_static! {
+    static ref NVRTC: sys::Nvrtc = unsafe {sys::Nvrtc::new(libloading::library_filename("nvrtc")).expect("Could not load nvrtc library")};
+}

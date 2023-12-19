@@ -16,7 +16,7 @@ bindgen \
   --with-derive-eq \
   --with-derive-hash \
   --with-derive-ord \
-  --size_t-is-usize \
   --use-core \
+  --dynamic-loading Driver \
   wrapper.h -- -I/usr/local/cuda/include \
   > sys.rs
