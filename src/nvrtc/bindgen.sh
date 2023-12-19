@@ -2,15 +2,15 @@
 set -exu
 
 bindgen \
-  --whitelist-type="^nvrtc.*" \
-  --whitelist-function="^nvrtc.*" \
+  --allowlist-type="^nvrtc.*" \
+  --allowlist-function="^nvrtc.*" \
   --default-enum-style=rust \
   --no-doc-comments \
   --with-derive-default \
   --with-derive-eq \
   --with-derive-hash \
   --with-derive-ord \
-  --size_t-is-usize \
   --use-core \
+  --dynamic-loading Nvrtc \
   wrapper.h -- -I/usr/local/cuda/include \
   > sys.rs
