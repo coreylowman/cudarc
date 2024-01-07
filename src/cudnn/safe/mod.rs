@@ -21,7 +21,7 @@ mod core;
 mod reduce;
 
 pub use self::conv::{
-    Conv2dBackwardData, Conv2dBackwardFilter, Conv2dDescriptor, Conv2dForward, FilterDescriptor,
+    ConvBackwardData, ConvBackwardFilter, ConvDescriptor, ConvForward, FilterDescriptor,
 };
 pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
@@ -76,7 +76,7 @@ mod tests {
         )?;
 
         {
-            let op = Conv2dForward {
+            let op = ConvForward {
                 conv: &conv,
                 x: &x,
                 w: &filter,
@@ -90,7 +90,7 @@ mod tests {
         }
 
         {
-            let op = Conv2dBackwardData {
+            let op = ConvBackwardData {
                 conv: &conv,
                 dx: &x,
                 w: &filter,
@@ -104,7 +104,7 @@ mod tests {
         }
 
         {
-            let op = Conv2dBackwardFilter {
+            let op = ConvBackwardFilter {
                 conv: &conv,
                 x: &x,
                 dw: &filter,
