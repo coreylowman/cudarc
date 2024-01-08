@@ -6,7 +6,7 @@ use crate::{
 
 use std::{marker::PhantomData, sync::Arc};
 
-/// A descriptor of the filters for conv2d operation. Create with [`Cudnn::create_4d_filter()`]
+/// A descriptor of the filters for conv operation. Create with [`Cudnn::create_4d_filter()`]
 #[derive(Debug)]
 pub struct FilterDescriptor<T> {
     pub(crate) desc: sys::cudnnFilterDescriptor_t,
@@ -84,13 +84,15 @@ impl<T> Drop for FilterDescriptor<T> {
     }
 }
 
-/// A descriptor for a conv2d operation holding stride, padding, and dilation.
+/// A descriptor for a conv operation holding stride, padding, and dilation.
 #[derive(Debug)]
 pub struct ConvDescriptor<T> {
     pub(crate) desc: sys::cudnnConvolutionDescriptor_t,
     pub(crate) handle: Arc<Cudnn>,
     pub(crate) marker: PhantomData<T>,
 }
+#[deprecated(note = "use ConvDescriptor instead. This will be removed in future versions")]
+type Conv2dDescriptor<T> = ConvDescriptor<T>;
 
 impl Cudnn {
     /// Creates a conv2d descriptor.
@@ -202,6 +204,8 @@ pub struct ConvForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType>
     /// Output image descriptor
     pub y: &'a TensorDescriptor<Y>,
 }
+#[deprecated(note = "use ConvForward instead. This will be removed in future versions")]
+type Conv2dForward<T> = ConvForward<T>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
@@ -314,6 +318,8 @@ pub struct ConvBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnData
     /// Output image descriptor
     pub dy: &'a TensorDescriptor<Y>,
 }
+#[deprecated(note = "use ConvBackwardData instead. This will be removed in future versions")]
+type Conv2dBackwardData<T> = ConvBackwardData<T>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
@@ -426,6 +432,8 @@ pub struct ConvBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDa
     /// Output image descriptor
     pub dy: &'a TensorDescriptor<Y>,
 }
+#[deprecated(note = "use ConvBackwardFilter instead. This will be removed in future versions")]
+type Conv2dBackwardFilter<T> = ConvBackwardFilter<T>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
