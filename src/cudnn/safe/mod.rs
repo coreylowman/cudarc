@@ -21,7 +21,17 @@ mod core;
 mod reduce;
 
 pub use self::conv::{
-    ConvBackwardData, ConvBackwardFilter, ConvDescriptor, ConvForward, FilterDescriptor,
+    // Deprecated APIs
+    Conv2dBackwardData,
+    Conv2dBackwardFilter,
+    Conv2dDescriptor,
+    Conv2dForward,
+    // Current APIs
+    ConvBackwardData,
+    ConvBackwardFilter,
+    ConvDescriptor,
+    ConvForward,
+    FilterDescriptor,
 };
 pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
