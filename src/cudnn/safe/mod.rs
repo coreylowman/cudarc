@@ -182,7 +182,7 @@ mod tests {
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[32, 3, 4, 4, 4],
         )?;
-        let y = cudnn.create_nd_tensor::<f32>(&[32, 32, 60, 60, 60], &[0; 5])?;
+        let y = cudnn.create_nd_tensor::<f32>(&[32, 32, 61, 61, 61], &[0; 5])?;
 
         {
             let op = ConvForward {
