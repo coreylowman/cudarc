@@ -319,7 +319,7 @@ pub struct ConvBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnData
     pub dy: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvBackwardData instead. This will be removed in future versions")]
-pub type ConvBackwardData<'a, X, C, Y> = ConvBackwardData<'a, X, C, Y>;
+pub type Conv2dBackwardData<'a, X, C, Y> = ConvBackwardData<'a, X, C, Y>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
