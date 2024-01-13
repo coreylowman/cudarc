@@ -63,7 +63,7 @@ mod tests {
     }
 
     #[test]
-    fn test_conv_pick_algorithms() -> Result<(), CudnnError> {
+    fn test_conv2d_pick_algorithms() -> Result<(), CudnnError> {
         let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
 
         let conv = cudnn.create_conv2d::<f32>(
@@ -125,6 +125,72 @@ mod tests {
                 algo,
                 cudnn::sys::cudnnConvolutionBwdFilterAlgo_t::CUDNN_CONVOLUTION_BWD_FILTER_ALGO_1
             );
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_conv1d() -> Result<(), CudnnError> {
+        let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
+
+        let conv = cudnn.create_convnd::<f32>(
+            &[0; 1],
+            &[1; 1],
+            &[1; 1],
+            cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
+        )?;
+        // With less than 4 dimensions, 4D tensors should be used with 1 set for unused
+        // dimensions
+        let x = cudnn.create_4d_tensor::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [100, 128, 32, 1],
+        )?;
+        let filter = cudnn.create_nd_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            &[256, 128, 3],
+        )?;
+        let y = cudnn.create_4d_tensor::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [100, 256, 30, 1],
+        )?;
+
+        {
+            let op = ConvForward {
+                conv: &conv,
+                x: &x,
+                w: &filter,
+                y: &y,
+            };
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_conv3d() -> Result<(), CudnnError> {
+        let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
+
+        let conv = cudnn.create_convnd::<f32>(
+            &[0; 3],
+            &[1; 3],
+            &[1; 3],
+            cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
+        )?;
+        let x = cudnn.create_nd_tensor::<f32>(&[32, 3, 64, 64, 64], &[0; 5])?;
+        let filter = cudnn.create_nd_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            &[32, 3, 4, 4, 4],
+        )?;
+        let y = cudnn.create_nd_tensor::<f32>(&[32, 32, 60, 60, 60], &[0; 5])?;
+
+        {
+            let op = ConvForward {
+                conv: &conv,
+                x: &x,
+                w: &filter,
+                y: &y,
+            };
         }
 
         Ok(())
