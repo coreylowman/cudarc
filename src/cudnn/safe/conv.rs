@@ -139,7 +139,7 @@ impl Cudnn {
     /// - `mode` - CROSS_CORRELATION is standard convolution
     pub fn create_convnd<T: CudnnDataType>(
         self: &Arc<Cudnn>,
-        pads: &[std::ffi::c_in],
+        pads: &[std::ffi::c_int],
         strides: &[std::ffi::c_int],
         dilations: &[std::ffi::c_int],
         mode: sys::cudnnConvolutionMode_t,
