@@ -205,7 +205,7 @@ pub struct ConvForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType>
     pub y: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvForward instead. This will be removed in future versions")]
-pub type Conv2dForward<'a, X, C, Y> = ConvForward<X, C, Y>;
+pub type Conv2dForward<'a, X, C, Y> = ConvForward<'a, X, C, Y>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
@@ -319,7 +319,7 @@ pub struct ConvBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnData
     pub dy: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvBackwardData instead. This will be removed in future versions")]
-pub type Conv2dBackwardData<'a, X, C, Y> = ConvBackwardData<X, C, Y>;
+pub type ConvBackwardData<'a, X, C, Y> = ConvBackwardData<'a, X, C, Y>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
@@ -433,7 +433,7 @@ pub struct ConvBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDa
     pub dy: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvBackwardFilter instead. This will be removed in future versions")]
-pub type Conv2dBackwardFilter<'a, X, C, Y> = ConvBackwardFilter<X, C, Y>;
+pub type Conv2dBackwardFilter<'a, X, C, Y> = ConvBackwardFilter<'a, X, C, Y>;
 
 impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
