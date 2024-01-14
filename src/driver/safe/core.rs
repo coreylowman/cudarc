@@ -1,4 +1,7 @@
-use crate::driver::{result, sys};
+use crate::driver::{
+    result,
+    sys::{self, CUfunction_attribute_enum},
+};
 
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 
@@ -386,6 +389,19 @@ impl CudaFunction {
         };
 
         Ok(cluster_size as u32)
+    }
+
+    /// Set the value of a specific attribute of this [CudaFunction].
+    pub fn set_attribute(
+        &self,
+        attribute: CUfunction_attribute_enum,
+        value: i32,
+    ) -> Result<(), result::DriverError> {
+        unsafe {
+            result::function::set_function_attribute(self.cu_function, attribute, value)?;
+        }
+
+        Ok(())
     }
 }
 
