@@ -139,6 +139,28 @@ pub mod device {
     }
 }
 
+pub mod function {
+    use super::sys::{self, CUfunction_attribute_enum};
+
+    /// Sets the specific attribute of a cuda function.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html#group__CUDART__EXECUTION_1g317e77d2657abf915fd9ed03e75f3eb0)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn set_function_attribute(
+        f: sys::CUfunction,
+        attribute: CUfunction_attribute_enum,
+        value: i32,
+    ) -> Result<(), super::DriverError> {
+        unsafe {
+            sys::cuFuncSetAttribute(f, attribute, value).result()?;
+        }
+
+        Ok(())
+    }
+}
+
 pub mod occupancy {
 
     use core::{
