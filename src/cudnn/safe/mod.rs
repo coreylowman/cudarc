@@ -198,14 +198,14 @@ mod tests {
             &[1; 3],
             cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
         )?;
-        let x = cudnn.create_nd_tensor::<f32>(&[32, 3, 64, 64, 64], &[0; 5])?;
+        let x = cudnn.create_nd_tensor::<f32>(&[32, 3, 64, 64, 64], &[1; 5])?;
         let filter = cudnn.create_nd_filter::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[32, 3, 4, 4, 4],
         )?;
-        let y = cudnn.create_nd_tensor::<f32>(&[32, 32, 61, 61, 61], &[0; 5])?;
+        let y = cudnn.create_nd_tensor::<f32>(&[32, 32, 61, 61, 61], &[1; 5])?;
 
-        {
+        { 
             let op = ConvForward {
                 conv: &conv,
                 x: &x,
