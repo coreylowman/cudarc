@@ -132,7 +132,8 @@ mod tests {
 
     #[test]
     fn test_conv1d() -> Result<(), CudnnError> {
-        let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev)?;
 
         let conv = cudnn.create_convnd::<f32>(
             &[0; 1],
@@ -142,15 +143,20 @@ mod tests {
         )?;
         // With less than 4 dimensions, 4D tensors should be used with 1 set for unused
         // dimensions
-        let x = cudnn.create_4d_tensor::<f32>(
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![0.f32; 100 * 128 * 32]).unwrap();
+        let x_desc = cudnn.create_4d_tensor::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             [100, 128, 32, 1],
         )?;
-        let filter = cudnn.create_nd_filter::<f32>(
+        let filter = dev.htod_copy(vec![1.f32; 256 * 128 * 3]).unwrap();
+        let filter_desc = cudnn.create_nd_filter::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[256, 128, 3],
         )?;
-        let y = cudnn.create_4d_tensor::<f32>(
+        let mut y = dev.alloc_zeros(100 * 256 * 30).unwrap();
+        let y_desc = cudnn.create_4d_tensor::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             [100, 256, 30, 1],
         )?;
@@ -158,10 +164,25 @@ mod tests {
         {
             let op = ConvForward {
                 conv: &conv,
-                x: &x,
-                w: &filter,
-                y: &y,
+                x: &x_desc,
+                w: &filter_desc,
+                y: &y_desc,
             };
+
+            // Pick algorithm
+            let algo = op.pick_algorithm()?;
+
+            // Get workspace size
+            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let mut workspace = dev.alloc::<u8>(workspace_size)?;
+
+            // Launch conv operation
+            unsafe {
+                op.launch(algo, Some(&mut workspace), (1.0, 0.0), &x, &filter, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(c_host.len(), 100 * 256 * 30);
         }
 
         Ok(())
