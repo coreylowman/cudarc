@@ -20,6 +20,7 @@ mod conv;
 mod core;
 mod reduce;
 
+#[allow(deprecated)]
 pub use self::conv::{
     // Deprecated APIs
     Conv2dBackwardData,
