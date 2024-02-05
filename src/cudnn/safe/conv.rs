@@ -96,7 +96,7 @@ pub type Conv2dDescriptor<T> = ConvDescriptor<T>;
 
 impl Cudnn {
     /// Creates a conv2d descriptor.
-    /// - `pad` is the padding to apply to height and width of image
+    /// - `pad` is the padding to apply to height and width of tensor
     /// - `stride` is the kernel strides
     /// - `dilation` is the kernel dilation
     /// - `mode` - CROSS_CORRELATION is standard convolution
@@ -197,11 +197,11 @@ impl<T> Drop for ConvDescriptor<T> {
 pub struct ConvForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
     /// Conv parameters
     pub conv: &'a ConvDescriptor<C>,
-    /// Input image descriptor
+    /// Input tensor descriptor
     pub x: &'a TensorDescriptor<X>,
     /// Filter descriptor
     pub w: &'a FilterDescriptor<X>,
-    /// Output image descriptor
+    /// Output tensor descriptor
     pub y: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvForward instead. This will be removed in future versions")]
@@ -253,25 +253,25 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X
 
     /// Launches the operation.
     ///
-    /// - `img` is the input image
+    /// - `src` is the input tensor
     /// - `filter` is the convolution kernels
     /// - `y` is the output
     ///
     /// # Safety
-    /// The img/filter/y arguments must match the data type/layout specified in the
+    /// The src/filter/y arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub unsafe fn launch<Workspace, Img, Filter, Dst>(
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionFwdAlgo_t,
         workspace: Option<&mut Workspace>,
         (alpha, beta): (Y, Y),
-        img: &Img,
+        src: &Src,
         filter: &Filter,
         y: &mut Dst,
     ) -> Result<(), CudnnError>
     where
         Workspace: DevicePtrMut<u8>,
-        Img: DevicePtr<X>,
+        Src: DevicePtr<X>,
         Filter: DevicePtr<X>,
         Dst: DevicePtrMut<Y>,
     {
@@ -288,7 +288,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X
             self.conv.handle.handle,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            *img.device_ptr() as *const X as *const std::ffi::c_void,
+            *src.device_ptr() as *const X as *const std::ffi::c_void,
             self.w.desc,
             *filter.device_ptr() as *const X as *const std::ffi::c_void,
             self.conv.desc,
@@ -302,7 +302,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X
     }
 }
 
-/// The convolution backward operation for the input image. Pass in references to descriptors
+/// The convolution backward operation for the input tensor. Pass in references to descriptors
 /// directly, and then call:
 /// 1. [`ConvBackwardData::pick_algorithm()`] to use cudnn heuristics to select the algorithm
 /// 2. [`ConvBackwardData::get_workspace_size()`] to get required workspace size.
@@ -311,11 +311,11 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X
 pub struct ConvBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
     /// Conv descriptor
     pub conv: &'a ConvDescriptor<C>,
-    /// Input image descriptor
+    /// Input tensor descriptor
     pub dx: &'a TensorDescriptor<X>,
     /// Filter descriptor
     pub w: &'a FilterDescriptor<X>,
-    /// Output image descriptor
+    /// Output tensor descriptor
     pub dy: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvBackwardData instead. This will be removed in future versions")]
@@ -367,25 +367,25 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<
 
     /// Launches the operation.
     ///
-    /// - `dx` is the gradient of the input image to populate
+    /// - `dx` is the gradient of the input tensor to populate
     /// - `filter` is the convolution kernels
-    /// - `dy` is the gradient of the output image
+    /// - `dy` is the gradient of the output tensor
     ///
     /// # Safety
     /// The arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub unsafe fn launch<Workspace, Img, Filter, Dst>(
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionBwdDataAlgo_t,
         workspace: Option<&mut Workspace>,
         (alpha, beta): (Y, Y),
-        dx: &mut Img,
+        dx: &mut Src,
         filter: &Filter,
         dy: &Dst,
     ) -> Result<(), CudnnError>
     where
         Workspace: DevicePtrMut<u8>,
-        Img: DevicePtrMut<X>,
+        Src: DevicePtrMut<X>,
         Filter: DevicePtr<X>,
         Dst: DevicePtr<Y>,
     {
@@ -425,11 +425,11 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<
 pub struct ConvBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
     /// Conv descriptor
     pub conv: &'a ConvDescriptor<C>,
-    /// Input image descriptor
+    /// Input tensor descriptor
     pub x: &'a TensorDescriptor<X>,
     /// Filter descriptor
     pub dw: &'a FilterDescriptor<X>,
-    /// Output image descriptor
+    /// Output tensor descriptor
     pub dy: &'a TensorDescriptor<Y>,
 }
 #[deprecated(note = "use ConvBackwardFilter instead. This will be removed in future versions")]
@@ -481,25 +481,25 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilte
 
     /// Launches the operation.
     ///
-    /// - `x` is the input image
+    /// - `x` is the input tensor
     /// - `dfilter` is the gradient of the convolution kernels
-    /// - `dy` is the gradient of the output image
+    /// - `dy` is the gradient of the output tensor
     ///
     /// # Safety
     /// The arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub unsafe fn launch<Workspace, Img, Filter, Dst>(
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionBwdFilterAlgo_t,
         workspace: Option<&mut Workspace>,
         (alpha, beta): (Y, Y),
-        x: &Img,
+        x: &Src,
         dfilter: &mut Filter,
         dy: &Dst,
     ) -> Result<(), CudnnError>
     where
         Workspace: DevicePtrMut<u8>,
-        Img: DevicePtr<X>,
+        Src: DevicePtr<X>,
         Filter: DevicePtrMut<X>,
         Dst: DevicePtr<Y>,
     {
