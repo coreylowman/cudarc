@@ -20,6 +20,7 @@ mod conv;
 mod core;
 mod reduce;
 
+#[allow(deprecated)]
 pub use self::conv::{
     // Deprecated APIs
     Conv2dBackwardData,
@@ -170,7 +171,7 @@ mod tests {
             };
 
             // Pick algorithm
-            // Note that the number of feature maps in the filter and input
+            // Note that the number of dimensions in the filter and input
             // must match. Hence the similarity with Conv2D operation.
             let algo = op.pick_algorithm()?;
 
@@ -193,7 +194,8 @@ mod tests {
 
     #[test]
     fn test_conv3d() -> Result<(), CudnnError> {
-        let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
 
         let conv = cudnn.create_convnd::<f32>(
             &[0; 3],
@@ -201,20 +203,59 @@ mod tests {
             &[1; 3],
             cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
         )?;
-        let x = cudnn.create_nd_tensor::<f32>(&[32, 3, 64, 64, 64], &[1; 5])?;
-        let filter = cudnn.create_nd_filter::<f32>(
-            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![1.0f32; 32 * 3 * 64 * 64 * 64]).unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 3, 64, 64, 64], 
+            &[
+                3 * 64 * 64 * 64,
+                64 * 64 * 64,
+                64 * 64,
+                64,
+                1
+            ]
+        )?;
+        let filter = dev.htod_copy(vec![1.0f32; 32 * 3 * 4 * 4 * 4]).unwrap();
+        let filter_desc = cudnn.create_nd_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,         
             &[32, 3, 4, 4, 4],
         )?;
-        let y = cudnn.create_nd_tensor::<f32>(&[32, 32, 61, 61, 61], &[1; 5])?;
-
-        { 
+        let mut y = dev.alloc_zeros::<f32>(32 * 32 * 61 * 61 * 61).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 32, 61, 61, 61], 
+            &[
+                32 * 61 * 61 * 61,
+                61 * 61 * 61,
+                61 * 61,
+                61,
+                1
+            ]
+        )?;
+        
+        {
             let op = ConvForward {
                 conv: &conv,
-                x: &x,
-                w: &filter,
-                y: &y,
+                x: &x_desc,
+                w: &filter_desc,
+                y: &y_desc,
             };
+
+            // Pick algorithm
+            let algo = op.pick_algorithm()?;
+
+            // Get workspace size
+            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
+
+            // Launch conv operation
+            unsafe {
+                op.launch(algo, Some(&mut workspace), (1.0, 0.0), &x, &filter, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 32 * 32 * 61 * 61 * 61);
+            assert_eq!(y_host[0], 3.0 * 4.0 * 4.0 * 4.0);
         }
 
         Ok(())
