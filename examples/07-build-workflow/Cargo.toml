@@ -11,4 +11,4 @@ cc = "1.0.82"
 regex = "1.9.3"
 
 [dependencies]
-cudarc = { version = "0.9.14", path = "../.." }
+cudarc = { path = "../.." }

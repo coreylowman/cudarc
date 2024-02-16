@@ -65,7 +65,7 @@ fn main() -> Result<(), DriverError> {
 
     let my_structs = gpu.sync_reclaim(gpu_my_structs)?;
 
-    assert!(my_structs.iter().all(|i| i.data == [1.0; 4]));
+    assert!(my_structs.iter().all(|i| i.data == [2.0; 4]));
 
     Ok(())
 }
