@@ -3,7 +3,7 @@ use crate::driver::{result, sys};
 use super::alloc::DeviceRepr;
 use super::core::{CudaDevice, CudaFunction, CudaModule, CudaStream};
 
-use std::sync::Arc;
+use std::{vec::Vec, sync::Arc};
 
 impl CudaDevice {
     /// Whether a module and function are currently loaded into the device.
@@ -300,7 +300,7 @@ impl_launch!(
 
 #[cfg(test)]
 mod tests {
-    use std::{time::Instant, vec::Vec};
+    use std::time::Instant;
 
     use crate::{
         driver::{DeviceSlice, DriverError},
