@@ -56,8 +56,8 @@ impl Cudnn {
         Ok(desc)
     }
 
-    /// Create a filter 1d descriptor.
-    pub fn create_1d_filter<T: CudnnDataType>(
+    /// Create a filter 3d descriptor.
+    pub fn create_3d_filter<T: CudnnDataType>(
         self: &Arc<Cudnn>,
         format: sys::cudnnTensorFormat_t,
         dims: [std::ffi::c_int; 3],
