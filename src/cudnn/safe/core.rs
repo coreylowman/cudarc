@@ -16,6 +16,7 @@ pub struct Cudnn {
 
 impl Cudnn {
     /// Creates a new cudnn handle and sets the stream to the `device`'s stream.
+    #[allow(clippy::arc_with_non_send_sync)]
     pub fn new(device: Arc<CudaDevice>) -> Result<Arc<Self>, CudnnError> {
         device.bind_to_thread().unwrap();
         let handle = result::create_handle()?;
