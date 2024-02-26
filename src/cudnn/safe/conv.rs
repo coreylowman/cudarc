@@ -6,7 +6,7 @@ use crate::{
 
 use std::{marker::PhantomData, sync::Arc};
 
-/// A descriptor of the filters for conv2d operation. Create with [`Cudnn::create_4d_filter()`]
+/// A descriptor of the filters for conv operation. Create with [`Cudnn::create_4d_filter()`]
 #[derive(Debug)]
 pub struct FilterDescriptor<T> {
     pub(crate) desc: sys::cudnnFilterDescriptor_t,
@@ -31,6 +31,48 @@ impl Cudnn {
         unsafe { result::set_filter4d_descriptor(desc.desc, T::DATA_TYPE, format, dims) }?;
         Ok(desc)
     }
+
+    /// Create a filter Nd descriptor.
+    pub fn create_nd_filter<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        format: sys::cudnnTensorFormat_t,
+        dims: &[std::ffi::c_int],
+    ) -> Result<FilterDescriptor<T>, CudnnError> {
+        let desc = result::create_filter_descriptor()?;
+        let desc = FilterDescriptor {
+            desc,
+            handle: self.clone(),
+            marker: PhantomData,
+        };
+        unsafe {
+            result::set_filternd_descriptor(
+                desc.desc,
+                T::DATA_TYPE,
+                format,
+                dims.len() as std::ffi::c_int,
+                dims.as_ptr(),
+            )
+        }?;
+        Ok(desc)
+    }
+
+    /// Create a filter 3d descriptor.
+    pub fn create_3d_filter<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        format: sys::cudnnTensorFormat_t,
+        dims: [std::ffi::c_int; 3],
+    ) -> Result<FilterDescriptor<T>, CudnnError> {
+        self.create_nd_filter(format, &dims)
+    }
+
+    /// Create a filter 5d descriptor.
+    pub fn create_5d_filter<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        format: sys::cudnnTensorFormat_t,
+        dims: [std::ffi::c_int; 5],
+    ) -> Result<FilterDescriptor<T>, CudnnError> {
+        self.create_nd_filter(format, &dims)
+    }
 }
 
 impl<T> Drop for FilterDescriptor<T> {
@@ -42,17 +84,19 @@ impl<T> Drop for FilterDescriptor<T> {
     }
 }
 
-/// A descriptor for a conv2d operation holding stride, padding, and dilation.
+/// A descriptor for a conv operation holding stride, padding, and dilation.
 #[derive(Debug)]
-pub struct Conv2dDescriptor<T> {
+pub struct ConvDescriptor<T> {
     pub(crate) desc: sys::cudnnConvolutionDescriptor_t,
     pub(crate) handle: Arc<Cudnn>,
     pub(crate) marker: PhantomData<T>,
 }
+#[deprecated(note = "use ConvDescriptor instead. This will be removed in future versions")]
+pub type Conv2dDescriptor<T> = ConvDescriptor<T>;
 
 impl Cudnn {
     /// Creates a conv2d descriptor.
-    /// - `pad` is the padding to apply to height and width of image
+    /// - `pad` is the padding to apply to height and width of tensor
     /// - `stride` is the kernel strides
     /// - `dilation` is the kernel dilation
     /// - `mode` - CROSS_CORRELATION is standard convolution
@@ -62,12 +106,12 @@ impl Cudnn {
         stride: [std::ffi::c_int; 2],
         dilation: [std::ffi::c_int; 2],
         mode: sys::cudnnConvolutionMode_t,
-    ) -> Result<Conv2dDescriptor<T>, CudnnError> {
+    ) -> Result<ConvDescriptor<T>, CudnnError> {
         let [pad_h, pad_w] = pad;
         let [stride_h, stride_w] = stride;
         let [dilation_h, dilation_w] = dilation;
         let desc = result::create_convolution_descriptor()?;
-        let desc = Conv2dDescriptor {
+        let desc = ConvDescriptor {
             desc,
             handle: self.clone(),
             marker: PhantomData,
@@ -87,9 +131,41 @@ impl Cudnn {
         }?;
         Ok(desc)
     }
+
+    /// Creates a ConvDescription for Nd convolution operations.
+    /// - `pads` is an array the zero-padding size for each dimension
+    /// - `strides` is an array for the kernel strides for each dimension
+    /// - `dilations` is an array for the kernel dilation for each dimension
+    /// - `mode` - CROSS_CORRELATION is standard convolution
+    pub fn create_convnd<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        pads: &[std::ffi::c_int],
+        strides: &[std::ffi::c_int],
+        dilations: &[std::ffi::c_int],
+        mode: sys::cudnnConvolutionMode_t,
+    ) -> Result<ConvDescriptor<T>, CudnnError> {
+        let desc = result::create_convolution_descriptor()?;
+        let desc = ConvDescriptor {
+            desc,
+            handle: self.clone(),
+            marker: PhantomData,
+        };
+        unsafe {
+            result::set_convolutionnd_descriptor(
+                desc.desc,
+                pads.len() as std::ffi::c_int,
+                pads.as_ptr(),
+                strides.as_ptr(),
+                dilations.as_ptr(),
+                mode,
+                T::DATA_TYPE,
+            )
+        }?;
+        Ok(desc)
+    }
 }
 
-impl<T> Conv2dDescriptor<T> {
+impl<T> ConvDescriptor<T> {
     /// Set's the math type for this convolution. Refer to [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionMathType)
     /// for more information.
     pub fn set_math_type(&mut self, math_type: sys::cudnnMathType_t) -> Result<(), CudnnError> {
@@ -103,7 +179,7 @@ impl<T> Conv2dDescriptor<T> {
     }
 }
 
-impl<T> Drop for Conv2dDescriptor<T> {
+impl<T> Drop for ConvDescriptor<T> {
     fn drop(&mut self) {
         let desc = std::mem::replace(&mut self.desc, std::ptr::null_mut());
         if !desc.is_null() {
@@ -114,22 +190,24 @@ impl<T> Drop for Conv2dDescriptor<T> {
 
 /// The convolution 2d forward operation. Pass in references to descriptors
 /// directly, and then call:
-/// 1. [`Conv2dForward::pick_algorithm()`] to use cudnn heuristics to select the algorithm
-/// 2. [`Conv2dForward::get_workspace_size()`] to get required workspace size.
-/// 3. [`Conv2dForward::launch()`] to execute it
+/// 1. [`ConvForward::pick_algorithm()`] to use cudnn heuristics to select the algorithm
+/// 2. [`ConvForward::get_workspace_size()`] to get required workspace size.
+/// 3. [`ConvForward::launch()`] to execute it
 #[derive(Debug)]
-pub struct Conv2dForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
+pub struct ConvForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
     /// Conv parameters
-    pub conv: &'a Conv2dDescriptor<C>,
-    /// Input image descriptor
+    pub conv: &'a ConvDescriptor<C>,
+    /// Input tensor descriptor
     pub x: &'a TensorDescriptor<X>,
     /// Filter descriptor
     pub w: &'a FilterDescriptor<X>,
-    /// Output image descriptor
+    /// Output tensor descriptor
     pub y: &'a TensorDescriptor<Y>,
 }
+#[deprecated(note = "use ConvForward instead. This will be removed in future versions")]
+pub type Conv2dForward<'a, X, C, Y> = ConvForward<'a, X, C, Y>;
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a, X, C, Y> {
+impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
     pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionFwdAlgo_t, CudnnError> {
         const NUM_ALGOS: usize = 8;
@@ -175,25 +253,25 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
 
     /// Launches the operation.
     ///
-    /// - `img` is the input image
+    /// - `src` is the input tensor
     /// - `filter` is the convolution kernels
     /// - `y` is the output
     ///
     /// # Safety
-    /// The img/filter/y arguments must match the data type/layout specified in the
+    /// The src/filter/y arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub unsafe fn launch<Workspace, Img, Filter, Dst>(
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionFwdAlgo_t,
         workspace: Option<&mut Workspace>,
         (alpha, beta): (Y, Y),
-        img: &Img,
+        src: &Src,
         filter: &Filter,
         y: &mut Dst,
     ) -> Result<(), CudnnError>
     where
         Workspace: DevicePtrMut<u8>,
-        Img: DevicePtr<X>,
+        Src: DevicePtr<X>,
         Filter: DevicePtr<X>,
         Dst: DevicePtrMut<Y>,
     {
@@ -210,7 +288,7 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
             self.conv.handle.handle,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            *img.device_ptr() as *const X as *const std::ffi::c_void,
+            *src.device_ptr() as *const X as *const std::ffi::c_void,
             self.w.desc,
             *filter.device_ptr() as *const X as *const std::ffi::c_void,
             self.conv.desc,
@@ -224,24 +302,26 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dForward<'a,
     }
 }
 
-/// The convolution 2d backward operation for the input image. Pass in references to descriptors
+/// The convolution backward operation for the input tensor. Pass in references to descriptors
 /// directly, and then call:
-/// 1. [`Conv2dBackwardData::pick_algorithm()`] to use cudnn heuristics to select the algorithm
-/// 2. [`Conv2dBackwardData::get_workspace_size()`] to get required workspace size.
-/// 3. [`Conv2dBackwardData::launch()`] to execute it
+/// 1. [`ConvBackwardData::pick_algorithm()`] to use cudnn heuristics to select the algorithm
+/// 2. [`ConvBackwardData::get_workspace_size()`] to get required workspace size.
+/// 3. [`ConvBackwardData::launch()`] to execute it
 #[derive(Debug)]
-pub struct Conv2dBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
+pub struct ConvBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
     /// Conv descriptor
-    pub conv: &'a Conv2dDescriptor<C>,
-    /// Input image descriptor
+    pub conv: &'a ConvDescriptor<C>,
+    /// Input tensor descriptor
     pub dx: &'a TensorDescriptor<X>,
     /// Filter descriptor
     pub w: &'a FilterDescriptor<X>,
-    /// Output image descriptor
+    /// Output tensor descriptor
     pub dy: &'a TensorDescriptor<Y>,
 }
+#[deprecated(note = "use ConvBackwardData instead. This will be removed in future versions")]
+pub type Conv2dBackwardData<'a, X, C, Y> = ConvBackwardData<'a, X, C, Y>;
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardData<'a, X, C, Y> {
+impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
     pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionBwdDataAlgo_t, CudnnError> {
         const NUM_ALGOS: usize = 6;
@@ -287,25 +367,25 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardDat
 
     /// Launches the operation.
     ///
-    /// - `dx` is the gradient of the input image to populate
+    /// - `dx` is the gradient of the input tensor to populate
     /// - `filter` is the convolution kernels
-    /// - `dy` is the gradient of the output image
+    /// - `dy` is the gradient of the output tensor
     ///
     /// # Safety
     /// The arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub unsafe fn launch<Workspace, Img, Filter, Dst>(
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionBwdDataAlgo_t,
         workspace: Option<&mut Workspace>,
         (alpha, beta): (Y, Y),
-        dx: &mut Img,
+        dx: &mut Src,
         filter: &Filter,
         dy: &Dst,
     ) -> Result<(), CudnnError>
     where
         Workspace: DevicePtrMut<u8>,
-        Img: DevicePtrMut<X>,
+        Src: DevicePtrMut<X>,
         Filter: DevicePtr<X>,
         Dst: DevicePtr<Y>,
     {
@@ -338,22 +418,24 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardDat
 
 /// The convolution 2d backward operation for the filters. Pass in references to descriptors
 /// directly, and then call:
-/// 1. [`Conv2dBackwardFilter::pick_algorithm()`] to use cudnn heuristics to select the algorithm
-/// 2. [`Conv2dBackwardFilter::get_workspace_size()`] to get required workspace size.
-/// 3. [`Conv2dBackwardFilter::launch()`] to execute it
+/// 1. [`ConvBackwardFilter::pick_algorithm()`] to use cudnn heuristics to select the algorithm
+/// 2. [`ConvBackwardFilter::get_workspace_size()`] to get required workspace size.
+/// 3. [`ConvBackwardFilter::launch()`] to execute it
 #[derive(Debug)]
-pub struct Conv2dBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
+pub struct ConvBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> {
     /// Conv descriptor
-    pub conv: &'a Conv2dDescriptor<C>,
-    /// Input image descriptor
+    pub conv: &'a ConvDescriptor<C>,
+    /// Input tensor descriptor
     pub x: &'a TensorDescriptor<X>,
     /// Filter descriptor
     pub dw: &'a FilterDescriptor<X>,
-    /// Output image descriptor
+    /// Output tensor descriptor
     pub dy: &'a TensorDescriptor<Y>,
 }
+#[deprecated(note = "use ConvBackwardFilter instead. This will be removed in future versions")]
+pub type Conv2dBackwardFilter<'a, X, C, Y> = ConvBackwardFilter<'a, X, C, Y>;
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFilter<'a, X, C, Y> {
+impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'a, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
     pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionBwdFilterAlgo_t, CudnnError> {
         const NUM_ALGOS: usize = 7;
@@ -399,25 +481,25 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> Conv2dBackwardFil
 
     /// Launches the operation.
     ///
-    /// - `x` is the input image
+    /// - `x` is the input tensor
     /// - `dfilter` is the gradient of the convolution kernels
-    /// - `dy` is the gradient of the output image
+    /// - `dy` is the gradient of the output tensor
     ///
     /// # Safety
     /// The arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub unsafe fn launch<Workspace, Img, Filter, Dst>(
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionBwdFilterAlgo_t,
         workspace: Option<&mut Workspace>,
         (alpha, beta): (Y, Y),
-        x: &Img,
+        x: &Src,
         dfilter: &mut Filter,
         dy: &Dst,
     ) -> Result<(), CudnnError>
     where
         Workspace: DevicePtrMut<u8>,
-        Img: DevicePtr<X>,
+        Src: DevicePtr<X>,
         Filter: DevicePtrMut<X>,
         Dst: DevicePtr<Y>,
     {

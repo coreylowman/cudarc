@@ -188,6 +188,21 @@ pub unsafe fn set_filter4d_descriptor(
     sys::cudnnSetFilter4dDescriptor(filter_desc, data_type, format, k, c, h, w).result()
 }
 
+/// Sets data on a pre allocated filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetFilterNdDescriptor)
+///
+/// # Safety
+/// `filter_desc` must be have been allocated with [create_filter_descriptor]
+/// and NOT already freed by [destroy_filter_descriptor].
+pub unsafe fn set_filternd_descriptor(
+    filter_desc: sys::cudnnFilterDescriptor_t,
+    data_type: sys::cudnnDataType_t,
+    format: sys::cudnnTensorFormat_t,
+    nb_dims: std::ffi::c_int,
+    filter_dims: *const std::ffi::c_int,
+) -> Result<(), CudnnError> {
+    sys::cudnnSetFilterNdDescriptor(filter_desc, data_type, format, nb_dims, filter_dims).result()
+}
+
 /// Destroys a filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyFilterDescriptor)
 ///
 /// # Safety
@@ -232,6 +247,33 @@ pub unsafe fn set_convolution2d_descriptor(
         v,
         dilation_h,
         dilation_w,
+        mode,
+        compute_type,
+    )
+    .result()
+}
+
+/// Sets data on a conv descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionNdDescriptor)
+///
+/// # Safety
+/// `conv_desc` must have been allocated by [create_convolution_descriptor]
+/// and NOT freed by [destroy_convolution_descriptor].
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn set_convolutionnd_descriptor(
+    conv_desc: sys::cudnnConvolutionDescriptor_t,
+    array_length: std::ffi::c_int,
+    pads: *const std::ffi::c_int,
+    filter_strides: *const std::ffi::c_int,
+    dilations: *const std::ffi::c_int,
+    mode: sys::cudnnConvolutionMode_t,
+    compute_type: sys::cudnnDataType_t,
+) -> Result<(), CudnnError> {
+    sys::cudnnSetConvolutionNdDescriptor(
+        conv_desc,
+        array_length,
+        pads,
+        filter_strides,
+        dilations,
         mode,
         compute_type,
     )

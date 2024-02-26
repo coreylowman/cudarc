@@ -20,8 +20,19 @@ mod conv;
 mod core;
 mod reduce;
 
+#[allow(deprecated)]
 pub use self::conv::{
-    Conv2dBackwardData, Conv2dBackwardFilter, Conv2dDescriptor, Conv2dForward, FilterDescriptor,
+    // Deprecated APIs
+    Conv2dBackwardData,
+    Conv2dBackwardFilter,
+    Conv2dDescriptor,
+    Conv2dForward,
+    // Current APIs
+    ConvBackwardData,
+    ConvBackwardFilter,
+    ConvDescriptor,
+    ConvForward,
+    FilterDescriptor,
 };
 pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
@@ -53,7 +64,7 @@ mod tests {
     }
 
     #[test]
-    fn test_conv_pick_algorithms() -> Result<(), CudnnError> {
+    fn test_conv2d_pick_algorithms() -> Result<(), CudnnError> {
         let cudnn = Cudnn::new(CudaDevice::new(0).unwrap())?;
 
         let conv = cudnn.create_conv2d::<f32>(
@@ -76,7 +87,7 @@ mod tests {
         )?;
 
         {
-            let op = Conv2dForward {
+            let op = ConvForward {
                 conv: &conv,
                 x: &x,
                 w: &filter,
@@ -90,7 +101,7 @@ mod tests {
         }
 
         {
-            let op = Conv2dBackwardData {
+            let op = ConvBackwardData {
                 conv: &conv,
                 dx: &x,
                 w: &filter,
@@ -104,7 +115,7 @@ mod tests {
         }
 
         {
-            let op = Conv2dBackwardFilter {
+            let op = ConvBackwardFilter {
                 conv: &conv,
                 x: &x,
                 dw: &filter,
@@ -115,6 +126,136 @@ mod tests {
                 algo,
                 cudnn::sys::cudnnConvolutionBwdFilterAlgo_t::CUDNN_CONVOLUTION_BWD_FILTER_ALGO_1
             );
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_conv1d() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let conv = cudnn.create_convnd::<f32>(
+            &[0; 2],
+            &[1; 2],
+            &[1; 2],
+            cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
+        )?;
+        // With less than 4 dimensions, 4D tensors should be used with 1 set for unused
+        // dimensions
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![1.0f32; 100 * 128 * 32]).unwrap();
+        let x_desc = cudnn.create_4d_tensor::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [100, 128, 32, 1],
+        )?;
+        let filter = dev.htod_copy(vec![1.0f32; 256 * 128 * 3]).unwrap();
+        let filter_desc = cudnn.create_nd_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            &[256, 128, 3, 1],
+        )?;
+        let mut y = dev.alloc_zeros::<f32>(100 * 256 * 30).unwrap();
+        let y_desc = cudnn.create_4d_tensor::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            [100, 256, 30, 1],
+        )?;
+
+        {
+            let op = ConvForward {
+                conv: &conv,
+                x: &x_desc,
+                w: &filter_desc,
+                y: &y_desc,
+            };
+
+            // Pick algorithm
+            // Note that the number of dimensions in the filter and input
+            // must match. Hence the similarity with Conv2D operation.
+            let algo = op.pick_algorithm()?;
+
+            // Get workspace size
+            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
+
+            // Launch conv operation
+            unsafe {
+                op.launch(algo, Some(&mut workspace), (1.0, 0.0), &x, &filter, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 100 * 256 * 30);
+            assert_eq!(y_host[0], 128.0 * 3.0);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_conv3d() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let conv = cudnn.create_convnd::<f32>(
+            &[0; 3],
+            &[1; 3],
+            &[1; 3],
+            cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
+        )?;
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![1.0f32; 32 * 3 * 64 * 64 * 64]).unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 3, 64, 64, 64], 
+            &[
+                3 * 64 * 64 * 64,
+                64 * 64 * 64,
+                64 * 64,
+                64,
+                1
+            ]
+        )?;
+        let filter = dev.htod_copy(vec![1.0f32; 32 * 3 * 4 * 4 * 4]).unwrap();
+        let filter_desc = cudnn.create_nd_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,         
+            &[32, 3, 4, 4, 4],
+        )?;
+        let mut y = dev.alloc_zeros::<f32>(32 * 32 * 61 * 61 * 61).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 32, 61, 61, 61], 
+            &[
+                32 * 61 * 61 * 61,
+                61 * 61 * 61,
+                61 * 61,
+                61,
+                1
+            ]
+        )?;
+        
+        {
+            let op = ConvForward {
+                conv: &conv,
+                x: &x_desc,
+                w: &filter_desc,
+                y: &y_desc,
+            };
+
+            // Pick algorithm
+            let algo = op.pick_algorithm()?;
+
+            // Get workspace size
+            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
+
+            // Launch conv operation
+            unsafe {
+                op.launch(algo, Some(&mut workspace), (1.0, 0.0), &x, &filter, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 32 * 32 * 61 * 61 * 61);
+            assert_eq!(y_host[0], 3.0 * 4.0 * 4.0 * 4.0);
         }
 
         Ok(())
