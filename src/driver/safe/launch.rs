@@ -3,7 +3,7 @@ use crate::driver::{result, sys};
 use super::alloc::DeviceRepr;
 use super::core::{CudaDevice, CudaFunction, CudaModule, CudaStream};
 
-use std::{vec::Vec, sync::Arc};
+use std::{sync::Arc, vec::Vec};
 
 impl CudaDevice {
     /// Whether a module and function are currently loaded into the device.

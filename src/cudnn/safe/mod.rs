@@ -207,32 +207,20 @@ mod tests {
         // Create input, filter and output tensors
         let x = dev.htod_copy(vec![1.0f32; 32 * 3 * 64 * 64 * 64]).unwrap();
         let x_desc = cudnn.create_nd_tensor::<f32>(
-            &[32, 3, 64, 64, 64], 
-            &[
-                3 * 64 * 64 * 64,
-                64 * 64 * 64,
-                64 * 64,
-                64,
-                1
-            ]
+            &[32, 3, 64, 64, 64],
+            &[3 * 64 * 64 * 64, 64 * 64 * 64, 64 * 64, 64, 1],
         )?;
         let filter = dev.htod_copy(vec![1.0f32; 32 * 3 * 4 * 4 * 4]).unwrap();
         let filter_desc = cudnn.create_nd_filter::<f32>(
-            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,         
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[32, 3, 4, 4, 4],
         )?;
         let mut y = dev.alloc_zeros::<f32>(32 * 32 * 61 * 61 * 61).unwrap();
         let y_desc = cudnn.create_nd_tensor::<f32>(
-            &[32, 32, 61, 61, 61], 
-            &[
-                32 * 61 * 61 * 61,
-                61 * 61 * 61,
-                61 * 61,
-                61,
-                1
-            ]
+            &[32, 32, 61, 61, 61],
+            &[32 * 61 * 61 * 61, 61 * 61 * 61, 61 * 61, 61, 1],
         )?;
-        
+
         {
             let op = ConvForward {
                 conv: &conv,
