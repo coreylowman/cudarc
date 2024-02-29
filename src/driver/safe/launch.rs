@@ -329,13 +329,13 @@ mod tests {
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
-    const SIN_CU: &str = "
-extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
+    const SIN_CU: &str = r#"
+extern "C" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
     size_t i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < numel) {
         out[i] = sin(inp[i]);
     }
-}";
+}"#;
 
     #[test]
     fn test_launch_with_mut_and_ref_cudarc() {
@@ -422,40 +422,41 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         drop(a_dev);
     }
 
-    const TEST_KERNELS: &str = "
-extern \"C\" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
+    const TEST_KERNELS: &str = r#"
+extern "C" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
     assert(s_min == -128);
     assert(s_max == 127);
     assert(u_min == 0);
     assert(u_max == 255);
 }
 
-extern \"C\" __global__ void int_16bit(signed short s_min, short s_max, unsigned short u_min, unsigned short u_max) {
+extern "C" __global__ void int_16bit(signed short s_min, short s_max, unsigned short u_min, unsigned short u_max) {
     assert(s_min == -32768);
     assert(s_max == 32767);
     assert(u_min == 0);
     assert(u_max == 65535);
 }
 
-extern \"C\" __global__ void int_32bit(signed int s_min, int s_max, unsigned int u_min, unsigned int u_max) {
+extern "C" __global__ void int_32bit(signed int s_min, int s_max, unsigned int u_min, unsigned int u_max) {
     assert(s_min == -2147483648);
     assert(s_max == 2147483647);
     assert(u_min == 0);
     assert(u_max == 4294967295);
 }
 
-extern \"C\" __global__ void int_64bit(signed long s_min, long s_max, unsigned long u_min, unsigned long u_max) {
+// single `long` is 32bit
+extern "C" __global__ void int_64bit(signed long long s_min, long long s_max, unsigned long long u_min, unsigned long long u_max) {
     assert(s_min == -9223372036854775808);
     assert(s_max == 9223372036854775807);
     assert(u_min == 0);
     assert(u_max == 18446744073709551615);
 }
 
-extern \"C\" __global__ void floating(float f, double d) {
+extern "C" __global__ void floating(float f, double d) {
     assert(fabs(f - 1.2345678) <= 1e-7);
     assert(fabs(d - -10.123456789876543) <= 1e-16);
 }
-";
+"#;
 
     #[test]
     fn test_launch_with_8bit() {
@@ -539,13 +540,13 @@ extern \"C\" __global__ void floating(float f, double d) {
     }
 
     #[cfg(feature = "f16")]
-    const HALF_KERNELS: &str = "
-#include \"cuda_fp16.h\"
+    const HALF_KERNELS: &str = r#"
+#include "cuda_fp16.h"
 
-extern \"C\" __global__ void halfs(__half h) {
+extern "C" __global__ void halfs(__half h) {
     assert(__habs(h - __float2half(1.234)) <= __float2half(1e-4));
 }
-";
+"#;
 
     #[cfg(feature = "f16")]
     #[test]
@@ -574,15 +575,15 @@ extern \"C\" __global__ void halfs(__half h) {
         dev.synchronize().unwrap();
     }
 
-    const SLOW_KERNELS: &str = "
-extern \"C\" __global__ void slow_worker(const float *data, const size_t len, float *out) {
+    const SLOW_KERNELS: &str = r#"
+extern "C" __global__ void slow_worker(const float *data, const size_t len, float *out) {
     float tmp = 0.0;
     for(size_t i = 0; i < 1000000; i++) {
         tmp += data[i % len];
     }
     *out = tmp;
 }
-";
+"#;
 
     #[test]
     fn test_par_launch() -> Result<(), DriverError> {
