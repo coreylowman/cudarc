@@ -47,7 +47,7 @@
 //! Loading kernels is done with [CudaDevice::load_ptx()]
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
-//! let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! let ptx = compile_ptx(r#"extern "C" __global__ void my_function(float *out) { }"#).unwrap();
 //! let device = CudaDevice::new(0).unwrap();
 //! device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! ```
@@ -55,7 +55,7 @@
 //! Retrieve the function using the registered module name & actual function name:
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
-//! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! # let ptx = compile_ptx(r#"extern "C" __global__ void my_function(float *out) { }"#).unwrap();
 //! # let device = CudaDevice::new(0).unwrap();
 //! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! let func: CudaFunction = device.get_func("module_name", "my_function").unwrap();
@@ -64,7 +64,7 @@
 //! Asynchronously execute the kernel:
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
-//! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! # let ptx = compile_ptx(r#"extern "C" __global__ void my_function(float *out) { }"#).unwrap();
 //! # let device = CudaDevice::new(0).unwrap();
 //! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! # let func: CudaFunction = device.get_func("module_name", "my_function").unwrap();
@@ -89,7 +89,7 @@
 //!
 //! ```rust
 //! # use cudarc::{driver::*, nvrtc::*};
-//! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
+//! # let ptx = compile_ptx(r#"extern "C" __global__ void my_function(float *out) { }"#).unwrap();
 //! # let device = CudaDevice::new(0).unwrap();
 //! # device.load_ptx(ptx, "module_name", &["my_function"]).unwrap();
 //! let mut a: CudaSlice<f32> = device.alloc_zeros::<f32>(3 * 10).unwrap();

@@ -66,7 +66,7 @@ pub(crate) enum PtxKind {
 /// Example:
 /// ```rust
 /// # use cudarc::nvrtc::*;
-/// let ptx = compile_ptx("extern \"C\" __global__ void kernel() { }").unwrap();
+/// let ptx = compile_ptx(r#"extern "C" __global__ void kernel() { }"#).unwrap();
 /// ```
 pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
     compile_ptx_with_opts(src, Default::default())
@@ -82,7 +82,7 @@ pub fn compile_ptx<S: AsRef<str>>(src: S) -> Result<Ptx, CompileError> {
 ///     maxrregcount: Some(10),
 ///     ..Default::default()
 /// };
-/// let ptx = compile_ptx_with_opts("extern \"C\" __global__ void kernel() { }", opts).unwrap();
+/// let ptx = compile_ptx_with_opts(r#"extern "C" __global__ void kernel() { }"#, opts).unwrap();
 /// ```
 pub fn compile_ptx_with_opts<S: AsRef<str>>(
     src: S,
@@ -242,13 +242,12 @@ mod tests {
 
     #[test]
     fn test_compile_no_opts() {
-        const SRC: &str =
-            "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, int numel) {
+        const SRC: &str = r#"extern "C" __global__ void sin_kernel(float *out, const float *inp, int numel) {
             int i = blockIdx.x * blockDim.x + threadIdx.x;
             if (i < numel) {
                 out[i] = sin(inp[i]);
             }
-        }";
+        }"#;
         compile_ptx_with_opts(SRC, Default::default()).unwrap();
     }
 

@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-bindgen = "0.66.1"
-cc = "1.0.82"
-regex = "1.9.3"
+bindgen = "0.69.4"
+cc = "1.0.88"
+regex = "1.10.3"
 
 [dependencies]
 cudarc = { path = "../.." }

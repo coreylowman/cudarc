@@ -27,7 +27,7 @@ fn main() -> Result<(), DriverError> {
     unsafe { f.launch_on_stream(&stream, cfg, (&mut b_dev, &a_dev, n as i32)) }?;
 
     // and we must join with the default work stream in order for copies
-    // to work corrently.
+    // to work correctly.
     // NOTE: this is actually async with respect to the host!
     dev.wait_for(&stream)?;
 

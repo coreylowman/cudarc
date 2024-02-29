@@ -54,13 +54,13 @@ let mut out = dev.alloc_zeros::<f32>(100)?;
 You can also use the nvrtc api to compile kernels at runtime:
 
 ```rust
-let ptx = cudarc::nvrtc::compile_ptx("
-extern \"C\" __global__ void sin_kernel(float *out, const float *inp, const size_t numel) {
+let ptx = cudarc::nvrtc::compile_ptx(r#"
+extern "C" __global__ void sin_kernel(float *out, const float *inp, const size_t numel) {
     unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < numel) {
         out[i] = sin(inp[i]);
     }
-}")?;
+}"#)?;
 
 // and dynamically load it into the device
 dev.load_ptx(ptx, "my_module", &["sin_kernel"])?;

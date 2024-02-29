@@ -1,8 +1,8 @@
 use cudarc::driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig};
 use cudarc::nvrtc::compile_ptx;
 
-const PTX_SRC: &str = "
-extern \"C\" __global__ void matmul(float* A, float* B, float* C, int N) {
+const PTX_SRC: &str = r#"
+extern "C" __global__ void matmul(float* A, float* B, float* C, int N) {
     int ROW = blockIdx.y*blockDim.y+threadIdx.y;
     int COL = blockIdx.x*blockDim.x+threadIdx.x;
 
@@ -14,10 +14,10 @@ extern \"C\" __global__ void matmul(float* A, float* B, float* C, int N) {
             tmpSum += A[ROW * N + i] * B[i * N + COL];
         }
     }
-    // printf(\"pos, (%d, %d) - N %d - value %d\\n\", ROW, COL, N, tmpSum);
+    // printf("pos, (%d, %d) - N %d - value %d\n", ROW, COL, N, tmpSum);
     C[ROW * N + COL] = tmpSum;
 }
-";
+"#;
 
 fn main() -> Result<(), DriverError> {
     let start = std::time::Instant::now();

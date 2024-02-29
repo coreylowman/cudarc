@@ -1,6 +1,6 @@
 use cudarc::{driver::*, nvrtc::compile_ptx};
 
-/// Here's the struct in rust, note that we have #[repr(C)]
+/// Here's the struct in rust, note that we have `#[repr(C)]`
 /// here which allows us to pass it to cuda.
 #[repr(C)]
 struct MyCoolRustStruct {
@@ -13,7 +13,7 @@ struct MyCoolRustStruct {
 /// We have to implement this to send it to cuda!
 unsafe impl DeviceRepr for MyCoolRustStruct {}
 
-const PTX_SRC: &str = "
+const PTX_SRC: &str = r#"
 // here's the same struct in cuda
 struct MyCoolStruct {
     float a;
@@ -21,13 +21,13 @@ struct MyCoolStruct {
     unsigned int c;
     size_t d;
 };
-extern \"C\" __global__ void my_custom_kernel(MyCoolStruct thing) {
+extern "C" __global__ void my_custom_kernel(MyCoolStruct thing) {
     assert(thing.a == 1.0);
     assert(thing.b == 2.34);
     assert(thing.c == 57);
     assert(thing.d == 420);
 }
-";
+"#;
 
 fn main() -> Result<(), DriverError> {
     let dev = CudaDevice::new(0)?;

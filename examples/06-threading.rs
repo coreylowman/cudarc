@@ -3,11 +3,11 @@ use cudarc::nvrtc::compile_ptx;
 
 use std::thread;
 
-const KERNEL_SRC: &str = "
-extern \"C\" __global__ void hello_world(int i) {
-    printf(\"Hello from the cuda kernel in thread %d\\n\", i);
+const KERNEL_SRC: &str = r#"
+extern "C" __global__ void hello_world(int i) {
+    printf("Hello from the cuda kernel in thread %d\n", i);
 }
-";
+"#;
 
 fn main() -> Result<(), DriverError> {
     let cfg = LaunchConfig {
@@ -30,7 +30,7 @@ fn main() -> Result<(), DriverError> {
         let dev = &dev;
 
         thread::scope(move |s| {
-            for i in 0..10i32 {
+            for i in 0..10_i32 {
                 s.spawn(move || {
                     // NOTE: this is the important call to have
                     // without this, you'll get a CUDA_ERROR_INVALID_CONTEXT
@@ -49,7 +49,7 @@ fn main() -> Result<(), DriverError> {
         let ptx = compile_ptx(KERNEL_SRC).unwrap();
 
         thread::scope(|s| {
-            for i in 0..10i32 {
+            for i in 0..10_i32 {
                 let ptx = ptx.clone();
                 s.spawn(move || {
                     let dev = CudaDevice::new(0)?;
