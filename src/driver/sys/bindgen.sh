@@ -16,7 +16,9 @@ bindgen \
   --with-derive-eq \
   --with-derive-hash \
   --with-derive-ord \
-  --size_t-is-usize \
   --use-core \
   wrapper.h -- -I/usr/local/cuda/include \
-  > sys.rs
+  > tmp.rs
+
+CUDA_VERSION=$(cat tmp.rs | grep "CUDA_VERSION" | awk '{ print $6 }' | sed 's/.$//')
+mv tmp.rs sys_${CUDA_VERSION}.rs
