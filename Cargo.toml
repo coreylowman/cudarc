@@ -24,7 +24,14 @@ keywords = [
 features = ["ci-check", "f16", "cudnn"]
 
 [features]
-default = ["std", "driver", "nvrtc", "cublas", "curand"]
+default = ["std", "driver", "nvrtc", "cublas", "curand", "cuda_auto_version"]
+
+cuda_auto_version = []
+cuda_11080 = []
+cuda_12000 = []
+cuda_12010 = []
+cuda_12020 = []
+
 nvrtc = []
 driver = ["nvrtc"]
 cublas = ["driver"]
