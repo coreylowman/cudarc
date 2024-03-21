@@ -20,4 +20,4 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --no-default-features --features cuda_version_11_8,ci-check,no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl
+          args: --no-default-features --features cuda_11080,ci-check,no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl

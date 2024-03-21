@@ -24,6 +24,26 @@ fn link_cuda() {
             )
         });
 
+    #[cfg(feature = "cuda_auto_version")]
+    {
+        use std::{fs::File, io::Read};
+        let mut header = File::open(toolkit_root.join("include").join("cuda.h")).unwrap();
+        let mut contents = String::new();
+        header.read_to_string(&mut contents).unwrap();
+
+        println!("cargo:rustc-cfg=feature=\"nightly\"");
+
+        let key = "CUDA_VERSION ";
+        let start = key.len() + contents.find(key).unwrap();
+        match contents[start..].lines().next().unwrap() {
+            "12020" => println!("cargo:rustc-cfg=feature=\"cuda_12020\""),
+            "12010" => println!("cargo:rustc-cfg=feature=\"cuda_12010\""),
+            "12000" => println!("cargo:rustc-cfg=feature=\"cuda_12000\""),
+            "11080" => println!("cargo:rustc-cfg=feature=\"cuda_11080\""),
+            v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
+        }
+    }
+
     for path in lib_candidates(&toolkit_root) {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
