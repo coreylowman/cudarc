@@ -31,8 +31,6 @@ fn link_cuda() {
         let mut contents = String::new();
         header.read_to_string(&mut contents).unwrap();
 
-        println!("cargo:rustc-cfg=feature=\"nightly\"");
-
         let key = "CUDA_VERSION ";
         let start = key.len() + contents.find(key).unwrap();
         match contents[start..].lines().next().unwrap() {
