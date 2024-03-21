@@ -17,3 +17,8 @@ pub use sys_12010::*;
 mod sys_12020;
 #[cfg(feature = "cuda_12020")]
 pub use sys_12020::*;
+
+pub unsafe fn lib() -> &'static Lib {
+    static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
+    LIB.get_or_init(|| Lib::new(libloading::library_filename("nccl")).unwrap())
+}
