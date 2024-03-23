@@ -17,3 +17,8 @@ pub use sys_12010::*;
 mod sys_12020;
 #[cfg(feature = "cuda_12020")]
 pub use sys_12020::*;
+
+#[cfg(feature = "cuda_12040")]
+mod sys_12040;
+#[cfg(feature = "cuda_12040")]
+pub use sys_12040::*;
