@@ -32,6 +32,8 @@ cuda_12000 = []
 cuda_12010 = []
 cuda_12020 = []
 
+dynamic_linking = []
+
 nvrtc = []
 driver = ["nvrtc"]
 cublas = ["driver"]
