@@ -34,6 +34,7 @@ fn link_cuda() {
         let key = "CUDA_VERSION ";
         let start = key.len() + contents.find(key).unwrap();
         match contents[start..].lines().next().unwrap() {
+            "12040" => println!("cargo:rustc-cfg=feature=\"cuda_12040\""),
             "12020" => println!("cargo:rustc-cfg=feature=\"cuda_12020\""),
             "12010" => println!("cargo:rustc-cfg=feature=\"cuda_12010\""),
             "12000" => println!("cargo:rustc-cfg=feature=\"cuda_12000\""),
