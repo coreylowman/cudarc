@@ -9148,232 +9148,6 @@ pub enum CUdeviceNumaConfig_enum {
     CU_DEVICE_NUMA_CONFIG_NUMA_NODE = 1,
 }
 pub use self::CUdeviceNumaConfig_enum as CUdeviceNumaConfig;
-extern "C" {
-    pub fn cuGetErrorString(error: CUresult, pStr: *mut *const ::core::ffi::c_char) -> CUresult;
-}
-extern "C" {
-    pub fn cuGetErrorName(error: CUresult, pStr: *mut *const ::core::ffi::c_char) -> CUresult;
-}
-extern "C" {
-    pub fn cuInit(Flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuDriverGetVersion(driverVersion: *mut ::core::ffi::c_int) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGet(device: *mut CUdevice, ordinal: ::core::ffi::c_int) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetCount(count: *mut ::core::ffi::c_int) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetName(
-        name: *mut ::core::ffi::c_char,
-        len: ::core::ffi::c_int,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetUuid(uuid: *mut CUuuid, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetUuid_v2(uuid: *mut CUuuid, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetLuid(
-        luid: *mut ::core::ffi::c_char,
-        deviceNodeMask: *mut ::core::ffi::c_uint,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceTotalMem_v2(bytes: *mut usize, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetTexture1DLinearMaxWidth(
-        maxWidthInElements: *mut usize,
-        format: CUarray_format,
-        numChannels: ::core::ffi::c_uint,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetAttribute(
-        pi: *mut ::core::ffi::c_int,
-        attrib: CUdevice_attribute,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::core::ffi::c_void,
-        dev: CUdevice,
-        flags: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceSetMemPool(dev: CUdevice, pool: CUmemoryPool) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetMemPool(pool: *mut CUmemoryPool, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetDefaultMemPool(pool_out: *mut CUmemoryPool, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetExecAffinitySupport(
-        pi: *mut ::core::ffi::c_int,
-        type_: CUexecAffinityType,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuFlushGPUDirectRDMAWrites(
-        target: CUflushGPUDirectRDMAWritesTarget,
-        scope: CUflushGPUDirectRDMAWritesScope,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetProperties(prop: *mut CUdevprop, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceComputeCapability(
-        major: *mut ::core::ffi::c_int,
-        minor: *mut ::core::ffi::c_int,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDevicePrimaryCtxRetain(pctx: *mut CUcontext, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDevicePrimaryCtxRelease_v2(dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDevicePrimaryCtxSetFlags_v2(dev: CUdevice, flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuDevicePrimaryCtxGetState(
-        dev: CUdevice,
-        flags: *mut ::core::ffi::c_uint,
-        active: *mut ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDevicePrimaryCtxReset_v2(dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxCreate_v2(
-        pctx: *mut CUcontext,
-        flags: ::core::ffi::c_uint,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxCreate_v3(
-        pctx: *mut CUcontext,
-        paramsArray: *mut CUexecAffinityParam,
-        numParams: ::core::ffi::c_int,
-        flags: ::core::ffi::c_uint,
-        dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxDestroy_v2(ctx: CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxPushCurrent_v2(ctx: CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxPopCurrent_v2(pctx: *mut CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxSetCurrent(ctx: CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetCurrent(pctx: *mut CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetDevice(device: *mut CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetFlags(flags: *mut ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxSetFlags(flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetId(ctx: CUcontext, ctxId: *mut ::core::ffi::c_ulonglong) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxSynchronize() -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxSetLimit(limit: CUlimit, value: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetLimit(pvalue: *mut usize, limit: CUlimit) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetCacheConfig(pconfig: *mut CUfunc_cache) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxSetCacheConfig(config: CUfunc_cache) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetSharedMemConfig(pConfig: *mut CUsharedconfig) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxSetSharedMemConfig(config: CUsharedconfig) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetApiVersion(ctx: CUcontext, version: *mut ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetStreamPriorityRange(
-        leastPriority: *mut ::core::ffi::c_int,
-        greatestPriority: *mut ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxResetPersistingL2Cache() -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxGetExecAffinity(
-        pExecAffinity: *mut CUexecAffinityParam,
-        type_: CUexecAffinityType,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxAttach(pctx: *mut CUcontext, flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxDetach(ctx: CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleLoad(module: *mut CUmodule, fname: *const ::core::ffi::c_char) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleLoadData(module: *mut CUmodule, image: *const ::core::ffi::c_void) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleLoadDataEx(
-        module: *mut CUmodule,
-        image: *const ::core::ffi::c_void,
-        numOptions: ::core::ffi::c_uint,
-        options: *mut CUjit_option,
-        optionValues: *mut *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleLoadFatBinary(
-        module: *mut CUmodule,
-        fatCubin: *const ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleUnload(hmod: CUmodule) -> CUresult;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUmoduleLoadingMode_enum {
@@ -9381,34 +9155,4199 @@ pub enum CUmoduleLoadingMode_enum {
     CU_MODULE_LAZY_LOADING = 2,
 }
 pub use self::CUmoduleLoadingMode_enum as CUmoduleLoadingMode;
-extern "C" {
-    pub fn cuModuleGetLoadingMode(mode: *mut CUmoduleLoadingMode) -> CUresult;
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUcoredumpSettings_enum {
+    CU_COREDUMP_ENABLE_ON_EXCEPTION = 1,
+    CU_COREDUMP_TRIGGER_HOST = 2,
+    CU_COREDUMP_LIGHTWEIGHT = 3,
+    CU_COREDUMP_ENABLE_USER_TRIGGER = 4,
+    CU_COREDUMP_FILE = 5,
+    CU_COREDUMP_PIPE = 6,
+    CU_COREDUMP_MAX = 7,
 }
-extern "C" {
-    pub fn cuModuleGetFunction(
+pub use self::CUcoredumpSettings_enum as CUcoredumpSettings;
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUoutput_mode_enum {
+    CU_OUT_KEY_VALUE_PAIR = 0,
+    CU_OUT_CSV = 1,
+}
+pub use self::CUoutput_mode_enum as CUoutput_mode;
+extern crate libloading;
+pub struct Lib {
+    __library: ::libloading::Library,
+    pub cuGetErrorString: Result<
+        unsafe extern "C" fn(error: CUresult, pStr: *mut *const ::core::ffi::c_char) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGetErrorName: Result<
+        unsafe extern "C" fn(error: CUresult, pStr: *mut *const ::core::ffi::c_char) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuInit:
+        Result<unsafe extern "C" fn(Flags: ::core::ffi::c_uint) -> CUresult, ::libloading::Error>,
+    pub cuDriverGetVersion: Result<
+        unsafe extern "C" fn(driverVersion: *mut ::core::ffi::c_int) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGet: Result<
+        unsafe extern "C" fn(device: *mut CUdevice, ordinal: ::core::ffi::c_int) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetCount: Result<
+        unsafe extern "C" fn(count: *mut ::core::ffi::c_int) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetName: Result<
+        unsafe extern "C" fn(
+            name: *mut ::core::ffi::c_char,
+            len: ::core::ffi::c_int,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetUuid: Result<
+        unsafe extern "C" fn(uuid: *mut CUuuid, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetUuid_v2: Result<
+        unsafe extern "C" fn(uuid: *mut CUuuid, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetLuid: Result<
+        unsafe extern "C" fn(
+            luid: *mut ::core::ffi::c_char,
+            deviceNodeMask: *mut ::core::ffi::c_uint,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceTotalMem_v2: Result<
+        unsafe extern "C" fn(bytes: *mut usize, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetTexture1DLinearMaxWidth: Result<
+        unsafe extern "C" fn(
+            maxWidthInElements: *mut usize,
+            format: CUarray_format,
+            numChannels: ::core::ffi::c_uint,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetAttribute: Result<
+        unsafe extern "C" fn(
+            pi: *mut ::core::ffi::c_int,
+            attrib: CUdevice_attribute,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetNvSciSyncAttributes: Result<
+        unsafe extern "C" fn(
+            nvSciSyncAttrList: *mut ::core::ffi::c_void,
+            dev: CUdevice,
+            flags: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceSetMemPool: Result<
+        unsafe extern "C" fn(dev: CUdevice, pool: CUmemoryPool) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetMemPool: Result<
+        unsafe extern "C" fn(pool: *mut CUmemoryPool, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetDefaultMemPool: Result<
+        unsafe extern "C" fn(pool_out: *mut CUmemoryPool, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetExecAffinitySupport: Result<
+        unsafe extern "C" fn(
+            pi: *mut ::core::ffi::c_int,
+            type_: CUexecAffinityType,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFlushGPUDirectRDMAWrites: Result<
+        unsafe extern "C" fn(
+            target: CUflushGPUDirectRDMAWritesTarget,
+            scope: CUflushGPUDirectRDMAWritesScope,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetProperties: Result<
+        unsafe extern "C" fn(prop: *mut CUdevprop, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceComputeCapability: Result<
+        unsafe extern "C" fn(
+            major: *mut ::core::ffi::c_int,
+            minor: *mut ::core::ffi::c_int,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDevicePrimaryCtxRetain: Result<
+        unsafe extern "C" fn(pctx: *mut CUcontext, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDevicePrimaryCtxRelease_v2:
+        Result<unsafe extern "C" fn(dev: CUdevice) -> CUresult, ::libloading::Error>,
+    pub cuDevicePrimaryCtxSetFlags_v2: Result<
+        unsafe extern "C" fn(dev: CUdevice, flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDevicePrimaryCtxGetState: Result<
+        unsafe extern "C" fn(
+            dev: CUdevice,
+            flags: *mut ::core::ffi::c_uint,
+            active: *mut ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDevicePrimaryCtxReset_v2:
+        Result<unsafe extern "C" fn(dev: CUdevice) -> CUresult, ::libloading::Error>,
+    pub cuCtxCreate_v2: Result<
+        unsafe extern "C" fn(
+            pctx: *mut CUcontext,
+            flags: ::core::ffi::c_uint,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxCreate_v3: Result<
+        unsafe extern "C" fn(
+            pctx: *mut CUcontext,
+            paramsArray: *mut CUexecAffinityParam,
+            numParams: ::core::ffi::c_int,
+            flags: ::core::ffi::c_uint,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxDestroy_v2:
+        Result<unsafe extern "C" fn(ctx: CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuCtxPushCurrent_v2:
+        Result<unsafe extern "C" fn(ctx: CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuCtxPopCurrent_v2:
+        Result<unsafe extern "C" fn(pctx: *mut CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuCtxSetCurrent:
+        Result<unsafe extern "C" fn(ctx: CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetCurrent:
+        Result<unsafe extern "C" fn(pctx: *mut CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetDevice:
+        Result<unsafe extern "C" fn(device: *mut CUdevice) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetFlags: Result<
+        unsafe extern "C" fn(flags: *mut ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxSetFlags:
+        Result<unsafe extern "C" fn(flags: ::core::ffi::c_uint) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetId: Result<
+        unsafe extern "C" fn(ctx: CUcontext, ctxId: *mut ::core::ffi::c_ulonglong) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxSynchronize: Result<unsafe extern "C" fn() -> CUresult, ::libloading::Error>,
+    pub cuCtxSetLimit:
+        Result<unsafe extern "C" fn(limit: CUlimit, value: usize) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetLimit: Result<
+        unsafe extern "C" fn(pvalue: *mut usize, limit: CUlimit) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxGetCacheConfig:
+        Result<unsafe extern "C" fn(pconfig: *mut CUfunc_cache) -> CUresult, ::libloading::Error>,
+    pub cuCtxSetCacheConfig:
+        Result<unsafe extern "C" fn(config: CUfunc_cache) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetSharedMemConfig:
+        Result<unsafe extern "C" fn(pConfig: *mut CUsharedconfig) -> CUresult, ::libloading::Error>,
+    pub cuCtxSetSharedMemConfig:
+        Result<unsafe extern "C" fn(config: CUsharedconfig) -> CUresult, ::libloading::Error>,
+    pub cuCtxGetApiVersion: Result<
+        unsafe extern "C" fn(ctx: CUcontext, version: *mut ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxGetStreamPriorityRange: Result<
+        unsafe extern "C" fn(
+            leastPriority: *mut ::core::ffi::c_int,
+            greatestPriority: *mut ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxResetPersistingL2Cache:
+        Result<unsafe extern "C" fn() -> CUresult, ::libloading::Error>,
+    pub cuCtxGetExecAffinity: Result<
+        unsafe extern "C" fn(
+            pExecAffinity: *mut CUexecAffinityParam,
+            type_: CUexecAffinityType,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxAttach: Result<
+        unsafe extern "C" fn(pctx: *mut CUcontext, flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxDetach: Result<unsafe extern "C" fn(ctx: CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuModuleLoad: Result<
+        unsafe extern "C" fn(module: *mut CUmodule, fname: *const ::core::ffi::c_char) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleLoadData: Result<
+        unsafe extern "C" fn(module: *mut CUmodule, image: *const ::core::ffi::c_void) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleLoadDataEx: Result<
+        unsafe extern "C" fn(
+            module: *mut CUmodule,
+            image: *const ::core::ffi::c_void,
+            numOptions: ::core::ffi::c_uint,
+            options: *mut CUjit_option,
+            optionValues: *mut *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleLoadFatBinary: Result<
+        unsafe extern "C" fn(
+            module: *mut CUmodule,
+            fatCubin: *const ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleUnload:
+        Result<unsafe extern "C" fn(hmod: CUmodule) -> CUresult, ::libloading::Error>,
+    pub cuModuleGetLoadingMode: Result<
+        unsafe extern "C" fn(mode: *mut CUmoduleLoadingMode) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleGetFunction: Result<
+        unsafe extern "C" fn(
+            hfunc: *mut CUfunction,
+            hmod: CUmodule,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleGetGlobal_v2: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            bytes: *mut usize,
+            hmod: CUmodule,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLinkCreate_v2: Result<
+        unsafe extern "C" fn(
+            numOptions: ::core::ffi::c_uint,
+            options: *mut CUjit_option,
+            optionValues: *mut *mut ::core::ffi::c_void,
+            stateOut: *mut CUlinkState,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLinkAddData_v2: Result<
+        unsafe extern "C" fn(
+            state: CUlinkState,
+            type_: CUjitInputType,
+            data: *mut ::core::ffi::c_void,
+            size: usize,
+            name: *const ::core::ffi::c_char,
+            numOptions: ::core::ffi::c_uint,
+            options: *mut CUjit_option,
+            optionValues: *mut *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLinkAddFile_v2: Result<
+        unsafe extern "C" fn(
+            state: CUlinkState,
+            type_: CUjitInputType,
+            path: *const ::core::ffi::c_char,
+            numOptions: ::core::ffi::c_uint,
+            options: *mut CUjit_option,
+            optionValues: *mut *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLinkComplete: Result<
+        unsafe extern "C" fn(
+            state: CUlinkState,
+            cubinOut: *mut *mut ::core::ffi::c_void,
+            sizeOut: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLinkDestroy:
+        Result<unsafe extern "C" fn(state: CUlinkState) -> CUresult, ::libloading::Error>,
+    pub cuModuleGetTexRef: Result<
+        unsafe extern "C" fn(
+            pTexRef: *mut CUtexref,
+            hmod: CUmodule,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuModuleGetSurfRef: Result<
+        unsafe extern "C" fn(
+            pSurfRef: *mut CUsurfref,
+            hmod: CUmodule,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryLoadData: Result<
+        unsafe extern "C" fn(
+            library: *mut CUlibrary,
+            code: *const ::core::ffi::c_void,
+            jitOptions: *mut CUjit_option,
+            jitOptionsValues: *mut *mut ::core::ffi::c_void,
+            numJitOptions: ::core::ffi::c_uint,
+            libraryOptions: *mut CUlibraryOption,
+            libraryOptionValues: *mut *mut ::core::ffi::c_void,
+            numLibraryOptions: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryLoadFromFile: Result<
+        unsafe extern "C" fn(
+            library: *mut CUlibrary,
+            fileName: *const ::core::ffi::c_char,
+            jitOptions: *mut CUjit_option,
+            jitOptionsValues: *mut *mut ::core::ffi::c_void,
+            numJitOptions: ::core::ffi::c_uint,
+            libraryOptions: *mut CUlibraryOption,
+            libraryOptionValues: *mut *mut ::core::ffi::c_void,
+            numLibraryOptions: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryUnload:
+        Result<unsafe extern "C" fn(library: CUlibrary) -> CUresult, ::libloading::Error>,
+    pub cuLibraryGetKernel: Result<
+        unsafe extern "C" fn(
+            pKernel: *mut CUkernel,
+            library: CUlibrary,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryGetModule: Result<
+        unsafe extern "C" fn(pMod: *mut CUmodule, library: CUlibrary) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuKernelGetFunction: Result<
+        unsafe extern "C" fn(pFunc: *mut CUfunction, kernel: CUkernel) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryGetGlobal: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            bytes: *mut usize,
+            library: CUlibrary,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryGetManaged: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            bytes: *mut usize,
+            library: CUlibrary,
+            name: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLibraryGetUnifiedFunction: Result<
+        unsafe extern "C" fn(
+            fptr: *mut *mut ::core::ffi::c_void,
+            library: CUlibrary,
+            symbol: *const ::core::ffi::c_char,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuKernelGetAttribute: Result<
+        unsafe extern "C" fn(
+            pi: *mut ::core::ffi::c_int,
+            attrib: CUfunction_attribute,
+            kernel: CUkernel,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuKernelSetAttribute: Result<
+        unsafe extern "C" fn(
+            attrib: CUfunction_attribute,
+            val: ::core::ffi::c_int,
+            kernel: CUkernel,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuKernelSetCacheConfig: Result<
+        unsafe extern "C" fn(kernel: CUkernel, config: CUfunc_cache, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemGetInfo_v2: Result<
+        unsafe extern "C" fn(free: *mut usize, total: *mut usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAlloc_v2: Result<
+        unsafe extern "C" fn(dptr: *mut CUdeviceptr, bytesize: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAllocPitch_v2: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            pPitch: *mut usize,
+            WidthInBytes: usize,
+            Height: usize,
+            ElementSizeBytes: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemFree_v2:
+        Result<unsafe extern "C" fn(dptr: CUdeviceptr) -> CUresult, ::libloading::Error>,
+    pub cuMemGetAddressRange_v2: Result<
+        unsafe extern "C" fn(
+            pbase: *mut CUdeviceptr,
+            psize: *mut usize,
+            dptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAllocHost_v2: Result<
+        unsafe extern "C" fn(pp: *mut *mut ::core::ffi::c_void, bytesize: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemFreeHost:
+        Result<unsafe extern "C" fn(p: *mut ::core::ffi::c_void) -> CUresult, ::libloading::Error>,
+    pub cuMemHostAlloc: Result<
+        unsafe extern "C" fn(
+            pp: *mut *mut ::core::ffi::c_void,
+            bytesize: usize,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemHostGetDevicePointer_v2: Result<
+        unsafe extern "C" fn(
+            pdptr: *mut CUdeviceptr,
+            p: *mut ::core::ffi::c_void,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemHostGetFlags: Result<
+        unsafe extern "C" fn(
+            pFlags: *mut ::core::ffi::c_uint,
+            p: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAllocManaged: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            bytesize: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetByPCIBusId: Result<
+        unsafe extern "C" fn(dev: *mut CUdevice, pciBusId: *const ::core::ffi::c_char) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGetPCIBusId: Result<
+        unsafe extern "C" fn(
+            pciBusId: *mut ::core::ffi::c_char,
+            len: ::core::ffi::c_int,
+            dev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuIpcGetEventHandle: Result<
+        unsafe extern "C" fn(pHandle: *mut CUipcEventHandle, event: CUevent) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuIpcOpenEventHandle: Result<
+        unsafe extern "C" fn(phEvent: *mut CUevent, handle: CUipcEventHandle) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuIpcGetMemHandle: Result<
+        unsafe extern "C" fn(pHandle: *mut CUipcMemHandle, dptr: CUdeviceptr) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuIpcOpenMemHandle_v2: Result<
+        unsafe extern "C" fn(
+            pdptr: *mut CUdeviceptr,
+            handle: CUipcMemHandle,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuIpcCloseMemHandle:
+        Result<unsafe extern "C" fn(dptr: CUdeviceptr) -> CUresult, ::libloading::Error>,
+    pub cuMemHostRegister_v2: Result<
+        unsafe extern "C" fn(
+            p: *mut ::core::ffi::c_void,
+            bytesize: usize,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemHostUnregister:
+        Result<unsafe extern "C" fn(p: *mut ::core::ffi::c_void) -> CUresult, ::libloading::Error>,
+    pub cuMemcpy: Result<
+        unsafe extern "C" fn(dst: CUdeviceptr, src: CUdeviceptr, ByteCount: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyPeer: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstContext: CUcontext,
+            srcDevice: CUdeviceptr,
+            srcContext: CUcontext,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyHtoD_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            srcHost: *const ::core::ffi::c_void,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyDtoH_v2: Result<
+        unsafe extern "C" fn(
+            dstHost: *mut ::core::ffi::c_void,
+            srcDevice: CUdeviceptr,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyDtoD_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            srcDevice: CUdeviceptr,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyDtoA_v2: Result<
+        unsafe extern "C" fn(
+            dstArray: CUarray,
+            dstOffset: usize,
+            srcDevice: CUdeviceptr,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyAtoD_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            srcArray: CUarray,
+            srcOffset: usize,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyHtoA_v2: Result<
+        unsafe extern "C" fn(
+            dstArray: CUarray,
+            dstOffset: usize,
+            srcHost: *const ::core::ffi::c_void,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyAtoH_v2: Result<
+        unsafe extern "C" fn(
+            dstHost: *mut ::core::ffi::c_void,
+            srcArray: CUarray,
+            srcOffset: usize,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyAtoA_v2: Result<
+        unsafe extern "C" fn(
+            dstArray: CUarray,
+            dstOffset: usize,
+            srcArray: CUarray,
+            srcOffset: usize,
+            ByteCount: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpy2D_v2:
+        Result<unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY2D) -> CUresult, ::libloading::Error>,
+    pub cuMemcpy2DUnaligned_v2:
+        Result<unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY2D) -> CUresult, ::libloading::Error>,
+    pub cuMemcpy3D_v2:
+        Result<unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY3D) -> CUresult, ::libloading::Error>,
+    pub cuMemcpy3DPeer: Result<
+        unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY3D_PEER) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyAsync: Result<
+        unsafe extern "C" fn(
+            dst: CUdeviceptr,
+            src: CUdeviceptr,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyPeerAsync: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstContext: CUcontext,
+            srcDevice: CUdeviceptr,
+            srcContext: CUcontext,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyHtoDAsync_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            srcHost: *const ::core::ffi::c_void,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyDtoHAsync_v2: Result<
+        unsafe extern "C" fn(
+            dstHost: *mut ::core::ffi::c_void,
+            srcDevice: CUdeviceptr,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyDtoDAsync_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            srcDevice: CUdeviceptr,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyHtoAAsync_v2: Result<
+        unsafe extern "C" fn(
+            dstArray: CUarray,
+            dstOffset: usize,
+            srcHost: *const ::core::ffi::c_void,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpyAtoHAsync_v2: Result<
+        unsafe extern "C" fn(
+            dstHost: *mut ::core::ffi::c_void,
+            srcArray: CUarray,
+            srcOffset: usize,
+            ByteCount: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpy2DAsync_v2: Result<
+        unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY2D, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpy3DAsync_v2: Result<
+        unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY3D, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemcpy3DPeerAsync: Result<
+        unsafe extern "C" fn(pCopy: *const CUDA_MEMCPY3D_PEER, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD8_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            uc: ::core::ffi::c_uchar,
+            N: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD16_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            us: ::core::ffi::c_ushort,
+            N: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD32_v2: Result<
+        unsafe extern "C" fn(dstDevice: CUdeviceptr, ui: ::core::ffi::c_uint, N: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD2D8_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstPitch: usize,
+            uc: ::core::ffi::c_uchar,
+            Width: usize,
+            Height: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD2D16_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstPitch: usize,
+            us: ::core::ffi::c_ushort,
+            Width: usize,
+            Height: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD2D32_v2: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstPitch: usize,
+            ui: ::core::ffi::c_uint,
+            Width: usize,
+            Height: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD8Async: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            uc: ::core::ffi::c_uchar,
+            N: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD16Async: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            us: ::core::ffi::c_ushort,
+            N: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD32Async: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            ui: ::core::ffi::c_uint,
+            N: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD2D8Async: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstPitch: usize,
+            uc: ::core::ffi::c_uchar,
+            Width: usize,
+            Height: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD2D16Async: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstPitch: usize,
+            us: ::core::ffi::c_ushort,
+            Width: usize,
+            Height: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemsetD2D32Async: Result<
+        unsafe extern "C" fn(
+            dstDevice: CUdeviceptr,
+            dstPitch: usize,
+            ui: ::core::ffi::c_uint,
+            Width: usize,
+            Height: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArrayCreate_v2: Result<
+        unsafe extern "C" fn(
+            pHandle: *mut CUarray,
+            pAllocateArray: *const CUDA_ARRAY_DESCRIPTOR,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArrayGetDescriptor_v2: Result<
+        unsafe extern "C" fn(
+            pArrayDescriptor: *mut CUDA_ARRAY_DESCRIPTOR,
+            hArray: CUarray,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArrayGetSparseProperties: Result<
+        unsafe extern "C" fn(
+            sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
+            array: CUarray,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMipmappedArrayGetSparseProperties: Result<
+        unsafe extern "C" fn(
+            sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
+            mipmap: CUmipmappedArray,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArrayGetMemoryRequirements: Result<
+        unsafe extern "C" fn(
+            memoryRequirements: *mut CUDA_ARRAY_MEMORY_REQUIREMENTS,
+            array: CUarray,
+            device: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMipmappedArrayGetMemoryRequirements: Result<
+        unsafe extern "C" fn(
+            memoryRequirements: *mut CUDA_ARRAY_MEMORY_REQUIREMENTS,
+            mipmap: CUmipmappedArray,
+            device: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArrayGetPlane: Result<
+        unsafe extern "C" fn(
+            pPlaneArray: *mut CUarray,
+            hArray: CUarray,
+            planeIdx: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArrayDestroy:
+        Result<unsafe extern "C" fn(hArray: CUarray) -> CUresult, ::libloading::Error>,
+    pub cuArray3DCreate_v2: Result<
+        unsafe extern "C" fn(
+            pHandle: *mut CUarray,
+            pAllocateArray: *const CUDA_ARRAY3D_DESCRIPTOR,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuArray3DGetDescriptor_v2: Result<
+        unsafe extern "C" fn(
+            pArrayDescriptor: *mut CUDA_ARRAY3D_DESCRIPTOR,
+            hArray: CUarray,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMipmappedArrayCreate: Result<
+        unsafe extern "C" fn(
+            pHandle: *mut CUmipmappedArray,
+            pMipmappedArrayDesc: *const CUDA_ARRAY3D_DESCRIPTOR,
+            numMipmapLevels: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMipmappedArrayGetLevel: Result<
+        unsafe extern "C" fn(
+            pLevelArray: *mut CUarray,
+            hMipmappedArray: CUmipmappedArray,
+            level: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMipmappedArrayDestroy: Result<
+        unsafe extern "C" fn(hMipmappedArray: CUmipmappedArray) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemGetHandleForAddressRange: Result<
+        unsafe extern "C" fn(
+            handle: *mut ::core::ffi::c_void,
+            dptr: CUdeviceptr,
+            size: usize,
+            handleType: CUmemRangeHandleType,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAddressReserve: Result<
+        unsafe extern "C" fn(
+            ptr: *mut CUdeviceptr,
+            size: usize,
+            alignment: usize,
+            addr: CUdeviceptr,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAddressFree: Result<
+        unsafe extern "C" fn(ptr: CUdeviceptr, size: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemCreate: Result<
+        unsafe extern "C" fn(
+            handle: *mut CUmemGenericAllocationHandle,
+            size: usize,
+            prop: *const CUmemAllocationProp,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemRelease: Result<
+        unsafe extern "C" fn(handle: CUmemGenericAllocationHandle) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemMap: Result<
+        unsafe extern "C" fn(
+            ptr: CUdeviceptr,
+            size: usize,
+            offset: usize,
+            handle: CUmemGenericAllocationHandle,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemMapArrayAsync: Result<
+        unsafe extern "C" fn(
+            mapInfoList: *mut CUarrayMapInfo,
+            count: ::core::ffi::c_uint,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemUnmap: Result<
+        unsafe extern "C" fn(ptr: CUdeviceptr, size: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemSetAccess: Result<
+        unsafe extern "C" fn(
+            ptr: CUdeviceptr,
+            size: usize,
+            desc: *const CUmemAccessDesc,
+            count: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemGetAccess: Result<
+        unsafe extern "C" fn(
+            flags: *mut ::core::ffi::c_ulonglong,
+            location: *const CUmemLocation,
+            ptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemExportToShareableHandle: Result<
+        unsafe extern "C" fn(
+            shareableHandle: *mut ::core::ffi::c_void,
+            handle: CUmemGenericAllocationHandle,
+            handleType: CUmemAllocationHandleType,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemImportFromShareableHandle: Result<
+        unsafe extern "C" fn(
+            handle: *mut CUmemGenericAllocationHandle,
+            osHandle: *mut ::core::ffi::c_void,
+            shHandleType: CUmemAllocationHandleType,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemGetAllocationGranularity: Result<
+        unsafe extern "C" fn(
+            granularity: *mut usize,
+            prop: *const CUmemAllocationProp,
+            option: CUmemAllocationGranularity_flags,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemGetAllocationPropertiesFromHandle: Result<
+        unsafe extern "C" fn(
+            prop: *mut CUmemAllocationProp,
+            handle: CUmemGenericAllocationHandle,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemRetainAllocationHandle: Result<
+        unsafe extern "C" fn(
+            handle: *mut CUmemGenericAllocationHandle,
+            addr: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemFreeAsync: Result<
+        unsafe extern "C" fn(dptr: CUdeviceptr, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAllocAsync: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            bytesize: usize,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolTrimTo: Result<
+        unsafe extern "C" fn(pool: CUmemoryPool, minBytesToKeep: usize) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolSetAttribute: Result<
+        unsafe extern "C" fn(
+            pool: CUmemoryPool,
+            attr: CUmemPool_attribute,
+            value: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolGetAttribute: Result<
+        unsafe extern "C" fn(
+            pool: CUmemoryPool,
+            attr: CUmemPool_attribute,
+            value: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolSetAccess: Result<
+        unsafe extern "C" fn(
+            pool: CUmemoryPool,
+            map: *const CUmemAccessDesc,
+            count: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolGetAccess: Result<
+        unsafe extern "C" fn(
+            flags: *mut CUmemAccess_flags,
+            memPool: CUmemoryPool,
+            location: *mut CUmemLocation,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolCreate: Result<
+        unsafe extern "C" fn(pool: *mut CUmemoryPool, poolProps: *const CUmemPoolProps) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolDestroy:
+        Result<unsafe extern "C" fn(pool: CUmemoryPool) -> CUresult, ::libloading::Error>,
+    pub cuMemAllocFromPoolAsync: Result<
+        unsafe extern "C" fn(
+            dptr: *mut CUdeviceptr,
+            bytesize: usize,
+            pool: CUmemoryPool,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolExportToShareableHandle: Result<
+        unsafe extern "C" fn(
+            handle_out: *mut ::core::ffi::c_void,
+            pool: CUmemoryPool,
+            handleType: CUmemAllocationHandleType,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolImportFromShareableHandle: Result<
+        unsafe extern "C" fn(
+            pool_out: *mut CUmemoryPool,
+            handle: *mut ::core::ffi::c_void,
+            handleType: CUmemAllocationHandleType,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolExportPointer: Result<
+        unsafe extern "C" fn(
+            shareData_out: *mut CUmemPoolPtrExportData,
+            ptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPoolImportPointer: Result<
+        unsafe extern "C" fn(
+            ptr_out: *mut CUdeviceptr,
+            pool: CUmemoryPool,
+            shareData: *mut CUmemPoolPtrExportData,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMulticastCreate: Result<
+        unsafe extern "C" fn(
+            mcHandle: *mut CUmemGenericAllocationHandle,
+            prop: *const CUmulticastObjectProp,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMulticastAddDevice: Result<
+        unsafe extern "C" fn(mcHandle: CUmemGenericAllocationHandle, dev: CUdevice) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMulticastBindMem: Result<
+        unsafe extern "C" fn(
+            mcHandle: CUmemGenericAllocationHandle,
+            mcOffset: usize,
+            memHandle: CUmemGenericAllocationHandle,
+            memOffset: usize,
+            size: usize,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMulticastBindAddr: Result<
+        unsafe extern "C" fn(
+            mcHandle: CUmemGenericAllocationHandle,
+            mcOffset: usize,
+            memptr: CUdeviceptr,
+            size: usize,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMulticastUnbind: Result<
+        unsafe extern "C" fn(
+            mcHandle: CUmemGenericAllocationHandle,
+            dev: CUdevice,
+            mcOffset: usize,
+            size: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMulticastGetGranularity: Result<
+        unsafe extern "C" fn(
+            granularity: *mut usize,
+            prop: *const CUmulticastObjectProp,
+            option: CUmulticastGranularity_flags,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuPointerGetAttribute: Result<
+        unsafe extern "C" fn(
+            data: *mut ::core::ffi::c_void,
+            attribute: CUpointer_attribute,
+            ptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPrefetchAsync: Result<
+        unsafe extern "C" fn(
+            devPtr: CUdeviceptr,
+            count: usize,
+            dstDevice: CUdevice,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemPrefetchAsync_v2: Result<
+        unsafe extern "C" fn(
+            devPtr: CUdeviceptr,
+            count: usize,
+            location: CUmemLocation,
+            flags: ::core::ffi::c_uint,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAdvise: Result<
+        unsafe extern "C" fn(
+            devPtr: CUdeviceptr,
+            count: usize,
+            advice: CUmem_advise,
+            device: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemAdvise_v2: Result<
+        unsafe extern "C" fn(
+            devPtr: CUdeviceptr,
+            count: usize,
+            advice: CUmem_advise,
+            location: CUmemLocation,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemRangeGetAttribute: Result<
+        unsafe extern "C" fn(
+            data: *mut ::core::ffi::c_void,
+            dataSize: usize,
+            attribute: CUmem_range_attribute,
+            devPtr: CUdeviceptr,
+            count: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuMemRangeGetAttributes: Result<
+        unsafe extern "C" fn(
+            data: *mut *mut ::core::ffi::c_void,
+            dataSizes: *mut usize,
+            attributes: *mut CUmem_range_attribute,
+            numAttributes: usize,
+            devPtr: CUdeviceptr,
+            count: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuPointerSetAttribute: Result<
+        unsafe extern "C" fn(
+            value: *const ::core::ffi::c_void,
+            attribute: CUpointer_attribute,
+            ptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuPointerGetAttributes: Result<
+        unsafe extern "C" fn(
+            numAttributes: ::core::ffi::c_uint,
+            attributes: *mut CUpointer_attribute,
+            data: *mut *mut ::core::ffi::c_void,
+            ptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamCreate: Result<
+        unsafe extern "C" fn(phStream: *mut CUstream, Flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamCreateWithPriority: Result<
+        unsafe extern "C" fn(
+            phStream: *mut CUstream,
+            flags: ::core::ffi::c_uint,
+            priority: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamGetPriority: Result<
+        unsafe extern "C" fn(hStream: CUstream, priority: *mut ::core::ffi::c_int) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamGetFlags: Result<
+        unsafe extern "C" fn(hStream: CUstream, flags: *mut ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamGetId: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            streamId: *mut ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamGetCtx: Result<
+        unsafe extern "C" fn(hStream: CUstream, pctx: *mut CUcontext) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamWaitEvent: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            hEvent: CUevent,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamAddCallback: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            callback: CUstreamCallback,
+            userData: *mut ::core::ffi::c_void,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamBeginCapture_v2: Result<
+        unsafe extern "C" fn(hStream: CUstream, mode: CUstreamCaptureMode) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuThreadExchangeStreamCaptureMode: Result<
+        unsafe extern "C" fn(mode: *mut CUstreamCaptureMode) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamEndCapture: Result<
+        unsafe extern "C" fn(hStream: CUstream, phGraph: *mut CUgraph) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamIsCapturing: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            captureStatus: *mut CUstreamCaptureStatus,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamGetCaptureInfo_v2: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            captureStatus_out: *mut CUstreamCaptureStatus,
+            id_out: *mut cuuint64_t,
+            graph_out: *mut CUgraph,
+            dependencies_out: *mut *const CUgraphNode,
+            numDependencies_out: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamUpdateCaptureDependencies: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            dependencies: *mut CUgraphNode,
+            numDependencies: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamAttachMemAsync: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            dptr: CUdeviceptr,
+            length: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamQuery:
+        Result<unsafe extern "C" fn(hStream: CUstream) -> CUresult, ::libloading::Error>,
+    pub cuStreamSynchronize:
+        Result<unsafe extern "C" fn(hStream: CUstream) -> CUresult, ::libloading::Error>,
+    pub cuStreamDestroy_v2:
+        Result<unsafe extern "C" fn(hStream: CUstream) -> CUresult, ::libloading::Error>,
+    pub cuStreamCopyAttributes:
+        Result<unsafe extern "C" fn(dst: CUstream, src: CUstream) -> CUresult, ::libloading::Error>,
+    pub cuStreamGetAttribute: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            attr: CUstreamAttrID,
+            value_out: *mut CUstreamAttrValue,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamSetAttribute: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            attr: CUstreamAttrID,
+            value: *const CUstreamAttrValue,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuEventCreate: Result<
+        unsafe extern "C" fn(phEvent: *mut CUevent, Flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuEventRecord: Result<
+        unsafe extern "C" fn(hEvent: CUevent, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuEventRecordWithFlags: Result<
+        unsafe extern "C" fn(
+            hEvent: CUevent,
+            hStream: CUstream,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuEventQuery:
+        Result<unsafe extern "C" fn(hEvent: CUevent) -> CUresult, ::libloading::Error>,
+    pub cuEventSynchronize:
+        Result<unsafe extern "C" fn(hEvent: CUevent) -> CUresult, ::libloading::Error>,
+    pub cuEventDestroy_v2:
+        Result<unsafe extern "C" fn(hEvent: CUevent) -> CUresult, ::libloading::Error>,
+    pub cuEventElapsedTime: Result<
+        unsafe extern "C" fn(pMilliseconds: *mut f32, hStart: CUevent, hEnd: CUevent) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuImportExternalMemory: Result<
+        unsafe extern "C" fn(
+            extMem_out: *mut CUexternalMemory,
+            memHandleDesc: *const CUDA_EXTERNAL_MEMORY_HANDLE_DESC,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuExternalMemoryGetMappedBuffer: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut CUdeviceptr,
+            extMem: CUexternalMemory,
+            bufferDesc: *const CUDA_EXTERNAL_MEMORY_BUFFER_DESC,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuExternalMemoryGetMappedMipmappedArray: Result<
+        unsafe extern "C" fn(
+            mipmap: *mut CUmipmappedArray,
+            extMem: CUexternalMemory,
+            mipmapDesc: *const CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDestroyExternalMemory:
+        Result<unsafe extern "C" fn(extMem: CUexternalMemory) -> CUresult, ::libloading::Error>,
+    pub cuImportExternalSemaphore: Result<
+        unsafe extern "C" fn(
+            extSem_out: *mut CUexternalSemaphore,
+            semHandleDesc: *const CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuSignalExternalSemaphoresAsync: Result<
+        unsafe extern "C" fn(
+            extSemArray: *const CUexternalSemaphore,
+            paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
+            numExtSems: ::core::ffi::c_uint,
+            stream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuWaitExternalSemaphoresAsync: Result<
+        unsafe extern "C" fn(
+            extSemArray: *const CUexternalSemaphore,
+            paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
+            numExtSems: ::core::ffi::c_uint,
+            stream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDestroyExternalSemaphore:
+        Result<unsafe extern "C" fn(extSem: CUexternalSemaphore) -> CUresult, ::libloading::Error>,
+    pub cuStreamWaitValue32_v2: Result<
+        unsafe extern "C" fn(
+            stream: CUstream,
+            addr: CUdeviceptr,
+            value: cuuint32_t,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamWaitValue64_v2: Result<
+        unsafe extern "C" fn(
+            stream: CUstream,
+            addr: CUdeviceptr,
+            value: cuuint64_t,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamWriteValue32_v2: Result<
+        unsafe extern "C" fn(
+            stream: CUstream,
+            addr: CUdeviceptr,
+            value: cuuint32_t,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamWriteValue64_v2: Result<
+        unsafe extern "C" fn(
+            stream: CUstream,
+            addr: CUdeviceptr,
+            value: cuuint64_t,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuStreamBatchMemOp_v2: Result<
+        unsafe extern "C" fn(
+            stream: CUstream,
+            count: ::core::ffi::c_uint,
+            paramArray: *mut CUstreamBatchMemOpParams,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncGetAttribute: Result<
+        unsafe extern "C" fn(
+            pi: *mut ::core::ffi::c_int,
+            attrib: CUfunction_attribute,
+            hfunc: CUfunction,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncSetAttribute: Result<
+        unsafe extern "C" fn(
+            hfunc: CUfunction,
+            attrib: CUfunction_attribute,
+            value: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncSetCacheConfig: Result<
+        unsafe extern "C" fn(hfunc: CUfunction, config: CUfunc_cache) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncSetSharedMemConfig: Result<
+        unsafe extern "C" fn(hfunc: CUfunction, config: CUsharedconfig) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncGetModule: Result<
+        unsafe extern "C" fn(hmod: *mut CUmodule, hfunc: CUfunction) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunchKernel: Result<
+        unsafe extern "C" fn(
+            f: CUfunction,
+            gridDimX: ::core::ffi::c_uint,
+            gridDimY: ::core::ffi::c_uint,
+            gridDimZ: ::core::ffi::c_uint,
+            blockDimX: ::core::ffi::c_uint,
+            blockDimY: ::core::ffi::c_uint,
+            blockDimZ: ::core::ffi::c_uint,
+            sharedMemBytes: ::core::ffi::c_uint,
+            hStream: CUstream,
+            kernelParams: *mut *mut ::core::ffi::c_void,
+            extra: *mut *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunchKernelEx: Result<
+        unsafe extern "C" fn(
+            config: *const CUlaunchConfig,
+            f: CUfunction,
+            kernelParams: *mut *mut ::core::ffi::c_void,
+            extra: *mut *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunchCooperativeKernel: Result<
+        unsafe extern "C" fn(
+            f: CUfunction,
+            gridDimX: ::core::ffi::c_uint,
+            gridDimY: ::core::ffi::c_uint,
+            gridDimZ: ::core::ffi::c_uint,
+            blockDimX: ::core::ffi::c_uint,
+            blockDimY: ::core::ffi::c_uint,
+            blockDimZ: ::core::ffi::c_uint,
+            sharedMemBytes: ::core::ffi::c_uint,
+            hStream: CUstream,
+            kernelParams: *mut *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunchCooperativeKernelMultiDevice: Result<
+        unsafe extern "C" fn(
+            launchParamsList: *mut CUDA_LAUNCH_PARAMS,
+            numDevices: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunchHostFunc: Result<
+        unsafe extern "C" fn(
+            hStream: CUstream,
+            fn_: CUhostFn,
+            userData: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncSetBlockShape: Result<
+        unsafe extern "C" fn(
+            hfunc: CUfunction,
+            x: ::core::ffi::c_int,
+            y: ::core::ffi::c_int,
+            z: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuFuncSetSharedSize: Result<
+        unsafe extern "C" fn(hfunc: CUfunction, bytes: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuParamSetSize: Result<
+        unsafe extern "C" fn(hfunc: CUfunction, numbytes: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuParamSeti: Result<
+        unsafe extern "C" fn(
+            hfunc: CUfunction,
+            offset: ::core::ffi::c_int,
+            value: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuParamSetf: Result<
+        unsafe extern "C" fn(hfunc: CUfunction, offset: ::core::ffi::c_int, value: f32) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuParamSetv: Result<
+        unsafe extern "C" fn(
+            hfunc: CUfunction,
+            offset: ::core::ffi::c_int,
+            ptr: *mut ::core::ffi::c_void,
+            numbytes: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunch: Result<unsafe extern "C" fn(f: CUfunction) -> CUresult, ::libloading::Error>,
+    pub cuLaunchGrid: Result<
+        unsafe extern "C" fn(
+            f: CUfunction,
+            grid_width: ::core::ffi::c_int,
+            grid_height: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuLaunchGridAsync: Result<
+        unsafe extern "C" fn(
+            f: CUfunction,
+            grid_width: ::core::ffi::c_int,
+            grid_height: ::core::ffi::c_int,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuParamSetTexRef: Result<
+        unsafe extern "C" fn(
+            hfunc: CUfunction,
+            texunit: ::core::ffi::c_int,
+            hTexRef: CUtexref,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphCreate: Result<
+        unsafe extern "C" fn(phGraph: *mut CUgraph, flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddKernelNode_v2: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphKernelNodeGetParams_v2: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *mut CUDA_KERNEL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphKernelNodeSetParams_v2: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddMemcpyNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            copyParams: *const CUDA_MEMCPY3D,
+            ctx: CUcontext,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphMemcpyNodeGetParams: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, nodeParams: *mut CUDA_MEMCPY3D) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphMemcpyNodeSetParams: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, nodeParams: *const CUDA_MEMCPY3D) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddMemsetNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            memsetParams: *const CUDA_MEMSET_NODE_PARAMS,
+            ctx: CUcontext,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphMemsetNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *mut CUDA_MEMSET_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphMemsetNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_MEMSET_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddHostNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *const CUDA_HOST_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphHostNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *mut CUDA_HOST_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphHostNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_HOST_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddChildGraphNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            childGraph: CUgraph,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphChildGraphNodeGetGraph: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, phGraph: *mut CUgraph) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddEmptyNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddEventRecordNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            event: CUevent,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphEventRecordNodeGetEvent: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, event_out: *mut CUevent) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphEventRecordNodeSetEvent: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, event: CUevent) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddEventWaitNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            event: CUevent,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphEventWaitNodeGetEvent: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, event_out: *mut CUevent) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphEventWaitNodeSetEvent: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, event: CUevent) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddExternalSemaphoresSignalNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExternalSemaphoresSignalNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            params_out: *mut CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExternalSemaphoresSignalNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddExternalSemaphoresWaitNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExternalSemaphoresWaitNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            params_out: *mut CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExternalSemaphoresWaitNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddBatchMemOpNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphBatchMemOpNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams_out: *mut CUDA_BATCH_MEM_OP_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphBatchMemOpNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecBatchMemOpNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddMemAllocNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *mut CUDA_MEM_ALLOC_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphMemAllocNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            params_out: *mut CUDA_MEM_ALLOC_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddMemFreeNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            dptr: CUdeviceptr,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphMemFreeNodeGetParams: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, dptr_out: *mut CUdeviceptr) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceGraphMemTrim:
+        Result<unsafe extern "C" fn(device: CUdevice) -> CUresult, ::libloading::Error>,
+    pub cuDeviceGetGraphMemAttribute: Result<
+        unsafe extern "C" fn(
+            device: CUdevice,
+            attr: CUgraphMem_attribute,
+            value: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceSetGraphMemAttribute: Result<
+        unsafe extern "C" fn(
+            device: CUdevice,
+            attr: CUgraphMem_attribute,
+            value: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphClone: Result<
+        unsafe extern "C" fn(phGraphClone: *mut CUgraph, originalGraph: CUgraph) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeFindInClone: Result<
+        unsafe extern "C" fn(
+            phNode: *mut CUgraphNode,
+            hOriginalNode: CUgraphNode,
+            hClonedGraph: CUgraph,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeGetType: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, type_: *mut CUgraphNodeType) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphGetNodes: Result<
+        unsafe extern "C" fn(
+            hGraph: CUgraph,
+            nodes: *mut CUgraphNode,
+            numNodes: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphGetRootNodes: Result<
+        unsafe extern "C" fn(
+            hGraph: CUgraph,
+            rootNodes: *mut CUgraphNode,
+            numRootNodes: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphGetEdges: Result<
+        unsafe extern "C" fn(
+            hGraph: CUgraph,
+            from: *mut CUgraphNode,
+            to: *mut CUgraphNode,
+            numEdges: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeGetDependencies: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            dependencies: *mut CUgraphNode,
+            numDependencies: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeGetDependentNodes: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            dependentNodes: *mut CUgraphNode,
+            numDependentNodes: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddDependencies: Result<
+        unsafe extern "C" fn(
+            hGraph: CUgraph,
+            from: *const CUgraphNode,
+            to: *const CUgraphNode,
+            numDependencies: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphRemoveDependencies: Result<
+        unsafe extern "C" fn(
+            hGraph: CUgraph,
+            from: *const CUgraphNode,
+            to: *const CUgraphNode,
+            numDependencies: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphDestroyNode:
+        Result<unsafe extern "C" fn(hNode: CUgraphNode) -> CUresult, ::libloading::Error>,
+    pub cuGraphInstantiateWithFlags: Result<
+        unsafe extern "C" fn(
+            phGraphExec: *mut CUgraphExec,
+            hGraph: CUgraph,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphInstantiateWithParams: Result<
+        unsafe extern "C" fn(
+            phGraphExec: *mut CUgraphExec,
+            hGraph: CUgraph,
+            instantiateParams: *mut CUDA_GRAPH_INSTANTIATE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecGetFlags: Result<
+        unsafe extern "C" fn(hGraphExec: CUgraphExec, flags: *mut cuuint64_t) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecKernelNodeSetParams_v2: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecMemcpyNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            copyParams: *const CUDA_MEMCPY3D,
+            ctx: CUcontext,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecMemsetNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            memsetParams: *const CUDA_MEMSET_NODE_PARAMS,
+            ctx: CUcontext,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecHostNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_HOST_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecChildGraphNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            childGraph: CUgraph,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecEventRecordNodeSetEvent: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            event: CUevent,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecEventWaitNodeSetEvent: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            event: CUevent,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecExternalSemaphoresSignalNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecExternalSemaphoresWaitNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeSetEnabled: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            isEnabled: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeGetEnabled: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            isEnabled: *mut ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphUpload: Result<
+        unsafe extern "C" fn(hGraphExec: CUgraphExec, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphLaunch: Result<
+        unsafe extern "C" fn(hGraphExec: CUgraphExec, hStream: CUstream) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecDestroy:
+        Result<unsafe extern "C" fn(hGraphExec: CUgraphExec) -> CUresult, ::libloading::Error>,
+    pub cuGraphDestroy:
+        Result<unsafe extern "C" fn(hGraph: CUgraph) -> CUresult, ::libloading::Error>,
+    pub cuGraphExecUpdate_v2: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hGraph: CUgraph,
+            resultInfo: *mut CUgraphExecUpdateResultInfo,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphKernelNodeCopyAttributes: Result<
+        unsafe extern "C" fn(dst: CUgraphNode, src: CUgraphNode) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphKernelNodeGetAttribute: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            attr: CUkernelNodeAttrID,
+            value_out: *mut CUkernelNodeAttrValue,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphKernelNodeSetAttribute: Result<
+        unsafe extern "C" fn(
+            hNode: CUgraphNode,
+            attr: CUkernelNodeAttrID,
+            value: *const CUkernelNodeAttrValue,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphDebugDotPrint: Result<
+        unsafe extern "C" fn(
+            hGraph: CUgraph,
+            path: *const ::core::ffi::c_char,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuUserObjectCreate: Result<
+        unsafe extern "C" fn(
+            object_out: *mut CUuserObject,
+            ptr: *mut ::core::ffi::c_void,
+            destroy: CUhostFn,
+            initialRefcount: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuUserObjectRetain: Result<
+        unsafe extern "C" fn(object: CUuserObject, count: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuUserObjectRelease: Result<
+        unsafe extern "C" fn(object: CUuserObject, count: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphRetainUserObject: Result<
+        unsafe extern "C" fn(
+            graph: CUgraph,
+            object: CUuserObject,
+            count: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphReleaseUserObject: Result<
+        unsafe extern "C" fn(
+            graph: CUgraph,
+            object: CUuserObject,
+            count: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphAddNode: Result<
+        unsafe extern "C" fn(
+            phGraphNode: *mut CUgraphNode,
+            hGraph: CUgraph,
+            dependencies: *const CUgraphNode,
+            numDependencies: usize,
+            nodeParams: *mut CUgraphNodeParams,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphNodeSetParams: Result<
+        unsafe extern "C" fn(hNode: CUgraphNode, nodeParams: *mut CUgraphNodeParams) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphExecNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: CUgraphExec,
+            hNode: CUgraphNode,
+            nodeParams: *mut CUgraphNodeParams,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyMaxActiveBlocksPerMultiprocessor: Result<
+        unsafe extern "C" fn(
+            numBlocks: *mut ::core::ffi::c_int,
+            func: CUfunction,
+            blockSize: ::core::ffi::c_int,
+            dynamicSMemSize: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags: Result<
+        unsafe extern "C" fn(
+            numBlocks: *mut ::core::ffi::c_int,
+            func: CUfunction,
+            blockSize: ::core::ffi::c_int,
+            dynamicSMemSize: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyMaxPotentialBlockSize: Result<
+        unsafe extern "C" fn(
+            minGridSize: *mut ::core::ffi::c_int,
+            blockSize: *mut ::core::ffi::c_int,
+            func: CUfunction,
+            blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
+            dynamicSMemSize: usize,
+            blockSizeLimit: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyMaxPotentialBlockSizeWithFlags: Result<
+        unsafe extern "C" fn(
+            minGridSize: *mut ::core::ffi::c_int,
+            blockSize: *mut ::core::ffi::c_int,
+            func: CUfunction,
+            blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
+            dynamicSMemSize: usize,
+            blockSizeLimit: ::core::ffi::c_int,
+            flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyAvailableDynamicSMemPerBlock: Result<
+        unsafe extern "C" fn(
+            dynamicSmemSize: *mut usize,
+            func: CUfunction,
+            numBlocks: ::core::ffi::c_int,
+            blockSize: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyMaxPotentialClusterSize: Result<
+        unsafe extern "C" fn(
+            clusterSize: *mut ::core::ffi::c_int,
+            func: CUfunction,
+            config: *const CUlaunchConfig,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuOccupancyMaxActiveClusters: Result<
+        unsafe extern "C" fn(
+            numClusters: *mut ::core::ffi::c_int,
+            func: CUfunction,
+            config: *const CUlaunchConfig,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetArray: Result<
+        unsafe extern "C" fn(
+            hTexRef: CUtexref,
+            hArray: CUarray,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetMipmappedArray: Result<
+        unsafe extern "C" fn(
+            hTexRef: CUtexref,
+            hMipmappedArray: CUmipmappedArray,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetAddress_v2: Result<
+        unsafe extern "C" fn(
+            ByteOffset: *mut usize,
+            hTexRef: CUtexref,
+            dptr: CUdeviceptr,
+            bytes: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetAddress2D_v3: Result<
+        unsafe extern "C" fn(
+            hTexRef: CUtexref,
+            desc: *const CUDA_ARRAY_DESCRIPTOR,
+            dptr: CUdeviceptr,
+            Pitch: usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetFormat: Result<
+        unsafe extern "C" fn(
+            hTexRef: CUtexref,
+            fmt: CUarray_format,
+            NumPackedComponents: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetAddressMode: Result<
+        unsafe extern "C" fn(
+            hTexRef: CUtexref,
+            dim: ::core::ffi::c_int,
+            am: CUaddress_mode,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetFilterMode: Result<
+        unsafe extern "C" fn(hTexRef: CUtexref, fm: CUfilter_mode) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetMipmapFilterMode: Result<
+        unsafe extern "C" fn(hTexRef: CUtexref, fm: CUfilter_mode) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetMipmapLevelBias:
+        Result<unsafe extern "C" fn(hTexRef: CUtexref, bias: f32) -> CUresult, ::libloading::Error>,
+    pub cuTexRefSetMipmapLevelClamp: Result<
+        unsafe extern "C" fn(
+            hTexRef: CUtexref,
+            minMipmapLevelClamp: f32,
+            maxMipmapLevelClamp: f32,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetMaxAnisotropy: Result<
+        unsafe extern "C" fn(hTexRef: CUtexref, maxAniso: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetBorderColor: Result<
+        unsafe extern "C" fn(hTexRef: CUtexref, pBorderColor: *mut f32) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefSetFlags: Result<
+        unsafe extern "C" fn(hTexRef: CUtexref, Flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetAddress_v2: Result<
+        unsafe extern "C" fn(pdptr: *mut CUdeviceptr, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetArray: Result<
+        unsafe extern "C" fn(phArray: *mut CUarray, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetMipmappedArray: Result<
+        unsafe extern "C" fn(
+            phMipmappedArray: *mut CUmipmappedArray,
+            hTexRef: CUtexref,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetAddressMode: Result<
+        unsafe extern "C" fn(
+            pam: *mut CUaddress_mode,
+            hTexRef: CUtexref,
+            dim: ::core::ffi::c_int,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetFilterMode: Result<
+        unsafe extern "C" fn(pfm: *mut CUfilter_mode, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetFormat: Result<
+        unsafe extern "C" fn(
+            pFormat: *mut CUarray_format,
+            pNumChannels: *mut ::core::ffi::c_int,
+            hTexRef: CUtexref,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetMipmapFilterMode: Result<
+        unsafe extern "C" fn(pfm: *mut CUfilter_mode, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetMipmapLevelBias: Result<
+        unsafe extern "C" fn(pbias: *mut f32, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetMipmapLevelClamp: Result<
+        unsafe extern "C" fn(
+            pminMipmapLevelClamp: *mut f32,
+            pmaxMipmapLevelClamp: *mut f32,
+            hTexRef: CUtexref,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetMaxAnisotropy: Result<
+        unsafe extern "C" fn(pmaxAniso: *mut ::core::ffi::c_int, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetBorderColor: Result<
+        unsafe extern "C" fn(pBorderColor: *mut f32, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefGetFlags: Result<
+        unsafe extern "C" fn(pFlags: *mut ::core::ffi::c_uint, hTexRef: CUtexref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexRefCreate:
+        Result<unsafe extern "C" fn(pTexRef: *mut CUtexref) -> CUresult, ::libloading::Error>,
+    pub cuTexRefDestroy:
+        Result<unsafe extern "C" fn(hTexRef: CUtexref) -> CUresult, ::libloading::Error>,
+    pub cuSurfRefSetArray: Result<
+        unsafe extern "C" fn(
+            hSurfRef: CUsurfref,
+            hArray: CUarray,
+            Flags: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuSurfRefGetArray: Result<
+        unsafe extern "C" fn(phArray: *mut CUarray, hSurfRef: CUsurfref) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexObjectCreate: Result<
+        unsafe extern "C" fn(
+            pTexObject: *mut CUtexObject,
+            pResDesc: *const CUDA_RESOURCE_DESC,
+            pTexDesc: *const CUDA_TEXTURE_DESC,
+            pResViewDesc: *const CUDA_RESOURCE_VIEW_DESC,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexObjectDestroy:
+        Result<unsafe extern "C" fn(texObject: CUtexObject) -> CUresult, ::libloading::Error>,
+    pub cuTexObjectGetResourceDesc: Result<
+        unsafe extern "C" fn(pResDesc: *mut CUDA_RESOURCE_DESC, texObject: CUtexObject) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexObjectGetTextureDesc: Result<
+        unsafe extern "C" fn(pTexDesc: *mut CUDA_TEXTURE_DESC, texObject: CUtexObject) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTexObjectGetResourceViewDesc: Result<
+        unsafe extern "C" fn(
+            pResViewDesc: *mut CUDA_RESOURCE_VIEW_DESC,
+            texObject: CUtexObject,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuSurfObjectCreate: Result<
+        unsafe extern "C" fn(
+            pSurfObject: *mut CUsurfObject,
+            pResDesc: *const CUDA_RESOURCE_DESC,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuSurfObjectDestroy:
+        Result<unsafe extern "C" fn(surfObject: CUsurfObject) -> CUresult, ::libloading::Error>,
+    pub cuSurfObjectGetResourceDesc: Result<
+        unsafe extern "C" fn(
+            pResDesc: *mut CUDA_RESOURCE_DESC,
+            surfObject: CUsurfObject,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTensorMapEncodeTiled: Result<
+        unsafe extern "C" fn(
+            tensorMap: *mut CUtensorMap,
+            tensorDataType: CUtensorMapDataType,
+            tensorRank: cuuint32_t,
+            globalAddress: *mut ::core::ffi::c_void,
+            globalDim: *const cuuint64_t,
+            globalStrides: *const cuuint64_t,
+            boxDim: *const cuuint32_t,
+            elementStrides: *const cuuint32_t,
+            interleave: CUtensorMapInterleave,
+            swizzle: CUtensorMapSwizzle,
+            l2Promotion: CUtensorMapL2promotion,
+            oobFill: CUtensorMapFloatOOBfill,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTensorMapEncodeIm2col: Result<
+        unsafe extern "C" fn(
+            tensorMap: *mut CUtensorMap,
+            tensorDataType: CUtensorMapDataType,
+            tensorRank: cuuint32_t,
+            globalAddress: *mut ::core::ffi::c_void,
+            globalDim: *const cuuint64_t,
+            globalStrides: *const cuuint64_t,
+            pixelBoxLowerCorner: *const ::core::ffi::c_int,
+            pixelBoxUpperCorner: *const ::core::ffi::c_int,
+            channelsPerPixel: cuuint32_t,
+            pixelsPerColumn: cuuint32_t,
+            elementStrides: *const cuuint32_t,
+            interleave: CUtensorMapInterleave,
+            swizzle: CUtensorMapSwizzle,
+            l2Promotion: CUtensorMapL2promotion,
+            oobFill: CUtensorMapFloatOOBfill,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuTensorMapReplaceAddress: Result<
+        unsafe extern "C" fn(
+            tensorMap: *mut CUtensorMap,
+            globalAddress: *mut ::core::ffi::c_void,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuDeviceCanAccessPeer: Result<
+        unsafe extern "C" fn(
+            canAccessPeer: *mut ::core::ffi::c_int,
+            dev: CUdevice,
+            peerDev: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxEnablePeerAccess: Result<
+        unsafe extern "C" fn(peerContext: CUcontext, Flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCtxDisablePeerAccess:
+        Result<unsafe extern "C" fn(peerContext: CUcontext) -> CUresult, ::libloading::Error>,
+    pub cuDeviceGetP2PAttribute: Result<
+        unsafe extern "C" fn(
+            value: *mut ::core::ffi::c_int,
+            attrib: CUdevice_P2PAttribute,
+            srcDevice: CUdevice,
+            dstDevice: CUdevice,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphicsUnregisterResource:
+        Result<unsafe extern "C" fn(resource: CUgraphicsResource) -> CUresult, ::libloading::Error>,
+    pub cuGraphicsSubResourceGetMappedArray: Result<
+        unsafe extern "C" fn(
+            pArray: *mut CUarray,
+            resource: CUgraphicsResource,
+            arrayIndex: ::core::ffi::c_uint,
+            mipLevel: ::core::ffi::c_uint,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphicsResourceGetMappedMipmappedArray: Result<
+        unsafe extern "C" fn(
+            pMipmappedArray: *mut CUmipmappedArray,
+            resource: CUgraphicsResource,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphicsResourceGetMappedPointer_v2: Result<
+        unsafe extern "C" fn(
+            pDevPtr: *mut CUdeviceptr,
+            pSize: *mut usize,
+            resource: CUgraphicsResource,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphicsResourceSetMapFlags_v2: Result<
+        unsafe extern "C" fn(resource: CUgraphicsResource, flags: ::core::ffi::c_uint) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphicsMapResources: Result<
+        unsafe extern "C" fn(
+            count: ::core::ffi::c_uint,
+            resources: *mut CUgraphicsResource,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGraphicsUnmapResources: Result<
+        unsafe extern "C" fn(
+            count: ::core::ffi::c_uint,
+            resources: *mut CUgraphicsResource,
+            hStream: CUstream,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGetProcAddress_v2: Result<
+        unsafe extern "C" fn(
+            symbol: *const ::core::ffi::c_char,
+            pfn: *mut *mut ::core::ffi::c_void,
+            cudaVersion: ::core::ffi::c_int,
+            flags: cuuint64_t,
+            symbolStatus: *mut CUdriverProcAddressQueryResult,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCoredumpGetAttribute: Result<
+        unsafe extern "C" fn(
+            attrib: CUcoredumpSettings,
+            value: *mut ::core::ffi::c_void,
+            size: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCoredumpGetAttributeGlobal: Result<
+        unsafe extern "C" fn(
+            attrib: CUcoredumpSettings,
+            value: *mut ::core::ffi::c_void,
+            size: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCoredumpSetAttribute: Result<
+        unsafe extern "C" fn(
+            attrib: CUcoredumpSettings,
+            value: *mut ::core::ffi::c_void,
+            size: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuCoredumpSetAttributeGlobal: Result<
+        unsafe extern "C" fn(
+            attrib: CUcoredumpSettings,
+            value: *mut ::core::ffi::c_void,
+            size: *mut usize,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuGetExportTable: Result<
+        unsafe extern "C" fn(
+            ppExportTable: *mut *const ::core::ffi::c_void,
+            pExportTableId: *const CUuuid,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuProfilerInitialize: Result<
+        unsafe extern "C" fn(
+            configFile: *const ::core::ffi::c_char,
+            outputFile: *const ::core::ffi::c_char,
+            outputMode: CUoutput_mode,
+        ) -> CUresult,
+        ::libloading::Error,
+    >,
+    pub cuProfilerStart: Result<unsafe extern "C" fn() -> CUresult, ::libloading::Error>,
+    pub cuProfilerStop: Result<unsafe extern "C" fn() -> CUresult, ::libloading::Error>,
+}
+impl Lib {
+    pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
+    where
+        P: AsRef<::std::ffi::OsStr>,
+    {
+        let library = ::libloading::Library::new(path)?;
+        Self::from_library(library)
+    }
+    pub unsafe fn from_library<L>(library: L) -> Result<Self, ::libloading::Error>
+    where
+        L: Into<::libloading::Library>,
+    {
+        let __library = library.into();
+        let cuGetErrorString = __library.get(b"cuGetErrorString\0").map(|sym| *sym);
+        let cuGetErrorName = __library.get(b"cuGetErrorName\0").map(|sym| *sym);
+        let cuInit = __library.get(b"cuInit\0").map(|sym| *sym);
+        let cuDriverGetVersion = __library.get(b"cuDriverGetVersion\0").map(|sym| *sym);
+        let cuDeviceGet = __library.get(b"cuDeviceGet\0").map(|sym| *sym);
+        let cuDeviceGetCount = __library.get(b"cuDeviceGetCount\0").map(|sym| *sym);
+        let cuDeviceGetName = __library.get(b"cuDeviceGetName\0").map(|sym| *sym);
+        let cuDeviceGetUuid = __library.get(b"cuDeviceGetUuid\0").map(|sym| *sym);
+        let cuDeviceGetUuid_v2 = __library.get(b"cuDeviceGetUuid_v2\0").map(|sym| *sym);
+        let cuDeviceGetLuid = __library.get(b"cuDeviceGetLuid\0").map(|sym| *sym);
+        let cuDeviceTotalMem_v2 = __library.get(b"cuDeviceTotalMem_v2\0").map(|sym| *sym);
+        let cuDeviceGetTexture1DLinearMaxWidth = __library
+            .get(b"cuDeviceGetTexture1DLinearMaxWidth\0")
+            .map(|sym| *sym);
+        let cuDeviceGetAttribute = __library.get(b"cuDeviceGetAttribute\0").map(|sym| *sym);
+        let cuDeviceGetNvSciSyncAttributes = __library
+            .get(b"cuDeviceGetNvSciSyncAttributes\0")
+            .map(|sym| *sym);
+        let cuDeviceSetMemPool = __library.get(b"cuDeviceSetMemPool\0").map(|sym| *sym);
+        let cuDeviceGetMemPool = __library.get(b"cuDeviceGetMemPool\0").map(|sym| *sym);
+        let cuDeviceGetDefaultMemPool = __library
+            .get(b"cuDeviceGetDefaultMemPool\0")
+            .map(|sym| *sym);
+        let cuDeviceGetExecAffinitySupport = __library
+            .get(b"cuDeviceGetExecAffinitySupport\0")
+            .map(|sym| *sym);
+        let cuFlushGPUDirectRDMAWrites = __library
+            .get(b"cuFlushGPUDirectRDMAWrites\0")
+            .map(|sym| *sym);
+        let cuDeviceGetProperties = __library.get(b"cuDeviceGetProperties\0").map(|sym| *sym);
+        let cuDeviceComputeCapability = __library
+            .get(b"cuDeviceComputeCapability\0")
+            .map(|sym| *sym);
+        let cuDevicePrimaryCtxRetain = __library.get(b"cuDevicePrimaryCtxRetain\0").map(|sym| *sym);
+        let cuDevicePrimaryCtxRelease_v2 = __library
+            .get(b"cuDevicePrimaryCtxRelease_v2\0")
+            .map(|sym| *sym);
+        let cuDevicePrimaryCtxSetFlags_v2 = __library
+            .get(b"cuDevicePrimaryCtxSetFlags_v2\0")
+            .map(|sym| *sym);
+        let cuDevicePrimaryCtxGetState = __library
+            .get(b"cuDevicePrimaryCtxGetState\0")
+            .map(|sym| *sym);
+        let cuDevicePrimaryCtxReset_v2 = __library
+            .get(b"cuDevicePrimaryCtxReset_v2\0")
+            .map(|sym| *sym);
+        let cuCtxCreate_v2 = __library.get(b"cuCtxCreate_v2\0").map(|sym| *sym);
+        let cuCtxCreate_v3 = __library.get(b"cuCtxCreate_v3\0").map(|sym| *sym);
+        let cuCtxDestroy_v2 = __library.get(b"cuCtxDestroy_v2\0").map(|sym| *sym);
+        let cuCtxPushCurrent_v2 = __library.get(b"cuCtxPushCurrent_v2\0").map(|sym| *sym);
+        let cuCtxPopCurrent_v2 = __library.get(b"cuCtxPopCurrent_v2\0").map(|sym| *sym);
+        let cuCtxSetCurrent = __library.get(b"cuCtxSetCurrent\0").map(|sym| *sym);
+        let cuCtxGetCurrent = __library.get(b"cuCtxGetCurrent\0").map(|sym| *sym);
+        let cuCtxGetDevice = __library.get(b"cuCtxGetDevice\0").map(|sym| *sym);
+        let cuCtxGetFlags = __library.get(b"cuCtxGetFlags\0").map(|sym| *sym);
+        let cuCtxSetFlags = __library.get(b"cuCtxSetFlags\0").map(|sym| *sym);
+        let cuCtxGetId = __library.get(b"cuCtxGetId\0").map(|sym| *sym);
+        let cuCtxSynchronize = __library.get(b"cuCtxSynchronize\0").map(|sym| *sym);
+        let cuCtxSetLimit = __library.get(b"cuCtxSetLimit\0").map(|sym| *sym);
+        let cuCtxGetLimit = __library.get(b"cuCtxGetLimit\0").map(|sym| *sym);
+        let cuCtxGetCacheConfig = __library.get(b"cuCtxGetCacheConfig\0").map(|sym| *sym);
+        let cuCtxSetCacheConfig = __library.get(b"cuCtxSetCacheConfig\0").map(|sym| *sym);
+        let cuCtxGetSharedMemConfig = __library.get(b"cuCtxGetSharedMemConfig\0").map(|sym| *sym);
+        let cuCtxSetSharedMemConfig = __library.get(b"cuCtxSetSharedMemConfig\0").map(|sym| *sym);
+        let cuCtxGetApiVersion = __library.get(b"cuCtxGetApiVersion\0").map(|sym| *sym);
+        let cuCtxGetStreamPriorityRange = __library
+            .get(b"cuCtxGetStreamPriorityRange\0")
+            .map(|sym| *sym);
+        let cuCtxResetPersistingL2Cache = __library
+            .get(b"cuCtxResetPersistingL2Cache\0")
+            .map(|sym| *sym);
+        let cuCtxGetExecAffinity = __library.get(b"cuCtxGetExecAffinity\0").map(|sym| *sym);
+        let cuCtxAttach = __library.get(b"cuCtxAttach\0").map(|sym| *sym);
+        let cuCtxDetach = __library.get(b"cuCtxDetach\0").map(|sym| *sym);
+        let cuModuleLoad = __library.get(b"cuModuleLoad\0").map(|sym| *sym);
+        let cuModuleLoadData = __library.get(b"cuModuleLoadData\0").map(|sym| *sym);
+        let cuModuleLoadDataEx = __library.get(b"cuModuleLoadDataEx\0").map(|sym| *sym);
+        let cuModuleLoadFatBinary = __library.get(b"cuModuleLoadFatBinary\0").map(|sym| *sym);
+        let cuModuleUnload = __library.get(b"cuModuleUnload\0").map(|sym| *sym);
+        let cuModuleGetLoadingMode = __library.get(b"cuModuleGetLoadingMode\0").map(|sym| *sym);
+        let cuModuleGetFunction = __library.get(b"cuModuleGetFunction\0").map(|sym| *sym);
+        let cuModuleGetGlobal_v2 = __library.get(b"cuModuleGetGlobal_v2\0").map(|sym| *sym);
+        let cuLinkCreate_v2 = __library.get(b"cuLinkCreate_v2\0").map(|sym| *sym);
+        let cuLinkAddData_v2 = __library.get(b"cuLinkAddData_v2\0").map(|sym| *sym);
+        let cuLinkAddFile_v2 = __library.get(b"cuLinkAddFile_v2\0").map(|sym| *sym);
+        let cuLinkComplete = __library.get(b"cuLinkComplete\0").map(|sym| *sym);
+        let cuLinkDestroy = __library.get(b"cuLinkDestroy\0").map(|sym| *sym);
+        let cuModuleGetTexRef = __library.get(b"cuModuleGetTexRef\0").map(|sym| *sym);
+        let cuModuleGetSurfRef = __library.get(b"cuModuleGetSurfRef\0").map(|sym| *sym);
+        let cuLibraryLoadData = __library.get(b"cuLibraryLoadData\0").map(|sym| *sym);
+        let cuLibraryLoadFromFile = __library.get(b"cuLibraryLoadFromFile\0").map(|sym| *sym);
+        let cuLibraryUnload = __library.get(b"cuLibraryUnload\0").map(|sym| *sym);
+        let cuLibraryGetKernel = __library.get(b"cuLibraryGetKernel\0").map(|sym| *sym);
+        let cuLibraryGetModule = __library.get(b"cuLibraryGetModule\0").map(|sym| *sym);
+        let cuKernelGetFunction = __library.get(b"cuKernelGetFunction\0").map(|sym| *sym);
+        let cuLibraryGetGlobal = __library.get(b"cuLibraryGetGlobal\0").map(|sym| *sym);
+        let cuLibraryGetManaged = __library.get(b"cuLibraryGetManaged\0").map(|sym| *sym);
+        let cuLibraryGetUnifiedFunction = __library
+            .get(b"cuLibraryGetUnifiedFunction\0")
+            .map(|sym| *sym);
+        let cuKernelGetAttribute = __library.get(b"cuKernelGetAttribute\0").map(|sym| *sym);
+        let cuKernelSetAttribute = __library.get(b"cuKernelSetAttribute\0").map(|sym| *sym);
+        let cuKernelSetCacheConfig = __library.get(b"cuKernelSetCacheConfig\0").map(|sym| *sym);
+        let cuMemGetInfo_v2 = __library.get(b"cuMemGetInfo_v2\0").map(|sym| *sym);
+        let cuMemAlloc_v2 = __library.get(b"cuMemAlloc_v2\0").map(|sym| *sym);
+        let cuMemAllocPitch_v2 = __library.get(b"cuMemAllocPitch_v2\0").map(|sym| *sym);
+        let cuMemFree_v2 = __library.get(b"cuMemFree_v2\0").map(|sym| *sym);
+        let cuMemGetAddressRange_v2 = __library.get(b"cuMemGetAddressRange_v2\0").map(|sym| *sym);
+        let cuMemAllocHost_v2 = __library.get(b"cuMemAllocHost_v2\0").map(|sym| *sym);
+        let cuMemFreeHost = __library.get(b"cuMemFreeHost\0").map(|sym| *sym);
+        let cuMemHostAlloc = __library.get(b"cuMemHostAlloc\0").map(|sym| *sym);
+        let cuMemHostGetDevicePointer_v2 = __library
+            .get(b"cuMemHostGetDevicePointer_v2\0")
+            .map(|sym| *sym);
+        let cuMemHostGetFlags = __library.get(b"cuMemHostGetFlags\0").map(|sym| *sym);
+        let cuMemAllocManaged = __library.get(b"cuMemAllocManaged\0").map(|sym| *sym);
+        let cuDeviceGetByPCIBusId = __library.get(b"cuDeviceGetByPCIBusId\0").map(|sym| *sym);
+        let cuDeviceGetPCIBusId = __library.get(b"cuDeviceGetPCIBusId\0").map(|sym| *sym);
+        let cuIpcGetEventHandle = __library.get(b"cuIpcGetEventHandle\0").map(|sym| *sym);
+        let cuIpcOpenEventHandle = __library.get(b"cuIpcOpenEventHandle\0").map(|sym| *sym);
+        let cuIpcGetMemHandle = __library.get(b"cuIpcGetMemHandle\0").map(|sym| *sym);
+        let cuIpcOpenMemHandle_v2 = __library.get(b"cuIpcOpenMemHandle_v2\0").map(|sym| *sym);
+        let cuIpcCloseMemHandle = __library.get(b"cuIpcCloseMemHandle\0").map(|sym| *sym);
+        let cuMemHostRegister_v2 = __library.get(b"cuMemHostRegister_v2\0").map(|sym| *sym);
+        let cuMemHostUnregister = __library.get(b"cuMemHostUnregister\0").map(|sym| *sym);
+        let cuMemcpy = __library.get(b"cuMemcpy\0").map(|sym| *sym);
+        let cuMemcpyPeer = __library.get(b"cuMemcpyPeer\0").map(|sym| *sym);
+        let cuMemcpyHtoD_v2 = __library.get(b"cuMemcpyHtoD_v2\0").map(|sym| *sym);
+        let cuMemcpyDtoH_v2 = __library.get(b"cuMemcpyDtoH_v2\0").map(|sym| *sym);
+        let cuMemcpyDtoD_v2 = __library.get(b"cuMemcpyDtoD_v2\0").map(|sym| *sym);
+        let cuMemcpyDtoA_v2 = __library.get(b"cuMemcpyDtoA_v2\0").map(|sym| *sym);
+        let cuMemcpyAtoD_v2 = __library.get(b"cuMemcpyAtoD_v2\0").map(|sym| *sym);
+        let cuMemcpyHtoA_v2 = __library.get(b"cuMemcpyHtoA_v2\0").map(|sym| *sym);
+        let cuMemcpyAtoH_v2 = __library.get(b"cuMemcpyAtoH_v2\0").map(|sym| *sym);
+        let cuMemcpyAtoA_v2 = __library.get(b"cuMemcpyAtoA_v2\0").map(|sym| *sym);
+        let cuMemcpy2D_v2 = __library.get(b"cuMemcpy2D_v2\0").map(|sym| *sym);
+        let cuMemcpy2DUnaligned_v2 = __library.get(b"cuMemcpy2DUnaligned_v2\0").map(|sym| *sym);
+        let cuMemcpy3D_v2 = __library.get(b"cuMemcpy3D_v2\0").map(|sym| *sym);
+        let cuMemcpy3DPeer = __library.get(b"cuMemcpy3DPeer\0").map(|sym| *sym);
+        let cuMemcpyAsync = __library.get(b"cuMemcpyAsync\0").map(|sym| *sym);
+        let cuMemcpyPeerAsync = __library.get(b"cuMemcpyPeerAsync\0").map(|sym| *sym);
+        let cuMemcpyHtoDAsync_v2 = __library.get(b"cuMemcpyHtoDAsync_v2\0").map(|sym| *sym);
+        let cuMemcpyDtoHAsync_v2 = __library.get(b"cuMemcpyDtoHAsync_v2\0").map(|sym| *sym);
+        let cuMemcpyDtoDAsync_v2 = __library.get(b"cuMemcpyDtoDAsync_v2\0").map(|sym| *sym);
+        let cuMemcpyHtoAAsync_v2 = __library.get(b"cuMemcpyHtoAAsync_v2\0").map(|sym| *sym);
+        let cuMemcpyAtoHAsync_v2 = __library.get(b"cuMemcpyAtoHAsync_v2\0").map(|sym| *sym);
+        let cuMemcpy2DAsync_v2 = __library.get(b"cuMemcpy2DAsync_v2\0").map(|sym| *sym);
+        let cuMemcpy3DAsync_v2 = __library.get(b"cuMemcpy3DAsync_v2\0").map(|sym| *sym);
+        let cuMemcpy3DPeerAsync = __library.get(b"cuMemcpy3DPeerAsync\0").map(|sym| *sym);
+        let cuMemsetD8_v2 = __library.get(b"cuMemsetD8_v2\0").map(|sym| *sym);
+        let cuMemsetD16_v2 = __library.get(b"cuMemsetD16_v2\0").map(|sym| *sym);
+        let cuMemsetD32_v2 = __library.get(b"cuMemsetD32_v2\0").map(|sym| *sym);
+        let cuMemsetD2D8_v2 = __library.get(b"cuMemsetD2D8_v2\0").map(|sym| *sym);
+        let cuMemsetD2D16_v2 = __library.get(b"cuMemsetD2D16_v2\0").map(|sym| *sym);
+        let cuMemsetD2D32_v2 = __library.get(b"cuMemsetD2D32_v2\0").map(|sym| *sym);
+        let cuMemsetD8Async = __library.get(b"cuMemsetD8Async\0").map(|sym| *sym);
+        let cuMemsetD16Async = __library.get(b"cuMemsetD16Async\0").map(|sym| *sym);
+        let cuMemsetD32Async = __library.get(b"cuMemsetD32Async\0").map(|sym| *sym);
+        let cuMemsetD2D8Async = __library.get(b"cuMemsetD2D8Async\0").map(|sym| *sym);
+        let cuMemsetD2D16Async = __library.get(b"cuMemsetD2D16Async\0").map(|sym| *sym);
+        let cuMemsetD2D32Async = __library.get(b"cuMemsetD2D32Async\0").map(|sym| *sym);
+        let cuArrayCreate_v2 = __library.get(b"cuArrayCreate_v2\0").map(|sym| *sym);
+        let cuArrayGetDescriptor_v2 = __library.get(b"cuArrayGetDescriptor_v2\0").map(|sym| *sym);
+        let cuArrayGetSparseProperties = __library
+            .get(b"cuArrayGetSparseProperties\0")
+            .map(|sym| *sym);
+        let cuMipmappedArrayGetSparseProperties = __library
+            .get(b"cuMipmappedArrayGetSparseProperties\0")
+            .map(|sym| *sym);
+        let cuArrayGetMemoryRequirements = __library
+            .get(b"cuArrayGetMemoryRequirements\0")
+            .map(|sym| *sym);
+        let cuMipmappedArrayGetMemoryRequirements = __library
+            .get(b"cuMipmappedArrayGetMemoryRequirements\0")
+            .map(|sym| *sym);
+        let cuArrayGetPlane = __library.get(b"cuArrayGetPlane\0").map(|sym| *sym);
+        let cuArrayDestroy = __library.get(b"cuArrayDestroy\0").map(|sym| *sym);
+        let cuArray3DCreate_v2 = __library.get(b"cuArray3DCreate_v2\0").map(|sym| *sym);
+        let cuArray3DGetDescriptor_v2 = __library
+            .get(b"cuArray3DGetDescriptor_v2\0")
+            .map(|sym| *sym);
+        let cuMipmappedArrayCreate = __library.get(b"cuMipmappedArrayCreate\0").map(|sym| *sym);
+        let cuMipmappedArrayGetLevel = __library.get(b"cuMipmappedArrayGetLevel\0").map(|sym| *sym);
+        let cuMipmappedArrayDestroy = __library.get(b"cuMipmappedArrayDestroy\0").map(|sym| *sym);
+        let cuMemGetHandleForAddressRange = __library
+            .get(b"cuMemGetHandleForAddressRange\0")
+            .map(|sym| *sym);
+        let cuMemAddressReserve = __library.get(b"cuMemAddressReserve\0").map(|sym| *sym);
+        let cuMemAddressFree = __library.get(b"cuMemAddressFree\0").map(|sym| *sym);
+        let cuMemCreate = __library.get(b"cuMemCreate\0").map(|sym| *sym);
+        let cuMemRelease = __library.get(b"cuMemRelease\0").map(|sym| *sym);
+        let cuMemMap = __library.get(b"cuMemMap\0").map(|sym| *sym);
+        let cuMemMapArrayAsync = __library.get(b"cuMemMapArrayAsync\0").map(|sym| *sym);
+        let cuMemUnmap = __library.get(b"cuMemUnmap\0").map(|sym| *sym);
+        let cuMemSetAccess = __library.get(b"cuMemSetAccess\0").map(|sym| *sym);
+        let cuMemGetAccess = __library.get(b"cuMemGetAccess\0").map(|sym| *sym);
+        let cuMemExportToShareableHandle = __library
+            .get(b"cuMemExportToShareableHandle\0")
+            .map(|sym| *sym);
+        let cuMemImportFromShareableHandle = __library
+            .get(b"cuMemImportFromShareableHandle\0")
+            .map(|sym| *sym);
+        let cuMemGetAllocationGranularity = __library
+            .get(b"cuMemGetAllocationGranularity\0")
+            .map(|sym| *sym);
+        let cuMemGetAllocationPropertiesFromHandle = __library
+            .get(b"cuMemGetAllocationPropertiesFromHandle\0")
+            .map(|sym| *sym);
+        let cuMemRetainAllocationHandle = __library
+            .get(b"cuMemRetainAllocationHandle\0")
+            .map(|sym| *sym);
+        let cuMemFreeAsync = __library.get(b"cuMemFreeAsync\0").map(|sym| *sym);
+        let cuMemAllocAsync = __library.get(b"cuMemAllocAsync\0").map(|sym| *sym);
+        let cuMemPoolTrimTo = __library.get(b"cuMemPoolTrimTo\0").map(|sym| *sym);
+        let cuMemPoolSetAttribute = __library.get(b"cuMemPoolSetAttribute\0").map(|sym| *sym);
+        let cuMemPoolGetAttribute = __library.get(b"cuMemPoolGetAttribute\0").map(|sym| *sym);
+        let cuMemPoolSetAccess = __library.get(b"cuMemPoolSetAccess\0").map(|sym| *sym);
+        let cuMemPoolGetAccess = __library.get(b"cuMemPoolGetAccess\0").map(|sym| *sym);
+        let cuMemPoolCreate = __library.get(b"cuMemPoolCreate\0").map(|sym| *sym);
+        let cuMemPoolDestroy = __library.get(b"cuMemPoolDestroy\0").map(|sym| *sym);
+        let cuMemAllocFromPoolAsync = __library.get(b"cuMemAllocFromPoolAsync\0").map(|sym| *sym);
+        let cuMemPoolExportToShareableHandle = __library
+            .get(b"cuMemPoolExportToShareableHandle\0")
+            .map(|sym| *sym);
+        let cuMemPoolImportFromShareableHandle = __library
+            .get(b"cuMemPoolImportFromShareableHandle\0")
+            .map(|sym| *sym);
+        let cuMemPoolExportPointer = __library.get(b"cuMemPoolExportPointer\0").map(|sym| *sym);
+        let cuMemPoolImportPointer = __library.get(b"cuMemPoolImportPointer\0").map(|sym| *sym);
+        let cuMulticastCreate = __library.get(b"cuMulticastCreate\0").map(|sym| *sym);
+        let cuMulticastAddDevice = __library.get(b"cuMulticastAddDevice\0").map(|sym| *sym);
+        let cuMulticastBindMem = __library.get(b"cuMulticastBindMem\0").map(|sym| *sym);
+        let cuMulticastBindAddr = __library.get(b"cuMulticastBindAddr\0").map(|sym| *sym);
+        let cuMulticastUnbind = __library.get(b"cuMulticastUnbind\0").map(|sym| *sym);
+        let cuMulticastGetGranularity = __library
+            .get(b"cuMulticastGetGranularity\0")
+            .map(|sym| *sym);
+        let cuPointerGetAttribute = __library.get(b"cuPointerGetAttribute\0").map(|sym| *sym);
+        let cuMemPrefetchAsync = __library.get(b"cuMemPrefetchAsync\0").map(|sym| *sym);
+        let cuMemPrefetchAsync_v2 = __library.get(b"cuMemPrefetchAsync_v2\0").map(|sym| *sym);
+        let cuMemAdvise = __library.get(b"cuMemAdvise\0").map(|sym| *sym);
+        let cuMemAdvise_v2 = __library.get(b"cuMemAdvise_v2\0").map(|sym| *sym);
+        let cuMemRangeGetAttribute = __library.get(b"cuMemRangeGetAttribute\0").map(|sym| *sym);
+        let cuMemRangeGetAttributes = __library.get(b"cuMemRangeGetAttributes\0").map(|sym| *sym);
+        let cuPointerSetAttribute = __library.get(b"cuPointerSetAttribute\0").map(|sym| *sym);
+        let cuPointerGetAttributes = __library.get(b"cuPointerGetAttributes\0").map(|sym| *sym);
+        let cuStreamCreate = __library.get(b"cuStreamCreate\0").map(|sym| *sym);
+        let cuStreamCreateWithPriority = __library
+            .get(b"cuStreamCreateWithPriority\0")
+            .map(|sym| *sym);
+        let cuStreamGetPriority = __library.get(b"cuStreamGetPriority\0").map(|sym| *sym);
+        let cuStreamGetFlags = __library.get(b"cuStreamGetFlags\0").map(|sym| *sym);
+        let cuStreamGetId = __library.get(b"cuStreamGetId\0").map(|sym| *sym);
+        let cuStreamGetCtx = __library.get(b"cuStreamGetCtx\0").map(|sym| *sym);
+        let cuStreamWaitEvent = __library.get(b"cuStreamWaitEvent\0").map(|sym| *sym);
+        let cuStreamAddCallback = __library.get(b"cuStreamAddCallback\0").map(|sym| *sym);
+        let cuStreamBeginCapture_v2 = __library.get(b"cuStreamBeginCapture_v2\0").map(|sym| *sym);
+        let cuThreadExchangeStreamCaptureMode = __library
+            .get(b"cuThreadExchangeStreamCaptureMode\0")
+            .map(|sym| *sym);
+        let cuStreamEndCapture = __library.get(b"cuStreamEndCapture\0").map(|sym| *sym);
+        let cuStreamIsCapturing = __library.get(b"cuStreamIsCapturing\0").map(|sym| *sym);
+        let cuStreamGetCaptureInfo_v2 = __library
+            .get(b"cuStreamGetCaptureInfo_v2\0")
+            .map(|sym| *sym);
+        let cuStreamUpdateCaptureDependencies = __library
+            .get(b"cuStreamUpdateCaptureDependencies\0")
+            .map(|sym| *sym);
+        let cuStreamAttachMemAsync = __library.get(b"cuStreamAttachMemAsync\0").map(|sym| *sym);
+        let cuStreamQuery = __library.get(b"cuStreamQuery\0").map(|sym| *sym);
+        let cuStreamSynchronize = __library.get(b"cuStreamSynchronize\0").map(|sym| *sym);
+        let cuStreamDestroy_v2 = __library.get(b"cuStreamDestroy_v2\0").map(|sym| *sym);
+        let cuStreamCopyAttributes = __library.get(b"cuStreamCopyAttributes\0").map(|sym| *sym);
+        let cuStreamGetAttribute = __library.get(b"cuStreamGetAttribute\0").map(|sym| *sym);
+        let cuStreamSetAttribute = __library.get(b"cuStreamSetAttribute\0").map(|sym| *sym);
+        let cuEventCreate = __library.get(b"cuEventCreate\0").map(|sym| *sym);
+        let cuEventRecord = __library.get(b"cuEventRecord\0").map(|sym| *sym);
+        let cuEventRecordWithFlags = __library.get(b"cuEventRecordWithFlags\0").map(|sym| *sym);
+        let cuEventQuery = __library.get(b"cuEventQuery\0").map(|sym| *sym);
+        let cuEventSynchronize = __library.get(b"cuEventSynchronize\0").map(|sym| *sym);
+        let cuEventDestroy_v2 = __library.get(b"cuEventDestroy_v2\0").map(|sym| *sym);
+        let cuEventElapsedTime = __library.get(b"cuEventElapsedTime\0").map(|sym| *sym);
+        let cuImportExternalMemory = __library.get(b"cuImportExternalMemory\0").map(|sym| *sym);
+        let cuExternalMemoryGetMappedBuffer = __library
+            .get(b"cuExternalMemoryGetMappedBuffer\0")
+            .map(|sym| *sym);
+        let cuExternalMemoryGetMappedMipmappedArray = __library
+            .get(b"cuExternalMemoryGetMappedMipmappedArray\0")
+            .map(|sym| *sym);
+        let cuDestroyExternalMemory = __library.get(b"cuDestroyExternalMemory\0").map(|sym| *sym);
+        let cuImportExternalSemaphore = __library
+            .get(b"cuImportExternalSemaphore\0")
+            .map(|sym| *sym);
+        let cuSignalExternalSemaphoresAsync = __library
+            .get(b"cuSignalExternalSemaphoresAsync\0")
+            .map(|sym| *sym);
+        let cuWaitExternalSemaphoresAsync = __library
+            .get(b"cuWaitExternalSemaphoresAsync\0")
+            .map(|sym| *sym);
+        let cuDestroyExternalSemaphore = __library
+            .get(b"cuDestroyExternalSemaphore\0")
+            .map(|sym| *sym);
+        let cuStreamWaitValue32_v2 = __library.get(b"cuStreamWaitValue32_v2\0").map(|sym| *sym);
+        let cuStreamWaitValue64_v2 = __library.get(b"cuStreamWaitValue64_v2\0").map(|sym| *sym);
+        let cuStreamWriteValue32_v2 = __library.get(b"cuStreamWriteValue32_v2\0").map(|sym| *sym);
+        let cuStreamWriteValue64_v2 = __library.get(b"cuStreamWriteValue64_v2\0").map(|sym| *sym);
+        let cuStreamBatchMemOp_v2 = __library.get(b"cuStreamBatchMemOp_v2\0").map(|sym| *sym);
+        let cuFuncGetAttribute = __library.get(b"cuFuncGetAttribute\0").map(|sym| *sym);
+        let cuFuncSetAttribute = __library.get(b"cuFuncSetAttribute\0").map(|sym| *sym);
+        let cuFuncSetCacheConfig = __library.get(b"cuFuncSetCacheConfig\0").map(|sym| *sym);
+        let cuFuncSetSharedMemConfig = __library.get(b"cuFuncSetSharedMemConfig\0").map(|sym| *sym);
+        let cuFuncGetModule = __library.get(b"cuFuncGetModule\0").map(|sym| *sym);
+        let cuLaunchKernel = __library.get(b"cuLaunchKernel\0").map(|sym| *sym);
+        let cuLaunchKernelEx = __library.get(b"cuLaunchKernelEx\0").map(|sym| *sym);
+        let cuLaunchCooperativeKernel = __library
+            .get(b"cuLaunchCooperativeKernel\0")
+            .map(|sym| *sym);
+        let cuLaunchCooperativeKernelMultiDevice = __library
+            .get(b"cuLaunchCooperativeKernelMultiDevice\0")
+            .map(|sym| *sym);
+        let cuLaunchHostFunc = __library.get(b"cuLaunchHostFunc\0").map(|sym| *sym);
+        let cuFuncSetBlockShape = __library.get(b"cuFuncSetBlockShape\0").map(|sym| *sym);
+        let cuFuncSetSharedSize = __library.get(b"cuFuncSetSharedSize\0").map(|sym| *sym);
+        let cuParamSetSize = __library.get(b"cuParamSetSize\0").map(|sym| *sym);
+        let cuParamSeti = __library.get(b"cuParamSeti\0").map(|sym| *sym);
+        let cuParamSetf = __library.get(b"cuParamSetf\0").map(|sym| *sym);
+        let cuParamSetv = __library.get(b"cuParamSetv\0").map(|sym| *sym);
+        let cuLaunch = __library.get(b"cuLaunch\0").map(|sym| *sym);
+        let cuLaunchGrid = __library.get(b"cuLaunchGrid\0").map(|sym| *sym);
+        let cuLaunchGridAsync = __library.get(b"cuLaunchGridAsync\0").map(|sym| *sym);
+        let cuParamSetTexRef = __library.get(b"cuParamSetTexRef\0").map(|sym| *sym);
+        let cuGraphCreate = __library.get(b"cuGraphCreate\0").map(|sym| *sym);
+        let cuGraphAddKernelNode_v2 = __library.get(b"cuGraphAddKernelNode_v2\0").map(|sym| *sym);
+        let cuGraphKernelNodeGetParams_v2 = __library
+            .get(b"cuGraphKernelNodeGetParams_v2\0")
+            .map(|sym| *sym);
+        let cuGraphKernelNodeSetParams_v2 = __library
+            .get(b"cuGraphKernelNodeSetParams_v2\0")
+            .map(|sym| *sym);
+        let cuGraphAddMemcpyNode = __library.get(b"cuGraphAddMemcpyNode\0").map(|sym| *sym);
+        let cuGraphMemcpyNodeGetParams = __library
+            .get(b"cuGraphMemcpyNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuGraphMemcpyNodeSetParams = __library
+            .get(b"cuGraphMemcpyNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphAddMemsetNode = __library.get(b"cuGraphAddMemsetNode\0").map(|sym| *sym);
+        let cuGraphMemsetNodeGetParams = __library
+            .get(b"cuGraphMemsetNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuGraphMemsetNodeSetParams = __library
+            .get(b"cuGraphMemsetNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphAddHostNode = __library.get(b"cuGraphAddHostNode\0").map(|sym| *sym);
+        let cuGraphHostNodeGetParams = __library.get(b"cuGraphHostNodeGetParams\0").map(|sym| *sym);
+        let cuGraphHostNodeSetParams = __library.get(b"cuGraphHostNodeSetParams\0").map(|sym| *sym);
+        let cuGraphAddChildGraphNode = __library.get(b"cuGraphAddChildGraphNode\0").map(|sym| *sym);
+        let cuGraphChildGraphNodeGetGraph = __library
+            .get(b"cuGraphChildGraphNodeGetGraph\0")
+            .map(|sym| *sym);
+        let cuGraphAddEmptyNode = __library.get(b"cuGraphAddEmptyNode\0").map(|sym| *sym);
+        let cuGraphAddEventRecordNode = __library
+            .get(b"cuGraphAddEventRecordNode\0")
+            .map(|sym| *sym);
+        let cuGraphEventRecordNodeGetEvent = __library
+            .get(b"cuGraphEventRecordNodeGetEvent\0")
+            .map(|sym| *sym);
+        let cuGraphEventRecordNodeSetEvent = __library
+            .get(b"cuGraphEventRecordNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cuGraphAddEventWaitNode = __library.get(b"cuGraphAddEventWaitNode\0").map(|sym| *sym);
+        let cuGraphEventWaitNodeGetEvent = __library
+            .get(b"cuGraphEventWaitNodeGetEvent\0")
+            .map(|sym| *sym);
+        let cuGraphEventWaitNodeSetEvent = __library
+            .get(b"cuGraphEventWaitNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cuGraphAddExternalSemaphoresSignalNode = __library
+            .get(b"cuGraphAddExternalSemaphoresSignalNode\0")
+            .map(|sym| *sym);
+        let cuGraphExternalSemaphoresSignalNodeGetParams = __library
+            .get(b"cuGraphExternalSemaphoresSignalNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExternalSemaphoresSignalNodeSetParams = __library
+            .get(b"cuGraphExternalSemaphoresSignalNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphAddExternalSemaphoresWaitNode = __library
+            .get(b"cuGraphAddExternalSemaphoresWaitNode\0")
+            .map(|sym| *sym);
+        let cuGraphExternalSemaphoresWaitNodeGetParams = __library
+            .get(b"cuGraphExternalSemaphoresWaitNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExternalSemaphoresWaitNodeSetParams = __library
+            .get(b"cuGraphExternalSemaphoresWaitNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphAddBatchMemOpNode = __library.get(b"cuGraphAddBatchMemOpNode\0").map(|sym| *sym);
+        let cuGraphBatchMemOpNodeGetParams = __library
+            .get(b"cuGraphBatchMemOpNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuGraphBatchMemOpNodeSetParams = __library
+            .get(b"cuGraphBatchMemOpNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecBatchMemOpNodeSetParams = __library
+            .get(b"cuGraphExecBatchMemOpNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphAddMemAllocNode = __library.get(b"cuGraphAddMemAllocNode\0").map(|sym| *sym);
+        let cuGraphMemAllocNodeGetParams = __library
+            .get(b"cuGraphMemAllocNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuGraphAddMemFreeNode = __library.get(b"cuGraphAddMemFreeNode\0").map(|sym| *sym);
+        let cuGraphMemFreeNodeGetParams = __library
+            .get(b"cuGraphMemFreeNodeGetParams\0")
+            .map(|sym| *sym);
+        let cuDeviceGraphMemTrim = __library.get(b"cuDeviceGraphMemTrim\0").map(|sym| *sym);
+        let cuDeviceGetGraphMemAttribute = __library
+            .get(b"cuDeviceGetGraphMemAttribute\0")
+            .map(|sym| *sym);
+        let cuDeviceSetGraphMemAttribute = __library
+            .get(b"cuDeviceSetGraphMemAttribute\0")
+            .map(|sym| *sym);
+        let cuGraphClone = __library.get(b"cuGraphClone\0").map(|sym| *sym);
+        let cuGraphNodeFindInClone = __library.get(b"cuGraphNodeFindInClone\0").map(|sym| *sym);
+        let cuGraphNodeGetType = __library.get(b"cuGraphNodeGetType\0").map(|sym| *sym);
+        let cuGraphGetNodes = __library.get(b"cuGraphGetNodes\0").map(|sym| *sym);
+        let cuGraphGetRootNodes = __library.get(b"cuGraphGetRootNodes\0").map(|sym| *sym);
+        let cuGraphGetEdges = __library.get(b"cuGraphGetEdges\0").map(|sym| *sym);
+        let cuGraphNodeGetDependencies = __library
+            .get(b"cuGraphNodeGetDependencies\0")
+            .map(|sym| *sym);
+        let cuGraphNodeGetDependentNodes = __library
+            .get(b"cuGraphNodeGetDependentNodes\0")
+            .map(|sym| *sym);
+        let cuGraphAddDependencies = __library.get(b"cuGraphAddDependencies\0").map(|sym| *sym);
+        let cuGraphRemoveDependencies = __library
+            .get(b"cuGraphRemoveDependencies\0")
+            .map(|sym| *sym);
+        let cuGraphDestroyNode = __library.get(b"cuGraphDestroyNode\0").map(|sym| *sym);
+        let cuGraphInstantiateWithFlags = __library
+            .get(b"cuGraphInstantiateWithFlags\0")
+            .map(|sym| *sym);
+        let cuGraphInstantiateWithParams = __library
+            .get(b"cuGraphInstantiateWithParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecGetFlags = __library.get(b"cuGraphExecGetFlags\0").map(|sym| *sym);
+        let cuGraphExecKernelNodeSetParams_v2 = __library
+            .get(b"cuGraphExecKernelNodeSetParams_v2\0")
+            .map(|sym| *sym);
+        let cuGraphExecMemcpyNodeSetParams = __library
+            .get(b"cuGraphExecMemcpyNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecMemsetNodeSetParams = __library
+            .get(b"cuGraphExecMemsetNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecHostNodeSetParams = __library
+            .get(b"cuGraphExecHostNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecChildGraphNodeSetParams = __library
+            .get(b"cuGraphExecChildGraphNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecEventRecordNodeSetEvent = __library
+            .get(b"cuGraphExecEventRecordNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cuGraphExecEventWaitNodeSetEvent = __library
+            .get(b"cuGraphExecEventWaitNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cuGraphExecExternalSemaphoresSignalNodeSetParams = __library
+            .get(b"cuGraphExecExternalSemaphoresSignalNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphExecExternalSemaphoresWaitNodeSetParams = __library
+            .get(b"cuGraphExecExternalSemaphoresWaitNodeSetParams\0")
+            .map(|sym| *sym);
+        let cuGraphNodeSetEnabled = __library.get(b"cuGraphNodeSetEnabled\0").map(|sym| *sym);
+        let cuGraphNodeGetEnabled = __library.get(b"cuGraphNodeGetEnabled\0").map(|sym| *sym);
+        let cuGraphUpload = __library.get(b"cuGraphUpload\0").map(|sym| *sym);
+        let cuGraphLaunch = __library.get(b"cuGraphLaunch\0").map(|sym| *sym);
+        let cuGraphExecDestroy = __library.get(b"cuGraphExecDestroy\0").map(|sym| *sym);
+        let cuGraphDestroy = __library.get(b"cuGraphDestroy\0").map(|sym| *sym);
+        let cuGraphExecUpdate_v2 = __library.get(b"cuGraphExecUpdate_v2\0").map(|sym| *sym);
+        let cuGraphKernelNodeCopyAttributes = __library
+            .get(b"cuGraphKernelNodeCopyAttributes\0")
+            .map(|sym| *sym);
+        let cuGraphKernelNodeGetAttribute = __library
+            .get(b"cuGraphKernelNodeGetAttribute\0")
+            .map(|sym| *sym);
+        let cuGraphKernelNodeSetAttribute = __library
+            .get(b"cuGraphKernelNodeSetAttribute\0")
+            .map(|sym| *sym);
+        let cuGraphDebugDotPrint = __library.get(b"cuGraphDebugDotPrint\0").map(|sym| *sym);
+        let cuUserObjectCreate = __library.get(b"cuUserObjectCreate\0").map(|sym| *sym);
+        let cuUserObjectRetain = __library.get(b"cuUserObjectRetain\0").map(|sym| *sym);
+        let cuUserObjectRelease = __library.get(b"cuUserObjectRelease\0").map(|sym| *sym);
+        let cuGraphRetainUserObject = __library.get(b"cuGraphRetainUserObject\0").map(|sym| *sym);
+        let cuGraphReleaseUserObject = __library.get(b"cuGraphReleaseUserObject\0").map(|sym| *sym);
+        let cuGraphAddNode = __library.get(b"cuGraphAddNode\0").map(|sym| *sym);
+        let cuGraphNodeSetParams = __library.get(b"cuGraphNodeSetParams\0").map(|sym| *sym);
+        let cuGraphExecNodeSetParams = __library.get(b"cuGraphExecNodeSetParams\0").map(|sym| *sym);
+        let cuOccupancyMaxActiveBlocksPerMultiprocessor = __library
+            .get(b"cuOccupancyMaxActiveBlocksPerMultiprocessor\0")
+            .map(|sym| *sym);
+        let cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags = __library
+            .get(b"cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags\0")
+            .map(|sym| *sym);
+        let cuOccupancyMaxPotentialBlockSize = __library
+            .get(b"cuOccupancyMaxPotentialBlockSize\0")
+            .map(|sym| *sym);
+        let cuOccupancyMaxPotentialBlockSizeWithFlags = __library
+            .get(b"cuOccupancyMaxPotentialBlockSizeWithFlags\0")
+            .map(|sym| *sym);
+        let cuOccupancyAvailableDynamicSMemPerBlock = __library
+            .get(b"cuOccupancyAvailableDynamicSMemPerBlock\0")
+            .map(|sym| *sym);
+        let cuOccupancyMaxPotentialClusterSize = __library
+            .get(b"cuOccupancyMaxPotentialClusterSize\0")
+            .map(|sym| *sym);
+        let cuOccupancyMaxActiveClusters = __library
+            .get(b"cuOccupancyMaxActiveClusters\0")
+            .map(|sym| *sym);
+        let cuTexRefSetArray = __library.get(b"cuTexRefSetArray\0").map(|sym| *sym);
+        let cuTexRefSetMipmappedArray = __library
+            .get(b"cuTexRefSetMipmappedArray\0")
+            .map(|sym| *sym);
+        let cuTexRefSetAddress_v2 = __library.get(b"cuTexRefSetAddress_v2\0").map(|sym| *sym);
+        let cuTexRefSetAddress2D_v3 = __library.get(b"cuTexRefSetAddress2D_v3\0").map(|sym| *sym);
+        let cuTexRefSetFormat = __library.get(b"cuTexRefSetFormat\0").map(|sym| *sym);
+        let cuTexRefSetAddressMode = __library.get(b"cuTexRefSetAddressMode\0").map(|sym| *sym);
+        let cuTexRefSetFilterMode = __library.get(b"cuTexRefSetFilterMode\0").map(|sym| *sym);
+        let cuTexRefSetMipmapFilterMode = __library
+            .get(b"cuTexRefSetMipmapFilterMode\0")
+            .map(|sym| *sym);
+        let cuTexRefSetMipmapLevelBias = __library
+            .get(b"cuTexRefSetMipmapLevelBias\0")
+            .map(|sym| *sym);
+        let cuTexRefSetMipmapLevelClamp = __library
+            .get(b"cuTexRefSetMipmapLevelClamp\0")
+            .map(|sym| *sym);
+        let cuTexRefSetMaxAnisotropy = __library.get(b"cuTexRefSetMaxAnisotropy\0").map(|sym| *sym);
+        let cuTexRefSetBorderColor = __library.get(b"cuTexRefSetBorderColor\0").map(|sym| *sym);
+        let cuTexRefSetFlags = __library.get(b"cuTexRefSetFlags\0").map(|sym| *sym);
+        let cuTexRefGetAddress_v2 = __library.get(b"cuTexRefGetAddress_v2\0").map(|sym| *sym);
+        let cuTexRefGetArray = __library.get(b"cuTexRefGetArray\0").map(|sym| *sym);
+        let cuTexRefGetMipmappedArray = __library
+            .get(b"cuTexRefGetMipmappedArray\0")
+            .map(|sym| *sym);
+        let cuTexRefGetAddressMode = __library.get(b"cuTexRefGetAddressMode\0").map(|sym| *sym);
+        let cuTexRefGetFilterMode = __library.get(b"cuTexRefGetFilterMode\0").map(|sym| *sym);
+        let cuTexRefGetFormat = __library.get(b"cuTexRefGetFormat\0").map(|sym| *sym);
+        let cuTexRefGetMipmapFilterMode = __library
+            .get(b"cuTexRefGetMipmapFilterMode\0")
+            .map(|sym| *sym);
+        let cuTexRefGetMipmapLevelBias = __library
+            .get(b"cuTexRefGetMipmapLevelBias\0")
+            .map(|sym| *sym);
+        let cuTexRefGetMipmapLevelClamp = __library
+            .get(b"cuTexRefGetMipmapLevelClamp\0")
+            .map(|sym| *sym);
+        let cuTexRefGetMaxAnisotropy = __library.get(b"cuTexRefGetMaxAnisotropy\0").map(|sym| *sym);
+        let cuTexRefGetBorderColor = __library.get(b"cuTexRefGetBorderColor\0").map(|sym| *sym);
+        let cuTexRefGetFlags = __library.get(b"cuTexRefGetFlags\0").map(|sym| *sym);
+        let cuTexRefCreate = __library.get(b"cuTexRefCreate\0").map(|sym| *sym);
+        let cuTexRefDestroy = __library.get(b"cuTexRefDestroy\0").map(|sym| *sym);
+        let cuSurfRefSetArray = __library.get(b"cuSurfRefSetArray\0").map(|sym| *sym);
+        let cuSurfRefGetArray = __library.get(b"cuSurfRefGetArray\0").map(|sym| *sym);
+        let cuTexObjectCreate = __library.get(b"cuTexObjectCreate\0").map(|sym| *sym);
+        let cuTexObjectDestroy = __library.get(b"cuTexObjectDestroy\0").map(|sym| *sym);
+        let cuTexObjectGetResourceDesc = __library
+            .get(b"cuTexObjectGetResourceDesc\0")
+            .map(|sym| *sym);
+        let cuTexObjectGetTextureDesc = __library
+            .get(b"cuTexObjectGetTextureDesc\0")
+            .map(|sym| *sym);
+        let cuTexObjectGetResourceViewDesc = __library
+            .get(b"cuTexObjectGetResourceViewDesc\0")
+            .map(|sym| *sym);
+        let cuSurfObjectCreate = __library.get(b"cuSurfObjectCreate\0").map(|sym| *sym);
+        let cuSurfObjectDestroy = __library.get(b"cuSurfObjectDestroy\0").map(|sym| *sym);
+        let cuSurfObjectGetResourceDesc = __library
+            .get(b"cuSurfObjectGetResourceDesc\0")
+            .map(|sym| *sym);
+        let cuTensorMapEncodeTiled = __library.get(b"cuTensorMapEncodeTiled\0").map(|sym| *sym);
+        let cuTensorMapEncodeIm2col = __library.get(b"cuTensorMapEncodeIm2col\0").map(|sym| *sym);
+        let cuTensorMapReplaceAddress = __library
+            .get(b"cuTensorMapReplaceAddress\0")
+            .map(|sym| *sym);
+        let cuDeviceCanAccessPeer = __library.get(b"cuDeviceCanAccessPeer\0").map(|sym| *sym);
+        let cuCtxEnablePeerAccess = __library.get(b"cuCtxEnablePeerAccess\0").map(|sym| *sym);
+        let cuCtxDisablePeerAccess = __library.get(b"cuCtxDisablePeerAccess\0").map(|sym| *sym);
+        let cuDeviceGetP2PAttribute = __library.get(b"cuDeviceGetP2PAttribute\0").map(|sym| *sym);
+        let cuGraphicsUnregisterResource = __library
+            .get(b"cuGraphicsUnregisterResource\0")
+            .map(|sym| *sym);
+        let cuGraphicsSubResourceGetMappedArray = __library
+            .get(b"cuGraphicsSubResourceGetMappedArray\0")
+            .map(|sym| *sym);
+        let cuGraphicsResourceGetMappedMipmappedArray = __library
+            .get(b"cuGraphicsResourceGetMappedMipmappedArray\0")
+            .map(|sym| *sym);
+        let cuGraphicsResourceGetMappedPointer_v2 = __library
+            .get(b"cuGraphicsResourceGetMappedPointer_v2\0")
+            .map(|sym| *sym);
+        let cuGraphicsResourceSetMapFlags_v2 = __library
+            .get(b"cuGraphicsResourceSetMapFlags_v2\0")
+            .map(|sym| *sym);
+        let cuGraphicsMapResources = __library.get(b"cuGraphicsMapResources\0").map(|sym| *sym);
+        let cuGraphicsUnmapResources = __library.get(b"cuGraphicsUnmapResources\0").map(|sym| *sym);
+        let cuGetProcAddress_v2 = __library.get(b"cuGetProcAddress_v2\0").map(|sym| *sym);
+        let cuCoredumpGetAttribute = __library.get(b"cuCoredumpGetAttribute\0").map(|sym| *sym);
+        let cuCoredumpGetAttributeGlobal = __library
+            .get(b"cuCoredumpGetAttributeGlobal\0")
+            .map(|sym| *sym);
+        let cuCoredumpSetAttribute = __library.get(b"cuCoredumpSetAttribute\0").map(|sym| *sym);
+        let cuCoredumpSetAttributeGlobal = __library
+            .get(b"cuCoredumpSetAttributeGlobal\0")
+            .map(|sym| *sym);
+        let cuGetExportTable = __library.get(b"cuGetExportTable\0").map(|sym| *sym);
+        let cuProfilerInitialize = __library.get(b"cuProfilerInitialize\0").map(|sym| *sym);
+        let cuProfilerStart = __library.get(b"cuProfilerStart\0").map(|sym| *sym);
+        let cuProfilerStop = __library.get(b"cuProfilerStop\0").map(|sym| *sym);
+        Ok(Lib {
+            __library,
+            cuGetErrorString,
+            cuGetErrorName,
+            cuInit,
+            cuDriverGetVersion,
+            cuDeviceGet,
+            cuDeviceGetCount,
+            cuDeviceGetName,
+            cuDeviceGetUuid,
+            cuDeviceGetUuid_v2,
+            cuDeviceGetLuid,
+            cuDeviceTotalMem_v2,
+            cuDeviceGetTexture1DLinearMaxWidth,
+            cuDeviceGetAttribute,
+            cuDeviceGetNvSciSyncAttributes,
+            cuDeviceSetMemPool,
+            cuDeviceGetMemPool,
+            cuDeviceGetDefaultMemPool,
+            cuDeviceGetExecAffinitySupport,
+            cuFlushGPUDirectRDMAWrites,
+            cuDeviceGetProperties,
+            cuDeviceComputeCapability,
+            cuDevicePrimaryCtxRetain,
+            cuDevicePrimaryCtxRelease_v2,
+            cuDevicePrimaryCtxSetFlags_v2,
+            cuDevicePrimaryCtxGetState,
+            cuDevicePrimaryCtxReset_v2,
+            cuCtxCreate_v2,
+            cuCtxCreate_v3,
+            cuCtxDestroy_v2,
+            cuCtxPushCurrent_v2,
+            cuCtxPopCurrent_v2,
+            cuCtxSetCurrent,
+            cuCtxGetCurrent,
+            cuCtxGetDevice,
+            cuCtxGetFlags,
+            cuCtxSetFlags,
+            cuCtxGetId,
+            cuCtxSynchronize,
+            cuCtxSetLimit,
+            cuCtxGetLimit,
+            cuCtxGetCacheConfig,
+            cuCtxSetCacheConfig,
+            cuCtxGetSharedMemConfig,
+            cuCtxSetSharedMemConfig,
+            cuCtxGetApiVersion,
+            cuCtxGetStreamPriorityRange,
+            cuCtxResetPersistingL2Cache,
+            cuCtxGetExecAffinity,
+            cuCtxAttach,
+            cuCtxDetach,
+            cuModuleLoad,
+            cuModuleLoadData,
+            cuModuleLoadDataEx,
+            cuModuleLoadFatBinary,
+            cuModuleUnload,
+            cuModuleGetLoadingMode,
+            cuModuleGetFunction,
+            cuModuleGetGlobal_v2,
+            cuLinkCreate_v2,
+            cuLinkAddData_v2,
+            cuLinkAddFile_v2,
+            cuLinkComplete,
+            cuLinkDestroy,
+            cuModuleGetTexRef,
+            cuModuleGetSurfRef,
+            cuLibraryLoadData,
+            cuLibraryLoadFromFile,
+            cuLibraryUnload,
+            cuLibraryGetKernel,
+            cuLibraryGetModule,
+            cuKernelGetFunction,
+            cuLibraryGetGlobal,
+            cuLibraryGetManaged,
+            cuLibraryGetUnifiedFunction,
+            cuKernelGetAttribute,
+            cuKernelSetAttribute,
+            cuKernelSetCacheConfig,
+            cuMemGetInfo_v2,
+            cuMemAlloc_v2,
+            cuMemAllocPitch_v2,
+            cuMemFree_v2,
+            cuMemGetAddressRange_v2,
+            cuMemAllocHost_v2,
+            cuMemFreeHost,
+            cuMemHostAlloc,
+            cuMemHostGetDevicePointer_v2,
+            cuMemHostGetFlags,
+            cuMemAllocManaged,
+            cuDeviceGetByPCIBusId,
+            cuDeviceGetPCIBusId,
+            cuIpcGetEventHandle,
+            cuIpcOpenEventHandle,
+            cuIpcGetMemHandle,
+            cuIpcOpenMemHandle_v2,
+            cuIpcCloseMemHandle,
+            cuMemHostRegister_v2,
+            cuMemHostUnregister,
+            cuMemcpy,
+            cuMemcpyPeer,
+            cuMemcpyHtoD_v2,
+            cuMemcpyDtoH_v2,
+            cuMemcpyDtoD_v2,
+            cuMemcpyDtoA_v2,
+            cuMemcpyAtoD_v2,
+            cuMemcpyHtoA_v2,
+            cuMemcpyAtoH_v2,
+            cuMemcpyAtoA_v2,
+            cuMemcpy2D_v2,
+            cuMemcpy2DUnaligned_v2,
+            cuMemcpy3D_v2,
+            cuMemcpy3DPeer,
+            cuMemcpyAsync,
+            cuMemcpyPeerAsync,
+            cuMemcpyHtoDAsync_v2,
+            cuMemcpyDtoHAsync_v2,
+            cuMemcpyDtoDAsync_v2,
+            cuMemcpyHtoAAsync_v2,
+            cuMemcpyAtoHAsync_v2,
+            cuMemcpy2DAsync_v2,
+            cuMemcpy3DAsync_v2,
+            cuMemcpy3DPeerAsync,
+            cuMemsetD8_v2,
+            cuMemsetD16_v2,
+            cuMemsetD32_v2,
+            cuMemsetD2D8_v2,
+            cuMemsetD2D16_v2,
+            cuMemsetD2D32_v2,
+            cuMemsetD8Async,
+            cuMemsetD16Async,
+            cuMemsetD32Async,
+            cuMemsetD2D8Async,
+            cuMemsetD2D16Async,
+            cuMemsetD2D32Async,
+            cuArrayCreate_v2,
+            cuArrayGetDescriptor_v2,
+            cuArrayGetSparseProperties,
+            cuMipmappedArrayGetSparseProperties,
+            cuArrayGetMemoryRequirements,
+            cuMipmappedArrayGetMemoryRequirements,
+            cuArrayGetPlane,
+            cuArrayDestroy,
+            cuArray3DCreate_v2,
+            cuArray3DGetDescriptor_v2,
+            cuMipmappedArrayCreate,
+            cuMipmappedArrayGetLevel,
+            cuMipmappedArrayDestroy,
+            cuMemGetHandleForAddressRange,
+            cuMemAddressReserve,
+            cuMemAddressFree,
+            cuMemCreate,
+            cuMemRelease,
+            cuMemMap,
+            cuMemMapArrayAsync,
+            cuMemUnmap,
+            cuMemSetAccess,
+            cuMemGetAccess,
+            cuMemExportToShareableHandle,
+            cuMemImportFromShareableHandle,
+            cuMemGetAllocationGranularity,
+            cuMemGetAllocationPropertiesFromHandle,
+            cuMemRetainAllocationHandle,
+            cuMemFreeAsync,
+            cuMemAllocAsync,
+            cuMemPoolTrimTo,
+            cuMemPoolSetAttribute,
+            cuMemPoolGetAttribute,
+            cuMemPoolSetAccess,
+            cuMemPoolGetAccess,
+            cuMemPoolCreate,
+            cuMemPoolDestroy,
+            cuMemAllocFromPoolAsync,
+            cuMemPoolExportToShareableHandle,
+            cuMemPoolImportFromShareableHandle,
+            cuMemPoolExportPointer,
+            cuMemPoolImportPointer,
+            cuMulticastCreate,
+            cuMulticastAddDevice,
+            cuMulticastBindMem,
+            cuMulticastBindAddr,
+            cuMulticastUnbind,
+            cuMulticastGetGranularity,
+            cuPointerGetAttribute,
+            cuMemPrefetchAsync,
+            cuMemPrefetchAsync_v2,
+            cuMemAdvise,
+            cuMemAdvise_v2,
+            cuMemRangeGetAttribute,
+            cuMemRangeGetAttributes,
+            cuPointerSetAttribute,
+            cuPointerGetAttributes,
+            cuStreamCreate,
+            cuStreamCreateWithPriority,
+            cuStreamGetPriority,
+            cuStreamGetFlags,
+            cuStreamGetId,
+            cuStreamGetCtx,
+            cuStreamWaitEvent,
+            cuStreamAddCallback,
+            cuStreamBeginCapture_v2,
+            cuThreadExchangeStreamCaptureMode,
+            cuStreamEndCapture,
+            cuStreamIsCapturing,
+            cuStreamGetCaptureInfo_v2,
+            cuStreamUpdateCaptureDependencies,
+            cuStreamAttachMemAsync,
+            cuStreamQuery,
+            cuStreamSynchronize,
+            cuStreamDestroy_v2,
+            cuStreamCopyAttributes,
+            cuStreamGetAttribute,
+            cuStreamSetAttribute,
+            cuEventCreate,
+            cuEventRecord,
+            cuEventRecordWithFlags,
+            cuEventQuery,
+            cuEventSynchronize,
+            cuEventDestroy_v2,
+            cuEventElapsedTime,
+            cuImportExternalMemory,
+            cuExternalMemoryGetMappedBuffer,
+            cuExternalMemoryGetMappedMipmappedArray,
+            cuDestroyExternalMemory,
+            cuImportExternalSemaphore,
+            cuSignalExternalSemaphoresAsync,
+            cuWaitExternalSemaphoresAsync,
+            cuDestroyExternalSemaphore,
+            cuStreamWaitValue32_v2,
+            cuStreamWaitValue64_v2,
+            cuStreamWriteValue32_v2,
+            cuStreamWriteValue64_v2,
+            cuStreamBatchMemOp_v2,
+            cuFuncGetAttribute,
+            cuFuncSetAttribute,
+            cuFuncSetCacheConfig,
+            cuFuncSetSharedMemConfig,
+            cuFuncGetModule,
+            cuLaunchKernel,
+            cuLaunchKernelEx,
+            cuLaunchCooperativeKernel,
+            cuLaunchCooperativeKernelMultiDevice,
+            cuLaunchHostFunc,
+            cuFuncSetBlockShape,
+            cuFuncSetSharedSize,
+            cuParamSetSize,
+            cuParamSeti,
+            cuParamSetf,
+            cuParamSetv,
+            cuLaunch,
+            cuLaunchGrid,
+            cuLaunchGridAsync,
+            cuParamSetTexRef,
+            cuGraphCreate,
+            cuGraphAddKernelNode_v2,
+            cuGraphKernelNodeGetParams_v2,
+            cuGraphKernelNodeSetParams_v2,
+            cuGraphAddMemcpyNode,
+            cuGraphMemcpyNodeGetParams,
+            cuGraphMemcpyNodeSetParams,
+            cuGraphAddMemsetNode,
+            cuGraphMemsetNodeGetParams,
+            cuGraphMemsetNodeSetParams,
+            cuGraphAddHostNode,
+            cuGraphHostNodeGetParams,
+            cuGraphHostNodeSetParams,
+            cuGraphAddChildGraphNode,
+            cuGraphChildGraphNodeGetGraph,
+            cuGraphAddEmptyNode,
+            cuGraphAddEventRecordNode,
+            cuGraphEventRecordNodeGetEvent,
+            cuGraphEventRecordNodeSetEvent,
+            cuGraphAddEventWaitNode,
+            cuGraphEventWaitNodeGetEvent,
+            cuGraphEventWaitNodeSetEvent,
+            cuGraphAddExternalSemaphoresSignalNode,
+            cuGraphExternalSemaphoresSignalNodeGetParams,
+            cuGraphExternalSemaphoresSignalNodeSetParams,
+            cuGraphAddExternalSemaphoresWaitNode,
+            cuGraphExternalSemaphoresWaitNodeGetParams,
+            cuGraphExternalSemaphoresWaitNodeSetParams,
+            cuGraphAddBatchMemOpNode,
+            cuGraphBatchMemOpNodeGetParams,
+            cuGraphBatchMemOpNodeSetParams,
+            cuGraphExecBatchMemOpNodeSetParams,
+            cuGraphAddMemAllocNode,
+            cuGraphMemAllocNodeGetParams,
+            cuGraphAddMemFreeNode,
+            cuGraphMemFreeNodeGetParams,
+            cuDeviceGraphMemTrim,
+            cuDeviceGetGraphMemAttribute,
+            cuDeviceSetGraphMemAttribute,
+            cuGraphClone,
+            cuGraphNodeFindInClone,
+            cuGraphNodeGetType,
+            cuGraphGetNodes,
+            cuGraphGetRootNodes,
+            cuGraphGetEdges,
+            cuGraphNodeGetDependencies,
+            cuGraphNodeGetDependentNodes,
+            cuGraphAddDependencies,
+            cuGraphRemoveDependencies,
+            cuGraphDestroyNode,
+            cuGraphInstantiateWithFlags,
+            cuGraphInstantiateWithParams,
+            cuGraphExecGetFlags,
+            cuGraphExecKernelNodeSetParams_v2,
+            cuGraphExecMemcpyNodeSetParams,
+            cuGraphExecMemsetNodeSetParams,
+            cuGraphExecHostNodeSetParams,
+            cuGraphExecChildGraphNodeSetParams,
+            cuGraphExecEventRecordNodeSetEvent,
+            cuGraphExecEventWaitNodeSetEvent,
+            cuGraphExecExternalSemaphoresSignalNodeSetParams,
+            cuGraphExecExternalSemaphoresWaitNodeSetParams,
+            cuGraphNodeSetEnabled,
+            cuGraphNodeGetEnabled,
+            cuGraphUpload,
+            cuGraphLaunch,
+            cuGraphExecDestroy,
+            cuGraphDestroy,
+            cuGraphExecUpdate_v2,
+            cuGraphKernelNodeCopyAttributes,
+            cuGraphKernelNodeGetAttribute,
+            cuGraphKernelNodeSetAttribute,
+            cuGraphDebugDotPrint,
+            cuUserObjectCreate,
+            cuUserObjectRetain,
+            cuUserObjectRelease,
+            cuGraphRetainUserObject,
+            cuGraphReleaseUserObject,
+            cuGraphAddNode,
+            cuGraphNodeSetParams,
+            cuGraphExecNodeSetParams,
+            cuOccupancyMaxActiveBlocksPerMultiprocessor,
+            cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags,
+            cuOccupancyMaxPotentialBlockSize,
+            cuOccupancyMaxPotentialBlockSizeWithFlags,
+            cuOccupancyAvailableDynamicSMemPerBlock,
+            cuOccupancyMaxPotentialClusterSize,
+            cuOccupancyMaxActiveClusters,
+            cuTexRefSetArray,
+            cuTexRefSetMipmappedArray,
+            cuTexRefSetAddress_v2,
+            cuTexRefSetAddress2D_v3,
+            cuTexRefSetFormat,
+            cuTexRefSetAddressMode,
+            cuTexRefSetFilterMode,
+            cuTexRefSetMipmapFilterMode,
+            cuTexRefSetMipmapLevelBias,
+            cuTexRefSetMipmapLevelClamp,
+            cuTexRefSetMaxAnisotropy,
+            cuTexRefSetBorderColor,
+            cuTexRefSetFlags,
+            cuTexRefGetAddress_v2,
+            cuTexRefGetArray,
+            cuTexRefGetMipmappedArray,
+            cuTexRefGetAddressMode,
+            cuTexRefGetFilterMode,
+            cuTexRefGetFormat,
+            cuTexRefGetMipmapFilterMode,
+            cuTexRefGetMipmapLevelBias,
+            cuTexRefGetMipmapLevelClamp,
+            cuTexRefGetMaxAnisotropy,
+            cuTexRefGetBorderColor,
+            cuTexRefGetFlags,
+            cuTexRefCreate,
+            cuTexRefDestroy,
+            cuSurfRefSetArray,
+            cuSurfRefGetArray,
+            cuTexObjectCreate,
+            cuTexObjectDestroy,
+            cuTexObjectGetResourceDesc,
+            cuTexObjectGetTextureDesc,
+            cuTexObjectGetResourceViewDesc,
+            cuSurfObjectCreate,
+            cuSurfObjectDestroy,
+            cuSurfObjectGetResourceDesc,
+            cuTensorMapEncodeTiled,
+            cuTensorMapEncodeIm2col,
+            cuTensorMapReplaceAddress,
+            cuDeviceCanAccessPeer,
+            cuCtxEnablePeerAccess,
+            cuCtxDisablePeerAccess,
+            cuDeviceGetP2PAttribute,
+            cuGraphicsUnregisterResource,
+            cuGraphicsSubResourceGetMappedArray,
+            cuGraphicsResourceGetMappedMipmappedArray,
+            cuGraphicsResourceGetMappedPointer_v2,
+            cuGraphicsResourceSetMapFlags_v2,
+            cuGraphicsMapResources,
+            cuGraphicsUnmapResources,
+            cuGetProcAddress_v2,
+            cuCoredumpGetAttribute,
+            cuCoredumpGetAttributeGlobal,
+            cuCoredumpSetAttribute,
+            cuCoredumpSetAttributeGlobal,
+            cuGetExportTable,
+            cuProfilerInitialize,
+            cuProfilerStart,
+            cuProfilerStop,
+        })
+    }
+    pub unsafe fn cuGetErrorString(
+        &self,
+        error: CUresult,
+        pStr: *mut *const ::core::ffi::c_char,
+    ) -> CUresult {
+        (self
+            .cuGetErrorString
+            .as_ref()
+            .expect("Expected function, got error."))(error, pStr)
+    }
+    pub unsafe fn cuGetErrorName(
+        &self,
+        error: CUresult,
+        pStr: *mut *const ::core::ffi::c_char,
+    ) -> CUresult {
+        (self
+            .cuGetErrorName
+            .as_ref()
+            .expect("Expected function, got error."))(error, pStr)
+    }
+    pub unsafe fn cuInit(&self, Flags: ::core::ffi::c_uint) -> CUresult {
+        (self.cuInit.as_ref().expect("Expected function, got error."))(Flags)
+    }
+    pub unsafe fn cuDriverGetVersion(&self, driverVersion: *mut ::core::ffi::c_int) -> CUresult {
+        (self
+            .cuDriverGetVersion
+            .as_ref()
+            .expect("Expected function, got error."))(driverVersion)
+    }
+    pub unsafe fn cuDeviceGet(
+        &self,
+        device: *mut CUdevice,
+        ordinal: ::core::ffi::c_int,
+    ) -> CUresult {
+        (self
+            .cuDeviceGet
+            .as_ref()
+            .expect("Expected function, got error."))(device, ordinal)
+    }
+    pub unsafe fn cuDeviceGetCount(&self, count: *mut ::core::ffi::c_int) -> CUresult {
+        (self
+            .cuDeviceGetCount
+            .as_ref()
+            .expect("Expected function, got error."))(count)
+    }
+    pub unsafe fn cuDeviceGetName(
+        &self,
+        name: *mut ::core::ffi::c_char,
+        len: ::core::ffi::c_int,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetName
+            .as_ref()
+            .expect("Expected function, got error."))(name, len, dev)
+    }
+    pub unsafe fn cuDeviceGetUuid(&self, uuid: *mut CUuuid, dev: CUdevice) -> CUresult {
+        (self
+            .cuDeviceGetUuid
+            .as_ref()
+            .expect("Expected function, got error."))(uuid, dev)
+    }
+    pub unsafe fn cuDeviceGetUuid_v2(&self, uuid: *mut CUuuid, dev: CUdevice) -> CUresult {
+        (self
+            .cuDeviceGetUuid_v2
+            .as_ref()
+            .expect("Expected function, got error."))(uuid, dev)
+    }
+    pub unsafe fn cuDeviceGetLuid(
+        &self,
+        luid: *mut ::core::ffi::c_char,
+        deviceNodeMask: *mut ::core::ffi::c_uint,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetLuid
+            .as_ref()
+            .expect("Expected function, got error."))(luid, deviceNodeMask, dev)
+    }
+    pub unsafe fn cuDeviceTotalMem_v2(&self, bytes: *mut usize, dev: CUdevice) -> CUresult {
+        (self
+            .cuDeviceTotalMem_v2
+            .as_ref()
+            .expect("Expected function, got error."))(bytes, dev)
+    }
+    pub unsafe fn cuDeviceGetTexture1DLinearMaxWidth(
+        &self,
+        maxWidthInElements: *mut usize,
+        format: CUarray_format,
+        numChannels: ::core::ffi::c_uint,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetTexture1DLinearMaxWidth
+            .as_ref()
+            .expect("Expected function, got error."))(
+            maxWidthInElements, format, numChannels, dev
+        )
+    }
+    pub unsafe fn cuDeviceGetAttribute(
+        &self,
+        pi: *mut ::core::ffi::c_int,
+        attrib: CUdevice_attribute,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(pi, attrib, dev)
+    }
+    pub unsafe fn cuDeviceGetNvSciSyncAttributes(
+        &self,
+        nvSciSyncAttrList: *mut ::core::ffi::c_void,
+        dev: CUdevice,
+        flags: ::core::ffi::c_int,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetNvSciSyncAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(nvSciSyncAttrList, dev, flags)
+    }
+    pub unsafe fn cuDeviceSetMemPool(&self, dev: CUdevice, pool: CUmemoryPool) -> CUresult {
+        (self
+            .cuDeviceSetMemPool
+            .as_ref()
+            .expect("Expected function, got error."))(dev, pool)
+    }
+    pub unsafe fn cuDeviceGetMemPool(&self, pool: *mut CUmemoryPool, dev: CUdevice) -> CUresult {
+        (self
+            .cuDeviceGetMemPool
+            .as_ref()
+            .expect("Expected function, got error."))(pool, dev)
+    }
+    pub unsafe fn cuDeviceGetDefaultMemPool(
+        &self,
+        pool_out: *mut CUmemoryPool,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetDefaultMemPool
+            .as_ref()
+            .expect("Expected function, got error."))(pool_out, dev)
+    }
+    pub unsafe fn cuDeviceGetExecAffinitySupport(
+        &self,
+        pi: *mut ::core::ffi::c_int,
+        type_: CUexecAffinityType,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceGetExecAffinitySupport
+            .as_ref()
+            .expect("Expected function, got error."))(pi, type_, dev)
+    }
+    pub unsafe fn cuFlushGPUDirectRDMAWrites(
+        &self,
+        target: CUflushGPUDirectRDMAWritesTarget,
+        scope: CUflushGPUDirectRDMAWritesScope,
+    ) -> CUresult {
+        (self
+            .cuFlushGPUDirectRDMAWrites
+            .as_ref()
+            .expect("Expected function, got error."))(target, scope)
+    }
+    pub unsafe fn cuDeviceGetProperties(&self, prop: *mut CUdevprop, dev: CUdevice) -> CUresult {
+        (self
+            .cuDeviceGetProperties
+            .as_ref()
+            .expect("Expected function, got error."))(prop, dev)
+    }
+    pub unsafe fn cuDeviceComputeCapability(
+        &self,
+        major: *mut ::core::ffi::c_int,
+        minor: *mut ::core::ffi::c_int,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuDeviceComputeCapability
+            .as_ref()
+            .expect("Expected function, got error."))(major, minor, dev)
+    }
+    pub unsafe fn cuDevicePrimaryCtxRetain(&self, pctx: *mut CUcontext, dev: CUdevice) -> CUresult {
+        (self
+            .cuDevicePrimaryCtxRetain
+            .as_ref()
+            .expect("Expected function, got error."))(pctx, dev)
+    }
+    pub unsafe fn cuDevicePrimaryCtxRelease_v2(&self, dev: CUdevice) -> CUresult {
+        (self
+            .cuDevicePrimaryCtxRelease_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dev)
+    }
+    pub unsafe fn cuDevicePrimaryCtxSetFlags_v2(
+        &self,
+        dev: CUdevice,
+        flags: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuDevicePrimaryCtxSetFlags_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dev, flags)
+    }
+    pub unsafe fn cuDevicePrimaryCtxGetState(
+        &self,
+        dev: CUdevice,
+        flags: *mut ::core::ffi::c_uint,
+        active: *mut ::core::ffi::c_int,
+    ) -> CUresult {
+        (self
+            .cuDevicePrimaryCtxGetState
+            .as_ref()
+            .expect("Expected function, got error."))(dev, flags, active)
+    }
+    pub unsafe fn cuDevicePrimaryCtxReset_v2(&self, dev: CUdevice) -> CUresult {
+        (self
+            .cuDevicePrimaryCtxReset_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dev)
+    }
+    pub unsafe fn cuCtxCreate_v2(
+        &self,
+        pctx: *mut CUcontext,
+        flags: ::core::ffi::c_uint,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuCtxCreate_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pctx, flags, dev)
+    }
+    pub unsafe fn cuCtxCreate_v3(
+        &self,
+        pctx: *mut CUcontext,
+        paramsArray: *mut CUexecAffinityParam,
+        numParams: ::core::ffi::c_int,
+        flags: ::core::ffi::c_uint,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuCtxCreate_v3
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pctx, paramsArray, numParams, flags, dev
+        )
+    }
+    pub unsafe fn cuCtxDestroy_v2(&self, ctx: CUcontext) -> CUresult {
+        (self
+            .cuCtxDestroy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(ctx)
+    }
+    pub unsafe fn cuCtxPushCurrent_v2(&self, ctx: CUcontext) -> CUresult {
+        (self
+            .cuCtxPushCurrent_v2
+            .as_ref()
+            .expect("Expected function, got error."))(ctx)
+    }
+    pub unsafe fn cuCtxPopCurrent_v2(&self, pctx: *mut CUcontext) -> CUresult {
+        (self
+            .cuCtxPopCurrent_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pctx)
+    }
+    pub unsafe fn cuCtxSetCurrent(&self, ctx: CUcontext) -> CUresult {
+        (self
+            .cuCtxSetCurrent
+            .as_ref()
+            .expect("Expected function, got error."))(ctx)
+    }
+    pub unsafe fn cuCtxGetCurrent(&self, pctx: *mut CUcontext) -> CUresult {
+        (self
+            .cuCtxGetCurrent
+            .as_ref()
+            .expect("Expected function, got error."))(pctx)
+    }
+    pub unsafe fn cuCtxGetDevice(&self, device: *mut CUdevice) -> CUresult {
+        (self
+            .cuCtxGetDevice
+            .as_ref()
+            .expect("Expected function, got error."))(device)
+    }
+    pub unsafe fn cuCtxGetFlags(&self, flags: *mut ::core::ffi::c_uint) -> CUresult {
+        (self
+            .cuCtxGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(flags)
+    }
+    pub unsafe fn cuCtxSetFlags(&self, flags: ::core::ffi::c_uint) -> CUresult {
+        (self
+            .cuCtxSetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(flags)
+    }
+    pub unsafe fn cuCtxGetId(
+        &self,
+        ctx: CUcontext,
+        ctxId: *mut ::core::ffi::c_ulonglong,
+    ) -> CUresult {
+        (self
+            .cuCtxGetId
+            .as_ref()
+            .expect("Expected function, got error."))(ctx, ctxId)
+    }
+    pub unsafe fn cuCtxSynchronize(&self) -> CUresult {
+        (self
+            .cuCtxSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cuCtxSetLimit(&self, limit: CUlimit, value: usize) -> CUresult {
+        (self
+            .cuCtxSetLimit
+            .as_ref()
+            .expect("Expected function, got error."))(limit, value)
+    }
+    pub unsafe fn cuCtxGetLimit(&self, pvalue: *mut usize, limit: CUlimit) -> CUresult {
+        (self
+            .cuCtxGetLimit
+            .as_ref()
+            .expect("Expected function, got error."))(pvalue, limit)
+    }
+    pub unsafe fn cuCtxGetCacheConfig(&self, pconfig: *mut CUfunc_cache) -> CUresult {
+        (self
+            .cuCtxGetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(pconfig)
+    }
+    pub unsafe fn cuCtxSetCacheConfig(&self, config: CUfunc_cache) -> CUresult {
+        (self
+            .cuCtxSetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(config)
+    }
+    pub unsafe fn cuCtxGetSharedMemConfig(&self, pConfig: *mut CUsharedconfig) -> CUresult {
+        (self
+            .cuCtxGetSharedMemConfig
+            .as_ref()
+            .expect("Expected function, got error."))(pConfig)
+    }
+    pub unsafe fn cuCtxSetSharedMemConfig(&self, config: CUsharedconfig) -> CUresult {
+        (self
+            .cuCtxSetSharedMemConfig
+            .as_ref()
+            .expect("Expected function, got error."))(config)
+    }
+    pub unsafe fn cuCtxGetApiVersion(
+        &self,
+        ctx: CUcontext,
+        version: *mut ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuCtxGetApiVersion
+            .as_ref()
+            .expect("Expected function, got error."))(ctx, version)
+    }
+    pub unsafe fn cuCtxGetStreamPriorityRange(
+        &self,
+        leastPriority: *mut ::core::ffi::c_int,
+        greatestPriority: *mut ::core::ffi::c_int,
+    ) -> CUresult {
+        (self
+            .cuCtxGetStreamPriorityRange
+            .as_ref()
+            .expect("Expected function, got error."))(leastPriority, greatestPriority)
+    }
+    pub unsafe fn cuCtxResetPersistingL2Cache(&self) -> CUresult {
+        (self
+            .cuCtxResetPersistingL2Cache
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cuCtxGetExecAffinity(
+        &self,
+        pExecAffinity: *mut CUexecAffinityParam,
+        type_: CUexecAffinityType,
+    ) -> CUresult {
+        (self
+            .cuCtxGetExecAffinity
+            .as_ref()
+            .expect("Expected function, got error."))(pExecAffinity, type_)
+    }
+    pub unsafe fn cuCtxAttach(&self, pctx: *mut CUcontext, flags: ::core::ffi::c_uint) -> CUresult {
+        (self
+            .cuCtxAttach
+            .as_ref()
+            .expect("Expected function, got error."))(pctx, flags)
+    }
+    pub unsafe fn cuCtxDetach(&self, ctx: CUcontext) -> CUresult {
+        (self
+            .cuCtxDetach
+            .as_ref()
+            .expect("Expected function, got error."))(ctx)
+    }
+    pub unsafe fn cuModuleLoad(
+        &self,
+        module: *mut CUmodule,
+        fname: *const ::core::ffi::c_char,
+    ) -> CUresult {
+        (self
+            .cuModuleLoad
+            .as_ref()
+            .expect("Expected function, got error."))(module, fname)
+    }
+    pub unsafe fn cuModuleLoadData(
+        &self,
+        module: *mut CUmodule,
+        image: *const ::core::ffi::c_void,
+    ) -> CUresult {
+        (self
+            .cuModuleLoadData
+            .as_ref()
+            .expect("Expected function, got error."))(module, image)
+    }
+    pub unsafe fn cuModuleLoadDataEx(
+        &self,
+        module: *mut CUmodule,
+        image: *const ::core::ffi::c_void,
+        numOptions: ::core::ffi::c_uint,
+        options: *mut CUjit_option,
+        optionValues: *mut *mut ::core::ffi::c_void,
+    ) -> CUresult {
+        (self
+            .cuModuleLoadDataEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            module,
+            image,
+            numOptions,
+            options,
+            optionValues,
+        )
+    }
+    pub unsafe fn cuModuleLoadFatBinary(
+        &self,
+        module: *mut CUmodule,
+        fatCubin: *const ::core::ffi::c_void,
+    ) -> CUresult {
+        (self
+            .cuModuleLoadFatBinary
+            .as_ref()
+            .expect("Expected function, got error."))(module, fatCubin)
+    }
+    pub unsafe fn cuModuleUnload(&self, hmod: CUmodule) -> CUresult {
+        (self
+            .cuModuleUnload
+            .as_ref()
+            .expect("Expected function, got error."))(hmod)
+    }
+    pub unsafe fn cuModuleGetLoadingMode(&self, mode: *mut CUmoduleLoadingMode) -> CUresult {
+        (self
+            .cuModuleGetLoadingMode
+            .as_ref()
+            .expect("Expected function, got error."))(mode)
+    }
+    pub unsafe fn cuModuleGetFunction(
+        &self,
         hfunc: *mut CUfunction,
         hmod: CUmodule,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleGetGlobal_v2(
+    ) -> CUresult {
+        (self
+            .cuModuleGetFunction
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, hmod, name)
+    }
+    pub unsafe fn cuModuleGetGlobal_v2(
+        &self,
         dptr: *mut CUdeviceptr,
         bytes: *mut usize,
         hmod: CUmodule,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLinkCreate_v2(
+    ) -> CUresult {
+        (self
+            .cuModuleGetGlobal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytes, hmod, name)
+    }
+    pub unsafe fn cuLinkCreate_v2(
+        &self,
         numOptions: ::core::ffi::c_uint,
         options: *mut CUjit_option,
         optionValues: *mut *mut ::core::ffi::c_void,
         stateOut: *mut CUlinkState,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLinkAddData_v2(
+    ) -> CUresult {
+        (self
+            .cuLinkCreate_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            numOptions, options, optionValues, stateOut
+        )
+    }
+    pub unsafe fn cuLinkAddData_v2(
+        &self,
         state: CUlinkState,
         type_: CUjitInputType,
         data: *mut ::core::ffi::c_void,
@@ -9417,44 +13356,83 @@ extern "C" {
         numOptions: ::core::ffi::c_uint,
         options: *mut CUjit_option,
         optionValues: *mut *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLinkAddFile_v2(
+    ) -> CUresult {
+        (self
+            .cuLinkAddData_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            state,
+            type_,
+            data,
+            size,
+            name,
+            numOptions,
+            options,
+            optionValues,
+        )
+    }
+    pub unsafe fn cuLinkAddFile_v2(
+        &self,
         state: CUlinkState,
         type_: CUjitInputType,
         path: *const ::core::ffi::c_char,
         numOptions: ::core::ffi::c_uint,
         options: *mut CUjit_option,
         optionValues: *mut *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLinkComplete(
+    ) -> CUresult {
+        (self
+            .cuLinkAddFile_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            state,
+            type_,
+            path,
+            numOptions,
+            options,
+            optionValues,
+        )
+    }
+    pub unsafe fn cuLinkComplete(
+        &self,
         state: CUlinkState,
         cubinOut: *mut *mut ::core::ffi::c_void,
         sizeOut: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLinkDestroy(state: CUlinkState) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleGetTexRef(
+    ) -> CUresult {
+        (self
+            .cuLinkComplete
+            .as_ref()
+            .expect("Expected function, got error."))(state, cubinOut, sizeOut)
+    }
+    pub unsafe fn cuLinkDestroy(&self, state: CUlinkState) -> CUresult {
+        (self
+            .cuLinkDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(state)
+    }
+    pub unsafe fn cuModuleGetTexRef(
+        &self,
         pTexRef: *mut CUtexref,
         hmod: CUmodule,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuModuleGetSurfRef(
+    ) -> CUresult {
+        (self
+            .cuModuleGetTexRef
+            .as_ref()
+            .expect("Expected function, got error."))(pTexRef, hmod, name)
+    }
+    pub unsafe fn cuModuleGetSurfRef(
+        &self,
         pSurfRef: *mut CUsurfref,
         hmod: CUmodule,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryLoadData(
+    ) -> CUresult {
+        (self
+            .cuModuleGetSurfRef
+            .as_ref()
+            .expect("Expected function, got error."))(pSurfRef, hmod, name)
+    }
+    pub unsafe fn cuLibraryLoadData(
+        &self,
         library: *mut CUlibrary,
         code: *const ::core::ffi::c_void,
         jitOptions: *mut CUjit_option,
@@ -9463,10 +13441,23 @@ extern "C" {
         libraryOptions: *mut CUlibraryOption,
         libraryOptionValues: *mut *mut ::core::ffi::c_void,
         numLibraryOptions: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryLoadFromFile(
+    ) -> CUresult {
+        (self
+            .cuLibraryLoadData
+            .as_ref()
+            .expect("Expected function, got error."))(
+            library,
+            code,
+            jitOptions,
+            jitOptionsValues,
+            numJitOptions,
+            libraryOptions,
+            libraryOptionValues,
+            numLibraryOptions,
+        )
+    }
+    pub unsafe fn cuLibraryLoadFromFile(
+        &self,
         library: *mut CUlibrary,
         fileName: *const ::core::ffi::c_char,
         jitOptions: *mut CUjit_option,
@@ -9475,1031 +13466,1823 @@ extern "C" {
         libraryOptions: *mut CUlibraryOption,
         libraryOptionValues: *mut *mut ::core::ffi::c_void,
         numLibraryOptions: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryUnload(library: CUlibrary) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryGetKernel(
+    ) -> CUresult {
+        (self
+            .cuLibraryLoadFromFile
+            .as_ref()
+            .expect("Expected function, got error."))(
+            library,
+            fileName,
+            jitOptions,
+            jitOptionsValues,
+            numJitOptions,
+            libraryOptions,
+            libraryOptionValues,
+            numLibraryOptions,
+        )
+    }
+    pub unsafe fn cuLibraryUnload(&self, library: CUlibrary) -> CUresult {
+        (self
+            .cuLibraryUnload
+            .as_ref()
+            .expect("Expected function, got error."))(library)
+    }
+    pub unsafe fn cuLibraryGetKernel(
+        &self,
         pKernel: *mut CUkernel,
         library: CUlibrary,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryGetModule(pMod: *mut CUmodule, library: CUlibrary) -> CUresult;
-}
-extern "C" {
-    pub fn cuKernelGetFunction(pFunc: *mut CUfunction, kernel: CUkernel) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryGetGlobal(
+    ) -> CUresult {
+        (self
+            .cuLibraryGetKernel
+            .as_ref()
+            .expect("Expected function, got error."))(pKernel, library, name)
+    }
+    pub unsafe fn cuLibraryGetModule(&self, pMod: *mut CUmodule, library: CUlibrary) -> CUresult {
+        (self
+            .cuLibraryGetModule
+            .as_ref()
+            .expect("Expected function, got error."))(pMod, library)
+    }
+    pub unsafe fn cuKernelGetFunction(&self, pFunc: *mut CUfunction, kernel: CUkernel) -> CUresult {
+        (self
+            .cuKernelGetFunction
+            .as_ref()
+            .expect("Expected function, got error."))(pFunc, kernel)
+    }
+    pub unsafe fn cuLibraryGetGlobal(
+        &self,
         dptr: *mut CUdeviceptr,
         bytes: *mut usize,
         library: CUlibrary,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryGetManaged(
+    ) -> CUresult {
+        (self
+            .cuLibraryGetGlobal
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytes, library, name)
+    }
+    pub unsafe fn cuLibraryGetManaged(
+        &self,
         dptr: *mut CUdeviceptr,
         bytes: *mut usize,
         library: CUlibrary,
         name: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLibraryGetUnifiedFunction(
+    ) -> CUresult {
+        (self
+            .cuLibraryGetManaged
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytes, library, name)
+    }
+    pub unsafe fn cuLibraryGetUnifiedFunction(
+        &self,
         fptr: *mut *mut ::core::ffi::c_void,
         library: CUlibrary,
         symbol: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuKernelGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuLibraryGetUnifiedFunction
+            .as_ref()
+            .expect("Expected function, got error."))(fptr, library, symbol)
+    }
+    pub unsafe fn cuKernelGetAttribute(
+        &self,
         pi: *mut ::core::ffi::c_int,
         attrib: CUfunction_attribute,
         kernel: CUkernel,
         dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuKernelSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuKernelGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(pi, attrib, kernel, dev)
+    }
+    pub unsafe fn cuKernelSetAttribute(
+        &self,
         attrib: CUfunction_attribute,
         val: ::core::ffi::c_int,
         kernel: CUkernel,
         dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuKernelSetCacheConfig(
+    ) -> CUresult {
+        (self
+            .cuKernelSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(attrib, val, kernel, dev)
+    }
+    pub unsafe fn cuKernelSetCacheConfig(
+        &self,
         kernel: CUkernel,
         config: CUfunc_cache,
         dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemGetInfo_v2(free: *mut usize, total: *mut usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAlloc_v2(dptr: *mut CUdeviceptr, bytesize: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAllocPitch_v2(
+    ) -> CUresult {
+        (self
+            .cuKernelSetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(kernel, config, dev)
+    }
+    pub unsafe fn cuMemGetInfo_v2(&self, free: *mut usize, total: *mut usize) -> CUresult {
+        (self
+            .cuMemGetInfo_v2
+            .as_ref()
+            .expect("Expected function, got error."))(free, total)
+    }
+    pub unsafe fn cuMemAlloc_v2(&self, dptr: *mut CUdeviceptr, bytesize: usize) -> CUresult {
+        (self
+            .cuMemAlloc_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytesize)
+    }
+    pub unsafe fn cuMemAllocPitch_v2(
+        &self,
         dptr: *mut CUdeviceptr,
         pPitch: *mut usize,
         WidthInBytes: usize,
         Height: usize,
         ElementSizeBytes: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemFree_v2(dptr: CUdeviceptr) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemGetAddressRange_v2(
+    ) -> CUresult {
+        (self
+            .cuMemAllocPitch_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dptr,
+            pPitch,
+            WidthInBytes,
+            Height,
+            ElementSizeBytes,
+        )
+    }
+    pub unsafe fn cuMemFree_v2(&self, dptr: CUdeviceptr) -> CUresult {
+        (self
+            .cuMemFree_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dptr)
+    }
+    pub unsafe fn cuMemGetAddressRange_v2(
+        &self,
         pbase: *mut CUdeviceptr,
         psize: *mut usize,
         dptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAllocHost_v2(pp: *mut *mut ::core::ffi::c_void, bytesize: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemFreeHost(p: *mut ::core::ffi::c_void) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemHostAlloc(
+    ) -> CUresult {
+        (self
+            .cuMemGetAddressRange_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pbase, psize, dptr)
+    }
+    pub unsafe fn cuMemAllocHost_v2(
+        &self,
+        pp: *mut *mut ::core::ffi::c_void,
+        bytesize: usize,
+    ) -> CUresult {
+        (self
+            .cuMemAllocHost_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pp, bytesize)
+    }
+    pub unsafe fn cuMemFreeHost(&self, p: *mut ::core::ffi::c_void) -> CUresult {
+        (self
+            .cuMemFreeHost
+            .as_ref()
+            .expect("Expected function, got error."))(p)
+    }
+    pub unsafe fn cuMemHostAlloc(
+        &self,
         pp: *mut *mut ::core::ffi::c_void,
         bytesize: usize,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemHostGetDevicePointer_v2(
+    ) -> CUresult {
+        (self
+            .cuMemHostAlloc
+            .as_ref()
+            .expect("Expected function, got error."))(pp, bytesize, Flags)
+    }
+    pub unsafe fn cuMemHostGetDevicePointer_v2(
+        &self,
         pdptr: *mut CUdeviceptr,
         p: *mut ::core::ffi::c_void,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemHostGetFlags(
+    ) -> CUresult {
+        (self
+            .cuMemHostGetDevicePointer_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pdptr, p, Flags)
+    }
+    pub unsafe fn cuMemHostGetFlags(
+        &self,
         pFlags: *mut ::core::ffi::c_uint,
         p: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAllocManaged(
+    ) -> CUresult {
+        (self
+            .cuMemHostGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(pFlags, p)
+    }
+    pub unsafe fn cuMemAllocManaged(
+        &self,
         dptr: *mut CUdeviceptr,
         bytesize: usize,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetByPCIBusId(
+    ) -> CUresult {
+        (self
+            .cuMemAllocManaged
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytesize, flags)
+    }
+    pub unsafe fn cuDeviceGetByPCIBusId(
+        &self,
         dev: *mut CUdevice,
         pciBusId: *const ::core::ffi::c_char,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetPCIBusId(
+    ) -> CUresult {
+        (self
+            .cuDeviceGetByPCIBusId
+            .as_ref()
+            .expect("Expected function, got error."))(dev, pciBusId)
+    }
+    pub unsafe fn cuDeviceGetPCIBusId(
+        &self,
         pciBusId: *mut ::core::ffi::c_char,
         len: ::core::ffi::c_int,
         dev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuIpcGetEventHandle(pHandle: *mut CUipcEventHandle, event: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuIpcOpenEventHandle(phEvent: *mut CUevent, handle: CUipcEventHandle) -> CUresult;
-}
-extern "C" {
-    pub fn cuIpcGetMemHandle(pHandle: *mut CUipcMemHandle, dptr: CUdeviceptr) -> CUresult;
-}
-extern "C" {
-    pub fn cuIpcOpenMemHandle_v2(
+    ) -> CUresult {
+        (self
+            .cuDeviceGetPCIBusId
+            .as_ref()
+            .expect("Expected function, got error."))(pciBusId, len, dev)
+    }
+    pub unsafe fn cuIpcGetEventHandle(
+        &self,
+        pHandle: *mut CUipcEventHandle,
+        event: CUevent,
+    ) -> CUresult {
+        (self
+            .cuIpcGetEventHandle
+            .as_ref()
+            .expect("Expected function, got error."))(pHandle, event)
+    }
+    pub unsafe fn cuIpcOpenEventHandle(
+        &self,
+        phEvent: *mut CUevent,
+        handle: CUipcEventHandle,
+    ) -> CUresult {
+        (self
+            .cuIpcOpenEventHandle
+            .as_ref()
+            .expect("Expected function, got error."))(phEvent, handle)
+    }
+    pub unsafe fn cuIpcGetMemHandle(
+        &self,
+        pHandle: *mut CUipcMemHandle,
+        dptr: CUdeviceptr,
+    ) -> CUresult {
+        (self
+            .cuIpcGetMemHandle
+            .as_ref()
+            .expect("Expected function, got error."))(pHandle, dptr)
+    }
+    pub unsafe fn cuIpcOpenMemHandle_v2(
+        &self,
         pdptr: *mut CUdeviceptr,
         handle: CUipcMemHandle,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuIpcCloseMemHandle(dptr: CUdeviceptr) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemHostRegister_v2(
+    ) -> CUresult {
+        (self
+            .cuIpcOpenMemHandle_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pdptr, handle, Flags)
+    }
+    pub unsafe fn cuIpcCloseMemHandle(&self, dptr: CUdeviceptr) -> CUresult {
+        (self
+            .cuIpcCloseMemHandle
+            .as_ref()
+            .expect("Expected function, got error."))(dptr)
+    }
+    pub unsafe fn cuMemHostRegister_v2(
+        &self,
         p: *mut ::core::ffi::c_void,
         bytesize: usize,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemHostUnregister(p: *mut ::core::ffi::c_void) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy(dst: CUdeviceptr, src: CUdeviceptr, ByteCount: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyPeer(
+    ) -> CUresult {
+        (self
+            .cuMemHostRegister_v2
+            .as_ref()
+            .expect("Expected function, got error."))(p, bytesize, Flags)
+    }
+    pub unsafe fn cuMemHostUnregister(&self, p: *mut ::core::ffi::c_void) -> CUresult {
+        (self
+            .cuMemHostUnregister
+            .as_ref()
+            .expect("Expected function, got error."))(p)
+    }
+    pub unsafe fn cuMemcpy(
+        &self,
+        dst: CUdeviceptr,
+        src: CUdeviceptr,
+        ByteCount: usize,
+    ) -> CUresult {
+        (self
+            .cuMemcpy
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src, ByteCount)
+    }
+    pub unsafe fn cuMemcpyPeer(
+        &self,
         dstDevice: CUdeviceptr,
         dstContext: CUcontext,
         srcDevice: CUdeviceptr,
         srcContext: CUcontext,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyHtoD_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyPeer
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, dstContext, srcDevice, srcContext, ByteCount,
+        )
+    }
+    pub unsafe fn cuMemcpyHtoD_v2(
+        &self,
         dstDevice: CUdeviceptr,
         srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyDtoH_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyHtoD_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, srcHost, ByteCount)
+    }
+    pub unsafe fn cuMemcpyDtoH_v2(
+        &self,
         dstHost: *mut ::core::ffi::c_void,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyDtoD_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyDtoH_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstHost, srcDevice, ByteCount)
+    }
+    pub unsafe fn cuMemcpyDtoD_v2(
+        &self,
         dstDevice: CUdeviceptr,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyDtoA_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyDtoD_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, srcDevice, ByteCount)
+    }
+    pub unsafe fn cuMemcpyDtoA_v2(
+        &self,
         dstArray: CUarray,
         dstOffset: usize,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyAtoD_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyDtoA_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstArray, dstOffset, srcDevice, ByteCount
+        )
+    }
+    pub unsafe fn cuMemcpyAtoD_v2(
+        &self,
         dstDevice: CUdeviceptr,
         srcArray: CUarray,
         srcOffset: usize,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyHtoA_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyAtoD_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, srcArray, srcOffset, ByteCount
+        )
+    }
+    pub unsafe fn cuMemcpyHtoA_v2(
+        &self,
         dstArray: CUarray,
         dstOffset: usize,
         srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyAtoH_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyHtoA_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstArray, dstOffset, srcHost, ByteCount
+        )
+    }
+    pub unsafe fn cuMemcpyAtoH_v2(
+        &self,
         dstHost: *mut ::core::ffi::c_void,
         srcArray: CUarray,
         srcOffset: usize,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyAtoA_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyAtoH_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstHost, srcArray, srcOffset, ByteCount
+        )
+    }
+    pub unsafe fn cuMemcpyAtoA_v2(
+        &self,
         dstArray: CUarray,
         dstOffset: usize,
         srcArray: CUarray,
         srcOffset: usize,
         ByteCount: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy2D_v2(pCopy: *const CUDA_MEMCPY2D) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy2DUnaligned_v2(pCopy: *const CUDA_MEMCPY2D) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy3D_v2(pCopy: *const CUDA_MEMCPY3D) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy3DPeer(pCopy: *const CUDA_MEMCPY3D_PEER) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyAsync(
+    ) -> CUresult {
+        (self
+            .cuMemcpyAtoA_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstArray, dstOffset, srcArray, srcOffset, ByteCount,
+        )
+    }
+    pub unsafe fn cuMemcpy2D_v2(&self, pCopy: *const CUDA_MEMCPY2D) -> CUresult {
+        (self
+            .cuMemcpy2D_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy)
+    }
+    pub unsafe fn cuMemcpy2DUnaligned_v2(&self, pCopy: *const CUDA_MEMCPY2D) -> CUresult {
+        (self
+            .cuMemcpy2DUnaligned_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy)
+    }
+    pub unsafe fn cuMemcpy3D_v2(&self, pCopy: *const CUDA_MEMCPY3D) -> CUresult {
+        (self
+            .cuMemcpy3D_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy)
+    }
+    pub unsafe fn cuMemcpy3DPeer(&self, pCopy: *const CUDA_MEMCPY3D_PEER) -> CUresult {
+        (self
+            .cuMemcpy3DPeer
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy)
+    }
+    pub unsafe fn cuMemcpyAsync(
+        &self,
         dst: CUdeviceptr,
         src: CUdeviceptr,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyPeerAsync(
+    ) -> CUresult {
+        (self
+            .cuMemcpyAsync
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src, ByteCount, hStream)
+    }
+    pub unsafe fn cuMemcpyPeerAsync(
+        &self,
         dstDevice: CUdeviceptr,
         dstContext: CUcontext,
         srcDevice: CUdeviceptr,
         srcContext: CUcontext,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyHtoDAsync_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyPeerAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, dstContext, srcDevice, srcContext, ByteCount, hStream,
+        )
+    }
+    pub unsafe fn cuMemcpyHtoDAsync_v2(
+        &self,
         dstDevice: CUdeviceptr,
         srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyDtoHAsync_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyHtoDAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, srcHost, ByteCount, hStream)
+    }
+    pub unsafe fn cuMemcpyDtoHAsync_v2(
+        &self,
         dstHost: *mut ::core::ffi::c_void,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyDtoDAsync_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyDtoHAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstHost, srcDevice, ByteCount, hStream)
+    }
+    pub unsafe fn cuMemcpyDtoDAsync_v2(
+        &self,
         dstDevice: CUdeviceptr,
         srcDevice: CUdeviceptr,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyHtoAAsync_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyDtoDAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, srcDevice, ByteCount, hStream
+        )
+    }
+    pub unsafe fn cuMemcpyHtoAAsync_v2(
+        &self,
         dstArray: CUarray,
         dstOffset: usize,
         srcHost: *const ::core::ffi::c_void,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpyAtoHAsync_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyHtoAAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstArray, dstOffset, srcHost, ByteCount, hStream,
+        )
+    }
+    pub unsafe fn cuMemcpyAtoHAsync_v2(
+        &self,
         dstHost: *mut ::core::ffi::c_void,
         srcArray: CUarray,
         srcOffset: usize,
         ByteCount: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy2DAsync_v2(pCopy: *const CUDA_MEMCPY2D, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy3DAsync_v2(pCopy: *const CUDA_MEMCPY3D, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemcpy3DPeerAsync(pCopy: *const CUDA_MEMCPY3D_PEER, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD8_v2(dstDevice: CUdeviceptr, uc: ::core::ffi::c_uchar, N: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD16_v2(dstDevice: CUdeviceptr, us: ::core::ffi::c_ushort, N: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD32_v2(dstDevice: CUdeviceptr, ui: ::core::ffi::c_uint, N: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD2D8_v2(
+    ) -> CUresult {
+        (self
+            .cuMemcpyAtoHAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstHost, srcArray, srcOffset, ByteCount, hStream,
+        )
+    }
+    pub unsafe fn cuMemcpy2DAsync_v2(
+        &self,
+        pCopy: *const CUDA_MEMCPY2D,
+        hStream: CUstream,
+    ) -> CUresult {
+        (self
+            .cuMemcpy2DAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy, hStream)
+    }
+    pub unsafe fn cuMemcpy3DAsync_v2(
+        &self,
+        pCopy: *const CUDA_MEMCPY3D,
+        hStream: CUstream,
+    ) -> CUresult {
+        (self
+            .cuMemcpy3DAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy, hStream)
+    }
+    pub unsafe fn cuMemcpy3DPeerAsync(
+        &self,
+        pCopy: *const CUDA_MEMCPY3D_PEER,
+        hStream: CUstream,
+    ) -> CUresult {
+        (self
+            .cuMemcpy3DPeerAsync
+            .as_ref()
+            .expect("Expected function, got error."))(pCopy, hStream)
+    }
+    pub unsafe fn cuMemsetD8_v2(
+        &self,
+        dstDevice: CUdeviceptr,
+        uc: ::core::ffi::c_uchar,
+        N: usize,
+    ) -> CUresult {
+        (self
+            .cuMemsetD8_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, uc, N)
+    }
+    pub unsafe fn cuMemsetD16_v2(
+        &self,
+        dstDevice: CUdeviceptr,
+        us: ::core::ffi::c_ushort,
+        N: usize,
+    ) -> CUresult {
+        (self
+            .cuMemsetD16_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, us, N)
+    }
+    pub unsafe fn cuMemsetD32_v2(
+        &self,
+        dstDevice: CUdeviceptr,
+        ui: ::core::ffi::c_uint,
+        N: usize,
+    ) -> CUresult {
+        (self
+            .cuMemsetD32_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, ui, N)
+    }
+    pub unsafe fn cuMemsetD2D8_v2(
+        &self,
         dstDevice: CUdeviceptr,
         dstPitch: usize,
         uc: ::core::ffi::c_uchar,
         Width: usize,
         Height: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD2D16_v2(
+    ) -> CUresult {
+        (self
+            .cuMemsetD2D8_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, dstPitch, uc, Width, Height)
+    }
+    pub unsafe fn cuMemsetD2D16_v2(
+        &self,
         dstDevice: CUdeviceptr,
         dstPitch: usize,
         us: ::core::ffi::c_ushort,
         Width: usize,
         Height: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD2D32_v2(
+    ) -> CUresult {
+        (self
+            .cuMemsetD2D16_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, dstPitch, us, Width, Height)
+    }
+    pub unsafe fn cuMemsetD2D32_v2(
+        &self,
         dstDevice: CUdeviceptr,
         dstPitch: usize,
         ui: ::core::ffi::c_uint,
         Width: usize,
         Height: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD8Async(
+    ) -> CUresult {
+        (self
+            .cuMemsetD2D32_v2
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, dstPitch, ui, Width, Height)
+    }
+    pub unsafe fn cuMemsetD8Async(
+        &self,
         dstDevice: CUdeviceptr,
         uc: ::core::ffi::c_uchar,
         N: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD16Async(
+    ) -> CUresult {
+        (self
+            .cuMemsetD8Async
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, uc, N, hStream)
+    }
+    pub unsafe fn cuMemsetD16Async(
+        &self,
         dstDevice: CUdeviceptr,
         us: ::core::ffi::c_ushort,
         N: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD32Async(
+    ) -> CUresult {
+        (self
+            .cuMemsetD16Async
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, us, N, hStream)
+    }
+    pub unsafe fn cuMemsetD32Async(
+        &self,
         dstDevice: CUdeviceptr,
         ui: ::core::ffi::c_uint,
         N: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD2D8Async(
+    ) -> CUresult {
+        (self
+            .cuMemsetD32Async
+            .as_ref()
+            .expect("Expected function, got error."))(dstDevice, ui, N, hStream)
+    }
+    pub unsafe fn cuMemsetD2D8Async(
+        &self,
         dstDevice: CUdeviceptr,
         dstPitch: usize,
         uc: ::core::ffi::c_uchar,
         Width: usize,
         Height: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD2D16Async(
+    ) -> CUresult {
+        (self
+            .cuMemsetD2D8Async
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, dstPitch, uc, Width, Height, hStream,
+        )
+    }
+    pub unsafe fn cuMemsetD2D16Async(
+        &self,
         dstDevice: CUdeviceptr,
         dstPitch: usize,
         us: ::core::ffi::c_ushort,
         Width: usize,
         Height: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemsetD2D32Async(
+    ) -> CUresult {
+        (self
+            .cuMemsetD2D16Async
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, dstPitch, us, Width, Height, hStream,
+        )
+    }
+    pub unsafe fn cuMemsetD2D32Async(
+        &self,
         dstDevice: CUdeviceptr,
         dstPitch: usize,
         ui: ::core::ffi::c_uint,
         Width: usize,
         Height: usize,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArrayCreate_v2(
+    ) -> CUresult {
+        (self
+            .cuMemsetD2D32Async
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dstDevice, dstPitch, ui, Width, Height, hStream,
+        )
+    }
+    pub unsafe fn cuArrayCreate_v2(
+        &self,
         pHandle: *mut CUarray,
         pAllocateArray: *const CUDA_ARRAY_DESCRIPTOR,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArrayGetDescriptor_v2(
+    ) -> CUresult {
+        (self
+            .cuArrayCreate_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pHandle, pAllocateArray)
+    }
+    pub unsafe fn cuArrayGetDescriptor_v2(
+        &self,
         pArrayDescriptor: *mut CUDA_ARRAY_DESCRIPTOR,
         hArray: CUarray,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArrayGetSparseProperties(
+    ) -> CUresult {
+        (self
+            .cuArrayGetDescriptor_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pArrayDescriptor, hArray)
+    }
+    pub unsafe fn cuArrayGetSparseProperties(
+        &self,
         sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
         array: CUarray,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMipmappedArrayGetSparseProperties(
+    ) -> CUresult {
+        (self
+            .cuArrayGetSparseProperties
+            .as_ref()
+            .expect("Expected function, got error."))(sparseProperties, array)
+    }
+    pub unsafe fn cuMipmappedArrayGetSparseProperties(
+        &self,
         sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
         mipmap: CUmipmappedArray,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArrayGetMemoryRequirements(
+    ) -> CUresult {
+        (self
+            .cuMipmappedArrayGetSparseProperties
+            .as_ref()
+            .expect("Expected function, got error."))(sparseProperties, mipmap)
+    }
+    pub unsafe fn cuArrayGetMemoryRequirements(
+        &self,
         memoryRequirements: *mut CUDA_ARRAY_MEMORY_REQUIREMENTS,
         array: CUarray,
         device: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMipmappedArrayGetMemoryRequirements(
+    ) -> CUresult {
+        (self
+            .cuArrayGetMemoryRequirements
+            .as_ref()
+            .expect("Expected function, got error."))(memoryRequirements, array, device)
+    }
+    pub unsafe fn cuMipmappedArrayGetMemoryRequirements(
+        &self,
         memoryRequirements: *mut CUDA_ARRAY_MEMORY_REQUIREMENTS,
         mipmap: CUmipmappedArray,
         device: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArrayGetPlane(
+    ) -> CUresult {
+        (self
+            .cuMipmappedArrayGetMemoryRequirements
+            .as_ref()
+            .expect("Expected function, got error."))(memoryRequirements, mipmap, device)
+    }
+    pub unsafe fn cuArrayGetPlane(
+        &self,
         pPlaneArray: *mut CUarray,
         hArray: CUarray,
         planeIdx: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArrayDestroy(hArray: CUarray) -> CUresult;
-}
-extern "C" {
-    pub fn cuArray3DCreate_v2(
+    ) -> CUresult {
+        (self
+            .cuArrayGetPlane
+            .as_ref()
+            .expect("Expected function, got error."))(pPlaneArray, hArray, planeIdx)
+    }
+    pub unsafe fn cuArrayDestroy(&self, hArray: CUarray) -> CUresult {
+        (self
+            .cuArrayDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(hArray)
+    }
+    pub unsafe fn cuArray3DCreate_v2(
+        &self,
         pHandle: *mut CUarray,
         pAllocateArray: *const CUDA_ARRAY3D_DESCRIPTOR,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuArray3DGetDescriptor_v2(
+    ) -> CUresult {
+        (self
+            .cuArray3DCreate_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pHandle, pAllocateArray)
+    }
+    pub unsafe fn cuArray3DGetDescriptor_v2(
+        &self,
         pArrayDescriptor: *mut CUDA_ARRAY3D_DESCRIPTOR,
         hArray: CUarray,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMipmappedArrayCreate(
+    ) -> CUresult {
+        (self
+            .cuArray3DGetDescriptor_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pArrayDescriptor, hArray)
+    }
+    pub unsafe fn cuMipmappedArrayCreate(
+        &self,
         pHandle: *mut CUmipmappedArray,
         pMipmappedArrayDesc: *const CUDA_ARRAY3D_DESCRIPTOR,
         numMipmapLevels: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMipmappedArrayGetLevel(
+    ) -> CUresult {
+        (self
+            .cuMipmappedArrayCreate
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pHandle, pMipmappedArrayDesc, numMipmapLevels
+        )
+    }
+    pub unsafe fn cuMipmappedArrayGetLevel(
+        &self,
         pLevelArray: *mut CUarray,
         hMipmappedArray: CUmipmappedArray,
         level: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMipmappedArrayDestroy(hMipmappedArray: CUmipmappedArray) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemGetHandleForAddressRange(
+    ) -> CUresult {
+        (self
+            .cuMipmappedArrayGetLevel
+            .as_ref()
+            .expect("Expected function, got error."))(pLevelArray, hMipmappedArray, level)
+    }
+    pub unsafe fn cuMipmappedArrayDestroy(&self, hMipmappedArray: CUmipmappedArray) -> CUresult {
+        (self
+            .cuMipmappedArrayDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(hMipmappedArray)
+    }
+    pub unsafe fn cuMemGetHandleForAddressRange(
+        &self,
         handle: *mut ::core::ffi::c_void,
         dptr: CUdeviceptr,
         size: usize,
         handleType: CUmemRangeHandleType,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAddressReserve(
+    ) -> CUresult {
+        (self
+            .cuMemGetHandleForAddressRange
+            .as_ref()
+            .expect("Expected function, got error."))(handle, dptr, size, handleType, flags)
+    }
+    pub unsafe fn cuMemAddressReserve(
+        &self,
         ptr: *mut CUdeviceptr,
         size: usize,
         alignment: usize,
         addr: CUdeviceptr,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAddressFree(ptr: CUdeviceptr, size: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemCreate(
+    ) -> CUresult {
+        (self
+            .cuMemAddressReserve
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size, alignment, addr, flags)
+    }
+    pub unsafe fn cuMemAddressFree(&self, ptr: CUdeviceptr, size: usize) -> CUresult {
+        (self
+            .cuMemAddressFree
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size)
+    }
+    pub unsafe fn cuMemCreate(
+        &self,
         handle: *mut CUmemGenericAllocationHandle,
         size: usize,
         prop: *const CUmemAllocationProp,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemRelease(handle: CUmemGenericAllocationHandle) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemMap(
+    ) -> CUresult {
+        (self
+            .cuMemCreate
+            .as_ref()
+            .expect("Expected function, got error."))(handle, size, prop, flags)
+    }
+    pub unsafe fn cuMemRelease(&self, handle: CUmemGenericAllocationHandle) -> CUresult {
+        (self
+            .cuMemRelease
+            .as_ref()
+            .expect("Expected function, got error."))(handle)
+    }
+    pub unsafe fn cuMemMap(
+        &self,
         ptr: CUdeviceptr,
         size: usize,
         offset: usize,
         handle: CUmemGenericAllocationHandle,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemMapArrayAsync(
+    ) -> CUresult {
+        (self
+            .cuMemMap
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size, offset, handle, flags)
+    }
+    pub unsafe fn cuMemMapArrayAsync(
+        &self,
         mapInfoList: *mut CUarrayMapInfo,
         count: ::core::ffi::c_uint,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemUnmap(ptr: CUdeviceptr, size: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemSetAccess(
+    ) -> CUresult {
+        (self
+            .cuMemMapArrayAsync
+            .as_ref()
+            .expect("Expected function, got error."))(mapInfoList, count, hStream)
+    }
+    pub unsafe fn cuMemUnmap(&self, ptr: CUdeviceptr, size: usize) -> CUresult {
+        (self
+            .cuMemUnmap
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size)
+    }
+    pub unsafe fn cuMemSetAccess(
+        &self,
         ptr: CUdeviceptr,
         size: usize,
         desc: *const CUmemAccessDesc,
         count: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemGetAccess(
+    ) -> CUresult {
+        (self
+            .cuMemSetAccess
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size, desc, count)
+    }
+    pub unsafe fn cuMemGetAccess(
+        &self,
         flags: *mut ::core::ffi::c_ulonglong,
         location: *const CUmemLocation,
         ptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemExportToShareableHandle(
+    ) -> CUresult {
+        (self
+            .cuMemGetAccess
+            .as_ref()
+            .expect("Expected function, got error."))(flags, location, ptr)
+    }
+    pub unsafe fn cuMemExportToShareableHandle(
+        &self,
         shareableHandle: *mut ::core::ffi::c_void,
         handle: CUmemGenericAllocationHandle,
         handleType: CUmemAllocationHandleType,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemImportFromShareableHandle(
+    ) -> CUresult {
+        (self
+            .cuMemExportToShareableHandle
+            .as_ref()
+            .expect("Expected function, got error."))(
+            shareableHandle, handle, handleType, flags
+        )
+    }
+    pub unsafe fn cuMemImportFromShareableHandle(
+        &self,
         handle: *mut CUmemGenericAllocationHandle,
         osHandle: *mut ::core::ffi::c_void,
         shHandleType: CUmemAllocationHandleType,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemGetAllocationGranularity(
+    ) -> CUresult {
+        (self
+            .cuMemImportFromShareableHandle
+            .as_ref()
+            .expect("Expected function, got error."))(handle, osHandle, shHandleType)
+    }
+    pub unsafe fn cuMemGetAllocationGranularity(
+        &self,
         granularity: *mut usize,
         prop: *const CUmemAllocationProp,
         option: CUmemAllocationGranularity_flags,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemGetAllocationPropertiesFromHandle(
+    ) -> CUresult {
+        (self
+            .cuMemGetAllocationGranularity
+            .as_ref()
+            .expect("Expected function, got error."))(granularity, prop, option)
+    }
+    pub unsafe fn cuMemGetAllocationPropertiesFromHandle(
+        &self,
         prop: *mut CUmemAllocationProp,
         handle: CUmemGenericAllocationHandle,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemRetainAllocationHandle(
+    ) -> CUresult {
+        (self
+            .cuMemGetAllocationPropertiesFromHandle
+            .as_ref()
+            .expect("Expected function, got error."))(prop, handle)
+    }
+    pub unsafe fn cuMemRetainAllocationHandle(
+        &self,
         handle: *mut CUmemGenericAllocationHandle,
         addr: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemFreeAsync(dptr: CUdeviceptr, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAllocAsync(dptr: *mut CUdeviceptr, bytesize: usize, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolTrimTo(pool: CUmemoryPool, minBytesToKeep: usize) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuMemRetainAllocationHandle
+            .as_ref()
+            .expect("Expected function, got error."))(handle, addr)
+    }
+    pub unsafe fn cuMemFreeAsync(&self, dptr: CUdeviceptr, hStream: CUstream) -> CUresult {
+        (self
+            .cuMemFreeAsync
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, hStream)
+    }
+    pub unsafe fn cuMemAllocAsync(
+        &self,
+        dptr: *mut CUdeviceptr,
+        bytesize: usize,
+        hStream: CUstream,
+    ) -> CUresult {
+        (self
+            .cuMemAllocAsync
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytesize, hStream)
+    }
+    pub unsafe fn cuMemPoolTrimTo(&self, pool: CUmemoryPool, minBytesToKeep: usize) -> CUresult {
+        (self
+            .cuMemPoolTrimTo
+            .as_ref()
+            .expect("Expected function, got error."))(pool, minBytesToKeep)
+    }
+    pub unsafe fn cuMemPoolSetAttribute(
+        &self,
         pool: CUmemoryPool,
         attr: CUmemPool_attribute,
         value: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuMemPoolSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(pool, attr, value)
+    }
+    pub unsafe fn cuMemPoolGetAttribute(
+        &self,
         pool: CUmemoryPool,
         attr: CUmemPool_attribute,
         value: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolSetAccess(
+    ) -> CUresult {
+        (self
+            .cuMemPoolGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(pool, attr, value)
+    }
+    pub unsafe fn cuMemPoolSetAccess(
+        &self,
         pool: CUmemoryPool,
         map: *const CUmemAccessDesc,
         count: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolGetAccess(
+    ) -> CUresult {
+        (self
+            .cuMemPoolSetAccess
+            .as_ref()
+            .expect("Expected function, got error."))(pool, map, count)
+    }
+    pub unsafe fn cuMemPoolGetAccess(
+        &self,
         flags: *mut CUmemAccess_flags,
         memPool: CUmemoryPool,
         location: *mut CUmemLocation,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolCreate(pool: *mut CUmemoryPool, poolProps: *const CUmemPoolProps) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolDestroy(pool: CUmemoryPool) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAllocFromPoolAsync(
+    ) -> CUresult {
+        (self
+            .cuMemPoolGetAccess
+            .as_ref()
+            .expect("Expected function, got error."))(flags, memPool, location)
+    }
+    pub unsafe fn cuMemPoolCreate(
+        &self,
+        pool: *mut CUmemoryPool,
+        poolProps: *const CUmemPoolProps,
+    ) -> CUresult {
+        (self
+            .cuMemPoolCreate
+            .as_ref()
+            .expect("Expected function, got error."))(pool, poolProps)
+    }
+    pub unsafe fn cuMemPoolDestroy(&self, pool: CUmemoryPool) -> CUresult {
+        (self
+            .cuMemPoolDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(pool)
+    }
+    pub unsafe fn cuMemAllocFromPoolAsync(
+        &self,
         dptr: *mut CUdeviceptr,
         bytesize: usize,
         pool: CUmemoryPool,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolExportToShareableHandle(
+    ) -> CUresult {
+        (self
+            .cuMemAllocFromPoolAsync
+            .as_ref()
+            .expect("Expected function, got error."))(dptr, bytesize, pool, hStream)
+    }
+    pub unsafe fn cuMemPoolExportToShareableHandle(
+        &self,
         handle_out: *mut ::core::ffi::c_void,
         pool: CUmemoryPool,
         handleType: CUmemAllocationHandleType,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolImportFromShareableHandle(
+    ) -> CUresult {
+        (self
+            .cuMemPoolExportToShareableHandle
+            .as_ref()
+            .expect("Expected function, got error."))(handle_out, pool, handleType, flags)
+    }
+    pub unsafe fn cuMemPoolImportFromShareableHandle(
+        &self,
         pool_out: *mut CUmemoryPool,
         handle: *mut ::core::ffi::c_void,
         handleType: CUmemAllocationHandleType,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolExportPointer(
+    ) -> CUresult {
+        (self
+            .cuMemPoolImportFromShareableHandle
+            .as_ref()
+            .expect("Expected function, got error."))(pool_out, handle, handleType, flags)
+    }
+    pub unsafe fn cuMemPoolExportPointer(
+        &self,
         shareData_out: *mut CUmemPoolPtrExportData,
         ptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPoolImportPointer(
+    ) -> CUresult {
+        (self
+            .cuMemPoolExportPointer
+            .as_ref()
+            .expect("Expected function, got error."))(shareData_out, ptr)
+    }
+    pub unsafe fn cuMemPoolImportPointer(
+        &self,
         ptr_out: *mut CUdeviceptr,
         pool: CUmemoryPool,
         shareData: *mut CUmemPoolPtrExportData,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMulticastCreate(
+    ) -> CUresult {
+        (self
+            .cuMemPoolImportPointer
+            .as_ref()
+            .expect("Expected function, got error."))(ptr_out, pool, shareData)
+    }
+    pub unsafe fn cuMulticastCreate(
+        &self,
         mcHandle: *mut CUmemGenericAllocationHandle,
         prop: *const CUmulticastObjectProp,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMulticastAddDevice(mcHandle: CUmemGenericAllocationHandle, dev: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuMulticastBindMem(
+    ) -> CUresult {
+        (self
+            .cuMulticastCreate
+            .as_ref()
+            .expect("Expected function, got error."))(mcHandle, prop)
+    }
+    pub unsafe fn cuMulticastAddDevice(
+        &self,
+        mcHandle: CUmemGenericAllocationHandle,
+        dev: CUdevice,
+    ) -> CUresult {
+        (self
+            .cuMulticastAddDevice
+            .as_ref()
+            .expect("Expected function, got error."))(mcHandle, dev)
+    }
+    pub unsafe fn cuMulticastBindMem(
+        &self,
         mcHandle: CUmemGenericAllocationHandle,
         mcOffset: usize,
         memHandle: CUmemGenericAllocationHandle,
         memOffset: usize,
         size: usize,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMulticastBindAddr(
+    ) -> CUresult {
+        (self
+            .cuMulticastBindMem
+            .as_ref()
+            .expect("Expected function, got error."))(
+            mcHandle, mcOffset, memHandle, memOffset, size, flags,
+        )
+    }
+    pub unsafe fn cuMulticastBindAddr(
+        &self,
         mcHandle: CUmemGenericAllocationHandle,
         mcOffset: usize,
         memptr: CUdeviceptr,
         size: usize,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMulticastUnbind(
+    ) -> CUresult {
+        (self
+            .cuMulticastBindAddr
+            .as_ref()
+            .expect("Expected function, got error."))(
+            mcHandle, mcOffset, memptr, size, flags
+        )
+    }
+    pub unsafe fn cuMulticastUnbind(
+        &self,
         mcHandle: CUmemGenericAllocationHandle,
         dev: CUdevice,
         mcOffset: usize,
         size: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMulticastGetGranularity(
+    ) -> CUresult {
+        (self
+            .cuMulticastUnbind
+            .as_ref()
+            .expect("Expected function, got error."))(mcHandle, dev, mcOffset, size)
+    }
+    pub unsafe fn cuMulticastGetGranularity(
+        &self,
         granularity: *mut usize,
         prop: *const CUmulticastObjectProp,
         option: CUmulticastGranularity_flags,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuPointerGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuMulticastGetGranularity
+            .as_ref()
+            .expect("Expected function, got error."))(granularity, prop, option)
+    }
+    pub unsafe fn cuPointerGetAttribute(
+        &self,
         data: *mut ::core::ffi::c_void,
         attribute: CUpointer_attribute,
         ptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPrefetchAsync(
+    ) -> CUresult {
+        (self
+            .cuPointerGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(data, attribute, ptr)
+    }
+    pub unsafe fn cuMemPrefetchAsync(
+        &self,
         devPtr: CUdeviceptr,
         count: usize,
         dstDevice: CUdevice,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemPrefetchAsync_v2(
+    ) -> CUresult {
+        (self
+            .cuMemPrefetchAsync
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, dstDevice, hStream)
+    }
+    pub unsafe fn cuMemPrefetchAsync_v2(
+        &self,
         devPtr: CUdeviceptr,
         count: usize,
         location: CUmemLocation,
         flags: ::core::ffi::c_uint,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAdvise(
+    ) -> CUresult {
+        (self
+            .cuMemPrefetchAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            devPtr, count, location, flags, hStream
+        )
+    }
+    pub unsafe fn cuMemAdvise(
+        &self,
         devPtr: CUdeviceptr,
         count: usize,
         advice: CUmem_advise,
         device: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemAdvise_v2(
+    ) -> CUresult {
+        (self
+            .cuMemAdvise
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, advice, device)
+    }
+    pub unsafe fn cuMemAdvise_v2(
+        &self,
         devPtr: CUdeviceptr,
         count: usize,
         advice: CUmem_advise,
         location: CUmemLocation,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemRangeGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuMemAdvise_v2
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, advice, location)
+    }
+    pub unsafe fn cuMemRangeGetAttribute(
+        &self,
         data: *mut ::core::ffi::c_void,
         dataSize: usize,
         attribute: CUmem_range_attribute,
         devPtr: CUdeviceptr,
         count: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuMemRangeGetAttributes(
+    ) -> CUresult {
+        (self
+            .cuMemRangeGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            data, dataSize, attribute, devPtr, count
+        )
+    }
+    pub unsafe fn cuMemRangeGetAttributes(
+        &self,
         data: *mut *mut ::core::ffi::c_void,
         dataSizes: *mut usize,
         attributes: *mut CUmem_range_attribute,
         numAttributes: usize,
         devPtr: CUdeviceptr,
         count: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuPointerSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuMemRangeGetAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(
+            data,
+            dataSizes,
+            attributes,
+            numAttributes,
+            devPtr,
+            count,
+        )
+    }
+    pub unsafe fn cuPointerSetAttribute(
+        &self,
         value: *const ::core::ffi::c_void,
         attribute: CUpointer_attribute,
         ptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuPointerGetAttributes(
+    ) -> CUresult {
+        (self
+            .cuPointerSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(value, attribute, ptr)
+    }
+    pub unsafe fn cuPointerGetAttributes(
+        &self,
         numAttributes: ::core::ffi::c_uint,
         attributes: *mut CUpointer_attribute,
         data: *mut *mut ::core::ffi::c_void,
         ptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamCreate(phStream: *mut CUstream, Flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamCreateWithPriority(
+    ) -> CUresult {
+        (self
+            .cuPointerGetAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(numAttributes, attributes, data, ptr)
+    }
+    pub unsafe fn cuStreamCreate(
+        &self,
+        phStream: *mut CUstream,
+        Flags: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuStreamCreate
+            .as_ref()
+            .expect("Expected function, got error."))(phStream, Flags)
+    }
+    pub unsafe fn cuStreamCreateWithPriority(
+        &self,
         phStream: *mut CUstream,
         flags: ::core::ffi::c_uint,
         priority: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamGetPriority(hStream: CUstream, priority: *mut ::core::ffi::c_int) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamGetFlags(hStream: CUstream, flags: *mut ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamGetId(hStream: CUstream, streamId: *mut ::core::ffi::c_ulonglong) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamGetCtx(hStream: CUstream, pctx: *mut CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamWaitEvent(
+    ) -> CUresult {
+        (self
+            .cuStreamCreateWithPriority
+            .as_ref()
+            .expect("Expected function, got error."))(phStream, flags, priority)
+    }
+    pub unsafe fn cuStreamGetPriority(
+        &self,
+        hStream: CUstream,
+        priority: *mut ::core::ffi::c_int,
+    ) -> CUresult {
+        (self
+            .cuStreamGetPriority
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, priority)
+    }
+    pub unsafe fn cuStreamGetFlags(
+        &self,
+        hStream: CUstream,
+        flags: *mut ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuStreamGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, flags)
+    }
+    pub unsafe fn cuStreamGetId(
+        &self,
+        hStream: CUstream,
+        streamId: *mut ::core::ffi::c_ulonglong,
+    ) -> CUresult {
+        (self
+            .cuStreamGetId
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, streamId)
+    }
+    pub unsafe fn cuStreamGetCtx(&self, hStream: CUstream, pctx: *mut CUcontext) -> CUresult {
+        (self
+            .cuStreamGetCtx
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, pctx)
+    }
+    pub unsafe fn cuStreamWaitEvent(
+        &self,
         hStream: CUstream,
         hEvent: CUevent,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamAddCallback(
+    ) -> CUresult {
+        (self
+            .cuStreamWaitEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, hEvent, Flags)
+    }
+    pub unsafe fn cuStreamAddCallback(
+        &self,
         hStream: CUstream,
         callback: CUstreamCallback,
         userData: *mut ::core::ffi::c_void,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamBeginCapture_v2(hStream: CUstream, mode: CUstreamCaptureMode) -> CUresult;
-}
-extern "C" {
-    pub fn cuThreadExchangeStreamCaptureMode(mode: *mut CUstreamCaptureMode) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamEndCapture(hStream: CUstream, phGraph: *mut CUgraph) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamIsCapturing(
+    ) -> CUresult {
+        (self
+            .cuStreamAddCallback
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, callback, userData, flags)
+    }
+    pub unsafe fn cuStreamBeginCapture_v2(
+        &self,
+        hStream: CUstream,
+        mode: CUstreamCaptureMode,
+    ) -> CUresult {
+        (self
+            .cuStreamBeginCapture_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, mode)
+    }
+    pub unsafe fn cuThreadExchangeStreamCaptureMode(
+        &self,
+        mode: *mut CUstreamCaptureMode,
+    ) -> CUresult {
+        (self
+            .cuThreadExchangeStreamCaptureMode
+            .as_ref()
+            .expect("Expected function, got error."))(mode)
+    }
+    pub unsafe fn cuStreamEndCapture(&self, hStream: CUstream, phGraph: *mut CUgraph) -> CUresult {
+        (self
+            .cuStreamEndCapture
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, phGraph)
+    }
+    pub unsafe fn cuStreamIsCapturing(
+        &self,
         hStream: CUstream,
         captureStatus: *mut CUstreamCaptureStatus,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamGetCaptureInfo_v2(
+    ) -> CUresult {
+        (self
+            .cuStreamIsCapturing
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, captureStatus)
+    }
+    pub unsafe fn cuStreamGetCaptureInfo_v2(
+        &self,
         hStream: CUstream,
         captureStatus_out: *mut CUstreamCaptureStatus,
         id_out: *mut cuuint64_t,
         graph_out: *mut CUgraph,
         dependencies_out: *mut *const CUgraphNode,
         numDependencies_out: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamUpdateCaptureDependencies(
+    ) -> CUresult {
+        (self
+            .cuStreamGetCaptureInfo_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hStream,
+            captureStatus_out,
+            id_out,
+            graph_out,
+            dependencies_out,
+            numDependencies_out,
+        )
+    }
+    pub unsafe fn cuStreamUpdateCaptureDependencies(
+        &self,
         hStream: CUstream,
         dependencies: *mut CUgraphNode,
         numDependencies: usize,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamAttachMemAsync(
+    ) -> CUresult {
+        (self
+            .cuStreamUpdateCaptureDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hStream, dependencies, numDependencies, flags
+        )
+    }
+    pub unsafe fn cuStreamAttachMemAsync(
+        &self,
         hStream: CUstream,
         dptr: CUdeviceptr,
         length: usize,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamQuery(hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamSynchronize(hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamDestroy_v2(hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamCopyAttributes(dst: CUstream, src: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuStreamAttachMemAsync
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, dptr, length, flags)
+    }
+    pub unsafe fn cuStreamQuery(&self, hStream: CUstream) -> CUresult {
+        (self
+            .cuStreamQuery
+            .as_ref()
+            .expect("Expected function, got error."))(hStream)
+    }
+    pub unsafe fn cuStreamSynchronize(&self, hStream: CUstream) -> CUresult {
+        (self
+            .cuStreamSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))(hStream)
+    }
+    pub unsafe fn cuStreamDestroy_v2(&self, hStream: CUstream) -> CUresult {
+        (self
+            .cuStreamDestroy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hStream)
+    }
+    pub unsafe fn cuStreamCopyAttributes(&self, dst: CUstream, src: CUstream) -> CUresult {
+        (self
+            .cuStreamCopyAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src)
+    }
+    pub unsafe fn cuStreamGetAttribute(
+        &self,
         hStream: CUstream,
         attr: CUstreamAttrID,
         value_out: *mut CUstreamAttrValue,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuStreamGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, attr, value_out)
+    }
+    pub unsafe fn cuStreamSetAttribute(
+        &self,
         hStream: CUstream,
         attr: CUstreamAttrID,
         value: *const CUstreamAttrValue,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventCreate(phEvent: *mut CUevent, Flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventRecord(hEvent: CUevent, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventRecordWithFlags(
+    ) -> CUresult {
+        (self
+            .cuStreamSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, attr, value)
+    }
+    pub unsafe fn cuEventCreate(
+        &self,
+        phEvent: *mut CUevent,
+        Flags: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuEventCreate
+            .as_ref()
+            .expect("Expected function, got error."))(phEvent, Flags)
+    }
+    pub unsafe fn cuEventRecord(&self, hEvent: CUevent, hStream: CUstream) -> CUresult {
+        (self
+            .cuEventRecord
+            .as_ref()
+            .expect("Expected function, got error."))(hEvent, hStream)
+    }
+    pub unsafe fn cuEventRecordWithFlags(
+        &self,
         hEvent: CUevent,
         hStream: CUstream,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventQuery(hEvent: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventSynchronize(hEvent: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventDestroy_v2(hEvent: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuEventElapsedTime(pMilliseconds: *mut f32, hStart: CUevent, hEnd: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuImportExternalMemory(
+    ) -> CUresult {
+        (self
+            .cuEventRecordWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(hEvent, hStream, flags)
+    }
+    pub unsafe fn cuEventQuery(&self, hEvent: CUevent) -> CUresult {
+        (self
+            .cuEventQuery
+            .as_ref()
+            .expect("Expected function, got error."))(hEvent)
+    }
+    pub unsafe fn cuEventSynchronize(&self, hEvent: CUevent) -> CUresult {
+        (self
+            .cuEventSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))(hEvent)
+    }
+    pub unsafe fn cuEventDestroy_v2(&self, hEvent: CUevent) -> CUresult {
+        (self
+            .cuEventDestroy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hEvent)
+    }
+    pub unsafe fn cuEventElapsedTime(
+        &self,
+        pMilliseconds: *mut f32,
+        hStart: CUevent,
+        hEnd: CUevent,
+    ) -> CUresult {
+        (self
+            .cuEventElapsedTime
+            .as_ref()
+            .expect("Expected function, got error."))(pMilliseconds, hStart, hEnd)
+    }
+    pub unsafe fn cuImportExternalMemory(
+        &self,
         extMem_out: *mut CUexternalMemory,
         memHandleDesc: *const CUDA_EXTERNAL_MEMORY_HANDLE_DESC,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuExternalMemoryGetMappedBuffer(
+    ) -> CUresult {
+        (self
+            .cuImportExternalMemory
+            .as_ref()
+            .expect("Expected function, got error."))(extMem_out, memHandleDesc)
+    }
+    pub unsafe fn cuExternalMemoryGetMappedBuffer(
+        &self,
         devPtr: *mut CUdeviceptr,
         extMem: CUexternalMemory,
         bufferDesc: *const CUDA_EXTERNAL_MEMORY_BUFFER_DESC,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuExternalMemoryGetMappedMipmappedArray(
+    ) -> CUresult {
+        (self
+            .cuExternalMemoryGetMappedBuffer
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, extMem, bufferDesc)
+    }
+    pub unsafe fn cuExternalMemoryGetMappedMipmappedArray(
+        &self,
         mipmap: *mut CUmipmappedArray,
         extMem: CUexternalMemory,
         mipmapDesc: *const CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDestroyExternalMemory(extMem: CUexternalMemory) -> CUresult;
-}
-extern "C" {
-    pub fn cuImportExternalSemaphore(
+    ) -> CUresult {
+        (self
+            .cuExternalMemoryGetMappedMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(mipmap, extMem, mipmapDesc)
+    }
+    pub unsafe fn cuDestroyExternalMemory(&self, extMem: CUexternalMemory) -> CUresult {
+        (self
+            .cuDestroyExternalMemory
+            .as_ref()
+            .expect("Expected function, got error."))(extMem)
+    }
+    pub unsafe fn cuImportExternalSemaphore(
+        &self,
         extSem_out: *mut CUexternalSemaphore,
         semHandleDesc: *const CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuSignalExternalSemaphoresAsync(
+    ) -> CUresult {
+        (self
+            .cuImportExternalSemaphore
+            .as_ref()
+            .expect("Expected function, got error."))(extSem_out, semHandleDesc)
+    }
+    pub unsafe fn cuSignalExternalSemaphoresAsync(
+        &self,
         extSemArray: *const CUexternalSemaphore,
         paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
         numExtSems: ::core::ffi::c_uint,
         stream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuWaitExternalSemaphoresAsync(
+    ) -> CUresult {
+        (self
+            .cuSignalExternalSemaphoresAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            extSemArray, paramsArray, numExtSems, stream
+        )
+    }
+    pub unsafe fn cuWaitExternalSemaphoresAsync(
+        &self,
         extSemArray: *const CUexternalSemaphore,
         paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
         numExtSems: ::core::ffi::c_uint,
         stream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDestroyExternalSemaphore(extSem: CUexternalSemaphore) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamWaitValue32_v2(
+    ) -> CUresult {
+        (self
+            .cuWaitExternalSemaphoresAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            extSemArray, paramsArray, numExtSems, stream
+        )
+    }
+    pub unsafe fn cuDestroyExternalSemaphore(&self, extSem: CUexternalSemaphore) -> CUresult {
+        (self
+            .cuDestroyExternalSemaphore
+            .as_ref()
+            .expect("Expected function, got error."))(extSem)
+    }
+    pub unsafe fn cuStreamWaitValue32_v2(
+        &self,
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint32_t,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamWaitValue64_v2(
+    ) -> CUresult {
+        (self
+            .cuStreamWaitValue32_v2
+            .as_ref()
+            .expect("Expected function, got error."))(stream, addr, value, flags)
+    }
+    pub unsafe fn cuStreamWaitValue64_v2(
+        &self,
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint64_t,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamWriteValue32_v2(
+    ) -> CUresult {
+        (self
+            .cuStreamWaitValue64_v2
+            .as_ref()
+            .expect("Expected function, got error."))(stream, addr, value, flags)
+    }
+    pub unsafe fn cuStreamWriteValue32_v2(
+        &self,
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint32_t,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamWriteValue64_v2(
+    ) -> CUresult {
+        (self
+            .cuStreamWriteValue32_v2
+            .as_ref()
+            .expect("Expected function, got error."))(stream, addr, value, flags)
+    }
+    pub unsafe fn cuStreamWriteValue64_v2(
+        &self,
         stream: CUstream,
         addr: CUdeviceptr,
         value: cuuint64_t,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuStreamBatchMemOp_v2(
+    ) -> CUresult {
+        (self
+            .cuStreamWriteValue64_v2
+            .as_ref()
+            .expect("Expected function, got error."))(stream, addr, value, flags)
+    }
+    pub unsafe fn cuStreamBatchMemOp_v2(
+        &self,
         stream: CUstream,
         count: ::core::ffi::c_uint,
         paramArray: *mut CUstreamBatchMemOpParams,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuStreamBatchMemOp_v2
+            .as_ref()
+            .expect("Expected function, got error."))(stream, count, paramArray, flags)
+    }
+    pub unsafe fn cuFuncGetAttribute(
+        &self,
         pi: *mut ::core::ffi::c_int,
         attrib: CUfunction_attribute,
         hfunc: CUfunction,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuFuncGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(pi, attrib, hfunc)
+    }
+    pub unsafe fn cuFuncSetAttribute(
+        &self,
         hfunc: CUfunction,
         attrib: CUfunction_attribute,
         value: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncSetCacheConfig(hfunc: CUfunction, config: CUfunc_cache) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncSetSharedMemConfig(hfunc: CUfunction, config: CUsharedconfig) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncGetModule(hmod: *mut CUmodule, hfunc: CUfunction) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchKernel(
+    ) -> CUresult {
+        (self
+            .cuFuncSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, attrib, value)
+    }
+    pub unsafe fn cuFuncSetCacheConfig(&self, hfunc: CUfunction, config: CUfunc_cache) -> CUresult {
+        (self
+            .cuFuncSetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, config)
+    }
+    pub unsafe fn cuFuncSetSharedMemConfig(
+        &self,
+        hfunc: CUfunction,
+        config: CUsharedconfig,
+    ) -> CUresult {
+        (self
+            .cuFuncSetSharedMemConfig
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, config)
+    }
+    pub unsafe fn cuFuncGetModule(&self, hmod: *mut CUmodule, hfunc: CUfunction) -> CUresult {
+        (self
+            .cuFuncGetModule
+            .as_ref()
+            .expect("Expected function, got error."))(hmod, hfunc)
+    }
+    pub unsafe fn cuLaunchKernel(
+        &self,
         f: CUfunction,
         gridDimX: ::core::ffi::c_uint,
         gridDimY: ::core::ffi::c_uint,
@@ -10511,18 +15294,38 @@ extern "C" {
         hStream: CUstream,
         kernelParams: *mut *mut ::core::ffi::c_void,
         extra: *mut *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchKernelEx(
+    ) -> CUresult {
+        (self
+            .cuLaunchKernel
+            .as_ref()
+            .expect("Expected function, got error."))(
+            f,
+            gridDimX,
+            gridDimY,
+            gridDimZ,
+            blockDimX,
+            blockDimY,
+            blockDimZ,
+            sharedMemBytes,
+            hStream,
+            kernelParams,
+            extra,
+        )
+    }
+    pub unsafe fn cuLaunchKernelEx(
+        &self,
         config: *const CUlaunchConfig,
         f: CUfunction,
         kernelParams: *mut *mut ::core::ffi::c_void,
         extra: *mut *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchCooperativeKernel(
+    ) -> CUresult {
+        (self
+            .cuLaunchKernelEx
+            .as_ref()
+            .expect("Expected function, got error."))(config, f, kernelParams, extra)
+    }
+    pub unsafe fn cuLaunchCooperativeKernel(
+        &self,
         f: CUfunction,
         gridDimX: ::core::ffi::c_uint,
         gridDimY: ::core::ffi::c_uint,
@@ -10533,618 +15336,1169 @@ extern "C" {
         sharedMemBytes: ::core::ffi::c_uint,
         hStream: CUstream,
         kernelParams: *mut *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchCooperativeKernelMultiDevice(
+    ) -> CUresult {
+        (self
+            .cuLaunchCooperativeKernel
+            .as_ref()
+            .expect("Expected function, got error."))(
+            f,
+            gridDimX,
+            gridDimY,
+            gridDimZ,
+            blockDimX,
+            blockDimY,
+            blockDimZ,
+            sharedMemBytes,
+            hStream,
+            kernelParams,
+        )
+    }
+    pub unsafe fn cuLaunchCooperativeKernelMultiDevice(
+        &self,
         launchParamsList: *mut CUDA_LAUNCH_PARAMS,
         numDevices: ::core::ffi::c_uint,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchHostFunc(
+    ) -> CUresult {
+        (self
+            .cuLaunchCooperativeKernelMultiDevice
+            .as_ref()
+            .expect("Expected function, got error."))(launchParamsList, numDevices, flags)
+    }
+    pub unsafe fn cuLaunchHostFunc(
+        &self,
         hStream: CUstream,
         fn_: CUhostFn,
         userData: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncSetBlockShape(
+    ) -> CUresult {
+        (self
+            .cuLaunchHostFunc
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, fn_, userData)
+    }
+    pub unsafe fn cuFuncSetBlockShape(
+        &self,
         hfunc: CUfunction,
         x: ::core::ffi::c_int,
         y: ::core::ffi::c_int,
         z: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuFuncSetSharedSize(hfunc: CUfunction, bytes: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuParamSetSize(hfunc: CUfunction, numbytes: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuParamSeti(
+    ) -> CUresult {
+        (self
+            .cuFuncSetBlockShape
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, x, y, z)
+    }
+    pub unsafe fn cuFuncSetSharedSize(
+        &self,
+        hfunc: CUfunction,
+        bytes: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuFuncSetSharedSize
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, bytes)
+    }
+    pub unsafe fn cuParamSetSize(
+        &self,
+        hfunc: CUfunction,
+        numbytes: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuParamSetSize
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, numbytes)
+    }
+    pub unsafe fn cuParamSeti(
+        &self,
         hfunc: CUfunction,
         offset: ::core::ffi::c_int,
         value: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuParamSetf(hfunc: CUfunction, offset: ::core::ffi::c_int, value: f32) -> CUresult;
-}
-extern "C" {
-    pub fn cuParamSetv(
+    ) -> CUresult {
+        (self
+            .cuParamSeti
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, offset, value)
+    }
+    pub unsafe fn cuParamSetf(
+        &self,
+        hfunc: CUfunction,
+        offset: ::core::ffi::c_int,
+        value: f32,
+    ) -> CUresult {
+        (self
+            .cuParamSetf
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, offset, value)
+    }
+    pub unsafe fn cuParamSetv(
+        &self,
         hfunc: CUfunction,
         offset: ::core::ffi::c_int,
         ptr: *mut ::core::ffi::c_void,
         numbytes: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunch(f: CUfunction) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchGrid(
+    ) -> CUresult {
+        (self
+            .cuParamSetv
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, offset, ptr, numbytes)
+    }
+    pub unsafe fn cuLaunch(&self, f: CUfunction) -> CUresult {
+        (self
+            .cuLaunch
+            .as_ref()
+            .expect("Expected function, got error."))(f)
+    }
+    pub unsafe fn cuLaunchGrid(
+        &self,
         f: CUfunction,
         grid_width: ::core::ffi::c_int,
         grid_height: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuLaunchGridAsync(
+    ) -> CUresult {
+        (self
+            .cuLaunchGrid
+            .as_ref()
+            .expect("Expected function, got error."))(f, grid_width, grid_height)
+    }
+    pub unsafe fn cuLaunchGridAsync(
+        &self,
         f: CUfunction,
         grid_width: ::core::ffi::c_int,
         grid_height: ::core::ffi::c_int,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuParamSetTexRef(
+    ) -> CUresult {
+        (self
+            .cuLaunchGridAsync
+            .as_ref()
+            .expect("Expected function, got error."))(f, grid_width, grid_height, hStream)
+    }
+    pub unsafe fn cuParamSetTexRef(
+        &self,
         hfunc: CUfunction,
         texunit: ::core::ffi::c_int,
         hTexRef: CUtexref,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphCreate(phGraph: *mut CUgraph, flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddKernelNode_v2(
+    ) -> CUresult {
+        (self
+            .cuParamSetTexRef
+            .as_ref()
+            .expect("Expected function, got error."))(hfunc, texunit, hTexRef)
+    }
+    pub unsafe fn cuGraphCreate(
+        &self,
+        phGraph: *mut CUgraph,
+        flags: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuGraphCreate
+            .as_ref()
+            .expect("Expected function, got error."))(phGraph, flags)
+    }
+    pub unsafe fn cuGraphAddKernelNode_v2(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphKernelNodeGetParams_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphAddKernelNode_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphKernelNodeGetParams_v2(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *mut CUDA_KERNEL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphKernelNodeSetParams_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphKernelNodeGetParams_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphKernelNodeSetParams_v2(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddMemcpyNode(
+    ) -> CUresult {
+        (self
+            .cuGraphKernelNodeSetParams_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddMemcpyNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         copyParams: *const CUDA_MEMCPY3D,
         ctx: CUcontext,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphMemcpyNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddMemcpyNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            copyParams,
+            ctx,
+        )
+    }
+    pub unsafe fn cuGraphMemcpyNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *mut CUDA_MEMCPY3D,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphMemcpyNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphMemcpyNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphMemcpyNodeSetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_MEMCPY3D,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddMemsetNode(
+    ) -> CUresult {
+        (self
+            .cuGraphMemcpyNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddMemsetNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         memsetParams: *const CUDA_MEMSET_NODE_PARAMS,
         ctx: CUcontext,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphMemsetNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddMemsetNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            memsetParams,
+            ctx,
+        )
+    }
+    pub unsafe fn cuGraphMemsetNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *mut CUDA_MEMSET_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphMemsetNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphMemsetNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphMemsetNodeSetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_MEMSET_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddHostNode(
+    ) -> CUresult {
+        (self
+            .cuGraphMemsetNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddHostNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *const CUDA_HOST_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphHostNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddHostNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphHostNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *mut CUDA_HOST_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphHostNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphHostNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphHostNodeSetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_HOST_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddChildGraphNode(
+    ) -> CUresult {
+        (self
+            .cuGraphHostNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddChildGraphNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         childGraph: CUgraph,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphChildGraphNodeGetGraph(hNode: CUgraphNode, phGraph: *mut CUgraph) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddEmptyNode(
+    ) -> CUresult {
+        (self
+            .cuGraphAddChildGraphNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            childGraph,
+        )
+    }
+    pub unsafe fn cuGraphChildGraphNodeGetGraph(
+        &self,
+        hNode: CUgraphNode,
+        phGraph: *mut CUgraph,
+    ) -> CUresult {
+        (self
+            .cuGraphChildGraphNodeGetGraph
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, phGraph)
+    }
+    pub unsafe fn cuGraphAddEmptyNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddEventRecordNode(
+    ) -> CUresult {
+        (self
+            .cuGraphAddEmptyNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+        )
+    }
+    pub unsafe fn cuGraphAddEventRecordNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         event: CUevent,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphEventRecordNodeGetEvent(hNode: CUgraphNode, event_out: *mut CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphEventRecordNodeSetEvent(hNode: CUgraphNode, event: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddEventWaitNode(
+    ) -> CUresult {
+        (self
+            .cuGraphAddEventRecordNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            event,
+        )
+    }
+    pub unsafe fn cuGraphEventRecordNodeGetEvent(
+        &self,
+        hNode: CUgraphNode,
+        event_out: *mut CUevent,
+    ) -> CUresult {
+        (self
+            .cuGraphEventRecordNodeGetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, event_out)
+    }
+    pub unsafe fn cuGraphEventRecordNodeSetEvent(
+        &self,
+        hNode: CUgraphNode,
+        event: CUevent,
+    ) -> CUresult {
+        (self
+            .cuGraphEventRecordNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, event)
+    }
+    pub unsafe fn cuGraphAddEventWaitNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         event: CUevent,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphEventWaitNodeGetEvent(hNode: CUgraphNode, event_out: *mut CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphEventWaitNodeSetEvent(hNode: CUgraphNode, event: CUevent) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddExternalSemaphoresSignalNode(
+    ) -> CUresult {
+        (self
+            .cuGraphAddEventWaitNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            event,
+        )
+    }
+    pub unsafe fn cuGraphEventWaitNodeGetEvent(
+        &self,
+        hNode: CUgraphNode,
+        event_out: *mut CUevent,
+    ) -> CUresult {
+        (self
+            .cuGraphEventWaitNodeGetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, event_out)
+    }
+    pub unsafe fn cuGraphEventWaitNodeSetEvent(
+        &self,
+        hNode: CUgraphNode,
+        event: CUevent,
+    ) -> CUresult {
+        (self
+            .cuGraphEventWaitNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, event)
+    }
+    pub unsafe fn cuGraphAddExternalSemaphoresSignalNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExternalSemaphoresSignalNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddExternalSemaphoresSignalNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphExternalSemaphoresSignalNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         params_out: *mut CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExternalSemaphoresSignalNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExternalSemaphoresSignalNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, params_out)
+    }
+    pub unsafe fn cuGraphExternalSemaphoresSignalNodeSetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddExternalSemaphoresWaitNode(
+    ) -> CUresult {
+        (self
+            .cuGraphExternalSemaphoresSignalNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddExternalSemaphoresWaitNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExternalSemaphoresWaitNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddExternalSemaphoresWaitNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphExternalSemaphoresWaitNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         params_out: *mut CUDA_EXT_SEM_WAIT_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExternalSemaphoresWaitNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExternalSemaphoresWaitNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, params_out)
+    }
+    pub unsafe fn cuGraphExternalSemaphoresWaitNodeSetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddBatchMemOpNode(
+    ) -> CUresult {
+        (self
+            .cuGraphExternalSemaphoresWaitNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddBatchMemOpNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphBatchMemOpNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddBatchMemOpNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphBatchMemOpNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams_out: *mut CUDA_BATCH_MEM_OP_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphBatchMemOpNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphBatchMemOpNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams_out)
+    }
+    pub unsafe fn cuGraphBatchMemOpNodeSetParams(
+        &self,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecBatchMemOpNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphBatchMemOpNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphExecBatchMemOpNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddMemAllocNode(
+    ) -> CUresult {
+        (self
+            .cuGraphExecBatchMemOpNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphAddMemAllocNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *mut CUDA_MEM_ALLOC_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphMemAllocNodeGetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddMemAllocNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphMemAllocNodeGetParams(
+        &self,
         hNode: CUgraphNode,
         params_out: *mut CUDA_MEM_ALLOC_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddMemFreeNode(
+    ) -> CUresult {
+        (self
+            .cuGraphMemAllocNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, params_out)
+    }
+    pub unsafe fn cuGraphAddMemFreeNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         dptr: CUdeviceptr,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphMemFreeNodeGetParams(hNode: CUgraphNode, dptr_out: *mut CUdeviceptr) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGraphMemTrim(device: CUdevice) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetGraphMemAttribute(
+    ) -> CUresult {
+        (self
+            .cuGraphAddMemFreeNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            dptr,
+        )
+    }
+    pub unsafe fn cuGraphMemFreeNodeGetParams(
+        &self,
+        hNode: CUgraphNode,
+        dptr_out: *mut CUdeviceptr,
+    ) -> CUresult {
+        (self
+            .cuGraphMemFreeNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, dptr_out)
+    }
+    pub unsafe fn cuDeviceGraphMemTrim(&self, device: CUdevice) -> CUresult {
+        (self
+            .cuDeviceGraphMemTrim
+            .as_ref()
+            .expect("Expected function, got error."))(device)
+    }
+    pub unsafe fn cuDeviceGetGraphMemAttribute(
+        &self,
         device: CUdevice,
         attr: CUgraphMem_attribute,
         value: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceSetGraphMemAttribute(
+    ) -> CUresult {
+        (self
+            .cuDeviceGetGraphMemAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(device, attr, value)
+    }
+    pub unsafe fn cuDeviceSetGraphMemAttribute(
+        &self,
         device: CUdevice,
         attr: CUgraphMem_attribute,
         value: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphClone(phGraphClone: *mut CUgraph, originalGraph: CUgraph) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeFindInClone(
+    ) -> CUresult {
+        (self
+            .cuDeviceSetGraphMemAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(device, attr, value)
+    }
+    pub unsafe fn cuGraphClone(
+        &self,
+        phGraphClone: *mut CUgraph,
+        originalGraph: CUgraph,
+    ) -> CUresult {
+        (self
+            .cuGraphClone
+            .as_ref()
+            .expect("Expected function, got error."))(phGraphClone, originalGraph)
+    }
+    pub unsafe fn cuGraphNodeFindInClone(
+        &self,
         phNode: *mut CUgraphNode,
         hOriginalNode: CUgraphNode,
         hClonedGraph: CUgraph,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeGetType(hNode: CUgraphNode, type_: *mut CUgraphNodeType) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphGetNodes(
+    ) -> CUresult {
+        (self
+            .cuGraphNodeFindInClone
+            .as_ref()
+            .expect("Expected function, got error."))(phNode, hOriginalNode, hClonedGraph)
+    }
+    pub unsafe fn cuGraphNodeGetType(
+        &self,
+        hNode: CUgraphNode,
+        type_: *mut CUgraphNodeType,
+    ) -> CUresult {
+        (self
+            .cuGraphNodeGetType
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, type_)
+    }
+    pub unsafe fn cuGraphGetNodes(
+        &self,
         hGraph: CUgraph,
         nodes: *mut CUgraphNode,
         numNodes: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphGetRootNodes(
+    ) -> CUresult {
+        (self
+            .cuGraphGetNodes
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph, nodes, numNodes)
+    }
+    pub unsafe fn cuGraphGetRootNodes(
+        &self,
         hGraph: CUgraph,
         rootNodes: *mut CUgraphNode,
         numRootNodes: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphGetEdges(
+    ) -> CUresult {
+        (self
+            .cuGraphGetRootNodes
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph, rootNodes, numRootNodes)
+    }
+    pub unsafe fn cuGraphGetEdges(
+        &self,
         hGraph: CUgraph,
         from: *mut CUgraphNode,
         to: *mut CUgraphNode,
         numEdges: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeGetDependencies(
+    ) -> CUresult {
+        (self
+            .cuGraphGetEdges
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph, from, to, numEdges)
+    }
+    pub unsafe fn cuGraphNodeGetDependencies(
+        &self,
         hNode: CUgraphNode,
         dependencies: *mut CUgraphNode,
         numDependencies: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeGetDependentNodes(
+    ) -> CUresult {
+        (self
+            .cuGraphNodeGetDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, dependencies, numDependencies)
+    }
+    pub unsafe fn cuGraphNodeGetDependentNodes(
+        &self,
         hNode: CUgraphNode,
         dependentNodes: *mut CUgraphNode,
         numDependentNodes: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddDependencies(
+    ) -> CUresult {
+        (self
+            .cuGraphNodeGetDependentNodes
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hNode, dependentNodes, numDependentNodes
+        )
+    }
+    pub unsafe fn cuGraphAddDependencies(
+        &self,
         hGraph: CUgraph,
         from: *const CUgraphNode,
         to: *const CUgraphNode,
         numDependencies: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphRemoveDependencies(
+    ) -> CUresult {
+        (self
+            .cuGraphAddDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph, from, to, numDependencies)
+    }
+    pub unsafe fn cuGraphRemoveDependencies(
+        &self,
         hGraph: CUgraph,
         from: *const CUgraphNode,
         to: *const CUgraphNode,
         numDependencies: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphDestroyNode(hNode: CUgraphNode) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphInstantiateWithFlags(
+    ) -> CUresult {
+        (self
+            .cuGraphRemoveDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph, from, to, numDependencies)
+    }
+    pub unsafe fn cuGraphDestroyNode(&self, hNode: CUgraphNode) -> CUresult {
+        (self
+            .cuGraphDestroyNode
+            .as_ref()
+            .expect("Expected function, got error."))(hNode)
+    }
+    pub unsafe fn cuGraphInstantiateWithFlags(
+        &self,
         phGraphExec: *mut CUgraphExec,
         hGraph: CUgraph,
         flags: ::core::ffi::c_ulonglong,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphInstantiateWithParams(
+    ) -> CUresult {
+        (self
+            .cuGraphInstantiateWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(phGraphExec, hGraph, flags)
+    }
+    pub unsafe fn cuGraphInstantiateWithParams(
+        &self,
         phGraphExec: *mut CUgraphExec,
         hGraph: CUgraph,
         instantiateParams: *mut CUDA_GRAPH_INSTANTIATE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecGetFlags(hGraphExec: CUgraphExec, flags: *mut cuuint64_t) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecKernelNodeSetParams_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphInstantiateWithParams
+            .as_ref()
+            .expect("Expected function, got error."))(phGraphExec, hGraph, instantiateParams)
+    }
+    pub unsafe fn cuGraphExecGetFlags(
+        &self,
+        hGraphExec: CUgraphExec,
+        flags: *mut cuuint64_t,
+    ) -> CUresult {
+        (self
+            .cuGraphExecGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, flags)
+    }
+    pub unsafe fn cuGraphExecKernelNodeSetParams_v2(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecMemcpyNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExecKernelNodeSetParams_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphExecMemcpyNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         copyParams: *const CUDA_MEMCPY3D,
         ctx: CUcontext,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecMemsetNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExecMemcpyNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, copyParams, ctx)
+    }
+    pub unsafe fn cuGraphExecMemsetNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         memsetParams: *const CUDA_MEMSET_NODE_PARAMS,
         ctx: CUcontext,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecHostNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExecMemsetNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, memsetParams, ctx)
+    }
+    pub unsafe fn cuGraphExecHostNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_HOST_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecChildGraphNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExecHostNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphExecChildGraphNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         childGraph: CUgraph,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecEventRecordNodeSetEvent(
+    ) -> CUresult {
+        (self
+            .cuGraphExecChildGraphNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, childGraph)
+    }
+    pub unsafe fn cuGraphExecEventRecordNodeSetEvent(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         event: CUevent,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecEventWaitNodeSetEvent(
+    ) -> CUresult {
+        (self
+            .cuGraphExecEventRecordNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, event)
+    }
+    pub unsafe fn cuGraphExecEventWaitNodeSetEvent(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         event: CUevent,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecExternalSemaphoresSignalNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExecEventWaitNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, event)
+    }
+    pub unsafe fn cuGraphExecExternalSemaphoresSignalNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecExternalSemaphoresWaitNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphExecExternalSemaphoresSignalNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphExecExternalSemaphoresWaitNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeSetEnabled(
+    ) -> CUresult {
+        (self
+            .cuGraphExecExternalSemaphoresWaitNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphNodeSetEnabled(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         isEnabled: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeGetEnabled(
+    ) -> CUresult {
+        (self
+            .cuGraphNodeSetEnabled
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, isEnabled)
+    }
+    pub unsafe fn cuGraphNodeGetEnabled(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         isEnabled: *mut ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphUpload(hGraphExec: CUgraphExec, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphLaunch(hGraphExec: CUgraphExec, hStream: CUstream) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecDestroy(hGraphExec: CUgraphExec) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphDestroy(hGraph: CUgraph) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecUpdate_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphNodeGetEnabled
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, isEnabled)
+    }
+    pub unsafe fn cuGraphUpload(&self, hGraphExec: CUgraphExec, hStream: CUstream) -> CUresult {
+        (self
+            .cuGraphUpload
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hStream)
+    }
+    pub unsafe fn cuGraphLaunch(&self, hGraphExec: CUgraphExec, hStream: CUstream) -> CUresult {
+        (self
+            .cuGraphLaunch
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hStream)
+    }
+    pub unsafe fn cuGraphExecDestroy(&self, hGraphExec: CUgraphExec) -> CUresult {
+        (self
+            .cuGraphExecDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec)
+    }
+    pub unsafe fn cuGraphDestroy(&self, hGraph: CUgraph) -> CUresult {
+        (self
+            .cuGraphDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph)
+    }
+    pub unsafe fn cuGraphExecUpdate_v2(
+        &self,
         hGraphExec: CUgraphExec,
         hGraph: CUgraph,
         resultInfo: *mut CUgraphExecUpdateResultInfo,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphKernelNodeCopyAttributes(dst: CUgraphNode, src: CUgraphNode) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphKernelNodeGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuGraphExecUpdate_v2
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hGraph, resultInfo)
+    }
+    pub unsafe fn cuGraphKernelNodeCopyAttributes(
+        &self,
+        dst: CUgraphNode,
+        src: CUgraphNode,
+    ) -> CUresult {
+        (self
+            .cuGraphKernelNodeCopyAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src)
+    }
+    pub unsafe fn cuGraphKernelNodeGetAttribute(
+        &self,
         hNode: CUgraphNode,
         attr: CUkernelNodeAttrID,
         value_out: *mut CUkernelNodeAttrValue,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphKernelNodeSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuGraphKernelNodeGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, attr, value_out)
+    }
+    pub unsafe fn cuGraphKernelNodeSetAttribute(
+        &self,
         hNode: CUgraphNode,
         attr: CUkernelNodeAttrID,
         value: *const CUkernelNodeAttrValue,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphDebugDotPrint(
+    ) -> CUresult {
+        (self
+            .cuGraphKernelNodeSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, attr, value)
+    }
+    pub unsafe fn cuGraphDebugDotPrint(
+        &self,
         hGraph: CUgraph,
         path: *const ::core::ffi::c_char,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuUserObjectCreate(
+    ) -> CUresult {
+        (self
+            .cuGraphDebugDotPrint
+            .as_ref()
+            .expect("Expected function, got error."))(hGraph, path, flags)
+    }
+    pub unsafe fn cuUserObjectCreate(
+        &self,
         object_out: *mut CUuserObject,
         ptr: *mut ::core::ffi::c_void,
         destroy: CUhostFn,
         initialRefcount: ::core::ffi::c_uint,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuUserObjectRetain(object: CUuserObject, count: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuUserObjectRelease(object: CUuserObject, count: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphRetainUserObject(
+    ) -> CUresult {
+        (self
+            .cuUserObjectCreate
+            .as_ref()
+            .expect("Expected function, got error."))(
+            object_out,
+            ptr,
+            destroy,
+            initialRefcount,
+            flags,
+        )
+    }
+    pub unsafe fn cuUserObjectRetain(
+        &self,
+        object: CUuserObject,
+        count: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuUserObjectRetain
+            .as_ref()
+            .expect("Expected function, got error."))(object, count)
+    }
+    pub unsafe fn cuUserObjectRelease(
+        &self,
+        object: CUuserObject,
+        count: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuUserObjectRelease
+            .as_ref()
+            .expect("Expected function, got error."))(object, count)
+    }
+    pub unsafe fn cuGraphRetainUserObject(
+        &self,
         graph: CUgraph,
         object: CUuserObject,
         count: ::core::ffi::c_uint,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphReleaseUserObject(
+    ) -> CUresult {
+        (self
+            .cuGraphRetainUserObject
+            .as_ref()
+            .expect("Expected function, got error."))(graph, object, count, flags)
+    }
+    pub unsafe fn cuGraphReleaseUserObject(
+        &self,
         graph: CUgraph,
         object: CUuserObject,
         count: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphAddNode(
+    ) -> CUresult {
+        (self
+            .cuGraphReleaseUserObject
+            .as_ref()
+            .expect("Expected function, got error."))(graph, object, count)
+    }
+    pub unsafe fn cuGraphAddNode(
+        &self,
         phGraphNode: *mut CUgraphNode,
         hGraph: CUgraph,
         dependencies: *const CUgraphNode,
         numDependencies: usize,
         nodeParams: *mut CUgraphNodeParams,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphNodeSetParams(hNode: CUgraphNode, nodeParams: *mut CUgraphNodeParams)
-        -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphExecNodeSetParams(
+    ) -> CUresult {
+        (self
+            .cuGraphAddNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            phGraphNode,
+            hGraph,
+            dependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cuGraphNodeSetParams(
+        &self,
+        hNode: CUgraphNode,
+        nodeParams: *mut CUgraphNodeParams,
+    ) -> CUresult {
+        (self
+            .cuGraphNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cuGraphExecNodeSetParams(
+        &self,
         hGraphExec: CUgraphExec,
         hNode: CUgraphNode,
         nodeParams: *mut CUgraphNodeParams,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyMaxActiveBlocksPerMultiprocessor(
+    ) -> CUresult {
+        (self
+            .cuGraphExecNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cuOccupancyMaxActiveBlocksPerMultiprocessor(
+        &self,
         numBlocks: *mut ::core::ffi::c_int,
         func: CUfunction,
         blockSize: ::core::ffi::c_int,
         dynamicSMemSize: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+    ) -> CUresult {
+        (self
+            .cuOccupancyMaxActiveBlocksPerMultiprocessor
+            .as_ref()
+            .expect("Expected function, got error."))(
+            numBlocks, func, blockSize, dynamicSMemSize
+        )
+    }
+    pub unsafe fn cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+        &self,
         numBlocks: *mut ::core::ffi::c_int,
         func: CUfunction,
         blockSize: ::core::ffi::c_int,
         dynamicSMemSize: usize,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyMaxPotentialBlockSize(
+    ) -> CUresult {
+        (self
+            .cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(
+            numBlocks,
+            func,
+            blockSize,
+            dynamicSMemSize,
+            flags,
+        )
+    }
+    pub unsafe fn cuOccupancyMaxPotentialBlockSize(
+        &self,
         minGridSize: *mut ::core::ffi::c_int,
         blockSize: *mut ::core::ffi::c_int,
         func: CUfunction,
         blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
         dynamicSMemSize: usize,
         blockSizeLimit: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyMaxPotentialBlockSizeWithFlags(
+    ) -> CUresult {
+        (self
+            .cuOccupancyMaxPotentialBlockSize
+            .as_ref()
+            .expect("Expected function, got error."))(
+            minGridSize,
+            blockSize,
+            func,
+            blockSizeToDynamicSMemSize,
+            dynamicSMemSize,
+            blockSizeLimit,
+        )
+    }
+    pub unsafe fn cuOccupancyMaxPotentialBlockSizeWithFlags(
+        &self,
         minGridSize: *mut ::core::ffi::c_int,
         blockSize: *mut ::core::ffi::c_int,
         func: CUfunction,
@@ -11152,215 +16506,421 @@ extern "C" {
         dynamicSMemSize: usize,
         blockSizeLimit: ::core::ffi::c_int,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyAvailableDynamicSMemPerBlock(
+    ) -> CUresult {
+        (self
+            .cuOccupancyMaxPotentialBlockSizeWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(
+            minGridSize,
+            blockSize,
+            func,
+            blockSizeToDynamicSMemSize,
+            dynamicSMemSize,
+            blockSizeLimit,
+            flags,
+        )
+    }
+    pub unsafe fn cuOccupancyAvailableDynamicSMemPerBlock(
+        &self,
         dynamicSmemSize: *mut usize,
         func: CUfunction,
         numBlocks: ::core::ffi::c_int,
         blockSize: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyMaxPotentialClusterSize(
+    ) -> CUresult {
+        (self
+            .cuOccupancyAvailableDynamicSMemPerBlock
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dynamicSmemSize, func, numBlocks, blockSize
+        )
+    }
+    pub unsafe fn cuOccupancyMaxPotentialClusterSize(
+        &self,
         clusterSize: *mut ::core::ffi::c_int,
         func: CUfunction,
         config: *const CUlaunchConfig,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuOccupancyMaxActiveClusters(
+    ) -> CUresult {
+        (self
+            .cuOccupancyMaxPotentialClusterSize
+            .as_ref()
+            .expect("Expected function, got error."))(clusterSize, func, config)
+    }
+    pub unsafe fn cuOccupancyMaxActiveClusters(
+        &self,
         numClusters: *mut ::core::ffi::c_int,
         func: CUfunction,
         config: *const CUlaunchConfig,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetArray(
+    ) -> CUresult {
+        (self
+            .cuOccupancyMaxActiveClusters
+            .as_ref()
+            .expect("Expected function, got error."))(numClusters, func, config)
+    }
+    pub unsafe fn cuTexRefSetArray(
+        &self,
         hTexRef: CUtexref,
         hArray: CUarray,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetMipmappedArray(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetArray
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, hArray, Flags)
+    }
+    pub unsafe fn cuTexRefSetMipmappedArray(
+        &self,
         hTexRef: CUtexref,
         hMipmappedArray: CUmipmappedArray,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetAddress_v2(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, hMipmappedArray, Flags)
+    }
+    pub unsafe fn cuTexRefSetAddress_v2(
+        &self,
         ByteOffset: *mut usize,
         hTexRef: CUtexref,
         dptr: CUdeviceptr,
         bytes: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetAddress2D_v3(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetAddress_v2
+            .as_ref()
+            .expect("Expected function, got error."))(ByteOffset, hTexRef, dptr, bytes)
+    }
+    pub unsafe fn cuTexRefSetAddress2D_v3(
+        &self,
         hTexRef: CUtexref,
         desc: *const CUDA_ARRAY_DESCRIPTOR,
         dptr: CUdeviceptr,
         Pitch: usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetFormat(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetAddress2D_v3
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, desc, dptr, Pitch)
+    }
+    pub unsafe fn cuTexRefSetFormat(
+        &self,
         hTexRef: CUtexref,
         fmt: CUarray_format,
         NumPackedComponents: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetAddressMode(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetFormat
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, fmt, NumPackedComponents)
+    }
+    pub unsafe fn cuTexRefSetAddressMode(
+        &self,
         hTexRef: CUtexref,
         dim: ::core::ffi::c_int,
         am: CUaddress_mode,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetFilterMode(hTexRef: CUtexref, fm: CUfilter_mode) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetMipmapFilterMode(hTexRef: CUtexref, fm: CUfilter_mode) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetMipmapLevelBias(hTexRef: CUtexref, bias: f32) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetMipmapLevelClamp(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetAddressMode
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, dim, am)
+    }
+    pub unsafe fn cuTexRefSetFilterMode(&self, hTexRef: CUtexref, fm: CUfilter_mode) -> CUresult {
+        (self
+            .cuTexRefSetFilterMode
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, fm)
+    }
+    pub unsafe fn cuTexRefSetMipmapFilterMode(
+        &self,
+        hTexRef: CUtexref,
+        fm: CUfilter_mode,
+    ) -> CUresult {
+        (self
+            .cuTexRefSetMipmapFilterMode
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, fm)
+    }
+    pub unsafe fn cuTexRefSetMipmapLevelBias(&self, hTexRef: CUtexref, bias: f32) -> CUresult {
+        (self
+            .cuTexRefSetMipmapLevelBias
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, bias)
+    }
+    pub unsafe fn cuTexRefSetMipmapLevelClamp(
+        &self,
         hTexRef: CUtexref,
         minMipmapLevelClamp: f32,
         maxMipmapLevelClamp: f32,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetMaxAnisotropy(hTexRef: CUtexref, maxAniso: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetBorderColor(hTexRef: CUtexref, pBorderColor: *mut f32) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefSetFlags(hTexRef: CUtexref, Flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetAddress_v2(pdptr: *mut CUdeviceptr, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetArray(phArray: *mut CUarray, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetMipmappedArray(
+    ) -> CUresult {
+        (self
+            .cuTexRefSetMipmapLevelClamp
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hTexRef,
+            minMipmapLevelClamp,
+            maxMipmapLevelClamp,
+        )
+    }
+    pub unsafe fn cuTexRefSetMaxAnisotropy(
+        &self,
+        hTexRef: CUtexref,
+        maxAniso: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuTexRefSetMaxAnisotropy
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, maxAniso)
+    }
+    pub unsafe fn cuTexRefSetBorderColor(
+        &self,
+        hTexRef: CUtexref,
+        pBorderColor: *mut f32,
+    ) -> CUresult {
+        (self
+            .cuTexRefSetBorderColor
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, pBorderColor)
+    }
+    pub unsafe fn cuTexRefSetFlags(
+        &self,
+        hTexRef: CUtexref,
+        Flags: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuTexRefSetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef, Flags)
+    }
+    pub unsafe fn cuTexRefGetAddress_v2(
+        &self,
+        pdptr: *mut CUdeviceptr,
+        hTexRef: CUtexref,
+    ) -> CUresult {
+        (self
+            .cuTexRefGetAddress_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pdptr, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetArray(&self, phArray: *mut CUarray, hTexRef: CUtexref) -> CUresult {
+        (self
+            .cuTexRefGetArray
+            .as_ref()
+            .expect("Expected function, got error."))(phArray, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetMipmappedArray(
+        &self,
         phMipmappedArray: *mut CUmipmappedArray,
         hTexRef: CUtexref,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetAddressMode(
+    ) -> CUresult {
+        (self
+            .cuTexRefGetMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(phMipmappedArray, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetAddressMode(
+        &self,
         pam: *mut CUaddress_mode,
         hTexRef: CUtexref,
         dim: ::core::ffi::c_int,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetFilterMode(pfm: *mut CUfilter_mode, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetFormat(
+    ) -> CUresult {
+        (self
+            .cuTexRefGetAddressMode
+            .as_ref()
+            .expect("Expected function, got error."))(pam, hTexRef, dim)
+    }
+    pub unsafe fn cuTexRefGetFilterMode(
+        &self,
+        pfm: *mut CUfilter_mode,
+        hTexRef: CUtexref,
+    ) -> CUresult {
+        (self
+            .cuTexRefGetFilterMode
+            .as_ref()
+            .expect("Expected function, got error."))(pfm, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetFormat(
+        &self,
         pFormat: *mut CUarray_format,
         pNumChannels: *mut ::core::ffi::c_int,
         hTexRef: CUtexref,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetMipmapFilterMode(pfm: *mut CUfilter_mode, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetMipmapLevelBias(pbias: *mut f32, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetMipmapLevelClamp(
+    ) -> CUresult {
+        (self
+            .cuTexRefGetFormat
+            .as_ref()
+            .expect("Expected function, got error."))(pFormat, pNumChannels, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetMipmapFilterMode(
+        &self,
+        pfm: *mut CUfilter_mode,
+        hTexRef: CUtexref,
+    ) -> CUresult {
+        (self
+            .cuTexRefGetMipmapFilterMode
+            .as_ref()
+            .expect("Expected function, got error."))(pfm, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetMipmapLevelBias(
+        &self,
+        pbias: *mut f32,
+        hTexRef: CUtexref,
+    ) -> CUresult {
+        (self
+            .cuTexRefGetMipmapLevelBias
+            .as_ref()
+            .expect("Expected function, got error."))(pbias, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetMipmapLevelClamp(
+        &self,
         pminMipmapLevelClamp: *mut f32,
         pmaxMipmapLevelClamp: *mut f32,
         hTexRef: CUtexref,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetMaxAnisotropy(
+    ) -> CUresult {
+        (self
+            .cuTexRefGetMipmapLevelClamp
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pminMipmapLevelClamp,
+            pmaxMipmapLevelClamp,
+            hTexRef,
+        )
+    }
+    pub unsafe fn cuTexRefGetMaxAnisotropy(
+        &self,
         pmaxAniso: *mut ::core::ffi::c_int,
         hTexRef: CUtexref,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetBorderColor(pBorderColor: *mut f32, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefGetFlags(pFlags: *mut ::core::ffi::c_uint, hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefCreate(pTexRef: *mut CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexRefDestroy(hTexRef: CUtexref) -> CUresult;
-}
-extern "C" {
-    pub fn cuSurfRefSetArray(
+    ) -> CUresult {
+        (self
+            .cuTexRefGetMaxAnisotropy
+            .as_ref()
+            .expect("Expected function, got error."))(pmaxAniso, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetBorderColor(
+        &self,
+        pBorderColor: *mut f32,
+        hTexRef: CUtexref,
+    ) -> CUresult {
+        (self
+            .cuTexRefGetBorderColor
+            .as_ref()
+            .expect("Expected function, got error."))(pBorderColor, hTexRef)
+    }
+    pub unsafe fn cuTexRefGetFlags(
+        &self,
+        pFlags: *mut ::core::ffi::c_uint,
+        hTexRef: CUtexref,
+    ) -> CUresult {
+        (self
+            .cuTexRefGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(pFlags, hTexRef)
+    }
+    pub unsafe fn cuTexRefCreate(&self, pTexRef: *mut CUtexref) -> CUresult {
+        (self
+            .cuTexRefCreate
+            .as_ref()
+            .expect("Expected function, got error."))(pTexRef)
+    }
+    pub unsafe fn cuTexRefDestroy(&self, hTexRef: CUtexref) -> CUresult {
+        (self
+            .cuTexRefDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(hTexRef)
+    }
+    pub unsafe fn cuSurfRefSetArray(
+        &self,
         hSurfRef: CUsurfref,
         hArray: CUarray,
         Flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuSurfRefGetArray(phArray: *mut CUarray, hSurfRef: CUsurfref) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexObjectCreate(
+    ) -> CUresult {
+        (self
+            .cuSurfRefSetArray
+            .as_ref()
+            .expect("Expected function, got error."))(hSurfRef, hArray, Flags)
+    }
+    pub unsafe fn cuSurfRefGetArray(&self, phArray: *mut CUarray, hSurfRef: CUsurfref) -> CUresult {
+        (self
+            .cuSurfRefGetArray
+            .as_ref()
+            .expect("Expected function, got error."))(phArray, hSurfRef)
+    }
+    pub unsafe fn cuTexObjectCreate(
+        &self,
         pTexObject: *mut CUtexObject,
         pResDesc: *const CUDA_RESOURCE_DESC,
         pTexDesc: *const CUDA_TEXTURE_DESC,
         pResViewDesc: *const CUDA_RESOURCE_VIEW_DESC,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexObjectDestroy(texObject: CUtexObject) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexObjectGetResourceDesc(
+    ) -> CUresult {
+        (self
+            .cuTexObjectCreate
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pTexObject, pResDesc, pTexDesc, pResViewDesc
+        )
+    }
+    pub unsafe fn cuTexObjectDestroy(&self, texObject: CUtexObject) -> CUresult {
+        (self
+            .cuTexObjectDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(texObject)
+    }
+    pub unsafe fn cuTexObjectGetResourceDesc(
+        &self,
         pResDesc: *mut CUDA_RESOURCE_DESC,
         texObject: CUtexObject,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexObjectGetTextureDesc(
+    ) -> CUresult {
+        (self
+            .cuTexObjectGetResourceDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pResDesc, texObject)
+    }
+    pub unsafe fn cuTexObjectGetTextureDesc(
+        &self,
         pTexDesc: *mut CUDA_TEXTURE_DESC,
         texObject: CUtexObject,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTexObjectGetResourceViewDesc(
+    ) -> CUresult {
+        (self
+            .cuTexObjectGetTextureDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pTexDesc, texObject)
+    }
+    pub unsafe fn cuTexObjectGetResourceViewDesc(
+        &self,
         pResViewDesc: *mut CUDA_RESOURCE_VIEW_DESC,
         texObject: CUtexObject,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuSurfObjectCreate(
+    ) -> CUresult {
+        (self
+            .cuTexObjectGetResourceViewDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pResViewDesc, texObject)
+    }
+    pub unsafe fn cuSurfObjectCreate(
+        &self,
         pSurfObject: *mut CUsurfObject,
         pResDesc: *const CUDA_RESOURCE_DESC,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuSurfObjectDestroy(surfObject: CUsurfObject) -> CUresult;
-}
-extern "C" {
-    pub fn cuSurfObjectGetResourceDesc(
+    ) -> CUresult {
+        (self
+            .cuSurfObjectCreate
+            .as_ref()
+            .expect("Expected function, got error."))(pSurfObject, pResDesc)
+    }
+    pub unsafe fn cuSurfObjectDestroy(&self, surfObject: CUsurfObject) -> CUresult {
+        (self
+            .cuSurfObjectDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(surfObject)
+    }
+    pub unsafe fn cuSurfObjectGetResourceDesc(
+        &self,
         pResDesc: *mut CUDA_RESOURCE_DESC,
         surfObject: CUsurfObject,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTensorMapEncodeTiled(
+    ) -> CUresult {
+        (self
+            .cuSurfObjectGetResourceDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pResDesc, surfObject)
+    }
+    pub unsafe fn cuTensorMapEncodeTiled(
+        &self,
         tensorMap: *mut CUtensorMap,
         tensorDataType: CUtensorMapDataType,
         tensorRank: cuuint32_t,
@@ -11373,10 +16933,27 @@ extern "C" {
         swizzle: CUtensorMapSwizzle,
         l2Promotion: CUtensorMapL2promotion,
         oobFill: CUtensorMapFloatOOBfill,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTensorMapEncodeIm2col(
+    ) -> CUresult {
+        (self
+            .cuTensorMapEncodeTiled
+            .as_ref()
+            .expect("Expected function, got error."))(
+            tensorMap,
+            tensorDataType,
+            tensorRank,
+            globalAddress,
+            globalDim,
+            globalStrides,
+            boxDim,
+            elementStrides,
+            interleave,
+            swizzle,
+            l2Promotion,
+            oobFill,
+        )
+    }
+    pub unsafe fn cuTensorMapEncodeIm2col(
+        &self,
         tensorMap: *mut CUtensorMap,
         tensorDataType: CUtensorMapDataType,
         tensorRank: cuuint32_t,
@@ -11392,151 +16969,238 @@ extern "C" {
         swizzle: CUtensorMapSwizzle,
         l2Promotion: CUtensorMapL2promotion,
         oobFill: CUtensorMapFloatOOBfill,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuTensorMapReplaceAddress(
+    ) -> CUresult {
+        (self
+            .cuTensorMapEncodeIm2col
+            .as_ref()
+            .expect("Expected function, got error."))(
+            tensorMap,
+            tensorDataType,
+            tensorRank,
+            globalAddress,
+            globalDim,
+            globalStrides,
+            pixelBoxLowerCorner,
+            pixelBoxUpperCorner,
+            channelsPerPixel,
+            pixelsPerColumn,
+            elementStrides,
+            interleave,
+            swizzle,
+            l2Promotion,
+            oobFill,
+        )
+    }
+    pub unsafe fn cuTensorMapReplaceAddress(
+        &self,
         tensorMap: *mut CUtensorMap,
         globalAddress: *mut ::core::ffi::c_void,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceCanAccessPeer(
+    ) -> CUresult {
+        (self
+            .cuTensorMapReplaceAddress
+            .as_ref()
+            .expect("Expected function, got error."))(tensorMap, globalAddress)
+    }
+    pub unsafe fn cuDeviceCanAccessPeer(
+        &self,
         canAccessPeer: *mut ::core::ffi::c_int,
         dev: CUdevice,
         peerDev: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxEnablePeerAccess(peerContext: CUcontext, Flags: ::core::ffi::c_uint) -> CUresult;
-}
-extern "C" {
-    pub fn cuCtxDisablePeerAccess(peerContext: CUcontext) -> CUresult;
-}
-extern "C" {
-    pub fn cuDeviceGetP2PAttribute(
+    ) -> CUresult {
+        (self
+            .cuDeviceCanAccessPeer
+            .as_ref()
+            .expect("Expected function, got error."))(canAccessPeer, dev, peerDev)
+    }
+    pub unsafe fn cuCtxEnablePeerAccess(
+        &self,
+        peerContext: CUcontext,
+        Flags: ::core::ffi::c_uint,
+    ) -> CUresult {
+        (self
+            .cuCtxEnablePeerAccess
+            .as_ref()
+            .expect("Expected function, got error."))(peerContext, Flags)
+    }
+    pub unsafe fn cuCtxDisablePeerAccess(&self, peerContext: CUcontext) -> CUresult {
+        (self
+            .cuCtxDisablePeerAccess
+            .as_ref()
+            .expect("Expected function, got error."))(peerContext)
+    }
+    pub unsafe fn cuDeviceGetP2PAttribute(
+        &self,
         value: *mut ::core::ffi::c_int,
         attrib: CUdevice_P2PAttribute,
         srcDevice: CUdevice,
         dstDevice: CUdevice,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsUnregisterResource(resource: CUgraphicsResource) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsSubResourceGetMappedArray(
+    ) -> CUresult {
+        (self
+            .cuDeviceGetP2PAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(value, attrib, srcDevice, dstDevice)
+    }
+    pub unsafe fn cuGraphicsUnregisterResource(&self, resource: CUgraphicsResource) -> CUresult {
+        (self
+            .cuGraphicsUnregisterResource
+            .as_ref()
+            .expect("Expected function, got error."))(resource)
+    }
+    pub unsafe fn cuGraphicsSubResourceGetMappedArray(
+        &self,
         pArray: *mut CUarray,
         resource: CUgraphicsResource,
         arrayIndex: ::core::ffi::c_uint,
         mipLevel: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsResourceGetMappedMipmappedArray(
+    ) -> CUresult {
+        (self
+            .cuGraphicsSubResourceGetMappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(pArray, resource, arrayIndex, mipLevel)
+    }
+    pub unsafe fn cuGraphicsResourceGetMappedMipmappedArray(
+        &self,
         pMipmappedArray: *mut CUmipmappedArray,
         resource: CUgraphicsResource,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsResourceGetMappedPointer_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphicsResourceGetMappedMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(pMipmappedArray, resource)
+    }
+    pub unsafe fn cuGraphicsResourceGetMappedPointer_v2(
+        &self,
         pDevPtr: *mut CUdeviceptr,
         pSize: *mut usize,
         resource: CUgraphicsResource,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsResourceSetMapFlags_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphicsResourceGetMappedPointer_v2
+            .as_ref()
+            .expect("Expected function, got error."))(pDevPtr, pSize, resource)
+    }
+    pub unsafe fn cuGraphicsResourceSetMapFlags_v2(
+        &self,
         resource: CUgraphicsResource,
         flags: ::core::ffi::c_uint,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsMapResources(
+    ) -> CUresult {
+        (self
+            .cuGraphicsResourceSetMapFlags_v2
+            .as_ref()
+            .expect("Expected function, got error."))(resource, flags)
+    }
+    pub unsafe fn cuGraphicsMapResources(
+        &self,
         count: ::core::ffi::c_uint,
         resources: *mut CUgraphicsResource,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGraphicsUnmapResources(
+    ) -> CUresult {
+        (self
+            .cuGraphicsMapResources
+            .as_ref()
+            .expect("Expected function, got error."))(count, resources, hStream)
+    }
+    pub unsafe fn cuGraphicsUnmapResources(
+        &self,
         count: ::core::ffi::c_uint,
         resources: *mut CUgraphicsResource,
         hStream: CUstream,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGetProcAddress_v2(
+    ) -> CUresult {
+        (self
+            .cuGraphicsUnmapResources
+            .as_ref()
+            .expect("Expected function, got error."))(count, resources, hStream)
+    }
+    pub unsafe fn cuGetProcAddress_v2(
+        &self,
         symbol: *const ::core::ffi::c_char,
         pfn: *mut *mut ::core::ffi::c_void,
         cudaVersion: ::core::ffi::c_int,
         flags: cuuint64_t,
         symbolStatus: *mut CUdriverProcAddressQueryResult,
-    ) -> CUresult;
-}
-#[repr(u32)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub enum CUcoredumpSettings_enum {
-    CU_COREDUMP_ENABLE_ON_EXCEPTION = 1,
-    CU_COREDUMP_TRIGGER_HOST = 2,
-    CU_COREDUMP_LIGHTWEIGHT = 3,
-    CU_COREDUMP_ENABLE_USER_TRIGGER = 4,
-    CU_COREDUMP_FILE = 5,
-    CU_COREDUMP_PIPE = 6,
-    CU_COREDUMP_MAX = 7,
-}
-pub use self::CUcoredumpSettings_enum as CUcoredumpSettings;
-extern "C" {
-    pub fn cuCoredumpGetAttribute(
+    ) -> CUresult {
+        (self
+            .cuGetProcAddress_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            symbol, pfn, cudaVersion, flags, symbolStatus
+        )
+    }
+    pub unsafe fn cuCoredumpGetAttribute(
+        &self,
         attrib: CUcoredumpSettings,
         value: *mut ::core::ffi::c_void,
         size: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCoredumpGetAttributeGlobal(
+    ) -> CUresult {
+        (self
+            .cuCoredumpGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(attrib, value, size)
+    }
+    pub unsafe fn cuCoredumpGetAttributeGlobal(
+        &self,
         attrib: CUcoredumpSettings,
         value: *mut ::core::ffi::c_void,
         size: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCoredumpSetAttribute(
+    ) -> CUresult {
+        (self
+            .cuCoredumpGetAttributeGlobal
+            .as_ref()
+            .expect("Expected function, got error."))(attrib, value, size)
+    }
+    pub unsafe fn cuCoredumpSetAttribute(
+        &self,
         attrib: CUcoredumpSettings,
         value: *mut ::core::ffi::c_void,
         size: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuCoredumpSetAttributeGlobal(
+    ) -> CUresult {
+        (self
+            .cuCoredumpSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(attrib, value, size)
+    }
+    pub unsafe fn cuCoredumpSetAttributeGlobal(
+        &self,
         attrib: CUcoredumpSettings,
         value: *mut ::core::ffi::c_void,
         size: *mut usize,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuGetExportTable(
+    ) -> CUresult {
+        (self
+            .cuCoredumpSetAttributeGlobal
+            .as_ref()
+            .expect("Expected function, got error."))(attrib, value, size)
+    }
+    pub unsafe fn cuGetExportTable(
+        &self,
         ppExportTable: *mut *const ::core::ffi::c_void,
         pExportTableId: *const CUuuid,
-    ) -> CUresult;
-}
-#[repr(u32)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub enum CUoutput_mode_enum {
-    CU_OUT_KEY_VALUE_PAIR = 0,
-    CU_OUT_CSV = 1,
-}
-pub use self::CUoutput_mode_enum as CUoutput_mode;
-extern "C" {
-    pub fn cuProfilerInitialize(
+    ) -> CUresult {
+        (self
+            .cuGetExportTable
+            .as_ref()
+            .expect("Expected function, got error."))(ppExportTable, pExportTableId)
+    }
+    pub unsafe fn cuProfilerInitialize(
+        &self,
         configFile: *const ::core::ffi::c_char,
         outputFile: *const ::core::ffi::c_char,
         outputMode: CUoutput_mode,
-    ) -> CUresult;
-}
-extern "C" {
-    pub fn cuProfilerStart() -> CUresult;
-}
-extern "C" {
-    pub fn cuProfilerStop() -> CUresult;
+    ) -> CUresult {
+        (self
+            .cuProfilerInitialize
+            .as_ref()
+            .expect("Expected function, got error."))(configFile, outputFile, outputMode)
+    }
+    pub unsafe fn cuProfilerStart(&self) -> CUresult {
+        (self
+            .cuProfilerStart
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cuProfilerStop(&self) -> CUresult {
+        (self
+            .cuProfilerStop
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
 }
