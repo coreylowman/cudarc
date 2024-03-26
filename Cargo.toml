@@ -31,6 +31,7 @@ cuda_11080 = []
 cuda_12000 = []
 cuda_12010 = []
 cuda_12020 = []
+cuda_11070 = []
 
 nvrtc = []
 driver = ["nvrtc"]
