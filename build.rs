@@ -32,10 +32,12 @@ fn cuda_auto_version() {
     let key = "CUDA_VERSION ";
     let start = key.len() + contents.find(key).unwrap();
     match contents[start..].lines().next().unwrap() {
+        "12030" => println!("cargo:rustc-cfg=feature=\"cuda_12030\""),
         "12020" => println!("cargo:rustc-cfg=feature=\"cuda_12020\""),
         "12010" => println!("cargo:rustc-cfg=feature=\"cuda_12010\""),
         "12000" => println!("cargo:rustc-cfg=feature=\"cuda_12000\""),
         "11080" => println!("cargo:rustc-cfg=feature=\"cuda_11080\""),
+        "11070" => println!("cargo:rustc-cfg=feature=\"cuda_11070\""),
         v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
     }
 }
