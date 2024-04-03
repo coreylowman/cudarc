@@ -27,3 +27,8 @@ pub use sys_12020::*;
 mod sys_12030;
 #[cfg(feature = "cuda_12030")]
 pub use sys_12030::*;
+
+pub unsafe fn lib() -> &'static Lib {
+    static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
+    LIB.get_or_init(|| Lib::new(libloading::library_filename("cublas")).unwrap())
+}

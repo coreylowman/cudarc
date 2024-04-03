@@ -1,6 +1,6 @@
 use crate::driver::{
     result,
-    sys::{self, CUfunction_attribute_enum},
+    sys::{self, lib, CUfunction_attribute_enum},
 };
 
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
@@ -274,13 +274,14 @@ impl CudaFunction {
         let mut dynamic_smem_size: usize = 0;
 
         unsafe {
-            sys::cuOccupancyAvailableDynamicSMemPerBlock(
-                &mut dynamic_smem_size,
-                self.cu_function,
-                num_blocks as std::ffi::c_int,
-                block_size as std::ffi::c_int,
-            )
-            .result()?
+            lib()
+                .cuOccupancyAvailableDynamicSMemPerBlock(
+                    &mut dynamic_smem_size,
+                    self.cu_function,
+                    num_blocks as std::ffi::c_int,
+                    block_size as std::ffi::c_int,
+                )
+                .result()?
         };
 
         Ok(dynamic_smem_size)
@@ -296,14 +297,15 @@ impl CudaFunction {
         let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
 
         unsafe {
-            sys::cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
-                &mut num_blocks,
-                self.cu_function,
-                block_size as std::ffi::c_int,
-                dynamic_smem_size,
-                flags as std::ffi::c_uint,
-            )
-            .result()?
+            lib()
+                .cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+                    &mut num_blocks,
+                    self.cu_function,
+                    block_size as std::ffi::c_int,
+                    dynamic_smem_size,
+                    flags as std::ffi::c_uint,
+                )
+                .result()?
         };
 
         Ok(num_blocks as u32)
@@ -331,7 +333,9 @@ impl CudaFunction {
         };
 
         unsafe {
-            sys::cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg).result()?
+            lib()
+                .cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg)
+                .result()?
         };
 
         Ok(num_clusters as u32)
@@ -349,16 +353,17 @@ impl CudaFunction {
         let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
 
         unsafe {
-            sys::cuOccupancyMaxPotentialBlockSizeWithFlags(
-                &mut min_grid_size,
-                &mut block_size,
-                self.cu_function,
-                Some(block_size_to_dynamic_smem_size),
-                dynamic_smem_size,
-                block_size_limit as std::ffi::c_int,
-                flags as std::ffi::c_uint,
-            )
-            .result()?
+            lib()
+                .cuOccupancyMaxPotentialBlockSizeWithFlags(
+                    &mut min_grid_size,
+                    &mut block_size,
+                    self.cu_function,
+                    Some(block_size_to_dynamic_smem_size),
+                    dynamic_smem_size,
+                    block_size_limit as std::ffi::c_int,
+                    flags as std::ffi::c_uint,
+                )
+                .result()?
         };
 
         Ok((min_grid_size as u32, block_size as u32))
@@ -386,7 +391,8 @@ impl CudaFunction {
         };
 
         unsafe {
-            sys::cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg)
+            lib()
+                .cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg)
                 .result()?
         };
 

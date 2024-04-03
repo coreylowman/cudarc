@@ -265,129 +265,4823 @@ pub struct cublasContext {
     _unused: [u8; 0],
 }
 pub type cublasHandle_t = *mut cublasContext;
-extern "C" {
-    pub fn cublasCreate_v2(handle: *mut cublasHandle_t) -> cublasStatus_t;
+pub type cublasLogCallback =
+    ::core::option::Option<unsafe extern "C" fn(msg: *const ::core::ffi::c_char)>;
+extern crate libloading;
+pub struct Lib {
+    __library: ::libloading::Library,
+    pub cublasCreate_v2: Result<
+        unsafe extern "C" fn(handle: *mut cublasHandle_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDestroy_v2:
+        Result<unsafe extern "C" fn(handle: cublasHandle_t) -> cublasStatus_t, ::libloading::Error>,
+    pub cublasGetVersion_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            version: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetProperty: Result<
+        unsafe extern "C" fn(
+            type_: libraryPropertyType,
+            value: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetCudartVersion: Result<unsafe extern "C" fn() -> usize, ::libloading::Error>,
+    pub cublasSetWorkspace_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            workspace: *mut ::core::ffi::c_void,
+            workspaceSizeInBytes: usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetStream_v2: Result<
+        unsafe extern "C" fn(handle: cublasHandle_t, streamId: cudaStream_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetStream_v2: Result<
+        unsafe extern "C" fn(handle: cublasHandle_t, streamId: *mut cudaStream_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetPointerMode_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mode: *mut cublasPointerMode_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetPointerMode_v2: Result<
+        unsafe extern "C" fn(handle: cublasHandle_t, mode: cublasPointerMode_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetAtomicsMode: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mode: *mut cublasAtomicsMode_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetAtomicsMode: Result<
+        unsafe extern "C" fn(handle: cublasHandle_t, mode: cublasAtomicsMode_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetMathMode: Result<
+        unsafe extern "C" fn(handle: cublasHandle_t, mode: *mut cublasMath_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetMathMode: Result<
+        unsafe extern "C" fn(handle: cublasHandle_t, mode: cublasMath_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetSmCountTarget: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            smCountTarget: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetSmCountTarget: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            smCountTarget: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetStatusName: Result<
+        unsafe extern "C" fn(status: cublasStatus_t) -> *const ::core::ffi::c_char,
+        ::libloading::Error,
+    >,
+    pub cublasGetStatusString: Result<
+        unsafe extern "C" fn(status: cublasStatus_t) -> *const ::core::ffi::c_char,
+        ::libloading::Error,
+    >,
+    pub cublasLoggerConfigure: Result<
+        unsafe extern "C" fn(
+            logIsOn: ::core::ffi::c_int,
+            logToStdOut: ::core::ffi::c_int,
+            logToStdErr: ::core::ffi::c_int,
+            logFileName: *const ::core::ffi::c_char,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetLoggerCallback: Result<
+        unsafe extern "C" fn(userCallback: cublasLogCallback) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetLoggerCallback: Result<
+        unsafe extern "C" fn(userCallback: *mut cublasLogCallback) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetVector: Result<
+        unsafe extern "C" fn(
+            n: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            incx: ::core::ffi::c_int,
+            devicePtr: *mut ::core::ffi::c_void,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetVector: Result<
+        unsafe extern "C" fn(
+            n: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            incx: ::core::ffi::c_int,
+            y: *mut ::core::ffi::c_void,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetMatrix: Result<
+        unsafe extern "C" fn(
+            rows: ::core::ffi::c_int,
+            cols: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            A: *const ::core::ffi::c_void,
+            lda: ::core::ffi::c_int,
+            B: *mut ::core::ffi::c_void,
+            ldb: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetMatrix: Result<
+        unsafe extern "C" fn(
+            rows: ::core::ffi::c_int,
+            cols: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            A: *const ::core::ffi::c_void,
+            lda: ::core::ffi::c_int,
+            B: *mut ::core::ffi::c_void,
+            ldb: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetVectorAsync: Result<
+        unsafe extern "C" fn(
+            n: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            hostPtr: *const ::core::ffi::c_void,
+            incx: ::core::ffi::c_int,
+            devicePtr: *mut ::core::ffi::c_void,
+            incy: ::core::ffi::c_int,
+            stream: cudaStream_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetVectorAsync: Result<
+        unsafe extern "C" fn(
+            n: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            devicePtr: *const ::core::ffi::c_void,
+            incx: ::core::ffi::c_int,
+            hostPtr: *mut ::core::ffi::c_void,
+            incy: ::core::ffi::c_int,
+            stream: cudaStream_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSetMatrixAsync: Result<
+        unsafe extern "C" fn(
+            rows: ::core::ffi::c_int,
+            cols: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            A: *const ::core::ffi::c_void,
+            lda: ::core::ffi::c_int,
+            B: *mut ::core::ffi::c_void,
+            ldb: ::core::ffi::c_int,
+            stream: cudaStream_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGetMatrixAsync: Result<
+        unsafe extern "C" fn(
+            rows: ::core::ffi::c_int,
+            cols: ::core::ffi::c_int,
+            elemSize: ::core::ffi::c_int,
+            A: *const ::core::ffi::c_void,
+            lda: ::core::ffi::c_int,
+            B: *mut ::core::ffi::c_void,
+            ldb: ::core::ffi::c_int,
+            stream: cudaStream_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasXerbla: Result<
+        unsafe extern "C" fn(srName: *const ::core::ffi::c_char, info: ::core::ffi::c_int),
+        ::libloading::Error,
+    >,
+    pub cublasNrm2Ex: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_void,
+            resultType: cudaDataType,
+            executionType: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSnrm2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            result: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDnrm2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            result: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasScnrm2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDznrm2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDotEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *const ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_void,
+            resultType: cudaDataType,
+            executionType: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDotcEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *const ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_void,
+            resultType: cudaDataType,
+            executionType: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSdot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            y: *const f32,
+            incy: ::core::ffi::c_int,
+            result: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDdot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            y: *const f64,
+            incy: ::core::ffi::c_int,
+            result: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCdotu_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            result: *mut cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCdotc_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            result: *mut cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZdotu_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            result: *mut cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZdotc_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            result: *mut cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasScalEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const ::core::ffi::c_void,
+            alphaType: cudaDataType,
+            x: *mut ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            executionType: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSscal_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDscal_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCscal_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsscal_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZscal_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZdscal_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasAxpyEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const ::core::ffi::c_void,
+            alphaType: cudaDataType,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *mut ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+            executiontype: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSaxpy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDaxpy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCaxpy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZaxpy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCopyEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *mut ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasScopy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDcopy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCcopy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZcopy_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSswap_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDswap_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCswap_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZswap_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSwapEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *mut ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIsamax_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIdamax_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIcamax_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIzamax_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIamaxEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIsamin_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIdamin_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIcamin_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIzamin_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasIaminEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasAsumEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            result: *mut ::core::ffi::c_void,
+            resultType: cudaDataType,
+            executiontype: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSasum_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            result: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDasum_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            result: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasScasum_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDzasum_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            result: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSrot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+            c: *const f32,
+            s: *const f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDrot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+            c: *const f64,
+            s: *const f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCrot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+            c: *const f32,
+            s: *const cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsrot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+            c: *const f32,
+            s: *const f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZrot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            c: *const f64,
+            s: *const cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZdrot_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            c: *const f64,
+            s: *const f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasRotEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *mut ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+            c: *const ::core::ffi::c_void,
+            s: *const ::core::ffi::c_void,
+            csType: cudaDataType,
+            executiontype: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSrotg_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            a: *mut f32,
+            b: *mut f32,
+            c: *mut f32,
+            s: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDrotg_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            a: *mut f64,
+            b: *mut f64,
+            c: *mut f64,
+            s: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCrotg_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            a: *mut cuComplex,
+            b: *mut cuComplex,
+            c: *mut f32,
+            s: *mut cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZrotg_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            a: *mut cuDoubleComplex,
+            b: *mut cuDoubleComplex,
+            c: *mut f64,
+            s: *mut cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasRotgEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            a: *mut ::core::ffi::c_void,
+            b: *mut ::core::ffi::c_void,
+            abType: cudaDataType,
+            c: *mut ::core::ffi::c_void,
+            s: *mut ::core::ffi::c_void,
+            csType: cudaDataType,
+            executiontype: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSrotm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+            param: *const f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDrotm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+            param: *const f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasRotmEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            x: *mut ::core::ffi::c_void,
+            xType: cudaDataType,
+            incx: ::core::ffi::c_int,
+            y: *mut ::core::ffi::c_void,
+            yType: cudaDataType,
+            incy: ::core::ffi::c_int,
+            param: *const ::core::ffi::c_void,
+            paramType: cudaDataType,
+            executiontype: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSrotmg_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            d1: *mut f32,
+            d2: *mut f32,
+            x1: *mut f32,
+            y1: *const f32,
+            param: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDrotmg_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            d1: *mut f64,
+            d2: *mut f64,
+            x1: *mut f64,
+            y1: *const f64,
+            param: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasRotmgEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            d1: *mut ::core::ffi::c_void,
+            d1Type: cudaDataType,
+            d2: *mut ::core::ffi::c_void,
+            d2Type: cudaDataType,
+            x1: *mut ::core::ffi::c_void,
+            x1Type: cudaDataType,
+            y1: *const ::core::ffi::c_void,
+            y1Type: cudaDataType,
+            param: *mut ::core::ffi::c_void,
+            paramType: cudaDataType,
+            executiontype: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            beta: *const f32,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgemv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            beta: *const f64,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            kl: ::core::ffi::c_int,
+            ku: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            beta: *const f32,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            kl: ::core::ffi::c_int,
+            ku: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            beta: *const f64,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            kl: ::core::ffi::c_int,
+            ku: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            kl: ::core::ffi::c_int,
+            ku: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStrmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtrmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtrmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtrmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStpmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const f32,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtpmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const f64,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtpmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const cuComplex,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtpmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const cuDoubleComplex,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStrsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtrsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtrsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtrsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStpsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const f32,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtpsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const f64,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtpsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const cuComplex,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtpsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            AP: *const cuDoubleComplex,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStbsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *mut f32,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtbsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *mut f64,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtbsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtbsv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *mut cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsymv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            beta: *const f32,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsymv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            beta: *const f64,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsymv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsymv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasChemv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZhemv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            beta: *const f32,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            beta: *const f64,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasChbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZhbmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSspmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            AP: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            beta: *const f32,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDspmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            AP: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            beta: *const f64,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasChpmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            AP: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZhpmv_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            AP: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSger_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            y: *const f32,
+            incy: ::core::ffi::c_int,
+            A: *mut f32,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDger_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            y: *const f64,
+            incy: ::core::ffi::c_int,
+            A: *mut f64,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgeru_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgerc_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgeru_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgerc_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsyr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            A: *mut f32,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsyr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            A: *mut f64,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsyr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCher_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZher_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSspr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            AP: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDspr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            AP: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasChpr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            AP: *mut cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZhpr_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            AP: *mut cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsyr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            y: *const f32,
+            incy: ::core::ffi::c_int,
+            A: *mut f32,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsyr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            y: *const f64,
+            incy: ::core::ffi::c_int,
+            A: *mut f64,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsyr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCher2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZher2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSspr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            y: *const f32,
+            incy: ::core::ffi::c_int,
+            AP: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDspr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            y: *const f64,
+            incy: ::core::ffi::c_int,
+            AP: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasChpr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuComplex,
+            incy: ::core::ffi::c_int,
+            AP: *mut cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZhpr2_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            y: *const cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            AP: *mut cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            Aarray: *const *const f32,
+            lda: ::core::ffi::c_int,
+            xarray: *const *const f32,
+            incx: ::core::ffi::c_int,
+            beta: *const f32,
+            yarray: *const *mut f32,
+            incy: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgemvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            Aarray: *const *const f64,
+            lda: ::core::ffi::c_int,
+            xarray: *const *const f64,
+            incx: ::core::ffi::c_int,
+            beta: *const f64,
+            yarray: *const *mut f64,
+            incy: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            Aarray: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            xarray: *const *const cuComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            yarray: *const *mut cuComplex,
+            incy: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            Aarray: *const *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            xarray: *const *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            yarray: *const *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemvStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            stridex: ::core::ffi::c_longlong,
+            beta: *const f32,
+            y: *mut f32,
+            incy: ::core::ffi::c_int,
+            stridey: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgemvStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            stridex: ::core::ffi::c_longlong,
+            beta: *const f64,
+            y: *mut f64,
+            incy: ::core::ffi::c_int,
+            stridey: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemvStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            stridex: ::core::ffi::c_longlong,
+            beta: *const cuComplex,
+            y: *mut cuComplex,
+            incy: ::core::ffi::c_int,
+            stridey: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemvStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            stridex: ::core::ffi::c_longlong,
+            beta: *const cuDoubleComplex,
+            y: *mut cuDoubleComplex,
+            incy: ::core::ffi::c_int,
+            stridey: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgemm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemm3m: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemm3mEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            B: *const ::core::ffi::c_void,
+            Btype: cudaDataType,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemm3m: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemmEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            B: *const ::core::ffi::c_void,
+            Btype: cudaDataType,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGemmEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const ::core::ffi::c_void,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            B: *const ::core::ffi::c_void,
+            Btype: cudaDataType,
+            ldb: ::core::ffi::c_int,
+            beta: *const ::core::ffi::c_void,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+            computeType: cublasComputeType_t,
+            algo: cublasGemmAlgo_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemmEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            B: *const ::core::ffi::c_void,
+            Btype: cudaDataType,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasUint8gemmBias: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            transc: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            A: *const ::core::ffi::c_uchar,
+            A_bias: ::core::ffi::c_int,
+            lda: ::core::ffi::c_int,
+            B: *const ::core::ffi::c_uchar,
+            B_bias: ::core::ffi::c_int,
+            ldb: ::core::ffi::c_int,
+            C: *mut ::core::ffi::c_uchar,
+            C_bias: ::core::ffi::c_int,
+            ldc: ::core::ffi::c_int,
+            C_mult: ::core::ffi::c_int,
+            C_shift: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsyrk_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsyrk_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyrk_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsyrk_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyrkEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyrk3mEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCherk_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZherk_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCherkEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCherk3mEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsyr2k_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsyr2k_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyr2k_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsyr2k_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCher2k_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZher2k_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsyrkx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsyrkx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsyrkx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsyrkx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCherkx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZherkx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSsymm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDsymm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCsymm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZsymm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasChemm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZhemm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStrsm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            B: *mut f32,
+            ldb: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtrsm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            B: *mut f64,
+            ldb: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtrsm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *mut cuComplex,
+            ldb: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtrsm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *mut cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStrmm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtrmm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtrmm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtrmm_v2: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            Aarray: *const *const f32,
+            lda: ::core::ffi::c_int,
+            Barray: *const *const f32,
+            ldb: ::core::ffi::c_int,
+            beta: *const f32,
+            Carray: *const *mut f32,
+            ldc: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgemmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            Aarray: *const *const f64,
+            lda: ::core::ffi::c_int,
+            Barray: *const *const f64,
+            ldb: ::core::ffi::c_int,
+            beta: *const f64,
+            Carray: *const *mut f64,
+            ldc: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            Aarray: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            Barray: *const *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            Carray: *const *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemm3mBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            Aarray: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            Barray: *const *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            Carray: *const *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            Aarray: *const *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            Barray: *const *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            Carray: *const *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGemmBatchedEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const ::core::ffi::c_void,
+            Aarray: *const *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            Barray: *const *const ::core::ffi::c_void,
+            Btype: cudaDataType,
+            ldb: ::core::ffi::c_int,
+            beta: *const ::core::ffi::c_void,
+            Carray: *const *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+            computeType: cublasComputeType_t,
+            algo: cublasGemmAlgo_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasGemmStridedBatchedEx: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const ::core::ffi::c_void,
+            A: *const ::core::ffi::c_void,
+            Atype: cudaDataType,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            B: *const ::core::ffi::c_void,
+            Btype: cudaDataType,
+            ldb: ::core::ffi::c_int,
+            strideB: ::core::ffi::c_longlong,
+            beta: *const ::core::ffi::c_void,
+            C: *mut ::core::ffi::c_void,
+            Ctype: cudaDataType,
+            ldc: ::core::ffi::c_int,
+            strideC: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+            computeType: cublasComputeType_t,
+            algo: cublasGemmAlgo_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgemmStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            strideB: ::core::ffi::c_longlong,
+            beta: *const f32,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+            strideC: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgemmStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            strideB: ::core::ffi::c_longlong,
+            beta: *const f64,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+            strideC: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemmStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            strideB: ::core::ffi::c_longlong,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+            strideC: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgemm3mStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            strideB: ::core::ffi::c_longlong,
+            beta: *const cuComplex,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+            strideC: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgemmStridedBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            k: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            strideA: ::core::ffi::c_longlong,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            strideB: ::core::ffi::c_longlong,
+            beta: *const cuDoubleComplex,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+            strideC: ::core::ffi::c_longlong,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgeam: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            beta: *const f32,
+            B: *const f32,
+            ldb: ::core::ffi::c_int,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgeam: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            beta: *const f64,
+            B: *const f64,
+            ldb: ::core::ffi::c_int,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgeam: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            beta: *const cuComplex,
+            B: *const cuComplex,
+            ldb: ::core::ffi::c_int,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgeam: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            transa: cublasOperation_t,
+            transb: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            beta: *const cuDoubleComplex,
+            B: *const cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgetrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *mut f32,
+            lda: ::core::ffi::c_int,
+            P: *mut ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgetrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *mut f64,
+            lda: ::core::ffi::c_int,
+            P: *mut ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgetrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *mut cuComplex,
+            lda: ::core::ffi::c_int,
+            P: *mut ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgetrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            P: *mut ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgetriBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const f32,
+            lda: ::core::ffi::c_int,
+            P: *const ::core::ffi::c_int,
+            C: *const *mut f32,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgetriBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const f64,
+            lda: ::core::ffi::c_int,
+            P: *const ::core::ffi::c_int,
+            C: *const *mut f64,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgetriBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            P: *const ::core::ffi::c_int,
+            C: *const *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgetriBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            P: *const ::core::ffi::c_int,
+            C: *const *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgetrsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *const f32,
+            lda: ::core::ffi::c_int,
+            devIpiv: *const ::core::ffi::c_int,
+            Barray: *const *mut f32,
+            ldb: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgetrsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *const f64,
+            lda: ::core::ffi::c_int,
+            devIpiv: *const ::core::ffi::c_int,
+            Barray: *const *mut f64,
+            ldb: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgetrsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            devIpiv: *const ::core::ffi::c_int,
+            Barray: *const *mut cuComplex,
+            ldb: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgetrsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            devIpiv: *const ::core::ffi::c_int,
+            Barray: *const *mut cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStrsmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f32,
+            A: *const *const f32,
+            lda: ::core::ffi::c_int,
+            B: *const *mut f32,
+            ldb: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtrsmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const f64,
+            A: *const *const f64,
+            lda: ::core::ffi::c_int,
+            B: *const *mut f64,
+            ldb: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtrsmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuComplex,
+            A: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            B: *const *mut cuComplex,
+            ldb: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtrsmBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            side: cublasSideMode_t,
+            uplo: cublasFillMode_t,
+            trans: cublasOperation_t,
+            diag: cublasDiagType_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            alpha: *const cuDoubleComplex,
+            A: *const *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            B: *const *mut cuDoubleComplex,
+            ldb: ::core::ffi::c_int,
+            batchCount: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSmatinvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const f32,
+            lda: ::core::ffi::c_int,
+            Ainv: *const *mut f32,
+            lda_inv: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDmatinvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const f64,
+            lda: ::core::ffi::c_int,
+            Ainv: *const *mut f64,
+            lda_inv: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCmatinvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const cuComplex,
+            lda: ::core::ffi::c_int,
+            Ainv: *const *mut cuComplex,
+            lda_inv: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZmatinvBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            n: ::core::ffi::c_int,
+            A: *const *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            Ainv: *const *mut cuDoubleComplex,
+            lda_inv: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgeqrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            Aarray: *const *mut f32,
+            lda: ::core::ffi::c_int,
+            TauArray: *const *mut f32,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgeqrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            Aarray: *const *mut f64,
+            lda: ::core::ffi::c_int,
+            TauArray: *const *mut f64,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgeqrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            Aarray: *const *mut cuComplex,
+            lda: ::core::ffi::c_int,
+            TauArray: *const *mut cuComplex,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgeqrfBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            Aarray: *const *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            TauArray: *const *mut cuDoubleComplex,
+            info: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSgelsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *mut f32,
+            lda: ::core::ffi::c_int,
+            Carray: *const *mut f32,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            devInfoArray: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDgelsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *mut f64,
+            lda: ::core::ffi::c_int,
+            Carray: *const *mut f64,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            devInfoArray: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCgelsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *mut cuComplex,
+            lda: ::core::ffi::c_int,
+            Carray: *const *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            devInfoArray: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZgelsBatched: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            trans: cublasOperation_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            nrhs: ::core::ffi::c_int,
+            Aarray: *const *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            Carray: *const *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+            info: *mut ::core::ffi::c_int,
+            devInfoArray: *mut ::core::ffi::c_int,
+            batchSize: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasSdgmm: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mode: cublasSideMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            x: *const f32,
+            incx: ::core::ffi::c_int,
+            C: *mut f32,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDdgmm: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mode: cublasSideMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            x: *const f64,
+            incx: ::core::ffi::c_int,
+            C: *mut f64,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCdgmm: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mode: cublasSideMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuComplex,
+            incx: ::core::ffi::c_int,
+            C: *mut cuComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZdgmm: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mode: cublasSideMode_t,
+            m: ::core::ffi::c_int,
+            n: ::core::ffi::c_int,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            x: *const cuDoubleComplex,
+            incx: ::core::ffi::c_int,
+            C: *mut cuDoubleComplex,
+            ldc: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStpttr: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            AP: *const f32,
+            A: *mut f32,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtpttr: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            AP: *const f64,
+            A: *mut f64,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtpttr: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            AP: *const cuComplex,
+            A: *mut cuComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtpttr: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            AP: *const cuDoubleComplex,
+            A: *mut cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasStrttp: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            A: *const f32,
+            lda: ::core::ffi::c_int,
+            AP: *mut f32,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasDtrttp: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            A: *const f64,
+            lda: ::core::ffi::c_int,
+            AP: *mut f64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasCtrttp: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            A: *const cuComplex,
+            lda: ::core::ffi::c_int,
+            AP: *mut cuComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasZtrttp: Result<
+        unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            uplo: cublasFillMode_t,
+            n: ::core::ffi::c_int,
+            A: *const cuDoubleComplex,
+            lda: ::core::ffi::c_int,
+            AP: *mut cuDoubleComplex,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
 }
-extern "C" {
-    pub fn cublasDestroy_v2(handle: cublasHandle_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetVersion_v2(
+impl Lib {
+    pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
+    where
+        P: AsRef<::std::ffi::OsStr>,
+    {
+        let library = ::libloading::Library::new(path)?;
+        Self::from_library(library)
+    }
+    pub unsafe fn from_library<L>(library: L) -> Result<Self, ::libloading::Error>
+    where
+        L: Into<::libloading::Library>,
+    {
+        let __library = library.into();
+        let cublasCreate_v2 = __library.get(b"cublasCreate_v2\0").map(|sym| *sym);
+        let cublasDestroy_v2 = __library.get(b"cublasDestroy_v2\0").map(|sym| *sym);
+        let cublasGetVersion_v2 = __library.get(b"cublasGetVersion_v2\0").map(|sym| *sym);
+        let cublasGetProperty = __library.get(b"cublasGetProperty\0").map(|sym| *sym);
+        let cublasGetCudartVersion = __library.get(b"cublasGetCudartVersion\0").map(|sym| *sym);
+        let cublasSetWorkspace_v2 = __library.get(b"cublasSetWorkspace_v2\0").map(|sym| *sym);
+        let cublasSetStream_v2 = __library.get(b"cublasSetStream_v2\0").map(|sym| *sym);
+        let cublasGetStream_v2 = __library.get(b"cublasGetStream_v2\0").map(|sym| *sym);
+        let cublasGetPointerMode_v2 = __library.get(b"cublasGetPointerMode_v2\0").map(|sym| *sym);
+        let cublasSetPointerMode_v2 = __library.get(b"cublasSetPointerMode_v2\0").map(|sym| *sym);
+        let cublasGetAtomicsMode = __library.get(b"cublasGetAtomicsMode\0").map(|sym| *sym);
+        let cublasSetAtomicsMode = __library.get(b"cublasSetAtomicsMode\0").map(|sym| *sym);
+        let cublasGetMathMode = __library.get(b"cublasGetMathMode\0").map(|sym| *sym);
+        let cublasSetMathMode = __library.get(b"cublasSetMathMode\0").map(|sym| *sym);
+        let cublasGetSmCountTarget = __library.get(b"cublasGetSmCountTarget\0").map(|sym| *sym);
+        let cublasSetSmCountTarget = __library.get(b"cublasSetSmCountTarget\0").map(|sym| *sym);
+        let cublasGetStatusName = __library.get(b"cublasGetStatusName\0").map(|sym| *sym);
+        let cublasGetStatusString = __library.get(b"cublasGetStatusString\0").map(|sym| *sym);
+        let cublasLoggerConfigure = __library.get(b"cublasLoggerConfigure\0").map(|sym| *sym);
+        let cublasSetLoggerCallback = __library.get(b"cublasSetLoggerCallback\0").map(|sym| *sym);
+        let cublasGetLoggerCallback = __library.get(b"cublasGetLoggerCallback\0").map(|sym| *sym);
+        let cublasSetVector = __library.get(b"cublasSetVector\0").map(|sym| *sym);
+        let cublasGetVector = __library.get(b"cublasGetVector\0").map(|sym| *sym);
+        let cublasSetMatrix = __library.get(b"cublasSetMatrix\0").map(|sym| *sym);
+        let cublasGetMatrix = __library.get(b"cublasGetMatrix\0").map(|sym| *sym);
+        let cublasSetVectorAsync = __library.get(b"cublasSetVectorAsync\0").map(|sym| *sym);
+        let cublasGetVectorAsync = __library.get(b"cublasGetVectorAsync\0").map(|sym| *sym);
+        let cublasSetMatrixAsync = __library.get(b"cublasSetMatrixAsync\0").map(|sym| *sym);
+        let cublasGetMatrixAsync = __library.get(b"cublasGetMatrixAsync\0").map(|sym| *sym);
+        let cublasXerbla = __library.get(b"cublasXerbla\0").map(|sym| *sym);
+        let cublasNrm2Ex = __library.get(b"cublasNrm2Ex\0").map(|sym| *sym);
+        let cublasSnrm2_v2 = __library.get(b"cublasSnrm2_v2\0").map(|sym| *sym);
+        let cublasDnrm2_v2 = __library.get(b"cublasDnrm2_v2\0").map(|sym| *sym);
+        let cublasScnrm2_v2 = __library.get(b"cublasScnrm2_v2\0").map(|sym| *sym);
+        let cublasDznrm2_v2 = __library.get(b"cublasDznrm2_v2\0").map(|sym| *sym);
+        let cublasDotEx = __library.get(b"cublasDotEx\0").map(|sym| *sym);
+        let cublasDotcEx = __library.get(b"cublasDotcEx\0").map(|sym| *sym);
+        let cublasSdot_v2 = __library.get(b"cublasSdot_v2\0").map(|sym| *sym);
+        let cublasDdot_v2 = __library.get(b"cublasDdot_v2\0").map(|sym| *sym);
+        let cublasCdotu_v2 = __library.get(b"cublasCdotu_v2\0").map(|sym| *sym);
+        let cublasCdotc_v2 = __library.get(b"cublasCdotc_v2\0").map(|sym| *sym);
+        let cublasZdotu_v2 = __library.get(b"cublasZdotu_v2\0").map(|sym| *sym);
+        let cublasZdotc_v2 = __library.get(b"cublasZdotc_v2\0").map(|sym| *sym);
+        let cublasScalEx = __library.get(b"cublasScalEx\0").map(|sym| *sym);
+        let cublasSscal_v2 = __library.get(b"cublasSscal_v2\0").map(|sym| *sym);
+        let cublasDscal_v2 = __library.get(b"cublasDscal_v2\0").map(|sym| *sym);
+        let cublasCscal_v2 = __library.get(b"cublasCscal_v2\0").map(|sym| *sym);
+        let cublasCsscal_v2 = __library.get(b"cublasCsscal_v2\0").map(|sym| *sym);
+        let cublasZscal_v2 = __library.get(b"cublasZscal_v2\0").map(|sym| *sym);
+        let cublasZdscal_v2 = __library.get(b"cublasZdscal_v2\0").map(|sym| *sym);
+        let cublasAxpyEx = __library.get(b"cublasAxpyEx\0").map(|sym| *sym);
+        let cublasSaxpy_v2 = __library.get(b"cublasSaxpy_v2\0").map(|sym| *sym);
+        let cublasDaxpy_v2 = __library.get(b"cublasDaxpy_v2\0").map(|sym| *sym);
+        let cublasCaxpy_v2 = __library.get(b"cublasCaxpy_v2\0").map(|sym| *sym);
+        let cublasZaxpy_v2 = __library.get(b"cublasZaxpy_v2\0").map(|sym| *sym);
+        let cublasCopyEx = __library.get(b"cublasCopyEx\0").map(|sym| *sym);
+        let cublasScopy_v2 = __library.get(b"cublasScopy_v2\0").map(|sym| *sym);
+        let cublasDcopy_v2 = __library.get(b"cublasDcopy_v2\0").map(|sym| *sym);
+        let cublasCcopy_v2 = __library.get(b"cublasCcopy_v2\0").map(|sym| *sym);
+        let cublasZcopy_v2 = __library.get(b"cublasZcopy_v2\0").map(|sym| *sym);
+        let cublasSswap_v2 = __library.get(b"cublasSswap_v2\0").map(|sym| *sym);
+        let cublasDswap_v2 = __library.get(b"cublasDswap_v2\0").map(|sym| *sym);
+        let cublasCswap_v2 = __library.get(b"cublasCswap_v2\0").map(|sym| *sym);
+        let cublasZswap_v2 = __library.get(b"cublasZswap_v2\0").map(|sym| *sym);
+        let cublasSwapEx = __library.get(b"cublasSwapEx\0").map(|sym| *sym);
+        let cublasIsamax_v2 = __library.get(b"cublasIsamax_v2\0").map(|sym| *sym);
+        let cublasIdamax_v2 = __library.get(b"cublasIdamax_v2\0").map(|sym| *sym);
+        let cublasIcamax_v2 = __library.get(b"cublasIcamax_v2\0").map(|sym| *sym);
+        let cublasIzamax_v2 = __library.get(b"cublasIzamax_v2\0").map(|sym| *sym);
+        let cublasIamaxEx = __library.get(b"cublasIamaxEx\0").map(|sym| *sym);
+        let cublasIsamin_v2 = __library.get(b"cublasIsamin_v2\0").map(|sym| *sym);
+        let cublasIdamin_v2 = __library.get(b"cublasIdamin_v2\0").map(|sym| *sym);
+        let cublasIcamin_v2 = __library.get(b"cublasIcamin_v2\0").map(|sym| *sym);
+        let cublasIzamin_v2 = __library.get(b"cublasIzamin_v2\0").map(|sym| *sym);
+        let cublasIaminEx = __library.get(b"cublasIaminEx\0").map(|sym| *sym);
+        let cublasAsumEx = __library.get(b"cublasAsumEx\0").map(|sym| *sym);
+        let cublasSasum_v2 = __library.get(b"cublasSasum_v2\0").map(|sym| *sym);
+        let cublasDasum_v2 = __library.get(b"cublasDasum_v2\0").map(|sym| *sym);
+        let cublasScasum_v2 = __library.get(b"cublasScasum_v2\0").map(|sym| *sym);
+        let cublasDzasum_v2 = __library.get(b"cublasDzasum_v2\0").map(|sym| *sym);
+        let cublasSrot_v2 = __library.get(b"cublasSrot_v2\0").map(|sym| *sym);
+        let cublasDrot_v2 = __library.get(b"cublasDrot_v2\0").map(|sym| *sym);
+        let cublasCrot_v2 = __library.get(b"cublasCrot_v2\0").map(|sym| *sym);
+        let cublasCsrot_v2 = __library.get(b"cublasCsrot_v2\0").map(|sym| *sym);
+        let cublasZrot_v2 = __library.get(b"cublasZrot_v2\0").map(|sym| *sym);
+        let cublasZdrot_v2 = __library.get(b"cublasZdrot_v2\0").map(|sym| *sym);
+        let cublasRotEx = __library.get(b"cublasRotEx\0").map(|sym| *sym);
+        let cublasSrotg_v2 = __library.get(b"cublasSrotg_v2\0").map(|sym| *sym);
+        let cublasDrotg_v2 = __library.get(b"cublasDrotg_v2\0").map(|sym| *sym);
+        let cublasCrotg_v2 = __library.get(b"cublasCrotg_v2\0").map(|sym| *sym);
+        let cublasZrotg_v2 = __library.get(b"cublasZrotg_v2\0").map(|sym| *sym);
+        let cublasRotgEx = __library.get(b"cublasRotgEx\0").map(|sym| *sym);
+        let cublasSrotm_v2 = __library.get(b"cublasSrotm_v2\0").map(|sym| *sym);
+        let cublasDrotm_v2 = __library.get(b"cublasDrotm_v2\0").map(|sym| *sym);
+        let cublasRotmEx = __library.get(b"cublasRotmEx\0").map(|sym| *sym);
+        let cublasSrotmg_v2 = __library.get(b"cublasSrotmg_v2\0").map(|sym| *sym);
+        let cublasDrotmg_v2 = __library.get(b"cublasDrotmg_v2\0").map(|sym| *sym);
+        let cublasRotmgEx = __library.get(b"cublasRotmgEx\0").map(|sym| *sym);
+        let cublasSgemv_v2 = __library.get(b"cublasSgemv_v2\0").map(|sym| *sym);
+        let cublasDgemv_v2 = __library.get(b"cublasDgemv_v2\0").map(|sym| *sym);
+        let cublasCgemv_v2 = __library.get(b"cublasCgemv_v2\0").map(|sym| *sym);
+        let cublasZgemv_v2 = __library.get(b"cublasZgemv_v2\0").map(|sym| *sym);
+        let cublasSgbmv_v2 = __library.get(b"cublasSgbmv_v2\0").map(|sym| *sym);
+        let cublasDgbmv_v2 = __library.get(b"cublasDgbmv_v2\0").map(|sym| *sym);
+        let cublasCgbmv_v2 = __library.get(b"cublasCgbmv_v2\0").map(|sym| *sym);
+        let cublasZgbmv_v2 = __library.get(b"cublasZgbmv_v2\0").map(|sym| *sym);
+        let cublasStrmv_v2 = __library.get(b"cublasStrmv_v2\0").map(|sym| *sym);
+        let cublasDtrmv_v2 = __library.get(b"cublasDtrmv_v2\0").map(|sym| *sym);
+        let cublasCtrmv_v2 = __library.get(b"cublasCtrmv_v2\0").map(|sym| *sym);
+        let cublasZtrmv_v2 = __library.get(b"cublasZtrmv_v2\0").map(|sym| *sym);
+        let cublasStbmv_v2 = __library.get(b"cublasStbmv_v2\0").map(|sym| *sym);
+        let cublasDtbmv_v2 = __library.get(b"cublasDtbmv_v2\0").map(|sym| *sym);
+        let cublasCtbmv_v2 = __library.get(b"cublasCtbmv_v2\0").map(|sym| *sym);
+        let cublasZtbmv_v2 = __library.get(b"cublasZtbmv_v2\0").map(|sym| *sym);
+        let cublasStpmv_v2 = __library.get(b"cublasStpmv_v2\0").map(|sym| *sym);
+        let cublasDtpmv_v2 = __library.get(b"cublasDtpmv_v2\0").map(|sym| *sym);
+        let cublasCtpmv_v2 = __library.get(b"cublasCtpmv_v2\0").map(|sym| *sym);
+        let cublasZtpmv_v2 = __library.get(b"cublasZtpmv_v2\0").map(|sym| *sym);
+        let cublasStrsv_v2 = __library.get(b"cublasStrsv_v2\0").map(|sym| *sym);
+        let cublasDtrsv_v2 = __library.get(b"cublasDtrsv_v2\0").map(|sym| *sym);
+        let cublasCtrsv_v2 = __library.get(b"cublasCtrsv_v2\0").map(|sym| *sym);
+        let cublasZtrsv_v2 = __library.get(b"cublasZtrsv_v2\0").map(|sym| *sym);
+        let cublasStpsv_v2 = __library.get(b"cublasStpsv_v2\0").map(|sym| *sym);
+        let cublasDtpsv_v2 = __library.get(b"cublasDtpsv_v2\0").map(|sym| *sym);
+        let cublasCtpsv_v2 = __library.get(b"cublasCtpsv_v2\0").map(|sym| *sym);
+        let cublasZtpsv_v2 = __library.get(b"cublasZtpsv_v2\0").map(|sym| *sym);
+        let cublasStbsv_v2 = __library.get(b"cublasStbsv_v2\0").map(|sym| *sym);
+        let cublasDtbsv_v2 = __library.get(b"cublasDtbsv_v2\0").map(|sym| *sym);
+        let cublasCtbsv_v2 = __library.get(b"cublasCtbsv_v2\0").map(|sym| *sym);
+        let cublasZtbsv_v2 = __library.get(b"cublasZtbsv_v2\0").map(|sym| *sym);
+        let cublasSsymv_v2 = __library.get(b"cublasSsymv_v2\0").map(|sym| *sym);
+        let cublasDsymv_v2 = __library.get(b"cublasDsymv_v2\0").map(|sym| *sym);
+        let cublasCsymv_v2 = __library.get(b"cublasCsymv_v2\0").map(|sym| *sym);
+        let cublasZsymv_v2 = __library.get(b"cublasZsymv_v2\0").map(|sym| *sym);
+        let cublasChemv_v2 = __library.get(b"cublasChemv_v2\0").map(|sym| *sym);
+        let cublasZhemv_v2 = __library.get(b"cublasZhemv_v2\0").map(|sym| *sym);
+        let cublasSsbmv_v2 = __library.get(b"cublasSsbmv_v2\0").map(|sym| *sym);
+        let cublasDsbmv_v2 = __library.get(b"cublasDsbmv_v2\0").map(|sym| *sym);
+        let cublasChbmv_v2 = __library.get(b"cublasChbmv_v2\0").map(|sym| *sym);
+        let cublasZhbmv_v2 = __library.get(b"cublasZhbmv_v2\0").map(|sym| *sym);
+        let cublasSspmv_v2 = __library.get(b"cublasSspmv_v2\0").map(|sym| *sym);
+        let cublasDspmv_v2 = __library.get(b"cublasDspmv_v2\0").map(|sym| *sym);
+        let cublasChpmv_v2 = __library.get(b"cublasChpmv_v2\0").map(|sym| *sym);
+        let cublasZhpmv_v2 = __library.get(b"cublasZhpmv_v2\0").map(|sym| *sym);
+        let cublasSger_v2 = __library.get(b"cublasSger_v2\0").map(|sym| *sym);
+        let cublasDger_v2 = __library.get(b"cublasDger_v2\0").map(|sym| *sym);
+        let cublasCgeru_v2 = __library.get(b"cublasCgeru_v2\0").map(|sym| *sym);
+        let cublasCgerc_v2 = __library.get(b"cublasCgerc_v2\0").map(|sym| *sym);
+        let cublasZgeru_v2 = __library.get(b"cublasZgeru_v2\0").map(|sym| *sym);
+        let cublasZgerc_v2 = __library.get(b"cublasZgerc_v2\0").map(|sym| *sym);
+        let cublasSsyr_v2 = __library.get(b"cublasSsyr_v2\0").map(|sym| *sym);
+        let cublasDsyr_v2 = __library.get(b"cublasDsyr_v2\0").map(|sym| *sym);
+        let cublasCsyr_v2 = __library.get(b"cublasCsyr_v2\0").map(|sym| *sym);
+        let cublasZsyr_v2 = __library.get(b"cublasZsyr_v2\0").map(|sym| *sym);
+        let cublasCher_v2 = __library.get(b"cublasCher_v2\0").map(|sym| *sym);
+        let cublasZher_v2 = __library.get(b"cublasZher_v2\0").map(|sym| *sym);
+        let cublasSspr_v2 = __library.get(b"cublasSspr_v2\0").map(|sym| *sym);
+        let cublasDspr_v2 = __library.get(b"cublasDspr_v2\0").map(|sym| *sym);
+        let cublasChpr_v2 = __library.get(b"cublasChpr_v2\0").map(|sym| *sym);
+        let cublasZhpr_v2 = __library.get(b"cublasZhpr_v2\0").map(|sym| *sym);
+        let cublasSsyr2_v2 = __library.get(b"cublasSsyr2_v2\0").map(|sym| *sym);
+        let cublasDsyr2_v2 = __library.get(b"cublasDsyr2_v2\0").map(|sym| *sym);
+        let cublasCsyr2_v2 = __library.get(b"cublasCsyr2_v2\0").map(|sym| *sym);
+        let cublasZsyr2_v2 = __library.get(b"cublasZsyr2_v2\0").map(|sym| *sym);
+        let cublasCher2_v2 = __library.get(b"cublasCher2_v2\0").map(|sym| *sym);
+        let cublasZher2_v2 = __library.get(b"cublasZher2_v2\0").map(|sym| *sym);
+        let cublasSspr2_v2 = __library.get(b"cublasSspr2_v2\0").map(|sym| *sym);
+        let cublasDspr2_v2 = __library.get(b"cublasDspr2_v2\0").map(|sym| *sym);
+        let cublasChpr2_v2 = __library.get(b"cublasChpr2_v2\0").map(|sym| *sym);
+        let cublasZhpr2_v2 = __library.get(b"cublasZhpr2_v2\0").map(|sym| *sym);
+        let cublasSgemvBatched = __library.get(b"cublasSgemvBatched\0").map(|sym| *sym);
+        let cublasDgemvBatched = __library.get(b"cublasDgemvBatched\0").map(|sym| *sym);
+        let cublasCgemvBatched = __library.get(b"cublasCgemvBatched\0").map(|sym| *sym);
+        let cublasZgemvBatched = __library.get(b"cublasZgemvBatched\0").map(|sym| *sym);
+        let cublasSgemvStridedBatched = __library
+            .get(b"cublasSgemvStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasDgemvStridedBatched = __library
+            .get(b"cublasDgemvStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasCgemvStridedBatched = __library
+            .get(b"cublasCgemvStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasZgemvStridedBatched = __library
+            .get(b"cublasZgemvStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasSgemm_v2 = __library.get(b"cublasSgemm_v2\0").map(|sym| *sym);
+        let cublasDgemm_v2 = __library.get(b"cublasDgemm_v2\0").map(|sym| *sym);
+        let cublasCgemm_v2 = __library.get(b"cublasCgemm_v2\0").map(|sym| *sym);
+        let cublasCgemm3m = __library.get(b"cublasCgemm3m\0").map(|sym| *sym);
+        let cublasCgemm3mEx = __library.get(b"cublasCgemm3mEx\0").map(|sym| *sym);
+        let cublasZgemm_v2 = __library.get(b"cublasZgemm_v2\0").map(|sym| *sym);
+        let cublasZgemm3m = __library.get(b"cublasZgemm3m\0").map(|sym| *sym);
+        let cublasSgemmEx = __library.get(b"cublasSgemmEx\0").map(|sym| *sym);
+        let cublasGemmEx = __library.get(b"cublasGemmEx\0").map(|sym| *sym);
+        let cublasCgemmEx = __library.get(b"cublasCgemmEx\0").map(|sym| *sym);
+        let cublasUint8gemmBias = __library.get(b"cublasUint8gemmBias\0").map(|sym| *sym);
+        let cublasSsyrk_v2 = __library.get(b"cublasSsyrk_v2\0").map(|sym| *sym);
+        let cublasDsyrk_v2 = __library.get(b"cublasDsyrk_v2\0").map(|sym| *sym);
+        let cublasCsyrk_v2 = __library.get(b"cublasCsyrk_v2\0").map(|sym| *sym);
+        let cublasZsyrk_v2 = __library.get(b"cublasZsyrk_v2\0").map(|sym| *sym);
+        let cublasCsyrkEx = __library.get(b"cublasCsyrkEx\0").map(|sym| *sym);
+        let cublasCsyrk3mEx = __library.get(b"cublasCsyrk3mEx\0").map(|sym| *sym);
+        let cublasCherk_v2 = __library.get(b"cublasCherk_v2\0").map(|sym| *sym);
+        let cublasZherk_v2 = __library.get(b"cublasZherk_v2\0").map(|sym| *sym);
+        let cublasCherkEx = __library.get(b"cublasCherkEx\0").map(|sym| *sym);
+        let cublasCherk3mEx = __library.get(b"cublasCherk3mEx\0").map(|sym| *sym);
+        let cublasSsyr2k_v2 = __library.get(b"cublasSsyr2k_v2\0").map(|sym| *sym);
+        let cublasDsyr2k_v2 = __library.get(b"cublasDsyr2k_v2\0").map(|sym| *sym);
+        let cublasCsyr2k_v2 = __library.get(b"cublasCsyr2k_v2\0").map(|sym| *sym);
+        let cublasZsyr2k_v2 = __library.get(b"cublasZsyr2k_v2\0").map(|sym| *sym);
+        let cublasCher2k_v2 = __library.get(b"cublasCher2k_v2\0").map(|sym| *sym);
+        let cublasZher2k_v2 = __library.get(b"cublasZher2k_v2\0").map(|sym| *sym);
+        let cublasSsyrkx = __library.get(b"cublasSsyrkx\0").map(|sym| *sym);
+        let cublasDsyrkx = __library.get(b"cublasDsyrkx\0").map(|sym| *sym);
+        let cublasCsyrkx = __library.get(b"cublasCsyrkx\0").map(|sym| *sym);
+        let cublasZsyrkx = __library.get(b"cublasZsyrkx\0").map(|sym| *sym);
+        let cublasCherkx = __library.get(b"cublasCherkx\0").map(|sym| *sym);
+        let cublasZherkx = __library.get(b"cublasZherkx\0").map(|sym| *sym);
+        let cublasSsymm_v2 = __library.get(b"cublasSsymm_v2\0").map(|sym| *sym);
+        let cublasDsymm_v2 = __library.get(b"cublasDsymm_v2\0").map(|sym| *sym);
+        let cublasCsymm_v2 = __library.get(b"cublasCsymm_v2\0").map(|sym| *sym);
+        let cublasZsymm_v2 = __library.get(b"cublasZsymm_v2\0").map(|sym| *sym);
+        let cublasChemm_v2 = __library.get(b"cublasChemm_v2\0").map(|sym| *sym);
+        let cublasZhemm_v2 = __library.get(b"cublasZhemm_v2\0").map(|sym| *sym);
+        let cublasStrsm_v2 = __library.get(b"cublasStrsm_v2\0").map(|sym| *sym);
+        let cublasDtrsm_v2 = __library.get(b"cublasDtrsm_v2\0").map(|sym| *sym);
+        let cublasCtrsm_v2 = __library.get(b"cublasCtrsm_v2\0").map(|sym| *sym);
+        let cublasZtrsm_v2 = __library.get(b"cublasZtrsm_v2\0").map(|sym| *sym);
+        let cublasStrmm_v2 = __library.get(b"cublasStrmm_v2\0").map(|sym| *sym);
+        let cublasDtrmm_v2 = __library.get(b"cublasDtrmm_v2\0").map(|sym| *sym);
+        let cublasCtrmm_v2 = __library.get(b"cublasCtrmm_v2\0").map(|sym| *sym);
+        let cublasZtrmm_v2 = __library.get(b"cublasZtrmm_v2\0").map(|sym| *sym);
+        let cublasSgemmBatched = __library.get(b"cublasSgemmBatched\0").map(|sym| *sym);
+        let cublasDgemmBatched = __library.get(b"cublasDgemmBatched\0").map(|sym| *sym);
+        let cublasCgemmBatched = __library.get(b"cublasCgemmBatched\0").map(|sym| *sym);
+        let cublasCgemm3mBatched = __library.get(b"cublasCgemm3mBatched\0").map(|sym| *sym);
+        let cublasZgemmBatched = __library.get(b"cublasZgemmBatched\0").map(|sym| *sym);
+        let cublasGemmBatchedEx = __library.get(b"cublasGemmBatchedEx\0").map(|sym| *sym);
+        let cublasGemmStridedBatchedEx = __library
+            .get(b"cublasGemmStridedBatchedEx\0")
+            .map(|sym| *sym);
+        let cublasSgemmStridedBatched = __library
+            .get(b"cublasSgemmStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasDgemmStridedBatched = __library
+            .get(b"cublasDgemmStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasCgemmStridedBatched = __library
+            .get(b"cublasCgemmStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasCgemm3mStridedBatched = __library
+            .get(b"cublasCgemm3mStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasZgemmStridedBatched = __library
+            .get(b"cublasZgemmStridedBatched\0")
+            .map(|sym| *sym);
+        let cublasSgeam = __library.get(b"cublasSgeam\0").map(|sym| *sym);
+        let cublasDgeam = __library.get(b"cublasDgeam\0").map(|sym| *sym);
+        let cublasCgeam = __library.get(b"cublasCgeam\0").map(|sym| *sym);
+        let cublasZgeam = __library.get(b"cublasZgeam\0").map(|sym| *sym);
+        let cublasSgetrfBatched = __library.get(b"cublasSgetrfBatched\0").map(|sym| *sym);
+        let cublasDgetrfBatched = __library.get(b"cublasDgetrfBatched\0").map(|sym| *sym);
+        let cublasCgetrfBatched = __library.get(b"cublasCgetrfBatched\0").map(|sym| *sym);
+        let cublasZgetrfBatched = __library.get(b"cublasZgetrfBatched\0").map(|sym| *sym);
+        let cublasSgetriBatched = __library.get(b"cublasSgetriBatched\0").map(|sym| *sym);
+        let cublasDgetriBatched = __library.get(b"cublasDgetriBatched\0").map(|sym| *sym);
+        let cublasCgetriBatched = __library.get(b"cublasCgetriBatched\0").map(|sym| *sym);
+        let cublasZgetriBatched = __library.get(b"cublasZgetriBatched\0").map(|sym| *sym);
+        let cublasSgetrsBatched = __library.get(b"cublasSgetrsBatched\0").map(|sym| *sym);
+        let cublasDgetrsBatched = __library.get(b"cublasDgetrsBatched\0").map(|sym| *sym);
+        let cublasCgetrsBatched = __library.get(b"cublasCgetrsBatched\0").map(|sym| *sym);
+        let cublasZgetrsBatched = __library.get(b"cublasZgetrsBatched\0").map(|sym| *sym);
+        let cublasStrsmBatched = __library.get(b"cublasStrsmBatched\0").map(|sym| *sym);
+        let cublasDtrsmBatched = __library.get(b"cublasDtrsmBatched\0").map(|sym| *sym);
+        let cublasCtrsmBatched = __library.get(b"cublasCtrsmBatched\0").map(|sym| *sym);
+        let cublasZtrsmBatched = __library.get(b"cublasZtrsmBatched\0").map(|sym| *sym);
+        let cublasSmatinvBatched = __library.get(b"cublasSmatinvBatched\0").map(|sym| *sym);
+        let cublasDmatinvBatched = __library.get(b"cublasDmatinvBatched\0").map(|sym| *sym);
+        let cublasCmatinvBatched = __library.get(b"cublasCmatinvBatched\0").map(|sym| *sym);
+        let cublasZmatinvBatched = __library.get(b"cublasZmatinvBatched\0").map(|sym| *sym);
+        let cublasSgeqrfBatched = __library.get(b"cublasSgeqrfBatched\0").map(|sym| *sym);
+        let cublasDgeqrfBatched = __library.get(b"cublasDgeqrfBatched\0").map(|sym| *sym);
+        let cublasCgeqrfBatched = __library.get(b"cublasCgeqrfBatched\0").map(|sym| *sym);
+        let cublasZgeqrfBatched = __library.get(b"cublasZgeqrfBatched\0").map(|sym| *sym);
+        let cublasSgelsBatched = __library.get(b"cublasSgelsBatched\0").map(|sym| *sym);
+        let cublasDgelsBatched = __library.get(b"cublasDgelsBatched\0").map(|sym| *sym);
+        let cublasCgelsBatched = __library.get(b"cublasCgelsBatched\0").map(|sym| *sym);
+        let cublasZgelsBatched = __library.get(b"cublasZgelsBatched\0").map(|sym| *sym);
+        let cublasSdgmm = __library.get(b"cublasSdgmm\0").map(|sym| *sym);
+        let cublasDdgmm = __library.get(b"cublasDdgmm\0").map(|sym| *sym);
+        let cublasCdgmm = __library.get(b"cublasCdgmm\0").map(|sym| *sym);
+        let cublasZdgmm = __library.get(b"cublasZdgmm\0").map(|sym| *sym);
+        let cublasStpttr = __library.get(b"cublasStpttr\0").map(|sym| *sym);
+        let cublasDtpttr = __library.get(b"cublasDtpttr\0").map(|sym| *sym);
+        let cublasCtpttr = __library.get(b"cublasCtpttr\0").map(|sym| *sym);
+        let cublasZtpttr = __library.get(b"cublasZtpttr\0").map(|sym| *sym);
+        let cublasStrttp = __library.get(b"cublasStrttp\0").map(|sym| *sym);
+        let cublasDtrttp = __library.get(b"cublasDtrttp\0").map(|sym| *sym);
+        let cublasCtrttp = __library.get(b"cublasCtrttp\0").map(|sym| *sym);
+        let cublasZtrttp = __library.get(b"cublasZtrttp\0").map(|sym| *sym);
+        Ok(Lib {
+            __library,
+            cublasCreate_v2,
+            cublasDestroy_v2,
+            cublasGetVersion_v2,
+            cublasGetProperty,
+            cublasGetCudartVersion,
+            cublasSetWorkspace_v2,
+            cublasSetStream_v2,
+            cublasGetStream_v2,
+            cublasGetPointerMode_v2,
+            cublasSetPointerMode_v2,
+            cublasGetAtomicsMode,
+            cublasSetAtomicsMode,
+            cublasGetMathMode,
+            cublasSetMathMode,
+            cublasGetSmCountTarget,
+            cublasSetSmCountTarget,
+            cublasGetStatusName,
+            cublasGetStatusString,
+            cublasLoggerConfigure,
+            cublasSetLoggerCallback,
+            cublasGetLoggerCallback,
+            cublasSetVector,
+            cublasGetVector,
+            cublasSetMatrix,
+            cublasGetMatrix,
+            cublasSetVectorAsync,
+            cublasGetVectorAsync,
+            cublasSetMatrixAsync,
+            cublasGetMatrixAsync,
+            cublasXerbla,
+            cublasNrm2Ex,
+            cublasSnrm2_v2,
+            cublasDnrm2_v2,
+            cublasScnrm2_v2,
+            cublasDznrm2_v2,
+            cublasDotEx,
+            cublasDotcEx,
+            cublasSdot_v2,
+            cublasDdot_v2,
+            cublasCdotu_v2,
+            cublasCdotc_v2,
+            cublasZdotu_v2,
+            cublasZdotc_v2,
+            cublasScalEx,
+            cublasSscal_v2,
+            cublasDscal_v2,
+            cublasCscal_v2,
+            cublasCsscal_v2,
+            cublasZscal_v2,
+            cublasZdscal_v2,
+            cublasAxpyEx,
+            cublasSaxpy_v2,
+            cublasDaxpy_v2,
+            cublasCaxpy_v2,
+            cublasZaxpy_v2,
+            cublasCopyEx,
+            cublasScopy_v2,
+            cublasDcopy_v2,
+            cublasCcopy_v2,
+            cublasZcopy_v2,
+            cublasSswap_v2,
+            cublasDswap_v2,
+            cublasCswap_v2,
+            cublasZswap_v2,
+            cublasSwapEx,
+            cublasIsamax_v2,
+            cublasIdamax_v2,
+            cublasIcamax_v2,
+            cublasIzamax_v2,
+            cublasIamaxEx,
+            cublasIsamin_v2,
+            cublasIdamin_v2,
+            cublasIcamin_v2,
+            cublasIzamin_v2,
+            cublasIaminEx,
+            cublasAsumEx,
+            cublasSasum_v2,
+            cublasDasum_v2,
+            cublasScasum_v2,
+            cublasDzasum_v2,
+            cublasSrot_v2,
+            cublasDrot_v2,
+            cublasCrot_v2,
+            cublasCsrot_v2,
+            cublasZrot_v2,
+            cublasZdrot_v2,
+            cublasRotEx,
+            cublasSrotg_v2,
+            cublasDrotg_v2,
+            cublasCrotg_v2,
+            cublasZrotg_v2,
+            cublasRotgEx,
+            cublasSrotm_v2,
+            cublasDrotm_v2,
+            cublasRotmEx,
+            cublasSrotmg_v2,
+            cublasDrotmg_v2,
+            cublasRotmgEx,
+            cublasSgemv_v2,
+            cublasDgemv_v2,
+            cublasCgemv_v2,
+            cublasZgemv_v2,
+            cublasSgbmv_v2,
+            cublasDgbmv_v2,
+            cublasCgbmv_v2,
+            cublasZgbmv_v2,
+            cublasStrmv_v2,
+            cublasDtrmv_v2,
+            cublasCtrmv_v2,
+            cublasZtrmv_v2,
+            cublasStbmv_v2,
+            cublasDtbmv_v2,
+            cublasCtbmv_v2,
+            cublasZtbmv_v2,
+            cublasStpmv_v2,
+            cublasDtpmv_v2,
+            cublasCtpmv_v2,
+            cublasZtpmv_v2,
+            cublasStrsv_v2,
+            cublasDtrsv_v2,
+            cublasCtrsv_v2,
+            cublasZtrsv_v2,
+            cublasStpsv_v2,
+            cublasDtpsv_v2,
+            cublasCtpsv_v2,
+            cublasZtpsv_v2,
+            cublasStbsv_v2,
+            cublasDtbsv_v2,
+            cublasCtbsv_v2,
+            cublasZtbsv_v2,
+            cublasSsymv_v2,
+            cublasDsymv_v2,
+            cublasCsymv_v2,
+            cublasZsymv_v2,
+            cublasChemv_v2,
+            cublasZhemv_v2,
+            cublasSsbmv_v2,
+            cublasDsbmv_v2,
+            cublasChbmv_v2,
+            cublasZhbmv_v2,
+            cublasSspmv_v2,
+            cublasDspmv_v2,
+            cublasChpmv_v2,
+            cublasZhpmv_v2,
+            cublasSger_v2,
+            cublasDger_v2,
+            cublasCgeru_v2,
+            cublasCgerc_v2,
+            cublasZgeru_v2,
+            cublasZgerc_v2,
+            cublasSsyr_v2,
+            cublasDsyr_v2,
+            cublasCsyr_v2,
+            cublasZsyr_v2,
+            cublasCher_v2,
+            cublasZher_v2,
+            cublasSspr_v2,
+            cublasDspr_v2,
+            cublasChpr_v2,
+            cublasZhpr_v2,
+            cublasSsyr2_v2,
+            cublasDsyr2_v2,
+            cublasCsyr2_v2,
+            cublasZsyr2_v2,
+            cublasCher2_v2,
+            cublasZher2_v2,
+            cublasSspr2_v2,
+            cublasDspr2_v2,
+            cublasChpr2_v2,
+            cublasZhpr2_v2,
+            cublasSgemvBatched,
+            cublasDgemvBatched,
+            cublasCgemvBatched,
+            cublasZgemvBatched,
+            cublasSgemvStridedBatched,
+            cublasDgemvStridedBatched,
+            cublasCgemvStridedBatched,
+            cublasZgemvStridedBatched,
+            cublasSgemm_v2,
+            cublasDgemm_v2,
+            cublasCgemm_v2,
+            cublasCgemm3m,
+            cublasCgemm3mEx,
+            cublasZgemm_v2,
+            cublasZgemm3m,
+            cublasSgemmEx,
+            cublasGemmEx,
+            cublasCgemmEx,
+            cublasUint8gemmBias,
+            cublasSsyrk_v2,
+            cublasDsyrk_v2,
+            cublasCsyrk_v2,
+            cublasZsyrk_v2,
+            cublasCsyrkEx,
+            cublasCsyrk3mEx,
+            cublasCherk_v2,
+            cublasZherk_v2,
+            cublasCherkEx,
+            cublasCherk3mEx,
+            cublasSsyr2k_v2,
+            cublasDsyr2k_v2,
+            cublasCsyr2k_v2,
+            cublasZsyr2k_v2,
+            cublasCher2k_v2,
+            cublasZher2k_v2,
+            cublasSsyrkx,
+            cublasDsyrkx,
+            cublasCsyrkx,
+            cublasZsyrkx,
+            cublasCherkx,
+            cublasZherkx,
+            cublasSsymm_v2,
+            cublasDsymm_v2,
+            cublasCsymm_v2,
+            cublasZsymm_v2,
+            cublasChemm_v2,
+            cublasZhemm_v2,
+            cublasStrsm_v2,
+            cublasDtrsm_v2,
+            cublasCtrsm_v2,
+            cublasZtrsm_v2,
+            cublasStrmm_v2,
+            cublasDtrmm_v2,
+            cublasCtrmm_v2,
+            cublasZtrmm_v2,
+            cublasSgemmBatched,
+            cublasDgemmBatched,
+            cublasCgemmBatched,
+            cublasCgemm3mBatched,
+            cublasZgemmBatched,
+            cublasGemmBatchedEx,
+            cublasGemmStridedBatchedEx,
+            cublasSgemmStridedBatched,
+            cublasDgemmStridedBatched,
+            cublasCgemmStridedBatched,
+            cublasCgemm3mStridedBatched,
+            cublasZgemmStridedBatched,
+            cublasSgeam,
+            cublasDgeam,
+            cublasCgeam,
+            cublasZgeam,
+            cublasSgetrfBatched,
+            cublasDgetrfBatched,
+            cublasCgetrfBatched,
+            cublasZgetrfBatched,
+            cublasSgetriBatched,
+            cublasDgetriBatched,
+            cublasCgetriBatched,
+            cublasZgetriBatched,
+            cublasSgetrsBatched,
+            cublasDgetrsBatched,
+            cublasCgetrsBatched,
+            cublasZgetrsBatched,
+            cublasStrsmBatched,
+            cublasDtrsmBatched,
+            cublasCtrsmBatched,
+            cublasZtrsmBatched,
+            cublasSmatinvBatched,
+            cublasDmatinvBatched,
+            cublasCmatinvBatched,
+            cublasZmatinvBatched,
+            cublasSgeqrfBatched,
+            cublasDgeqrfBatched,
+            cublasCgeqrfBatched,
+            cublasZgeqrfBatched,
+            cublasSgelsBatched,
+            cublasDgelsBatched,
+            cublasCgelsBatched,
+            cublasZgelsBatched,
+            cublasSdgmm,
+            cublasDdgmm,
+            cublasCdgmm,
+            cublasZdgmm,
+            cublasStpttr,
+            cublasDtpttr,
+            cublasCtpttr,
+            cublasZtpttr,
+            cublasStrttp,
+            cublasDtrttp,
+            cublasCtrttp,
+            cublasZtrttp,
+        })
+    }
+    pub unsafe fn cublasCreate_v2(&self, handle: *mut cublasHandle_t) -> cublasStatus_t {
+        (self
+            .cublasCreate_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle)
+    }
+    pub unsafe fn cublasDestroy_v2(&self, handle: cublasHandle_t) -> cublasStatus_t {
+        (self
+            .cublasDestroy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle)
+    }
+    pub unsafe fn cublasGetVersion_v2(
+        &self,
         handle: cublasHandle_t,
         version: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetProperty(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetVersion_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, version)
+    }
+    pub unsafe fn cublasGetProperty(
+        &self,
         type_: libraryPropertyType,
         value: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetCudartVersion() -> usize;
-}
-extern "C" {
-    pub fn cublasSetWorkspace_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetProperty
+            .as_ref()
+            .expect("Expected function, got error."))(type_, value)
+    }
+    pub unsafe fn cublasGetCudartVersion(&self) -> usize {
+        (self
+            .cublasGetCudartVersion
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cublasSetWorkspace_v2(
+        &self,
         handle: cublasHandle_t,
         workspace: *mut ::core::ffi::c_void,
         workspaceSizeInBytes: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetStream_v2(handle: cublasHandle_t, streamId: cudaStream_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetStream_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetWorkspace_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, workspace, workspaceSizeInBytes
+        )
+    }
+    pub unsafe fn cublasSetStream_v2(
+        &self,
+        handle: cublasHandle_t,
+        streamId: cudaStream_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetStream_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, streamId)
+    }
+    pub unsafe fn cublasGetStream_v2(
+        &self,
         handle: cublasHandle_t,
         streamId: *mut cudaStream_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetPointerMode_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetStream_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, streamId)
+    }
+    pub unsafe fn cublasGetPointerMode_v2(
+        &self,
         handle: cublasHandle_t,
         mode: *mut cublasPointerMode_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetPointerMode_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetPointerMode_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, mode)
+    }
+    pub unsafe fn cublasSetPointerMode_v2(
+        &self,
         handle: cublasHandle_t,
         mode: cublasPointerMode_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetAtomicsMode(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetPointerMode_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, mode)
+    }
+    pub unsafe fn cublasGetAtomicsMode(
+        &self,
         handle: cublasHandle_t,
         mode: *mut cublasAtomicsMode_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetAtomicsMode(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetAtomicsMode
+            .as_ref()
+            .expect("Expected function, got error."))(handle, mode)
+    }
+    pub unsafe fn cublasSetAtomicsMode(
+        &self,
         handle: cublasHandle_t,
         mode: cublasAtomicsMode_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetMathMode(handle: cublasHandle_t, mode: *mut cublasMath_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetMathMode(handle: cublasHandle_t, mode: cublasMath_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetSmCountTarget(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetAtomicsMode
+            .as_ref()
+            .expect("Expected function, got error."))(handle, mode)
+    }
+    pub unsafe fn cublasGetMathMode(
+        &self,
+        handle: cublasHandle_t,
+        mode: *mut cublasMath_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetMathMode
+            .as_ref()
+            .expect("Expected function, got error."))(handle, mode)
+    }
+    pub unsafe fn cublasSetMathMode(
+        &self,
+        handle: cublasHandle_t,
+        mode: cublasMath_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetMathMode
+            .as_ref()
+            .expect("Expected function, got error."))(handle, mode)
+    }
+    pub unsafe fn cublasGetSmCountTarget(
+        &self,
         handle: cublasHandle_t,
         smCountTarget: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetSmCountTarget(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetSmCountTarget
+            .as_ref()
+            .expect("Expected function, got error."))(handle, smCountTarget)
+    }
+    pub unsafe fn cublasSetSmCountTarget(
+        &self,
         handle: cublasHandle_t,
         smCountTarget: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetStatusName(status: cublasStatus_t) -> *const ::core::ffi::c_char;
-}
-extern "C" {
-    pub fn cublasGetStatusString(status: cublasStatus_t) -> *const ::core::ffi::c_char;
-}
-pub type cublasLogCallback =
-    ::core::option::Option<unsafe extern "C" fn(msg: *const ::core::ffi::c_char)>;
-extern "C" {
-    pub fn cublasLoggerConfigure(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetSmCountTarget
+            .as_ref()
+            .expect("Expected function, got error."))(handle, smCountTarget)
+    }
+    pub unsafe fn cublasGetStatusName(&self, status: cublasStatus_t) -> *const ::core::ffi::c_char {
+        (self
+            .cublasGetStatusName
+            .as_ref()
+            .expect("Expected function, got error."))(status)
+    }
+    pub unsafe fn cublasGetStatusString(
+        &self,
+        status: cublasStatus_t,
+    ) -> *const ::core::ffi::c_char {
+        (self
+            .cublasGetStatusString
+            .as_ref()
+            .expect("Expected function, got error."))(status)
+    }
+    pub unsafe fn cublasLoggerConfigure(
+        &self,
         logIsOn: ::core::ffi::c_int,
         logToStdOut: ::core::ffi::c_int,
         logToStdErr: ::core::ffi::c_int,
         logFileName: *const ::core::ffi::c_char,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetLoggerCallback(userCallback: cublasLogCallback) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetLoggerCallback(userCallback: *mut cublasLogCallback) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetVector(
+    ) -> cublasStatus_t {
+        (self
+            .cublasLoggerConfigure
+            .as_ref()
+            .expect("Expected function, got error."))(
+            logIsOn,
+            logToStdOut,
+            logToStdErr,
+            logFileName,
+        )
+    }
+    pub unsafe fn cublasSetLoggerCallback(
+        &self,
+        userCallback: cublasLogCallback,
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetLoggerCallback
+            .as_ref()
+            .expect("Expected function, got error."))(userCallback)
+    }
+    pub unsafe fn cublasGetLoggerCallback(
+        &self,
+        userCallback: *mut cublasLogCallback,
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetLoggerCallback
+            .as_ref()
+            .expect("Expected function, got error."))(userCallback)
+    }
+    pub unsafe fn cublasSetVector(
+        &self,
         n: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
         incx: ::core::ffi::c_int,
         devicePtr: *mut ::core::ffi::c_void,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetVector(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetVector
+            .as_ref()
+            .expect("Expected function, got error."))(n, elemSize, x, incx, devicePtr, incy)
+    }
+    pub unsafe fn cublasGetVector(
+        &self,
         n: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
         incx: ::core::ffi::c_int,
         y: *mut ::core::ffi::c_void,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetMatrix(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetVector
+            .as_ref()
+            .expect("Expected function, got error."))(n, elemSize, x, incx, y, incy)
+    }
+    pub unsafe fn cublasSetMatrix(
+        &self,
         rows: ::core::ffi::c_int,
         cols: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
@@ -395,10 +5089,14 @@ extern "C" {
         lda: ::core::ffi::c_int,
         B: *mut ::core::ffi::c_void,
         ldb: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetMatrix(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetMatrix
+            .as_ref()
+            .expect("Expected function, got error."))(rows, cols, elemSize, A, lda, B, ldb)
+    }
+    pub unsafe fn cublasGetMatrix(
+        &self,
         rows: ::core::ffi::c_int,
         cols: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
@@ -406,10 +5104,14 @@ extern "C" {
         lda: ::core::ffi::c_int,
         B: *mut ::core::ffi::c_void,
         ldb: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetVectorAsync(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetMatrix
+            .as_ref()
+            .expect("Expected function, got error."))(rows, cols, elemSize, A, lda, B, ldb)
+    }
+    pub unsafe fn cublasSetVectorAsync(
+        &self,
         n: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
         hostPtr: *const ::core::ffi::c_void,
@@ -417,10 +5119,16 @@ extern "C" {
         devicePtr: *mut ::core::ffi::c_void,
         incy: ::core::ffi::c_int,
         stream: cudaStream_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetVectorAsync(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetVectorAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            n, elemSize, hostPtr, incx, devicePtr, incy, stream,
+        )
+    }
+    pub unsafe fn cublasGetVectorAsync(
+        &self,
         n: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
         devicePtr: *const ::core::ffi::c_void,
@@ -428,10 +5136,16 @@ extern "C" {
         hostPtr: *mut ::core::ffi::c_void,
         incy: ::core::ffi::c_int,
         stream: cudaStream_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSetMatrixAsync(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetVectorAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            n, elemSize, devicePtr, incx, hostPtr, incy, stream,
+        )
+    }
+    pub unsafe fn cublasSetMatrixAsync(
+        &self,
         rows: ::core::ffi::c_int,
         cols: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
@@ -440,10 +5154,16 @@ extern "C" {
         B: *mut ::core::ffi::c_void,
         ldb: ::core::ffi::c_int,
         stream: cudaStream_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGetMatrixAsync(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSetMatrixAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            rows, cols, elemSize, A, lda, B, ldb, stream
+        )
+    }
+    pub unsafe fn cublasGetMatrixAsync(
+        &self,
         rows: ::core::ffi::c_int,
         cols: ::core::ffi::c_int,
         elemSize: ::core::ffi::c_int,
@@ -452,13 +5172,26 @@ extern "C" {
         B: *mut ::core::ffi::c_void,
         ldb: ::core::ffi::c_int,
         stream: cudaStream_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasXerbla(srName: *const ::core::ffi::c_char, info: ::core::ffi::c_int);
-}
-extern "C" {
-    pub fn cublasNrm2Ex(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGetMatrixAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            rows, cols, elemSize, A, lda, B, ldb, stream
+        )
+    }
+    pub unsafe fn cublasXerbla(
+        &self,
+        srName: *const ::core::ffi::c_char,
+        info: ::core::ffi::c_int,
+    ) {
+        (self
+            .cublasXerbla
+            .as_ref()
+            .expect("Expected function, got error."))(srName, info)
+    }
+    pub unsafe fn cublasNrm2Ex(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
@@ -467,46 +5200,75 @@ extern "C" {
         result: *mut ::core::ffi::c_void,
         resultType: cudaDataType,
         executionType: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSnrm2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasNrm2Ex
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            x,
+            xType,
+            incx,
+            result,
+            resultType,
+            executionType,
+        )
+    }
+    pub unsafe fn cublasSnrm2_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f32,
         incx: ::core::ffi::c_int,
         result: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDnrm2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSnrm2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasDnrm2_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f64,
         incx: ::core::ffi::c_int,
         result: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasScnrm2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDnrm2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasScnrm2_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
         incx: ::core::ffi::c_int,
         result: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDznrm2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasScnrm2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasDznrm2_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
         incx: ::core::ffi::c_int,
         result: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDotEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDznrm2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasDotEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
@@ -518,10 +5280,26 @@ extern "C" {
         result: *mut ::core::ffi::c_void,
         resultType: cudaDataType,
         executionType: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDotcEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDotEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            x,
+            xType,
+            incx,
+            y,
+            yType,
+            incy,
+            result,
+            resultType,
+            executionType,
+        )
+    }
+    pub unsafe fn cublasDotcEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
@@ -533,10 +5311,26 @@ extern "C" {
         result: *mut ::core::ffi::c_void,
         resultType: cudaDataType,
         executionType: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSdot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDotcEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            x,
+            xType,
+            incx,
+            y,
+            yType,
+            incy,
+            result,
+            resultType,
+            executionType,
+        )
+    }
+    pub unsafe fn cublasSdot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f32,
@@ -544,10 +5338,14 @@ extern "C" {
         y: *const f32,
         incy: ::core::ffi::c_int,
         result: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDdot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSdot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, result)
+    }
+    pub unsafe fn cublasDdot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f64,
@@ -555,10 +5353,14 @@ extern "C" {
         y: *const f64,
         incy: ::core::ffi::c_int,
         result: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCdotu_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDdot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, result)
+    }
+    pub unsafe fn cublasCdotu_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
@@ -566,10 +5368,14 @@ extern "C" {
         y: *const cuComplex,
         incy: ::core::ffi::c_int,
         result: *mut cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCdotc_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCdotu_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, result)
+    }
+    pub unsafe fn cublasCdotc_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
@@ -577,10 +5383,14 @@ extern "C" {
         y: *const cuComplex,
         incy: ::core::ffi::c_int,
         result: *mut cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZdotu_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCdotc_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, result)
+    }
+    pub unsafe fn cublasZdotu_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
@@ -588,10 +5398,14 @@ extern "C" {
         y: *const cuDoubleComplex,
         incy: ::core::ffi::c_int,
         result: *mut cuDoubleComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZdotc_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZdotu_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, result)
+    }
+    pub unsafe fn cublasZdotc_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
@@ -599,10 +5413,14 @@ extern "C" {
         y: *const cuDoubleComplex,
         incy: ::core::ffi::c_int,
         result: *mut cuDoubleComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasScalEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZdotc_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, result)
+    }
+    pub unsafe fn cublasScalEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const ::core::ffi::c_void,
@@ -611,64 +5429,101 @@ extern "C" {
         xType: cudaDataType,
         incx: ::core::ffi::c_int,
         executionType: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSscal_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasScalEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            alpha,
+            alphaType,
+            x,
+            xType,
+            incx,
+            executionType,
+        )
+    }
+    pub unsafe fn cublasSscal_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const f32,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDscal_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSscal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx)
+    }
+    pub unsafe fn cublasDscal_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const f64,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCscal_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDscal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx)
+    }
+    pub unsafe fn cublasCscal_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const cuComplex,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsscal_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCscal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx)
+    }
+    pub unsafe fn cublasCsscal_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const f32,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZscal_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsscal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx)
+    }
+    pub unsafe fn cublasZscal_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const cuDoubleComplex,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZdscal_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZscal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx)
+    }
+    pub unsafe fn cublasZdscal_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const f64,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasAxpyEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZdscal_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx)
+    }
+    pub unsafe fn cublasAxpyEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const ::core::ffi::c_void,
@@ -680,10 +5535,26 @@ extern "C" {
         yType: cudaDataType,
         incy: ::core::ffi::c_int,
         executiontype: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSaxpy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasAxpyEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            alpha,
+            alphaType,
+            x,
+            xType,
+            incx,
+            y,
+            yType,
+            incy,
+            executiontype,
+        )
+    }
+    pub unsafe fn cublasSaxpy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const f32,
@@ -691,10 +5562,14 @@ extern "C" {
         incx: ::core::ffi::c_int,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDaxpy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSaxpy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx, y, incy)
+    }
+    pub unsafe fn cublasDaxpy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const f64,
@@ -702,10 +5577,14 @@ extern "C" {
         incx: ::core::ffi::c_int,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCaxpy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDaxpy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx, y, incy)
+    }
+    pub unsafe fn cublasCaxpy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const cuComplex,
@@ -713,10 +5592,14 @@ extern "C" {
         incx: ::core::ffi::c_int,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZaxpy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCaxpy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx, y, incy)
+    }
+    pub unsafe fn cublasZaxpy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         alpha: *const cuDoubleComplex,
@@ -724,10 +5607,14 @@ extern "C" {
         incx: ::core::ffi::c_int,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCopyEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZaxpy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, alpha, x, incx, y, incy)
+    }
+    pub unsafe fn cublasCopyEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
@@ -736,90 +5623,128 @@ extern "C" {
         y: *mut ::core::ffi::c_void,
         yType: cudaDataType,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasScopy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCopyEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, x, xType, incx, y, yType, incy
+        )
+    }
+    pub unsafe fn cublasScopy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f32,
         incx: ::core::ffi::c_int,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDcopy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasScopy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasDcopy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f64,
         incx: ::core::ffi::c_int,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCcopy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDcopy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasCcopy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
         incx: ::core::ffi::c_int,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZcopy_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCcopy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasZcopy_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
         incx: ::core::ffi::c_int,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSswap_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZcopy_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasSswap_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut f32,
         incx: ::core::ffi::c_int,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDswap_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSswap_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasDswap_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut f64,
         incx: ::core::ffi::c_int,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCswap_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDswap_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasCswap_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZswap_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCswap_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasZswap_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSwapEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZswap_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy)
+    }
+    pub unsafe fn cublasSwapEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut ::core::ffi::c_void,
@@ -828,102 +5753,148 @@ extern "C" {
         y: *mut ::core::ffi::c_void,
         yType: cudaDataType,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIsamax_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSwapEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, x, xType, incx, y, yType, incy
+        )
+    }
+    pub unsafe fn cublasIsamax_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f32,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIdamax_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIsamax_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIdamax_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f64,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIcamax_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIdamax_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIcamax_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIzamax_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIcamax_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIzamax_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIamaxEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIzamax_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIamaxEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
         xType: cudaDataType,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIsamin_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIamaxEx
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, xType, incx, result)
+    }
+    pub unsafe fn cublasIsamin_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f32,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIdamin_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIsamin_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIdamin_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f64,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIcamin_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIdamin_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIcamin_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIzamin_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIcamin_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIzamin_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasIaminEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIzamin_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasIaminEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
         xType: cudaDataType,
         incx: ::core::ffi::c_int,
         result: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasAsumEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasIaminEx
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, xType, incx, result)
+    }
+    pub unsafe fn cublasAsumEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const ::core::ffi::c_void,
@@ -932,46 +5903,75 @@ extern "C" {
         result: *mut ::core::ffi::c_void,
         resultType: cudaDataType,
         executiontype: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSasum_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasAsumEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            x,
+            xType,
+            incx,
+            result,
+            resultType,
+            executiontype,
+        )
+    }
+    pub unsafe fn cublasSasum_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f32,
         incx: ::core::ffi::c_int,
         result: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDasum_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSasum_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasDasum_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const f64,
         incx: ::core::ffi::c_int,
         result: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasScasum_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDasum_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasScasum_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuComplex,
         incx: ::core::ffi::c_int,
         result: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDzasum_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasScasum_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasDzasum_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *const cuDoubleComplex,
         incx: ::core::ffi::c_int,
         result: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSrot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDzasum_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, result)
+    }
+    pub unsafe fn cublasSrot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut f32,
@@ -980,10 +5980,14 @@ extern "C" {
         incy: ::core::ffi::c_int,
         c: *const f32,
         s: *const f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDrot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSrot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, c, s)
+    }
+    pub unsafe fn cublasDrot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut f64,
@@ -992,10 +5996,14 @@ extern "C" {
         incy: ::core::ffi::c_int,
         c: *const f64,
         s: *const f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCrot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDrot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, c, s)
+    }
+    pub unsafe fn cublasCrot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut cuComplex,
@@ -1004,10 +6012,14 @@ extern "C" {
         incy: ::core::ffi::c_int,
         c: *const f32,
         s: *const cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsrot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCrot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, c, s)
+    }
+    pub unsafe fn cublasCsrot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut cuComplex,
@@ -1016,10 +6028,14 @@ extern "C" {
         incy: ::core::ffi::c_int,
         c: *const f32,
         s: *const f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZrot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsrot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, c, s)
+    }
+    pub unsafe fn cublasZrot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
@@ -1028,10 +6044,14 @@ extern "C" {
         incy: ::core::ffi::c_int,
         c: *const f64,
         s: *const cuDoubleComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZdrot_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZrot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, c, s)
+    }
+    pub unsafe fn cublasZdrot_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
@@ -1040,10 +6060,14 @@ extern "C" {
         incy: ::core::ffi::c_int,
         c: *const f64,
         s: *const f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasRotEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZdrot_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, c, s)
+    }
+    pub unsafe fn cublasRotEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut ::core::ffi::c_void,
@@ -1056,46 +6080,79 @@ extern "C" {
         s: *const ::core::ffi::c_void,
         csType: cudaDataType,
         executiontype: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSrotg_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasRotEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            x,
+            xType,
+            incx,
+            y,
+            yType,
+            incy,
+            c,
+            s,
+            csType,
+            executiontype,
+        )
+    }
+    pub unsafe fn cublasSrotg_v2(
+        &self,
         handle: cublasHandle_t,
         a: *mut f32,
         b: *mut f32,
         c: *mut f32,
         s: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDrotg_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSrotg_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, a, b, c, s)
+    }
+    pub unsafe fn cublasDrotg_v2(
+        &self,
         handle: cublasHandle_t,
         a: *mut f64,
         b: *mut f64,
         c: *mut f64,
         s: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCrotg_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDrotg_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, a, b, c, s)
+    }
+    pub unsafe fn cublasCrotg_v2(
+        &self,
         handle: cublasHandle_t,
         a: *mut cuComplex,
         b: *mut cuComplex,
         c: *mut f32,
         s: *mut cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZrotg_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCrotg_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, a, b, c, s)
+    }
+    pub unsafe fn cublasZrotg_v2(
+        &self,
         handle: cublasHandle_t,
         a: *mut cuDoubleComplex,
         b: *mut cuDoubleComplex,
         c: *mut f64,
         s: *mut cuDoubleComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasRotgEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZrotg_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, a, b, c, s)
+    }
+    pub unsafe fn cublasRotgEx(
+        &self,
         handle: cublasHandle_t,
         a: *mut ::core::ffi::c_void,
         b: *mut ::core::ffi::c_void,
@@ -1104,10 +6161,23 @@ extern "C" {
         s: *mut ::core::ffi::c_void,
         csType: cudaDataType,
         executiontype: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSrotm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasRotgEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            a,
+            b,
+            abType,
+            c,
+            s,
+            csType,
+            executiontype,
+        )
+    }
+    pub unsafe fn cublasSrotm_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut f32,
@@ -1115,10 +6185,14 @@ extern "C" {
         y: *mut f32,
         incy: ::core::ffi::c_int,
         param: *const f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDrotm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSrotm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, param)
+    }
+    pub unsafe fn cublasDrotm_v2(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut f64,
@@ -1126,10 +6200,14 @@ extern "C" {
         y: *mut f64,
         incy: ::core::ffi::c_int,
         param: *const f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasRotmEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDrotm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, x, incx, y, incy, param)
+    }
+    pub unsafe fn cublasRotmEx(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         x: *mut ::core::ffi::c_void,
@@ -1141,30 +6219,54 @@ extern "C" {
         param: *const ::core::ffi::c_void,
         paramType: cudaDataType,
         executiontype: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSrotmg_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasRotmEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            n,
+            x,
+            xType,
+            incx,
+            y,
+            yType,
+            incy,
+            param,
+            paramType,
+            executiontype,
+        )
+    }
+    pub unsafe fn cublasSrotmg_v2(
+        &self,
         handle: cublasHandle_t,
         d1: *mut f32,
         d2: *mut f32,
         x1: *mut f32,
         y1: *const f32,
         param: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDrotmg_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSrotmg_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, d1, d2, x1, y1, param)
+    }
+    pub unsafe fn cublasDrotmg_v2(
+        &self,
         handle: cublasHandle_t,
         d1: *mut f64,
         d2: *mut f64,
         x1: *mut f64,
         y1: *const f64,
         param: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasRotmgEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDrotmg_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, d1, d2, x1, y1, param)
+    }
+    pub unsafe fn cublasRotmgEx(
+        &self,
         handle: cublasHandle_t,
         d1: *mut ::core::ffi::c_void,
         d1Type: cudaDataType,
@@ -1177,10 +6279,27 @@ extern "C" {
         param: *mut ::core::ffi::c_void,
         paramType: cudaDataType,
         executiontype: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasRotmgEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            d1,
+            d1Type,
+            d2,
+            d2Type,
+            x1,
+            x1Type,
+            y1,
+            y1Type,
+            param,
+            paramType,
+            executiontype,
+        )
+    }
+    pub unsafe fn cublasSgemv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1193,10 +6312,16 @@ extern "C" {
         beta: *const f32,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgemv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasDgemv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1209,10 +6334,16 @@ extern "C" {
         beta: *const f64,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgemv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasCgemv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1225,10 +6356,16 @@ extern "C" {
         beta: *const cuComplex,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasZgemv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1241,10 +6378,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasSgbmv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1259,10 +6402,16 @@ extern "C" {
         beta: *const f32,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, kl, ku, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasDgbmv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1277,10 +6426,16 @@ extern "C" {
         beta: *const f64,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, kl, ku, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasCgbmv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1295,10 +6450,16 @@ extern "C" {
         beta: *const cuComplex,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, kl, ku, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasZgbmv_v2(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -1313,10 +6474,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStrmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, kl, ku, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasStrmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1326,10 +6493,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtrmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStrmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasDtrmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1339,10 +6512,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtrmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtrmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasCtrmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1352,10 +6531,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtrmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtrmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasZtrmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1365,10 +6550,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtrmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasStbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1379,10 +6570,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasDtbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1393,10 +6590,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasCtbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1407,10 +6610,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasZtbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1421,10 +6630,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStpmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasStpmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1433,10 +6648,16 @@ extern "C" {
         AP: *const f32,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtpmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStpmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasDtpmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1445,10 +6666,16 @@ extern "C" {
         AP: *const f64,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtpmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtpmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasCtpmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1457,10 +6684,16 @@ extern "C" {
         AP: *const cuComplex,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtpmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtpmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasZtpmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1469,10 +6702,16 @@ extern "C" {
         AP: *const cuDoubleComplex,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStrsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtpmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasStrsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1482,10 +6721,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtrsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStrsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasDtrsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1495,10 +6740,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtrsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtrsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasCtrsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1508,10 +6759,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtrsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtrsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasZtrsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1521,10 +6778,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStpsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtrsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, A, lda, x, incx
+        )
+    }
+    pub unsafe fn cublasStpsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1533,10 +6796,16 @@ extern "C" {
         AP: *const f32,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtpsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStpsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasDtpsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1545,10 +6814,16 @@ extern "C" {
         AP: *const f64,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtpsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtpsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasCtpsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1557,10 +6832,16 @@ extern "C" {
         AP: *const cuComplex,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtpsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtpsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasZtpsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1569,10 +6850,16 @@ extern "C" {
         AP: *const cuDoubleComplex,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStbsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtpsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, AP, x, incx
+        )
+    }
+    pub unsafe fn cublasStbsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1583,10 +6870,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f32,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtbsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStbsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasDtbsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1597,10 +6890,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut f64,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtbsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtbsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasCtbsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1611,10 +6910,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtbsv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtbsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasZtbsv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -1625,10 +6930,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         x: *mut cuDoubleComplex,
         incx: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsymv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtbsv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, diag, n, k, A, lda, x, incx,
+        )
+    }
+    pub unsafe fn cublasSsymv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1640,10 +6951,16 @@ extern "C" {
         beta: *const f32,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsymv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsymv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasDsymv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1655,10 +6972,16 @@ extern "C" {
         beta: *const f64,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsymv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsymv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasCsymv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1670,10 +6993,16 @@ extern "C" {
         beta: *const cuComplex,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsymv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsymv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasZsymv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1685,10 +7014,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasChemv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsymv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasChemv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1700,10 +7035,16 @@ extern "C" {
         beta: *const cuComplex,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZhemv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasChemv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasZhemv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1715,10 +7056,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZhemv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasSsbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1731,10 +7078,16 @@ extern "C" {
         beta: *const f32,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, k, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasDsbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1747,10 +7100,16 @@ extern "C" {
         beta: *const f64,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasChbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, k, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasChbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1763,10 +7122,16 @@ extern "C" {
         beta: *const cuComplex,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZhbmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasChbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, k, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasZhbmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1779,10 +7144,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSspmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZhbmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, k, alpha, A, lda, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasSspmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1793,10 +7164,16 @@ extern "C" {
         beta: *const f32,
         y: *mut f32,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDspmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSspmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, AP, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasDspmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1807,10 +7184,16 @@ extern "C" {
         beta: *const f64,
         y: *mut f64,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasChpmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDspmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, AP, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasChpmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1821,10 +7204,16 @@ extern "C" {
         beta: *const cuComplex,
         y: *mut cuComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZhpmv_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasChpmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, AP, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasZhpmv_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1835,10 +7224,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         y: *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSger_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZhpmv_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, AP, x, incx, beta, y, incy,
+        )
+    }
+    pub unsafe fn cublasSger_v2(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -1849,10 +7244,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut f32,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDger_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSger_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, alpha, x, incx, y, incy, A, lda
+        )
+    }
+    pub unsafe fn cublasDger_v2(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -1863,10 +7264,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut f64,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgeru_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDger_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, alpha, x, incx, y, incy, A, lda
+        )
+    }
+    pub unsafe fn cublasCgeru_v2(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -1877,10 +7284,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgerc_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgeru_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, alpha, x, incx, y, incy, A, lda
+        )
+    }
+    pub unsafe fn cublasCgerc_v2(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -1891,10 +7304,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgeru_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgerc_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, alpha, x, incx, y, incy, A, lda
+        )
+    }
+    pub unsafe fn cublasZgeru_v2(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -1905,10 +7324,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgerc_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgeru_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, alpha, x, incx, y, incy, A, lda
+        )
+    }
+    pub unsafe fn cublasZgerc_v2(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -1919,10 +7344,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsyr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgerc_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, alpha, x, incx, y, incy, A, lda
+        )
+    }
+    pub unsafe fn cublasSsyr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1931,10 +7362,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         A: *mut f32,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsyr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsyr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, A, lda
+        )
+    }
+    pub unsafe fn cublasDsyr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1943,10 +7380,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         A: *mut f64,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsyr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, A, lda
+        )
+    }
+    pub unsafe fn cublasCsyr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1955,10 +7398,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsyr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, A, lda
+        )
+    }
+    pub unsafe fn cublasZsyr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1967,10 +7416,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCher_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsyr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, A, lda
+        )
+    }
+    pub unsafe fn cublasCher_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1979,10 +7434,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZher_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCher_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, A, lda
+        )
+    }
+    pub unsafe fn cublasZher_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -1991,10 +7452,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSspr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZher_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, A, lda
+        )
+    }
+    pub unsafe fn cublasSspr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2002,10 +7469,14 @@ extern "C" {
         x: *const f32,
         incx: ::core::ffi::c_int,
         AP: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDspr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSspr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, alpha, x, incx, AP)
+    }
+    pub unsafe fn cublasDspr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2013,10 +7484,14 @@ extern "C" {
         x: *const f64,
         incx: ::core::ffi::c_int,
         AP: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasChpr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDspr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, alpha, x, incx, AP)
+    }
+    pub unsafe fn cublasChpr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2024,10 +7499,14 @@ extern "C" {
         x: *const cuComplex,
         incx: ::core::ffi::c_int,
         AP: *mut cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZhpr_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasChpr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, alpha, x, incx, AP)
+    }
+    pub unsafe fn cublasZhpr_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2035,10 +7514,14 @@ extern "C" {
         x: *const cuDoubleComplex,
         incx: ::core::ffi::c_int,
         AP: *mut cuDoubleComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsyr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZhpr_v2
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, alpha, x, incx, AP)
+    }
+    pub unsafe fn cublasSsyr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2049,10 +7532,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut f32,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsyr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsyr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, A, lda,
+        )
+    }
+    pub unsafe fn cublasDsyr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2063,10 +7552,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut f64,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsyr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, A, lda,
+        )
+    }
+    pub unsafe fn cublasCsyr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2077,10 +7572,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsyr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, A, lda,
+        )
+    }
+    pub unsafe fn cublasZsyr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2091,10 +7592,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCher2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsyr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, A, lda,
+        )
+    }
+    pub unsafe fn cublasCher2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2105,10 +7612,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZher2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCher2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, A, lda,
+        )
+    }
+    pub unsafe fn cublasZher2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2119,10 +7632,16 @@ extern "C" {
         incy: ::core::ffi::c_int,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSspr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZher2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, A, lda,
+        )
+    }
+    pub unsafe fn cublasSspr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2132,10 +7651,16 @@ extern "C" {
         y: *const f32,
         incy: ::core::ffi::c_int,
         AP: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDspr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSspr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, AP
+        )
+    }
+    pub unsafe fn cublasDspr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2145,10 +7670,16 @@ extern "C" {
         y: *const f64,
         incy: ::core::ffi::c_int,
         AP: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasChpr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDspr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, AP
+        )
+    }
+    pub unsafe fn cublasChpr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2158,10 +7689,16 @@ extern "C" {
         y: *const cuComplex,
         incy: ::core::ffi::c_int,
         AP: *mut cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZhpr2_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasChpr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, AP
+        )
+    }
+    pub unsafe fn cublasZhpr2_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
@@ -2171,10 +7708,16 @@ extern "C" {
         y: *const cuDoubleComplex,
         incy: ::core::ffi::c_int,
         AP: *mut cuDoubleComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZhpr2_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, n, alpha, x, incx, y, incy, AP
+        )
+    }
+    pub unsafe fn cublasSgemvBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2188,10 +7731,16 @@ extern "C" {
         yarray: *const *mut f32,
         incy: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgemvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, Aarray, lda, xarray, incx, beta, yarray, incy, batchCount,
+        )
+    }
+    pub unsafe fn cublasDgemvBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2205,10 +7754,16 @@ extern "C" {
         yarray: *const *mut f64,
         incy: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgemvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, Aarray, lda, xarray, incx, beta, yarray, incy, batchCount,
+        )
+    }
+    pub unsafe fn cublasCgemvBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2222,10 +7777,16 @@ extern "C" {
         yarray: *const *mut cuComplex,
         incy: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, Aarray, lda, xarray, incx, beta, yarray, incy, batchCount,
+        )
+    }
+    pub unsafe fn cublasZgemvBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2239,10 +7800,16 @@ extern "C" {
         yarray: *const *mut cuDoubleComplex,
         incy: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemvStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, Aarray, lda, xarray, incx, beta, yarray, incy, batchCount,
+        )
+    }
+    pub unsafe fn cublasSgemvStridedBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2259,10 +7826,17 @@ extern "C" {
         incy: ::core::ffi::c_int,
         stridey: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgemvStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemvStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, strideA, x, incx, stridex, beta, y, incy, stridey,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasDgemvStridedBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2279,10 +7853,17 @@ extern "C" {
         incy: ::core::ffi::c_int,
         stridey: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemvStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgemvStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, strideA, x, incx, stridex, beta, y, incy, stridey,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasCgemvStridedBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2299,10 +7880,17 @@ extern "C" {
         incy: ::core::ffi::c_int,
         stridey: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemvStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemvStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, strideA, x, incx, stridex, beta, y, incy, stridey,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasZgemvStridedBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -2319,10 +7907,17 @@ extern "C" {
         incy: ::core::ffi::c_int,
         stridey: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemvStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, m, n, alpha, A, lda, strideA, x, incx, stridex, beta, y, incy, stridey,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasSgemm_v2(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2337,10 +7932,16 @@ extern "C" {
         beta: *const f32,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgemm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDgemm_v2(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2355,10 +7956,16 @@ extern "C" {
         beta: *const f64,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgemm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCgemm_v2(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2373,10 +7980,16 @@ extern "C" {
         beta: *const cuComplex,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemm3m(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCgemm3m(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2391,10 +8004,16 @@ extern "C" {
         beta: *const cuComplex,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemm3mEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemm3m
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCgemm3mEx(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2412,10 +8031,17 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemm3mEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype,
+            ldc,
+        )
+    }
+    pub unsafe fn cublasZgemm_v2(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2430,10 +8056,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemm3m(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZgemm3m(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2448,10 +8080,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemmEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemm3m
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasSgemmEx(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2469,10 +8107,17 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGemmEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemmEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype,
+            ldc,
+        )
+    }
+    pub unsafe fn cublasGemmEx(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2492,10 +8137,34 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         computeType: cublasComputeType_t,
         algo: cublasGemmAlgo_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemmEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGemmEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            transa,
+            transb,
+            m,
+            n,
+            k,
+            alpha,
+            A,
+            Atype,
+            lda,
+            B,
+            Btype,
+            ldb,
+            beta,
+            C,
+            Ctype,
+            ldc,
+            computeType,
+            algo,
+        )
+    }
+    pub unsafe fn cublasCgemmEx(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2513,10 +8182,17 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasUint8gemmBias(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemmEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype,
+            ldc,
+        )
+    }
+    pub unsafe fn cublasUint8gemmBias(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -2535,10 +8211,17 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         C_mult: ::core::ffi::c_int,
         C_shift: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsyrk_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasUint8gemmBias
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, transc, m, n, k, A, A_bias, lda, B, B_bias, ldb, C, C_bias,
+            ldc, C_mult, C_shift,
+        )
+    }
+    pub unsafe fn cublasSsyrk_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2550,10 +8233,16 @@ extern "C" {
         beta: *const f32,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsyrk_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsyrk_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDsyrk_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2565,10 +8254,16 @@ extern "C" {
         beta: *const f64,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyrk_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsyrk_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCsyrk_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2580,10 +8275,16 @@ extern "C" {
         beta: *const cuComplex,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsyrk_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyrk_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZsyrk_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2595,10 +8296,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyrkEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsyrk_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCsyrkEx(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2612,10 +8319,16 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyrk3mEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyrkEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, Atype, lda, beta, C, Ctype, ldc,
+        )
+    }
+    pub unsafe fn cublasCsyrk3mEx(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2629,10 +8342,16 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCherk_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyrk3mEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, Atype, lda, beta, C, Ctype, ldc,
+        )
+    }
+    pub unsafe fn cublasCherk_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2644,10 +8363,16 @@ extern "C" {
         beta: *const f32,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZherk_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCherk_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZherk_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2659,10 +8384,16 @@ extern "C" {
         beta: *const f64,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCherkEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZherk_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCherkEx(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2676,10 +8407,16 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCherk3mEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCherkEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, Atype, lda, beta, C, Ctype, ldc,
+        )
+    }
+    pub unsafe fn cublasCherk3mEx(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2693,112 +8430,16 @@ extern "C" {
         C: *mut ::core::ffi::c_void,
         Ctype: cudaDataType,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsyr2k_v2(
-        handle: cublasHandle_t,
-        uplo: cublasFillMode_t,
-        trans: cublasOperation_t,
-        n: ::core::ffi::c_int,
-        k: ::core::ffi::c_int,
-        alpha: *const f32,
-        A: *const f32,
-        lda: ::core::ffi::c_int,
-        B: *const f32,
-        ldb: ::core::ffi::c_int,
-        beta: *const f32,
-        C: *mut f32,
-        ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsyr2k_v2(
-        handle: cublasHandle_t,
-        uplo: cublasFillMode_t,
-        trans: cublasOperation_t,
-        n: ::core::ffi::c_int,
-        k: ::core::ffi::c_int,
-        alpha: *const f64,
-        A: *const f64,
-        lda: ::core::ffi::c_int,
-        B: *const f64,
-        ldb: ::core::ffi::c_int,
-        beta: *const f64,
-        C: *mut f64,
-        ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyr2k_v2(
-        handle: cublasHandle_t,
-        uplo: cublasFillMode_t,
-        trans: cublasOperation_t,
-        n: ::core::ffi::c_int,
-        k: ::core::ffi::c_int,
-        alpha: *const cuComplex,
-        A: *const cuComplex,
-        lda: ::core::ffi::c_int,
-        B: *const cuComplex,
-        ldb: ::core::ffi::c_int,
-        beta: *const cuComplex,
-        C: *mut cuComplex,
-        ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsyr2k_v2(
-        handle: cublasHandle_t,
-        uplo: cublasFillMode_t,
-        trans: cublasOperation_t,
-        n: ::core::ffi::c_int,
-        k: ::core::ffi::c_int,
-        alpha: *const cuDoubleComplex,
-        A: *const cuDoubleComplex,
-        lda: ::core::ffi::c_int,
-        B: *const cuDoubleComplex,
-        ldb: ::core::ffi::c_int,
-        beta: *const cuDoubleComplex,
-        C: *mut cuDoubleComplex,
-        ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCher2k_v2(
-        handle: cublasHandle_t,
-        uplo: cublasFillMode_t,
-        trans: cublasOperation_t,
-        n: ::core::ffi::c_int,
-        k: ::core::ffi::c_int,
-        alpha: *const cuComplex,
-        A: *const cuComplex,
-        lda: ::core::ffi::c_int,
-        B: *const cuComplex,
-        ldb: ::core::ffi::c_int,
-        beta: *const f32,
-        C: *mut cuComplex,
-        ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZher2k_v2(
-        handle: cublasHandle_t,
-        uplo: cublasFillMode_t,
-        trans: cublasOperation_t,
-        n: ::core::ffi::c_int,
-        k: ::core::ffi::c_int,
-        alpha: *const cuDoubleComplex,
-        A: *const cuDoubleComplex,
-        lda: ::core::ffi::c_int,
-        B: *const cuDoubleComplex,
-        ldb: ::core::ffi::c_int,
-        beta: *const f64,
-        C: *mut cuDoubleComplex,
-        ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsyrkx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCherk3mEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, Atype, lda, beta, C, Ctype, ldc,
+        )
+    }
+    pub unsafe fn cublasSsyr2k_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2812,10 +8453,16 @@ extern "C" {
         beta: *const f32,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsyrkx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsyr2k_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDsyr2k_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2829,10 +8476,16 @@ extern "C" {
         beta: *const f64,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsyrkx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsyr2k_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCsyr2k_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2846,10 +8499,16 @@ extern "C" {
         beta: *const cuComplex,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsyrkx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyr2k_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZsyr2k_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2863,10 +8522,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCherkx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsyr2k_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCher2k_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2880,10 +8545,16 @@ extern "C" {
         beta: *const f32,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZherkx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCher2k_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZher2k_v2(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         trans: cublasOperation_t,
@@ -2897,10 +8568,154 @@ extern "C" {
         beta: *const f64,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSsymm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZher2k_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasSsyrkx(
+        &self,
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: ::core::ffi::c_int,
+        k: ::core::ffi::c_int,
+        alpha: *const f32,
+        A: *const f32,
+        lda: ::core::ffi::c_int,
+        B: *const f32,
+        ldb: ::core::ffi::c_int,
+        beta: *const f32,
+        C: *mut f32,
+        ldc: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsyrkx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDsyrkx(
+        &self,
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: ::core::ffi::c_int,
+        k: ::core::ffi::c_int,
+        alpha: *const f64,
+        A: *const f64,
+        lda: ::core::ffi::c_int,
+        B: *const f64,
+        ldb: ::core::ffi::c_int,
+        beta: *const f64,
+        C: *mut f64,
+        ldc: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsyrkx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCsyrkx(
+        &self,
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: ::core::ffi::c_int,
+        k: ::core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: ::core::ffi::c_int,
+        B: *const cuComplex,
+        ldb: ::core::ffi::c_int,
+        beta: *const cuComplex,
+        C: *mut cuComplex,
+        ldc: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsyrkx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZsyrkx(
+        &self,
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: ::core::ffi::c_int,
+        k: ::core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: ::core::ffi::c_int,
+        B: *const cuDoubleComplex,
+        ldb: ::core::ffi::c_int,
+        beta: *const cuDoubleComplex,
+        C: *mut cuDoubleComplex,
+        ldc: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsyrkx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCherkx(
+        &self,
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: ::core::ffi::c_int,
+        k: ::core::ffi::c_int,
+        alpha: *const cuComplex,
+        A: *const cuComplex,
+        lda: ::core::ffi::c_int,
+        B: *const cuComplex,
+        ldb: ::core::ffi::c_int,
+        beta: *const f32,
+        C: *mut cuComplex,
+        ldc: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasCherkx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZherkx(
+        &self,
+        handle: cublasHandle_t,
+        uplo: cublasFillMode_t,
+        trans: cublasOperation_t,
+        n: ::core::ffi::c_int,
+        k: ::core::ffi::c_int,
+        alpha: *const cuDoubleComplex,
+        A: *const cuDoubleComplex,
+        lda: ::core::ffi::c_int,
+        B: *const cuDoubleComplex,
+        ldb: ::core::ffi::c_int,
+        beta: *const f64,
+        C: *mut cuDoubleComplex,
+        ldc: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasZherkx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasSsymm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -2914,10 +8729,16 @@ extern "C" {
         beta: *const f32,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDsymm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSsymm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDsymm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -2931,10 +8752,16 @@ extern "C" {
         beta: *const f64,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCsymm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDsymm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCsymm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -2948,10 +8775,16 @@ extern "C" {
         beta: *const cuComplex,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZsymm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCsymm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZsymm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -2965,10 +8798,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasChemm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZsymm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasChemm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -2982,10 +8821,16 @@ extern "C" {
         beta: *const cuComplex,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZhemm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasChemm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZhemm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -2999,10 +8844,16 @@ extern "C" {
         beta: *const cuDoubleComplex,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStrsm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZhemm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc,
+        )
+    }
+    pub unsafe fn cublasStrsm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3015,10 +8866,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         B: *mut f32,
         ldb: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtrsm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStrsm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb,
+        )
+    }
+    pub unsafe fn cublasDtrsm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3031,10 +8888,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         B: *mut f64,
         ldb: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtrsm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtrsm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb,
+        )
+    }
+    pub unsafe fn cublasCtrsm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3047,10 +8910,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         B: *mut cuComplex,
         ldb: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtrsm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtrsm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb,
+        )
+    }
+    pub unsafe fn cublasZtrsm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3063,10 +8932,16 @@ extern "C" {
         lda: ::core::ffi::c_int,
         B: *mut cuDoubleComplex,
         ldb: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStrmm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtrsm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb,
+        )
+    }
+    pub unsafe fn cublasStrmm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3081,10 +8956,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtrmm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStrmm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDtrmm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3099,10 +8980,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtrmm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtrmm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCtrmm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3117,10 +9004,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtrmm_v2(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtrmm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZtrmm_v2(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3135,10 +9028,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtrmm_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasSgemmBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3154,10 +9053,17 @@ extern "C" {
         Carray: *const *mut f32,
         ldc: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgemmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, Aarray, lda, Barray, ldb, beta, Carray, ldc,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasDgemmBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3173,10 +9079,17 @@ extern "C" {
         Carray: *const *mut f64,
         ldc: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgemmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, Aarray, lda, Barray, ldb, beta, Carray, ldc,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasCgemmBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3192,10 +9105,17 @@ extern "C" {
         Carray: *const *mut cuComplex,
         ldc: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemm3mBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, Aarray, lda, Barray, ldb, beta, Carray, ldc,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasCgemm3mBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3211,10 +9131,17 @@ extern "C" {
         Carray: *const *mut cuComplex,
         ldc: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemm3mBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, Aarray, lda, Barray, ldb, beta, Carray, ldc,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasZgemmBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3230,10 +9157,17 @@ extern "C" {
         Carray: *const *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGemmBatchedEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, Aarray, lda, Barray, ldb, beta, Carray, ldc,
+            batchCount,
+        )
+    }
+    pub unsafe fn cublasGemmBatchedEx(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3254,10 +9188,35 @@ extern "C" {
         batchCount: ::core::ffi::c_int,
         computeType: cublasComputeType_t,
         algo: cublasGemmAlgo_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasGemmStridedBatchedEx(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGemmBatchedEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            transa,
+            transb,
+            m,
+            n,
+            k,
+            alpha,
+            Aarray,
+            Atype,
+            lda,
+            Barray,
+            Btype,
+            ldb,
+            beta,
+            Carray,
+            Ctype,
+            ldc,
+            batchCount,
+            computeType,
+            algo,
+        )
+    }
+    pub unsafe fn cublasGemmStridedBatchedEx(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3281,10 +9240,38 @@ extern "C" {
         batchCount: ::core::ffi::c_int,
         computeType: cublasComputeType_t,
         algo: cublasGemmAlgo_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgemmStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasGemmStridedBatchedEx
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            transa,
+            transb,
+            m,
+            n,
+            k,
+            alpha,
+            A,
+            Atype,
+            lda,
+            strideA,
+            B,
+            Btype,
+            ldb,
+            strideB,
+            beta,
+            C,
+            Ctype,
+            ldc,
+            strideC,
+            batchCount,
+            computeType,
+            algo,
+        )
+    }
+    pub unsafe fn cublasSgemmStridedBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3303,10 +9290,17 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         strideC: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgemmStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgemmStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, strideA, B, ldb, strideB, beta, C, ldc,
+            strideC, batchCount,
+        )
+    }
+    pub unsafe fn cublasDgemmStridedBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3325,10 +9319,17 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         strideC: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemmStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgemmStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, strideA, B, ldb, strideB, beta, C, ldc,
+            strideC, batchCount,
+        )
+    }
+    pub unsafe fn cublasCgemmStridedBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3347,10 +9348,17 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         strideC: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgemm3mStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemmStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, strideA, B, ldb, strideB, beta, C, ldc,
+            strideC, batchCount,
+        )
+    }
+    pub unsafe fn cublasCgemm3mStridedBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3369,10 +9377,17 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         strideC: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgemmStridedBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgemm3mStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, strideA, B, ldb, strideB, beta, C, ldc,
+            strideC, batchCount,
+        )
+    }
+    pub unsafe fn cublasZgemmStridedBatched(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3391,10 +9406,17 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         strideC: ::core::ffi::c_longlong,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgeam(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgemmStridedBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, k, alpha, A, lda, strideA, B, ldb, strideB, beta, C, ldc,
+            strideC, batchCount,
+        )
+    }
+    pub unsafe fn cublasSgeam(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3408,10 +9430,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgeam(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgeam
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasDgeam(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3425,10 +9453,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgeam(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgeam
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasCgeam(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3442,10 +9476,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgeam(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgeam
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasZgeam(
+        &self,
         handle: cublasHandle_t,
         transa: cublasOperation_t,
         transb: cublasOperation_t,
@@ -3459,10 +9499,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgetrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgeam
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc,
+        )
+    }
+    pub unsafe fn cublasSgetrfBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *mut f32,
@@ -3470,10 +9516,14 @@ extern "C" {
         P: *mut ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgetrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgetrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, A, lda, P, info, batchSize)
+    }
+    pub unsafe fn cublasDgetrfBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *mut f64,
@@ -3481,10 +9531,14 @@ extern "C" {
         P: *mut ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgetrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgetrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, A, lda, P, info, batchSize)
+    }
+    pub unsafe fn cublasCgetrfBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *mut cuComplex,
@@ -3492,10 +9546,14 @@ extern "C" {
         P: *mut ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgetrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgetrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, A, lda, P, info, batchSize)
+    }
+    pub unsafe fn cublasZgetrfBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *mut cuDoubleComplex,
@@ -3503,10 +9561,14 @@ extern "C" {
         P: *mut ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgetriBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgetrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(handle, n, A, lda, P, info, batchSize)
+    }
+    pub unsafe fn cublasSgetriBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const f32,
@@ -3516,10 +9578,16 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgetriBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgetriBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, P, C, ldc, info, batchSize
+        )
+    }
+    pub unsafe fn cublasDgetriBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const f64,
@@ -3529,10 +9597,16 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgetriBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgetriBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, P, C, ldc, info, batchSize
+        )
+    }
+    pub unsafe fn cublasCgetriBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const cuComplex,
@@ -3542,10 +9616,16 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgetriBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgetriBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, P, C, ldc, info, batchSize
+        )
+    }
+    pub unsafe fn cublasZgetriBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const cuDoubleComplex,
@@ -3555,10 +9635,16 @@ extern "C" {
         ldc: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgetrsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgetriBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, P, C, ldc, info, batchSize
+        )
+    }
+    pub unsafe fn cublasSgetrsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         n: ::core::ffi::c_int,
@@ -3570,10 +9656,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgetrsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgetrsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, n, nrhs, Aarray, lda, devIpiv, Barray, ldb, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasDgetrsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         n: ::core::ffi::c_int,
@@ -3585,10 +9677,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgetrsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgetrsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, n, nrhs, Aarray, lda, devIpiv, Barray, ldb, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasCgetrsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         n: ::core::ffi::c_int,
@@ -3600,10 +9698,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgetrsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgetrsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, n, nrhs, Aarray, lda, devIpiv, Barray, ldb, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasZgetrsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         n: ::core::ffi::c_int,
@@ -3615,10 +9719,16 @@ extern "C" {
         ldb: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStrsmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgetrsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, trans, n, nrhs, Aarray, lda, devIpiv, Barray, ldb, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasStrsmBatched(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3632,10 +9742,16 @@ extern "C" {
         B: *const *mut f32,
         ldb: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtrsmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStrsmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, batchCount,
+        )
+    }
+    pub unsafe fn cublasDtrsmBatched(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3649,10 +9765,16 @@ extern "C" {
         B: *const *mut f64,
         ldb: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtrsmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtrsmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, batchCount,
+        )
+    }
+    pub unsafe fn cublasCtrsmBatched(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3666,10 +9788,16 @@ extern "C" {
         B: *const *mut cuComplex,
         ldb: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtrsmBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtrsmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, batchCount,
+        )
+    }
+    pub unsafe fn cublasZtrsmBatched(
+        &self,
         handle: cublasHandle_t,
         side: cublasSideMode_t,
         uplo: cublasFillMode_t,
@@ -3683,10 +9811,16 @@ extern "C" {
         B: *const *mut cuDoubleComplex,
         ldb: ::core::ffi::c_int,
         batchCount: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSmatinvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtrsmBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, batchCount,
+        )
+    }
+    pub unsafe fn cublasSmatinvBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const f32,
@@ -3695,10 +9829,16 @@ extern "C" {
         lda_inv: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDmatinvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSmatinvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, Ainv, lda_inv, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasDmatinvBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const f64,
@@ -3707,10 +9847,16 @@ extern "C" {
         lda_inv: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCmatinvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDmatinvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, Ainv, lda_inv, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasCmatinvBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const cuComplex,
@@ -3719,10 +9865,16 @@ extern "C" {
         lda_inv: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZmatinvBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCmatinvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, Ainv, lda_inv, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasZmatinvBatched(
+        &self,
         handle: cublasHandle_t,
         n: ::core::ffi::c_int,
         A: *const *const cuDoubleComplex,
@@ -3731,10 +9883,16 @@ extern "C" {
         lda_inv: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgeqrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZmatinvBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, n, A, lda, Ainv, lda_inv, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasSgeqrfBatched(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -3743,10 +9901,16 @@ extern "C" {
         TauArray: *const *mut f32,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgeqrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgeqrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, Aarray, lda, TauArray, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasDgeqrfBatched(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -3755,10 +9919,16 @@ extern "C" {
         TauArray: *const *mut f64,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgeqrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgeqrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, Aarray, lda, TauArray, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasCgeqrfBatched(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -3767,10 +9937,16 @@ extern "C" {
         TauArray: *const *mut cuComplex,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgeqrfBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgeqrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, Aarray, lda, TauArray, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasZgeqrfBatched(
+        &self,
         handle: cublasHandle_t,
         m: ::core::ffi::c_int,
         n: ::core::ffi::c_int,
@@ -3779,10 +9955,16 @@ extern "C" {
         TauArray: *const *mut cuDoubleComplex,
         info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSgelsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgeqrfBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, m, n, Aarray, lda, TauArray, info, batchSize,
+        )
+    }
+    pub unsafe fn cublasSgelsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -3795,10 +9977,27 @@ extern "C" {
         info: *mut ::core::ffi::c_int,
         devInfoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDgelsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSgelsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            trans,
+            m,
+            n,
+            nrhs,
+            Aarray,
+            lda,
+            Carray,
+            ldc,
+            info,
+            devInfoArray,
+            batchSize,
+        )
+    }
+    pub unsafe fn cublasDgelsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -3811,10 +10010,27 @@ extern "C" {
         info: *mut ::core::ffi::c_int,
         devInfoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCgelsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDgelsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            trans,
+            m,
+            n,
+            nrhs,
+            Aarray,
+            lda,
+            Carray,
+            ldc,
+            info,
+            devInfoArray,
+            batchSize,
+        )
+    }
+    pub unsafe fn cublasCgelsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -3827,10 +10043,27 @@ extern "C" {
         info: *mut ::core::ffi::c_int,
         devInfoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZgelsBatched(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCgelsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            trans,
+            m,
+            n,
+            nrhs,
+            Aarray,
+            lda,
+            Carray,
+            ldc,
+            info,
+            devInfoArray,
+            batchSize,
+        )
+    }
+    pub unsafe fn cublasZgelsBatched(
+        &self,
         handle: cublasHandle_t,
         trans: cublasOperation_t,
         m: ::core::ffi::c_int,
@@ -3843,10 +10076,27 @@ extern "C" {
         info: *mut ::core::ffi::c_int,
         devInfoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasSdgmm(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZgelsBatched
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle,
+            trans,
+            m,
+            n,
+            nrhs,
+            Aarray,
+            lda,
+            Carray,
+            ldc,
+            info,
+            devInfoArray,
+            batchSize,
+        )
+    }
+    pub unsafe fn cublasSdgmm(
+        &self,
         handle: cublasHandle_t,
         mode: cublasSideMode_t,
         m: ::core::ffi::c_int,
@@ -3857,10 +10107,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         C: *mut f32,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDdgmm(
+    ) -> cublasStatus_t {
+        (self
+            .cublasSdgmm
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, mode, m, n, A, lda, x, incx, C, ldc
+        )
+    }
+    pub unsafe fn cublasDdgmm(
+        &self,
         handle: cublasHandle_t,
         mode: cublasSideMode_t,
         m: ::core::ffi::c_int,
@@ -3871,10 +10127,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         C: *mut f64,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCdgmm(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDdgmm
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, mode, m, n, A, lda, x, incx, C, ldc
+        )
+    }
+    pub unsafe fn cublasCdgmm(
+        &self,
         handle: cublasHandle_t,
         mode: cublasSideMode_t,
         m: ::core::ffi::c_int,
@@ -3885,10 +10147,16 @@ extern "C" {
         incx: ::core::ffi::c_int,
         C: *mut cuComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZdgmm(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCdgmm
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, mode, m, n, A, lda, x, incx, C, ldc
+        )
+    }
+    pub unsafe fn cublasZdgmm(
+        &self,
         handle: cublasHandle_t,
         mode: cublasSideMode_t,
         m: ::core::ffi::c_int,
@@ -3899,85 +10167,124 @@ extern "C" {
         incx: ::core::ffi::c_int,
         C: *mut cuDoubleComplex,
         ldc: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStpttr(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZdgmm
+            .as_ref()
+            .expect("Expected function, got error."))(
+            handle, mode, m, n, A, lda, x, incx, C, ldc
+        )
+    }
+    pub unsafe fn cublasStpttr(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         AP: *const f32,
         A: *mut f32,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtpttr(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStpttr
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, AP, A, lda)
+    }
+    pub unsafe fn cublasDtpttr(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         AP: *const f64,
         A: *mut f64,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtpttr(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtpttr
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, AP, A, lda)
+    }
+    pub unsafe fn cublasCtpttr(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         AP: *const cuComplex,
         A: *mut cuComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtpttr(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtpttr
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, AP, A, lda)
+    }
+    pub unsafe fn cublasZtpttr(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         AP: *const cuDoubleComplex,
         A: *mut cuDoubleComplex,
         lda: ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasStrttp(
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtpttr
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, AP, A, lda)
+    }
+    pub unsafe fn cublasStrttp(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         A: *const f32,
         lda: ::core::ffi::c_int,
         AP: *mut f32,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasDtrttp(
+    ) -> cublasStatus_t {
+        (self
+            .cublasStrttp
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, A, lda, AP)
+    }
+    pub unsafe fn cublasDtrttp(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         A: *const f64,
         lda: ::core::ffi::c_int,
         AP: *mut f64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasCtrttp(
+    ) -> cublasStatus_t {
+        (self
+            .cublasDtrttp
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, A, lda, AP)
+    }
+    pub unsafe fn cublasCtrttp(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         A: *const cuComplex,
         lda: ::core::ffi::c_int,
         AP: *mut cuComplex,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasZtrttp(
+    ) -> cublasStatus_t {
+        (self
+            .cublasCtrttp
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, A, lda, AP)
+    }
+    pub unsafe fn cublasZtrttp(
+        &self,
         handle: cublasHandle_t,
         uplo: cublasFillMode_t,
         n: ::core::ffi::c_int,
         A: *const cuDoubleComplex,
         lda: ::core::ffi::c_int,
         AP: *mut cuDoubleComplex,
-    ) -> cublasStatus_t;
+    ) -> cublasStatus_t {
+        (self
+            .cublasZtrttp
+            .as_ref()
+            .expect("Expected function, got error."))(handle, uplo, n, A, lda, AP)
+    }
 }

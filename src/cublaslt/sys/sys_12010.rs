@@ -451,36 +451,6 @@ pub struct cublasLtContext {
     _unused: [u8; 0],
 }
 pub type cublasLtHandle_t = *mut cublasLtContext;
-extern "C" {
-    pub fn cublasLtCreate(lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtDestroy(lightHandle: cublasLtHandle_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtGetStatusName(status: cublasStatus_t) -> *const ::core::ffi::c_char;
-}
-extern "C" {
-    pub fn cublasLtGetStatusString(status: cublasStatus_t) -> *const ::core::ffi::c_char;
-}
-extern "C" {
-    pub fn cublasLtGetVersion() -> usize;
-}
-extern "C" {
-    pub fn cublasLtGetCudartVersion() -> usize;
-}
-extern "C" {
-    pub fn cublasLtGetProperty(
-        type_: libraryPropertyType,
-        value: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtHeuristicsCacheGetCapacity(capacity: *mut usize) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtHeuristicsCacheSetCapacity(capacity: usize) -> cublasStatus_t;
-}
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatrixLayoutOpaque_t {
@@ -810,41 +780,6 @@ pub enum cublasLtPointerModeMask_t {
     CUBLASLT_POINTER_MODE_MASK_ALPHA_DEVICE_VECTOR_BETA_HOST = 16,
 }
 pub type cublasLtNumericalImplFlags_t = u64;
-extern "C" {
-    pub fn cublasLtMatmul(
-        lightHandle: cublasLtHandle_t,
-        computeDesc: cublasLtMatmulDesc_t,
-        alpha: *const ::core::ffi::c_void,
-        A: *const ::core::ffi::c_void,
-        Adesc: cublasLtMatrixLayout_t,
-        B: *const ::core::ffi::c_void,
-        Bdesc: cublasLtMatrixLayout_t,
-        beta: *const ::core::ffi::c_void,
-        C: *const ::core::ffi::c_void,
-        Cdesc: cublasLtMatrixLayout_t,
-        D: *mut ::core::ffi::c_void,
-        Ddesc: cublasLtMatrixLayout_t,
-        algo: *const cublasLtMatmulAlgo_t,
-        workspace: *mut ::core::ffi::c_void,
-        workspaceSizeInBytes: usize,
-        stream: cudaStream_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixTransform(
-        lightHandle: cublasLtHandle_t,
-        transformDesc: cublasLtMatrixTransformDesc_t,
-        alpha: *const ::core::ffi::c_void,
-        A: *const ::core::ffi::c_void,
-        Adesc: cublasLtMatrixLayout_t,
-        beta: *const ::core::ffi::c_void,
-        B: *const ::core::ffi::c_void,
-        Bdesc: cublasLtMatrixLayout_t,
-        C: *mut ::core::ffi::c_void,
-        Cdesc: cublasLtMatrixLayout_t,
-        stream: cudaStream_t,
-    ) -> cublasStatus_t;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasLtOrder_t {
@@ -865,45 +800,6 @@ pub enum cublasLtMatrixLayoutAttribute_t {
     CUBLASLT_MATRIX_LAYOUT_BATCH_COUNT = 5,
     CUBLASLT_MATRIX_LAYOUT_STRIDED_BATCH_OFFSET = 6,
     CUBLASLT_MATRIX_LAYOUT_PLANE_OFFSET = 7,
-}
-extern "C" {
-    pub fn cublasLtMatrixLayoutInit_internal(
-        matLayout: cublasLtMatrixLayout_t,
-        size: usize,
-        type_: cudaDataType,
-        rows: u64,
-        cols: u64,
-        ld: i64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixLayoutCreate(
-        matLayout: *mut cublasLtMatrixLayout_t,
-        type_: cudaDataType,
-        rows: u64,
-        cols: u64,
-        ld: i64,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixLayoutDestroy(matLayout: cublasLtMatrixLayout_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixLayoutSetAttribute(
-        matLayout: cublasLtMatrixLayout_t,
-        attr: cublasLtMatrixLayoutAttribute_t,
-        buf: *const ::core::ffi::c_void,
-        sizeInBytes: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixLayoutGetAttribute(
-        matLayout: cublasLtMatrixLayout_t,
-        attr: cublasLtMatrixLayoutAttribute_t,
-        buf: *mut ::core::ffi::c_void,
-        sizeInBytes: usize,
-        sizeWritten: *mut usize,
-    ) -> cublasStatus_t;
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -934,41 +830,6 @@ pub enum cublasLtMatmulDescAttributes_t {
     CUBLASLT_MATMUL_DESC_FAST_ACCUM = 25,
     CUBLASLT_MATMUL_DESC_BIAS_DATA_TYPE = 26,
 }
-extern "C" {
-    pub fn cublasLtMatmulDescInit_internal(
-        matmulDesc: cublasLtMatmulDesc_t,
-        size: usize,
-        computeType: cublasComputeType_t,
-        scaleType: cudaDataType_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulDescCreate(
-        matmulDesc: *mut cublasLtMatmulDesc_t,
-        computeType: cublasComputeType_t,
-        scaleType: cudaDataType_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulDescDestroy(matmulDesc: cublasLtMatmulDesc_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulDescSetAttribute(
-        matmulDesc: cublasLtMatmulDesc_t,
-        attr: cublasLtMatmulDescAttributes_t,
-        buf: *const ::core::ffi::c_void,
-        sizeInBytes: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulDescGetAttribute(
-        matmulDesc: cublasLtMatmulDesc_t,
-        attr: cublasLtMatmulDescAttributes_t,
-        buf: *mut ::core::ffi::c_void,
-        sizeInBytes: usize,
-        sizeWritten: *mut usize,
-    ) -> cublasStatus_t;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasLtMatrixTransformDescAttributes_t {
@@ -976,41 +837,6 @@ pub enum cublasLtMatrixTransformDescAttributes_t {
     CUBLASLT_MATRIX_TRANSFORM_DESC_POINTER_MODE = 1,
     CUBLASLT_MATRIX_TRANSFORM_DESC_TRANSA = 2,
     CUBLASLT_MATRIX_TRANSFORM_DESC_TRANSB = 3,
-}
-extern "C" {
-    pub fn cublasLtMatrixTransformDescInit_internal(
-        transformDesc: cublasLtMatrixTransformDesc_t,
-        size: usize,
-        scaleType: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixTransformDescCreate(
-        transformDesc: *mut cublasLtMatrixTransformDesc_t,
-        scaleType: cudaDataType,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixTransformDescDestroy(
-        transformDesc: cublasLtMatrixTransformDesc_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixTransformDescSetAttribute(
-        transformDesc: cublasLtMatrixTransformDesc_t,
-        attr: cublasLtMatrixTransformDescAttributes_t,
-        buf: *const ::core::ffi::c_void,
-        sizeInBytes: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatrixTransformDescGetAttribute(
-        transformDesc: cublasLtMatrixTransformDesc_t,
-        attr: cublasLtMatrixTransformDescAttributes_t,
-        buf: *mut ::core::ffi::c_void,
-        sizeInBytes: usize,
-        sizeWritten: *mut usize,
-    ) -> cublasStatus_t;
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1063,35 +889,6 @@ pub enum cublasLtMatmulPreferenceAttributes_t {
     CUBLASLT_MATMUL_PREF_MIN_ALIGNMENT_D_BYTES = 8,
     CUBLASLT_MATMUL_PREF_MAX_WAVES_COUNT = 9,
     CUBLASLT_MATMUL_PREF_IMPL_MASK = 12,
-}
-extern "C" {
-    pub fn cublasLtMatmulPreferenceInit_internal(
-        pref: cublasLtMatmulPreference_t,
-        size: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulPreferenceCreate(pref: *mut cublasLtMatmulPreference_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulPreferenceDestroy(pref: cublasLtMatmulPreference_t) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulPreferenceSetAttribute(
-        pref: cublasLtMatmulPreference_t,
-        attr: cublasLtMatmulPreferenceAttributes_t,
-        buf: *const ::core::ffi::c_void,
-        sizeInBytes: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulPreferenceGetAttribute(
-        pref: cublasLtMatmulPreference_t,
-        attr: cublasLtMatmulPreferenceAttributes_t,
-        buf: *mut ::core::ffi::c_void,
-        sizeInBytes: usize,
-        sizeWritten: *mut usize,
-    ) -> cublasStatus_t;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
@@ -1177,59 +974,6 @@ impl Default for cublasLtMatmulHeuristicResult_t {
         }
     }
 }
-extern "C" {
-    pub fn cublasLtMatmulAlgoGetHeuristic(
-        lightHandle: cublasLtHandle_t,
-        operationDesc: cublasLtMatmulDesc_t,
-        Adesc: cublasLtMatrixLayout_t,
-        Bdesc: cublasLtMatrixLayout_t,
-        Cdesc: cublasLtMatrixLayout_t,
-        Ddesc: cublasLtMatrixLayout_t,
-        preference: cublasLtMatmulPreference_t,
-        requestedAlgoCount: ::core::ffi::c_int,
-        heuristicResultsArray: *mut cublasLtMatmulHeuristicResult_t,
-        returnAlgoCount: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulAlgoGetIds(
-        lightHandle: cublasLtHandle_t,
-        computeType: cublasComputeType_t,
-        scaleType: cudaDataType_t,
-        Atype: cudaDataType_t,
-        Btype: cudaDataType_t,
-        Ctype: cudaDataType_t,
-        Dtype: cudaDataType_t,
-        requestedAlgoCount: ::core::ffi::c_int,
-        algoIdsArray: *mut ::core::ffi::c_int,
-        returnAlgoCount: *mut ::core::ffi::c_int,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulAlgoInit(
-        lightHandle: cublasLtHandle_t,
-        computeType: cublasComputeType_t,
-        scaleType: cudaDataType_t,
-        Atype: cudaDataType_t,
-        Btype: cudaDataType_t,
-        Ctype: cudaDataType_t,
-        Dtype: cudaDataType_t,
-        algoId: ::core::ffi::c_int,
-        algo: *mut cublasLtMatmulAlgo_t,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulAlgoCheck(
-        lightHandle: cublasLtHandle_t,
-        operationDesc: cublasLtMatmulDesc_t,
-        Adesc: cublasLtMatrixLayout_t,
-        Bdesc: cublasLtMatrixLayout_t,
-        Cdesc: cublasLtMatrixLayout_t,
-        Ddesc: cublasLtMatrixLayout_t,
-        algo: *const cublasLtMatmulAlgo_t,
-        result: *mut cublasLtMatmulHeuristicResult_t,
-    ) -> cublasStatus_t;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasLtMatmulAlgoCapAttributes_t {
@@ -1252,15 +996,6 @@ pub enum cublasLtMatmulAlgoCapAttributes_t {
     CUBLASLT_ALGO_CAP_MIN_ALIGNMENT_C_BYTES = 18,
     CUBLASLT_ALGO_CAP_MIN_ALIGNMENT_D_BYTES = 19,
 }
-extern "C" {
-    pub fn cublasLtMatmulAlgoCapGetAttribute(
-        algo: *const cublasLtMatmulAlgo_t,
-        attr: cublasLtMatmulAlgoCapAttributes_t,
-        buf: *mut ::core::ffi::c_void,
-        sizeInBytes: usize,
-        sizeWritten: *mut usize,
-    ) -> cublasStatus_t;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasLtMatmulAlgoConfigAttributes_t {
@@ -1274,23 +1009,6 @@ pub enum cublasLtMatmulAlgoConfigAttributes_t {
     CUBLASLT_ALGO_CONFIG_INNER_SHAPE_ID = 7,
     CUBLASLT_ALGO_CONFIG_CLUSTER_SHAPE_ID = 8,
 }
-extern "C" {
-    pub fn cublasLtMatmulAlgoConfigSetAttribute(
-        algo: *mut cublasLtMatmulAlgo_t,
-        attr: cublasLtMatmulAlgoConfigAttributes_t,
-        buf: *const ::core::ffi::c_void,
-        sizeInBytes: usize,
-    ) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtMatmulAlgoConfigGetAttribute(
-        algo: *const cublasLtMatmulAlgo_t,
-        attr: cublasLtMatmulAlgoConfigAttributes_t,
-        buf: *mut ::core::ffi::c_void,
-        sizeInBytes: usize,
-        sizeWritten: *mut usize,
-    ) -> cublasStatus_t;
-}
 pub type cublasLtLoggerCallback_t = ::core::option::Option<
     unsafe extern "C" fn(
         logLevel: ::core::ffi::c_int,
@@ -1298,21 +1016,1073 @@ pub type cublasLtLoggerCallback_t = ::core::option::Option<
         message: *const ::core::ffi::c_char,
     ),
 >;
-extern "C" {
-    pub fn cublasLtLoggerSetCallback(callback: cublasLtLoggerCallback_t) -> cublasStatus_t;
+extern crate libloading;
+pub struct Lib {
+    __library: ::libloading::Library,
+    pub cublasLtCreate: Result<
+        unsafe extern "C" fn(lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtDestroy: Result<
+        unsafe extern "C" fn(lightHandle: cublasLtHandle_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtGetStatusName: Result<
+        unsafe extern "C" fn(status: cublasStatus_t) -> *const ::core::ffi::c_char,
+        ::libloading::Error,
+    >,
+    pub cublasLtGetStatusString: Result<
+        unsafe extern "C" fn(status: cublasStatus_t) -> *const ::core::ffi::c_char,
+        ::libloading::Error,
+    >,
+    pub cublasLtGetVersion: Result<unsafe extern "C" fn() -> usize, ::libloading::Error>,
+    pub cublasLtGetCudartVersion: Result<unsafe extern "C" fn() -> usize, ::libloading::Error>,
+    pub cublasLtGetProperty: Result<
+        unsafe extern "C" fn(
+            type_: libraryPropertyType,
+            value: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtHeuristicsCacheGetCapacity:
+        Result<unsafe extern "C" fn(capacity: *mut usize) -> cublasStatus_t, ::libloading::Error>,
+    pub cublasLtHeuristicsCacheSetCapacity:
+        Result<unsafe extern "C" fn(capacity: usize) -> cublasStatus_t, ::libloading::Error>,
+    pub cublasLtMatmul: Result<
+        unsafe extern "C" fn(
+            lightHandle: cublasLtHandle_t,
+            computeDesc: cublasLtMatmulDesc_t,
+            alpha: *const ::core::ffi::c_void,
+            A: *const ::core::ffi::c_void,
+            Adesc: cublasLtMatrixLayout_t,
+            B: *const ::core::ffi::c_void,
+            Bdesc: cublasLtMatrixLayout_t,
+            beta: *const ::core::ffi::c_void,
+            C: *const ::core::ffi::c_void,
+            Cdesc: cublasLtMatrixLayout_t,
+            D: *mut ::core::ffi::c_void,
+            Ddesc: cublasLtMatrixLayout_t,
+            algo: *const cublasLtMatmulAlgo_t,
+            workspace: *mut ::core::ffi::c_void,
+            workspaceSizeInBytes: usize,
+            stream: cudaStream_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixTransform: Result<
+        unsafe extern "C" fn(
+            lightHandle: cublasLtHandle_t,
+            transformDesc: cublasLtMatrixTransformDesc_t,
+            alpha: *const ::core::ffi::c_void,
+            A: *const ::core::ffi::c_void,
+            Adesc: cublasLtMatrixLayout_t,
+            beta: *const ::core::ffi::c_void,
+            B: *const ::core::ffi::c_void,
+            Bdesc: cublasLtMatrixLayout_t,
+            C: *mut ::core::ffi::c_void,
+            Cdesc: cublasLtMatrixLayout_t,
+            stream: cudaStream_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixLayoutInit_internal: Result<
+        unsafe extern "C" fn(
+            matLayout: cublasLtMatrixLayout_t,
+            size: usize,
+            type_: cudaDataType,
+            rows: u64,
+            cols: u64,
+            ld: i64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixLayoutCreate: Result<
+        unsafe extern "C" fn(
+            matLayout: *mut cublasLtMatrixLayout_t,
+            type_: cudaDataType,
+            rows: u64,
+            cols: u64,
+            ld: i64,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixLayoutDestroy: Result<
+        unsafe extern "C" fn(matLayout: cublasLtMatrixLayout_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixLayoutSetAttribute: Result<
+        unsafe extern "C" fn(
+            matLayout: cublasLtMatrixLayout_t,
+            attr: cublasLtMatrixLayoutAttribute_t,
+            buf: *const ::core::ffi::c_void,
+            sizeInBytes: usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixLayoutGetAttribute: Result<
+        unsafe extern "C" fn(
+            matLayout: cublasLtMatrixLayout_t,
+            attr: cublasLtMatrixLayoutAttribute_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulDescInit_internal: Result<
+        unsafe extern "C" fn(
+            matmulDesc: cublasLtMatmulDesc_t,
+            size: usize,
+            computeType: cublasComputeType_t,
+            scaleType: cudaDataType_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulDescCreate: Result<
+        unsafe extern "C" fn(
+            matmulDesc: *mut cublasLtMatmulDesc_t,
+            computeType: cublasComputeType_t,
+            scaleType: cudaDataType_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulDescDestroy: Result<
+        unsafe extern "C" fn(matmulDesc: cublasLtMatmulDesc_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulDescSetAttribute: Result<
+        unsafe extern "C" fn(
+            matmulDesc: cublasLtMatmulDesc_t,
+            attr: cublasLtMatmulDescAttributes_t,
+            buf: *const ::core::ffi::c_void,
+            sizeInBytes: usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulDescGetAttribute: Result<
+        unsafe extern "C" fn(
+            matmulDesc: cublasLtMatmulDesc_t,
+            attr: cublasLtMatmulDescAttributes_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixTransformDescInit_internal: Result<
+        unsafe extern "C" fn(
+            transformDesc: cublasLtMatrixTransformDesc_t,
+            size: usize,
+            scaleType: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixTransformDescCreate: Result<
+        unsafe extern "C" fn(
+            transformDesc: *mut cublasLtMatrixTransformDesc_t,
+            scaleType: cudaDataType,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixTransformDescDestroy: Result<
+        unsafe extern "C" fn(transformDesc: cublasLtMatrixTransformDesc_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixTransformDescSetAttribute: Result<
+        unsafe extern "C" fn(
+            transformDesc: cublasLtMatrixTransformDesc_t,
+            attr: cublasLtMatrixTransformDescAttributes_t,
+            buf: *const ::core::ffi::c_void,
+            sizeInBytes: usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatrixTransformDescGetAttribute: Result<
+        unsafe extern "C" fn(
+            transformDesc: cublasLtMatrixTransformDesc_t,
+            attr: cublasLtMatrixTransformDescAttributes_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulPreferenceInit_internal: Result<
+        unsafe extern "C" fn(pref: cublasLtMatmulPreference_t, size: usize) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulPreferenceCreate: Result<
+        unsafe extern "C" fn(pref: *mut cublasLtMatmulPreference_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulPreferenceDestroy: Result<
+        unsafe extern "C" fn(pref: cublasLtMatmulPreference_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulPreferenceSetAttribute: Result<
+        unsafe extern "C" fn(
+            pref: cublasLtMatmulPreference_t,
+            attr: cublasLtMatmulPreferenceAttributes_t,
+            buf: *const ::core::ffi::c_void,
+            sizeInBytes: usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulPreferenceGetAttribute: Result<
+        unsafe extern "C" fn(
+            pref: cublasLtMatmulPreference_t,
+            attr: cublasLtMatmulPreferenceAttributes_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoGetHeuristic: Result<
+        unsafe extern "C" fn(
+            lightHandle: cublasLtHandle_t,
+            operationDesc: cublasLtMatmulDesc_t,
+            Adesc: cublasLtMatrixLayout_t,
+            Bdesc: cublasLtMatrixLayout_t,
+            Cdesc: cublasLtMatrixLayout_t,
+            Ddesc: cublasLtMatrixLayout_t,
+            preference: cublasLtMatmulPreference_t,
+            requestedAlgoCount: ::core::ffi::c_int,
+            heuristicResultsArray: *mut cublasLtMatmulHeuristicResult_t,
+            returnAlgoCount: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoGetIds: Result<
+        unsafe extern "C" fn(
+            lightHandle: cublasLtHandle_t,
+            computeType: cublasComputeType_t,
+            scaleType: cudaDataType_t,
+            Atype: cudaDataType_t,
+            Btype: cudaDataType_t,
+            Ctype: cudaDataType_t,
+            Dtype: cudaDataType_t,
+            requestedAlgoCount: ::core::ffi::c_int,
+            algoIdsArray: *mut ::core::ffi::c_int,
+            returnAlgoCount: *mut ::core::ffi::c_int,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoInit: Result<
+        unsafe extern "C" fn(
+            lightHandle: cublasLtHandle_t,
+            computeType: cublasComputeType_t,
+            scaleType: cudaDataType_t,
+            Atype: cudaDataType_t,
+            Btype: cudaDataType_t,
+            Ctype: cudaDataType_t,
+            Dtype: cudaDataType_t,
+            algoId: ::core::ffi::c_int,
+            algo: *mut cublasLtMatmulAlgo_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoCheck: Result<
+        unsafe extern "C" fn(
+            lightHandle: cublasLtHandle_t,
+            operationDesc: cublasLtMatmulDesc_t,
+            Adesc: cublasLtMatrixLayout_t,
+            Bdesc: cublasLtMatrixLayout_t,
+            Cdesc: cublasLtMatrixLayout_t,
+            Ddesc: cublasLtMatrixLayout_t,
+            algo: *const cublasLtMatmulAlgo_t,
+            result: *mut cublasLtMatmulHeuristicResult_t,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoCapGetAttribute: Result<
+        unsafe extern "C" fn(
+            algo: *const cublasLtMatmulAlgo_t,
+            attr: cublasLtMatmulAlgoCapAttributes_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoConfigSetAttribute: Result<
+        unsafe extern "C" fn(
+            algo: *mut cublasLtMatmulAlgo_t,
+            attr: cublasLtMatmulAlgoConfigAttributes_t,
+            buf: *const ::core::ffi::c_void,
+            sizeInBytes: usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtMatmulAlgoConfigGetAttribute: Result<
+        unsafe extern "C" fn(
+            algo: *const cublasLtMatmulAlgo_t,
+            attr: cublasLtMatmulAlgoConfigAttributes_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtLoggerSetCallback: Result<
+        unsafe extern "C" fn(callback: cublasLtLoggerCallback_t) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtLoggerSetFile:
+        Result<unsafe extern "C" fn(file: *mut FILE) -> cublasStatus_t, ::libloading::Error>,
+    pub cublasLtLoggerOpenFile: Result<
+        unsafe extern "C" fn(logFile: *const ::core::ffi::c_char) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtLoggerSetLevel: Result<
+        unsafe extern "C" fn(level: ::core::ffi::c_int) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtLoggerSetMask: Result<
+        unsafe extern "C" fn(mask: ::core::ffi::c_int) -> cublasStatus_t,
+        ::libloading::Error,
+    >,
+    pub cublasLtLoggerForceDisable:
+        Result<unsafe extern "C" fn() -> cublasStatus_t, ::libloading::Error>,
 }
-extern "C" {
-    pub fn cublasLtLoggerSetFile(file: *mut FILE) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtLoggerOpenFile(logFile: *const ::core::ffi::c_char) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtLoggerSetLevel(level: ::core::ffi::c_int) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtLoggerSetMask(mask: ::core::ffi::c_int) -> cublasStatus_t;
-}
-extern "C" {
-    pub fn cublasLtLoggerForceDisable() -> cublasStatus_t;
+impl Lib {
+    pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
+    where
+        P: AsRef<::std::ffi::OsStr>,
+    {
+        let library = ::libloading::Library::new(path)?;
+        Self::from_library(library)
+    }
+    pub unsafe fn from_library<L>(library: L) -> Result<Self, ::libloading::Error>
+    where
+        L: Into<::libloading::Library>,
+    {
+        let __library = library.into();
+        let cublasLtCreate = __library.get(b"cublasLtCreate\0").map(|sym| *sym);
+        let cublasLtDestroy = __library.get(b"cublasLtDestroy\0").map(|sym| *sym);
+        let cublasLtGetStatusName = __library.get(b"cublasLtGetStatusName\0").map(|sym| *sym);
+        let cublasLtGetStatusString = __library.get(b"cublasLtGetStatusString\0").map(|sym| *sym);
+        let cublasLtGetVersion = __library.get(b"cublasLtGetVersion\0").map(|sym| *sym);
+        let cublasLtGetCudartVersion = __library.get(b"cublasLtGetCudartVersion\0").map(|sym| *sym);
+        let cublasLtGetProperty = __library.get(b"cublasLtGetProperty\0").map(|sym| *sym);
+        let cublasLtHeuristicsCacheGetCapacity = __library
+            .get(b"cublasLtHeuristicsCacheGetCapacity\0")
+            .map(|sym| *sym);
+        let cublasLtHeuristicsCacheSetCapacity = __library
+            .get(b"cublasLtHeuristicsCacheSetCapacity\0")
+            .map(|sym| *sym);
+        let cublasLtMatmul = __library.get(b"cublasLtMatmul\0").map(|sym| *sym);
+        let cublasLtMatrixTransform = __library.get(b"cublasLtMatrixTransform\0").map(|sym| *sym);
+        let cublasLtMatrixLayoutInit_internal = __library
+            .get(b"cublasLtMatrixLayoutInit_internal\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixLayoutCreate = __library
+            .get(b"cublasLtMatrixLayoutCreate\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixLayoutDestroy = __library
+            .get(b"cublasLtMatrixLayoutDestroy\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixLayoutSetAttribute = __library
+            .get(b"cublasLtMatrixLayoutSetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixLayoutGetAttribute = __library
+            .get(b"cublasLtMatrixLayoutGetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulDescInit_internal = __library
+            .get(b"cublasLtMatmulDescInit_internal\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulDescCreate = __library.get(b"cublasLtMatmulDescCreate\0").map(|sym| *sym);
+        let cublasLtMatmulDescDestroy = __library
+            .get(b"cublasLtMatmulDescDestroy\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulDescSetAttribute = __library
+            .get(b"cublasLtMatmulDescSetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulDescGetAttribute = __library
+            .get(b"cublasLtMatmulDescGetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixTransformDescInit_internal = __library
+            .get(b"cublasLtMatrixTransformDescInit_internal\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixTransformDescCreate = __library
+            .get(b"cublasLtMatrixTransformDescCreate\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixTransformDescDestroy = __library
+            .get(b"cublasLtMatrixTransformDescDestroy\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixTransformDescSetAttribute = __library
+            .get(b"cublasLtMatrixTransformDescSetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatrixTransformDescGetAttribute = __library
+            .get(b"cublasLtMatrixTransformDescGetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulPreferenceInit_internal = __library
+            .get(b"cublasLtMatmulPreferenceInit_internal\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulPreferenceCreate = __library
+            .get(b"cublasLtMatmulPreferenceCreate\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulPreferenceDestroy = __library
+            .get(b"cublasLtMatmulPreferenceDestroy\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulPreferenceSetAttribute = __library
+            .get(b"cublasLtMatmulPreferenceSetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulPreferenceGetAttribute = __library
+            .get(b"cublasLtMatmulPreferenceGetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulAlgoGetHeuristic = __library
+            .get(b"cublasLtMatmulAlgoGetHeuristic\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulAlgoGetIds = __library.get(b"cublasLtMatmulAlgoGetIds\0").map(|sym| *sym);
+        let cublasLtMatmulAlgoInit = __library.get(b"cublasLtMatmulAlgoInit\0").map(|sym| *sym);
+        let cublasLtMatmulAlgoCheck = __library.get(b"cublasLtMatmulAlgoCheck\0").map(|sym| *sym);
+        let cublasLtMatmulAlgoCapGetAttribute = __library
+            .get(b"cublasLtMatmulAlgoCapGetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulAlgoConfigSetAttribute = __library
+            .get(b"cublasLtMatmulAlgoConfigSetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtMatmulAlgoConfigGetAttribute = __library
+            .get(b"cublasLtMatmulAlgoConfigGetAttribute\0")
+            .map(|sym| *sym);
+        let cublasLtLoggerSetCallback = __library
+            .get(b"cublasLtLoggerSetCallback\0")
+            .map(|sym| *sym);
+        let cublasLtLoggerSetFile = __library.get(b"cublasLtLoggerSetFile\0").map(|sym| *sym);
+        let cublasLtLoggerOpenFile = __library.get(b"cublasLtLoggerOpenFile\0").map(|sym| *sym);
+        let cublasLtLoggerSetLevel = __library.get(b"cublasLtLoggerSetLevel\0").map(|sym| *sym);
+        let cublasLtLoggerSetMask = __library.get(b"cublasLtLoggerSetMask\0").map(|sym| *sym);
+        let cublasLtLoggerForceDisable = __library
+            .get(b"cublasLtLoggerForceDisable\0")
+            .map(|sym| *sym);
+        Ok(Lib {
+            __library,
+            cublasLtCreate,
+            cublasLtDestroy,
+            cublasLtGetStatusName,
+            cublasLtGetStatusString,
+            cublasLtGetVersion,
+            cublasLtGetCudartVersion,
+            cublasLtGetProperty,
+            cublasLtHeuristicsCacheGetCapacity,
+            cublasLtHeuristicsCacheSetCapacity,
+            cublasLtMatmul,
+            cublasLtMatrixTransform,
+            cublasLtMatrixLayoutInit_internal,
+            cublasLtMatrixLayoutCreate,
+            cublasLtMatrixLayoutDestroy,
+            cublasLtMatrixLayoutSetAttribute,
+            cublasLtMatrixLayoutGetAttribute,
+            cublasLtMatmulDescInit_internal,
+            cublasLtMatmulDescCreate,
+            cublasLtMatmulDescDestroy,
+            cublasLtMatmulDescSetAttribute,
+            cublasLtMatmulDescGetAttribute,
+            cublasLtMatrixTransformDescInit_internal,
+            cublasLtMatrixTransformDescCreate,
+            cublasLtMatrixTransformDescDestroy,
+            cublasLtMatrixTransformDescSetAttribute,
+            cublasLtMatrixTransformDescGetAttribute,
+            cublasLtMatmulPreferenceInit_internal,
+            cublasLtMatmulPreferenceCreate,
+            cublasLtMatmulPreferenceDestroy,
+            cublasLtMatmulPreferenceSetAttribute,
+            cublasLtMatmulPreferenceGetAttribute,
+            cublasLtMatmulAlgoGetHeuristic,
+            cublasLtMatmulAlgoGetIds,
+            cublasLtMatmulAlgoInit,
+            cublasLtMatmulAlgoCheck,
+            cublasLtMatmulAlgoCapGetAttribute,
+            cublasLtMatmulAlgoConfigSetAttribute,
+            cublasLtMatmulAlgoConfigGetAttribute,
+            cublasLtLoggerSetCallback,
+            cublasLtLoggerSetFile,
+            cublasLtLoggerOpenFile,
+            cublasLtLoggerSetLevel,
+            cublasLtLoggerSetMask,
+            cublasLtLoggerForceDisable,
+        })
+    }
+    pub unsafe fn cublasLtCreate(&self, lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t {
+        (self
+            .cublasLtCreate
+            .as_ref()
+            .expect("Expected function, got error."))(lightHandle)
+    }
+    pub unsafe fn cublasLtDestroy(&self, lightHandle: cublasLtHandle_t) -> cublasStatus_t {
+        (self
+            .cublasLtDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(lightHandle)
+    }
+    pub unsafe fn cublasLtGetStatusName(
+        &self,
+        status: cublasStatus_t,
+    ) -> *const ::core::ffi::c_char {
+        (self
+            .cublasLtGetStatusName
+            .as_ref()
+            .expect("Expected function, got error."))(status)
+    }
+    pub unsafe fn cublasLtGetStatusString(
+        &self,
+        status: cublasStatus_t,
+    ) -> *const ::core::ffi::c_char {
+        (self
+            .cublasLtGetStatusString
+            .as_ref()
+            .expect("Expected function, got error."))(status)
+    }
+    pub unsafe fn cublasLtGetVersion(&self) -> usize {
+        (self
+            .cublasLtGetVersion
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cublasLtGetCudartVersion(&self) -> usize {
+        (self
+            .cublasLtGetCudartVersion
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cublasLtGetProperty(
+        &self,
+        type_: libraryPropertyType,
+        value: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtGetProperty
+            .as_ref()
+            .expect("Expected function, got error."))(type_, value)
+    }
+    pub unsafe fn cublasLtHeuristicsCacheGetCapacity(
+        &self,
+        capacity: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtHeuristicsCacheGetCapacity
+            .as_ref()
+            .expect("Expected function, got error."))(capacity)
+    }
+    pub unsafe fn cublasLtHeuristicsCacheSetCapacity(&self, capacity: usize) -> cublasStatus_t {
+        (self
+            .cublasLtHeuristicsCacheSetCapacity
+            .as_ref()
+            .expect("Expected function, got error."))(capacity)
+    }
+    pub unsafe fn cublasLtMatmul(
+        &self,
+        lightHandle: cublasLtHandle_t,
+        computeDesc: cublasLtMatmulDesc_t,
+        alpha: *const ::core::ffi::c_void,
+        A: *const ::core::ffi::c_void,
+        Adesc: cublasLtMatrixLayout_t,
+        B: *const ::core::ffi::c_void,
+        Bdesc: cublasLtMatrixLayout_t,
+        beta: *const ::core::ffi::c_void,
+        C: *const ::core::ffi::c_void,
+        Cdesc: cublasLtMatrixLayout_t,
+        D: *mut ::core::ffi::c_void,
+        Ddesc: cublasLtMatrixLayout_t,
+        algo: *const cublasLtMatmulAlgo_t,
+        workspace: *mut ::core::ffi::c_void,
+        workspaceSizeInBytes: usize,
+        stream: cudaStream_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmul
+            .as_ref()
+            .expect("Expected function, got error."))(
+            lightHandle,
+            computeDesc,
+            alpha,
+            A,
+            Adesc,
+            B,
+            Bdesc,
+            beta,
+            C,
+            Cdesc,
+            D,
+            Ddesc,
+            algo,
+            workspace,
+            workspaceSizeInBytes,
+            stream,
+        )
+    }
+    pub unsafe fn cublasLtMatrixTransform(
+        &self,
+        lightHandle: cublasLtHandle_t,
+        transformDesc: cublasLtMatrixTransformDesc_t,
+        alpha: *const ::core::ffi::c_void,
+        A: *const ::core::ffi::c_void,
+        Adesc: cublasLtMatrixLayout_t,
+        beta: *const ::core::ffi::c_void,
+        B: *const ::core::ffi::c_void,
+        Bdesc: cublasLtMatrixLayout_t,
+        C: *mut ::core::ffi::c_void,
+        Cdesc: cublasLtMatrixLayout_t,
+        stream: cudaStream_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixTransform
+            .as_ref()
+            .expect("Expected function, got error."))(
+            lightHandle,
+            transformDesc,
+            alpha,
+            A,
+            Adesc,
+            beta,
+            B,
+            Bdesc,
+            C,
+            Cdesc,
+            stream,
+        )
+    }
+    pub unsafe fn cublasLtMatrixLayoutInit_internal(
+        &self,
+        matLayout: cublasLtMatrixLayout_t,
+        size: usize,
+        type_: cudaDataType,
+        rows: u64,
+        cols: u64,
+        ld: i64,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixLayoutInit_internal
+            .as_ref()
+            .expect("Expected function, got error."))(matLayout, size, type_, rows, cols, ld)
+    }
+    pub unsafe fn cublasLtMatrixLayoutCreate(
+        &self,
+        matLayout: *mut cublasLtMatrixLayout_t,
+        type_: cudaDataType,
+        rows: u64,
+        cols: u64,
+        ld: i64,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixLayoutCreate
+            .as_ref()
+            .expect("Expected function, got error."))(matLayout, type_, rows, cols, ld)
+    }
+    pub unsafe fn cublasLtMatrixLayoutDestroy(
+        &self,
+        matLayout: cublasLtMatrixLayout_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixLayoutDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(matLayout)
+    }
+    pub unsafe fn cublasLtMatrixLayoutSetAttribute(
+        &self,
+        matLayout: cublasLtMatrixLayout_t,
+        attr: cublasLtMatrixLayoutAttribute_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixLayoutSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(matLayout, attr, buf, sizeInBytes)
+    }
+    pub unsafe fn cublasLtMatrixLayoutGetAttribute(
+        &self,
+        matLayout: cublasLtMatrixLayout_t,
+        attr: cublasLtMatrixLayoutAttribute_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixLayoutGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            matLayout,
+            attr,
+            buf,
+            sizeInBytes,
+            sizeWritten,
+        )
+    }
+    pub unsafe fn cublasLtMatmulDescInit_internal(
+        &self,
+        matmulDesc: cublasLtMatmulDesc_t,
+        size: usize,
+        computeType: cublasComputeType_t,
+        scaleType: cudaDataType_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulDescInit_internal
+            .as_ref()
+            .expect("Expected function, got error."))(
+            matmulDesc, size, computeType, scaleType
+        )
+    }
+    pub unsafe fn cublasLtMatmulDescCreate(
+        &self,
+        matmulDesc: *mut cublasLtMatmulDesc_t,
+        computeType: cublasComputeType_t,
+        scaleType: cudaDataType_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulDescCreate
+            .as_ref()
+            .expect("Expected function, got error."))(matmulDesc, computeType, scaleType)
+    }
+    pub unsafe fn cublasLtMatmulDescDestroy(
+        &self,
+        matmulDesc: cublasLtMatmulDesc_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulDescDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(matmulDesc)
+    }
+    pub unsafe fn cublasLtMatmulDescSetAttribute(
+        &self,
+        matmulDesc: cublasLtMatmulDesc_t,
+        attr: cublasLtMatmulDescAttributes_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulDescSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(matmulDesc, attr, buf, sizeInBytes)
+    }
+    pub unsafe fn cublasLtMatmulDescGetAttribute(
+        &self,
+        matmulDesc: cublasLtMatmulDesc_t,
+        attr: cublasLtMatmulDescAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulDescGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            matmulDesc,
+            attr,
+            buf,
+            sizeInBytes,
+            sizeWritten,
+        )
+    }
+    pub unsafe fn cublasLtMatrixTransformDescInit_internal(
+        &self,
+        transformDesc: cublasLtMatrixTransformDesc_t,
+        size: usize,
+        scaleType: cudaDataType,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixTransformDescInit_internal
+            .as_ref()
+            .expect("Expected function, got error."))(transformDesc, size, scaleType)
+    }
+    pub unsafe fn cublasLtMatrixTransformDescCreate(
+        &self,
+        transformDesc: *mut cublasLtMatrixTransformDesc_t,
+        scaleType: cudaDataType,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixTransformDescCreate
+            .as_ref()
+            .expect("Expected function, got error."))(transformDesc, scaleType)
+    }
+    pub unsafe fn cublasLtMatrixTransformDescDestroy(
+        &self,
+        transformDesc: cublasLtMatrixTransformDesc_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixTransformDescDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(transformDesc)
+    }
+    pub unsafe fn cublasLtMatrixTransformDescSetAttribute(
+        &self,
+        transformDesc: cublasLtMatrixTransformDesc_t,
+        attr: cublasLtMatrixTransformDescAttributes_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixTransformDescSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(transformDesc, attr, buf, sizeInBytes)
+    }
+    pub unsafe fn cublasLtMatrixTransformDescGetAttribute(
+        &self,
+        transformDesc: cublasLtMatrixTransformDesc_t,
+        attr: cublasLtMatrixTransformDescAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatrixTransformDescGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            transformDesc,
+            attr,
+            buf,
+            sizeInBytes,
+            sizeWritten,
+        )
+    }
+    pub unsafe fn cublasLtMatmulPreferenceInit_internal(
+        &self,
+        pref: cublasLtMatmulPreference_t,
+        size: usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulPreferenceInit_internal
+            .as_ref()
+            .expect("Expected function, got error."))(pref, size)
+    }
+    pub unsafe fn cublasLtMatmulPreferenceCreate(
+        &self,
+        pref: *mut cublasLtMatmulPreference_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulPreferenceCreate
+            .as_ref()
+            .expect("Expected function, got error."))(pref)
+    }
+    pub unsafe fn cublasLtMatmulPreferenceDestroy(
+        &self,
+        pref: cublasLtMatmulPreference_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulPreferenceDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(pref)
+    }
+    pub unsafe fn cublasLtMatmulPreferenceSetAttribute(
+        &self,
+        pref: cublasLtMatmulPreference_t,
+        attr: cublasLtMatmulPreferenceAttributes_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulPreferenceSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(pref, attr, buf, sizeInBytes)
+    }
+    pub unsafe fn cublasLtMatmulPreferenceGetAttribute(
+        &self,
+        pref: cublasLtMatmulPreference_t,
+        attr: cublasLtMatmulPreferenceAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulPreferenceGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pref, attr, buf, sizeInBytes, sizeWritten
+        )
+    }
+    pub unsafe fn cublasLtMatmulAlgoGetHeuristic(
+        &self,
+        lightHandle: cublasLtHandle_t,
+        operationDesc: cublasLtMatmulDesc_t,
+        Adesc: cublasLtMatrixLayout_t,
+        Bdesc: cublasLtMatrixLayout_t,
+        Cdesc: cublasLtMatrixLayout_t,
+        Ddesc: cublasLtMatrixLayout_t,
+        preference: cublasLtMatmulPreference_t,
+        requestedAlgoCount: ::core::ffi::c_int,
+        heuristicResultsArray: *mut cublasLtMatmulHeuristicResult_t,
+        returnAlgoCount: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoGetHeuristic
+            .as_ref()
+            .expect("Expected function, got error."))(
+            lightHandle,
+            operationDesc,
+            Adesc,
+            Bdesc,
+            Cdesc,
+            Ddesc,
+            preference,
+            requestedAlgoCount,
+            heuristicResultsArray,
+            returnAlgoCount,
+        )
+    }
+    pub unsafe fn cublasLtMatmulAlgoGetIds(
+        &self,
+        lightHandle: cublasLtHandle_t,
+        computeType: cublasComputeType_t,
+        scaleType: cudaDataType_t,
+        Atype: cudaDataType_t,
+        Btype: cudaDataType_t,
+        Ctype: cudaDataType_t,
+        Dtype: cudaDataType_t,
+        requestedAlgoCount: ::core::ffi::c_int,
+        algoIdsArray: *mut ::core::ffi::c_int,
+        returnAlgoCount: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoGetIds
+            .as_ref()
+            .expect("Expected function, got error."))(
+            lightHandle,
+            computeType,
+            scaleType,
+            Atype,
+            Btype,
+            Ctype,
+            Dtype,
+            requestedAlgoCount,
+            algoIdsArray,
+            returnAlgoCount,
+        )
+    }
+    pub unsafe fn cublasLtMatmulAlgoInit(
+        &self,
+        lightHandle: cublasLtHandle_t,
+        computeType: cublasComputeType_t,
+        scaleType: cudaDataType_t,
+        Atype: cudaDataType_t,
+        Btype: cudaDataType_t,
+        Ctype: cudaDataType_t,
+        Dtype: cudaDataType_t,
+        algoId: ::core::ffi::c_int,
+        algo: *mut cublasLtMatmulAlgo_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoInit
+            .as_ref()
+            .expect("Expected function, got error."))(
+            lightHandle,
+            computeType,
+            scaleType,
+            Atype,
+            Btype,
+            Ctype,
+            Dtype,
+            algoId,
+            algo,
+        )
+    }
+    pub unsafe fn cublasLtMatmulAlgoCheck(
+        &self,
+        lightHandle: cublasLtHandle_t,
+        operationDesc: cublasLtMatmulDesc_t,
+        Adesc: cublasLtMatrixLayout_t,
+        Bdesc: cublasLtMatrixLayout_t,
+        Cdesc: cublasLtMatrixLayout_t,
+        Ddesc: cublasLtMatrixLayout_t,
+        algo: *const cublasLtMatmulAlgo_t,
+        result: *mut cublasLtMatmulHeuristicResult_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoCheck
+            .as_ref()
+            .expect("Expected function, got error."))(
+            lightHandle,
+            operationDesc,
+            Adesc,
+            Bdesc,
+            Cdesc,
+            Ddesc,
+            algo,
+            result,
+        )
+    }
+    pub unsafe fn cublasLtMatmulAlgoCapGetAttribute(
+        &self,
+        algo: *const cublasLtMatmulAlgo_t,
+        attr: cublasLtMatmulAlgoCapAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoCapGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            algo, attr, buf, sizeInBytes, sizeWritten
+        )
+    }
+    pub unsafe fn cublasLtMatmulAlgoConfigSetAttribute(
+        &self,
+        algo: *mut cublasLtMatmulAlgo_t,
+        attr: cublasLtMatmulAlgoConfigAttributes_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoConfigSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(algo, attr, buf, sizeInBytes)
+    }
+    pub unsafe fn cublasLtMatmulAlgoConfigGetAttribute(
+        &self,
+        algo: *const cublasLtMatmulAlgo_t,
+        attr: cublasLtMatmulAlgoConfigAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtMatmulAlgoConfigGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            algo, attr, buf, sizeInBytes, sizeWritten
+        )
+    }
+    pub unsafe fn cublasLtLoggerSetCallback(
+        &self,
+        callback: cublasLtLoggerCallback_t,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtLoggerSetCallback
+            .as_ref()
+            .expect("Expected function, got error."))(callback)
+    }
+    pub unsafe fn cublasLtLoggerSetFile(&self, file: *mut FILE) -> cublasStatus_t {
+        (self
+            .cublasLtLoggerSetFile
+            .as_ref()
+            .expect("Expected function, got error."))(file)
+    }
+    pub unsafe fn cublasLtLoggerOpenFile(
+        &self,
+        logFile: *const ::core::ffi::c_char,
+    ) -> cublasStatus_t {
+        (self
+            .cublasLtLoggerOpenFile
+            .as_ref()
+            .expect("Expected function, got error."))(logFile)
+    }
+    pub unsafe fn cublasLtLoggerSetLevel(&self, level: ::core::ffi::c_int) -> cublasStatus_t {
+        (self
+            .cublasLtLoggerSetLevel
+            .as_ref()
+            .expect("Expected function, got error."))(level)
+    }
+    pub unsafe fn cublasLtLoggerSetMask(&self, mask: ::core::ffi::c_int) -> cublasStatus_t {
+        (self
+            .cublasLtLoggerSetMask
+            .as_ref()
+            .expect("Expected function, got error."))(mask)
+    }
+    pub unsafe fn cublasLtLoggerForceDisable(&self) -> cublasStatus_t {
+        (self
+            .cublasLtLoggerForceDisable
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
 }

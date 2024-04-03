@@ -17,6 +17,7 @@ bindgen \
   --with-derive-hash \
   --with-derive-ord \
   --use-core \
+  --dynamic-loading Lib \
   wrapper.h -- -I/usr/local/cuda/include \
   > tmp.rs
 
