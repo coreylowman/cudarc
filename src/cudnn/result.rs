@@ -46,6 +46,7 @@ pub fn get_cudart_version() -> usize {
 
 /// Runs all *VersionCheck functions.
 pub fn version_check() -> Result<(), CudnnError> {
+    #[cfg(not(feature = "cuda_12030"))]
     unsafe {
         sys::cudnnAdvInferVersionCheck().result()?;
         sys::cudnnAdvTrainVersionCheck().result()?;
@@ -53,6 +54,12 @@ pub fn version_check() -> Result<(), CudnnError> {
         sys::cudnnCnnTrainVersionCheck().result()?;
         sys::cudnnOpsInferVersionCheck().result()?;
         sys::cudnnOpsTrainVersionCheck().result()?;
+    }
+    #[cfg(feature = "cuda_12030")]
+    unsafe {
+        sys::cudnnAdvVersionCheck().result()?;
+        sys::cudnnCnnVersionCheck().result()?;
+        sys::cudnnOpsVersionCheck().result()?;
     }
     Ok(())
 }
