@@ -27,11 +27,12 @@ features = ["ci-check", "f16", "cudnn"]
 default = ["std", "driver", "nvrtc", "cublas", "curand", "cuda_auto_version"]
 
 cuda_auto_version = []
+cuda_11070 = []
 cuda_11080 = []
 cuda_12000 = []
 cuda_12010 = []
 cuda_12020 = []
-cuda_11070 = []
+cuda_12030 = []
 
 nvrtc = []
 driver = ["nvrtc"]
