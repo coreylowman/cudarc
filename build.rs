@@ -6,15 +6,26 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
     println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
 
-    #[cfg(feature = "cuda_auto_version")]
-    cuda_auto_version();
+    #[cfg(not(any(
+        feature = "cuda-version-from-build-system",
+        feature = "cuda-12030",
+        feature = "cuda-12020",
+        feature = "cuda-12010",
+        feature = "cuda-12000",
+        feature = "cuda-11080",
+        feature = "cuda-11070",
+    )))]
+    compile_error!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
+
+    #[cfg(feature = "cuda-version-from-build-system")]
+    cuda_version_from_build_system();
 
     #[cfg(feature = "dynamic-linking")]
     dynamic_linking();
 }
 
 #[allow(unused)]
-fn cuda_auto_version() {
+fn cuda_version_from_build_system() {
     let toolkit_root = root_candidates()
             .find(|path| path.join("include").join("cuda.h").is_file())
             .unwrap_or_else(|| {
@@ -32,12 +43,12 @@ fn cuda_auto_version() {
     let key = "CUDA_VERSION ";
     let start = key.len() + contents.find(key).unwrap();
     match contents[start..].lines().next().unwrap() {
-        "12030" => println!("cargo:rustc-cfg=feature=\"cuda_12030\""),
-        "12020" => println!("cargo:rustc-cfg=feature=\"cuda_12020\""),
-        "12010" => println!("cargo:rustc-cfg=feature=\"cuda_12010\""),
-        "12000" => println!("cargo:rustc-cfg=feature=\"cuda_12000\""),
-        "11080" => println!("cargo:rustc-cfg=feature=\"cuda_11080\""),
-        "11070" => println!("cargo:rustc-cfg=feature=\"cuda_11070\""),
+        "12030" => println!("cargo:rustc-cfg=feature=\"cuda-12030\""),
+        "12020" => println!("cargo:rustc-cfg=feature=\"cuda-12020\""),
+        "12010" => println!("cargo:rustc-cfg=feature=\"cuda-12010\""),
+        "12000" => println!("cargo:rustc-cfg=feature=\"cuda-12000\""),
+        "11080" => println!("cargo:rustc-cfg=feature=\"cuda-11080\""),
+        "11070" => println!("cargo:rustc-cfg=feature=\"cuda-11070\""),
         v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
     }
 }

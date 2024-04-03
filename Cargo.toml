@@ -24,15 +24,15 @@ keywords = [
 features = ["ci-check", "f16", "cudnn"]
 
 [features]
-default = ["std", "cuda_auto_version", "cublas", "cublaslt", "cudnn", "curand", "driver", "nccl", "nvrtc"]
+default = ["std", "cublas", "cublaslt", "cudnn", "curand", "driver", "nccl", "nvrtc"]
 
-cuda_auto_version = []
-cuda_11070 = []
-cuda_11080 = []
-cuda_12000 = []
-cuda_12010 = []
-cuda_12020 = []
-cuda_12030 = []
+cuda-version-from-build-system = []
+cuda-11070 = []
+cuda-11080 = []
+cuda-12000 = []
+cuda-12010 = []
+cuda-12020 = []
+cuda-12030 = []
 
 dynamic-linking = []
 
