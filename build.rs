@@ -9,7 +9,7 @@ fn main() {
     #[cfg(feature = "cuda_auto_version")]
     cuda_auto_version();
 
-    #[cfg(feature = "dynamic_linking")]
+    #[cfg(feature = "dynamic-linking")]
     dynamic_linking();
 }
 
