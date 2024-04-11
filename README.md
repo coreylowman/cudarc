@@ -12,6 +12,7 @@ Safe abstractions over:
 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
 5. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
+6. [NCCL API](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
 
 **Pre-alpha state**, expect breaking changes and not all cuda functions
 contain a safe wrapper. **Contributions welcome for any that aren't included!**
@@ -30,6 +31,7 @@ use cudarc::nvrtc::{safe, result, sys};
 use cudarc::cublas::{safe, result, sys};
 use cudarc::cublaslt::{safe, result, sys};
 use cudarc::curand::{safe, result, sys};
+use cudarc::nccl::{safe, result, sys};
 ```
 
 where:
