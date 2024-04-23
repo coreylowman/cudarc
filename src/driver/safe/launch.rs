@@ -65,6 +65,23 @@ impl CudaFunction {
     }
 
     #[inline(always)]
+    unsafe fn launch_cooperative_async_impl(
+        self,
+        cfg: LaunchConfig,
+        params: &mut [*mut std::ffi::c_void],
+    ) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
+        result::launch_cooperative_kernel(
+            self.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.device.stream,
+            params,
+        )
+    }
+
+    #[inline(always)]
     unsafe fn par_launch_async_impl(
         self,
         stream: &CudaStream,
@@ -205,6 +222,12 @@ pub unsafe trait LaunchAsync<Params> {
         cfg: LaunchConfig,
         params: Params,
     ) -> Result<(), result::DriverError>;
+
+    unsafe fn launch_cooperative(
+        self,
+        cfg: LaunchConfig,
+        params: Params,
+    ) -> Result<(), result::DriverError>;
 }
 
 unsafe impl LaunchAsync<&mut [*mut std::ffi::c_void]> for CudaFunction {
@@ -225,6 +248,15 @@ unsafe impl LaunchAsync<&mut [*mut std::ffi::c_void]> for CudaFunction {
         args: &mut [*mut std::ffi::c_void],
     ) -> Result<(), result::DriverError> {
         self.par_launch_async_impl(stream, cfg, args)
+    }
+
+    #[inline(always)]
+    unsafe fn launch_cooperative(
+        self,
+        cfg: LaunchConfig,
+        args: &mut [*mut std::ffi::c_void],
+    ) -> Result<(), result::DriverError> {
+        self.launch_cooperative_async_impl(cfg, args)
     }
 }
 
@@ -247,6 +279,15 @@ unsafe impl LaunchAsync<&mut Vec<*mut std::ffi::c_void>> for CudaFunction {
     ) -> Result<(), result::DriverError> {
         self.par_launch_async_impl(stream, cfg, args)
     }
+
+    #[inline(always)]
+    unsafe fn launch_cooperative(
+        self,
+        cfg: LaunchConfig,
+        args: &mut Vec<*mut std::ffi::c_void>,
+    ) -> Result<(), result::DriverError> {
+        self.launch_cooperative_async_impl(cfg, args)
+    }
 }
 
 macro_rules! impl_launch {
@@ -260,6 +301,16 @@ unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction 
     ) -> Result<(), result::DriverError> {
         let params = &mut [$(args.$Idx.as_kernel_param(), )*];
         self.launch_async_impl(cfg, params)
+    }
+
+    #[inline(always)]
+    unsafe fn launch_cooperative(
+        self,
+        cfg: LaunchConfig,
+        args: ($($Vars, )*)
+    ) -> Result<(), result::DriverError> {
+        let params = &mut [$(args.$Idx.as_kernel_param(), )*];
+        self.launch_cooperative_async_impl(cfg, params)
     }
 
     #[inline(always)]
