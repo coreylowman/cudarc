@@ -111,8 +111,10 @@ pub unsafe fn comm_init_all(
 }
 
 /// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcommsplit)
+/// **Only available in 12.2+.
 /// # Safety
 /// User is in charge of sending valid pointers.
+#[cfg(any(feature = "cuda-12020", feature = "cuda-12030"))]
 pub unsafe fn comm_split(
     comm: sys::ncclComm_t,
     color: ::core::ffi::c_int,
