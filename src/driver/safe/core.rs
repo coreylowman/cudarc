@@ -83,6 +83,42 @@ impl CudaDevice {
         Ok(Arc::new(device))
     }
 
+    /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
+    pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
+        result::init()?;
+
+        let cu_device = result::device::get(ordinal as i32)?;
+
+        // primary context initialization, can fail with OOM
+        let cu_primary_ctx = unsafe { result::primary_ctx::retain(cu_device) }?;
+
+        unsafe { result::ctx::set_current(cu_primary_ctx) }.unwrap();
+
+        // can fail with OOM
+        let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
+
+        let value = unsafe {
+            result::device::get_attribute(
+                cu_device,
+                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
+            )?
+        };
+        let is_async = value > 0;
+
+        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+
+        let device = CudaDevice {
+            cu_device,
+            cu_primary_ctx,
+            stream,
+            event,
+            modules: RwLock::new(BTreeMap::new()),
+            ordinal,
+            is_async,
+        };
+        Ok(Arc::new(device))
+    }
+
     pub fn count() -> Result<i32, result::DriverError> {
         result::init().unwrap();
         result::device::get_count()
