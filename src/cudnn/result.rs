@@ -57,9 +57,9 @@ pub fn version_check() -> Result<(), CudnnError> {
     }
     #[cfg(feature = "cuda-12030")]
     unsafe {
-        sys::cudnnAdvVersionCheck().result()?;
-        sys::cudnnCnnVersionCheck().result()?;
-        sys::cudnnOpsVersionCheck().result()?;
+        lib().cudnnAdvVersionCheck().result()?;
+        lib().cudnnCnnVersionCheck().result()?;
+        lib().cudnnOpsVersionCheck().result()?;
     }
     Ok(())
 }
