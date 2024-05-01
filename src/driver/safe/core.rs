@@ -51,9 +51,9 @@ unsafe impl Sync for CudaDevice {}
 impl CudaDevice {
     /// Creates a new [CudaDevice] on device index `ordinal`.
     pub fn new(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
-        result::init().unwrap();
+        result::init()?;
 
-        let cu_device = result::device::get(ordinal as i32).unwrap();
+        let cu_device = result::device::get(ordinal as i32)?;
 
         // primary context initialization, can fail with OOM
         let cu_primary_ctx = unsafe { result::primary_ctx::retain(cu_device) }?;
