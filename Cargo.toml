@@ -21,7 +21,7 @@ keywords = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package.metadata.docs.rs]
-features = ["cuda-12030", "f16", "cudnn"]
+features = ["cuda-12040", "f16", "cudnn"]
 
 [features]
 default = ["std", "cublas", "cublaslt", "cudnn", "curand", "driver", "nccl", "nvrtc"]
@@ -33,6 +33,7 @@ cuda-12000 = []
 cuda-12010 = []
 cuda-12020 = []
 cuda-12030 = []
+cuda-12040 = []
 
 dynamic-linking = []
 
