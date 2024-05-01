@@ -1,6 +1,6 @@
 [package]
 name = "cudarc"
-version = "0.10.0"
+version = "0.11.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
@@ -21,7 +21,7 @@ keywords = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package.metadata.docs.rs]
-features = ["ci-check", "f16", "cudnn"]
+features = ["cuda-12030", "f16", "cudnn"]
 
 [features]
 default = ["std", "cublas", "cublaslt", "cudnn", "curand", "driver", "nccl", "nvrtc"]
