@@ -78,6 +78,7 @@ cudnn_dtype!(i8, CUDNN_DATA_INT8);
 cudnn_dtype!(i32, CUDNN_DATA_INT32);
 cudnn_dtype!(i64, CUDNN_DATA_INT64);
 cudnn_dtype!(u8, CUDNN_DATA_UINT8);
+#[cfg(not(feature = "cuda-12040"))]
 cudnn_dtype!(bool, CUDNN_DATA_BOOLEAN);
 
 #[cfg(feature = "f16")]
