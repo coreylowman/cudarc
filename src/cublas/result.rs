@@ -139,7 +139,28 @@ pub unsafe fn hgemm(
     c: *mut half::f16,
     ldc: c_int,
 ) -> Result<(), CublasError> {
-    super::half::cublasHgemm(
+    // NOTE: for some reason cublasHgemm is only included in header files if using c++. Therefore it
+    // is not included in the bindgen exports. So we manually link to the library & load the symbol here.
+    static LIB: std::sync::OnceLock<libloading::Library> = std::sync::OnceLock::new();
+    let lib = LIB
+        .get_or_init(|| libloading::Library::new(libloading::library_filename("cublas")).unwrap());
+    let f: unsafe extern "C" fn(
+        handle: sys::cublasHandle_t,
+        transa: sys::cublasOperation_t,
+        transb: sys::cublasOperation_t,
+        m: c_int,
+        n: c_int,
+        k: c_int,
+        alpha: *const half::f16,
+        A: *const half::f16,
+        lda: c_int,
+        B: *const half::f16,
+        ldb: c_int,
+        beta: *const half::f16,
+        C: *mut half::f16,
+        ldc: c_int,
+    ) -> sys::cublasStatus_t = lib.get(b"cublasHgemm\0").map(|sym| *sym).unwrap();
+    f(
         handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
     )
     .result()
@@ -239,7 +260,35 @@ pub unsafe fn hgemm_strided_batched(
     stride_c: c_longlong,
     batch_size: c_int,
 ) -> Result<(), CublasError> {
-    super::half::cublasHgemmStridedBatched(
+    // NOTE: for some reason cublasHgemm is only included in header files if using c++. Therefore it
+    // is not included in the bindgen exports. So we manually link to the library & load the symbol here.
+    static LIB: std::sync::OnceLock<libloading::Library> = std::sync::OnceLock::new();
+    let lib = LIB
+        .get_or_init(|| libloading::Library::new(libloading::library_filename("cublas")).unwrap());
+    let f: unsafe extern "C" fn(
+        handle: sys::cublasHandle_t,
+        transa: sys::cublasOperation_t,
+        transb: sys::cublasOperation_t,
+        m: c_int,
+        n: c_int,
+        k: c_int,
+        alpha: *const half::f16,
+        A: *const half::f16,
+        lda: c_int,
+        strideA: c_longlong,
+        B: *const half::f16,
+        ldb: c_int,
+        strideB: c_longlong,
+        beta: *const half::f16,
+        C: *mut half::f16,
+        ldc: c_int,
+        strideC: c_longlong,
+        batchCount: c_int,
+    ) -> sys::cublasStatus_t = lib
+        .get(b"cublasHgemmStridedBatched\0")
+        .map(|sym| *sym)
+        .unwrap();
+    f(
         handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
         stride_c, batch_size,
     )
