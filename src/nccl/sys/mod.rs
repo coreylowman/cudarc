@@ -33,7 +33,6 @@ mod sys_12040;
 #[cfg(feature = "cuda-12040")]
 pub use sys_12040::*;
 
-
 pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
     LIB.get_or_init(|| Lib::new(libloading::library_filename("nccl")).unwrap())
