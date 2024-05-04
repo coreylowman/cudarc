@@ -248,7 +248,7 @@ impl CudaDevice {
     }
 
     /// Get the global pointer and size through module and symbol name
-    pub fn get_symbol_ptr<T: Unpin + DeviceRepr>(self: &Arc<Self>, module_name: &str, symbol: &str ,len:usize) -> Result<(CudaSlice<T>, usize), result::DriverError> {
+    pub fn get_symbol_ptr<T: Unpin + DeviceRepr>(self: &Arc<Self>, module_name: &str, symbol: &str, len:usize) -> Result<(CudaSlice<T>, usize), result::DriverError> {
         let modules = self.modules.read();
         #[cfg(not(feature = "no-std"))]
         let modules = modules.unwrap();
@@ -258,7 +258,8 @@ impl CudaDevice {
             Some(m) =>  {
                 let name = CString::new(symbol).unwrap();
                 unsafe {
-                    let (cu_device_ptr,size) = result::module::get_symbol_ptr(m.cu_module, name)?;
+                    let (cu_device_ptr, size) = result::module::get_symbol_ptr(m.cu_module, name)?;
+                    assert_eq!(core::mem::size_of::<T>() * len, size);
                     Ok((self.upgrade_device_symbol_ptr(cu_device_ptr, len), size))
                 }
             },
@@ -281,6 +282,7 @@ impl CudaDevice {
     ) -> Result<(CudaSlice<T>, usize), result::DriverError> {
         let (mut dst, szie) = self.get_symbol_ptr(module_name, symbol,src.len())?;
         assert_eq!(src.len(), dst.len());
+        assert_eq!(core::mem::size_of::<T>() * src.len(), szie);
         dst.host_buf = Some(Pin::new(src));
         self.bind_to_thread()?;
         if self.is_async {

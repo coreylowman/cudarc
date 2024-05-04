@@ -796,7 +796,7 @@ pub mod module {
     /// 
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1gf3e43672e26073b1081476dbf47a86ab)
     /// # Safety
-    pub unsafe fn get_global(
+    pub unsafe fn get_symbol_ptr(
         module: sys::CUmodule, 
         name: CString
     ) -> Result<(sys::CUdeviceptr, usize), DriverError> {
