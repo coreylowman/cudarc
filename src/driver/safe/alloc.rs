@@ -1,3 +1,5 @@
+use std::ffi::CString;
+
 use crate::driver::{result, sys};
 
 use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut};
@@ -102,6 +104,30 @@ impl CudaDevice {
             len,
             device: self.clone(),
             host_buf: None,
+            undrop: false,
+        }
+    }
+
+    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
+    /// [`CudaSlice::leak()`].
+    ///
+    /// # Safety
+    /// - `cu_device_ptr` must from [result::module::get_symbol_ptr]
+    /// - `cu_device_ptr` must be a valid allocation
+    /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
+    /// - The memory may not be valid for type `T`, so some sort of memset operation
+    ///   should be called on the memory.
+    pub unsafe fn upgrade_device_symbol_ptr<T>(
+        self: &Arc<Self>,
+        cu_device_ptr: sys::CUdeviceptr,
+        len: usize,
+    ) -> CudaSlice<T> {
+        CudaSlice {
+            cu_device_ptr,
+            len,
+            device: self.clone(),
+            host_buf: None,
+            undrop: true
         }
     }
 }
@@ -122,6 +148,7 @@ impl CudaDevice {
             len: 0,
             device: self.clone(),
             host_buf: None,
+            undrop: false,
         })
     }
 
@@ -144,6 +171,7 @@ impl CudaDevice {
             len,
             device: self.clone(),
             host_buf: None,
+            undrop: false,
         })
     }
 
@@ -217,6 +245,85 @@ impl CudaDevice {
                 )
             }
         }
+    }
+
+    /// Get the global pointer and size through module and symbol name
+    pub fn get_symbol_ptr<T: Unpin + DeviceRepr>(self: &Arc<Self>, module_name: &str, symbol: &str ,len:usize) -> Result<(CudaSlice<T>, usize), result::DriverError> {
+        let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
+
+        match modules
+        .get(module_name) {
+            Some(m) =>  {
+                let name = CString::new(symbol).unwrap();
+                unsafe {
+                    let (cu_device_ptr,size) = result::module::get_symbol_ptr(m.cu_module, name)?;
+                    Ok((self.upgrade_device_symbol_ptr(cu_device_ptr, len), size))
+                }
+            },
+            None => Err(result::DriverError(sys::CUresult::CUDA_ERROR_NOT_FOUND)),
+        }
+    }
+
+    /// Takes ownership of the host data and copies it to device global data asynchronously.
+    ///
+    /// # Safety
+    ///
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn htod_symbol_copy<T: Unpin + DeviceRepr>(
+        self: &Arc<Self>,
+        module_name: &str,
+        symbol: &str,
+        src: Vec<T>,
+    ) -> Result<(CudaSlice<T>, usize), result::DriverError> {
+        let (mut dst, szie) = self.get_symbol_ptr(module_name, symbol,src.len())?;
+        assert_eq!(src.len(), dst.len());
+        dst.host_buf = Some(Pin::new(src));
+        self.bind_to_thread()?;
+        if self.is_async {
+            unsafe {
+                result::memcpy_htod_async(
+                    dst.cu_device_ptr,
+                    dst.host_buf.as_ref().unwrap(),
+                    self.stream,
+                )
+            }?
+        } else {
+            unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
+        }
+        Ok((dst, szie))
+    }
+
+    /// Takes ownership of the host data and copies it to device global data asynchronously.
+    ///
+    /// # Safety
+    ///
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn htod_symbol_copy_into<T: Unpin + DeviceRepr>(
+        self: &Arc<Self>,
+        src: Vec<T>,
+        dst: &mut CudaSlice<T>,
+    ) -> Result<(), result::DriverError> {
+        assert_eq!(src.len(), dst.len());
+        dst.host_buf = Some(Pin::new(src));
+        self.bind_to_thread()?;
+        if self.is_async {
+            unsafe {
+                result::memcpy_htod_async(
+                    dst.cu_device_ptr,
+                    dst.host_buf.as_ref().unwrap(),
+                    self.stream,
+                )
+            }?
+        } else {
+            unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
+        }
+        Ok(())
     }
 
     /// Takes ownership of the host data and copies it to device data asynchronously.

@@ -792,6 +792,29 @@ pub mod module {
         Ok(func.assume_init())
     }
 
+    /// Returns in *dptr and *bytes the base pointer and size of the global of name name located in module module
+    /// 
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1gf3e43672e26073b1081476dbf47a86ab)
+    /// # Safety
+    pub unsafe fn get_global(
+        module: sys::CUmodule, 
+        name: CString
+    ) -> Result<(sys::CUdeviceptr, usize), DriverError> {
+        let mut dev_ptr = MaybeUninit::uninit();
+        let mut size = MaybeUninit::uninit();
+        let name_ptr = name.as_c_str().as_ptr();
+        lib()
+        .cuModuleGetGlobal_v2(
+            dev_ptr.as_mut_ptr(), 
+            size.as_mut_ptr(), 
+            module, 
+            name_ptr
+        )
+        .result()?;
+        Ok((dev_ptr.assume_init(), size.assume_init()))
+    }
+    
+
     /// Unloads a module.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1g8ea3d716524369de3763104ced4ea57b)

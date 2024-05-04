@@ -234,6 +234,7 @@ pub struct CudaSlice<T> {
     pub(crate) len: usize,
     pub(crate) device: Arc<CudaDevice>,
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
+    pub(crate) undrop: bool
 }
 
 unsafe impl<T: Send> Send for CudaSlice<T> {}
@@ -241,6 +242,9 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
+        if self.undrop {
+            return;
+        }
         self.device.bind_to_thread().unwrap();
         unsafe {
             if self.device.is_async {
