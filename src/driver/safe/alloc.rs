@@ -1,3 +1,5 @@
+use core::mem::size_of;
+use core::usize;
 use std::ffi::CString;
 
 use crate::driver::{result, sys};
@@ -209,46 +211,9 @@ impl CudaDevice {
         }
     }
 
-    /// Device to device copy (safe version of [result::memcpy_dtod_async]).
-    ///
-    /// # Panics
-    ///
-    /// If the length of the two values are different
-    ///
-    /// # Safety
-    /// 1. We are guarunteed that `src` and `dst` are pointers to the same underlying
-    ///     type `T`
-    /// 2. Since they are both references, they can't have been freed
-    /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
-    pub fn dtod_copy<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
-        self: &Arc<Self>,
-        src: &Src,
-        dst: &mut Dst,
-    ) -> Result<(), result::DriverError> {
-        assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
-        if self.is_async {
-            unsafe {
-                result::memcpy_dtod_async(
-                    *dst.device_ptr_mut(),
-                    *src.device_ptr(),
-                    src.len() * std::mem::size_of::<T>(),
-                    self.stream,
-                )
-            }
-        } else {
-            unsafe {
-                result::memcpy_dtod_sync(
-                    *dst.device_ptr_mut(),
-                    *src.device_ptr(),
-                    src.len() * std::mem::size_of::<T>(),
-                )
-            }
-        }
-    }
 
     /// Get the global pointer and size through module and symbol name
-    pub fn get_symbol_ptr<T: Unpin + DeviceRepr>(self: &Arc<Self>, module_name: &str, symbol: &str, len:usize) -> Result<(CudaSlice<T>, usize), result::DriverError> {
+    pub fn get_symbol_ptr<T: DeviceRepr>(self: &Arc<Self>, module_name: &str, symbol: &str) -> Result<(CudaSlice<T>, usize), result::DriverError> {
         let modules = self.modules.read();
         #[cfg(not(feature = "no-std"))]
         let modules = modules.unwrap();
@@ -259,8 +224,8 @@ impl CudaDevice {
                 let name = CString::new(symbol).unwrap();
                 unsafe {
                     let (cu_device_ptr, size) = result::module::get_symbol_ptr(m.cu_module, name)?;
-                    assert_eq!(core::mem::size_of::<T>() * len, size);
-                    Ok((self.upgrade_device_symbol_ptr(cu_device_ptr, len), size))
+                    let len = size / size_of::<T>();
+                    Ok((self.upgrade_device_symbol_ptr(cu_device_ptr, len), len))
                 }
             },
             None => Err(result::DriverError(sys::CUresult::CUDA_ERROR_NOT_FOUND)),
@@ -280,9 +245,8 @@ impl CudaDevice {
         symbol: &str,
         src: Vec<T>,
     ) -> Result<(CudaSlice<T>, usize), result::DriverError> {
-        let (mut dst, szie) = self.get_symbol_ptr(module_name, symbol,src.len())?;
-        assert_eq!(src.len(), dst.len());
-        assert_eq!(core::mem::size_of::<T>() * src.len(), szie);
+        let (mut dst, len) = self.get_symbol_ptr(module_name, symbol)?;
+        assert_eq!(src.len(), len);
         dst.host_buf = Some(Pin::new(src));
         self.bind_to_thread()?;
         if self.is_async {
@@ -296,7 +260,7 @@ impl CudaDevice {
         } else {
             unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
         }
-        Ok((dst, szie))
+        Ok((dst, len))
     }
 
     /// Takes ownership of the host data and copies it to device global data asynchronously.
@@ -414,6 +378,73 @@ impl CudaDevice {
             unsafe { result::memcpy_htod_sync(*dst.device_ptr_mut(), src) }?;
         }
         self.synchronize()
+    }
+
+    /// Device to device copy (safe version of [result::memcpy_dtod_async]).
+    ///
+    /// # Panics
+    ///
+    /// If the length of the two values are different
+    ///
+    /// # Safety
+    /// 1. We are guarunteed that `src` and `dst` are pointers to the same underlying
+    ///     type `T`
+    /// 2. Since they are both references, they can't have been freed
+    /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn dtod_copy<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
+        self: &Arc<Self>,
+        src: &Src,
+        dst: &mut Dst,
+    ) -> Result<(), result::DriverError> {
+        assert_eq!(src.len(), dst.len());
+        self.bind_to_thread()?;
+        if self.is_async {
+            unsafe {
+                result::memcpy_dtod_async(
+                    *dst.device_ptr_mut(),
+                    *src.device_ptr(),
+                    src.len() * std::mem::size_of::<T>(),
+                    self.stream,
+                )
+            }
+        } else {
+            unsafe {
+                result::memcpy_dtod_sync(
+                    *dst.device_ptr_mut(),
+                    *src.device_ptr(),
+                    src.len() * std::mem::size_of::<T>(),
+                )
+            }
+        }
+    }
+
+    /// Synchronously copies device global memory into host memory.
+    /// Unlike [`CudaDevice::dtod_sync_symbol_copy_into`] this returns a [`Vec<T>`].
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    pub fn dtod_sync_symbol_copy<T: DeviceRepr>(
+        self: &Arc<Self>,
+        module_name: &str,
+        symbol: &str
+    ) -> Result<Vec<T>, result::DriverError> {
+        let (src, len) = self.get_symbol_ptr(module_name, symbol)?;
+        let mut dst = Vec::with_capacity(len);
+        unsafe { dst.set_len(src.len()) };
+        self.dtoh_sync_copy_into(&src, &mut dst)?;
+        Ok(dst)
+    }
+
+    /// Synchronously copies device global memory into host memory
+    ///
+    /// Same as [`CudaDevice::dtoh_sync_copy_into`]
+    pub fn dtod_sync_symbol_copy_into<T: DeviceRepr, Src: DevicePtr<T>>(
+        self: &Arc<Self>,
+        src: &Src,
+        dst: &mut [T],
+    ) -> Result<(), result::DriverError> {
+        self.dtoh_sync_copy_into(src, dst)
     }
 
     /// Synchronously copies device memory into host memory.
