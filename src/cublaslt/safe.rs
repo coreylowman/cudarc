@@ -574,9 +574,10 @@ mod tests {
     #[test]
     fn test_matmul_half() {
         let logpath = CString::new("log_matmul_half").unwrap();
-        unsafe { sys::cublasLtLoggerSetLevel(4).result().unwrap() };
+        unsafe { lib().cublasLtLoggerSetLevel(4).result().unwrap() };
         unsafe {
-            sys::cublasLtLoggerOpenFile(logpath.as_ptr())
+            lib()
+                .cublasLtLoggerOpenFile(logpath.as_ptr())
                 .result()
                 .unwrap()
         };
