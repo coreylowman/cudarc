@@ -223,6 +223,15 @@ pub unsafe trait LaunchAsync<Params> {
         params: Params,
     ) -> Result<(), result::DriverError>;
 
+    /// Launch the cooperative function on a stream concurrent to the device's default
+    /// work stream.
+    ///
+    /// # Safety
+    /// This method is even more unsafe than [LaunchAsync::launch_cooperative], all the same rules apply,
+    /// except now things are executing in parallel to each other.
+    ///
+    /// That means that if any of the kernels modify the same memory location, you'll get race
+    /// conditions or potentially undefined behavior.
     unsafe fn launch_cooperative(
         self,
         cfg: LaunchConfig,
