@@ -549,12 +549,12 @@ pub struct CudaView<'a, T> {
 impl<T> CudaSlice<T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
-    /// Returns `None` if `range.start >= self.len`
+    /// Panics if `range.start >= self.len`.
     pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'_, T> {
         self.try_slice(range).unwrap()
     }
 
-    /// Fallible version of [CudaSlice::slice]
+    /// Fallible version of [CudaSlice::slice()].
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
@@ -582,7 +582,7 @@ impl<T> CudaSlice<T> {
 impl<'a, T> CudaView<'a, T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
-    /// Returns `None` if `range.start >= self.len`
+    /// Panics if `range.start >= self.len`.
     pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
         self.try_slice(range).unwrap()
     }
@@ -608,7 +608,7 @@ pub struct CudaViewMut<'a, T> {
 impl<T> CudaSlice<T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
-    /// Returns `None` if `offset >= self.len`
+    /// Panics if `range` and `0...self.len()` are not overlapping.
     pub fn slice_mut(&mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
         self.try_slice_mut(range).unwrap()
     }
@@ -639,14 +639,14 @@ impl<T> CudaSlice<T> {
 
     /// Splits the [CudaSlice] into two at the given index, returning two [CudaViewMut] for the two halves.
     ///
-    /// Panics if `mid > self.len`
+    /// Panics if `mid > self.len`.
     pub fn split_at_mut<'a>(&'a mut self, mid: usize) -> (CudaViewMut<'a, T>, CudaViewMut<'a, T>) {
         self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaSlice::split_at_mut].
     ///
-    /// Returns `None` if `mid > self.len`
+    /// Returns `None` if `mid > self.len`.
     pub fn try_split_at_mut<'a>(
         &'a mut self,
         mid: usize,
@@ -672,7 +672,7 @@ impl<T> CudaSlice<T> {
 impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
-    /// Returns `None` if `range.start >= self.len`
+    /// Panics if `range` and `0...self.len()` are not overlapping.
     pub fn slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
         self.try_slice(range).unwrap()
     }
@@ -688,7 +688,7 @@ impl<'a, T> CudaViewMut<'a, T> {
 
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
-    /// Returns `None` if `offset >= self.len`
+    /// Panics if `range` and `0...self.len()` are not overlapping.
     pub fn slice_mut<'b: 'a>(&'b mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'a, T> {
         self.try_slice_mut(range).unwrap()
     }
