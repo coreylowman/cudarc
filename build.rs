@@ -8,6 +8,7 @@ fn main() {
 
     #[cfg(not(any(
         feature = "cuda-version-from-build-system",
+        feature = "cuda-12050",
         feature = "cuda-12040",
         feature = "cuda-12030",
         feature = "cuda-12020",
@@ -16,7 +17,7 @@ fn main() {
         feature = "cuda-11080",
         feature = "cuda-11070",
     )))]
-    compile_error!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
+    compile_error!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
 
     #[cfg(feature = "cuda-version-from-build-system")]
     cuda_version_from_build_system();
@@ -44,6 +45,7 @@ fn cuda_version_from_build_system() {
     let key = "CUDA_VERSION ";
     let start = key.len() + contents.find(key).unwrap();
     match contents[start..].lines().next().unwrap() {
+        "12050" => println!("cargo:rustc-cfg=feature=\"cuda-12050\""),
         "12040" => println!("cargo:rustc-cfg=feature=\"cuda-12040\""),
         "12030" => println!("cargo:rustc-cfg=feature=\"cuda-12030\""),
         "12020" => println!("cargo:rustc-cfg=feature=\"cuda-12020\""),
