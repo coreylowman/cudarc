@@ -94,7 +94,7 @@ pub mod nvrtc;
 
 pub mod types;
 
-pub(crate) fn get_lib_name_candidates(lib_name: &str) -> Vec<String> {
+pub(crate) fn get_lib_name_candidates(lib_name: &str) -> std::vec::Vec<std::string::String> {
     let pointer_width = if cfg!(target_pointer_width = "32") {
         "32"
     } else if cfg!(target_pointer_width = "64") {
@@ -107,12 +107,12 @@ pub(crate) fn get_lib_name_candidates(lib_name: &str) -> Vec<String> {
     let minor = env!("CUDA_MINOR_VERSION");
 
     [
-        format!("{lib_name}"),
-        format!("{lib_name}{pointer_width}"),
-        format!("{lib_name}{pointer_width}_{major}"),
-        format!("{lib_name}{pointer_width}_{major}{minor}"),
-        format!("{lib_name}{pointer_width}_{major}{minor}_0"),
-        format!("{lib_name}{pointer_width}_{major}0_{minor}"),
+        lib_name.into(),
+        std::format!("{lib_name}{pointer_width}"),
+        std::format!("{lib_name}{pointer_width}_{major}"),
+        std::format!("{lib_name}{pointer_width}_{major}{minor}"),
+        std::format!("{lib_name}{pointer_width}_{major}{minor}_0"),
+        std::format!("{lib_name}{pointer_width}_{major}0_{minor}"),
     ]
     .into()
 }
