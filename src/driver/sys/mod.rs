@@ -40,5 +40,16 @@ pub use sys_12050::*;
 
 pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
-    LIB.get_or_init(|| Lib::new(libloading::library_filename("cuda")).unwrap())
+    LIB.get_or_init(|| {
+        let lib_name = "cuda";
+        let choices = [lib_name, "nvcuda"];
+        for choice in choices {
+            if let Ok(lib) = Lib::new(libloading::library_filename(choice)) {
+                return lib;
+            }
+        }
+        panic!(
+            "Unable to find {lib_name} lib under the names {choices:?}. Please open GitHub issue."
+        );
+    })
 }
