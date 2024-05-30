@@ -57,10 +57,11 @@ fn cuda_version_from_build_system() -> (usize, usize) {
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let version_line = stdout.lines().skip(3).next().unwrap();
-    let release_section = version_line.split(", ").skip(1).next().unwrap();
+    let version_line = stdout.lines().nth(3).unwrap();
+    let release_section = version_line.split(", ").nth(1).unwrap();
+    let version_number = release_section.split(' ').nth(1).unwrap();
 
-    match release_section.split(" ").last().unwrap() {
+    match version_number {
         "12.5" => (12, 5),
         "12.4" => (12, 4),
         "12.3" => (12, 3),
