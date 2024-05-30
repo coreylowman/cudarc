@@ -6,28 +6,43 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
     println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
 
-    #[cfg(not(any(
-        feature = "cuda-version-from-build-system",
-        feature = "cuda-12050",
-        feature = "cuda-12040",
-        feature = "cuda-12030",
-        feature = "cuda-12020",
-        feature = "cuda-12010",
-        feature = "cuda-12000",
-        feature = "cuda-11080",
-        feature = "cuda-11070",
-    )))]
-    compile_error!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
+    let (major, minor): (usize, usize) = if cfg!(feature = "cuda-12050") {
+        (12, 5)
+    } else if cfg!(feature = "cuda-12040") {
+        (12, 4)
+    } else if cfg!(feature = "cuda-12030") {
+        (12, 3)
+    } else if cfg!(feature = "cuda-12020") {
+        (12, 2)
+    } else if cfg!(feature = "cuda-12010") {
+        (12, 1)
+    } else if cfg!(feature = "cuda-12000") {
+        (12, 0)
+    } else if cfg!(feature = "cuda-11080") {
+        (11, 8)
+    } else if cfg!(feature = "cuda-11070") {
+        (11, 7)
+    } else {
+        #[cfg(not(feature = "cuda-version-from-build-system"))]
+        panic!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
 
-    #[cfg(feature = "cuda-version-from-build-system")]
-    cuda_version_from_build_system();
+        #[cfg(feature = "cuda-version-from-build-system")]
+        {
+            let (major, minor) = cuda_version_from_build_system();
+            println!("cargo:rustc-cfg=feature=\"cuda-{major}0{minor}0\"");
+            (major, minor)
+        }
+    };
+
+    println!("cargo:rustc-env=CUDA_MAJOR_VERSION={major}");
+    println!("cargo:rustc-env=CUDA_MINOR_VERSION={minor}");
 
     #[cfg(feature = "dynamic-linking")]
     dynamic_linking();
 }
 
 #[allow(unused)]
-fn cuda_version_from_build_system() {
+fn cuda_version_from_build_system() -> (usize, usize) {
     let toolkit_root = root_candidates()
             .find(|path| path.join("include").join("cuda.h").is_file())
             .unwrap_or_else(|| {
@@ -45,14 +60,14 @@ fn cuda_version_from_build_system() {
     let key = "CUDA_VERSION ";
     let start = key.len() + contents.find(key).unwrap();
     match contents[start..].lines().next().unwrap() {
-        "12050" => println!("cargo:rustc-cfg=feature=\"cuda-12050\""),
-        "12040" => println!("cargo:rustc-cfg=feature=\"cuda-12040\""),
-        "12030" => println!("cargo:rustc-cfg=feature=\"cuda-12030\""),
-        "12020" => println!("cargo:rustc-cfg=feature=\"cuda-12020\""),
-        "12010" => println!("cargo:rustc-cfg=feature=\"cuda-12010\""),
-        "12000" => println!("cargo:rustc-cfg=feature=\"cuda-12000\""),
-        "11080" => println!("cargo:rustc-cfg=feature=\"cuda-11080\""),
-        "11070" => println!("cargo:rustc-cfg=feature=\"cuda-11070\""),
+        "12050" => (12, 5),
+        "12040" => (12, 4),
+        "12030" => (12, 3),
+        "12020" => (12, 2),
+        "12010" => (12, 1),
+        "12000" => (12, 0),
+        "11080" => (11, 8),
+        "11070" => (11, 7),
         v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
     }
 }

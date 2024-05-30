@@ -93,3 +93,26 @@ pub mod nccl;
 pub mod nvrtc;
 
 pub mod types;
+
+pub(crate) fn get_lib_name_candidates(lib_name: &str) -> std::vec::Vec<std::string::String> {
+    let pointer_width = if cfg!(target_pointer_width = "32") {
+        "32"
+    } else if cfg!(target_pointer_width = "64") {
+        "64"
+    } else {
+        panic!("Unsupported target pointer width")
+    };
+
+    let major = env!("CUDA_MAJOR_VERSION");
+    let minor = env!("CUDA_MINOR_VERSION");
+
+    [
+        lib_name.into(),
+        std::format!("{lib_name}{pointer_width}"),
+        std::format!("{lib_name}{pointer_width}_{major}"),
+        std::format!("{lib_name}{pointer_width}_{major}{minor}"),
+        std::format!("{lib_name}{pointer_width}_{major}{minor}_0"),
+        std::format!("{lib_name}{pointer_width}_{major}0_{minor}"),
+    ]
+    .into()
+}
