@@ -107,7 +107,8 @@ pub(crate) fn get_lib_name_candidates(lib_name: &str) -> Vec<String> {
     let minor = env!("CUDA_MINOR_VERSION");
 
     [
-        lib_name.to_string(),
+        format!("{lib_name}"),
+        format!("{lib_name}{pointer_width}"),
         format!("{lib_name}{pointer_width}_{major}"),
         format!("{lib_name}{pointer_width}_{major}{minor}"),
         format!("{lib_name}{pointer_width}_{major}{minor}_0"),
