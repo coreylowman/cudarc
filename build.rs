@@ -6,19 +6,6 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
     println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
 
-    #[cfg(not(any(
-        feature = "cuda-version-from-build-system",
-        feature = "cuda-12050",
-        feature = "cuda-12040",
-        feature = "cuda-12030",
-        feature = "cuda-12020",
-        feature = "cuda-12010",
-        feature = "cuda-12000",
-        feature = "cuda-11080",
-        feature = "cuda-11070",
-    )))]
-    compile_error!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
-
     let (major, minor): (usize, usize) = if cfg!(feature = "cuda-12050") {
         (12, 5)
     } else if cfg!(feature = "cuda-12040") {
@@ -37,7 +24,7 @@ fn main() {
         (11, 7)
     } else {
         #[cfg(not(feature = "cuda-version-from-build-system"))]
-        compile_error!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
+        panic!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
 
         #[cfg(feature = "cuda-version-from-build-system")]
         {
