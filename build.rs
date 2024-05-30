@@ -43,31 +43,33 @@ fn main() {
 
 #[allow(unused)]
 fn cuda_version_from_build_system() -> (usize, usize) {
-    let toolkit_root = root_candidates()
-            .find(|path| path.join("include").join("cuda.h").is_file())
-            .unwrap_or_else(|| {
-                panic!(
-                    "Unable to find `include/cuda.h` under any of: {:?}. Set the `CUDA_ROOT` environment variable to `$CUDA_ROOT/include/cuda.h` to override path.",
-                    root_candidates().collect::<Vec<_>>()
-                )
-            });
+    let output = std::process::Command::new("nvcc")
+        .arg("--version")
+        .output()
+        .expect("Failed to execute `nvcc`");
 
-    use std::{fs::File, io::Read};
-    let mut header = File::open(toolkit_root.join("include").join("cuda.h")).unwrap();
-    let mut contents = String::new();
-    header.read_to_string(&mut contents).unwrap();
+    if !output.status.success() {
+        panic!(
+            "`nvcc --version` failed.\nstdout:\n{}\n\nstderr:\n{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr),
+        );
+    }
 
-    let key = "CUDA_VERSION ";
-    let start = key.len() + contents.find(key).unwrap();
-    match contents[start..].lines().next().unwrap() {
-        "12050" => (12, 5),
-        "12040" => (12, 4),
-        "12030" => (12, 3),
-        "12020" => (12, 2),
-        "12010" => (12, 1),
-        "12000" => (12, 0),
-        "11080" => (11, 8),
-        "11070" => (11, 7),
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let version_line = stdout.lines().nth(3).unwrap();
+    let release_section = version_line.split(", ").nth(1).unwrap();
+    let version_number = release_section.split(' ').nth(1).unwrap();
+
+    match version_number {
+        "12.5" => (12, 5),
+        "12.4" => (12, 4),
+        "12.3" => (12, 3),
+        "12.2" => (12, 2),
+        "12.1" => (12, 1),
+        "12.0" => (12, 0),
+        "11.8" => (11, 8),
+        "11.7" => (11, 7),
         v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
     }
 }
