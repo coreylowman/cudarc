@@ -113,6 +113,8 @@ pub(crate) fn get_lib_name_candidates(lib_name: &str) -> std::vec::Vec<std::stri
         std::format!("{lib_name}{pointer_width}_{major}{minor}"),
         std::format!("{lib_name}{pointer_width}_{major}{minor}_0"),
         std::format!("{lib_name}{pointer_width}_{major}0_{minor}"),
+        // See issue #242
+        std::format!("{lib_name}{pointer_width}_10"),
     ]
     .into()
 }
