@@ -538,7 +538,9 @@ impl Drop for CudaStream {
     }
 }
 
-/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()].
+/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()] or [CudaSlice::slice()].
+///
+/// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaView<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
@@ -550,6 +552,31 @@ impl<T> CudaSlice<T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Panics if `range.start >= self.len`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # fn do_something(view: &CudaView<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice(0..50);
+    /// do_something(&view);
+    /// ```
+    ///
+    /// Like a normal slice, borrow checking prevents the underlying [CudaSlice] from being dropped.
+    /// ```rust,compile_fail
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # fn do_something(view: &CudaView<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let view = {
+    ///     let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    ///     let mut view = slice.slice(0..50);
+    ///     // cannot return view, since it borrows from slice
+    ///     view
+    /// };
+    /// do_something(&view);
+    /// ```
     pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'_, T> {
         self.try_slice(range).unwrap()
     }
@@ -583,6 +610,18 @@ impl<'a, T> CudaView<'a, T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Panics if `range.start >= self.len`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # fn do_something(view: &CudaView<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice(0..50);
+    /// let mut view2 = view.slice(0..25);
+    /// do_something(&view);
+    /// ```
     pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
         self.try_slice(range).unwrap()
     }
@@ -597,7 +636,9 @@ impl<'a, T> CudaView<'a, T> {
     }
 }
 
-/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()].
+/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()] or [CudaSlice::slice_mut()].
+///
+/// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
@@ -609,6 +650,44 @@ impl<T> CudaSlice<T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: &mut CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// do_something(&mut view);
+    /// ```
+    ///
+    /// Like a normal mutable slice, borrow checking prevents the underlying [CudaSlice] from being dropped.
+    /// ```rust,compile_fail
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: &mut CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut view = {
+    ///     let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    ///     let view = slice.slice_mut(0..50);
+    ///     // cannot return view, since it borrows from slice
+    ///     view
+    /// };
+    /// do_something(&mut view);
+    /// ```
+    ///
+    /// Like with normal mutable slices, one cannot mutably slice twice into the same [CudaSlice]:
+    /// ```rust,compile_fail
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view1 = slice.slice_mut(0..50);
+    /// // cannot borrow twice from slice
+    /// let mut view2 = slice.slice_mut(50..100);
+    /// do_something(view1, view2);
+    /// ```
+    /// If you need non-overlapping mutable views into a [CudaSlice], you can use [CudaSlice::split_at_mut()].
     pub fn slice_mut(&mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
         self.try_slice_mut(range).unwrap()
     }
@@ -640,6 +719,17 @@ impl<T> CudaSlice<T> {
     /// Splits the [CudaSlice] into two at the given index, returning two [CudaViewMut] for the two halves.
     ///
     /// Panics if `mid > self.len`.
+    ///
+    /// This method can be used to create non-overlapping mutable views into a [CudaSlice].
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// // split the slice into two non-overlapping, mutable views
+    /// let (mut view1, mut view2) = slice.split_at_mut(50);
+    /// do_something(view1, view2);
+    /// ```
     pub fn split_at_mut<'a>(&'a mut self, mid: usize) -> (CudaViewMut<'a, T>, CudaViewMut<'a, T>) {
         self.try_split_at_mut(mid).unwrap()
     }
@@ -673,6 +763,32 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaView] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: &mut CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// let mut view2 = view.slice_mut(0..25);
+    /// do_something(&mut view2);
+    /// ```
+    ///
+    /// One cannot slice twice into the same [CudaViewMut]:
+    /// ```rust,compile_fail
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// // cannot borrow twice from same view
+    /// let mut view1 = slice.slice_mut(0..25);
+    /// let mut view2 = slice.slice_mut(25..50);
+    /// do_something(view1, view2);
+    /// ```
+    /// If you need non-overlapping mutable views into a [CudaViewMut], you can use [CudaViewMut::split_at_mut()].
     pub fn slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
         self.try_slice(range).unwrap()
     }
@@ -707,7 +823,18 @@ impl<'a, T> CudaViewMut<'a, T> {
 
     /// Splits the [CudaViewMut] into two at the given index.
     ///
-    /// Panics if `mid > self.len`
+    /// Panics if `mid > self.len`.
+    ///
+    /// This method can be used to create non-overlapping mutable views into a [CudaViewMut].
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// // split the view into two non-overlapping, mutable views
+    /// let (mut view1, mut view2) = view.split_at_mut(25);
+    /// do_something(view1, view2);
     pub fn split_at_mut<'b: 'a>(
         &'b mut self,
         mid: usize,
