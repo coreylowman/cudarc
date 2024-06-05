@@ -42,6 +42,8 @@ pub use super::result::CudnnError;
 mod tests {
     use super::*;
     use crate::{cudnn, driver::CudaDevice};
+    #[cfg(feature = "no-std")]
+    use no_std_compat::vec;
 
     #[test]
     fn test_create_descriptors() -> Result<(), CudnnError> {
@@ -176,7 +178,7 @@ mod tests {
             let algo = op.pick_algorithm()?;
 
             // Get workspace size
-            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let workspace_size = op.get_workspace_size(algo)?;
             let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
 
             // Launch conv operation
@@ -233,7 +235,7 @@ mod tests {
             let algo = op.pick_algorithm()?;
 
             // Get workspace size
-            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let workspace_size = op.get_workspace_size(algo)?;
             let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
 
             // Launch conv operation

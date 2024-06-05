@@ -311,6 +311,8 @@ pub fn group_start() -> Result<NcclStatus, NcclError> {
 mod tests {
     use super::*;
     use crate::driver::CudaDevice;
+    #[cfg(feature = "no-std")]
+    use no_std_compat::{vec, vec::Vec};
     use std::ffi::c_void;
 
     #[test]
@@ -367,7 +369,6 @@ mod tests {
         let comm_id = get_uniqueid().unwrap();
         let threads: Vec<_> = (0..n_devices)
             .map(|i| {
-                let n_devices = n_devices.clone();
                 std::thread::spawn(move || {
                     let dev = CudaDevice::new(i).unwrap();
                     let sendslice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();

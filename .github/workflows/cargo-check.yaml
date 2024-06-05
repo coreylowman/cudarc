@@ -16,8 +16,8 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: -F cuda-12020
+          args: -F cuda-12020 --all-targets
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --no-default-features --features cuda-12020,no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl
+          args: --no-default-features --features cuda-12020,no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl --all-targets
