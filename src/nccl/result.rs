@@ -311,6 +311,8 @@ pub fn group_start() -> Result<NcclStatus, NcclError> {
 mod tests {
     use super::*;
     use crate::driver::CudaDevice;
+    #[cfg(feature = "no-std")]
+    use no_std_compat::{vec, vec::Vec};
     use std::ffi::c_void;
 
     #[test]

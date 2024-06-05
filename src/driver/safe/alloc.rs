@@ -426,6 +426,8 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(feature = "no-std")]
+    use no_std_compat::vec;
 
     #[test]
     fn test_post_build_arc_count() {

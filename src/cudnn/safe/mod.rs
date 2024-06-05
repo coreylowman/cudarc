@@ -42,6 +42,8 @@ pub use super::result::CudnnError;
 mod tests {
     use super::*;
     use crate::{cudnn, driver::CudaDevice};
+    #[cfg(feature = "no-std")]
+    use no_std_compat::vec;
 
     #[test]
     fn test_create_descriptors() -> Result<(), CudnnError> {
