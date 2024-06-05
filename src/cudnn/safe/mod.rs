@@ -178,7 +178,7 @@ mod tests {
             let algo = op.pick_algorithm()?;
 
             // Get workspace size
-            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let workspace_size = op.get_workspace_size(algo)?;
             let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
 
             // Launch conv operation
@@ -235,7 +235,7 @@ mod tests {
             let algo = op.pick_algorithm()?;
 
             // Get workspace size
-            let workspace_size = op.get_workspace_size(algo.clone())?;
+            let workspace_size = op.get_workspace_size(algo)?;
             let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
 
             // Launch conv operation
