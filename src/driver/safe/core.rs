@@ -730,17 +730,17 @@ impl<T> CudaSlice<T> {
     /// let (mut view1, mut view2) = slice.split_at_mut(50);
     /// do_something(view1, view2);
     /// ```
-    pub fn split_at_mut<'a>(&'a mut self, mid: usize) -> (CudaViewMut<'a, T>, CudaViewMut<'a, T>) {
+    pub fn split_at_mut(&mut self, mid: usize) -> (CudaViewMut<'_, T>, CudaViewMut<'_, T>) {
         self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaSlice::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`.
-    pub fn try_split_at_mut<'a>(
-        &'a mut self,
+    pub fn try_split_at_mut(
+        &mut self,
         mid: usize,
-    ) -> Option<(CudaViewMut<'a, T>, CudaViewMut<'a, T>)> {
+    ) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
         if mid > self.len() {
             return None;
         }

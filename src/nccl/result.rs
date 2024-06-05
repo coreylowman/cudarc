@@ -367,7 +367,6 @@ mod tests {
         let comm_id = get_uniqueid().unwrap();
         let threads: Vec<_> = (0..n_devices)
             .map(|i| {
-                let n_devices = n_devices.clone();
                 std::thread::spawn(move || {
                     let dev = CudaDevice::new(i).unwrap();
                     let sendslice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
