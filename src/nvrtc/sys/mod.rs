@@ -43,7 +43,7 @@ pub unsafe fn lib() -> &'static Lib {
     LIB.get_or_init(|| {
         match std::env::var("NVRTC_LIB_OVERRIDE") {
             Ok(nvrtc_lib_override) => {
-                match Lib::new(libloading::library_filename(nvrtc_lib_override)) {
+                match Lib::new(libloading::library_filename(&nvrtc_lib_override)) {
                     Ok(lib) => return lib,
                     Err(err) => {
                         panic!("Failed to load {nvrtc_lib_override}; error = {err:?}");
