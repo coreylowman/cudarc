@@ -41,15 +41,27 @@ pub use sys_12050::*;
 pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
     LIB.get_or_init(|| {
-        let lib_name = "nvrtc";
-        let choices = crate::get_lib_name_candidates(lib_name);
-        for choice in choices.iter() {
-            if let Ok(lib) = Lib::new(libloading::library_filename(choice)) {
-                return lib;
-            }
+        match std::env::var("NVRTC_LIB_OVERRIDE") {
+            Ok(nvrtc_lib_override) => {
+                match Lib::new(libloading::library_filename(nvrtc_lib_override)) {
+                    Ok(lib) => return lib,
+                    Err(err) => {
+                        panic!("Failed to load {nvrtc_lib_override}; error = {err:?}");
+                    }
+                }
+            },
+            Err(_) => {
+                let lib_name = "nvrtc";
+                let choices = crate::get_lib_name_candidates(lib_name);
+                for choice in choices.iter() {
+                    if let Ok(lib) = Lib::new(libloading::library_filename(choice)) {
+                        return lib;
+                    }
+                }
+                panic!(
+                    "Unable to find {lib_name} lib under the names {choices:?}. Please open GitHub issue."
+                );
+            },
         }
-        panic!(
-            "Unable to find {lib_name} lib under the names {choices:?}. Please open GitHub issue."
-        );
     })
 }
