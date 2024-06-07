@@ -54,10 +54,10 @@ impl RuntimeError {
     }
 }
 
-impl std::fmt::Debug for DriverError {
+impl std::fmt::Debug for RuntimeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let err_str = self.error_string().unwrap();
-        f.debug_tuple("DriverError")
+        f.debug_tuple("RuntimeError")
             .field(&self.0)
             .field(&err_str)
             .finish()
@@ -65,14 +65,14 @@ impl std::fmt::Debug for DriverError {
 }
 
 #[cfg(feature = "std")]
-impl std::fmt::Display for DriverError {
+impl std::fmt::Display for RuntimeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for DriverError {}
+impl std::error::Error for RuntimeError {}
 
 /// Initializes the CUDA driver API.
 /// **MUST BE CALLED BEFORE ANYTHING ELSE**
