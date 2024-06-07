@@ -1,4 +1,4 @@
-declare -a modules=("cublas" "cublaslt" "cudnn" "curand" "driver" "nccl" "nvrtc")
+declare -a modules=("cublas" "cublaslt" "cudart" "cudnn" "curand" "driver" "nccl" "nvrtc")
 for path in "${modules[@]}"
 do
     cd src/${path}/sys
