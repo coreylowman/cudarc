@@ -11,7 +11,7 @@
 //! to make naming easier. For example [sys::cuStreamCreate()]
 //! turns into [stream::create()], where [stream] is a module.
 
-use super::sys::{self, lib};
+use super::sys;
 use core::ffi::{c_uchar, c_uint, c_void, CStr};
 use std::mem::MaybeUninit;
 
@@ -20,12 +20,12 @@ use std::mem::MaybeUninit;
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct RuntimeError(pub sys::cudaError_t);
 
-impl sys::CUresult {
+impl sys::cudaError_t {
     #[inline]
-    pub fn result(self) -> Result<(), DriverError> {
+    pub fn result(self) -> Result<(), RuntimeError> {
         match self {
-            sys::CUresult::CUDA_SUCCESS => Ok(()),
-            _ => Err(DriverError(self)),
+            sys::cudaError_t::cudaSuccess => Ok(()),
+            _ => Err(RuntimeError(self)),
         }
     }
 }
@@ -74,12 +74,12 @@ impl std::fmt::Display for RuntimeError {
 #[cfg(feature = "std")]
 impl std::error::Error for RuntimeError {}
 
-/// Initializes the CUDA driver API.
+/// Initializes the CUDA Runtime API.
 /// **MUST BE CALLED BEFORE ANYTHING ELSE**
 ///
-/// See [cuInit() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__INITIALIZE.html#group__CUDA__INITIALIZE_1g0a2f1517e1bd8502c7194c3a8c134bc3)
-pub fn init() -> Result<(), DriverError> {
-    unsafe { lib().cuInit(0).result() }
+/// See [cudaFree(0) docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1g73c56d86fcf39b7499df72db9b70b70a)
+pub fn init() -> Result<(), RuntimeError> {
+    unsafe { sys::cudaFree(std::ptr::null_mut()).result() }
 }
 
 pub mod device {
@@ -87,84 +87,85 @@ pub mod device {
     //!
     //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE)
 
-    use super::{
-        sys::{self, lib},
-        DriverError,
-    };
+    use super::{sys, RuntimeError};
     use core::ffi::c_int;
     use std::mem::MaybeUninit;
 
     /// Get a device for a specific ordinal.
-    /// See [cuDeviceGet() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8bdd1cc7201304b01357b8034f6587cb).
-    pub fn get(ordinal: c_int) -> Result<sys::CUdevice, DriverError> {
-        let mut dev = MaybeUninit::uninit();
+    /// See [cudaGetDeviceProperties_v2() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1g073d3dcb31d45fc96c8ff52833a890d0)
+    pub fn get(ordinal: c_int) -> Result<sys::cudaDeviceProp, RuntimeError> {
+        let mut prop = MaybeUninit::uninit();
         unsafe {
-            lib().cuDeviceGet(dev.as_mut_ptr(), ordinal).result()?;
-            Ok(dev.assume_init())
+            sys::cudaGetDeviceProperties_v2(prop.as_mut_ptr(), ordinal).result()?;
+            Ok(prop.assume_init())
         }
     }
 
     /// Gets the number of available devices.
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g52b5ce05cb8c5fb6831b2c0ff2887c74)
-    pub fn get_count() -> Result<c_int, DriverError> {
+    /// See [cudaGetDeviceCount() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1g9ac74732f1585d3a1a99bb0d3ea7fc48)
+    pub fn get_count() -> Result<c_int, RuntimeError> {
         let mut count = MaybeUninit::uninit();
         unsafe {
-            lib().cuDeviceGetCount(count.as_mut_ptr()).result()?;
+            sys::cudaGetDeviceCount(count.as_mut_ptr()).result()?;
             Ok(count.assume_init())
+        }
+    }
+
+    /// Returns the amount of free and total memory in bytes on the device.
+    ///
+    /// See [cudaMemGetInfo() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1g0f1786e548dd2cd70152f8b8b95cc84a)
+    pub fn mem_info() -> Result<(usize, usize), RuntimeError> {
+        let mut free = MaybeUninit::uninit();
+        let mut total = MaybeUninit::uninit();
+        unsafe {
+            sys::cudaMemGetInfo(free.as_mut_ptr(), total.as_mut_ptr()).result()?;
+            Ok((free.assume_init(), total.assume_init()))
         }
     }
 
     /// Returns the total amount of memory in bytes on the device.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1gc6a0d6551335a3780f9f3c967a0fde5d)
+    /// See [cudaMemGetInfo docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1gc6a0d6551335a3780f9f3c967a0fde5d)
     ///
-    /// # Safety
-    /// Must be a device returned from [get].
-    pub unsafe fn total_mem(dev: sys::CUdevice) -> Result<usize, DriverError> {
+    pub fn total_mem() -> Result<usize, RuntimeError> {
         let mut bytes = MaybeUninit::uninit();
-        lib()
-            .cuDeviceTotalMem_v2(bytes.as_mut_ptr(), dev)
-            .result()?;
-        Ok(bytes.assume_init())
+        unsafe {
+            sys::cudaMemGetInfo(std::ptr::null_mut(), bytes.as_mut_ptr()).result()?;
+            Ok(bytes.assume_init())
+        }
     }
 
-    /// Get an attribute of a device.
+    /// Returns the amount of free memory in bytes on the device.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8c6e2c7b5c7c8b7e6f7f4c2b7f6d9c5d)
+    /// See [cudaMemGetInfo docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1gc6a0d6551335a3780f9f3c967a0fde5d)
     ///
-    /// # Safety
-    /// Must be a device returned from [get].
-    pub unsafe fn get_attribute(
-        dev: sys::CUdevice,
-        attrib: sys::CUdevice_attribute,
-    ) -> Result<i32, DriverError> {
-        let mut value = MaybeUninit::uninit();
-        lib()
-            .cuDeviceGetAttribute(value.as_mut_ptr(), attrib, dev)
-            .result()?;
-        Ok(value.assume_init())
+    pub fn free_mem() -> Result<usize, RuntimeError> {
+        let mut bytes = MaybeUninit::uninit();
+        unsafe {
+            sys::cudaMemGetInfo(bytes.as_mut_ptr(), std::ptr::null_mut()).result()?;
+            Ok(bytes.assume_init())
+        }
     }
+
+    // no get device attribute for cudart as its not needed
 }
 
-pub mod function {
-    use super::sys::{self, lib, CUfunction_attribute_enum};
 
-    /// Sets the specific attribute of a cuda function.
+pub mod function {
+    use super::{sys, RuntimeError};
+
+    /// Sets the specific attribute of a CUDA function.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html#group__CUDART__EXECUTION_1g317e77d2657abf915fd9ed03e75f3eb0)
+    /// See [cudaFuncSetAttribute() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html#group__CUDART__EXECUTION_1g84e85b84357f7268f1f23e211fcffbb7)
     ///
     /// # Safety
     /// Function must exist.
     pub unsafe fn set_function_attribute(
-        f: sys::CUfunction,
-        attribute: CUfunction_attribute_enum,
+        func: sys::cudaFunction_t,
+        attribute: sys::cudaFuncAttribute,
         value: i32,
-    ) -> Result<(), super::DriverError> {
-        unsafe {
-            lib().cuFuncSetAttribute(f, attribute, value).result()?;
-        }
-
-        Ok(())
+    ) -> Result<(), RuntimeError> {
+        sys::cudaFuncSetAttribute(func, attribute, value).result()
     }
 }
 
@@ -403,19 +404,16 @@ pub mod ctx {
 }
 
 pub mod stream {
-    //! Stream management functions (`cuStream*`).
+    //! Stream management functions (`cudaStream*`).
     //!
-    //! See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM).
+    //! See [CUDA Runtime API](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html).
 
-    use super::{
-        sys::{self, lib},
-        DriverError,
-    };
+    use super::{sys, RuntimeError};
     use std::mem::MaybeUninit;
 
     /// The kind of stream to initialize.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1ga581f0c5833e21ded8b5a56594e243f4)
+    /// See [cudaStreamCreateWithFlags() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html#group__CUDART__STREAM_1g180dc77f922e6cb192b72e43835b8070)
     pub enum StreamKind {
         /// From cuda docs:
         /// > Default stream creation flag.
@@ -430,72 +428,60 @@ pub mod stream {
     }
 
     impl StreamKind {
-        fn flags(self) -> sys::CUstream_flags {
+        fn flags(self) -> u32 {
             match self {
-                Self::Default => sys::CUstream_flags::CU_STREAM_DEFAULT,
-                Self::NonBlocking => sys::CUstream_flags::CU_STREAM_NON_BLOCKING,
+                Self::Default => sys::cudaStreamDefault,
+                Self::NonBlocking => sys::cudaStreamNonBlocking,
             }
         }
     }
 
-    /// The null stream, which is just a null pointer. **Recommend not using this.**
-    ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/stream-sync-behavior.html#stream-sync-behavior__default-stream)
-    pub fn null() -> sys::CUstream {
-        std::ptr::null_mut()
-    }
-
     /// Creates a stream with the specified kind.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1ga581f0c5833e21ded8b5a56594e243f4)
-    pub fn create(kind: StreamKind) -> Result<sys::CUstream, DriverError> {
+    /// See [cudaStreamCreateWithFlags() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html#group__CUDART__STREAM_1g180dc77f922e6cb192b72e43835b8070)
+    pub fn create(kind: StreamKind) -> Result<cudaStream_t, RuntimeError> {
         let mut stream = MaybeUninit::uninit();
         unsafe {
-            lib()
-                .cuStreamCreate(stream.as_mut_ptr(), kind.flags() as u32)
-                .result()?;
+            sys::cudaStreamCreateWithFlags(stream.as_mut_ptr(), kind.flags()).result()?;
             Ok(stream.assume_init())
         }
     }
 
     /// Wait until a stream's tasks are completed.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g15e49dd91ec15991eb7c0a741beb7dad)
+    /// See [cudaStreamSynchronize() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html#group__CUDART__STREAM_1g1817a344209a37f3d920c0f4a43fddab)
     ///
     /// # Safety
     ///
     /// This should only be called with stream created by [create] and not already
     /// destroyed. This follows default stream semantics, see relevant cuda docs.
-    pub unsafe fn synchronize(stream: sys::CUstream) -> Result<(), DriverError> {
-        lib().cuStreamSynchronize(stream).result()
+    pub unsafe fn synchronize(stream: cudaStream_t) -> Result<(), RuntimeError> {
+        sys::cudaStreamSynchronize(stream).result()
     }
 
     /// Destroys a stream.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g244c8833de4596bcd31a06cdf21ee758)
+    /// See [cudaStreamDestroy() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html#group__CUDART__STREAM_1g204f4b2c2706a37865d4a37c396a6709)
     ///
     /// # Safety
     ///
-    /// This should only be called with stream created by [create] and not already
-    /// destroyed. This follows default stream semantics, see relevant cuda docs.
-    pub unsafe fn destroy(stream: sys::CUstream) -> Result<(), DriverError> {
-        lib().cuStreamDestroy_v2(stream).result()
+    /// This should only be called with stream created by [create] and not already destroyed.
+    pub unsafe fn destroy(stream: cudaStream_t) -> Result<(), RuntimeError> {
+        sys::cudaStreamDestroy(stream).result()
     }
 
     /// Make a compute stream wait on an event.
     ///
-    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g6a898b652dfc6aa1d5c8d97062618b2f)
+    /// See [cudaStreamWaitEvent() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html#group__CUDART__STREAM_1g8b3b8b02c5a445ee827ea7ac4d5ec7ea)
     ///
     /// # Safety
     /// 1. Both stream and event must not have been freed already
     pub unsafe fn wait_event(
-        stream: sys::CUstream,
-        event: sys::CUevent,
-        flags: sys::CUevent_wait_flags,
-    ) -> Result<(), DriverError> {
-        lib()
-            .cuStreamWaitEvent(stream, event, flags as u32)
-            .result()
+        stream: cudaStream_t,
+        event: sys::cudaEvent_t,
+        flags: u32,
+    ) -> Result<(), RuntimeError> {
+        sys::cudaStreamWaitEvent(stream, event, flags).result()
     }
 }
 
