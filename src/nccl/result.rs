@@ -26,6 +26,11 @@ impl sys::ncclResult_t {
     pub fn result(self) -> Result<NcclStatus, NcclError> {
         match self {
             sys::ncclResult_t::ncclSuccess => Ok(NcclStatus::Success),
+            #[cfg(not(any(
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070"
+            )))]
             sys::ncclResult_t::ncclInProgress => Ok(NcclStatus::InProgress),
             sys::ncclResult_t::ncclNumResults => Ok(NcclStatus::NumResults),
             _ => Err(NcclError(self)),
@@ -36,6 +41,7 @@ impl sys::ncclResult_t {
 /// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?c.ncclCommFinalize)
 /// # Safety
 /// User is in charge of sending valid pointers.
+#[cfg(not(any(feature = "cuda-11050", feature = "cuda-11060", feature = "cuda-11070")))]
 pub unsafe fn comm_finalize(comm: sys::ncclComm_t) -> Result<NcclStatus, NcclError> {
     lib().ncclCommFinalize(comm).result()
 }
@@ -75,6 +81,7 @@ pub fn get_uniqueid() -> Result<sys::ncclUniqueId, NcclError> {
 /// See [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/comms.html?ncclcomminitrankconfig)
 /// # Safety
 /// User is in charge of sending valid pointers.
+#[cfg(not(any(feature = "cuda-11050", feature = "cuda-11060", feature = "cuda-11070")))]
 pub unsafe fn comm_init_rank_config(
     comm: *mut sys::ncclComm_t,
     nranks: ::core::ffi::c_int,
