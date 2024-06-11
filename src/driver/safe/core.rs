@@ -129,6 +129,11 @@ impl CudaDevice {
         self.ordinal
     }
 
+    /// Get the name of this device.
+    pub fn name(&self) -> Result<String, result::DriverError> {
+        result::device::get_name(self.cu_device)
+    }
+
     /// Get the underlying [sys::CUdevice] of this [CudaDevice].
     ///
     /// # Safety

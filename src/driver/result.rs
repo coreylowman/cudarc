@@ -95,8 +95,8 @@ pub mod device {
         sys::{self, lib},
         DriverError,
     };
-    use core::ffi::c_int;
-    use std::mem::MaybeUninit;
+    use core::ffi::{c_int, CStr};
+    use std::{ffi::CString, mem::MaybeUninit};
 
     /// Get a device for a specific ordinal.
     /// See [cuDeviceGet() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8bdd1cc7201304b01357b8034f6587cb).
@@ -147,6 +147,21 @@ pub mod device {
             .cuDeviceGetAttribute(value.as_mut_ptr(), attrib, dev)
             .result()?;
         Ok(value.assume_init())
+    }
+
+    /// Get name of the device.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1gef75aa30df95446a845f2a7b9fffbb7f)
+    pub fn get_name(dev: sys::CUdevice) -> Result<String, DriverError> {
+        const BUF_SIZE: usize = 128;
+        let mut buf = [0u8; BUF_SIZE];
+        unsafe {
+            lib()
+                .cuDeviceGetName(buf.as_mut_ptr() as _, BUF_SIZE as _, dev)
+                .result()?;
+        }
+        let name = CStr::from_bytes_until_nul(&buf).expect("No null byte was present");
+        Ok(String::from_utf8_lossy(name.to_bytes()).to_string())
     }
 }
 
