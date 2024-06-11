@@ -95,8 +95,10 @@ pub mod device {
         sys::{self, lib},
         DriverError,
     };
-    use core::ffi::{c_int, CStr};
-    use std::{ffi::CString, mem::MaybeUninit};
+    use std::{
+        ffi::{c_int, CStr},
+        mem::MaybeUninit,
+    };
 
     /// Get a device for a specific ordinal.
     /// See [cuDeviceGet() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html#group__CUDA__DEVICE_1g8bdd1cc7201304b01357b8034f6587cb).
