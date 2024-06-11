@@ -98,6 +98,7 @@ pub mod device {
     use std::{
         ffi::{c_int, CStr},
         mem::MaybeUninit,
+        string::String,
     };
 
     /// Get a device for a specific ordinal.
@@ -163,7 +164,7 @@ pub mod device {
                 .result()?;
         }
         let name = CStr::from_bytes_until_nul(&buf).expect("No null byte was present");
-        Ok(String::from_utf8_lossy(name.to_bytes()).to_string())
+        Ok(String::from_utf8_lossy(name.to_bytes()).into())
     }
 }
 
