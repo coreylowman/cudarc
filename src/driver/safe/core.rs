@@ -484,6 +484,9 @@ pub struct CudaStream {
     device: Arc<CudaDevice>,
 }
 
+unsafe impl Send for CudaStream {}
+unsafe impl Sync for CudaStream {}
+
 impl CudaDevice {
     /// Allocates a new stream that can execute kernels concurrently to the default stream.
     ///
@@ -906,6 +909,8 @@ impl<R: RangeBounds<usize>> RangeHelper for R {
 
 #[cfg(test)]
 mod tests {
+    use std::thread;
+
     use super::*;
 
     #[test]
@@ -929,5 +934,18 @@ mod tests {
         assert!(unsafe { slice.transmute::<f32>(26) }.is_none());
         assert!(unsafe { slice.transmute_mut::<f32>(25) }.is_some());
         assert!(unsafe { slice.transmute_mut::<f32>(26) }.is_none());
+    }
+
+    #[test]
+    fn test_send_dev() {
+        let dev = CudaDevice::new(0).unwrap();
+        thread::spawn(|| dev);
+    }
+
+    #[test]
+    fn test_send_stream() {
+        let dev = CudaDevice::new(0).unwrap();
+        let stream = dev.fork_default_stream().unwrap();
+        thread::spawn(|| stream);
     }
 }
