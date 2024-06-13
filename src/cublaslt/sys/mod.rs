@@ -58,8 +58,6 @@ pub unsafe fn lib() -> &'static Lib {
                 return lib;
             }
         }
-        panic!(
-            "Unable to find {lib_name} lib under the names {choices:?}. Please open GitHub issue."
-        );
+        crate::panic_no_lib_found(lib_name, &choices);
     })
 }
