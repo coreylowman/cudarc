@@ -10823,6 +10823,8 @@ pub struct Lib {
         ) -> cudaError_t,
         ::libloading::Error,
     >,
+    pub cudaProfilerStart: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaProfilerStop: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
 }
 impl Lib {
     pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
@@ -11374,6 +11376,8 @@ impl Lib {
         let cudaGetExportTable = __library.get(b"cudaGetExportTable\0").map(|sym| *sym);
         let cudaGetFuncBySymbol = __library.get(b"cudaGetFuncBySymbol\0").map(|sym| *sym);
         let cudaGetKernel = __library.get(b"cudaGetKernel\0").map(|sym| *sym);
+        let cudaProfilerStart = __library.get(b"cudaProfilerStart\0").map(|sym| *sym);
+        let cudaProfilerStop = __library.get(b"cudaProfilerStop\0").map(|sym| *sym);
         Ok(Lib {
             __library,
             cudaDeviceReset,
@@ -11679,6 +11683,8 @@ impl Lib {
             cudaGetExportTable,
             cudaGetFuncBySymbol,
             cudaGetKernel,
+            cudaProfilerStart,
+            cudaProfilerStop,
         })
     }
     pub unsafe fn cudaDeviceReset(&self) -> cudaError_t {
@@ -15134,5 +15140,17 @@ impl Lib {
             .cudaGetKernel
             .as_ref()
             .expect("Expected function, got error."))(kernelPtr, entryFuncAddr)
+    }
+    pub unsafe fn cudaProfilerStart(&self) -> cudaError_t {
+        (self
+            .cudaProfilerStart
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaProfilerStop(&self) -> cudaError_t {
+        (self
+            .cudaProfilerStop
+            .as_ref()
+            .expect("Expected function, got error."))()
     }
 }

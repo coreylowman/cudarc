@@ -9,15 +9,9 @@ use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
-    string::String,
 };
 
-#[cfg(feature = "no-std")]
-use spin::RwLock;
-#[cfg(not(feature = "no-std"))]
-use std::sync::RwLock;
-
-use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
+use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
 /// and [CudaFunction].
@@ -42,6 +36,8 @@ pub struct CudaDevice {
     pub(crate) event: sys::cudaEvent_t,
     pub(crate) ordinal: usize,
     pub(crate) is_async: bool,
+    /// In order to prevent the primary context created by the driver API from being destroyed
+    pub(crate) _driver_device: Option<Arc<crate::driver::CudaDevice>>,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -50,9 +46,9 @@ unsafe impl Sync for CudaDevice {}
 impl CudaDevice {
     /// Creates a new [CudaDevice] on device index `ordinal`.
     pub fn new(ordinal: usize) -> Result<Arc<Self>, result::RuntimeError> {
-        result::init()?;
+        result::device::set(ordinal as i32)?;
 
-        let device_prop = result::device::get(ordinal as i32)?;
+        let device_prop = result::device::get_device_prop(ordinal as i32)?;
 
         // can fail with OOM
         let event = result::event::create(sys::cudaEventDisableTiming)?;
@@ -72,15 +68,32 @@ impl CudaDevice {
             event,
             ordinal,
             is_async,
+            _driver_device: None,
         };
         Ok(Arc::new(device))
     }
 
+    /// Creates a [CudaDevice] from [crate::driver::CudaDevice].
+    pub fn from_driver(
+        device: &Arc<crate::driver::CudaDevice>,
+    ) -> Result<Arc<Self>, result::RuntimeError> {
+        device.bind_to_thread().unwrap();
+        result::device::set(device.ordinal() as i32)?;
+        Ok(Arc::new(CudaDevice {
+            device_prop: result::device::get_device_prop(device.ordinal() as i32)?,
+            stream: device.stream as sys::cudaStream_t,
+            event: device.event as sys::cudaEvent_t,
+            ordinal: device.ordinal(),
+            is_async: device.is_async,
+            _driver_device: Some(device.clone()),
+        }))
+    }
+
     /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
     pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::RuntimeError> {
-        result::init()?;
+        result::device::set(ordinal as i32)?;
 
-        let device_prop = result::device::get(ordinal as i32)?;
+        let device_prop = result::device::get_device_prop(ordinal as i32)?;
 
         // can fail with OOM
         let event = result::event::create(sys::cudaEventDisableTiming)?;
@@ -102,13 +115,13 @@ impl CudaDevice {
             event,
             ordinal,
             is_async,
+            _driver_device: None,
         };
 
         Ok(Arc::new(device))
     }
 
     pub fn count() -> Result<i32, result::RuntimeError> {
-        result::init().unwrap();
         result::device::get_count()
     }
 
@@ -150,17 +163,20 @@ impl CudaDevice {
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
-        // Synchronize and destroy the stream if it exists.
-        let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
-        if !stream.is_null() {
-            unsafe { result::stream::synchronize(stream) }.unwrap();
-            unsafe { result::stream::destroy(stream) }.unwrap();
-        }
+        // we will let the driver api handle the cleanup
+        if self._driver_device.is_none() {
+            // Synchronize and destroy the stream if it exists.
+            let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
+            if !stream.is_null() {
+                unsafe { result::stream::synchronize(stream) }.unwrap();
+                unsafe { result::stream::destroy(stream) }.unwrap();
+            }
 
-        // Destroy the event if it exists.
-        let event = std::mem::replace(&mut self.event, std::ptr::null_mut());
-        if !event.is_null() {
-            unsafe { result::event::destroy(event) }.unwrap();
+            // Destroy the event if it exists.
+            let event = std::mem::replace(&mut self.event, std::ptr::null_mut());
+            if !event.is_null() {
+                unsafe { result::event::destroy(event) }.unwrap();
+            }
         }
     }
 }
@@ -193,9 +209,10 @@ impl Drop for CudaDevice {
 /// by the [CudaFunction]**.
 #[derive(Debug)]
 pub struct CudaSlice<T> {
-    pub(crate) device_ptr: *mut c_void,
+    pub(crate) device_ptr: *mut T,
     pub(crate) len: usize,
     pub(crate) device: Arc<CudaDevice>,
+    pub(crate) _driver_device: Option<Arc<crate::driver::CudaDevice>>,
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
@@ -206,9 +223,9 @@ impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         unsafe {
             if self.device.is_async {
-                result::free_async(self.device_ptr, self.device.stream).unwrap();
+                result::free_async(self.device_ptr as *mut c_void, self.device.stream).unwrap();
             } else {
-                result::free_sync(self.device_ptr).unwrap();
+                result::free_sync(self.device_ptr as *mut c_void).unwrap();
             }
         }
     }
@@ -243,11 +260,12 @@ impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     }
 }
 
-/// Wrapper around [sys::CUfunction]. Used by [crate::runtime::LaunchAsync].
+/// Wrapper around [sys::cudaFunction_t]. Used by [crate::runtime::LaunchAsync].
 #[derive(Debug, Clone)]
 pub struct CudaFunction {
-    pub(crate) cuda_function: *const c_void,
+    pub(crate) cuda_function: sys::cudaFunction_t,
     pub(crate) device: Arc<CudaDevice>,
+    pub(crate) _driver_device: Option<Arc<crate::driver::CudaDevice>>,
 }
 
 pub enum CudaOccupancyFlagsEnum {
@@ -256,6 +274,17 @@ pub enum CudaOccupancyFlagsEnum {
 }
 
 impl CudaFunction {
+    pub fn new(device: &Arc<CudaDevice>, cuda_function: sys::cudaFunction_t) -> Self {
+        if let Some(driver_device) = &device._driver_device {
+            driver_device.bind_to_thread().unwrap();
+        }
+        CudaFunction {
+            cuda_function,
+            device: device.clone(),
+            _driver_device: device._driver_device.clone(),
+        }
+    }
+
     pub fn occupancy_available_dynamic_smem_per_block(
         &self,
         num_blocks: u32,
@@ -267,7 +296,7 @@ impl CudaFunction {
             lib()
                 .cudaOccupancyAvailableDynamicSMemPerBlock(
                     &mut dynamic_smem_size,
-                    self.cuda_function,
+                    self.cuda_function as *const c_void,
                     num_blocks as std::ffi::c_int,
                     block_size as std::ffi::c_int,
                 )
@@ -290,7 +319,7 @@ impl CudaFunction {
             lib()
                 .cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
                     &mut num_blocks,
-                    self.cuda_function,
+                    self.cuda_function as *const c_void,
                     block_size as std::ffi::c_int,
                     dynamic_smem_size,
                     flags as std::ffi::c_uint,
@@ -328,7 +357,11 @@ impl CudaFunction {
 
         unsafe {
             lib()
-                .cudaOccupancyMaxActiveClusters(&mut num_clusters, self.cuda_function, &cfg)
+                .cudaOccupancyMaxActiveClusters(
+                    &mut num_clusters,
+                    self.cuda_function as *const c_void,
+                    &cfg,
+                )
                 .result()?
         };
 
@@ -348,11 +381,11 @@ impl CudaFunction {
             flags.unwrap_or(crate::driver::sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
 
         unsafe {
-            lib()
+            crate::driver::sys::lib()
                 .cuOccupancyMaxPotentialBlockSizeWithFlags(
                     &mut min_grid_size,
                     &mut block_size,
-                    self.cuda_function,
+                    self.cuda_function as crate::driver::sys::CUfunction,
                     Some(block_size_to_dynamic_smem_size),
                     dynamic_smem_size,
                     block_size_limit as std::ffi::c_int,
@@ -372,22 +405,30 @@ impl CudaFunction {
     ) -> Result<u32, result::RuntimeError> {
         let mut cluster_size: std::ffi::c_int = 0;
 
-        let cfg = sys::CUlaunchConfig {
-            gridDimX: config.grid_dim.0,
-            gridDimY: config.grid_dim.1,
-            gridDimZ: config.grid_dim.2,
-            blockDimX: config.block_dim.0,
-            blockDimY: config.block_dim.1,
-            blockDimZ: config.block_dim.2,
-            sharedMemBytes: shared_mem_size as std::ffi::c_uint,
-            hStream: self.device.stream,
+        let cfg = sys::cudaLaunchConfig_st {
+            gridDim: sys::dim3 {
+                x: config.grid_dim.0,
+                y: config.grid_dim.1,
+                z: config.grid_dim.2,
+            },
+            blockDim: sys::dim3 {
+                x: config.block_dim.0,
+                y: config.block_dim.1,
+                z: config.block_dim.2,
+            },
+            dynamicSmemBytes: shared_mem_size as usize,
+            stream: self.device.stream,
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
         };
 
         unsafe {
             lib()
-                .cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cuda_function, &cfg)
+                .cudaOccupancyMaxPotentialClusterSize(
+                    &mut cluster_size,
+                    self.cuda_function as *const c_void,
+                    &cfg,
+                )
                 .result()?
         };
 
@@ -397,11 +438,15 @@ impl CudaFunction {
     /// Set the value of a specific attribute of this [CudaFunction].
     pub fn set_attribute(
         &self,
-        attribute: CUfunction_attribute_enum,
+        attribute: sys::cudaFuncAttribute,
         value: i32,
     ) -> Result<(), result::RuntimeError> {
         unsafe {
-            result::function::set_function_attribute(self.cuda_function, attribute, value)?;
+            result::function::set_function_attribute(
+                self.cuda_function as *const c_void,
+                attribute,
+                value,
+            )?;
         }
 
         Ok(())
@@ -532,7 +577,7 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice()].
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
-            ptr: self.device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            ptr: unsafe { self.device_ptr.add(start) },
             len: end - start,
             marker: PhantomData,
         })
@@ -547,7 +592,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
-            ptr: self.device_ptr,
+            ptr: self.device_ptr as *mut S,
             len,
             marker: PhantomData,
         })
@@ -577,7 +622,7 @@ impl<'a, T> CudaView<'a, T> {
     /// Fallible version of [CudaView::slice]
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            ptr: unsafe { self.ptr.add(start) },
             len: end - start,
             marker: PhantomData,
         })
@@ -643,7 +688,7 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
-            ptr: self.device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            ptr: unsafe { self.device_ptr.add(start) },
             len: end - start,
             marker: PhantomData,
         })
@@ -658,7 +703,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
-            ptr: self.device_ptr,
+            ptr: self.device_ptr as *mut S,
             len,
             marker: PhantomData,
         })
@@ -699,7 +744,7 @@ impl<T> CudaSlice<T> {
                 marker: PhantomData,
             },
             CudaViewMut {
-                ptr: self.device_ptr + (mid * std::mem::size_of::<T>()) as u64,
+                ptr: unsafe { self.device_ptr.add(mid) },
                 len: self.len - mid,
                 marker: PhantomData,
             },
@@ -744,7 +789,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Fallible version of [CudaViewMut::slice]
     pub fn try_slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            ptr: unsafe { self.ptr.add(start) },
             len: end - start,
             marker: PhantomData,
         })
@@ -763,7 +808,7 @@ impl<'a, T> CudaViewMut<'a, T> {
         range: impl RangeBounds<usize>,
     ) -> Option<CudaViewMut<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            ptr: unsafe { self.ptr.add(start) },
             len: end - start,
             marker: PhantomData,
         })
@@ -807,7 +852,7 @@ impl<'a, T> CudaViewMut<'a, T> {
                 marker: PhantomData,
             },
             CudaViewMut {
-                ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
+                ptr: unsafe { self.ptr.add(mid) },
                 len: self.len - mid,
                 marker: PhantomData,
             },

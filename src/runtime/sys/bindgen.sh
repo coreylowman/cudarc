@@ -19,3 +19,13 @@ bindgen \
 
 CUDART_VERSION=$(cat tmp.rs | grep "CUDART_VERSION" | awk '{ print $6 }' | sed 's/.$//')
 mv tmp.rs sys_${CUDART_VERSION}.rs
+
+if [[ "$OSTYPE" == "msys" ]]; then
+    # windows
+    nvcc -shared -Xcompiler -fPIC -o libtestkernel.dll testkernel.cu
+    mv libtestkernel.dll ../../../target/debug/
+else
+    # linux
+    nvcc -shared -Xcompiler -fPIC -o libtestkernel.so testkernel.cu
+    mv libtestkernel.so ../../../target/debug/
+fi

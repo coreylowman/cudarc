@@ -1,4 +1,6 @@
-use crate::runtime::{result, sys};
+use crate::runtime::result;
+
+use std::ffi::c_void;
 
 use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut};
 use super::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
@@ -43,64 +45,68 @@ unsafe impl DeviceRepr for half::bf16 {}
 unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaSlice<T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+        self.device_ptr() as *mut std::ffi::c_void
     }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &CudaSlice<T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+        self.device_ptr() as *mut std::ffi::c_void
     }
 }
 
 unsafe impl<'a, T: DeviceRepr> DeviceRepr for &CudaView<'a, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+        self.device_ptr() as *mut std::ffi::c_void
     }
 }
 
 unsafe impl<'a, T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'a, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+        self.device_ptr() as *mut std::ffi::c_void
     }
 }
 
 impl<T> CudaSlice<T> {
-    /// Takes ownership of the underlying [sys::CUdeviceptr]. **It is up
+    /// Takes ownership of the underlying device pointer. **It is up
     /// to the owner to free this value**.
     ///
     /// Drops the underlying host_buf if there is one.
-    pub fn leak(mut self) -> sys::CUdeviceptr {
+    pub fn leak(mut self) -> *mut T {
         if let Some(host_buf) = std::mem::take(&mut self.host_buf) {
             drop(host_buf);
         }
-        let ptr = self.cu_device_ptr;
+        let ptr = self.device_ptr;
         std::mem::forget(self);
         ptr
     }
 }
 
 impl CudaDevice {
-    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
+    /// Creates a [CudaSlice] from a raw device pointer. Useful in conjunction with
     /// [`CudaSlice::leak()`].
     ///
     /// # Safety
-    /// - `cu_device_ptr` must be a valid allocation
-    /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
+    /// - `device_ptr` must be a valid allocation
+    /// - `device_ptr` must have space for `len * std::mem::size_of<T>()` bytes
     /// - The memory may not be valid for type `T`, so some sort of memset operation
     ///   should be called on the memory.
     pub unsafe fn upgrade_device_ptr<T>(
         self: &Arc<Self>,
-        cu_device_ptr: sys::CUdeviceptr,
+        device_ptr: *mut T,
         len: usize,
     ) -> CudaSlice<T> {
+        if let Some(driver_device) = &self._driver_device {
+            driver_device.bind_to_thread().unwrap();
+        }
         CudaSlice {
-            cu_device_ptr,
+            device_ptr,
             len,
             device: self.clone(),
+            _driver_device: self._driver_device.clone(),
             host_buf: None,
         }
     }
@@ -109,18 +115,21 @@ impl CudaDevice {
 impl CudaDevice {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::RuntimeError> {
-        self.bind_to_thread()?;
-        let cu_device_ptr = unsafe {
+        if let Some(driver_device) = &self._driver_device {
+            driver_device.bind_to_thread().unwrap();
+        }
+        let device_ptr = unsafe {
             if self.is_async {
-                result::malloc_async(self.stream, 0)?
+                result::malloc_async(self.stream, 0)? as *mut T
             } else {
-                result::malloc_sync(0)?
+                result::malloc_sync(0)? as *mut T
             }
         };
         Ok(CudaSlice {
-            cu_device_ptr,
+            device_ptr,
             len: 0,
             device: self.clone(),
+            _driver_device: self._driver_device.clone(),
             host_buf: None,
         })
     }
@@ -133,16 +142,19 @@ impl CudaDevice {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::RuntimeError> {
-        self.bind_to_thread()?;
-        let cu_device_ptr = if self.is_async {
-            result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
+        if let Some(driver_device) = &self._driver_device {
+            driver_device.bind_to_thread().unwrap();
+        }
+        let device_ptr = if self.is_async {
+            result::malloc_async(self.stream, len * std::mem::size_of::<T>())? as *mut T
         } else {
-            result::malloc_sync(len * std::mem::size_of::<T>())?
+            result::malloc_sync(len * std::mem::size_of::<T>())? as *mut T
         };
         Ok(CudaSlice {
-            cu_device_ptr,
+            device_ptr,
             len,
             device: self.clone(),
+            _driver_device: self._driver_device.clone(),
             host_buf: None,
         })
     }
@@ -171,13 +183,19 @@ impl CudaDevice {
         self: &Arc<Self>,
         dst: &mut Dst,
     ) -> Result<(), result::RuntimeError> {
-        self.bind_to_thread()?;
         if self.is_async {
             unsafe {
-                result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream)
+                result::memset_d8_async(
+                    dst.device_ptr_mut() as *mut c_void,
+                    0,
+                    dst.num_bytes(),
+                    self.stream,
+                )
             }
         } else {
-            unsafe { result::memset_d8_sync(*dst.device_ptr_mut(), 0, dst.num_bytes()) }
+            unsafe {
+                result::memset_d8_sync(dst.device_ptr_mut() as *mut c_void, 0, dst.num_bytes())
+            }
         }
     }
 
@@ -188,7 +206,7 @@ impl CudaDevice {
     /// If the length of the two values are different
     ///
     /// # Safety
-    /// 1. We are guarunteed that `src` and `dst` are pointers to the same underlying
+    /// 1. We are guaranteed that `src` and `dst` are pointers to the same underlying
     ///     type `T`
     /// 2. Since they are both references, they can't have been freed
     /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
@@ -198,12 +216,11 @@ impl CudaDevice {
         dst: &mut Dst,
     ) -> Result<(), result::RuntimeError> {
         assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
         if self.is_async {
             unsafe {
                 result::memcpy_dtod_async(
-                    *dst.device_ptr_mut(),
-                    *src.device_ptr(),
+                    dst.device_ptr_mut() as *mut c_void,
+                    src.device_ptr() as *const c_void,
                     src.len() * std::mem::size_of::<T>(),
                     self.stream,
                 )
@@ -211,8 +228,8 @@ impl CudaDevice {
         } else {
             unsafe {
                 result::memcpy_dtod_sync(
-                    *dst.device_ptr_mut(),
-                    *src.device_ptr(),
+                    dst.device_ptr_mut() as *mut c_void,
+                    src.device_ptr() as *const c_void,
                     src.len() * std::mem::size_of::<T>(),
                 )
             }
@@ -223,7 +240,7 @@ impl CudaDevice {
     ///
     /// # Safety
     ///
-    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    /// 1. Since `src` is owned by this function, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn htod_copy<T: Unpin + DeviceRepr>(
@@ -239,7 +256,7 @@ impl CudaDevice {
     ///
     /// # Safety
     ///
-    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    /// 1. Since `src` is owned by this function, it is safe to copy data. Any actions executed
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn htod_copy_into<T: DeviceRepr + Unpin>(
@@ -249,18 +266,23 @@ impl CudaDevice {
     ) -> Result<(), result::RuntimeError> {
         assert_eq!(src.len(), dst.len());
         dst.host_buf = Some(Pin::new(src));
-        self.bind_to_thread()?;
         if self.is_async {
             unsafe {
                 result::memcpy_htod_async(
-                    dst.cu_device_ptr,
+                    dst.device_ptr as *mut c_void,
                     dst.host_buf.as_ref().unwrap(),
                     self.stream,
                 )
             }?
         } else {
-            unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
+            unsafe {
+                result::memcpy_htod_sync(
+                    dst.device_ptr as *mut c_void,
+                    dst.host_buf.as_ref().unwrap(),
+                )
+            }?
         }
+
         Ok(())
     }
 
@@ -298,11 +320,12 @@ impl CudaDevice {
         dst: &mut Dst,
     ) -> Result<(), result::RuntimeError> {
         assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
         if self.is_async {
-            unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
+            unsafe {
+                result::memcpy_htod_async(dst.device_ptr_mut() as *mut c_void, src, self.stream)
+            }?;
         } else {
-            unsafe { result::memcpy_htod_sync(*dst.device_ptr_mut(), src) }?;
+            unsafe { result::memcpy_htod_sync(dst.device_ptr_mut() as *mut c_void, src) }?;
         }
         self.synchronize()
     }
@@ -342,16 +365,17 @@ impl CudaDevice {
         dst: &mut [T],
     ) -> Result<(), result::RuntimeError> {
         assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
         if self.is_async {
-            unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
+            unsafe {
+                result::memcpy_dtoh_async(dst, src.device_ptr() as *mut c_void, self.stream)
+            }?;
         } else {
-            unsafe { result::memcpy_dtoh_sync(dst, *src.device_ptr()) }?;
+            unsafe { result::memcpy_dtoh_sync(dst, src.device_ptr() as *const c_void) }?;
         }
         self.synchronize()
     }
 
-    /// Synchronously de-allocates `src` and converts it into it's host value.
+    /// Synchronously de-allocates `src` and converts it into its host value.
     /// You can just [drop] the slice if you don't need the host data.
     ///
     /// # Safety
@@ -372,7 +396,6 @@ impl CudaDevice {
 
     /// Synchronizes the stream.
     pub fn synchronize(self: &Arc<Self>) -> Result<(), result::RuntimeError> {
-        self.bind_to_thread()?;
         unsafe { result::stream::synchronize(self.stream) }
     }
 }
@@ -412,7 +435,7 @@ macro_rules! impl_tuples {
     ($t:tt) => {
         impl_tuples!(@ $t);
     };
-    // the $l is in front of the reptition to prevent parsing ambiguities
+    // the $l is in front of the repetition to prevent parsing ambiguities
     ($l:tt $(,$t:tt)+) => {
         impl_tuples!($($t),+);
         impl_tuples!(@ $l $(,$t)+);
@@ -426,6 +449,8 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::runtime::result::mem_get_info;
+
     #[cfg(feature = "no-std")]
     use no_std_compat::vec;
 
@@ -497,17 +522,17 @@ mod tests {
     #[ignore = "must be executed by itself"]
     fn test_post_alloc_memory() {
         let device = CudaDevice::new(0).unwrap();
-        let (free1, total1) = result::mem_get_info().unwrap();
+        let (free1, total1) = mem_get_info().unwrap();
 
         let t = device.htod_copy([0.0f32; 5].to_vec()).unwrap();
-        let (free2, total2) = result::mem_get_info().unwrap();
+        let (free2, total2) = mem_get_info().unwrap();
         assert_eq!(total1, total2);
         assert!(free2 < free1);
 
         drop(t);
         device.synchronize().unwrap();
 
-        let (free3, total3) = result::mem_get_info().unwrap();
+        let (free3, total3) = mem_get_info().unwrap();
         assert_eq!(total2, total3);
         assert!(free3 > free2);
         assert_eq!(free3, free1);

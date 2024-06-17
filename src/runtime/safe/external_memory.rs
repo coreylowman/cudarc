@@ -4,7 +4,7 @@ use std::ops::Range;
 use std::sync::Arc;
 
 use super::{CudaDevice, DevicePtr, DeviceSlice};
-use crate::driver::{result, sys, DriverError};
+use crate::runtime::{result, sys, RuntimeError};
 
 impl CudaDevice {
     /// Import external memory from a [`File`].
@@ -16,9 +16,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         file: File,
         size: u64,
-    ) -> Result<ExternalMemory, DriverError> {
-        self.bind_to_thread()?;
-
+    ) -> Result<ExternalMemory, RuntimeError> {
         #[cfg(unix)]
         let external_memory = unsafe {
             use std::os::fd::AsRawFd;
@@ -44,7 +42,7 @@ impl CudaDevice {
 /// The imported external memory will be destroyed when this struct is dropped.
 #[derive(Debug)]
 pub struct ExternalMemory {
-    external_memory: sys::CUexternalMemory,
+    external_memory: sys::cudaExternalMemory_t,
     size: u64,
     device: Arc<CudaDevice>,
     _file: ManuallyDrop<File>,
@@ -52,14 +50,12 @@ pub struct ExternalMemory {
 
 impl Drop for ExternalMemory {
     fn drop(&mut self) {
-        self.device.bind_to_thread().unwrap();
-
         unsafe { result::external_memory::destroy_external_memory(self.external_memory) }.unwrap();
 
-        // From [CUDA docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735),
+        // From [CUDA docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735),
         // when successfully importing UNIX file descriptor:
         //
-        // > Ownership of the file descriptor is transferred to the CUDA driver when the handle is imported successfully.
+        // > Ownership of the file descriptor is transferred to the CUDA runtime when the handle is imported successfully.
         // > Performing any operations on the file descriptor after it is imported results in undefined behavior.
         //
         // On the other hand, on Windows:
@@ -77,7 +73,7 @@ impl Drop for ExternalMemory {
 
 impl ExternalMemory {
     /// Map the whole external memory to get mapped buffer.
-    pub fn map_all(self) -> Result<MappedBuffer, DriverError> {
+    pub fn map_all(self) -> Result<MappedBuffer, RuntimeError> {
         let size = self.size as usize;
         self.map_range(0..size)
     }
@@ -91,7 +87,7 @@ impl ExternalMemory {
     /// # Panics
     /// This function will panic if the range is invalid,
     /// such as when the start or end is larger than the size.
-    pub fn map_range(self, range: Range<usize>) -> Result<MappedBuffer, DriverError> {
+    pub fn map_range(self, range: Range<usize>) -> Result<MappedBuffer, RuntimeError> {
         assert!(range.start as u64 <= self.size);
         assert!(range.end as u64 <= self.size);
         let device_ptr = unsafe {
@@ -115,26 +111,25 @@ impl ExternalMemory {
 /// The underlying mapped buffer will be freed when this struct is dropped.
 #[derive(Debug)]
 pub struct MappedBuffer {
-    device_ptr: sys::CUdeviceptr,
+    device_ptr: *mut std::ffi::c_void,
     len: usize,
     external_memory: ExternalMemory,
 }
 
 impl Drop for MappedBuffer {
     fn drop(&mut self) {
-        self.external_memory.device.bind_to_thread().unwrap();
         unsafe { result::memory_free(self.device_ptr) }.unwrap()
     }
 }
 
-impl DeviceSlice<u8> for MappedBuffer {
+impl DeviceSlice<std::ffi::c_void> for MappedBuffer {
     fn len(&self) -> usize {
         self.len
     }
 }
 
-impl DevicePtr<u8> for MappedBuffer {
-    fn device_ptr(&self) -> &sys::CUdeviceptr {
-        &self.device_ptr
+impl DevicePtr<std::ffi::c_void> for MappedBuffer {
+    fn device_ptr(&self) -> *const std::ffi::c_void {
+        self.device_ptr
     }
 }

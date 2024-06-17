@@ -1,4 +1,4 @@
-use crate::driver::{result, sys::lib};
+use crate::runtime::{result, sys::lib};
 
 /// Calls [profiler_start()] in [Profiler::new()], and [profiler_stop()] in [Drop].
 #[derive(Default)]
@@ -8,10 +8,10 @@ impl Profiler {
     /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then Profiler::new() has no effect.
     /// More info in [Cuda docs](https://docs.nvidia.com/cuda/profiler-users-guide/)
     /// ```no_run
-    /// use cudarc::driver::{Profiler};
-    /// # use cudarc::driver::result;
+    /// use cudarc::runtime::{Profiler};
+    /// # use cudarc::runtime::result;
     ///
-    /// # fn run() -> Result<(), result::DriverError>{
+    /// # fn run() -> Result<(), result::RuntimeError>{
     /// {
     /// let profiler = Profiler::new()?;
     /// // Hotpath
@@ -24,7 +24,7 @@ impl Profiler {
     /// // And this will profile only the hotpath.
     /// ```
     ///
-    pub fn new() -> Result<Self, result::DriverError> {
+    pub fn new() -> Result<Self, result::RuntimeError> {
         profiler_start()?;
         Ok(Self {})
     }
@@ -41,10 +41,10 @@ impl Drop for Profiler {
 /// More info in [Cuda docs](https://docs.nvidia.com/cuda/profiler-users-guide/)
 /// For RAII version see [`Profiler::new`].
 /// ```no_run
-/// use cudarc::driver::{profiler_start, profiler_stop};
-/// # use cudarc::driver::result;
+/// use cudarc::runtime::{profiler_start, profiler_stop};
+/// # use cudarc::runtime::result;
 ///
-/// # fn run() -> Result<(), result::DriverError>{
+/// # fn run() -> Result<(), result::RuntimeError>{
 /// profiler_start()?;
 /// // Hotpath
 /// profiler_stop()?;
@@ -55,11 +55,11 @@ impl Drop for Profiler {
 /// // And this will profile only the hotpath.
 /// ```
 ///
-pub fn profiler_start() -> Result<(), result::DriverError> {
-    unsafe { lib().cuProfilerStart() }.result()
+pub fn profiler_start() -> Result<(), result::RuntimeError> {
+    unsafe { lib().cudaProfilerStart() }.result()
 }
 
 /// Disables profile collection by the active profiling tool for the current context. If profiling is already disabled, then profiler_stop() has no effect.
-pub fn profiler_stop() -> Result<(), result::DriverError> {
-    unsafe { lib().cuProfilerStop() }.result()
+pub fn profiler_stop() -> Result<(), result::RuntimeError> {
+    unsafe { lib().cudaProfilerStop() }.result()
 }
