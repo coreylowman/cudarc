@@ -300,7 +300,7 @@ mod tests {
     use libloading::Symbol;
 
     use super::*;
-    use crate::runtime::{sys, CudaDevice};
+    use crate::runtime::{sys, CudaDevice, RuntimeError};
 
     pub unsafe fn test_lib() -> &'static ::libloading::Library {
         static TEST_LIB: std::sync::OnceLock<::libloading::Library> = std::sync::OnceLock::new();
