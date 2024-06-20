@@ -203,7 +203,6 @@ pub mod device {
 pub mod function {
     use super::{lib, sys, RuntimeError};
     use core::ffi::c_void;
-    use std::mem::MaybeUninit;
 
     /// Sets the specific attribute of a CUDA function.
     ///
@@ -217,18 +216,6 @@ pub mod function {
         value: i32,
     ) -> Result<(), RuntimeError> {
         lib().cudaFuncSetAttribute(func, attribute, value).result()
-    }
-
-    pub fn get_function_by_symbol(
-        symbol_ptr: *const c_void,
-    ) -> Result<sys::cudaFunction_t, RuntimeError> {
-        let mut func_ptr = MaybeUninit::uninit();
-        unsafe {
-            lib()
-                .cudaGetFuncBySymbol(func_ptr.as_mut_ptr(), symbol_ptr)
-                .result()?;
-            Ok(func_ptr.assume_init())
-        }
     }
 }
 
