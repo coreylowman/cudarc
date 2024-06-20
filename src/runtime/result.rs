@@ -798,7 +798,7 @@ pub mod event {
 /// 5. The kernel params must be valid.
 #[inline]
 pub unsafe fn launch_kernel(
-    f: *const c_void,
+    f: sys::cudaFunction_t,
     grid_dim: (u32, u32, u32),
     block_dim: (u32, u32, u32),
     shared_mem_bytes: usize,
@@ -807,7 +807,7 @@ pub unsafe fn launch_kernel(
 ) -> Result<(), RuntimeError> {
     lib()
         .cudaLaunchKernel(
-            f,
+            f as *const c_void,
             sys::dim3 {
                 x: grid_dim.0,
                 y: grid_dim.1,

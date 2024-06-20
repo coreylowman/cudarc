@@ -33,7 +33,7 @@ impl CudaDevice {
                 .get(module_name)
                 .and_then(|m| m.get_func(func_name))
                 .map(|cu_function| CudaFunction {
-                    cuda_function: cu_function as *const std::ffi::c_void,
+                    cuda_function: cu_function as sys::cudaFunction_t,
                     device: self.clone(),
                     _driver_device: Some(driver_device).cloned(),
                 });
@@ -66,29 +66,14 @@ impl CudaFunction {
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
     ) -> Result<(), result::RuntimeError> {
-        if self._driver_device.is_some() {
-            if let Err(e) = crate::driver::result::launch_kernel(
-                self.cuda_function as crate::driver::sys::CUfunction,
-                cfg.grid_dim,
-                cfg.block_dim,
-                cfg.shared_mem_bytes as u32,
-                stream.stream as crate::driver::sys::CUstream,
-                params,
-            ) {
-                Err(RuntimeError::from(e.0))
-            } else {
-                Ok(())
-            }
-        } else {
-            result::launch_kernel(
-                self.cuda_function,
-                cfg.grid_dim,
-                cfg.block_dim,
-                cfg.shared_mem_bytes,
-                stream.stream,
-                params,
-            )
-        }
+        result::launch_kernel(
+            self.cuda_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            stream.stream,
+            params,
+        )
     }
 }
 
