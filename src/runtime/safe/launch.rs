@@ -2,7 +2,7 @@ use crate::runtime::{result, sys};
 
 use super::alloc::DeviceRepr;
 use super::core::{CudaFunction, CudaStream};
-use super::{CudaDevice, RuntimeError};
+use super::CudaDevice;
 
 use std::sync::Arc;
 use std::vec::Vec;
