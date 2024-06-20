@@ -1,4 +1,4 @@
-use crate::runtime::result;
+use crate::runtime::{result, sys};
 
 use super::alloc::DeviceRepr;
 use super::core::{CudaFunction, CudaStream};
