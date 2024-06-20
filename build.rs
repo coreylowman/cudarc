@@ -22,9 +22,13 @@ fn main() {
         (11, 8)
     } else if cfg!(feature = "cuda-11070") {
         (11, 7)
+    } else if cfg!(feature = "cuda-11060") {
+        (11, 6)
+    } else if cfg!(feature = "cuda-11050") {
+        (11, 5)
     } else {
         #[cfg(not(feature = "cuda-version-from-build-system"))]
-        panic!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070]");
+        panic!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070, cuda-11060, cuda-11050]");
 
         #[cfg(feature = "cuda-version-from-build-system")]
         {
@@ -70,6 +74,8 @@ fn cuda_version_from_build_system() -> (usize, usize) {
         "12.0" => (12, 0),
         "11.8" => (11, 8),
         "11.7" => (11, 7),
+        "11.6" => (11, 6),
+        "11.5" => (11, 5),
         v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
     }
 }

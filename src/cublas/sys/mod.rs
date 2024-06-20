@@ -1,3 +1,13 @@
+#[cfg(feature = "cuda-11050")]
+mod sys_11050;
+#[cfg(feature = "cuda-11050")]
+pub use sys_11050::*;
+
+#[cfg(feature = "cuda-11060")]
+mod sys_11060;
+#[cfg(feature = "cuda-11060")]
+pub use sys_11060::*;
+
 #[cfg(feature = "cuda-11070")]
 mod sys_11070;
 #[cfg(feature = "cuda-11070")]
@@ -48,8 +58,6 @@ pub unsafe fn lib() -> &'static Lib {
                 return lib;
             }
         }
-        panic!(
-            "Unable to find {lib_name} lib under the names {choices:?}. Please open GitHub issue."
-        );
+        crate::panic_no_lib_found(lib_name, &choices);
     })
 }

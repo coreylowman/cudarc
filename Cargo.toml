@@ -1,6 +1,6 @@
 [package]
 name = "cudarc"
-version = "0.11.4"
+version = "0.11.6"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
@@ -27,6 +27,8 @@ features = ["cuda-12050", "f16", "cudnn"]
 default = ["std", "cublas", "cublaslt", "cudnn", "curand", "driver", "runtime", "nccl", "nvrtc"]
 
 cuda-version-from-build-system = []
+cuda-11050 = []
+cuda-11060 = []
 cuda-11070 = []
 cuda-11080 = []
 cuda-12000 = []

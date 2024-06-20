@@ -129,6 +129,11 @@ impl CudaDevice {
         self.ordinal
     }
 
+    /// Get the name of this device.
+    pub fn name(&self) -> Result<String, result::DriverError> {
+        result::device::get_name(self.cu_device)
+    }
+
     /// Get the underlying [sys::CUdevice] of this [CudaDevice].
     ///
     /// # Safety
@@ -347,7 +352,7 @@ impl CudaFunction {
         Ok(num_blocks as u32)
     }
 
-    #[cfg(not(feature = "cuda-11070"))]
+    #[cfg(not(any(feature = "cuda-11070", feature = "cuda-11060", feature = "cuda-11050")))]
     pub fn occupancy_max_active_clusters(
         &self,
         config: crate::driver::LaunchConfig,
@@ -405,7 +410,7 @@ impl CudaFunction {
         Ok((min_grid_size as u32, block_size as u32))
     }
 
-    #[cfg(not(feature = "cuda-11070"))]
+    #[cfg(not(any(feature = "cuda-11070", feature = "cuda-11060", feature = "cuda-11050")))]
     pub fn occupancy_max_potential_cluster_size(
         &self,
         config: crate::driver::LaunchConfig,
