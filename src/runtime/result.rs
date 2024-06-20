@@ -11,8 +11,8 @@
 //! to make naming easier. For example [sys::cudaStreamCreate()]
 //! turns into [stream::create()], where [stream] is a module.
 
-use crate::driver::sys::cudaError_enum;
 use super::sys::{self, lib};
+use crate::driver::sys::cudaError_enum;
 use core::ffi::{c_uchar, c_void, CStr};
 use std::mem::MaybeUninit;
 
@@ -35,11 +35,14 @@ impl From<cudaError_enum> for RuntimeError {
     fn from(e: cudaError_enum) -> Self {
         match e {
             cudaError_enum::CUDA_SUCCESS => Self(sys::cudaError_t::cudaSuccess),
-            cudaError_enum::CUDA_ERROR_INVALID_VALUE => Self(sys::cudaError_t::cudaErrorInvalidValue),
-            cudaError_enum::CUDA_ERROR_OUT_OF_MEMORY => Self(sys::cudaError_t::cudaErrorMemoryAllocation),
+            cudaError_enum::CUDA_ERROR_INVALID_VALUE => {
+                Self(sys::cudaError_t::cudaErrorInvalidValue)
+            }
+            cudaError_enum::CUDA_ERROR_OUT_OF_MEMORY => {
+                Self(sys::cudaError_t::cudaErrorMemoryAllocation)
+            }
             _ => Self(sys::cudaError_t::cudaErrorUnknown),
         }
-
     }
 }
 
@@ -200,6 +203,7 @@ pub mod device {
 pub mod function {
     use super::{lib, sys, RuntimeError};
     use core::ffi::c_void;
+    use std::mem::MaybeUninit;
 
     /// Sets the specific attribute of a CUDA function.
     ///
@@ -213,6 +217,18 @@ pub mod function {
         value: i32,
     ) -> Result<(), RuntimeError> {
         lib().cudaFuncSetAttribute(func, attribute, value).result()
+    }
+
+    pub fn get_function_by_symbol(
+        symbol_ptr: *const c_void,
+    ) -> Result<sys::cudaFunction_t, RuntimeError> {
+        let mut func_ptr = MaybeUninit::uninit();
+        unsafe {
+            lib()
+                .cudaGetFuncBySymbol(func_ptr.as_mut_ptr(), symbol_ptr)
+                .result()?;
+            Ok(func_ptr.assume_init())
+        }
     }
 }
 
