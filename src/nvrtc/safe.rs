@@ -17,7 +17,7 @@ pub struct Ptx(pub(crate) PtxKind);
 
 impl Ptx {
     /// Creates a Ptx from a pre-compiled .ptx file.
-    pub fn from_file<P: Into<PathBuf>>(path: P) -> Self {
+    pub fn from_file<P: Into<PathBuf>>(path: P) -> Self {231
         Self(PtxKind::File(path.into()))
     }
 
@@ -228,7 +228,7 @@ impl CompileOptions {
         for path in self.include_paths {
             options.push(std::format!("--include-path={path}"));
         }
-        
+
         if let Some(arch) = self.arch {
             options.push(std::format!("--gpu-architecture={arch}"))
         }
