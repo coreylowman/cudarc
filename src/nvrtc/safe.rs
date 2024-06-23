@@ -190,7 +190,7 @@ pub struct CompileOptions {
     pub prec_sqrt: Option<bool>,
     pub prec_div: Option<bool>,
     pub fmad: Option<bool>,
-    pub device_as_default_execution_space: Option<bool>,
+    pub options: Vec<String>,
     pub use_fast_math: Option<bool>,
     pub maxrregcount: Option<usize>,
     pub include_paths: Vec<String>,
@@ -228,13 +228,13 @@ impl CompileOptions {
         for path in self.include_paths {
             options.push(std::format!("--include-path={path}"));
         }
-
+        
         if let Some(arch) = self.arch {
             options.push(std::format!("--gpu-architecture={arch}"))
         }
 
-        if let Some(true) = self.device_as_default_execution_space {
-            options.push("--device-as-default-execution-space".into());
+        for path in self.options {
+            options.push(option);
         }
 
         options
