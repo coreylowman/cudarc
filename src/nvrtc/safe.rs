@@ -17,7 +17,7 @@ pub struct Ptx(pub(crate) PtxKind);
 
 impl Ptx {
     /// Creates a Ptx from a pre-compiled .ptx file.
-    pub fn from_file<P: Into<PathBuf>>(path: P) -> Self {231
+    pub fn from_file<P: Into<PathBuf>>(path: P) -> Self {
         Self(PtxKind::File(path.into()))
     }
 
@@ -233,7 +233,7 @@ impl CompileOptions {
             options.push(std::format!("--gpu-architecture={arch}"))
         }
 
-        for path in self.options {
+        for option in self.options {
             options.push(option);
         }
 
