@@ -458,7 +458,7 @@ unsafe impl Send for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
 /// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
-/// upon the completion of this streams work.
+/// upon the completion of this stream's work.
 ///
 /// Create with [CudaDevice::fork_default_stream].
 ///
@@ -466,8 +466,8 @@ unsafe impl Sync for CudaFunction {}
 /// ```ignore
 /// let stream = dev.fork_default_stream()?; // 0
 /// dev.launch(...)?; // 1
-/// dev.launch_on_stream(&stream, ...)?; // 2
-/// dev.launch(...)?; // 3
+/// function_1.launch_on_stream(&stream, ...)?; // 2
+/// function_2.launch(...)?; // 3
 /// drop(stream); // 4
 /// dev.launch(...) // 5
 /// ```
@@ -476,8 +476,62 @@ unsafe impl Sync for CudaFunction {}
 /// - 1 will launch on the default work stream
 /// - 2 will launch concurrently to 1 on `&stream`,
 /// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
-/// - 4 will place a streamWaitEvent(`&stream`) on default work stream
+/// - 4 will place a streamWaitEvent(`&stream`) on the default work stream
 /// - 5 will happen on the default stream **after the default stream waits for 2**
+///
+/// **This is asynchronous with respect to the host.**
+///
+/// # Example with wait_for_default and wait_for
+///
+/// There is also a way to synchronize work on non-default streams without dropping them.
+/// It can be interesting to reuse the [CudaStream] streams during the whole
+/// duration of the computation.
+/// To that end, one can use [CudaStream::wait_for_default] and [CudaDevice::wait_for].
+///
+/// Let's suppose that there are 4 streams: stream_1, stream_2, stream_3, stream_4.
+/// There is no work queued on the default stream. All the work is queued on non-default streams.
+/// And let's suppose that the stream dependencies are as follows:
+/// - stream_1 dependencies: []
+/// - stream_2 dependencies: []
+/// - stream_3 dependencies: [stream_1, stream_2]
+/// - stream_4 dependencies: [stream_3]
+///
+/// Pseudo-code:
+/// ```ignore
+/// let stream_1 = dev.fork_default_stream()?; // 0
+/// let stream_2 = dev.fork_default_stream()?; // 1
+/// let stream_3 = dev.fork_default_stream()?; // 2
+/// let stream_4 = dev.fork_default_stream()?; // 3
+///
+/// function_1.launch_on_stream(&stream_1, ...)?; // 4
+/// function_2.launch_on_stream(&stream_2, ...)?; // 5
+/// dev.wait_for(&stream_1); // 6
+/// dev.wait_for(&stream_2); // 7
+///
+/// stream_3.wait_for_default(); // 8
+/// function_3.launch_on_stream(&stream_3, ...)?; // 10
+/// dev.wait_for(&stream_3); // 11
+///
+/// stream_4.wait_for_default(); // 12
+/// function_4.launch_on_stream(&stream_4, ...)?; // 13
+/// dev.wait_for(&stream_4); // 14
+/// ```
+///
+/// - function_1 and function_2 will be executed concurrently.
+/// - function_3 will be executed once function_1 and function_2 have completed their execution.
+/// - function_4 will be executed once function_3 has completed its execution.
+///
+/// This is handy because it can be use to do out-of-order execution of kernels using dependency
+/// analysis. For example, with multi-head attention with 12 heads, each head can be executed
+/// in its own stream.
+///
+/// **This is asynchronous with respect to the host.**
+///
+/// See [CUDA C/C++ Streams and Concurrency](https://developer.download.nvidia.com/CUDA/training/StreamsAndConcurrencyWebinar.pdf)
+/// See [3. Stream synchronization behavior](https://docs.nvidia.com/cuda/cuda-runtime-api/stream-sync-behavior.html)
+/// See [6.6. Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html)
+/// See [Out-of-order execution](https://en.wikipedia.org/wiki/Out-of-order_execution)
+/// See [Dependence analysis](https://en.wikipedia.org/wiki/Dependence_analysis)
 #[derive(Debug)]
 pub struct CudaStream {
     pub stream: sys::CUstream,
@@ -502,7 +556,7 @@ impl CudaDevice {
         Ok(stream)
     }
 
-    /// Forces [CudaStream] to drop, causing the default work stream to block on `streams` completion.
+    /// Forces [CudaStream] to drop, causing the default work stream to block on `stream`'s completion.
     /// **This is asynchronous with respect to the host.**
     #[allow(unused_variables)]
     pub fn wait_for(self: &Arc<Self>, stream: &CudaStream) -> Result<(), result::DriverError> {
@@ -519,7 +573,7 @@ impl CudaDevice {
 }
 
 impl CudaStream {
-    /// Record's the current default streams workload, and then causes `self`
+    /// Records the current default stream's workload, and then causes `self`
     /// to wait for the default stream to finish that recorded workload.
     pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
         self.device.bind_to_thread()?;
