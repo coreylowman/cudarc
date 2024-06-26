@@ -24,8 +24,14 @@ impl sys::CUresult {
     #[inline]
     pub fn result(self) -> Result<(), DriverError> {
         match self {
-            sys::CUresult::CUDA_SUCCESS => Ok(()),
-            _ => Err(DriverError(self)),
+            sys::CUresult::CUDA_SUCCESS => {
+                println!("CUDA operation succeeded.");
+                Ok(())
+            }
+            _ => {
+                println!("CUDA operation failed with error: {:?}", self);
+                Err(DriverError(self))
+            }
         }
     }
 }
