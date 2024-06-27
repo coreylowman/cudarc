@@ -78,6 +78,7 @@ fn cuda_version_from_build_system() -> (usize, usize) {
         "11.7" => (11, 7),
         "11.6" => (11, 6),
         "11.5" => (11, 5),
+        "11.4" => (11, 4),
         v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
     }
 }
