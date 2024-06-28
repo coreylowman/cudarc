@@ -64,7 +64,7 @@ impl std::fmt::Debug for DriverError {
             Ok(err_str) => f
                 .debug_tuple("DriverError")
                 .field(&self.0)
-                .field(err_str)
+                .field(&err_str)
                 .finish(),
             Err(_) => f
                 .debug_tuple("DriverError")
