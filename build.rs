@@ -94,7 +94,7 @@ fn dynamic_linking(major: usize, minor: usize) {
             )
         });
 
-    for path in lib_candidates(&toolkit_root, major, minor) {
+    for path in lib_candidates(toolkit_root, major, minor) {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
 
@@ -113,7 +113,7 @@ fn dynamic_linking(major: usize, minor: usize) {
                 )
             });
 
-        for path in lib_candidates(&cudnn_root, major, minor) {
+        for path in lib_candidates(cudnn_root, major, minor) {
             println!("cargo:rustc-link-search=native={}", path.display());
         }
     }
