@@ -352,7 +352,12 @@ impl CudaFunction {
         Ok(num_blocks as u32)
     }
 
-    #[cfg(not(any(feature = "cuda-11070", feature = "cuda-11060", feature = "cuda-11050", feature = "cuda-11040")))]
+    #[cfg(not(any(
+        feature = "cuda-11070",
+        feature = "cuda-11060",
+        feature = "cuda-11050",
+        feature = "cuda-11040"
+    )))]
     pub fn occupancy_max_active_clusters(
         &self,
         config: crate::driver::LaunchConfig,
@@ -410,7 +415,12 @@ impl CudaFunction {
         Ok((min_grid_size as u32, block_size as u32))
     }
 
-    #[cfg(not(any(feature = "cuda-11070", feature = "cuda-11060", feature = "cuda-11050", feature = "cuda-11040")))]
+    #[cfg(not(any(
+        feature = "cuda-11070",
+        feature = "cuda-11060",
+        feature = "cuda-11050",
+        feature = "cuda-11040"
+    )))]
     pub fn occupancy_max_potential_cluster_size(
         &self,
         config: crate::driver::LaunchConfig,
