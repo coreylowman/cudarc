@@ -50,6 +50,7 @@ pub struct ExternalMemory {
 
 impl Drop for ExternalMemory {
     fn drop(&mut self) {
+
         unsafe { result::external_memory::destroy_external_memory(self.external_memory) }.unwrap();
 
         // From [CUDA docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735),
@@ -122,13 +123,13 @@ impl Drop for MappedBuffer {
     }
 }
 
-impl DeviceSlice<std::ffi::c_void> for MappedBuffer {
+impl DeviceSlice<*mut std::ffi::c_void> for MappedBuffer {
     fn len(&self) -> usize {
         self.len
     }
 }
 
-impl DevicePtr<std::ffi::c_void> for MappedBuffer {
+impl DevicePtr<*mut std::ffi::c_void> for MappedBuffer {
     fn device_ptr(&self) -> *const std::ffi::c_void {
         self.device_ptr
     }
