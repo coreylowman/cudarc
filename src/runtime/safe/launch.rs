@@ -42,7 +42,6 @@ impl CudaFunction {
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
     ) -> Result<(), RuntimeError> {
-        self.device.bind_to_thread()?;
         let cuda_result = result::launch_kernel(
             self.cu_function,
             cfg.grid_dim,
@@ -64,7 +63,6 @@ impl CudaFunction {
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
     ) -> Result<(), RuntimeError> {
-        self.device.bind_to_thread()?;
         let cuda_result = result::launch_kernel(
             self.cu_function,
             cfg.grid_dim,
