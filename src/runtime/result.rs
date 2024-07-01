@@ -871,20 +871,23 @@ pub unsafe fn launch_kernel(
     shared_mem_bytes: usize,
     stream: sys::cudaStream_t,
     kernel_params: &mut [*mut c_void],
-) -> Result<(), DriverError> {
-    crate::driver::sys::lib()
-        .cuLaunchKernel(
-            f,
-            grid_dim.0,
-            grid_dim.1,
-            grid_dim.2,
-            block_dim.0,
-            block_dim.1,
-            block_dim.2,
-            shared_mem_bytes as u32,
-            stream as crate::driver::sys::CUstream,
+) -> Result<(), RuntimeError> {
+    lib()
+        .cudaLaunchKernel(
+            f as *const c_void,
+            sys::dim3 {
+                x: grid_dim.0,
+                y: grid_dim.1,
+                z: grid_dim.2,
+            },
+            sys::dim3 {
+                x: block_dim.0,
+                y: block_dim.1,
+                z: block_dim.2,
+            },
             kernel_params.as_mut_ptr(),
-            std::ptr::null_mut(),
+            shared_mem_bytes,
+            stream,
         )
         .result()
 }
