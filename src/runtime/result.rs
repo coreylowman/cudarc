@@ -88,6 +88,19 @@ impl std::fmt::Display for RuntimeError {
 #[cfg(feature = "std")]
 impl std::error::Error for RuntimeError {}
 
+/// CUDA device flags.
+///
+/// See [cudaSetDeviceFlags() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1g69e73c7dda3fc05306ae7c811a690fac)
+pub enum CudaDeviceFlags {
+    CudaDeviceScheduleAuto = sys::cudaDeviceScheduleAuto as isize,
+    CudaDeviceScheduleSpin = sys::cudaDeviceScheduleSpin as isize,
+    CudaDeviceScheduleYield = sys::cudaDeviceScheduleYield as isize,
+    CudaDeviceScheduleBlockingSync = sys::cudaDeviceScheduleBlockingSync as isize,
+    CudaDeviceMapHost = sys::cudaDeviceMapHost as isize,
+    CudaDeviceLmemResizeToMax = sys::cudaDeviceLmemResizeToMax as isize,
+    CudaDeviceSyncMemops = sys::cudaDeviceSyncMemops as isize,
+}
+
 pub mod device {
     //! Device management functions (`cudaGetDevice*`).
     //!
@@ -97,6 +110,25 @@ pub mod device {
     use core::ffi::c_int;
     use std::mem::MaybeUninit;
 
+    /// Initialize the CUDA driver API.
+    ///
+    /// See [cudaDeviceInit() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1gac04a5d82168676b20121ca870919419)
+    pub fn init(
+        device: i32,
+        device_flags: super::CudaDeviceFlags,
+        flags: u32,
+    ) -> Result<(), RuntimeError> {
+        if flags == 0 || flags == sys::cudaInitDeviceFlagsAreValid {
+            unsafe {
+                lib()
+                    .cudaInitDevice(device, device_flags as u32, flags)
+                    .result()
+            }
+        } else {
+            Err(RuntimeError(sys::cudaError_t::cudaErrorInvalidValue))
+        }
+    }
+
     /// Sets the current device for the calling host thread.
     /// If not already done so, it will initialize the structures and context for the device.
     ///
@@ -105,7 +137,7 @@ pub mod device {
     /// # Safety
     /// 1. Must be a valid ordinal between 0 to (cudaGetDeviceCount() - 1).
     pub fn set(ordinal: i32) -> Result<(), RuntimeError> {
-        unsafe { lib().cudaSetDevice(ordinal as i32).result() }
+        unsafe { lib().cudaSetDevice(ordinal).result() }
     }
 
     /// Get the device for the calling host thread.
@@ -198,11 +230,21 @@ pub mod device {
             Ok(value.assume_init())
         }
     }
+
+    /// Reset the device and release all memory allocations.
+    ///
+    /// See [cudaDeviceReset() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1g073d3dcb31d45fc96c8ff52833a890d0)
+    /// # Safety
+    /// Must be called if cudaSet*Device() or cudaInitDevice() has been called.
+    pub unsafe fn reset() -> Result<(), RuntimeError> {
+        lib().cudaDeviceReset().result()
+    }
 }
 
 pub mod function {
     use super::{lib, sys, RuntimeError};
-    use core::ffi::c_void;
+    use std::mem::MaybeUninit;
+    use std::os::raw::c_void;
 
     /// Sets the specific attribute of a CUDA function.
     ///
@@ -216,6 +258,42 @@ pub mod function {
         value: i32,
     ) -> Result<(), RuntimeError> {
         lib().cudaFuncSetAttribute(func, attribute, value).result()
+    }
+
+    /// Sets the specific attribute of a CUDA function.
+    ///
+    /// See [cudaFuncSetAttribute() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html#group__CUDART__EXECUTION_1g317e77d2657abf915fd9ed03e75f3eb0)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn get_function_attributes(
+        func: *const c_void,
+    ) -> Result<sys::cudaFuncAttributes, RuntimeError> {
+        let mut attr = MaybeUninit::uninit();
+        unsafe {
+            lib()
+                .cudaFuncGetAttributes(attr.as_mut_ptr(), func)
+                .result()?;
+            Ok(attr.assume_init())
+        }
+    }
+
+    /// Retrieves the function pointer from a symbol.
+    ///
+    /// See [cudaGetFuncBySymbol() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DRIVER.html#group__CUDART__DRIVER_1gaba6f8d01e745f0c8d8776ceb18be617)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn get_function_by_symbol(
+        symbol_ptr: *const c_void,
+    ) -> Result<sys::cudaFunction_t, RuntimeError> {
+        let mut func = MaybeUninit::uninit();
+        unsafe {
+            lib()
+                .cudaGetFuncBySymbol(func.as_mut_ptr(), symbol_ptr)
+                .result()?;
+            Ok(func.assume_init())
+        }
     }
 }
 
@@ -574,7 +652,7 @@ pub unsafe fn memcpy_htod_async<T>(
         .cudaMemcpyAsync(
             dst,
             src.as_ptr() as *const c_void,
-            src.len() * std::mem::size_of::<T>(),
+            std::mem::size_of_val(src),
             sys::cudaMemcpyKind::cudaMemcpyHostToDevice,
             stream,
         )
@@ -595,7 +673,7 @@ pub unsafe fn memcpy_htod_sync<T>(dst: *mut c_void, src: &[T]) -> Result<(), Run
         .cudaMemcpy(
             dst,
             src.as_ptr() as *const c_void,
-            src.len() * std::mem::size_of::<T>(),
+            std::mem::size_of_val(src),
             sys::cudaMemcpyKind::cudaMemcpyHostToDevice,
         )
         .result()
@@ -621,7 +699,7 @@ pub unsafe fn memcpy_dtoh_async<T>(
         .cudaMemcpyAsync(
             dst.as_mut_ptr() as *mut c_void,
             src,
-            dst.len() * std::mem::size_of::<T>(),
+            std::mem::size_of_val(dst),
             sys::cudaMemcpyKind::cudaMemcpyDeviceToHost,
             stream,
         )
@@ -642,7 +720,7 @@ pub unsafe fn memcpy_dtoh_sync<T>(dst: &mut [T], src: *const c_void) -> Result<(
         .cudaMemcpy(
             dst.as_mut_ptr() as *mut c_void,
             src,
-            dst.len() * std::mem::size_of::<T>(),
+            std::mem::size_of_val(dst),
             sys::cudaMemcpyKind::cudaMemcpyDeviceToHost,
         )
         .result()
@@ -785,29 +863,26 @@ pub mod event {
 /// 5. The kernel params must be valid.
 #[inline]
 pub unsafe fn launch_kernel(
-    f: sys::cudaFunction_t,
+    f: crate::driver::sys::CUfunction,
     grid_dim: (u32, u32, u32),
     block_dim: (u32, u32, u32),
     shared_mem_bytes: usize,
     stream: sys::cudaStream_t,
     kernel_params: &mut [*mut c_void],
-) -> Result<(), RuntimeError> {
-    lib()
-        .cudaLaunchKernel(
-            f as *const c_void,
-            sys::dim3 {
-                x: grid_dim.0,
-                y: grid_dim.1,
-                z: grid_dim.2,
-            },
-            sys::dim3 {
-                x: block_dim.0,
-                y: block_dim.1,
-                z: block_dim.2,
-            },
+) -> Result<(), DriverError> {
+    crate::driver::sys::lib()
+        .cuLaunchKernel(
+            f,
+            grid_dim.0,
+            grid_dim.1,
+            grid_dim.2,
+            block_dim.0,
+            block_dim.1,
+            block_dim.2,
+            shared_mem_bytes as u32,
+            stream as crate::driver::sys::CUstream,
             kernel_params.as_mut_ptr(),
-            shared_mem_bytes,
-            stream,
+            std::ptr::null_mut(),
         )
         .result()
 }
