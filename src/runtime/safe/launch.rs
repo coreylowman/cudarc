@@ -1,8 +1,8 @@
-use crate::runtime::{result, sys};
+use crate::driver::result;
 
 use super::alloc::DeviceRepr;
-use super::core::{CudaFunction, CudaStream};
-use super::CudaDevice;
+use super::core::{CudaDevice, CudaFunction, CudaStream};
+use crate::runtime::{sys, RuntimeError};
 
 use std::sync::Arc;
 use std::vec::Vec;
@@ -10,35 +10,28 @@ use std::vec::Vec;
 impl CudaDevice {
     /// Whether a module and function are currently loaded into the device.
     pub fn has_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> bool {
-        if let Some(driver_device) = &self._driver_device {
-            let modules = driver_device.modules.read();
-            #[cfg(not(feature = "no-std"))]
-            let modules = modules.unwrap();
+        let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
 
-            return modules
-                .get(module_name)
-                .map_or(false, |module| module.has_func(func_name));
-        }
-        false
+        modules
+            .get(module_name)
+            .map_or(false, |module| module.has_func(func_name))
     }
 
     /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
     pub fn get_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> Option<CudaFunction> {
-        if let Some(driver_device) = &self._driver_device {
-            let modules = driver_device.modules.read();
-            #[cfg(not(feature = "no-std"))]
-            let modules = modules.unwrap();
+        let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
 
-            return modules
-                .get(module_name)
-                .and_then(|m| m.get_func(func_name))
-                .map(|cu_function| CudaFunction {
-                    cuda_function: cu_function as sys::cudaFunction_t,
-                    device: self.clone(),
-                    _driver_device: Some(driver_device).cloned(),
-                });
-        }
-        None
+        modules
+            .get(module_name)
+            .and_then(|m| m.get_func(func_name))
+            .map(|cu_function| CudaFunction {
+                cu_function,
+                device: self.clone(),
+            })
     }
 }
 
@@ -48,15 +41,20 @@ impl CudaFunction {
         self,
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::RuntimeError> {
-        result::launch_kernel(
-            self.cuda_function,
+    ) -> Result<(), RuntimeError> {
+        self.device.bind_to_thread()?;
+        let cuda_result = result::launch_kernel(
+            self.cu_function,
             cfg.grid_dim,
             cfg.block_dim,
-            cfg.shared_mem_bytes,
-            self.device.stream,
+            cfg.shared_mem_bytes as u32,
+            self.device.stream as crate::driver::sys::CUstream,
             params,
-        )
+        );
+        if cuda_result.is_err() {
+            return Err(RuntimeError(sys::cudaError::cudaErrorInvalidValue));
+        }
+        Ok(())
     }
 
     #[inline(always)]
@@ -65,15 +63,20 @@ impl CudaFunction {
         stream: &CudaStream,
         cfg: LaunchConfig,
         params: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::RuntimeError> {
-        result::launch_kernel(
-            self.cuda_function,
+    ) -> Result<(), RuntimeError> {
+        self.device.bind_to_thread()?;
+        let cuda_result = result::launch_kernel(
+            self.cu_function,
             cfg.grid_dim,
             cfg.block_dim,
-            cfg.shared_mem_bytes,
-            stream.stream,
+            cfg.shared_mem_bytes as u32,
+            stream.stream as crate::driver::sys::CUstream,
             params,
-        )
+        );
+        if cuda_result.is_err() {
+            return Err(RuntimeError(sys::cudaError::cudaErrorInvalidValue));
+        }
+        Ok(())
     }
 }
 
@@ -182,7 +185,7 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
-    unsafe fn launch(self, cfg: LaunchConfig, params: Params) -> Result<(), result::RuntimeError>;
+    unsafe fn launch(self, cfg: LaunchConfig, params: Params) -> Result<(), RuntimeError>;
 
     /// Launch the function on a stream concurrent to the device's default
     /// work stream.
@@ -198,7 +201,7 @@ pub unsafe trait LaunchAsync<Params> {
         stream: &CudaStream,
         cfg: LaunchConfig,
         params: Params,
-    ) -> Result<(), result::RuntimeError>;
+    ) -> Result<(), RuntimeError>;
 }
 
 unsafe impl LaunchAsync<&mut [*mut std::ffi::c_void]> for CudaFunction {
@@ -207,7 +210,7 @@ unsafe impl LaunchAsync<&mut [*mut std::ffi::c_void]> for CudaFunction {
         self,
         cfg: LaunchConfig,
         args: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::RuntimeError> {
+    ) -> Result<(), RuntimeError> {
         self.launch_async_impl(cfg, args)
     }
 
@@ -217,7 +220,7 @@ unsafe impl LaunchAsync<&mut [*mut std::ffi::c_void]> for CudaFunction {
         stream: &CudaStream,
         cfg: LaunchConfig,
         args: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::RuntimeError> {
+    ) -> Result<(), RuntimeError> {
         self.par_launch_async_impl(stream, cfg, args)
     }
 }
@@ -228,7 +231,7 @@ unsafe impl LaunchAsync<&mut Vec<*mut std::ffi::c_void>> for CudaFunction {
         self,
         cfg: LaunchConfig,
         args: &mut Vec<*mut std::ffi::c_void>,
-    ) -> Result<(), result::RuntimeError> {
+    ) -> Result<(), RuntimeError> {
         self.launch_async_impl(cfg, args)
     }
 
@@ -238,7 +241,7 @@ unsafe impl LaunchAsync<&mut Vec<*mut std::ffi::c_void>> for CudaFunction {
         stream: &CudaStream,
         cfg: LaunchConfig,
         args: &mut Vec<*mut std::ffi::c_void>,
-    ) -> Result<(), result::RuntimeError> {
+    ) -> Result<(), RuntimeError> {
         self.par_launch_async_impl(stream, cfg, args)
     }
 }
@@ -251,7 +254,7 @@ macro_rules! impl_launch {
                 self,
                 cfg: LaunchConfig,
                 args: ($($Vars, )*)
-            ) -> Result<(), result::RuntimeError> {
+            ) -> Result<(), RuntimeError> {
                 let params = &mut [$(args.$Idx.as_kernel_param(), )*];
                 self.launch_async_impl(cfg, params)
             }
@@ -262,7 +265,7 @@ macro_rules! impl_launch {
                 stream: &CudaStream,
                 cfg: LaunchConfig,
                 args: ($($Vars, )*)
-            ) -> Result<(), result::RuntimeError> {
+            ) -> Result<(), RuntimeError> {
                 let params = &mut [$(args.$Idx.as_kernel_param(), )*];
                 self.par_launch_async_impl(stream, cfg, params)
             }
@@ -297,23 +300,9 @@ mod tests {
     use std::sync::Arc;
     use std::time::Instant;
 
-    use libloading::Symbol;
-
     use super::*;
-    use crate::runtime::{sys, CudaDevice, RuntimeError};
-
-    pub unsafe fn test_lib() -> &'static ::libloading::Library {
-        static TEST_LIB: std::sync::OnceLock<::libloading::Library> = std::sync::OnceLock::new();
-        TEST_LIB.get_or_init(|| {
-            let lib_name = ::libloading::library_filename("testkernel");
-            let root_path = "target/debug";
-            let path = ::std::path::Path::new(root_path).join(lib_name);
-            if let Ok(lib) = ::libloading::Library::new(path) {
-                return lib;
-            }
-            panic!("Unable to find testkernel. Please open GitHub issue.");
-        })
-    }
+    use crate::nvrtc::compile_ptx_with_opts;
+    use crate::runtime::{CudaDevice, DeviceSlice, RuntimeError};
 
     #[test]
     fn test_mut_into_kernel_param_no_inc_rc() {
@@ -347,23 +336,36 @@ mod tests {
     //     const size_t grid_size = (numel + block_size - 1) / block_size;
     //     sin_kernel<<<grid_size, block_size>>>(out, inp, numel);
     // }
+    const SIN_CU: &str = "
+extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
+    size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < numel) {
+        out[i] = sin(inp[i]);
+    }
+}";
 
     #[test]
     fn test_launch_with_mut_and_ref_cudarc() {
-        let t_lib = unsafe { &test_lib() };
-
-        let sin_kernel: Symbol<unsafe extern "C" fn(*mut f32, *const f32, usize)> =
-            unsafe { t_lib.get(b"test_sin_kernel\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
-        let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
-        let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
-        let b_dev = a_dev.clone();
+        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
 
-        let numel = a_host.len();
+        let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
+
+        let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
+
+        let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
+
+        let mut b_dev = a_dev.clone();
+
         unsafe {
-            sin_kernel(b_dev.device_ptr, a_dev.device_ptr as *const f32, numel);
+            sin_kernel.launch(
+                LaunchConfig::for_num_elems(10),
+                (&mut b_dev, &a_dev, 10usize),
+            )
         }
+        .unwrap();
+
         let b_host = dev.sync_reclaim(b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
@@ -376,21 +378,19 @@ mod tests {
 
     #[test]
     fn test_large_launches() {
-        let t_lib = unsafe { &test_lib() };
-        let sin_kernel: Symbol<unsafe extern "C" fn(*mut f32, *const f32, usize)> =
-            unsafe { t_lib.get(b"test_sin_kernel\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
         for numel in [256, 512, 1024, 1280, 1536, 2048] {
             let mut a = Vec::with_capacity(numel);
             a.resize(numel, 1.0f32);
 
             let a = dev.htod_copy(a).unwrap();
-            let b = dev.alloc_zeros::<f32>(numel).unwrap();
+            let mut b = dev.alloc_zeros::<f32>(numel).unwrap();
 
-            unsafe {
-                sin_kernel(b.device_ptr, a.device_ptr as *const f32, numel);
-            }
+            let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
+            let cfg = LaunchConfig::for_num_elems(numel as u32);
+            unsafe { sin_kernel.launch(cfg, (&mut b, &a, numel)) }.unwrap();
 
             let b = dev.sync_reclaim(b).unwrap();
             for v in b {
@@ -401,11 +401,9 @@ mod tests {
 
     #[test]
     fn test_launch_with_views() {
-        let t_lib = unsafe { &test_lib() };
-        let sin_kernel: Symbol<unsafe extern "C" fn(*mut f32, *const f32, usize)> =
-            unsafe { t_lib.get(b"test_sin_kernel\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
         let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
@@ -414,11 +412,11 @@ mod tests {
         for i in 0..5 {
             let a_sub = a_dev.try_slice(i * 2..).unwrap();
             assert_eq!(a_sub.len, 10 - 2 * i);
-            let b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
+            let mut b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
             assert_eq!(b_sub.len, 10 - 2 * i);
-            unsafe {
-                sin_kernel(b_sub.ptr, a_sub.ptr as *const f32, 2);
-            }
+            let f = dev.get_func("sin", "sin_kernel").unwrap();
+            unsafe { f.launch(LaunchConfig::for_num_elems(2), (&mut b_sub, &a_sub, 2usize)) }
+                .unwrap();
         }
 
         let b_host = dev.sync_reclaim(b_dev).unwrap();
@@ -431,155 +429,185 @@ mod tests {
         drop(a_dev);
     }
 
-    // extern "C" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
-    //     assert(s_min == -128);
-    //     assert(s_max == 127);
-    //     assert(u_min == 0);
-    //     assert(u_max == 255);
-    // }
-    //
-    // extern "C" __global__ void int_16bit(signed short s_min, short s_max, unsigned short u_min, unsigned short u_max) {
-    //     assert(s_min == -32768);
-    //     assert(s_max == 32767);
-    //     assert(u_min == 0);
-    //     assert(u_max == 65535);
-    // }
-    //
-    // extern "C" __global__ void int_32bit(signed int s_min, int s_max, unsigned int u_min, unsigned int u_max) {
-    //     assert(s_min == -2147483648);
-    //     assert(s_max == 2147483647);
-    //     assert(u_min == 0);
-    //     assert(u_max == 4294967295);
-    // }
-    //
-    // extern "C" __global__ void int_64bit(signed long s_min, long s_max, unsigned long u_min, unsigned long u_max) {
-    //     assert(s_min == -9223372036854775808);
-    //     assert(s_max == 9223372036854775807);
-    //     assert(u_min == 0);
-    //     assert(u_max == 18446744073709551615);
-    // }
-    //
-    // extern "C" __global__ void floating(float f, double d) {
-    //     assert(fabs(f - 1.2345678) <= 1e-7);
-    //     assert(fabs(d - -10.123456789876543) <= 1e-16);
-    // }
+    const TEST_KERNELS: &str = "
+extern \"C\" __global__ void int_8bit(signed char s_min, char s_max, unsigned char u_min, unsigned char u_max) {
+    assert(s_min == -128);
+    assert(s_max == 127);
+    assert(u_min == 0);
+    assert(u_max == 255);
+}
+
+extern \"C\" __global__ void int_16bit(signed short s_min, short s_max, unsigned short u_min, unsigned short u_max) {
+    assert(s_min == -32768);
+    assert(s_max == 32767);
+    assert(u_min == 0);
+    assert(u_max == 65535);
+}
+
+extern \"C\" __global__ void int_32bit(signed int s_min, int s_max, unsigned int u_min, unsigned int u_max) {
+    assert(s_min == -2147483648);
+    assert(s_max == 2147483647);
+    assert(u_min == 0);
+    assert(u_max == 4294967295);
+}
+
+extern \"C\" __global__ void int_64bit(signed long s_min, long s_max, unsigned long u_min, unsigned long u_max) {
+    assert(s_min == -9223372036854775808);
+    assert(s_max == 9223372036854775807);
+    assert(u_min == 0);
+    assert(u_max == 18446744073709551615);
+}
+
+extern \"C\" __global__ void floating(float f, double d) {
+    assert(fabs(f - 1.2345678) <= 1e-7);
+    assert(fabs(d - -10.123456789876543) <= 1e-16);
+}
+";
 
     #[test]
     fn test_launch_with_8bit() {
-        let t_lib = unsafe { &test_lib() };
-        let int_8bit: Symbol<unsafe extern "C" fn(i8, i8, u8, u8)> =
-            unsafe { t_lib.get(b"test_int_8bit\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
-        unsafe { int_8bit(i8::MIN, i8::MAX, u8::MIN, u8::MAX) };
+        dev.load_ptx(ptx, "tests", &["int_8bit"]).unwrap();
+        let f = dev.get_func("tests", "int_8bit").unwrap();
+        unsafe {
+            f.launch(
+                LaunchConfig::for_num_elems(1),
+                (i8::MIN, i8::MAX, u8::MIN, u8::MAX),
+            )
+        }
+        .unwrap();
 
         dev.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_16bit() {
-        let t_lib = unsafe { &test_lib() };
-        let int_16bit: Symbol<unsafe extern "C" fn(i16, i16, u16, u16)> =
-            unsafe { t_lib.get(b"test_int_16bit\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
-        unsafe { int_16bit(i16::MIN, i16::MAX, u16::MIN, u16::MAX) };
-
+        dev.load_ptx(ptx, "tests", &["int_16bit"]).unwrap();
+        let f = dev.get_func("tests", "int_16bit").unwrap();
+        unsafe {
+            f.launch(
+                LaunchConfig::for_num_elems(1),
+                (i16::MIN, i16::MAX, u16::MIN, u16::MAX),
+            )
+        }
+        .unwrap();
         dev.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_32bit() {
-        let t_lib = unsafe { &test_lib() };
-        let int_32bit: Symbol<unsafe extern "C" fn(i32, i32, u32, u32)> =
-            unsafe { t_lib.get(b"test_int_32bit\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
-        unsafe { int_32bit(i32::MIN, i32::MAX, u32::MIN, u32::MAX) };
-
+        dev.load_ptx(ptx, "tests", &["int_32bit"]).unwrap();
+        let f = dev.get_func("tests", "int_32bit").unwrap();
+        unsafe {
+            f.launch(
+                LaunchConfig::for_num_elems(1),
+                (i32::MIN, i32::MAX, u32::MIN, u32::MAX),
+            )
+        }
+        .unwrap();
         dev.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_64bit() {
-        let t_lib = unsafe { &test_lib() };
-        let int_64bit: Symbol<unsafe extern "C" fn(i64, i64, u64, u64)> =
-            unsafe { t_lib.get(b"test_int_64bit\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
-        unsafe { int_64bit(i64::MIN, i64::MAX, u64::MIN, u64::MAX) };
-
+        dev.load_ptx(ptx, "tests", &["int_64bit"]).unwrap();
+        let f = dev.get_func("tests", "int_64bit").unwrap();
+        unsafe {
+            f.launch(
+                LaunchConfig::for_num_elems(1),
+                (i64::MIN, i64::MAX, u64::MIN, u64::MAX),
+            )
+        }
+        .unwrap();
         dev.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_floats() {
-        let t_lib = unsafe { &test_lib() };
-        let floating: Symbol<unsafe extern "C" fn(f32, f64)> =
-            unsafe { t_lib.get(b"test_floating\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
-        unsafe { floating(1.2345678, -10.123456789876543) };
-
+        dev.load_ptx(ptx, "tests", &["floating"]).unwrap();
+        let f = dev.get_func("tests", "floating").unwrap();
+        unsafe {
+            f.launch(
+                LaunchConfig::for_num_elems(1),
+                (1.2345678f32, -10.123456789876543f64),
+            )
+        }
+        .unwrap();
         dev.synchronize().unwrap();
     }
 
-    // #include cuda_fp16.h
-    //
-    // extern "C" __global__ void halfs(__half h) {
-    //     assert(__habs(h - __float2half(1.234)) <= __float2half(1e-4));
-    // }
+    #[cfg(feature = "f16")]
+    const HALF_KERNELS: &str = "
+#include \"cuda_fp16.h\"
+
+extern \"C\" __global__ void halfs(__half h) {
+    assert(__habs(h - __float2half(1.234)) <= __float2half(1e-4));
+}
+";
 
     #[cfg(feature = "f16")]
     #[test]
     fn test_launch_with_half() {
-        let t_lib = unsafe { &test_lib() };
-        let halfs: Symbol<unsafe extern "C" fn(half::f16)> =
-            unsafe { t_lib.get(b"test_halfs\0").unwrap() };
+        use crate::nvrtc::CompileOptions;
 
+        let ptx = compile_ptx_with_opts(
+            HALF_KERNELS,
+            CompileOptions {
+                include_paths: std::vec!["/usr/include".into()],
+                arch: Some("compute_53"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
         let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["halfs"]).unwrap();
+        let f = dev.get_func("tests", "halfs").unwrap();
         unsafe {
-            halfs(half::f16::from_f32(1.234));
-        };
+            f.launch(
+                LaunchConfig::for_num_elems(1),
+                (half::f16::from_f32(1.234),),
+            )
+        }
+        .unwrap();
         dev.synchronize().unwrap();
     }
 
-    // extern "C" __global__ void slow_worker(const float *data, const size_t len, float *out) {
-    //     float tmp = 0.0;
-    //     for(size_t i = 0; i < 1000000; i++) {
-    //         tmp += data[i % len];
-    //     }
-    //     *out = tmp;
-    // }
-    //
-    // extern "C" void test_slow_worker(const float *data, const size_t len, float *out) {
-    //     slow_worker<<<1, 1>>>(data, len, out);
-    // }
-    //
-    // extern "C" void test_slow_worker_stream(const float *data, const size_t len, float *out, cudaStream_t stream) {
-    //     slow_worker<<<1, 1, 0, stream>>>(data, len, out);
-    // }
+    const SLOW_KERNELS: &str = "
+extern \"C\" __global__ void slow_worker(const float *data, const size_t len, float *out) {
+    float tmp = 0.0;
+    for(size_t i = 0; i < 1000000; i++) {
+        tmp += data[i % len];
+    }
+    *out = tmp;
+}
+";
 
     #[test]
     fn test_par_launch() -> Result<(), RuntimeError> {
-        let t_lib = unsafe { &test_lib() };
-        let slow_worker: Symbol<unsafe extern "C" fn(*const f32, usize, *mut f32)> =
-            unsafe { t_lib.get(b"test_slow_worker\0").unwrap() };
-
-        let slow_worker_stream: Symbol<
-            unsafe extern "C" fn(*const f32, usize, *mut f32, sys::cudaStream_t),
-        > = unsafe { t_lib.get(b"test_slow_worker_stream\0").unwrap() };
-
+        let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
         let dev = CudaDevice::new(0).unwrap();
+        dev.load_ptx(ptx, "tests", &["slow_worker"]).unwrap();
         let slice = dev.alloc_zeros::<f32>(1000)?;
-        let a = dev.alloc_zeros::<f32>(1)?;
-        let b = dev.alloc_zeros::<f32>(1)?;
+        let mut a = dev.alloc_zeros::<f32>(1)?;
+        let mut b = dev.alloc_zeros::<f32>(1)?;
+        let cfg = LaunchConfig::for_num_elems(1);
 
         let start = Instant::now();
         {
             // launch two kernels on the default stream
-            unsafe { slow_worker(slice.device_ptr as *const f32, slice.len, a.device_ptr) };
-            unsafe { slow_worker(slice.device_ptr as *const f32, slice.len, b.device_ptr) };
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch(cfg, (&slice, slice.len(), &mut b))? };
             dev.synchronize()?;
         }
         let double_launch_s = start.elapsed().as_secs_f64();
@@ -588,22 +616,10 @@ mod tests {
         {
             // create a new stream & launch them concurrently
             let stream = dev.fork_default_stream()?;
-            unsafe {
-                slow_worker_stream(
-                    slice.device_ptr as *const f32,
-                    slice.len,
-                    a.device_ptr,
-                    stream.stream,
-                )
-            };
-            unsafe {
-                slow_worker_stream(
-                    slice.device_ptr as *const f32,
-                    slice.len,
-                    b.device_ptr,
-                    stream.stream,
-                )
-            };
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
+            let f = dev.get_func("tests", "slow_worker").unwrap();
+            unsafe { f.launch_on_stream(&stream, cfg, (&slice, slice.len(), &mut b))? };
             dev.wait_for(&stream)?;
             dev.synchronize()?;
         }
