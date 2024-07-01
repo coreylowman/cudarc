@@ -60,11 +60,18 @@ impl DriverError {
 
 impl std::fmt::Debug for DriverError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let err_str = self.error_string().unwrap();
-        f.debug_tuple("DriverError")
-            .field(&self.0)
-            .field(&err_str)
-            .finish()
+        match self.error_string() {
+            Ok(err_str) => f
+                .debug_tuple("DriverError")
+                .field(&self.0)
+                .field(&err_str)
+                .finish(),
+            Err(_) => f
+                .debug_tuple("DriverError")
+                .field(&self.0)
+                .field(&"<Failure when calling cuGetErrorString()>")
+                .finish(),
+        }
     }
 }
 
