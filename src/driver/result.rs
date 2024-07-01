@@ -60,11 +60,18 @@ impl DriverError {
 
 impl std::fmt::Debug for DriverError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let err_str = self.error_string().unwrap();
-        f.debug_tuple("DriverError")
-            .field(&self.0)
-            .field(&err_str)
-            .finish()
+        match self.error_string() {
+            Ok(err_str) => f
+                .debug_tuple("DriverError")
+                .field(&self.0)
+                .field(&err_str)
+                .finish(),
+            Err(_) => f
+                .debug_tuple("DriverError")
+                .field(&self.0)
+                .field(&"<Failure when calling cuGetErrorString()>")
+                .finish(),
+        }
     }
 }
 
@@ -519,6 +526,24 @@ pub mod stream {
             .cuStreamWaitEvent(stream, event, flags as u32)
             .result()
     }
+
+    /// Attach managed memory to a stream.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g6e468d680e263e7eba02a56643c50533)
+    ///
+    /// # Safety
+    /// See the cuda docs, there are a lot of considerations for this one.
+    /// > Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
+    pub unsafe fn attach_mem_async(
+        stream: sys::CUstream,
+        dptr: sys::CUdeviceptr,
+        num_bytes: usize,
+        flags: sys::CUmemAttach_flags,
+    ) -> Result<(), DriverError> {
+        lib()
+            .cuStreamAttachMemAsync(stream, dptr, num_bytes, flags as u32)
+            .result()
+    }
 }
 
 /// Allocates memory with stream ordered semantics.
@@ -552,6 +577,56 @@ pub unsafe fn malloc_sync(num_bytes: usize) -> Result<sys::CUdeviceptr, DriverEr
         .cuMemAlloc_v2(dev_ptr.as_mut_ptr(), num_bytes)
         .result()?;
     Ok(dev_ptr.assume_init())
+}
+
+/// Allocates managed memory.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gb347ded34dc326af404aa02af5388a32)
+///
+/// # Safety
+/// 1. The memory return by this is unset, which may be invalid for `T`.
+pub unsafe fn malloc_managed(
+    num_bytes: usize,
+    flags: sys::CUmemAttach_flags,
+) -> Result<sys::CUdeviceptr, DriverError> {
+    let mut dev_ptr = MaybeUninit::uninit();
+    lib()
+        .cuMemAllocManaged(dev_ptr.as_mut_ptr(), num_bytes, flags as u32)
+        .result()?;
+    Ok(dev_ptr.assume_init())
+}
+
+/// Advise about the usage of a given memory range.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__UNIFIED.html#group__CUDA__UNIFIED_1g27608c857a9254789c13f3e3b72029e2)
+///
+/// # Safety
+/// 1. Memory must have been allocated by [malloc_managed()]
+/// 2. num_bytes must be the amount of bytes passed to [malloc_managed()]
+pub unsafe fn mem_advise(
+    dptr: sys::CUdeviceptr,
+    num_bytes: usize,
+    advice: sys::CUmem_advise,
+    location: sys::CUmemLocation,
+) -> Result<(), DriverError> {
+    lib()
+        .cuMemAdvise_v2(dptr, num_bytes, advice, location)
+        .result()
+}
+
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__UNIFIED.html#group__CUDA__UNIFIED_1gfe94f8b7fb56291ebcea44261aa4cb84)
+///
+/// # Safety
+/// 1. The dptr/num_bytes must be allocated by [malloc_managed()] and must be the exact same memory range.
+pub unsafe fn mem_prefetch_async(
+    dptr: sys::CUdeviceptr,
+    num_bytes: usize,
+    location: sys::CUmemLocation,
+    stream: sys::CUstream,
+) -> Result<(), DriverError> {
+    lib()
+        .cuMemPrefetchAsync_v2(dptr, num_bytes, location, 0, stream)
+        .result()
 }
 
 /// Frees memory with stream ordered semantics.

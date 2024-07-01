@@ -1,3 +1,8 @@
+#[cfg(feature = "cuda-11040")]
+mod sys_11040;
+#[cfg(feature = "cuda-11040")]
+pub use sys_11040::*;
+
 #[cfg(feature = "cuda-11050")]
 mod sys_11050;
 #[cfg(feature = "cuda-11050")]
