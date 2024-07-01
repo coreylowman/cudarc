@@ -1,9 +1,8 @@
-use crate::runtime::{
-    result,
-    sys::{self, lib},
-};
+use crate::driver::{result as driver_result, sys as driver_sys};
+use crate::runtime::{result, sys};
 use core::ffi::c_void;
 
+use super::RuntimeError;
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
 
 use std::{
@@ -11,6 +10,8 @@ use std::{
     ops::{Bound, RangeBounds},
 };
 
+use std::collections::BTreeMap;
+use std::sync::RwLock;
 use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 
 /// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
@@ -29,15 +30,15 @@ use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 /// can outlive the [CudaDevice]
 #[derive(Debug)]
 pub struct CudaDevice {
-    pub(crate) device_prop: sys::cudaDeviceProp,
+    pub(crate) cu_device: driver_sys::CUdevice,
+    pub(crate) cu_primary_ctx: driver_sys::CUcontext,
     /// The stream that all work is executed on.
     pub(crate) stream: sys::cudaStream_t,
     /// Used to synchronize with stream
     pub(crate) event: sys::cudaEvent_t,
+    pub(crate) modules: RwLock<BTreeMap<String, crate::driver::core::CudaModule>>,
     pub(crate) ordinal: usize,
     pub(crate) is_async: bool,
-    /// In order to prevent the primary context created by the driver API from being destroyed
-    pub(crate) _driver_device: Option<Arc<crate::driver::CudaDevice>>,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -45,10 +46,11 @@ unsafe impl Sync for CudaDevice {}
 
 impl CudaDevice {
     /// Creates a new [CudaDevice] on device index `ordinal`.
-    pub fn new(ordinal: usize) -> Result<Arc<Self>, result::RuntimeError> {
+    pub fn new(ordinal: usize) -> Result<Arc<Self>, RuntimeError> {
         result::device::set(ordinal as i32)?;
 
-        let device_prop = result::device::get_device_prop(ordinal as i32)?;
+        let cu_device = driver_result::device::get(ordinal as i32).unwrap();
+        let cu_primary_ctx = driver_result::ctx::get_current().unwrap();
 
         // can fail with OOM
         let event = result::event::create(sys::cudaEventDisableTiming)?;
@@ -63,40 +65,28 @@ impl CudaDevice {
         let is_async = value > 0;
 
         let device = CudaDevice {
-            device_prop,
+            cu_device,
             stream: std::ptr::null_mut(),
             event,
+            cu_primary_ctx: cu_primary_ctx.expect("No current context"),
+            modules: RwLock::new(BTreeMap::new()),
             ordinal,
             is_async,
-            _driver_device: None,
         };
         Ok(Arc::new(device))
     }
 
-    /// Creates a [CudaDevice] from [crate::driver::CudaDevice].
-    pub fn from_driver(
-        device: &Arc<crate::driver::CudaDevice>,
-    ) -> Result<Arc<Self>, result::RuntimeError> {
-        device.bind_to_thread().unwrap();
-        result::device::set(device.ordinal() as i32)?;
-        Ok(Arc::new(CudaDevice {
-            device_prop: result::device::get_device_prop(device.ordinal() as i32)?,
-            stream: device.stream as sys::cudaStream_t,
-            event: device.event as sys::cudaEvent_t,
-            ordinal: device.ordinal(),
-            is_async: device.is_async,
-            _driver_device: Some(device.clone()),
-        }))
-    }
-
     /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
-    pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::RuntimeError> {
-        result::device::set(ordinal as i32)?;
+    pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, RuntimeError> {
+        result::device::set(ordinal as i32).unwrap();
 
-        let device_prop = result::device::get_device_prop(ordinal as i32)?;
+        let cu_device = driver_result::device::get(ordinal as i32).unwrap();
+        let cu_primary_ctx = driver_result::ctx::get_current().unwrap();
 
         // can fail with OOM
         let event = result::event::create(sys::cudaEventDisableTiming)?;
+
+        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
 
         let value = unsafe {
             result::device::get_attribute(
@@ -107,17 +97,15 @@ impl CudaDevice {
 
         let is_async = value > 0;
 
-        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
-
         let device = CudaDevice {
-            device_prop,
+            cu_device,
             stream,
             event,
+            cu_primary_ctx: cu_primary_ctx.expect("No current context"),
+            modules: RwLock::new(BTreeMap::new()),
             ordinal,
             is_async,
-            _driver_device: None,
         };
-
         Ok(Arc::new(device))
     }
 
@@ -125,12 +113,7 @@ impl CudaDevice {
         result::device::get_count()
     }
 
-    /// Get the `ordinal` index of this [CudaDevice].
-    pub fn ordinal(&self) -> usize {
-        self.ordinal
-    }
-
-    /// Get the underlying [sys::cudaDeviceProp] of this [CudaDevice].
+    /// Get the underlying [sys::CUdevice] of this [CudaDevice].
     ///
     /// # Safety
     /// While this function is marked as safe, actually using the
@@ -138,11 +121,23 @@ impl CudaDevice {
     ///
     /// **You must not free/release the device pointer**, as it is still
     /// owned by the [CudaDevice].
-    pub fn device_prop(&self) -> &sys::cudaDeviceProp {
-        &self.device_prop
+    pub fn cu_device(&self) -> &driver_sys::CUdevice {
+        &self.cu_device
     }
 
-    /// Get the underlying [sys::cudaStream_t] that this [CudaDevice] executes
+    /// Get the underlying [sys::CUcontext] of this [CudaDevice].
+    ///
+    /// # Safety
+    /// While this function is marked as safe, actually using the
+    /// returned object is unsafe.
+    ///
+    /// **You must not free/release the context pointer**, as it is still
+    /// owned by the [CudaDevice].
+    pub fn cu_primary_ctx(&self) -> &driver_sys::CUcontext {
+        &self.cu_primary_ctx
+    }
+
+    /// Get the underlying [sys::CUstream] that this [CudaDevice] executes
     /// all of its work on.
     ///
     /// # Safety
@@ -151,8 +146,13 @@ impl CudaDevice {
     ///
     /// **You must not free/release the stream pointer**, as it is still
     /// owned by the [CudaDevice].
-    pub fn stream(&self) -> &sys::cudaStream_t {
-        &self.stream
+    pub fn cu_stream(&self) -> driver_sys::CUstream {
+        self.stream as driver_sys::CUstream
+    }
+
+    /// Get the `ordinal` index of this [CudaDevice].
+    pub fn ordinal(&self) -> usize {
+        self.ordinal
     }
 
     /// Get the value of the specified attribute of this [CudaDevice].
@@ -163,21 +163,32 @@ impl CudaDevice {
 
 impl Drop for CudaDevice {
     fn drop(&mut self) {
+        self.bind_to_thread().unwrap();
         // we will let the driver api handle the cleanup
-        if self._driver_device.is_none() {
-            // Synchronize and destroy the stream if it exists.
-            let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
-            if !stream.is_null() {
-                unsafe { result::stream::synchronize(stream) }.unwrap();
-                unsafe { result::stream::destroy(stream) }.unwrap();
-            }
+        let modules = RwLock::get_mut(&mut self.modules);
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
 
-            // Destroy the event if it exists.
-            let event = std::mem::replace(&mut self.event, std::ptr::null_mut());
-            if !event.is_null() {
-                unsafe { result::event::destroy(event) }.unwrap();
-            }
+        for (_, module) in modules.iter() {
+            unsafe { crate::driver::result::module::unload(module.cu_module) }.unwrap();
         }
+        modules.clear();
+
+        // Synchronize and destroy the stream if it exists.
+        let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
+        if !stream.is_null() {
+            unsafe { result::stream::synchronize(stream) }.unwrap();
+            unsafe { result::stream::destroy(stream) }.unwrap();
+        }
+
+        // Destroy the event if it exists.
+        let event = std::mem::replace(&mut self.event, std::ptr::null_mut());
+        if !event.is_null() {
+            unsafe { result::event::destroy(event) }.unwrap();
+        }
+
+        // Destroy and clean up all resources, including the active context
+        unsafe { result::device::reset() }.unwrap();
     }
 }
 
@@ -209,10 +220,9 @@ impl Drop for CudaDevice {
 /// by the [CudaFunction]**.
 #[derive(Debug)]
 pub struct CudaSlice<T> {
-    pub(crate) device_ptr: *mut T,
+    pub(crate) device_ptr: *mut c_void,
     pub(crate) len: usize,
     pub(crate) device: Arc<CudaDevice>,
-    pub(crate) _driver_device: Option<Arc<crate::driver::CudaDevice>>,
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
@@ -223,9 +233,9 @@ impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
         unsafe {
             if self.device.is_async {
-                result::free_async(self.device_ptr as *mut c_void, self.device.stream).unwrap();
+                result::free_async(self.device_ptr, self.device.stream).unwrap();
             } else {
-                result::free_sync(self.device_ptr as *mut c_void).unwrap();
+                result::free_sync(self.device_ptr).unwrap();
             }
         }
     }
@@ -260,197 +270,16 @@ impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     }
 }
 
-/// Wrapper around [sys::cudaFunction_t]. Used by [crate::runtime::LaunchAsync].
+/// Wrapper around [imp::Symbol] that ensures that the
 #[derive(Debug, Clone)]
 pub struct CudaFunction {
-    pub(crate) cuda_function: sys::cudaFunction_t,
+    pub(crate) cu_function: driver_sys::CUfunction,
     pub(crate) device: Arc<CudaDevice>,
-    pub(crate) _driver_device: Option<Arc<crate::driver::CudaDevice>>,
 }
 
 pub enum CudaOccupancyFlagsEnum {
     OccupancyDefault = sys::cudaOccupancyDefault as isize,
     OccupancyDisableCachingOverride = sys::cudaOccupancyDisableCachingOverride as isize,
-}
-
-impl CudaFunction {
-    pub fn new(device: &Arc<CudaDevice>, cuda_function: sys::cudaFunction_t) -> Self {
-        if let Some(driver_device) = &device._driver_device {
-            driver_device.bind_to_thread().unwrap();
-        }
-        CudaFunction {
-            cuda_function,
-            device: device.clone(),
-            _driver_device: device._driver_device.clone(),
-        }
-    }
-
-    pub fn occupancy_available_dynamic_smem_per_block(
-        &self,
-        num_blocks: u32,
-        block_size: u32,
-    ) -> Result<usize, result::RuntimeError> {
-        let mut dynamic_smem_size: usize = 0;
-
-        unsafe {
-            lib()
-                .cudaOccupancyAvailableDynamicSMemPerBlock(
-                    &mut dynamic_smem_size,
-                    self.cuda_function as *const c_void,
-                    num_blocks as std::ffi::c_int,
-                    block_size as std::ffi::c_int,
-                )
-                .result()?
-        };
-
-        Ok(dynamic_smem_size)
-    }
-
-    pub fn occupancy_max_active_blocks_per_multiprocessor(
-        &self,
-        block_size: u32,
-        dynamic_smem_size: usize,
-        flags: Option<CudaOccupancyFlagsEnum>,
-    ) -> Result<u32, result::RuntimeError> {
-        let mut num_blocks: std::ffi::c_int = 0;
-        let flags = flags.unwrap_or(CudaOccupancyFlagsEnum::OccupancyDefault);
-
-        unsafe {
-            lib()
-                .cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
-                    &mut num_blocks,
-                    self.cuda_function as *const c_void,
-                    block_size as std::ffi::c_int,
-                    dynamic_smem_size,
-                    flags as std::ffi::c_uint,
-                )
-                .result()?
-        };
-
-        Ok(num_blocks as u32)
-    }
-
-    #[cfg(not(feature = "cuda-11070"))]
-    pub fn occupancy_max_active_clusters(
-        &self,
-        config: crate::runtime::LaunchConfig,
-        shared_mem_size: u32,
-    ) -> Result<u32, result::RuntimeError> {
-        let mut num_clusters: std::ffi::c_int = 0;
-
-        let cfg = sys::cudaLaunchConfig_st {
-            gridDim: sys::dim3 {
-                x: config.grid_dim.0,
-                y: config.grid_dim.1,
-                z: config.grid_dim.2,
-            },
-            blockDim: sys::dim3 {
-                x: config.block_dim.0,
-                y: config.block_dim.1,
-                z: config.block_dim.2,
-            },
-            dynamicSmemBytes: shared_mem_size as usize,
-            stream: self.device.stream,
-            attrs: std::ptr::null_mut(),
-            numAttrs: 0,
-        };
-
-        unsafe {
-            lib()
-                .cudaOccupancyMaxActiveClusters(
-                    &mut num_clusters,
-                    self.cuda_function as *const c_void,
-                    &cfg,
-                )
-                .result()?
-        };
-
-        Ok(num_clusters as u32)
-    }
-
-    pub fn occupancy_max_potential_block_size(
-        &self,
-        block_size_to_dynamic_smem_size: extern "C" fn(block_size: std::ffi::c_int) -> usize,
-        dynamic_smem_size: usize,
-        block_size_limit: u32,
-        flags: Option<crate::driver::sys::CUoccupancy_flags_enum>,
-    ) -> Result<(u32, u32), crate::driver::result::DriverError> {
-        let mut min_grid_size: std::ffi::c_int = 0;
-        let mut block_size: std::ffi::c_int = 0;
-        let flags =
-            flags.unwrap_or(crate::driver::sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
-
-        unsafe {
-            crate::driver::sys::lib()
-                .cuOccupancyMaxPotentialBlockSizeWithFlags(
-                    &mut min_grid_size,
-                    &mut block_size,
-                    self.cuda_function as crate::driver::sys::CUfunction,
-                    Some(block_size_to_dynamic_smem_size),
-                    dynamic_smem_size,
-                    block_size_limit as std::ffi::c_int,
-                    flags as std::ffi::c_uint,
-                )
-                .result()?
-        };
-
-        Ok((min_grid_size as u32, block_size as u32))
-    }
-
-    #[cfg(not(feature = "cuda-11070"))]
-    pub fn occupancy_max_potential_cluster_size(
-        &self,
-        config: crate::runtime::LaunchConfig,
-        shared_mem_size: u32,
-    ) -> Result<u32, result::RuntimeError> {
-        let mut cluster_size: std::ffi::c_int = 0;
-
-        let cfg = sys::cudaLaunchConfig_st {
-            gridDim: sys::dim3 {
-                x: config.grid_dim.0,
-                y: config.grid_dim.1,
-                z: config.grid_dim.2,
-            },
-            blockDim: sys::dim3 {
-                x: config.block_dim.0,
-                y: config.block_dim.1,
-                z: config.block_dim.2,
-            },
-            dynamicSmemBytes: shared_mem_size as usize,
-            stream: self.device.stream,
-            attrs: std::ptr::null_mut(),
-            numAttrs: 0,
-        };
-
-        unsafe {
-            lib()
-                .cudaOccupancyMaxPotentialClusterSize(
-                    &mut cluster_size,
-                    self.cuda_function as *const c_void,
-                    &cfg,
-                )
-                .result()?
-        };
-
-        Ok(cluster_size as u32)
-    }
-
-    /// Set the value of a specific attribute of this [CudaFunction].
-    pub fn set_attribute(
-        &self,
-        attribute: sys::cudaFuncAttribute,
-        value: i32,
-    ) -> Result<(), result::RuntimeError> {
-        unsafe {
-            result::function::set_function_attribute(
-                self.cuda_function as *const c_void,
-                attribute,
-                value,
-            )?;
-        }
-
-        Ok(())
-    }
 }
 
 unsafe impl Send for CudaFunction {}
@@ -536,7 +365,7 @@ impl Drop for CudaStream {
 /// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaView<'a, T> {
-    pub(crate) ptr: *mut T,
+    pub(crate) ptr: *mut c_void,
     pub(crate) len: usize,
     marker: PhantomData<&'a [T]>,
 }
@@ -592,7 +421,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
-            ptr: self.device_ptr as *mut S,
+            ptr: self.device_ptr,
             len,
             marker: PhantomData,
         })
@@ -634,7 +463,7 @@ impl<'a, T> CudaView<'a, T> {
 /// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
-    pub(crate) ptr: *mut T,
+    pub(crate) ptr: *mut c_void,
     pub(crate) len: usize,
     marker: PhantomData<&'a mut [T]>,
 }
@@ -703,7 +532,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
-            ptr: self.device_ptr as *mut S,
+            ptr: self.device_ptr,
             len,
             marker: PhantomData,
         })
