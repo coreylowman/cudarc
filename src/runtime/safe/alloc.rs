@@ -1,6 +1,7 @@
+use crate::driver::sys as driver_sys;
 use crate::runtime::result;
 
-use std::ffi::c_void;
+use core::ffi::c_void;
 
 use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut};
 use super::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
@@ -17,7 +18,7 @@ use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 /// and not all types are valid.
 pub unsafe trait DeviceRepr {
     #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+    fn as_kernel_param(&self) -> *mut c_void {
         self as *const Self as *mut _
     }
 }
@@ -75,7 +76,7 @@ impl<T> CudaSlice<T> {
     /// to the owner to free this value**.
     ///
     /// Drops the underlying host_buf if there is one.
-    pub fn leak(mut self) -> *mut T {
+    pub fn leak(mut self) -> *mut c_void {
         if let Some(host_buf) = std::mem::take(&mut self.host_buf) {
             drop(host_buf);
         }
@@ -96,17 +97,13 @@ impl CudaDevice {
     ///   should be called on the memory.
     pub unsafe fn upgrade_device_ptr<T>(
         self: &Arc<Self>,
-        device_ptr: *mut T,
+        device_ptr: *mut c_void,
         len: usize,
     ) -> CudaSlice<T> {
-        if let Some(driver_device) = &self._driver_device {
-            driver_device.bind_to_thread().unwrap();
-        }
         CudaSlice {
             device_ptr,
             len,
             device: self.clone(),
-            _driver_device: self._driver_device.clone(),
             host_buf: None,
         }
     }
@@ -115,21 +112,17 @@ impl CudaDevice {
 impl CudaDevice {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::RuntimeError> {
-        if let Some(driver_device) = &self._driver_device {
-            driver_device.bind_to_thread().unwrap();
-        }
         let device_ptr = unsafe {
             if self.is_async {
-                result::malloc_async(self.stream, 0)? as *mut T
+                result::malloc_async(self.stream, 0)?
             } else {
-                result::malloc_sync(0)? as *mut T
+                result::malloc_sync(0)?
             }
         };
         Ok(CudaSlice {
             device_ptr,
             len: 0,
             device: self.clone(),
-            _driver_device: self._driver_device.clone(),
             host_buf: None,
         })
     }
@@ -142,19 +135,15 @@ impl CudaDevice {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, result::RuntimeError> {
-        if let Some(driver_device) = &self._driver_device {
-            driver_device.bind_to_thread().unwrap();
-        }
         let device_ptr = if self.is_async {
-            result::malloc_async(self.stream, len * std::mem::size_of::<T>())? as *mut T
+            result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
         } else {
-            result::malloc_sync(len * std::mem::size_of::<T>())? as *mut T
+            result::malloc_sync(len * std::mem::size_of::<T>())?
         };
         Ok(CudaSlice {
             device_ptr,
             len,
             device: self.clone(),
-            _driver_device: self._driver_device.clone(),
             host_buf: None,
         })
     }
@@ -185,17 +174,10 @@ impl CudaDevice {
     ) -> Result<(), result::RuntimeError> {
         if self.is_async {
             unsafe {
-                result::memset_d8_async(
-                    dst.device_ptr_mut() as *mut c_void,
-                    0,
-                    dst.num_bytes(),
-                    self.stream,
-                )
+                result::memset_d8_async(dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream)
             }
         } else {
-            unsafe {
-                result::memset_d8_sync(dst.device_ptr_mut() as *mut c_void, 0, dst.num_bytes())
-            }
+            unsafe { result::memset_d8_sync(dst.device_ptr_mut(), 0, dst.num_bytes()) }
         }
     }
 
@@ -219,8 +201,8 @@ impl CudaDevice {
         if self.is_async {
             unsafe {
                 result::memcpy_dtod_async(
-                    dst.device_ptr_mut() as *mut c_void,
-                    src.device_ptr() as *const c_void,
+                    dst.device_ptr_mut(),
+                    src.device_ptr(),
                     src.len() * std::mem::size_of::<T>(),
                     self.stream,
                 )
@@ -228,8 +210,8 @@ impl CudaDevice {
         } else {
             unsafe {
                 result::memcpy_dtod_sync(
-                    dst.device_ptr_mut() as *mut c_void,
-                    src.device_ptr() as *const c_void,
+                    dst.device_ptr_mut(),
+                    src.device_ptr(),
                     src.len() * std::mem::size_of::<T>(),
                 )
             }
@@ -269,18 +251,13 @@ impl CudaDevice {
         if self.is_async {
             unsafe {
                 result::memcpy_htod_async(
-                    dst.device_ptr as *mut c_void,
+                    dst.device_ptr,
                     dst.host_buf.as_ref().unwrap(),
                     self.stream,
                 )
             }?
         } else {
-            unsafe {
-                result::memcpy_htod_sync(
-                    dst.device_ptr as *mut c_void,
-                    dst.host_buf.as_ref().unwrap(),
-                )
-            }?
+            unsafe { result::memcpy_htod_sync(dst.device_ptr, dst.host_buf.as_ref().unwrap()) }?
         }
 
         Ok(())
@@ -321,11 +298,9 @@ impl CudaDevice {
     ) -> Result<(), result::RuntimeError> {
         assert_eq!(src.len(), dst.len());
         if self.is_async {
-            unsafe {
-                result::memcpy_htod_async(dst.device_ptr_mut() as *mut c_void, src, self.stream)
-            }?;
+            unsafe { result::memcpy_htod_async(dst.device_ptr_mut(), src, self.stream) }?;
         } else {
-            unsafe { result::memcpy_htod_sync(dst.device_ptr_mut() as *mut c_void, src) }?;
+            unsafe { result::memcpy_htod_sync(dst.device_ptr_mut(), src) }?;
         }
         self.synchronize()
     }
@@ -366,11 +341,9 @@ impl CudaDevice {
     ) -> Result<(), result::RuntimeError> {
         assert_eq!(src.len(), dst.len());
         if self.is_async {
-            unsafe {
-                result::memcpy_dtoh_async(dst, src.device_ptr() as *mut c_void, self.stream)
-            }?;
+            unsafe { result::memcpy_dtoh_async(dst, src.device_ptr(), self.stream) }?;
         } else {
-            unsafe { result::memcpy_dtoh_sync(dst, src.device_ptr() as *const c_void) }?;
+            unsafe { result::memcpy_dtoh_sync(dst, src.device_ptr()) }?;
         }
         self.synchronize()
     }
