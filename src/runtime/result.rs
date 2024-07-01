@@ -13,7 +13,9 @@
 
 use super::sys::{self, lib};
 use crate::driver::sys::cudaError_enum;
-use core::ffi::{c_uchar, c_void, CStr};
+use crate::driver::DriverError;
+use core::ffi::{c_uchar, c_void};
+use std::ffi::CStr;
 use std::mem::MaybeUninit;
 
 /// Wrapper around `cudaError_t`. See
