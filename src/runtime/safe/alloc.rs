@@ -45,29 +45,31 @@ unsafe impl DeviceRepr for half::bf16 {}
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaSlice<T> {
     #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        self.device_ptr() as *mut std::ffi::c_void
+    fn as_kernel_param(&self) -> *mut c_void {
+        &(self.device_ptr as driver_sys::CUdeviceptr) as *const driver_sys::CUdeviceptr
+            as *mut c_void
     }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &CudaSlice<T> {
     #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        self.device_ptr() as *mut std::ffi::c_void
+    fn as_kernel_param(&self) -> *mut c_void {
+        &(self.device_ptr as driver_sys::CUdeviceptr) as *const driver_sys::CUdeviceptr
+            as *mut c_void
     }
 }
 
 unsafe impl<'a, T: DeviceRepr> DeviceRepr for &CudaView<'a, T> {
     #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        self.device_ptr() as *mut std::ffi::c_void
+    fn as_kernel_param(&self) -> *mut c_void {
+        &(self.ptr as driver_sys::CUdeviceptr) as *const driver_sys::CUdeviceptr as *mut c_void
     }
 }
 
 unsafe impl<'a, T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'a, T> {
     #[inline(always)]
-    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
-        self.device_ptr() as *mut std::ffi::c_void
+    fn as_kernel_param(&self) -> *mut c_void {
+        &(self.ptr as driver_sys::CUdeviceptr) as *const driver_sys::CUdeviceptr as *mut c_void
     }
 }
 
