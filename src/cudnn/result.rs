@@ -779,3 +779,56 @@ pub unsafe fn reduce_tensor(
         )
         .result()
 }
+
+pub fn create_pooling_descriptor() -> Result<sys::cudnnPoolingDescriptor_t, CudnnError> {
+    let mut desc = MaybeUninit::uninit();
+    unsafe { lib().cudnnCreatePoolingDescriptor(desc.as_mut_ptr()).result()?;
+        Ok(desc.assume_init())
+    }
+}
+
+pub fn set_pooling_descriptor(
+    desc: sys::cudnnPoolingDescriptor_t,
+    mode: sys::cudnnPoolingMode_t,
+    nan_propagation: sys::cudnnNanPropagation_t,
+    dims: std::ffi::c_int,
+    input: &[std::ffi::c_int],
+    pads: &[std::ffi::c_int],
+    strides: &[std::ffi::c_int],
+) -> Result<(), CudnnError> {
+    unsafe {
+        lib().cudnnSetPoolingNdDescriptor(
+            desc,
+            mode,
+            nan_propagation,
+            dims,
+            input.as_ptr(),
+            pads.as_ptr(),
+            strides.as_ptr()
+        ).result()
+    }
+}
+
+pub fn pooling_forward(
+    handle: sys::cudnnHandle_t,
+    pooling_desc: sys::cudnnPoolingDescriptor_t,
+    alpha: *const ::core::ffi::c_void,
+    x_desc: sys::cudnnTensorDescriptor_t,
+    x: *const ::core::ffi::c_void,
+    beta: *const ::core::ffi::c_void,
+    y_desc: sys::cudnnTensorDescriptor_t,
+    y: *mut ::core::ffi::c_void,
+) -> Result<(), CudnnError> {
+    unsafe {
+        lib().cudnnPoolingForward(
+            handle,
+            pooling_desc,
+            alpha,
+            x_desc,
+            x,
+            beta,
+            y_desc,
+            y,
+        ).result()
+    }
+}
