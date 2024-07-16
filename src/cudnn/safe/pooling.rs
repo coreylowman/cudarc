@@ -3,8 +3,8 @@ use crate::{
     driver::{DevicePtr, DevicePtrMut},
 };
 
-use std::{marker::PhantomData, sync::Arc};
 use crate::cudnn::{result, Cudnn, CudnnDataType, TensorDescriptor};
+use std::{marker::PhantomData, sync::Arc};
 
 pub struct PoolingDescriptor<T> {
     desc: sys::cudnnPoolingDescriptor_t,
@@ -36,7 +36,7 @@ impl Cudnn {
             input.len() as std::ffi::c_int,
             input,
             pads,
-            strides
+            strides,
         )?;
 
         Ok(desc)
@@ -64,18 +64,18 @@ where
     where
         Input: DevicePtr<X>,
         Output: DevicePtrMut<Y>,
-        {
-            let alpha = alpha.into_scaling_parameter();
-            let beta = beta.into_scaling_parameter();
-            result::pooling_forward(
-                self.pooling.handle.handle,
-                self.pooling.desc,
-                (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
-                self.x.desc,
-                *input.device_ptr() as *const X as *const std::ffi::c_void,
-                (&beta) as *const Y::Scalar as *const std::ffi::c_void,
-                self.y.desc,
-                *output.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
-            )
-        }
+    {
+        let alpha = alpha.into_scaling_parameter();
+        let beta = beta.into_scaling_parameter();
+        result::pooling_forward(
+            self.pooling.handle.handle,
+            self.pooling.desc,
+            (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
+            self.x.desc,
+            *input.device_ptr() as *const X as *const std::ffi::c_void,
+            (&beta) as *const Y::Scalar as *const std::ffi::c_void,
+            self.y.desc,
+            *output.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
+        )
+    }
 }

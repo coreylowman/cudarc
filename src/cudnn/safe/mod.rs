@@ -18,8 +18,8 @@
 
 mod conv;
 mod core;
-mod reduce;
 mod pooling;
+mod reduce;
 
 #[allow(deprecated)]
 pub use self::conv::{
@@ -35,8 +35,8 @@ pub use self::conv::{
     ConvForward,
     FilterDescriptor,
 };
-pub use self::pooling::{PoolingForward, PoolingDescriptor};
 pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
+pub use self::pooling::{PoolingDescriptor, PoolingForward};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
 pub use super::result::CudnnError;
 
