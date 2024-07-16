@@ -599,10 +599,17 @@ pub unsafe fn malloc_managed(
 /// Advise about the usage of a given memory range.
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__UNIFIED.html#group__CUDA__UNIFIED_1g27608c857a9254789c13f3e3b72029e2)
+/// **Only available in 12.2+.
 ///
 /// # Safety
 /// 1. Memory must have been allocated by [malloc_managed()]
 /// 2. num_bytes must be the amount of bytes passed to [malloc_managed()]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050"
+))]
 pub unsafe fn mem_advise(
     dptr: sys::CUdeviceptr,
     num_bytes: usize,
@@ -615,9 +622,16 @@ pub unsafe fn mem_advise(
 }
 
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__UNIFIED.html#group__CUDA__UNIFIED_1gfe94f8b7fb56291ebcea44261aa4cb84)
+/// **Only available in 12.2+.
 ///
 /// # Safety
 /// 1. The dptr/num_bytes must be allocated by [malloc_managed()] and must be the exact same memory range.
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050"
+))]
 pub unsafe fn mem_prefetch_async(
     dptr: sys::CUdeviceptr,
     num_bytes: usize,

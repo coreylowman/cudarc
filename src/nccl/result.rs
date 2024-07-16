@@ -132,7 +132,12 @@ pub unsafe fn comm_init_all(
 /// **Only available in 12.2+.
 /// # Safety
 /// User is in charge of sending valid pointers.
-#[cfg(any(feature = "cuda-12020", feature = "cuda-12030", feature = "cuda-12040"))]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050"
+))]
 pub unsafe fn comm_split(
     comm: sys::ncclComm_t,
     color: ::core::ffi::c_int,
