@@ -44,9 +44,9 @@ impl Cudnn {
 }
 
 pub struct PoolingForward<'a, P, X, Y> {
-    pooling: &'a PoolingDescriptor<P>,
-    x: &'a TensorDescriptor<X>,
-    y: &'a TensorDescriptor<Y>,
+    pub pooling: &'a PoolingDescriptor<P>,
+    pub x: &'a TensorDescriptor<X>,
+    pub y: &'a TensorDescriptor<Y>,
 }
 
 impl<'a, P, X, Y> PoolingForward<'a, P, X, Y>
