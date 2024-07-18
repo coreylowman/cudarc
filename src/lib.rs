@@ -101,6 +101,8 @@ pub(crate) fn panic_no_lib_found<S: std::fmt::Debug>(lib_name: &str, choices: &[
 }
 
 pub(crate) fn get_lib_name_candidates(lib_name: &str) -> std::vec::Vec<std::string::String> {
+    use std::env::consts::{DLL_PREFIX, DLL_SUFFIX};
+
     let pointer_width = if cfg!(target_pointer_width = "32") {
         "32"
     } else if cfg!(target_pointer_width = "64") {
@@ -113,18 +115,22 @@ pub(crate) fn get_lib_name_candidates(lib_name: &str) -> std::vec::Vec<std::stri
     let minor = env!("CUDA_MINOR_VERSION");
 
     [
-        lib_name.into(),
-        std::format!("{lib_name}{pointer_width}"),
-        std::format!("{lib_name}{pointer_width}_{major}"),
-        std::format!("{lib_name}{pointer_width}_{major}{minor}"),
-        std::format!("{lib_name}{pointer_width}_{major}{minor}_0"),
-        std::format!("{lib_name}{pointer_width}_{major}0_{minor}"),
+        std::format!("{DLL_PREFIX}{lib_name}{DLL_SUFFIX}"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}{DLL_SUFFIX}"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_{major}{DLL_SUFFIX}"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_{major}{minor}{DLL_SUFFIX}"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_{major}{minor}_0{DLL_SUFFIX}"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_{major}0_{minor}{DLL_SUFFIX}"),
         // See issue #242
-        std::format!("{lib_name}{pointer_width}_10"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_10{DLL_SUFFIX}"),
         // See issue #246
-        std::format!("{lib_name}{pointer_width}_{major}0_0"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_{major}0_0{DLL_SUFFIX}"),
         // See issue #260
-        std::format!("{lib_name}{pointer_width}_9"),
+        std::format!("{DLL_PREFIX}{lib_name}{pointer_width}_9{DLL_SUFFIX}"),
+        // See issue #274
+        std::format!("{DLL_PREFIX}{lib_name}{DLL_SUFFIX}.{major}"),
+        std::format!("{DLL_PREFIX}{lib_name}{DLL_SUFFIX}.11"),
+        std::format!("{DLL_PREFIX}{lib_name}{DLL_SUFFIX}.10"),
     ]
     .into()
 }

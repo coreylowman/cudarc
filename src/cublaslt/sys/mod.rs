@@ -59,7 +59,7 @@ pub unsafe fn lib() -> &'static Lib {
         let lib_name = "cublasLt";
         let choices = crate::get_lib_name_candidates(lib_name);
         for choice in choices.iter() {
-            if let Ok(lib) = Lib::new(libloading::library_filename(choice)) {
+            if let Ok(lib) = Lib::new(choice) {
                 return lib;
             }
         }
