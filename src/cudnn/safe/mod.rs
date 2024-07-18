@@ -31,6 +31,7 @@ pub use self::conv::{
     // Current APIs
     ConvBackwardData,
     ConvBackwardFilter,
+    ConvBiasActivationForward,
     ConvDescriptor,
     ConvForward,
     FilterDescriptor,

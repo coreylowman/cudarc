@@ -525,3 +525,134 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilte
         )
     }
 }
+
+#[derive(Debug)]
+pub struct ConvBiasActivationForward<
+    'a,
+    X: CudnnDataType,
+    C: CudnnDataType,
+    A: CudnnDataType,
+    Y: CudnnDataType,
+> {
+    /// Conv parameters.
+    pub conv: &'a ConvDescriptor<C>,
+    /// Activation function.
+    pub act: &'a ActivationDescriptor<A>,
+    /// Input tensor descriptor
+    pub x: &'a TensorDescriptor<X>,
+    /// Filter descriptor
+    pub w: &'a FilterDescriptor<X>,
+    /// Z descriptor
+    pub z: &'a TensorDescriptor<X>,
+    /// Bias descriptor
+    pub bias: &'a TensorDescriptor<X>,
+    /// Output tensor descriptor
+    pub y: &'a TensorDescriptor<Y>,
+}
+
+impl<'a, X, C, A, Y> ConvBiasActivationForward<'a, X, C, A, Y>
+where
+    X: CudnnDataType,
+    C: CudnnDataType,
+    A: CudnnDataType,
+    Y: CudnnDataType,
+{
+    /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
+    pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionFwdAlgo_t, CudnnError> {
+        let conv = ConvForward {
+            conv: self.conv,
+            x: self.x,
+            w: self.w,
+            y: self.y,
+        };
+        conv.pick_algorithm()
+    }
+
+    /// Returns size in **bytes** to execute the selected algorithm.
+    pub fn get_workspace_size(
+        &self,
+        algo: sys::cudnnConvolutionFwdAlgo_t,
+    ) -> Result<usize, CudnnError> {
+        let conv = ConvForward {
+            conv: self.conv,
+            x: self.x,
+            w: self.w,
+            y: self.y,
+        };
+        conv.get_workspace_size(algo)
+    }
+
+    pub unsafe fn launch<Workspace, Src, Filter, Dst>(
+        &self,
+        algo: sys::cudnnConvolutionFwdAlgo_t,
+        workspace: Option<&mut Workspace>,
+        (alpha1, alpha2): (Y, Y),
+        src: &Src,
+        filter: &Filter,
+        z: &Src,
+        bias: &Src,
+        y: &mut Dst,
+    ) -> Result<(), CudnnError>
+    where
+        Workspace: DevicePtrMut<u8>,
+        Src: DevicePtr<X>,
+        Filter: DevicePtr<X>,
+        Dst: DevicePtrMut<Y>,
+    {
+        let (num_bytes, workspace_ptr) = match workspace {
+            Some(w) => (
+                w.num_bytes(),
+                *w.device_ptr_mut() as *mut u8 as *mut std::ffi::c_void,
+            ),
+            None => (0, std::ptr::null_mut()),
+        };
+        let alpha1 = alpha1.into_scaling_parameter();
+        let alpha2 = alpha2.into_scaling_parameter();
+        result::convolution_bias_activation_forward(
+            self.conv.handle.handle,
+            (&alpha1) as *const Y::Scalar as *const std::ffi::c_void,
+            self.x.desc,
+            *src.device_ptr() as *const X as *const std::ffi::c_void,
+            self.w.desc,
+            *filter.device_ptr() as *const X as *const std::ffi::c_void,
+            self.conv.desc,
+            algo,
+            workspace_ptr,
+            num_bytes,
+            (&alpha2) as *const Y::Scalar as *const std::ffi::c_void,
+            self.z.desc,
+            *z.device_ptr() as *const X as *const std::ffi::c_void,
+            self.bias.desc,
+            *bias.device_ptr() as *const X as *const std::ffi::c_void,
+            self.act.desc,
+            self.y.desc,
+            *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
+        )
+    }
+}
+
+#[derive(Debug)]
+pub struct ActivationDescriptor<T> {
+    pub(crate) desc: sys::cudnnActivationDescriptor_t,
+    #[allow(unused)]
+    pub(crate) handle: Arc<Cudnn>,
+    pub(crate) marker: PhantomData<T>,
+}
+
+impl Cudnn {
+    pub fn create_activation<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        mode: sys::cudnnActivationMode_t,
+        nan_propagation: sys::cudnnNanPropagation_t,
+        coef: f64,
+    ) -> Result<ActivationDescriptor<T>, CudnnError> {
+        let desc = result::create_activation_descriptor()?;
+        let desc = ActivationDescriptor {
+            desc,
+            handle: self.clone(),
+            marker: PhantomData,
+        };
+        result::set_activation_descriptor(desc.desc, mode, nan_propagation, coef)?;
+        Ok(desc)
+    }
+}

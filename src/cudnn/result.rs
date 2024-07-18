@@ -447,6 +447,51 @@ pub unsafe fn convolution_forward(
         .result()
 }
 
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn convolution_bias_activation_forward(
+    handle: sys::cudnnHandle_t,
+    alpha1: *const ::core::ffi::c_void,
+    x_desc: sys::cudnnTensorDescriptor_t,
+    x: *const ::core::ffi::c_void,
+    w_desc: sys::cudnnFilterDescriptor_t,
+    w: *const ::core::ffi::c_void,
+    conv_desc: sys::cudnnConvolutionDescriptor_t,
+    algo: sys::cudnnConvolutionFwdAlgo_t,
+    work_space: *mut ::core::ffi::c_void,
+    work_space_size_in_bytes: usize,
+    alpha2: *const ::core::ffi::c_void,
+    z_desc: sys::cudnnTensorDescriptor_t,
+    z: *const ::core::ffi::c_void,
+    bias_desc: sys::cudnnTensorDescriptor_t,
+    bias: *const ::core::ffi::c_void,
+    activation_desc: sys::cudnnActivationDescriptor_t,
+    y_desc: sys::cudnnTensorDescriptor_t,
+    y: *mut ::core::ffi::c_void,
+) -> Result<(), CudnnError> {
+    lib()
+        .cudnnConvolutionBiasActivationForward(
+            handle,
+            alpha1,
+            x_desc,
+            x,
+            w_desc,
+            w,
+            conv_desc,
+            algo,
+            work_space,
+            work_space_size_in_bytes,
+            alpha2,
+            z_desc,
+            z,
+            bias_desc,
+            bias,
+            activation_desc,
+            y_desc,
+            y,
+        )
+        .result()
+}
+
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardDataAlgorithm_v7)
 ///
 /// # Safety
@@ -827,6 +872,29 @@ pub fn pooling_forward(
     unsafe {
         lib()
             .cudnnPoolingForward(handle, pooling_desc, alpha, x_desc, x, beta, y_desc, y)
+            .result()
+    }
+}
+
+pub fn create_activation_descriptor() -> Result<sys::cudnnActivationDescriptor_t, CudnnError> {
+    let mut desc = MaybeUninit::uninit();
+    unsafe {
+        lib()
+            .cudnnCreateActivationDescriptor(desc.as_mut_ptr())
+            .result()?;
+        Ok(desc.assume_init())
+    }
+}
+
+pub fn set_activation_descriptor(
+    desc: sys::cudnnActivationDescriptor_t,
+    mode: sys::cudnnActivationMode_t,
+    nan_propagation: sys::cudnnNanPropagation_t,
+    coef: f64,
+) -> Result<(), CudnnError> {
+    unsafe {
+        lib()
+            .cudnnSetActivationDescriptor(desc, mode, nan_propagation, coef)
             .result()
     }
 }
