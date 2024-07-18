@@ -100,7 +100,47 @@ pub enum CudaDeviceFlags {
     CudaDeviceScheduleBlockingSync = sys::cudaDeviceScheduleBlockingSync as isize,
     CudaDeviceMapHost = sys::cudaDeviceMapHost as isize,
     CudaDeviceLmemResizeToMax = sys::cudaDeviceLmemResizeToMax as isize,
+    #[cfg(not(any(
+        feature = "cuda-11080",
+        feature = "cuda-11070",
+        feature = "cuda-11060",
+        feature = "cuda-11050"
+    )))]
     CudaDeviceSyncMemops = sys::cudaDeviceSyncMemops as isize,
+}
+
+pub mod version {
+    //! CUDA Runtime API version functions (`cudaRuntimeGetVersion`).
+    //!
+    //! See [CUDA Runtime API](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__VERSION.html)
+
+    use super::{lib, RuntimeError};
+
+    /// Returns the CUDA Runtime version.
+    ///
+    /// See [cudaRuntimeGetVersion() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART____VERSION.html#group__CUDART____VERSION_1g0e3952c7802fd730432180f1f4a6cdc6)
+    pub fn get() -> Result<i32, RuntimeError> {
+        let mut version = 0;
+        unsafe {
+            lib().cudaRuntimeGetVersion(&mut version).result()?;
+        }
+        Ok(version)
+    }
+
+    pub fn get_runtime_version() -> Result<i32, RuntimeError> {
+        get()
+    }
+
+    /// Returns the CUDA Driver version.
+    ///
+    /// See [cudaDriverGetVersion() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART____VERSION.html#group__CUDART____VERSION_1g8a06ee14a0551606b7c780084d5564ab)
+    pub fn get_driver_version() -> Result<i32, RuntimeError> {
+        let mut version = 0;
+        unsafe {
+            lib().cudaDriverGetVersion(&mut version).result()?;
+        }
+        Ok(version)
+    }
 }
 
 pub mod device {
@@ -109,27 +149,8 @@ pub mod device {
     //! See [cudart docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDA__DEVICE)
 
     use super::{lib, sys, RuntimeError};
-    use core::ffi::c_int;
+    use core::ffi::{c_int, c_void};
     use std::mem::MaybeUninit;
-
-    /// Initialize the CUDA driver API.
-    ///
-    /// See [cudaDeviceInit() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1gac04a5d82168676b20121ca870919419)
-    pub fn init(
-        device: i32,
-        device_flags: super::CudaDeviceFlags,
-        flags: u32,
-    ) -> Result<(), RuntimeError> {
-        if flags == 0 || flags == sys::cudaInitDeviceFlagsAreValid {
-            unsafe {
-                lib()
-                    .cudaInitDevice(device, device_flags as u32, flags)
-                    .result()
-            }
-        } else {
-            Err(RuntimeError(sys::cudaError_t::cudaErrorInvalidValue))
-        }
-    }
 
     /// Sets the current device for the calling host thread.
     /// If not already done so, it will initialize the structures and context for the device.
