@@ -513,7 +513,7 @@ pub mod stream {
     pub fn create(kind: StreamKind) -> Result<sys::cudaStream_t, RuntimeError> {
         let mut stream = MaybeUninit::uninit();
         unsafe {
-            lib().cudaStreamCreateWithFlags(stream.as_mut_ptr(), kind.flags() as u32);
+            lib().cudaStreamCreateWithFlags(stream.as_mut_ptr(), kind.flags());
             Ok(stream.assume_init())
         }
     }
