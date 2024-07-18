@@ -173,25 +173,40 @@ pub mod device {
         }
     }
 
+    /// Frees device memory.
+    ///
+    /// See [cudaFree() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1g9b0ec4fcdc8894cf65d308d2b1f00223)
+    ///
+    /// # Safety
+    /// 1. Must be a device pointer returned from `cudaMalloc()`, `cudaMallocPitch()`,
+    /// `cudaMallocManaged()`, `cudaMallocAsync()`, `cudaMallocFromPoolAsync()`.
+    ///
+    /// # Note
+    /// if device_ptr is 0, no operation is performed.
+    pub unsafe fn free(device_ptr: *mut c_void) -> Result<(), RuntimeError> {
+        unsafe { lib().cudaFree(device_ptr).result() }
+    }
+
     /// Get a device prop for a specific ordinal.
     /// See [cudaGetDeviceProperties_v2() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE_1g073d3dcb31d45fc96c8ff52833a890d0)
     pub fn get_device_prop(ordinal: c_int) -> Result<sys::cudaDeviceProp, RuntimeError> {
         let mut prop = MaybeUninit::uninit();
+
+        #[cfg(not(any(
+            feature = "cuda-11080",
+            feature = "cuda-11070",
+            feature = "cuda-11060",
+            feature = "cuda-11050"
+        )))]
         unsafe {
             lib()
                 .cudaGetDeviceProperties_v2(prop.as_mut_ptr(), ordinal)
                 .result()?;
             Ok(prop.assume_init())
         }
-    }
-
-    pub fn get_from_driver(
-        device: &crate::driver::CudaDevice,
-    ) -> Result<sys::cudaDeviceProp, RuntimeError> {
-        let mut prop = MaybeUninit::uninit();
         unsafe {
             lib()
-                .cudaGetDeviceProperties_v2(prop.as_mut_ptr(), device.ordinal() as i32)
+                .cudaGetDeviceProperties(prop.as_mut_ptr(), ordinal)
                 .result()?;
             Ok(prop.assume_init())
         }
