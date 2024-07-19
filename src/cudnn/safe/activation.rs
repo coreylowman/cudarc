@@ -1,40 +1,42 @@
-use crate::cudnn::{result, sys, Cudnn, CudnnDataType, CudnnError};
+use crate::cudnn::{result, sys, Cudnn, CudnnDataType, CudnnError, TensorDescriptor};
 use crate::driver::{DevicePtr, DevicePtrMut};
 use core::marker::PhantomData;
 use std::sync::Arc;
 
-pub struct ActivationForward<'a, A: CudnnDataType> {
+pub struct ActivationForward<'a, A: CudnnDataType, X: CudnnDataType, Y: CudnnDataType> {
     /// Activation function.
     pub act: &'a ActivationDescriptor<A>,
+    pub x: &'a TensorDescriptor<X>,
+    pub y: &'a TensorDescriptor<Y>,
 }
 
-impl<'a, T> ActivationForward<'a, T>
+impl<'a, A, X, Y> ActivationForward<'a, A, X, Y>
 where
-    T: CudnnDataType,
+    A: CudnnDataType,
+    X: CudnnDataType,
+    Y: CudnnDataType,
 {
     pub fn launch<Src, Dst>(
         &self,
-        (alpha, beta): (T, T),
-        x_desc: sys::cudnnTensorDescriptor_t,
+        (alpha, beta): (Y, Y),
         x: &Src,
-        y_desc: sys::cudnnTensorDescriptor_t,
         y: &mut Dst,
     ) -> Result<(), CudnnError>
     where
-        Src: DevicePtr<T>,
-        Dst: DevicePtrMut<T>,
+        Src: DevicePtr<A>,
+        Dst: DevicePtrMut<A>,
     {
         let alpha = alpha.into_scaling_parameter();
         let beta = beta.into_scaling_parameter();
         result::activation_forward(
             self.act.handle.handle,
             self.act.desc,
-            (&alpha) as *const T::Scalar as *const std::ffi::c_void,
-            x_desc,
-            *x.device_ptr() as *const T as *const std::ffi::c_void,
-            (&beta) as *const T::Scalar as *const std::ffi::c_void,
-            y_desc,
-            *y.device_ptr_mut() as *mut T as *mut std::ffi::c_void,
+            (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
+            self.x.desc,
+            *x.device_ptr() as *const X as *const std::ffi::c_void,
+            (&beta) as *const Y::Scalar as *const std::ffi::c_void,
+            self.y.desc,
+            *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
         )
     }
 }
