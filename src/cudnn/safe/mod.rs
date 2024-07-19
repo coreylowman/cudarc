@@ -16,6 +16,7 @@
 //!
 //! # Reductions
 
+mod activation;
 mod conv;
 mod core;
 mod pooling;
@@ -40,6 +41,7 @@ pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
 pub use self::pooling::{PoolingDescriptor, PoolingForward};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
 pub use super::result::CudnnError;
+pub use activation::{ActivationDescriptor, ActivationForward};
 
 #[cfg(test)]
 mod tests {

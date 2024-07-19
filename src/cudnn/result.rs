@@ -898,3 +898,20 @@ pub fn set_activation_descriptor(
             .result()
     }
 }
+
+pub fn activation_forward(
+    handle: sys::cudnnHandle_t,
+    activation_desc: sys::cudnnActivationDescriptor_t,
+    alpha: *const ::core::ffi::c_void,
+    x_desc: sys::cudnnTensorDescriptor_t,
+    x: *const ::core::ffi::c_void,
+    beta: *const ::core::ffi::c_void,
+    y_desc: sys::cudnnTensorDescriptor_t,
+    y: *mut ::core::ffi::c_void,
+) -> Result<(), CudnnError> {
+    unsafe {
+        lib()
+            .cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y)
+            .result()
+    }
+}
