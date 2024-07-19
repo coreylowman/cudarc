@@ -48,6 +48,7 @@ pub const cudaInitDeviceFlagsAreValid: u32 = 1;
 pub const cudaCooperativeLaunchMultiDeviceNoPreSync: u32 = 1;
 pub const cudaCooperativeLaunchMultiDeviceNoPostSync: u32 = 2;
 pub const cudaArraySparsePropertiesSingleMipTail: u32 = 1;
+pub const CUDA_IPC_HANDLE_SIZE: u32 = 64;
 pub const cudaExternalMemoryDedicated: u32 = 1;
 pub const cudaExternalSemaphoreSignalSkipNvSciBufMemSync: u32 = 1;
 pub const cudaExternalSemaphoreWaitSkipNvSciBufMemSync: u32 = 2;
@@ -67,6 +68,7 @@ pub const cudaTextureTypeCubemap: u32 = 12;
 pub const cudaTextureType1DLayered: u32 = 241;
 pub const cudaTextureType2DLayered: u32 = 242;
 pub const cudaTextureTypeCubemapLayered: u32 = 252;
+pub const CUDART_VERSION: u32 = 12020;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaRoundMode {
@@ -78,36 +80,36 @@ pub enum cudaRoundMode {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct dim3 {
-    pub x: ::std::os::raw::c_uint,
-    pub y: ::std::os::raw::c_uint,
-    pub z: ::std::os::raw::c_uint,
+    pub x: ::core::ffi::c_uint,
+    pub y: ::core::ffi::c_uint,
+    pub z: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_dim3() {
-    const UNINIT: ::std::mem::MaybeUninit<dim3> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<dim3> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<dim3>(),
+        ::core::mem::size_of::<dim3>(),
         12usize,
         concat!("Size of: ", stringify!(dim3))
     );
     assert_eq!(
-        ::std::mem::align_of::<dim3>(),
+        ::core::mem::align_of::<dim3>(),
         4usize,
         concat!("Alignment of ", stringify!(dim3))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
         0usize,
         concat!("Offset of field: ", stringify!(dim3), "::", stringify!(x))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
         4usize,
         concat!("Offset of field: ", stringify!(dim3), "::", stringify!(y))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
         8usize,
         concat!("Offset of field: ", stringify!(dim3), "::", stringify!(z))
     );
@@ -282,29 +284,29 @@ pub enum cudaChannelFormatKind {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaChannelFormatDesc {
-    pub x: ::std::os::raw::c_int,
-    pub y: ::std::os::raw::c_int,
-    pub z: ::std::os::raw::c_int,
-    pub w: ::std::os::raw::c_int,
+    pub x: ::core::ffi::c_int,
+    pub y: ::core::ffi::c_int,
+    pub z: ::core::ffi::c_int,
+    pub w: ::core::ffi::c_int,
     pub f: cudaChannelFormatKind,
 }
 #[test]
 fn bindgen_test_layout_cudaChannelFormatDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaChannelFormatDesc> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaChannelFormatDesc> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaChannelFormatDesc>(),
+        ::core::mem::size_of::<cudaChannelFormatDesc>(),
         20usize,
         concat!("Size of: ", stringify!(cudaChannelFormatDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaChannelFormatDesc>(),
+        ::core::mem::align_of::<cudaChannelFormatDesc>(),
         4usize,
         concat!("Alignment of ", stringify!(cudaChannelFormatDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -314,7 +316,7 @@ fn bindgen_test_layout_cudaChannelFormatDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -324,7 +326,7 @@ fn bindgen_test_layout_cudaChannelFormatDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -334,7 +336,7 @@ fn bindgen_test_layout_cudaChannelFormatDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).w) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).w) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
@@ -344,7 +346,7 @@ fn bindgen_test_layout_cudaChannelFormatDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).f) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).f) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -356,9 +358,9 @@ fn bindgen_test_layout_cudaChannelFormatDesc() {
 }
 impl Default for cudaChannelFormatDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -381,25 +383,25 @@ pub type cudaMipmappedArray_const_t = *const cudaMipmappedArray;
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaArraySparseProperties {
     pub tileExtent: cudaArraySparseProperties__bindgen_ty_1,
-    pub miptailFirstLevel: ::std::os::raw::c_uint,
-    pub miptailSize: ::std::os::raw::c_ulonglong,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 4usize],
+    pub miptailFirstLevel: ::core::ffi::c_uint,
+    pub miptailSize: ::core::ffi::c_ulonglong,
+    pub flags: ::core::ffi::c_uint,
+    pub reserved: [::core::ffi::c_uint; 4usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaArraySparseProperties__bindgen_ty_1 {
-    pub width: ::std::os::raw::c_uint,
-    pub height: ::std::os::raw::c_uint,
-    pub depth: ::std::os::raw::c_uint,
+    pub width: ::core::ffi::c_uint,
+    pub height: ::core::ffi::c_uint,
+    pub depth: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaArraySparseProperties__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaArraySparseProperties__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaArraySparseProperties__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaArraySparseProperties__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaArraySparseProperties__bindgen_ty_1>(),
         12usize,
         concat!(
             "Size of: ",
@@ -407,7 +409,7 @@ fn bindgen_test_layout_cudaArraySparseProperties__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaArraySparseProperties__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaArraySparseProperties__bindgen_ty_1>(),
         4usize,
         concat!(
             "Alignment of ",
@@ -415,7 +417,7 @@ fn bindgen_test_layout_cudaArraySparseProperties__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -425,7 +427,7 @@ fn bindgen_test_layout_cudaArraySparseProperties__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -435,7 +437,7 @@ fn bindgen_test_layout_cudaArraySparseProperties__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).depth) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).depth) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -447,21 +449,21 @@ fn bindgen_test_layout_cudaArraySparseProperties__bindgen_ty_1() {
 }
 #[test]
 fn bindgen_test_layout_cudaArraySparseProperties() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaArraySparseProperties> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaArraySparseProperties> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaArraySparseProperties>(),
+        ::core::mem::size_of::<cudaArraySparseProperties>(),
         48usize,
         concat!("Size of: ", stringify!(cudaArraySparseProperties))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaArraySparseProperties>(),
+        ::core::mem::align_of::<cudaArraySparseProperties>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaArraySparseProperties))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tileExtent) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).tileExtent) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -471,7 +473,7 @@ fn bindgen_test_layout_cudaArraySparseProperties() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).miptailFirstLevel) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).miptailFirstLevel) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
@@ -481,7 +483,7 @@ fn bindgen_test_layout_cudaArraySparseProperties() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).miptailSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).miptailSize) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -491,7 +493,7 @@ fn bindgen_test_layout_cudaArraySparseProperties() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -501,7 +503,7 @@ fn bindgen_test_layout_cudaArraySparseProperties() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         28usize,
         concat!(
             "Offset of field: ",
@@ -516,25 +518,25 @@ fn bindgen_test_layout_cudaArraySparseProperties() {
 pub struct cudaArrayMemoryRequirements {
     pub size: usize,
     pub alignment: usize,
-    pub reserved: [::std::os::raw::c_uint; 4usize],
+    pub reserved: [::core::ffi::c_uint; 4usize],
 }
 #[test]
 fn bindgen_test_layout_cudaArrayMemoryRequirements() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaArrayMemoryRequirements> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaArrayMemoryRequirements> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaArrayMemoryRequirements>(),
+        ::core::mem::size_of::<cudaArrayMemoryRequirements>(),
         32usize,
         concat!("Size of: ", stringify!(cudaArrayMemoryRequirements))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaArrayMemoryRequirements>(),
+        ::core::mem::align_of::<cudaArrayMemoryRequirements>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaArrayMemoryRequirements))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -544,7 +546,7 @@ fn bindgen_test_layout_cudaArrayMemoryRequirements() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).alignment) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).alignment) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -554,7 +556,7 @@ fn bindgen_test_layout_cudaArrayMemoryRequirements() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -584,27 +586,27 @@ pub enum cudaMemcpyKind {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaPitchedPtr {
-    pub ptr: *mut ::std::os::raw::c_void,
+    pub ptr: *mut ::core::ffi::c_void,
     pub pitch: usize,
     pub xsize: usize,
     pub ysize: usize,
 }
 #[test]
 fn bindgen_test_layout_cudaPitchedPtr() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaPitchedPtr> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaPitchedPtr> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaPitchedPtr>(),
+        ::core::mem::size_of::<cudaPitchedPtr>(),
         32usize,
         concat!("Size of: ", stringify!(cudaPitchedPtr))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaPitchedPtr>(),
+        ::core::mem::align_of::<cudaPitchedPtr>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaPitchedPtr))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ptr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).ptr) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -614,7 +616,7 @@ fn bindgen_test_layout_cudaPitchedPtr() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -624,7 +626,7 @@ fn bindgen_test_layout_cudaPitchedPtr() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).xsize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).xsize) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -634,7 +636,7 @@ fn bindgen_test_layout_cudaPitchedPtr() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ysize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).ysize) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -646,9 +648,9 @@ fn bindgen_test_layout_cudaPitchedPtr() {
 }
 impl Default for cudaPitchedPtr {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -662,20 +664,20 @@ pub struct cudaExtent {
 }
 #[test]
 fn bindgen_test_layout_cudaExtent() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExtent> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExtent> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExtent>(),
+        ::core::mem::size_of::<cudaExtent>(),
         24usize,
         concat!("Size of: ", stringify!(cudaExtent))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExtent>(),
+        ::core::mem::align_of::<cudaExtent>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaExtent))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -685,7 +687,7 @@ fn bindgen_test_layout_cudaExtent() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -695,7 +697,7 @@ fn bindgen_test_layout_cudaExtent() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).depth) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).depth) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -714,20 +716,20 @@ pub struct cudaPos {
 }
 #[test]
 fn bindgen_test_layout_cudaPos() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaPos> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaPos> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaPos>(),
+        ::core::mem::size_of::<cudaPos>(),
         24usize,
         concat!("Size of: ", stringify!(cudaPos))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaPos>(),
+        ::core::mem::align_of::<cudaPos>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaPos))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -737,7 +739,7 @@ fn bindgen_test_layout_cudaPos() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -747,7 +749,7 @@ fn bindgen_test_layout_cudaPos() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -771,20 +773,20 @@ pub struct cudaMemcpy3DParms {
 }
 #[test]
 fn bindgen_test_layout_cudaMemcpy3DParms() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemcpy3DParms> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemcpy3DParms> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemcpy3DParms>(),
+        ::core::mem::size_of::<cudaMemcpy3DParms>(),
         160usize,
         concat!("Size of: ", stringify!(cudaMemcpy3DParms))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemcpy3DParms>(),
+        ::core::mem::align_of::<cudaMemcpy3DParms>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemcpy3DParms))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -794,7 +796,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcPos) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcPos) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -804,7 +806,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcPtr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcPtr) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -814,7 +816,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize },
         64usize,
         concat!(
             "Offset of field: ",
@@ -824,7 +826,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstPos) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstPos) as usize - ptr as usize },
         72usize,
         concat!(
             "Offset of field: ",
@@ -834,7 +836,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstPtr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstPtr) as usize - ptr as usize },
         96usize,
         concat!(
             "Offset of field: ",
@@ -844,7 +846,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extent) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extent) as usize - ptr as usize },
         128usize,
         concat!(
             "Offset of field: ",
@@ -854,7 +856,7 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).kind) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).kind) as usize - ptr as usize },
         152usize,
         concat!(
             "Offset of field: ",
@@ -866,9 +868,9 @@ fn bindgen_test_layout_cudaMemcpy3DParms() {
 }
 impl Default for cudaMemcpy3DParms {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -876,26 +878,27 @@ impl Default for cudaMemcpy3DParms {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemcpyNodeParams {
-    pub flags: ::std::os::raw::c_int,
-    pub reserved: [::std::os::raw::c_int; 3usize],
+    pub flags: ::core::ffi::c_int,
+    pub reserved: [::core::ffi::c_int; 3usize],
     pub copyParams: cudaMemcpy3DParms,
 }
 #[test]
 fn bindgen_test_layout_cudaMemcpyNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemcpyNodeParams> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemcpyNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemcpyNodeParams>(),
+        ::core::mem::size_of::<cudaMemcpyNodeParams>(),
         176usize,
         concat!("Size of: ", stringify!(cudaMemcpyNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemcpyNodeParams>(),
+        ::core::mem::align_of::<cudaMemcpyNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemcpyNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -905,7 +908,7 @@ fn bindgen_test_layout_cudaMemcpyNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -915,7 +918,7 @@ fn bindgen_test_layout_cudaMemcpyNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).copyParams) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).copyParams) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -927,9 +930,9 @@ fn bindgen_test_layout_cudaMemcpyNodeParams() {
 }
 impl Default for cudaMemcpyNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -940,30 +943,30 @@ pub struct cudaMemcpy3DPeerParms {
     pub srcArray: cudaArray_t,
     pub srcPos: cudaPos,
     pub srcPtr: cudaPitchedPtr,
-    pub srcDevice: ::std::os::raw::c_int,
+    pub srcDevice: ::core::ffi::c_int,
     pub dstArray: cudaArray_t,
     pub dstPos: cudaPos,
     pub dstPtr: cudaPitchedPtr,
-    pub dstDevice: ::std::os::raw::c_int,
+    pub dstDevice: ::core::ffi::c_int,
     pub extent: cudaExtent,
 }
 #[test]
 fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemcpy3DPeerParms> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemcpy3DPeerParms> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemcpy3DPeerParms>(),
+        ::core::mem::size_of::<cudaMemcpy3DPeerParms>(),
         168usize,
         concat!("Size of: ", stringify!(cudaMemcpy3DPeerParms))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemcpy3DPeerParms>(),
+        ::core::mem::align_of::<cudaMemcpy3DPeerParms>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemcpy3DPeerParms))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcArray) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -973,7 +976,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcPos) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcPos) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -983,7 +986,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcPtr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcPtr) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -993,7 +996,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).srcDevice) as usize - ptr as usize },
         64usize,
         concat!(
             "Offset of field: ",
@@ -1003,7 +1006,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstArray) as usize - ptr as usize },
         72usize,
         concat!(
             "Offset of field: ",
@@ -1013,7 +1016,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstPos) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstPos) as usize - ptr as usize },
         80usize,
         concat!(
             "Offset of field: ",
@@ -1023,7 +1026,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstPtr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstPtr) as usize - ptr as usize },
         104usize,
         concat!(
             "Offset of field: ",
@@ -1033,7 +1036,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dstDevice) as usize - ptr as usize },
         136usize,
         concat!(
             "Offset of field: ",
@@ -1043,7 +1046,7 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extent) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extent) as usize - ptr as usize },
         144usize,
         concat!(
             "Offset of field: ",
@@ -1055,9 +1058,9 @@ fn bindgen_test_layout_cudaMemcpy3DPeerParms() {
 }
 impl Default for cudaMemcpy3DPeerParms {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1065,29 +1068,29 @@ impl Default for cudaMemcpy3DPeerParms {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemsetParams {
-    pub dst: *mut ::std::os::raw::c_void,
+    pub dst: *mut ::core::ffi::c_void,
     pub pitch: usize,
-    pub value: ::std::os::raw::c_uint,
-    pub elementSize: ::std::os::raw::c_uint,
+    pub value: ::core::ffi::c_uint,
+    pub elementSize: ::core::ffi::c_uint,
     pub width: usize,
     pub height: usize,
 }
 #[test]
 fn bindgen_test_layout_cudaMemsetParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemsetParams> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemsetParams> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemsetParams>(),
+        ::core::mem::size_of::<cudaMemsetParams>(),
         40usize,
         concat!("Size of: ", stringify!(cudaMemsetParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemsetParams>(),
+        ::core::mem::align_of::<cudaMemsetParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemsetParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dst) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dst) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1097,7 +1100,7 @@ fn bindgen_test_layout_cudaMemsetParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1107,7 +1110,7 @@ fn bindgen_test_layout_cudaMemsetParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1117,7 +1120,7 @@ fn bindgen_test_layout_cudaMemsetParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).elementSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).elementSize) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -1127,7 +1130,7 @@ fn bindgen_test_layout_cudaMemsetParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -1137,7 +1140,7 @@ fn bindgen_test_layout_cudaMemsetParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -1149,9 +1152,9 @@ fn bindgen_test_layout_cudaMemsetParams() {
 }
 impl Default for cudaMemsetParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1159,29 +1162,29 @@ impl Default for cudaMemsetParams {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemsetParamsV2 {
-    pub dst: *mut ::std::os::raw::c_void,
+    pub dst: *mut ::core::ffi::c_void,
     pub pitch: usize,
-    pub value: ::std::os::raw::c_uint,
-    pub elementSize: ::std::os::raw::c_uint,
+    pub value: ::core::ffi::c_uint,
+    pub elementSize: ::core::ffi::c_uint,
     pub width: usize,
     pub height: usize,
 }
 #[test]
 fn bindgen_test_layout_cudaMemsetParamsV2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemsetParamsV2> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemsetParamsV2> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemsetParamsV2>(),
+        ::core::mem::size_of::<cudaMemsetParamsV2>(),
         40usize,
         concat!("Size of: ", stringify!(cudaMemsetParamsV2))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemsetParamsV2>(),
+        ::core::mem::align_of::<cudaMemsetParamsV2>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemsetParamsV2))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dst) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dst) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1191,7 +1194,7 @@ fn bindgen_test_layout_cudaMemsetParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pitch) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1201,7 +1204,7 @@ fn bindgen_test_layout_cudaMemsetParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1211,7 +1214,7 @@ fn bindgen_test_layout_cudaMemsetParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).elementSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).elementSize) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -1221,7 +1224,7 @@ fn bindgen_test_layout_cudaMemsetParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -1231,7 +1234,7 @@ fn bindgen_test_layout_cudaMemsetParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -1243,9 +1246,9 @@ fn bindgen_test_layout_cudaMemsetParamsV2() {
 }
 impl Default for cudaMemsetParamsV2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1260,7 +1263,7 @@ pub enum cudaAccessProperty {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct cudaAccessPolicyWindow {
-    pub base_ptr: *mut ::std::os::raw::c_void,
+    pub base_ptr: *mut ::core::ffi::c_void,
     pub num_bytes: usize,
     pub hitRatio: f32,
     pub hitProp: cudaAccessProperty,
@@ -1268,21 +1271,21 @@ pub struct cudaAccessPolicyWindow {
 }
 #[test]
 fn bindgen_test_layout_cudaAccessPolicyWindow() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaAccessPolicyWindow> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaAccessPolicyWindow> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaAccessPolicyWindow>(),
+        ::core::mem::size_of::<cudaAccessPolicyWindow>(),
         32usize,
         concat!("Size of: ", stringify!(cudaAccessPolicyWindow))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaAccessPolicyWindow>(),
+        ::core::mem::align_of::<cudaAccessPolicyWindow>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaAccessPolicyWindow))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).base_ptr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).base_ptr) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1292,7 +1295,7 @@ fn bindgen_test_layout_cudaAccessPolicyWindow() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).num_bytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).num_bytes) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1302,7 +1305,7 @@ fn bindgen_test_layout_cudaAccessPolicyWindow() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hitRatio) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).hitRatio) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1312,7 +1315,7 @@ fn bindgen_test_layout_cudaAccessPolicyWindow() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hitProp) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).hitProp) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -1322,7 +1325,7 @@ fn bindgen_test_layout_cudaAccessPolicyWindow() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).missProp) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).missProp) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -1334,37 +1337,37 @@ fn bindgen_test_layout_cudaAccessPolicyWindow() {
 }
 impl Default for cudaAccessPolicyWindow {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 pub type cudaHostFn_t =
-    ::std::option::Option<unsafe extern "C" fn(userData: *mut ::std::os::raw::c_void)>;
+    ::core::option::Option<unsafe extern "C" fn(userData: *mut ::core::ffi::c_void)>;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaHostNodeParams {
     pub fn_: cudaHostFn_t,
-    pub userData: *mut ::std::os::raw::c_void,
+    pub userData: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaHostNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaHostNodeParams> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaHostNodeParams> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaHostNodeParams>(),
+        ::core::mem::size_of::<cudaHostNodeParams>(),
         16usize,
         concat!("Size of: ", stringify!(cudaHostNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaHostNodeParams>(),
+        ::core::mem::align_of::<cudaHostNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaHostNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fn_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fn_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1374,7 +1377,7 @@ fn bindgen_test_layout_cudaHostNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).userData) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).userData) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1386,9 +1389,9 @@ fn bindgen_test_layout_cudaHostNodeParams() {
 }
 impl Default for cudaHostNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1397,24 +1400,25 @@ impl Default for cudaHostNodeParams {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaHostNodeParamsV2 {
     pub fn_: cudaHostFn_t,
-    pub userData: *mut ::std::os::raw::c_void,
+    pub userData: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaHostNodeParamsV2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaHostNodeParamsV2> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaHostNodeParamsV2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaHostNodeParamsV2>(),
+        ::core::mem::size_of::<cudaHostNodeParamsV2>(),
         16usize,
         concat!("Size of: ", stringify!(cudaHostNodeParamsV2))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaHostNodeParamsV2>(),
+        ::core::mem::align_of::<cudaHostNodeParamsV2>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaHostNodeParamsV2))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fn_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fn_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1424,7 +1428,7 @@ fn bindgen_test_layout_cudaHostNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).userData) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).userData) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1436,9 +1440,9 @@ fn bindgen_test_layout_cudaHostNodeParamsV2() {
 }
 impl Default for cudaHostNodeParamsV2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1587,11 +1591,11 @@ pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_1 {
 }
 #[test]
 fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -1599,7 +1603,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -1607,7 +1611,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).array) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).array) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1619,9 +1623,9 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_1() {
 }
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1633,11 +1637,11 @@ pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_2 {
 }
 #[test]
 fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Size of: ",
@@ -1645,7 +1649,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -1653,7 +1657,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1665,9 +1669,9 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_2() {
 }
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1675,17 +1679,17 @@ impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_2 {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_3 {
-    pub devPtr: *mut ::std::os::raw::c_void,
+    pub devPtr: *mut ::core::ffi::c_void,
     pub desc: cudaChannelFormatDesc,
     pub sizeInBytes: usize,
 }
 #[test]
 fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_3() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3>(),
         40usize,
         concat!(
             "Size of: ",
@@ -1693,7 +1697,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_3() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -1701,7 +1705,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_3() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1711,7 +1715,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_3() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).desc) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).desc) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1721,7 +1725,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_3() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sizeInBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sizeInBytes) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -1733,9 +1737,9 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_3() {
 }
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_3 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1743,7 +1747,7 @@ impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_3 {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_4 {
-    pub devPtr: *mut ::std::os::raw::c_void,
+    pub devPtr: *mut ::core::ffi::c_void,
     pub desc: cudaChannelFormatDesc,
     pub width: usize,
     pub height: usize,
@@ -1751,11 +1755,11 @@ pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_4 {
 }
 #[test]
 fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4>(),
+        ::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4>(),
         56usize,
         concat!(
             "Size of: ",
@@ -1763,7 +1767,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4>(),
+        ::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -1771,7 +1775,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).devPtr) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1781,7 +1785,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).desc) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).desc) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1791,7 +1795,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -1801,7 +1805,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -1811,7 +1815,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pitchInBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pitchInBytes) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -1823,30 +1827,30 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1__bindgen_ty_4() {
 }
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_4 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceDesc__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceDesc__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1>(),
         56usize,
         concat!("Size of: ", stringify!(cudaResourceDesc__bindgen_ty_1))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceDesc__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaResourceDesc__bindgen_ty_1))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).array) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).array) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1856,7 +1860,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).mipmap) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1866,7 +1870,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).linear) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).linear) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1876,7 +1880,7 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pitch2D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pitch2D) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1888,29 +1892,29 @@ fn bindgen_test_layout_cudaResourceDesc__bindgen_ty_1() {
 }
 impl Default for cudaResourceDesc__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaResourceDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceDesc> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceDesc> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceDesc>(),
+        ::core::mem::size_of::<cudaResourceDesc>(),
         64usize,
         concat!("Size of: ", stringify!(cudaResourceDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceDesc>(),
+        ::core::mem::align_of::<cudaResourceDesc>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaResourceDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).resType) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).resType) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1920,7 +1924,7 @@ fn bindgen_test_layout_cudaResourceDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).res) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).res) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1932,9 +1936,9 @@ fn bindgen_test_layout_cudaResourceDesc() {
 }
 impl Default for cudaResourceDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -1946,27 +1950,28 @@ pub struct cudaResourceViewDesc {
     pub width: usize,
     pub height: usize,
     pub depth: usize,
-    pub firstMipmapLevel: ::std::os::raw::c_uint,
-    pub lastMipmapLevel: ::std::os::raw::c_uint,
-    pub firstLayer: ::std::os::raw::c_uint,
-    pub lastLayer: ::std::os::raw::c_uint,
+    pub firstMipmapLevel: ::core::ffi::c_uint,
+    pub lastMipmapLevel: ::core::ffi::c_uint,
+    pub firstLayer: ::core::ffi::c_uint,
+    pub lastLayer: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaResourceViewDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaResourceViewDesc> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaResourceViewDesc> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaResourceViewDesc>(),
+        ::core::mem::size_of::<cudaResourceViewDesc>(),
         48usize,
         concat!("Size of: ", stringify!(cudaResourceViewDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaResourceViewDesc>(),
+        ::core::mem::align_of::<cudaResourceViewDesc>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaResourceViewDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).format) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).format) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1976,7 +1981,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).width) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1986,7 +1991,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).height) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1996,7 +2001,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).depth) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).depth) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -2006,7 +2011,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).firstMipmapLevel) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).firstMipmapLevel) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -2016,7 +2021,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).lastMipmapLevel) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).lastMipmapLevel) as usize - ptr as usize },
         36usize,
         concat!(
             "Offset of field: ",
@@ -2026,7 +2031,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).firstLayer) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).firstLayer) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -2036,7 +2041,7 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).lastLayer) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).lastLayer) as usize - ptr as usize },
         44usize,
         concat!(
             "Offset of field: ",
@@ -2048,9 +2053,9 @@ fn bindgen_test_layout_cudaResourceViewDesc() {
 }
 impl Default for cudaResourceViewDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2059,27 +2064,27 @@ impl Default for cudaResourceViewDesc {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaPointerAttributes {
     pub type_: cudaMemoryType,
-    pub device: ::std::os::raw::c_int,
-    pub devicePointer: *mut ::std::os::raw::c_void,
-    pub hostPointer: *mut ::std::os::raw::c_void,
+    pub device: ::core::ffi::c_int,
+    pub devicePointer: *mut ::core::ffi::c_void,
+    pub hostPointer: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaPointerAttributes() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaPointerAttributes> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaPointerAttributes> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaPointerAttributes>(),
+        ::core::mem::size_of::<cudaPointerAttributes>(),
         24usize,
         concat!("Size of: ", stringify!(cudaPointerAttributes))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaPointerAttributes>(),
+        ::core::mem::align_of::<cudaPointerAttributes>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaPointerAttributes))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2089,7 +2094,7 @@ fn bindgen_test_layout_cudaPointerAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).device) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).device) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -2099,7 +2104,7 @@ fn bindgen_test_layout_cudaPointerAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).devicePointer) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).devicePointer) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -2109,7 +2114,7 @@ fn bindgen_test_layout_cudaPointerAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hostPointer) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).hostPointer) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -2121,9 +2126,9 @@ fn bindgen_test_layout_cudaPointerAttributes() {
 }
 impl Default for cudaPointerAttributes {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2134,37 +2139,37 @@ pub struct cudaFuncAttributes {
     pub sharedSizeBytes: usize,
     pub constSizeBytes: usize,
     pub localSizeBytes: usize,
-    pub maxThreadsPerBlock: ::std::os::raw::c_int,
-    pub numRegs: ::std::os::raw::c_int,
-    pub ptxVersion: ::std::os::raw::c_int,
-    pub binaryVersion: ::std::os::raw::c_int,
-    pub cacheModeCA: ::std::os::raw::c_int,
-    pub maxDynamicSharedSizeBytes: ::std::os::raw::c_int,
-    pub preferredShmemCarveout: ::std::os::raw::c_int,
-    pub clusterDimMustBeSet: ::std::os::raw::c_int,
-    pub requiredClusterWidth: ::std::os::raw::c_int,
-    pub requiredClusterHeight: ::std::os::raw::c_int,
-    pub requiredClusterDepth: ::std::os::raw::c_int,
-    pub clusterSchedulingPolicyPreference: ::std::os::raw::c_int,
-    pub nonPortableClusterSizeAllowed: ::std::os::raw::c_int,
-    pub reserved: [::std::os::raw::c_int; 16usize],
+    pub maxThreadsPerBlock: ::core::ffi::c_int,
+    pub numRegs: ::core::ffi::c_int,
+    pub ptxVersion: ::core::ffi::c_int,
+    pub binaryVersion: ::core::ffi::c_int,
+    pub cacheModeCA: ::core::ffi::c_int,
+    pub maxDynamicSharedSizeBytes: ::core::ffi::c_int,
+    pub preferredShmemCarveout: ::core::ffi::c_int,
+    pub clusterDimMustBeSet: ::core::ffi::c_int,
+    pub requiredClusterWidth: ::core::ffi::c_int,
+    pub requiredClusterHeight: ::core::ffi::c_int,
+    pub requiredClusterDepth: ::core::ffi::c_int,
+    pub clusterSchedulingPolicyPreference: ::core::ffi::c_int,
+    pub nonPortableClusterSizeAllowed: ::core::ffi::c_int,
+    pub reserved: [::core::ffi::c_int; 16usize],
 }
 #[test]
 fn bindgen_test_layout_cudaFuncAttributes() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaFuncAttributes> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaFuncAttributes> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaFuncAttributes>(),
+        ::core::mem::size_of::<cudaFuncAttributes>(),
         144usize,
         concat!("Size of: ", stringify!(cudaFuncAttributes))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaFuncAttributes>(),
+        ::core::mem::align_of::<cudaFuncAttributes>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaFuncAttributes))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedSizeBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedSizeBytes) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2174,7 +2179,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).constSizeBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).constSizeBytes) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -2184,7 +2189,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).localSizeBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).localSizeBytes) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -2194,7 +2199,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxThreadsPerBlock) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxThreadsPerBlock) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -2204,7 +2209,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numRegs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numRegs) as usize - ptr as usize },
         28usize,
         concat!(
             "Offset of field: ",
@@ -2214,7 +2219,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ptxVersion) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).ptxVersion) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -2224,7 +2229,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).binaryVersion) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).binaryVersion) as usize - ptr as usize },
         36usize,
         concat!(
             "Offset of field: ",
@@ -2234,7 +2239,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cacheModeCA) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).cacheModeCA) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -2244,7 +2249,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxDynamicSharedSizeBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxDynamicSharedSizeBytes) as usize - ptr as usize },
         44usize,
         concat!(
             "Offset of field: ",
@@ -2254,7 +2259,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).preferredShmemCarveout) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).preferredShmemCarveout) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -2264,7 +2269,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).clusterDimMustBeSet) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).clusterDimMustBeSet) as usize - ptr as usize },
         52usize,
         concat!(
             "Offset of field: ",
@@ -2274,7 +2279,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).requiredClusterWidth) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).requiredClusterWidth) as usize - ptr as usize },
         56usize,
         concat!(
             "Offset of field: ",
@@ -2284,7 +2289,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).requiredClusterHeight) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).requiredClusterHeight) as usize - ptr as usize },
         60usize,
         concat!(
             "Offset of field: ",
@@ -2294,7 +2299,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).requiredClusterDepth) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).requiredClusterDepth) as usize - ptr as usize },
         64usize,
         concat!(
             "Offset of field: ",
@@ -2305,7 +2310,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).clusterSchedulingPolicyPreference) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).clusterSchedulingPolicyPreference) as usize - ptr as usize
         },
         68usize,
         concat!(
@@ -2317,7 +2322,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).nonPortableClusterSizeAllowed) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).nonPortableClusterSizeAllowed) as usize - ptr as usize
         },
         72usize,
         concat!(
@@ -2328,7 +2333,7 @@ fn bindgen_test_layout_cudaFuncAttributes() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         76usize,
         concat!(
             "Offset of field: ",
@@ -2598,24 +2603,24 @@ pub enum cudaMemLocationType {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemLocation {
     pub type_: cudaMemLocationType,
-    pub id: ::std::os::raw::c_int,
+    pub id: ::core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_cudaMemLocation() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemLocation> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemLocation> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemLocation>(),
+        ::core::mem::size_of::<cudaMemLocation>(),
         8usize,
         concat!("Size of: ", stringify!(cudaMemLocation))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemLocation>(),
+        ::core::mem::align_of::<cudaMemLocation>(),
         4usize,
         concat!("Alignment of ", stringify!(cudaMemLocation))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2625,7 +2630,7 @@ fn bindgen_test_layout_cudaMemLocation() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).id) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).id) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -2637,9 +2642,9 @@ fn bindgen_test_layout_cudaMemLocation() {
 }
 impl Default for cudaMemLocation {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2659,20 +2664,20 @@ pub struct cudaMemAccessDesc {
 }
 #[test]
 fn bindgen_test_layout_cudaMemAccessDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemAccessDesc> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemAccessDesc> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemAccessDesc>(),
+        ::core::mem::size_of::<cudaMemAccessDesc>(),
         12usize,
         concat!("Size of: ", stringify!(cudaMemAccessDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemAccessDesc>(),
+        ::core::mem::align_of::<cudaMemAccessDesc>(),
         4usize,
         concat!("Alignment of ", stringify!(cudaMemAccessDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).location) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).location) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2682,7 +2687,7 @@ fn bindgen_test_layout_cudaMemAccessDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -2694,9 +2699,9 @@ fn bindgen_test_layout_cudaMemAccessDesc() {
 }
 impl Default for cudaMemAccessDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2722,26 +2727,26 @@ pub struct cudaMemPoolProps {
     pub allocType: cudaMemAllocationType,
     pub handleTypes: cudaMemAllocationHandleType,
     pub location: cudaMemLocation,
-    pub win32SecurityAttributes: *mut ::std::os::raw::c_void,
+    pub win32SecurityAttributes: *mut ::core::ffi::c_void,
     pub maxSize: usize,
-    pub reserved: [::std::os::raw::c_uchar; 56usize],
+    pub reserved: [::core::ffi::c_uchar; 56usize],
 }
 #[test]
 fn bindgen_test_layout_cudaMemPoolProps() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemPoolProps> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemPoolProps> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemPoolProps>(),
+        ::core::mem::size_of::<cudaMemPoolProps>(),
         88usize,
         concat!("Size of: ", stringify!(cudaMemPoolProps))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemPoolProps>(),
+        ::core::mem::align_of::<cudaMemPoolProps>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemPoolProps))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).allocType) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).allocType) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2751,7 +2756,7 @@ fn bindgen_test_layout_cudaMemPoolProps() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).handleTypes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).handleTypes) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -2761,7 +2766,7 @@ fn bindgen_test_layout_cudaMemPoolProps() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).location) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).location) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -2771,7 +2776,7 @@ fn bindgen_test_layout_cudaMemPoolProps() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).win32SecurityAttributes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).win32SecurityAttributes) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -2781,7 +2786,7 @@ fn bindgen_test_layout_cudaMemPoolProps() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSize) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -2791,7 +2796,7 @@ fn bindgen_test_layout_cudaMemPoolProps() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -2803,9 +2808,9 @@ fn bindgen_test_layout_cudaMemPoolProps() {
 }
 impl Default for cudaMemPoolProps {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2813,25 +2818,25 @@ impl Default for cudaMemPoolProps {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemPoolPtrExportData {
-    pub reserved: [::std::os::raw::c_uchar; 64usize],
+    pub reserved: [::core::ffi::c_uchar; 64usize],
 }
 #[test]
 fn bindgen_test_layout_cudaMemPoolPtrExportData() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemPoolPtrExportData> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemPoolPtrExportData> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemPoolPtrExportData>(),
+        ::core::mem::size_of::<cudaMemPoolPtrExportData>(),
         64usize,
         concat!("Size of: ", stringify!(cudaMemPoolPtrExportData))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemPoolPtrExportData>(),
+        ::core::mem::align_of::<cudaMemPoolPtrExportData>(),
         1usize,
         concat!("Alignment of ", stringify!(cudaMemPoolPtrExportData))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2843,9 +2848,9 @@ fn bindgen_test_layout_cudaMemPoolPtrExportData() {
 }
 impl Default for cudaMemPoolPtrExportData {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2857,25 +2862,25 @@ pub struct cudaMemAllocNodeParams {
     pub accessDescs: *const cudaMemAccessDesc,
     pub accessDescCount: usize,
     pub bytesize: usize,
-    pub dptr: *mut ::std::os::raw::c_void,
+    pub dptr: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaMemAllocNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemAllocNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemAllocNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemAllocNodeParams>(),
+        ::core::mem::size_of::<cudaMemAllocNodeParams>(),
         120usize,
         concat!("Size of: ", stringify!(cudaMemAllocNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemAllocNodeParams>(),
+        ::core::mem::align_of::<cudaMemAllocNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemAllocNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).poolProps) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).poolProps) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2885,7 +2890,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).accessDescs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).accessDescs) as usize - ptr as usize },
         88usize,
         concat!(
             "Offset of field: ",
@@ -2895,7 +2900,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).accessDescCount) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).accessDescCount) as usize - ptr as usize },
         96usize,
         concat!(
             "Offset of field: ",
@@ -2905,7 +2910,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).bytesize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).bytesize) as usize - ptr as usize },
         104usize,
         concat!(
             "Offset of field: ",
@@ -2915,7 +2920,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dptr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dptr) as usize - ptr as usize },
         112usize,
         concat!(
             "Offset of field: ",
@@ -2927,9 +2932,9 @@ fn bindgen_test_layout_cudaMemAllocNodeParams() {
 }
 impl Default for cudaMemAllocNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -2941,25 +2946,25 @@ pub struct cudaMemAllocNodeParamsV2 {
     pub accessDescs: *const cudaMemAccessDesc,
     pub accessDescCount: usize,
     pub bytesize: usize,
-    pub dptr: *mut ::std::os::raw::c_void,
+    pub dptr: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaMemAllocNodeParamsV2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemAllocNodeParamsV2> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemAllocNodeParamsV2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemAllocNodeParamsV2>(),
+        ::core::mem::size_of::<cudaMemAllocNodeParamsV2>(),
         120usize,
         concat!("Size of: ", stringify!(cudaMemAllocNodeParamsV2))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemAllocNodeParamsV2>(),
+        ::core::mem::align_of::<cudaMemAllocNodeParamsV2>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemAllocNodeParamsV2))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).poolProps) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).poolProps) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -2969,7 +2974,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).accessDescs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).accessDescs) as usize - ptr as usize },
         88usize,
         concat!(
             "Offset of field: ",
@@ -2979,7 +2984,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).accessDescCount) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).accessDescCount) as usize - ptr as usize },
         96usize,
         concat!(
             "Offset of field: ",
@@ -2989,7 +2994,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).bytesize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).bytesize) as usize - ptr as usize },
         104usize,
         concat!(
             "Offset of field: ",
@@ -2999,7 +3004,7 @@ fn bindgen_test_layout_cudaMemAllocNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dptr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dptr) as usize - ptr as usize },
         112usize,
         concat!(
             "Offset of field: ",
@@ -3011,9 +3016,9 @@ fn bindgen_test_layout_cudaMemAllocNodeParamsV2() {
 }
 impl Default for cudaMemAllocNodeParamsV2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -3021,25 +3026,25 @@ impl Default for cudaMemAllocNodeParamsV2 {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemFreeNodeParams {
-    pub dptr: *mut ::std::os::raw::c_void,
+    pub dptr: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaMemFreeNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaMemFreeNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaMemFreeNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaMemFreeNodeParams>(),
+        ::core::mem::size_of::<cudaMemFreeNodeParams>(),
         8usize,
         concat!("Size of: ", stringify!(cudaMemFreeNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaMemFreeNodeParams>(),
+        ::core::mem::align_of::<cudaMemFreeNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaMemFreeNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dptr) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dptr) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -3051,9 +3056,9 @@ fn bindgen_test_layout_cudaMemFreeNodeParams() {
 }
 impl Default for cudaMemFreeNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -3077,24 +3082,24 @@ pub enum cudaDeviceP2PAttr {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUuuid_st {
-    pub bytes: [::std::os::raw::c_char; 16usize],
+    pub bytes: [::core::ffi::c_char; 16usize],
 }
 #[test]
 fn bindgen_test_layout_CUuuid_st() {
-    const UNINIT: ::std::mem::MaybeUninit<CUuuid_st> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<CUuuid_st> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<CUuuid_st>(),
+        ::core::mem::size_of::<CUuuid_st>(),
         16usize,
         concat!("Size of: ", stringify!(CUuuid_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<CUuuid_st>(),
+        ::core::mem::align_of::<CUuuid_st>(),
         1usize,
         concat!("Alignment of ", stringify!(CUuuid_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).bytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).bytes) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -3108,118 +3113,118 @@ pub type cudaUUID_t = CUuuid_st;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaDeviceProp {
-    pub name: [::std::os::raw::c_char; 256usize],
+    pub name: [::core::ffi::c_char; 256usize],
     pub uuid: cudaUUID_t,
-    pub luid: [::std::os::raw::c_char; 8usize],
-    pub luidDeviceNodeMask: ::std::os::raw::c_uint,
+    pub luid: [::core::ffi::c_char; 8usize],
+    pub luidDeviceNodeMask: ::core::ffi::c_uint,
     pub totalGlobalMem: usize,
     pub sharedMemPerBlock: usize,
-    pub regsPerBlock: ::std::os::raw::c_int,
-    pub warpSize: ::std::os::raw::c_int,
+    pub regsPerBlock: ::core::ffi::c_int,
+    pub warpSize: ::core::ffi::c_int,
     pub memPitch: usize,
-    pub maxThreadsPerBlock: ::std::os::raw::c_int,
-    pub maxThreadsDim: [::std::os::raw::c_int; 3usize],
-    pub maxGridSize: [::std::os::raw::c_int; 3usize],
-    pub clockRate: ::std::os::raw::c_int,
+    pub maxThreadsPerBlock: ::core::ffi::c_int,
+    pub maxThreadsDim: [::core::ffi::c_int; 3usize],
+    pub maxGridSize: [::core::ffi::c_int; 3usize],
+    pub clockRate: ::core::ffi::c_int,
     pub totalConstMem: usize,
-    pub major: ::std::os::raw::c_int,
-    pub minor: ::std::os::raw::c_int,
+    pub major: ::core::ffi::c_int,
+    pub minor: ::core::ffi::c_int,
     pub textureAlignment: usize,
     pub texturePitchAlignment: usize,
-    pub deviceOverlap: ::std::os::raw::c_int,
-    pub multiProcessorCount: ::std::os::raw::c_int,
-    pub kernelExecTimeoutEnabled: ::std::os::raw::c_int,
-    pub integrated: ::std::os::raw::c_int,
-    pub canMapHostMemory: ::std::os::raw::c_int,
-    pub computeMode: ::std::os::raw::c_int,
-    pub maxTexture1D: ::std::os::raw::c_int,
-    pub maxTexture1DMipmap: ::std::os::raw::c_int,
-    pub maxTexture1DLinear: ::std::os::raw::c_int,
-    pub maxTexture2D: [::std::os::raw::c_int; 2usize],
-    pub maxTexture2DMipmap: [::std::os::raw::c_int; 2usize],
-    pub maxTexture2DLinear: [::std::os::raw::c_int; 3usize],
-    pub maxTexture2DGather: [::std::os::raw::c_int; 2usize],
-    pub maxTexture3D: [::std::os::raw::c_int; 3usize],
-    pub maxTexture3DAlt: [::std::os::raw::c_int; 3usize],
-    pub maxTextureCubemap: ::std::os::raw::c_int,
-    pub maxTexture1DLayered: [::std::os::raw::c_int; 2usize],
-    pub maxTexture2DLayered: [::std::os::raw::c_int; 3usize],
-    pub maxTextureCubemapLayered: [::std::os::raw::c_int; 2usize],
-    pub maxSurface1D: ::std::os::raw::c_int,
-    pub maxSurface2D: [::std::os::raw::c_int; 2usize],
-    pub maxSurface3D: [::std::os::raw::c_int; 3usize],
-    pub maxSurface1DLayered: [::std::os::raw::c_int; 2usize],
-    pub maxSurface2DLayered: [::std::os::raw::c_int; 3usize],
-    pub maxSurfaceCubemap: ::std::os::raw::c_int,
-    pub maxSurfaceCubemapLayered: [::std::os::raw::c_int; 2usize],
+    pub deviceOverlap: ::core::ffi::c_int,
+    pub multiProcessorCount: ::core::ffi::c_int,
+    pub kernelExecTimeoutEnabled: ::core::ffi::c_int,
+    pub integrated: ::core::ffi::c_int,
+    pub canMapHostMemory: ::core::ffi::c_int,
+    pub computeMode: ::core::ffi::c_int,
+    pub maxTexture1D: ::core::ffi::c_int,
+    pub maxTexture1DMipmap: ::core::ffi::c_int,
+    pub maxTexture1DLinear: ::core::ffi::c_int,
+    pub maxTexture2D: [::core::ffi::c_int; 2usize],
+    pub maxTexture2DMipmap: [::core::ffi::c_int; 2usize],
+    pub maxTexture2DLinear: [::core::ffi::c_int; 3usize],
+    pub maxTexture2DGather: [::core::ffi::c_int; 2usize],
+    pub maxTexture3D: [::core::ffi::c_int; 3usize],
+    pub maxTexture3DAlt: [::core::ffi::c_int; 3usize],
+    pub maxTextureCubemap: ::core::ffi::c_int,
+    pub maxTexture1DLayered: [::core::ffi::c_int; 2usize],
+    pub maxTexture2DLayered: [::core::ffi::c_int; 3usize],
+    pub maxTextureCubemapLayered: [::core::ffi::c_int; 2usize],
+    pub maxSurface1D: ::core::ffi::c_int,
+    pub maxSurface2D: [::core::ffi::c_int; 2usize],
+    pub maxSurface3D: [::core::ffi::c_int; 3usize],
+    pub maxSurface1DLayered: [::core::ffi::c_int; 2usize],
+    pub maxSurface2DLayered: [::core::ffi::c_int; 3usize],
+    pub maxSurfaceCubemap: ::core::ffi::c_int,
+    pub maxSurfaceCubemapLayered: [::core::ffi::c_int; 2usize],
     pub surfaceAlignment: usize,
-    pub concurrentKernels: ::std::os::raw::c_int,
-    pub ECCEnabled: ::std::os::raw::c_int,
-    pub pciBusID: ::std::os::raw::c_int,
-    pub pciDeviceID: ::std::os::raw::c_int,
-    pub pciDomainID: ::std::os::raw::c_int,
-    pub tccDriver: ::std::os::raw::c_int,
-    pub asyncEngineCount: ::std::os::raw::c_int,
-    pub unifiedAddressing: ::std::os::raw::c_int,
-    pub memoryClockRate: ::std::os::raw::c_int,
-    pub memoryBusWidth: ::std::os::raw::c_int,
-    pub l2CacheSize: ::std::os::raw::c_int,
-    pub persistingL2CacheMaxSize: ::std::os::raw::c_int,
-    pub maxThreadsPerMultiProcessor: ::std::os::raw::c_int,
-    pub streamPrioritiesSupported: ::std::os::raw::c_int,
-    pub globalL1CacheSupported: ::std::os::raw::c_int,
-    pub localL1CacheSupported: ::std::os::raw::c_int,
+    pub concurrentKernels: ::core::ffi::c_int,
+    pub ECCEnabled: ::core::ffi::c_int,
+    pub pciBusID: ::core::ffi::c_int,
+    pub pciDeviceID: ::core::ffi::c_int,
+    pub pciDomainID: ::core::ffi::c_int,
+    pub tccDriver: ::core::ffi::c_int,
+    pub asyncEngineCount: ::core::ffi::c_int,
+    pub unifiedAddressing: ::core::ffi::c_int,
+    pub memoryClockRate: ::core::ffi::c_int,
+    pub memoryBusWidth: ::core::ffi::c_int,
+    pub l2CacheSize: ::core::ffi::c_int,
+    pub persistingL2CacheMaxSize: ::core::ffi::c_int,
+    pub maxThreadsPerMultiProcessor: ::core::ffi::c_int,
+    pub streamPrioritiesSupported: ::core::ffi::c_int,
+    pub globalL1CacheSupported: ::core::ffi::c_int,
+    pub localL1CacheSupported: ::core::ffi::c_int,
     pub sharedMemPerMultiprocessor: usize,
-    pub regsPerMultiprocessor: ::std::os::raw::c_int,
-    pub managedMemory: ::std::os::raw::c_int,
-    pub isMultiGpuBoard: ::std::os::raw::c_int,
-    pub multiGpuBoardGroupID: ::std::os::raw::c_int,
-    pub hostNativeAtomicSupported: ::std::os::raw::c_int,
-    pub singleToDoublePrecisionPerfRatio: ::std::os::raw::c_int,
-    pub pageableMemoryAccess: ::std::os::raw::c_int,
-    pub concurrentManagedAccess: ::std::os::raw::c_int,
-    pub computePreemptionSupported: ::std::os::raw::c_int,
-    pub canUseHostPointerForRegisteredMem: ::std::os::raw::c_int,
-    pub cooperativeLaunch: ::std::os::raw::c_int,
-    pub cooperativeMultiDeviceLaunch: ::std::os::raw::c_int,
+    pub regsPerMultiprocessor: ::core::ffi::c_int,
+    pub managedMemory: ::core::ffi::c_int,
+    pub isMultiGpuBoard: ::core::ffi::c_int,
+    pub multiGpuBoardGroupID: ::core::ffi::c_int,
+    pub hostNativeAtomicSupported: ::core::ffi::c_int,
+    pub singleToDoublePrecisionPerfRatio: ::core::ffi::c_int,
+    pub pageableMemoryAccess: ::core::ffi::c_int,
+    pub concurrentManagedAccess: ::core::ffi::c_int,
+    pub computePreemptionSupported: ::core::ffi::c_int,
+    pub canUseHostPointerForRegisteredMem: ::core::ffi::c_int,
+    pub cooperativeLaunch: ::core::ffi::c_int,
+    pub cooperativeMultiDeviceLaunch: ::core::ffi::c_int,
     pub sharedMemPerBlockOptin: usize,
-    pub pageableMemoryAccessUsesHostPageTables: ::std::os::raw::c_int,
-    pub directManagedMemAccessFromHost: ::std::os::raw::c_int,
-    pub maxBlocksPerMultiProcessor: ::std::os::raw::c_int,
-    pub accessPolicyMaxWindowSize: ::std::os::raw::c_int,
+    pub pageableMemoryAccessUsesHostPageTables: ::core::ffi::c_int,
+    pub directManagedMemAccessFromHost: ::core::ffi::c_int,
+    pub maxBlocksPerMultiProcessor: ::core::ffi::c_int,
+    pub accessPolicyMaxWindowSize: ::core::ffi::c_int,
     pub reservedSharedMemPerBlock: usize,
-    pub hostRegisterSupported: ::std::os::raw::c_int,
-    pub sparseCudaArraySupported: ::std::os::raw::c_int,
-    pub hostRegisterReadOnlySupported: ::std::os::raw::c_int,
-    pub timelineSemaphoreInteropSupported: ::std::os::raw::c_int,
-    pub memoryPoolsSupported: ::std::os::raw::c_int,
-    pub gpuDirectRDMASupported: ::std::os::raw::c_int,
-    pub gpuDirectRDMAFlushWritesOptions: ::std::os::raw::c_uint,
-    pub gpuDirectRDMAWritesOrdering: ::std::os::raw::c_int,
-    pub memoryPoolSupportedHandleTypes: ::std::os::raw::c_uint,
-    pub deferredMappingCudaArraySupported: ::std::os::raw::c_int,
-    pub ipcEventSupported: ::std::os::raw::c_int,
-    pub clusterLaunch: ::std::os::raw::c_int,
-    pub unifiedFunctionPointers: ::std::os::raw::c_int,
-    pub reserved2: [::std::os::raw::c_int; 2usize],
-    pub reserved: [::std::os::raw::c_int; 61usize],
+    pub hostRegisterSupported: ::core::ffi::c_int,
+    pub sparseCudaArraySupported: ::core::ffi::c_int,
+    pub hostRegisterReadOnlySupported: ::core::ffi::c_int,
+    pub timelineSemaphoreInteropSupported: ::core::ffi::c_int,
+    pub memoryPoolsSupported: ::core::ffi::c_int,
+    pub gpuDirectRDMASupported: ::core::ffi::c_int,
+    pub gpuDirectRDMAFlushWritesOptions: ::core::ffi::c_uint,
+    pub gpuDirectRDMAWritesOrdering: ::core::ffi::c_int,
+    pub memoryPoolSupportedHandleTypes: ::core::ffi::c_uint,
+    pub deferredMappingCudaArraySupported: ::core::ffi::c_int,
+    pub ipcEventSupported: ::core::ffi::c_int,
+    pub clusterLaunch: ::core::ffi::c_int,
+    pub unifiedFunctionPointers: ::core::ffi::c_int,
+    pub reserved2: [::core::ffi::c_int; 2usize],
+    pub reserved: [::core::ffi::c_int; 61usize],
 }
 #[test]
 fn bindgen_test_layout_cudaDeviceProp() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaDeviceProp> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaDeviceProp> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaDeviceProp>(),
+        ::core::mem::size_of::<cudaDeviceProp>(),
         1032usize,
         concat!("Size of: ", stringify!(cudaDeviceProp))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaDeviceProp>(),
+        ::core::mem::align_of::<cudaDeviceProp>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaDeviceProp))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -3229,7 +3234,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).uuid) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).uuid) as usize - ptr as usize },
         256usize,
         concat!(
             "Offset of field: ",
@@ -3239,7 +3244,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).luid) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).luid) as usize - ptr as usize },
         272usize,
         concat!(
             "Offset of field: ",
@@ -3249,7 +3254,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).luidDeviceNodeMask) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).luidDeviceNodeMask) as usize - ptr as usize },
         280usize,
         concat!(
             "Offset of field: ",
@@ -3259,7 +3264,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).totalGlobalMem) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).totalGlobalMem) as usize - ptr as usize },
         288usize,
         concat!(
             "Offset of field: ",
@@ -3269,7 +3274,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedMemPerBlock) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedMemPerBlock) as usize - ptr as usize },
         296usize,
         concat!(
             "Offset of field: ",
@@ -3279,7 +3284,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).regsPerBlock) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).regsPerBlock) as usize - ptr as usize },
         304usize,
         concat!(
             "Offset of field: ",
@@ -3289,7 +3294,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).warpSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).warpSize) as usize - ptr as usize },
         308usize,
         concat!(
             "Offset of field: ",
@@ -3299,7 +3304,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memPitch) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memPitch) as usize - ptr as usize },
         312usize,
         concat!(
             "Offset of field: ",
@@ -3309,7 +3314,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxThreadsPerBlock) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxThreadsPerBlock) as usize - ptr as usize },
         320usize,
         concat!(
             "Offset of field: ",
@@ -3319,7 +3324,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxThreadsDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxThreadsDim) as usize - ptr as usize },
         324usize,
         concat!(
             "Offset of field: ",
@@ -3329,7 +3334,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxGridSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxGridSize) as usize - ptr as usize },
         336usize,
         concat!(
             "Offset of field: ",
@@ -3339,7 +3344,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).clockRate) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).clockRate) as usize - ptr as usize },
         348usize,
         concat!(
             "Offset of field: ",
@@ -3349,7 +3354,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).totalConstMem) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).totalConstMem) as usize - ptr as usize },
         352usize,
         concat!(
             "Offset of field: ",
@@ -3359,7 +3364,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).major) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).major) as usize - ptr as usize },
         360usize,
         concat!(
             "Offset of field: ",
@@ -3369,7 +3374,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).minor) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).minor) as usize - ptr as usize },
         364usize,
         concat!(
             "Offset of field: ",
@@ -3379,7 +3384,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).textureAlignment) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).textureAlignment) as usize - ptr as usize },
         368usize,
         concat!(
             "Offset of field: ",
@@ -3389,7 +3394,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).texturePitchAlignment) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).texturePitchAlignment) as usize - ptr as usize },
         376usize,
         concat!(
             "Offset of field: ",
@@ -3399,7 +3404,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).deviceOverlap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).deviceOverlap) as usize - ptr as usize },
         384usize,
         concat!(
             "Offset of field: ",
@@ -3409,7 +3414,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).multiProcessorCount) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).multiProcessorCount) as usize - ptr as usize },
         388usize,
         concat!(
             "Offset of field: ",
@@ -3419,7 +3424,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).kernelExecTimeoutEnabled) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).kernelExecTimeoutEnabled) as usize - ptr as usize },
         392usize,
         concat!(
             "Offset of field: ",
@@ -3429,7 +3434,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).integrated) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).integrated) as usize - ptr as usize },
         396usize,
         concat!(
             "Offset of field: ",
@@ -3439,7 +3444,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).canMapHostMemory) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).canMapHostMemory) as usize - ptr as usize },
         400usize,
         concat!(
             "Offset of field: ",
@@ -3449,7 +3454,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).computeMode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).computeMode) as usize - ptr as usize },
         404usize,
         concat!(
             "Offset of field: ",
@@ -3459,7 +3464,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture1D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture1D) as usize - ptr as usize },
         408usize,
         concat!(
             "Offset of field: ",
@@ -3469,7 +3474,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture1DMipmap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture1DMipmap) as usize - ptr as usize },
         412usize,
         concat!(
             "Offset of field: ",
@@ -3479,7 +3484,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture1DLinear) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture1DLinear) as usize - ptr as usize },
         416usize,
         concat!(
             "Offset of field: ",
@@ -3489,7 +3494,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture2D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture2D) as usize - ptr as usize },
         420usize,
         concat!(
             "Offset of field: ",
@@ -3499,7 +3504,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture2DMipmap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture2DMipmap) as usize - ptr as usize },
         428usize,
         concat!(
             "Offset of field: ",
@@ -3509,7 +3514,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture2DLinear) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture2DLinear) as usize - ptr as usize },
         436usize,
         concat!(
             "Offset of field: ",
@@ -3519,7 +3524,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture2DGather) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture2DGather) as usize - ptr as usize },
         448usize,
         concat!(
             "Offset of field: ",
@@ -3529,7 +3534,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture3D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture3D) as usize - ptr as usize },
         456usize,
         concat!(
             "Offset of field: ",
@@ -3539,7 +3544,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture3DAlt) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture3DAlt) as usize - ptr as usize },
         468usize,
         concat!(
             "Offset of field: ",
@@ -3549,7 +3554,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTextureCubemap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTextureCubemap) as usize - ptr as usize },
         480usize,
         concat!(
             "Offset of field: ",
@@ -3559,7 +3564,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture1DLayered) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture1DLayered) as usize - ptr as usize },
         484usize,
         concat!(
             "Offset of field: ",
@@ -3569,7 +3574,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTexture2DLayered) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTexture2DLayered) as usize - ptr as usize },
         492usize,
         concat!(
             "Offset of field: ",
@@ -3579,7 +3584,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxTextureCubemapLayered) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxTextureCubemapLayered) as usize - ptr as usize },
         504usize,
         concat!(
             "Offset of field: ",
@@ -3589,7 +3594,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurface1D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurface1D) as usize - ptr as usize },
         512usize,
         concat!(
             "Offset of field: ",
@@ -3599,7 +3604,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurface2D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurface2D) as usize - ptr as usize },
         516usize,
         concat!(
             "Offset of field: ",
@@ -3609,7 +3614,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurface3D) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurface3D) as usize - ptr as usize },
         524usize,
         concat!(
             "Offset of field: ",
@@ -3619,7 +3624,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurface1DLayered) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurface1DLayered) as usize - ptr as usize },
         536usize,
         concat!(
             "Offset of field: ",
@@ -3629,7 +3634,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurface2DLayered) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurface2DLayered) as usize - ptr as usize },
         544usize,
         concat!(
             "Offset of field: ",
@@ -3639,7 +3644,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurfaceCubemap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurfaceCubemap) as usize - ptr as usize },
         556usize,
         concat!(
             "Offset of field: ",
@@ -3649,7 +3654,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxSurfaceCubemapLayered) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxSurfaceCubemapLayered) as usize - ptr as usize },
         560usize,
         concat!(
             "Offset of field: ",
@@ -3659,7 +3664,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).surfaceAlignment) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).surfaceAlignment) as usize - ptr as usize },
         568usize,
         concat!(
             "Offset of field: ",
@@ -3669,7 +3674,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).concurrentKernels) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).concurrentKernels) as usize - ptr as usize },
         576usize,
         concat!(
             "Offset of field: ",
@@ -3679,7 +3684,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ECCEnabled) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).ECCEnabled) as usize - ptr as usize },
         580usize,
         concat!(
             "Offset of field: ",
@@ -3689,7 +3694,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pciBusID) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pciBusID) as usize - ptr as usize },
         584usize,
         concat!(
             "Offset of field: ",
@@ -3699,7 +3704,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pciDeviceID) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pciDeviceID) as usize - ptr as usize },
         588usize,
         concat!(
             "Offset of field: ",
@@ -3709,7 +3714,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pciDomainID) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pciDomainID) as usize - ptr as usize },
         592usize,
         concat!(
             "Offset of field: ",
@@ -3719,7 +3724,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tccDriver) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).tccDriver) as usize - ptr as usize },
         596usize,
         concat!(
             "Offset of field: ",
@@ -3729,7 +3734,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).asyncEngineCount) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).asyncEngineCount) as usize - ptr as usize },
         600usize,
         concat!(
             "Offset of field: ",
@@ -3739,7 +3744,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).unifiedAddressing) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).unifiedAddressing) as usize - ptr as usize },
         604usize,
         concat!(
             "Offset of field: ",
@@ -3749,7 +3754,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memoryClockRate) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memoryClockRate) as usize - ptr as usize },
         608usize,
         concat!(
             "Offset of field: ",
@@ -3759,7 +3764,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memoryBusWidth) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memoryBusWidth) as usize - ptr as usize },
         612usize,
         concat!(
             "Offset of field: ",
@@ -3769,7 +3774,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).l2CacheSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).l2CacheSize) as usize - ptr as usize },
         616usize,
         concat!(
             "Offset of field: ",
@@ -3779,7 +3784,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).persistingL2CacheMaxSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).persistingL2CacheMaxSize) as usize - ptr as usize },
         620usize,
         concat!(
             "Offset of field: ",
@@ -3789,7 +3794,9 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxThreadsPerMultiProcessor) as usize - ptr as usize },
+        unsafe {
+            ::core::ptr::addr_of!((*ptr).maxThreadsPerMultiProcessor) as usize - ptr as usize
+        },
         624usize,
         concat!(
             "Offset of field: ",
@@ -3799,7 +3806,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).streamPrioritiesSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).streamPrioritiesSupported) as usize - ptr as usize },
         628usize,
         concat!(
             "Offset of field: ",
@@ -3809,7 +3816,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).globalL1CacheSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).globalL1CacheSupported) as usize - ptr as usize },
         632usize,
         concat!(
             "Offset of field: ",
@@ -3819,7 +3826,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).localL1CacheSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).localL1CacheSupported) as usize - ptr as usize },
         636usize,
         concat!(
             "Offset of field: ",
@@ -3829,7 +3836,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedMemPerMultiprocessor) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedMemPerMultiprocessor) as usize - ptr as usize },
         640usize,
         concat!(
             "Offset of field: ",
@@ -3839,7 +3846,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).regsPerMultiprocessor) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).regsPerMultiprocessor) as usize - ptr as usize },
         648usize,
         concat!(
             "Offset of field: ",
@@ -3849,7 +3856,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).managedMemory) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).managedMemory) as usize - ptr as usize },
         652usize,
         concat!(
             "Offset of field: ",
@@ -3859,7 +3866,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).isMultiGpuBoard) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).isMultiGpuBoard) as usize - ptr as usize },
         656usize,
         concat!(
             "Offset of field: ",
@@ -3869,7 +3876,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).multiGpuBoardGroupID) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).multiGpuBoardGroupID) as usize - ptr as usize },
         660usize,
         concat!(
             "Offset of field: ",
@@ -3879,7 +3886,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hostNativeAtomicSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).hostNativeAtomicSupported) as usize - ptr as usize },
         664usize,
         concat!(
             "Offset of field: ",
@@ -3890,7 +3897,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).singleToDoublePrecisionPerfRatio) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).singleToDoublePrecisionPerfRatio) as usize - ptr as usize
         },
         668usize,
         concat!(
@@ -3901,7 +3908,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pageableMemoryAccess) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pageableMemoryAccess) as usize - ptr as usize },
         672usize,
         concat!(
             "Offset of field: ",
@@ -3911,7 +3918,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).concurrentManagedAccess) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).concurrentManagedAccess) as usize - ptr as usize },
         676usize,
         concat!(
             "Offset of field: ",
@@ -3921,7 +3928,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).computePreemptionSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).computePreemptionSupported) as usize - ptr as usize },
         680usize,
         concat!(
             "Offset of field: ",
@@ -3932,7 +3939,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).canUseHostPointerForRegisteredMem) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).canUseHostPointerForRegisteredMem) as usize - ptr as usize
         },
         684usize,
         concat!(
@@ -3943,7 +3950,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cooperativeLaunch) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).cooperativeLaunch) as usize - ptr as usize },
         688usize,
         concat!(
             "Offset of field: ",
@@ -3954,7 +3961,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).cooperativeMultiDeviceLaunch) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).cooperativeMultiDeviceLaunch) as usize - ptr as usize
         },
         692usize,
         concat!(
@@ -3965,7 +3972,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedMemPerBlockOptin) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedMemPerBlockOptin) as usize - ptr as usize },
         696usize,
         concat!(
             "Offset of field: ",
@@ -3976,7 +3983,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).pageableMemoryAccessUsesHostPageTables) as usize
+            ::core::ptr::addr_of!((*ptr).pageableMemoryAccessUsesHostPageTables) as usize
                 - ptr as usize
         },
         704usize,
@@ -3989,7 +3996,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).directManagedMemAccessFromHost) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).directManagedMemAccessFromHost) as usize - ptr as usize
         },
         708usize,
         concat!(
@@ -4000,7 +4007,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxBlocksPerMultiProcessor) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxBlocksPerMultiProcessor) as usize - ptr as usize },
         712usize,
         concat!(
             "Offset of field: ",
@@ -4010,7 +4017,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).accessPolicyMaxWindowSize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).accessPolicyMaxWindowSize) as usize - ptr as usize },
         716usize,
         concat!(
             "Offset of field: ",
@@ -4020,7 +4027,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reservedSharedMemPerBlock) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reservedSharedMemPerBlock) as usize - ptr as usize },
         720usize,
         concat!(
             "Offset of field: ",
@@ -4030,7 +4037,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hostRegisterSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).hostRegisterSupported) as usize - ptr as usize },
         728usize,
         concat!(
             "Offset of field: ",
@@ -4040,7 +4047,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sparseCudaArraySupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sparseCudaArraySupported) as usize - ptr as usize },
         732usize,
         concat!(
             "Offset of field: ",
@@ -4051,7 +4058,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).hostRegisterReadOnlySupported) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).hostRegisterReadOnlySupported) as usize - ptr as usize
         },
         736usize,
         concat!(
@@ -4063,7 +4070,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).timelineSemaphoreInteropSupported) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).timelineSemaphoreInteropSupported) as usize - ptr as usize
         },
         740usize,
         concat!(
@@ -4074,7 +4081,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memoryPoolsSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memoryPoolsSupported) as usize - ptr as usize },
         744usize,
         concat!(
             "Offset of field: ",
@@ -4084,7 +4091,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).gpuDirectRDMASupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).gpuDirectRDMASupported) as usize - ptr as usize },
         748usize,
         concat!(
             "Offset of field: ",
@@ -4095,7 +4102,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).gpuDirectRDMAFlushWritesOptions) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).gpuDirectRDMAFlushWritesOptions) as usize - ptr as usize
         },
         752usize,
         concat!(
@@ -4106,7 +4113,9 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).gpuDirectRDMAWritesOrdering) as usize - ptr as usize },
+        unsafe {
+            ::core::ptr::addr_of!((*ptr).gpuDirectRDMAWritesOrdering) as usize - ptr as usize
+        },
         756usize,
         concat!(
             "Offset of field: ",
@@ -4117,7 +4126,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).memoryPoolSupportedHandleTypes) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).memoryPoolSupportedHandleTypes) as usize - ptr as usize
         },
         760usize,
         concat!(
@@ -4129,7 +4138,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).deferredMappingCudaArraySupported) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).deferredMappingCudaArraySupported) as usize - ptr as usize
         },
         764usize,
         concat!(
@@ -4140,7 +4149,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).ipcEventSupported) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).ipcEventSupported) as usize - ptr as usize },
         768usize,
         concat!(
             "Offset of field: ",
@@ -4150,7 +4159,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).clusterLaunch) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).clusterLaunch) as usize - ptr as usize },
         772usize,
         concat!(
             "Offset of field: ",
@@ -4160,7 +4169,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).unifiedFunctionPointers) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).unifiedFunctionPointers) as usize - ptr as usize },
         776usize,
         concat!(
             "Offset of field: ",
@@ -4170,7 +4179,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved2) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved2) as usize - ptr as usize },
         780usize,
         concat!(
             "Offset of field: ",
@@ -4180,7 +4189,7 @@ fn bindgen_test_layout_cudaDeviceProp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         788usize,
         concat!(
             "Offset of field: ",
@@ -4192,9 +4201,9 @@ fn bindgen_test_layout_cudaDeviceProp() {
 }
 impl Default for cudaDeviceProp {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4202,25 +4211,25 @@ impl Default for cudaDeviceProp {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaIpcEventHandle_st {
-    pub reserved: [::std::os::raw::c_char; 64usize],
+    pub reserved: [::core::ffi::c_char; 64usize],
 }
 #[test]
 fn bindgen_test_layout_cudaIpcEventHandle_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaIpcEventHandle_st> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaIpcEventHandle_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaIpcEventHandle_st>(),
+        ::core::mem::size_of::<cudaIpcEventHandle_st>(),
         64usize,
         concat!("Size of: ", stringify!(cudaIpcEventHandle_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaIpcEventHandle_st>(),
+        ::core::mem::align_of::<cudaIpcEventHandle_st>(),
         1usize,
         concat!("Alignment of ", stringify!(cudaIpcEventHandle_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4232,9 +4241,9 @@ fn bindgen_test_layout_cudaIpcEventHandle_st() {
 }
 impl Default for cudaIpcEventHandle_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4243,24 +4252,25 @@ pub type cudaIpcEventHandle_t = cudaIpcEventHandle_st;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaIpcMemHandle_st {
-    pub reserved: [::std::os::raw::c_char; 64usize],
+    pub reserved: [::core::ffi::c_char; 64usize],
 }
 #[test]
 fn bindgen_test_layout_cudaIpcMemHandle_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaIpcMemHandle_st> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaIpcMemHandle_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaIpcMemHandle_st>(),
+        ::core::mem::size_of::<cudaIpcMemHandle_st>(),
         64usize,
         concat!("Size of: ", stringify!(cudaIpcMemHandle_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaIpcMemHandle_st>(),
+        ::core::mem::align_of::<cudaIpcMemHandle_st>(),
         1usize,
         concat!("Alignment of ", stringify!(cudaIpcMemHandle_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4272,9 +4282,9 @@ fn bindgen_test_layout_cudaIpcMemHandle_st() {
 }
 impl Default for cudaIpcMemHandle_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4297,30 +4307,30 @@ pub enum cudaExternalMemoryHandleType {
 pub struct cudaExternalMemoryHandleDesc {
     pub type_: cudaExternalMemoryHandleType,
     pub handle: cudaExternalMemoryHandleDesc__bindgen_ty_1,
-    pub size: ::std::os::raw::c_ulonglong,
-    pub flags: ::std::os::raw::c_uint,
+    pub size: ::core::ffi::c_ulonglong,
+    pub flags: ::core::ffi::c_uint,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalMemoryHandleDesc__bindgen_ty_1 {
-    pub fd: ::std::os::raw::c_int,
+    pub fd: ::core::ffi::c_int,
     pub win32: cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    pub nvSciBufObject: *const ::std::os::raw::c_void,
+    pub nvSciBufObject: *const ::core::ffi::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1 {
-    pub handle: *mut ::std::os::raw::c_void,
-    pub name: *const ::std::os::raw::c_void,
+    pub handle: *mut ::core::ffi::c_void,
+    pub name: *const ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -4328,7 +4338,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1(
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4336,7 +4346,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1(
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4346,7 +4356,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1(
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -4358,20 +4368,20 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1(
 }
 impl Default for cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalMemoryHandleDesc__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalMemoryHandleDesc__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -4379,7 +4389,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4387,7 +4397,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fd) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fd) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4397,7 +4407,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).win32) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).win32) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4407,7 +4417,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nvSciBufObject) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).nvSciBufObject) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4419,30 +4429,30 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc__bindgen_ty_1() {
 }
 impl Default for cudaExternalMemoryHandleDesc__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalMemoryHandleDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalMemoryHandleDesc> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalMemoryHandleDesc> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalMemoryHandleDesc>(),
+        ::core::mem::size_of::<cudaExternalMemoryHandleDesc>(),
         40usize,
         concat!("Size of: ", stringify!(cudaExternalMemoryHandleDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalMemoryHandleDesc>(),
+        ::core::mem::align_of::<cudaExternalMemoryHandleDesc>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaExternalMemoryHandleDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4452,7 +4462,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -4462,7 +4472,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -4472,7 +4482,7 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -4484,9 +4494,9 @@ fn bindgen_test_layout_cudaExternalMemoryHandleDesc() {
 }
 impl Default for cudaExternalMemoryHandleDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4494,27 +4504,27 @@ impl Default for cudaExternalMemoryHandleDesc {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalMemoryBufferDesc {
-    pub offset: ::std::os::raw::c_ulonglong,
-    pub size: ::std::os::raw::c_ulonglong,
-    pub flags: ::std::os::raw::c_uint,
+    pub offset: ::core::ffi::c_ulonglong,
+    pub size: ::core::ffi::c_ulonglong,
+    pub flags: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalMemoryBufferDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalMemoryBufferDesc> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalMemoryBufferDesc> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalMemoryBufferDesc>(),
+        ::core::mem::size_of::<cudaExternalMemoryBufferDesc>(),
         24usize,
         concat!("Size of: ", stringify!(cudaExternalMemoryBufferDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalMemoryBufferDesc>(),
+        ::core::mem::align_of::<cudaExternalMemoryBufferDesc>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaExternalMemoryBufferDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).offset) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).offset) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4524,7 +4534,7 @@ fn bindgen_test_layout_cudaExternalMemoryBufferDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -4534,7 +4544,7 @@ fn bindgen_test_layout_cudaExternalMemoryBufferDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -4547,19 +4557,19 @@ fn bindgen_test_layout_cudaExternalMemoryBufferDesc() {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalMemoryMipmappedArrayDesc {
-    pub offset: ::std::os::raw::c_ulonglong,
+    pub offset: ::core::ffi::c_ulonglong,
     pub formatDesc: cudaChannelFormatDesc,
     pub extent: cudaExtent,
-    pub flags: ::std::os::raw::c_uint,
-    pub numLevels: ::std::os::raw::c_uint,
+    pub flags: ::core::ffi::c_uint,
+    pub numLevels: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalMemoryMipmappedArrayDesc> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalMemoryMipmappedArrayDesc> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalMemoryMipmappedArrayDesc>(),
+        ::core::mem::size_of::<cudaExternalMemoryMipmappedArrayDesc>(),
         64usize,
         concat!(
             "Size of: ",
@@ -4567,7 +4577,7 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalMemoryMipmappedArrayDesc>(),
+        ::core::mem::align_of::<cudaExternalMemoryMipmappedArrayDesc>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4575,7 +4585,7 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).offset) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).offset) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4585,7 +4595,7 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).formatDesc) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).formatDesc) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -4595,7 +4605,7 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extent) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extent) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -4605,7 +4615,7 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         56usize,
         concat!(
             "Offset of field: ",
@@ -4615,7 +4625,7 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numLevels) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numLevels) as usize - ptr as usize },
         60usize,
         concat!(
             "Offset of field: ",
@@ -4627,9 +4637,9 @@ fn bindgen_test_layout_cudaExternalMemoryMipmappedArrayDesc() {
 }
 impl Default for cudaExternalMemoryMipmappedArrayDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4653,29 +4663,29 @@ pub enum cudaExternalSemaphoreHandleType {
 pub struct cudaExternalSemaphoreHandleDesc {
     pub type_: cudaExternalSemaphoreHandleType,
     pub handle: cudaExternalSemaphoreHandleDesc__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: ::core::ffi::c_uint,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreHandleDesc__bindgen_ty_1 {
-    pub fd: ::std::os::raw::c_int,
+    pub fd: ::core::ffi::c_int,
     pub win32: cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    pub nvSciSyncObj: *const ::std::os::raw::c_void,
+    pub nvSciSyncObj: *const ::core::ffi::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1 {
-    pub handle: *mut ::std::os::raw::c_void,
-    pub name: *const ::std::os::raw::c_void,
+    pub handle: *mut ::core::ffi::c_void,
+    pub name: *const ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -4683,7 +4693,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4691,7 +4701,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4701,7 +4711,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -4713,20 +4723,20 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty
 }
 impl Default for cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreHandleDesc__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreHandleDesc__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1>(),
         16usize,
         concat!(
             "Size of: ",
@@ -4734,7 +4744,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4742,7 +4752,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fd) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fd) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4752,7 +4762,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).win32) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).win32) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4762,7 +4772,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nvSciSyncObj) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).nvSciSyncObj) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4774,30 +4784,30 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc__bindgen_ty_1() {
 }
 impl Default for cudaExternalSemaphoreHandleDesc__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreHandleDesc> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreHandleDesc> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreHandleDesc>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreHandleDesc>(),
         32usize,
         concat!("Size of: ", stringify!(cudaExternalSemaphoreHandleDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreHandleDesc>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreHandleDesc>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaExternalSemaphoreHandleDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4807,7 +4817,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).handle) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -4817,7 +4827,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -4829,9 +4839,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreHandleDesc() {
 }
 impl Default for cudaExternalSemaphoreHandleDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4840,7 +4850,7 @@ impl Default for cudaExternalSemaphoreHandleDesc {
 #[derive(Copy, Clone)]
 pub struct cudaExternalSemaphoreSignalParams_v1 {
     pub params: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: ::core::ffi::c_uint,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -4852,16 +4862,16 @@ pub struct cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1 {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1 {
-    pub value: ::std::os::raw::c_ulonglong,
+    pub value: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -4869,7 +4879,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4877,7 +4887,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4890,17 +4900,17 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2 {
-    pub fence: *mut ::std::os::raw::c_void,
-    pub reserved: ::std::os::raw::c_ulonglong,
+    pub fence: *mut ::core::ffi::c_void,
+    pub reserved: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Size of: ",
@@ -4908,7 +4918,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4916,7 +4926,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4926,7 +4936,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4938,9 +4948,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
 }
 impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -4948,16 +4958,16 @@ impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3 {
-    pub key: ::std::os::raw::c_ulonglong,
+    pub key: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Size of: ",
@@ -4965,7 +4975,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -4973,7 +4983,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -4985,11 +4995,11 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindg
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1>(),
         24usize,
         concat!(
             "Size of: ",
@@ -4997,7 +5007,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5005,7 +5015,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5015,7 +5025,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -5025,7 +5035,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -5037,20 +5047,20 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1() {
 }
 impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreSignalParams_v1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreSignalParams_v1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams_v1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1>(),
         32usize,
         concat!(
             "Size of: ",
@@ -5058,7 +5068,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams_v1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5066,7 +5076,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5076,7 +5086,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -5088,9 +5098,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams_v1() {
 }
 impl Default for cudaExternalSemaphoreSignalParams_v1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5099,7 +5109,7 @@ impl Default for cudaExternalSemaphoreSignalParams_v1 {
 #[derive(Copy, Clone)]
 pub struct cudaExternalSemaphoreWaitParams_v1 {
     pub params: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: ::core::ffi::c_uint,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -5111,16 +5121,16 @@ pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1 {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1 {
-    pub value: ::std::os::raw::c_ulonglong,
+    pub value: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5128,7 +5138,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5136,7 +5146,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5149,17 +5159,17 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2 {
-    pub fence: *mut ::std::os::raw::c_void,
-    pub reserved: ::std::os::raw::c_ulonglong,
+    pub fence: *mut ::core::ffi::c_void,
+    pub reserved: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5167,7 +5177,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5175,7 +5185,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5185,7 +5195,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5197,9 +5207,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
 }
 impl Default for cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5207,17 +5217,17 @@ impl Default for cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2 
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3 {
-    pub key: ::std::os::raw::c_ulonglong,
-    pub timeoutMs: ::std::os::raw::c_uint,
+    pub key: ::core::ffi::c_ulonglong,
+    pub timeoutMs: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3>(),
         16usize,
         concat!(
             "Size of: ",
@@ -5225,7 +5235,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5233,7 +5243,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5243,7 +5253,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).timeoutMs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).timeoutMs) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -5255,11 +5265,11 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1>(),
         32usize,
         concat!(
             "Size of: ",
@@ -5267,7 +5277,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5275,7 +5285,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5285,7 +5295,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -5295,7 +5305,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -5307,25 +5317,25 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1() {
 }
 impl Default for cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreWaitParams_v1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreWaitParams_v1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams_v1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1>(),
         40usize,
         concat!("Size of: ", stringify!(cudaExternalSemaphoreWaitParams_v1))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams_v1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5333,7 +5343,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5343,7 +5353,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -5355,9 +5365,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams_v1() {
 }
 impl Default for cudaExternalSemaphoreWaitParams_v1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5366,8 +5376,8 @@ impl Default for cudaExternalSemaphoreWaitParams_v1 {
 #[derive(Copy, Clone)]
 pub struct cudaExternalSemaphoreSignalParams {
     pub params: cudaExternalSemaphoreSignalParams__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub flags: ::core::ffi::c_uint,
+    pub reserved: [::core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -5375,21 +5385,21 @@ pub struct cudaExternalSemaphoreSignalParams__bindgen_ty_1 {
     pub fence: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1,
     pub nvSciSync: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2,
     pub keyedMutex: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3,
-    pub reserved: [::std::os::raw::c_uint; 12usize],
+    pub reserved: [::core::ffi::c_uint; 12usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1 {
-    pub value: ::std::os::raw::c_ulonglong,
+    pub value: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5397,7 +5407,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5405,7 +5415,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5418,17 +5428,17 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2 {
-    pub fence: *mut ::std::os::raw::c_void,
-    pub reserved: ::std::os::raw::c_ulonglong,
+    pub fence: *mut ::core::ffi::c_void,
+    pub reserved: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5436,7 +5446,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5444,7 +5454,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5454,7 +5464,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5466,9 +5476,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
 }
 impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5476,16 +5486,16 @@ impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2 {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3 {
-    pub key: ::std::os::raw::c_ulonglong,
+    pub key: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5493,7 +5503,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5501,7 +5511,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5513,11 +5523,11 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreSignalParams__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreSignalParams__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1>(),
         72usize,
         concat!(
             "Size of: ",
@@ -5525,7 +5535,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5533,7 +5543,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5543,7 +5553,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -5553,7 +5563,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -5563,7 +5573,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -5575,25 +5585,25 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams__bindgen_ty_1() {
 }
 impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreSignalParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreSignalParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalParams>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalParams>(),
         144usize,
         concat!("Size of: ", stringify!(cudaExternalSemaphoreSignalParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalParams>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalParams>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5601,7 +5611,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5611,7 +5621,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         72usize,
         concat!(
             "Offset of field: ",
@@ -5621,7 +5631,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         76usize,
         concat!(
             "Offset of field: ",
@@ -5633,9 +5643,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalParams() {
 }
 impl Default for cudaExternalSemaphoreSignalParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5644,8 +5654,8 @@ impl Default for cudaExternalSemaphoreSignalParams {
 #[derive(Copy, Clone)]
 pub struct cudaExternalSemaphoreWaitParams {
     pub params: cudaExternalSemaphoreWaitParams__bindgen_ty_1,
-    pub flags: ::std::os::raw::c_uint,
-    pub reserved: [::std::os::raw::c_uint; 16usize],
+    pub flags: ::core::ffi::c_uint,
+    pub reserved: [::core::ffi::c_uint; 16usize],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -5653,21 +5663,21 @@ pub struct cudaExternalSemaphoreWaitParams__bindgen_ty_1 {
     pub fence: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1,
     pub nvSciSync: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2,
     pub keyedMutex: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3,
-    pub reserved: [::std::os::raw::c_uint; 10usize],
+    pub reserved: [::core::ffi::c_uint; 10usize],
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1 {
-    pub value: ::std::os::raw::c_ulonglong,
+    pub value: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5675,7 +5685,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5683,7 +5693,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).value) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5696,17 +5706,17 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2 {
-    pub fence: *mut ::std::os::raw::c_void,
-    pub reserved: ::std::os::raw::c_ulonglong,
+    pub fence: *mut ::core::ffi::c_void,
+    pub reserved: ::core::ffi::c_ulonglong,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Size of: ",
@@ -5714,7 +5724,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5722,7 +5732,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5732,7 +5742,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5744,9 +5754,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
 }
 impl Default for cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5754,17 +5764,17 @@ impl Default for cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2 {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3 {
-    pub key: ::std::os::raw::c_ulonglong,
-    pub timeoutMs: ::std::os::raw::c_uint,
+    pub key: ::core::ffi::c_ulonglong,
+    pub timeoutMs: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3() {
-    const UNINIT: ::std::mem::MaybeUninit<
+    const UNINIT: ::core::mem::MaybeUninit<
         cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3,
-    > = ::std::mem::MaybeUninit::uninit();
+    > = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3>(),
         16usize,
         concat!(
             "Size of: ",
@@ -5772,7 +5782,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5780,7 +5790,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5790,7 +5800,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).timeoutMs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).timeoutMs) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -5802,11 +5812,11 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreWaitParams__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreWaitParams__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1>(),
         72usize,
         concat!(
             "Size of: ",
@@ -5814,7 +5824,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -5822,7 +5832,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).fence) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5832,7 +5842,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).nvSciSync) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -5842,7 +5852,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).keyedMutex) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -5852,7 +5862,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -5864,30 +5874,30 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams__bindgen_ty_1() {
 }
 impl Default for cudaExternalSemaphoreWaitParams__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreWaitParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreWaitParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitParams>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitParams>(),
         144usize,
         concat!("Size of: ", stringify!(cudaExternalSemaphoreWaitParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitParams>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaExternalSemaphoreWaitParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).params) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -5897,7 +5907,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         72usize,
         concat!(
             "Offset of field: ",
@@ -5907,7 +5917,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved) as usize - ptr as usize },
         76usize,
         concat!(
             "Offset of field: ",
@@ -5919,9 +5929,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitParams() {
 }
 impl Default for cudaExternalSemaphoreWaitParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -5998,29 +6008,29 @@ pub enum cudaCGScope {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchParams {
-    pub func: *mut ::std::os::raw::c_void,
+    pub func: *mut ::core::ffi::c_void,
     pub gridDim: dim3,
     pub blockDim: dim3,
-    pub args: *mut *mut ::std::os::raw::c_void,
+    pub args: *mut *mut ::core::ffi::c_void,
     pub sharedMem: usize,
     pub stream: cudaStream_t,
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchParams> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchParams> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchParams>(),
+        ::core::mem::size_of::<cudaLaunchParams>(),
         56usize,
         concat!("Size of: ", stringify!(cudaLaunchParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchParams>(),
+        ::core::mem::align_of::<cudaLaunchParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaLaunchParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).func) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).func) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6030,7 +6040,7 @@ fn bindgen_test_layout_cudaLaunchParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6040,7 +6050,7 @@ fn bindgen_test_layout_cudaLaunchParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -6050,7 +6060,7 @@ fn bindgen_test_layout_cudaLaunchParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).args) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).args) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -6060,7 +6070,7 @@ fn bindgen_test_layout_cudaLaunchParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedMem) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedMem) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -6070,7 +6080,7 @@ fn bindgen_test_layout_cudaLaunchParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).stream) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).stream) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -6082,9 +6092,9 @@ fn bindgen_test_layout_cudaLaunchParams() {
 }
 impl Default for cudaLaunchParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6092,29 +6102,30 @@ impl Default for cudaLaunchParams {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaKernelNodeParams {
-    pub func: *mut ::std::os::raw::c_void,
+    pub func: *mut ::core::ffi::c_void,
     pub gridDim: dim3,
     pub blockDim: dim3,
-    pub sharedMemBytes: ::std::os::raw::c_uint,
-    pub kernelParams: *mut *mut ::std::os::raw::c_void,
-    pub extra: *mut *mut ::std::os::raw::c_void,
+    pub sharedMemBytes: ::core::ffi::c_uint,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaKernelNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaKernelNodeParams> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaKernelNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaKernelNodeParams>(),
+        ::core::mem::size_of::<cudaKernelNodeParams>(),
         56usize,
         concat!("Size of: ", stringify!(cudaKernelNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaKernelNodeParams>(),
+        ::core::mem::align_of::<cudaKernelNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaKernelNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).func) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).func) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6124,7 +6135,7 @@ fn bindgen_test_layout_cudaKernelNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6134,7 +6145,7 @@ fn bindgen_test_layout_cudaKernelNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -6144,7 +6155,7 @@ fn bindgen_test_layout_cudaKernelNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -6154,7 +6165,7 @@ fn bindgen_test_layout_cudaKernelNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -6164,7 +6175,7 @@ fn bindgen_test_layout_cudaKernelNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -6176,9 +6187,9 @@ fn bindgen_test_layout_cudaKernelNodeParams() {
 }
 impl Default for cudaKernelNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6186,30 +6197,30 @@ impl Default for cudaKernelNodeParams {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaKernelNodeParamsV2 {
-    pub func: *mut ::std::os::raw::c_void,
+    pub func: *mut ::core::ffi::c_void,
     pub gridDim: dim3,
     pub blockDim: dim3,
-    pub sharedMemBytes: ::std::os::raw::c_uint,
-    pub kernelParams: *mut *mut ::std::os::raw::c_void,
-    pub extra: *mut *mut ::std::os::raw::c_void,
+    pub sharedMemBytes: ::core::ffi::c_uint,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_cudaKernelNodeParamsV2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaKernelNodeParamsV2> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaKernelNodeParamsV2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaKernelNodeParamsV2>(),
+        ::core::mem::size_of::<cudaKernelNodeParamsV2>(),
         56usize,
         concat!("Size of: ", stringify!(cudaKernelNodeParamsV2))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaKernelNodeParamsV2>(),
+        ::core::mem::align_of::<cudaKernelNodeParamsV2>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaKernelNodeParamsV2))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).func) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).func) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6219,7 +6230,7 @@ fn bindgen_test_layout_cudaKernelNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6229,7 +6240,7 @@ fn bindgen_test_layout_cudaKernelNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -6239,7 +6250,7 @@ fn bindgen_test_layout_cudaKernelNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sharedMemBytes) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -6249,7 +6260,7 @@ fn bindgen_test_layout_cudaKernelNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).kernelParams) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -6259,7 +6270,7 @@ fn bindgen_test_layout_cudaKernelNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -6271,9 +6282,9 @@ fn bindgen_test_layout_cudaKernelNodeParamsV2() {
 }
 impl Default for cudaKernelNodeParamsV2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6283,15 +6294,15 @@ impl Default for cudaKernelNodeParamsV2 {
 pub struct cudaExternalSemaphoreSignalNodeParams {
     pub extSemArray: *mut cudaExternalSemaphore_t,
     pub paramsArray: *const cudaExternalSemaphoreSignalParams,
-    pub numExtSems: ::std::os::raw::c_uint,
+    pub numExtSems: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreSignalNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreSignalNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalNodeParams>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalNodeParams>(),
         24usize,
         concat!(
             "Size of: ",
@@ -6299,7 +6310,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParams() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalNodeParams>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalNodeParams>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6307,7 +6318,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6317,7 +6328,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6327,7 +6338,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -6339,9 +6350,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParams() {
 }
 impl Default for cudaExternalSemaphoreSignalNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6351,15 +6362,15 @@ impl Default for cudaExternalSemaphoreSignalNodeParams {
 pub struct cudaExternalSemaphoreSignalNodeParamsV2 {
     pub extSemArray: *mut cudaExternalSemaphore_t,
     pub paramsArray: *const cudaExternalSemaphoreSignalParams,
-    pub numExtSems: ::std::os::raw::c_uint,
+    pub numExtSems: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParamsV2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreSignalNodeParamsV2> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreSignalNodeParamsV2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreSignalNodeParamsV2>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreSignalNodeParamsV2>(),
         24usize,
         concat!(
             "Size of: ",
@@ -6367,7 +6378,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParamsV2() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreSignalNodeParamsV2>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreSignalNodeParamsV2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6375,7 +6386,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6385,7 +6396,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6395,7 +6406,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -6407,9 +6418,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreSignalNodeParamsV2() {
 }
 impl Default for cudaExternalSemaphoreSignalNodeParamsV2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6419,20 +6430,20 @@ impl Default for cudaExternalSemaphoreSignalNodeParamsV2 {
 pub struct cudaExternalSemaphoreWaitNodeParams {
     pub extSemArray: *mut cudaExternalSemaphore_t,
     pub paramsArray: *const cudaExternalSemaphoreWaitParams,
-    pub numExtSems: ::std::os::raw::c_uint,
+    pub numExtSems: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreWaitNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreWaitNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitNodeParams>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitNodeParams>(),
         24usize,
         concat!("Size of: ", stringify!(cudaExternalSemaphoreWaitNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitNodeParams>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitNodeParams>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6440,7 +6451,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6450,7 +6461,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6460,7 +6471,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -6472,9 +6483,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParams() {
 }
 impl Default for cudaExternalSemaphoreWaitNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6484,15 +6495,15 @@ impl Default for cudaExternalSemaphoreWaitNodeParams {
 pub struct cudaExternalSemaphoreWaitNodeParamsV2 {
     pub extSemArray: *mut cudaExternalSemaphore_t,
     pub paramsArray: *const cudaExternalSemaphoreWaitParams,
-    pub numExtSems: ::std::os::raw::c_uint,
+    pub numExtSems: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParamsV2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaExternalSemaphoreWaitNodeParamsV2> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaExternalSemaphoreWaitNodeParamsV2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaExternalSemaphoreWaitNodeParamsV2>(),
+        ::core::mem::size_of::<cudaExternalSemaphoreWaitNodeParamsV2>(),
         24usize,
         concat!(
             "Size of: ",
@@ -6500,7 +6511,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParamsV2() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaExternalSemaphoreWaitNodeParamsV2>(),
+        ::core::mem::align_of::<cudaExternalSemaphoreWaitNodeParamsV2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6508,7 +6519,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extSemArray) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6518,7 +6529,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).paramsArray) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6528,7 +6539,7 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParamsV2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numExtSems) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -6540,9 +6551,9 @@ fn bindgen_test_layout_cudaExternalSemaphoreWaitNodeParamsV2() {
 }
 impl Default for cudaExternalSemaphoreWaitNodeParamsV2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6571,21 +6582,21 @@ pub struct cudaChildGraphNodeParams {
 }
 #[test]
 fn bindgen_test_layout_cudaChildGraphNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaChildGraphNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaChildGraphNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaChildGraphNodeParams>(),
+        ::core::mem::size_of::<cudaChildGraphNodeParams>(),
         8usize,
         concat!("Size of: ", stringify!(cudaChildGraphNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaChildGraphNodeParams>(),
+        ::core::mem::align_of::<cudaChildGraphNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaChildGraphNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).graph) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).graph) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6597,9 +6608,9 @@ fn bindgen_test_layout_cudaChildGraphNodeParams() {
 }
 impl Default for cudaChildGraphNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6611,21 +6622,21 @@ pub struct cudaEventRecordNodeParams {
 }
 #[test]
 fn bindgen_test_layout_cudaEventRecordNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaEventRecordNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaEventRecordNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaEventRecordNodeParams>(),
+        ::core::mem::size_of::<cudaEventRecordNodeParams>(),
         8usize,
         concat!("Size of: ", stringify!(cudaEventRecordNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaEventRecordNodeParams>(),
+        ::core::mem::align_of::<cudaEventRecordNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaEventRecordNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).event) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).event) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6637,9 +6648,9 @@ fn bindgen_test_layout_cudaEventRecordNodeParams() {
 }
 impl Default for cudaEventRecordNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6651,21 +6662,21 @@ pub struct cudaEventWaitNodeParams {
 }
 #[test]
 fn bindgen_test_layout_cudaEventWaitNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaEventWaitNodeParams> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaEventWaitNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaEventWaitNodeParams>(),
+        ::core::mem::size_of::<cudaEventWaitNodeParams>(),
         8usize,
         concat!("Size of: ", stringify!(cudaEventWaitNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaEventWaitNodeParams>(),
+        ::core::mem::align_of::<cudaEventWaitNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaEventWaitNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).event) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).event) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6677,9 +6688,9 @@ fn bindgen_test_layout_cudaEventWaitNodeParams() {
 }
 impl Default for cudaEventWaitNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6688,14 +6699,14 @@ impl Default for cudaEventWaitNodeParams {
 #[derive(Copy, Clone)]
 pub struct cudaGraphNodeParams {
     pub type_: cudaGraphNodeType,
-    pub reserved0: [::std::os::raw::c_int; 3usize],
+    pub reserved0: [::core::ffi::c_int; 3usize],
     pub __bindgen_anon_1: cudaGraphNodeParams__bindgen_ty_1,
-    pub reserved2: ::std::os::raw::c_longlong,
+    pub reserved2: ::core::ffi::c_longlong,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaGraphNodeParams__bindgen_ty_1 {
-    pub reserved1: [::std::os::raw::c_longlong; 29usize],
+    pub reserved1: [::core::ffi::c_longlong; 29usize],
     pub kernel: cudaKernelNodeParamsV2,
     pub memcpy: cudaMemcpyNodeParams,
     pub memset: cudaMemsetParamsV2,
@@ -6710,16 +6721,16 @@ pub union cudaGraphNodeParams__bindgen_ty_1 {
 }
 #[test]
 fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaGraphNodeParams__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaGraphNodeParams__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaGraphNodeParams__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaGraphNodeParams__bindgen_ty_1>(),
         232usize,
         concat!("Size of: ", stringify!(cudaGraphNodeParams__bindgen_ty_1))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaGraphNodeParams__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaGraphNodeParams__bindgen_ty_1>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -6727,7 +6738,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved1) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved1) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6737,7 +6748,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).kernel) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).kernel) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6747,7 +6758,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memcpy) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memcpy) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6757,7 +6768,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memset) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memset) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6767,7 +6778,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).host) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).host) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6777,7 +6788,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).graph) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).graph) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6787,7 +6798,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).eventWait) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).eventWait) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6797,7 +6808,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).eventRecord) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).eventRecord) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6807,7 +6818,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extSemSignal) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extSemSignal) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6817,7 +6828,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extSemWait) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).extSemWait) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6827,7 +6838,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).alloc) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).alloc) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6837,7 +6848,7 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).free) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).free) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6849,29 +6860,30 @@ fn bindgen_test_layout_cudaGraphNodeParams__bindgen_ty_1() {
 }
 impl Default for cudaGraphNodeParams__bindgen_ty_1 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaGraphNodeParams() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaGraphNodeParams> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaGraphNodeParams> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaGraphNodeParams>(),
+        ::core::mem::size_of::<cudaGraphNodeParams>(),
         256usize,
         concat!("Size of: ", stringify!(cudaGraphNodeParams))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaGraphNodeParams>(),
+        ::core::mem::align_of::<cudaGraphNodeParams>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaGraphNodeParams))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6881,7 +6893,7 @@ fn bindgen_test_layout_cudaGraphNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved0) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved0) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -6891,7 +6903,7 @@ fn bindgen_test_layout_cudaGraphNodeParams() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).reserved2) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).reserved2) as usize - ptr as usize },
         248usize,
         concat!(
             "Offset of field: ",
@@ -6903,9 +6915,9 @@ fn bindgen_test_layout_cudaGraphNodeParams() {
 }
 impl Default for cudaGraphNodeParams {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -6941,28 +6953,28 @@ pub enum cudaGraphInstantiateResult {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaGraphInstantiateParams_st {
-    pub flags: ::std::os::raw::c_ulonglong,
+    pub flags: ::core::ffi::c_ulonglong,
     pub uploadStream: cudaStream_t,
     pub errNode_out: cudaGraphNode_t,
     pub result_out: cudaGraphInstantiateResult,
 }
 #[test]
 fn bindgen_test_layout_cudaGraphInstantiateParams_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaGraphInstantiateParams_st> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaGraphInstantiateParams_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaGraphInstantiateParams_st>(),
+        ::core::mem::size_of::<cudaGraphInstantiateParams_st>(),
         32usize,
         concat!("Size of: ", stringify!(cudaGraphInstantiateParams_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaGraphInstantiateParams_st>(),
+        ::core::mem::align_of::<cudaGraphInstantiateParams_st>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaGraphInstantiateParams_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -6972,7 +6984,7 @@ fn bindgen_test_layout_cudaGraphInstantiateParams_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).uploadStream) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).uploadStream) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -6982,7 +6994,7 @@ fn bindgen_test_layout_cudaGraphInstantiateParams_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).errNode_out) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).errNode_out) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -6992,7 +7004,7 @@ fn bindgen_test_layout_cudaGraphInstantiateParams_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).result_out) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).result_out) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -7004,9 +7016,9 @@ fn bindgen_test_layout_cudaGraphInstantiateParams_st() {
 }
 impl Default for cudaGraphInstantiateParams_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7021,16 +7033,16 @@ pub struct cudaGraphExecUpdateResultInfo_st {
 }
 #[test]
 fn bindgen_test_layout_cudaGraphExecUpdateResultInfo_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaGraphExecUpdateResultInfo_st> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaGraphExecUpdateResultInfo_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaGraphExecUpdateResultInfo_st>(),
+        ::core::mem::size_of::<cudaGraphExecUpdateResultInfo_st>(),
         24usize,
         concat!("Size of: ", stringify!(cudaGraphExecUpdateResultInfo_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaGraphExecUpdateResultInfo_st>(),
+        ::core::mem::align_of::<cudaGraphExecUpdateResultInfo_st>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -7038,7 +7050,7 @@ fn bindgen_test_layout_cudaGraphExecUpdateResultInfo_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).result) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7048,7 +7060,7 @@ fn bindgen_test_layout_cudaGraphExecUpdateResultInfo_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).errorNode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).errorNode) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -7058,7 +7070,7 @@ fn bindgen_test_layout_cudaGraphExecUpdateResultInfo_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).errorFromNode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).errorFromNode) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -7070,9 +7082,9 @@ fn bindgen_test_layout_cudaGraphExecUpdateResultInfo_st() {
 }
 impl Default for cudaGraphExecUpdateResultInfo_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7123,26 +7135,26 @@ pub enum cudaLaunchMemSyncDomain {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchMemSyncDomainMap_st {
-    pub default_: ::std::os::raw::c_uchar,
-    pub remote: ::std::os::raw::c_uchar,
+    pub default_: ::core::ffi::c_uchar,
+    pub remote: ::core::ffi::c_uchar,
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchMemSyncDomainMap_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchMemSyncDomainMap_st> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchMemSyncDomainMap_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchMemSyncDomainMap_st>(),
+        ::core::mem::size_of::<cudaLaunchMemSyncDomainMap_st>(),
         2usize,
         concat!("Size of: ", stringify!(cudaLaunchMemSyncDomainMap_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchMemSyncDomainMap_st>(),
+        ::core::mem::align_of::<cudaLaunchMemSyncDomainMap_st>(),
         1usize,
         concat!("Alignment of ", stringify!(cudaLaunchMemSyncDomainMap_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).default_) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).default_) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7152,7 +7164,7 @@ fn bindgen_test_layout_cudaLaunchMemSyncDomainMap_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).remote) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).remote) as usize - ptr as usize },
         1usize,
         concat!(
             "Offset of field: ",
@@ -7181,32 +7193,32 @@ pub enum cudaLaunchAttributeID {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaLaunchAttributeValue {
-    pub pad: [::std::os::raw::c_char; 64usize],
+    pub pad: [::core::ffi::c_char; 64usize],
     pub accessPolicyWindow: cudaAccessPolicyWindow,
-    pub cooperative: ::std::os::raw::c_int,
+    pub cooperative: ::core::ffi::c_int,
     pub syncPolicy: cudaSynchronizationPolicy,
     pub clusterDim: cudaLaunchAttributeValue__bindgen_ty_1,
     pub clusterSchedulingPolicyPreference: cudaClusterSchedulingPolicy,
-    pub programmaticStreamSerializationAllowed: ::std::os::raw::c_int,
+    pub programmaticStreamSerializationAllowed: ::core::ffi::c_int,
     pub programmaticEvent: cudaLaunchAttributeValue__bindgen_ty_2,
-    pub priority: ::std::os::raw::c_int,
+    pub priority: ::core::ffi::c_int,
     pub memSyncDomainMap: cudaLaunchMemSyncDomainMap,
     pub memSyncDomain: cudaLaunchMemSyncDomain,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchAttributeValue__bindgen_ty_1 {
-    pub x: ::std::os::raw::c_uint,
-    pub y: ::std::os::raw::c_uint,
-    pub z: ::std::os::raw::c_uint,
+    pub x: ::core::ffi::c_uint,
+    pub y: ::core::ffi::c_uint,
+    pub z: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchAttributeValue__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchAttributeValue__bindgen_ty_1> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_1>(),
+        ::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_1>(),
         12usize,
         concat!(
             "Size of: ",
@@ -7214,7 +7226,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_1>(),
+        ::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_1>(),
         4usize,
         concat!(
             "Alignment of ",
@@ -7222,7 +7234,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7232,7 +7244,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -7242,7 +7254,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).z) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -7256,16 +7268,16 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_1() {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchAttributeValue__bindgen_ty_2 {
     pub event: cudaEvent_t,
-    pub flags: ::std::os::raw::c_int,
-    pub triggerAtBlockStart: ::std::os::raw::c_int,
+    pub flags: ::core::ffi::c_int,
+    pub triggerAtBlockStart: ::core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchAttributeValue__bindgen_ty_2> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchAttributeValue__bindgen_ty_2> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_2>(),
+        ::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_2>(),
         16usize,
         concat!(
             "Size of: ",
@@ -7273,7 +7285,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_2>(),
+        ::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_2>(),
         8usize,
         concat!(
             "Alignment of ",
@@ -7281,7 +7293,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).event) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).event) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7291,7 +7303,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -7301,7 +7313,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_2() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).triggerAtBlockStart) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).triggerAtBlockStart) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
@@ -7313,30 +7325,30 @@ fn bindgen_test_layout_cudaLaunchAttributeValue__bindgen_ty_2() {
 }
 impl Default for cudaLaunchAttributeValue__bindgen_ty_2 {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchAttributeValue() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchAttributeValue> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchAttributeValue> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchAttributeValue>(),
+        ::core::mem::size_of::<cudaLaunchAttributeValue>(),
         64usize,
         concat!("Size of: ", stringify!(cudaLaunchAttributeValue))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchAttributeValue>(),
+        ::core::mem::align_of::<cudaLaunchAttributeValue>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaLaunchAttributeValue))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pad) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pad) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7346,7 +7358,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).accessPolicyWindow) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).accessPolicyWindow) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7356,7 +7368,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cooperative) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).cooperative) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7366,7 +7378,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).syncPolicy) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).syncPolicy) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7376,7 +7388,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).clusterDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).clusterDim) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7387,7 +7399,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).clusterSchedulingPolicyPreference) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).clusterSchedulingPolicyPreference) as usize - ptr as usize
         },
         0usize,
         concat!(
@@ -7399,7 +7411,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).programmaticStreamSerializationAllowed) as usize
+            ::core::ptr::addr_of!((*ptr).programmaticStreamSerializationAllowed) as usize
                 - ptr as usize
         },
         0usize,
@@ -7411,7 +7423,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).programmaticEvent) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).programmaticEvent) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7421,7 +7433,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).priority) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).priority) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7431,7 +7443,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memSyncDomainMap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memSyncDomainMap) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7441,7 +7453,7 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).memSyncDomain) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).memSyncDomain) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7453,9 +7465,9 @@ fn bindgen_test_layout_cudaLaunchAttributeValue() {
 }
 impl Default for cudaLaunchAttributeValue {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7464,26 +7476,26 @@ impl Default for cudaLaunchAttributeValue {
 #[derive(Copy, Clone)]
 pub struct cudaLaunchAttribute_st {
     pub id: cudaLaunchAttributeID,
-    pub pad: [::std::os::raw::c_char; 4usize],
+    pub pad: [::core::ffi::c_char; 4usize],
     pub val: cudaLaunchAttributeValue,
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchAttribute_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchAttribute_st> =
-        ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchAttribute_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchAttribute_st>(),
+        ::core::mem::size_of::<cudaLaunchAttribute_st>(),
         72usize,
         concat!("Size of: ", stringify!(cudaLaunchAttribute_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchAttribute_st>(),
+        ::core::mem::align_of::<cudaLaunchAttribute_st>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaLaunchAttribute_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).id) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).id) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7493,7 +7505,7 @@ fn bindgen_test_layout_cudaLaunchAttribute_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).pad) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).pad) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
@@ -7503,7 +7515,7 @@ fn bindgen_test_layout_cudaLaunchAttribute_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).val) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).val) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -7515,9 +7527,9 @@ fn bindgen_test_layout_cudaLaunchAttribute_st() {
 }
 impl Default for cudaLaunchAttribute_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7531,24 +7543,25 @@ pub struct cudaLaunchConfig_st {
     pub dynamicSmemBytes: usize,
     pub stream: cudaStream_t,
     pub attrs: *mut cudaLaunchAttribute,
-    pub numAttrs: ::std::os::raw::c_uint,
+    pub numAttrs: ::core::ffi::c_uint,
 }
 #[test]
 fn bindgen_test_layout_cudaLaunchConfig_st() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaLaunchConfig_st> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaLaunchConfig_st> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaLaunchConfig_st>(),
+        ::core::mem::size_of::<cudaLaunchConfig_st>(),
         56usize,
         concat!("Size of: ", stringify!(cudaLaunchConfig_st))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaLaunchConfig_st>(),
+        ::core::mem::align_of::<cudaLaunchConfig_st>(),
         8usize,
         concat!("Alignment of ", stringify!(cudaLaunchConfig_st))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).gridDim) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7558,7 +7571,7 @@ fn bindgen_test_layout_cudaLaunchConfig_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).blockDim) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
@@ -7568,7 +7581,7 @@ fn bindgen_test_layout_cudaLaunchConfig_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dynamicSmemBytes) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).dynamicSmemBytes) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -7578,7 +7591,7 @@ fn bindgen_test_layout_cudaLaunchConfig_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).stream) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).stream) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -7588,7 +7601,7 @@ fn bindgen_test_layout_cudaLaunchConfig_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).attrs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).attrs) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -7598,7 +7611,7 @@ fn bindgen_test_layout_cudaLaunchConfig_st() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).numAttrs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).numAttrs) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -7610,9 +7623,9 @@ fn bindgen_test_layout_cudaLaunchConfig_st() {
 }
 impl Default for cudaLaunchConfig_st {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
@@ -7637,7 +7650,7 @@ pub enum cudaSurfaceFormatMode {
     cudaFormatModeForced = 0,
     cudaFormatModeAuto = 1,
 }
-pub type cudaSurfaceObject_t = ::std::os::raw::c_ulonglong;
+pub type cudaSurfaceObject_t = ::core::ffi::c_ulonglong;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaTextureAddressMode {
@@ -7664,33 +7677,33 @@ pub struct cudaTextureDesc {
     pub addressMode: [cudaTextureAddressMode; 3usize],
     pub filterMode: cudaTextureFilterMode,
     pub readMode: cudaTextureReadMode,
-    pub sRGB: ::std::os::raw::c_int,
+    pub sRGB: ::core::ffi::c_int,
     pub borderColor: [f32; 4usize],
-    pub normalizedCoords: ::std::os::raw::c_int,
-    pub maxAnisotropy: ::std::os::raw::c_uint,
+    pub normalizedCoords: ::core::ffi::c_int,
+    pub maxAnisotropy: ::core::ffi::c_uint,
     pub mipmapFilterMode: cudaTextureFilterMode,
     pub mipmapLevelBias: f32,
     pub minMipmapLevelClamp: f32,
     pub maxMipmapLevelClamp: f32,
-    pub disableTrilinearOptimization: ::std::os::raw::c_int,
-    pub seamlessCubemap: ::std::os::raw::c_int,
+    pub disableTrilinearOptimization: ::core::ffi::c_int,
+    pub seamlessCubemap: ::core::ffi::c_int,
 }
 #[test]
 fn bindgen_test_layout_cudaTextureDesc() {
-    const UNINIT: ::std::mem::MaybeUninit<cudaTextureDesc> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<cudaTextureDesc> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<cudaTextureDesc>(),
+        ::core::mem::size_of::<cudaTextureDesc>(),
         72usize,
         concat!("Size of: ", stringify!(cudaTextureDesc))
     );
     assert_eq!(
-        ::std::mem::align_of::<cudaTextureDesc>(),
+        ::core::mem::align_of::<cudaTextureDesc>(),
         4usize,
         concat!("Alignment of ", stringify!(cudaTextureDesc))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).addressMode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).addressMode) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -7700,7 +7713,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).filterMode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).filterMode) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
@@ -7710,7 +7723,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).readMode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).readMode) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -7720,7 +7733,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sRGB) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).sRGB) as usize - ptr as usize },
         20usize,
         concat!(
             "Offset of field: ",
@@ -7730,7 +7743,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).borderColor) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).borderColor) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -7740,7 +7753,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).normalizedCoords) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).normalizedCoords) as usize - ptr as usize },
         40usize,
         concat!(
             "Offset of field: ",
@@ -7750,7 +7763,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxAnisotropy) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxAnisotropy) as usize - ptr as usize },
         44usize,
         concat!(
             "Offset of field: ",
@@ -7760,7 +7773,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mipmapFilterMode) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).mipmapFilterMode) as usize - ptr as usize },
         48usize,
         concat!(
             "Offset of field: ",
@@ -7770,7 +7783,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mipmapLevelBias) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).mipmapLevelBias) as usize - ptr as usize },
         52usize,
         concat!(
             "Offset of field: ",
@@ -7780,7 +7793,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).minMipmapLevelClamp) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).minMipmapLevelClamp) as usize - ptr as usize },
         56usize,
         concat!(
             "Offset of field: ",
@@ -7790,7 +7803,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).maxMipmapLevelClamp) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).maxMipmapLevelClamp) as usize - ptr as usize },
         60usize,
         concat!(
             "Offset of field: ",
@@ -7801,7 +7814,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
     );
     assert_eq!(
         unsafe {
-            ::std::ptr::addr_of!((*ptr).disableTrilinearOptimization) as usize - ptr as usize
+            ::core::ptr::addr_of!((*ptr).disableTrilinearOptimization) as usize - ptr as usize
         },
         64usize,
         concat!(
@@ -7812,7 +7825,7 @@ fn bindgen_test_layout_cudaTextureDesc() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).seamlessCubemap) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).seamlessCubemap) as usize - ptr as usize },
         68usize,
         concat!(
             "Offset of field: ",
@@ -7824,726 +7837,4167 @@ fn bindgen_test_layout_cudaTextureDesc() {
 }
 impl Default for cudaTextureDesc {
     fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
             s.assume_init()
         }
     }
 }
-pub type cudaTextureObject_t = ::std::os::raw::c_ulonglong;
-extern "C" {
-    pub fn cudaDeviceReset() -> cudaError_t;
+pub type cudaTextureObject_t = ::core::ffi::c_ulonglong;
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaDataType_t {
+    CUDA_R_16F = 2,
+    CUDA_C_16F = 6,
+    CUDA_R_16BF = 14,
+    CUDA_C_16BF = 15,
+    CUDA_R_32F = 0,
+    CUDA_C_32F = 4,
+    CUDA_R_64F = 1,
+    CUDA_C_64F = 5,
+    CUDA_R_4I = 16,
+    CUDA_C_4I = 17,
+    CUDA_R_4U = 18,
+    CUDA_C_4U = 19,
+    CUDA_R_8I = 3,
+    CUDA_C_8I = 7,
+    CUDA_R_8U = 8,
+    CUDA_C_8U = 9,
+    CUDA_R_16I = 20,
+    CUDA_C_16I = 21,
+    CUDA_R_16U = 22,
+    CUDA_C_16U = 23,
+    CUDA_R_32I = 10,
+    CUDA_C_32I = 11,
+    CUDA_R_32U = 12,
+    CUDA_C_32U = 13,
+    CUDA_R_64I = 24,
+    CUDA_C_64I = 25,
+    CUDA_R_64U = 26,
+    CUDA_C_64U = 27,
+    CUDA_R_8F_E4M3 = 28,
+    CUDA_R_8F_E5M2 = 29,
 }
-extern "C" {
-    pub fn cudaDeviceSynchronize() -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceSetLimit(limit: cudaLimit, value: usize) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetLimit(pValue: *mut usize, limit: cudaLimit) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetTexture1DLinearMaxWidth(
-        maxWidthInElements: *mut usize,
-        fmtDesc: *const cudaChannelFormatDesc,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetCacheConfig(pCacheConfig: *mut cudaFuncCache) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetStreamPriorityRange(
-        leastPriority: *mut ::std::os::raw::c_int,
-        greatestPriority: *mut ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceSetCacheConfig(cacheConfig: cudaFuncCache) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetSharedMemConfig(pConfig: *mut cudaSharedMemConfig) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceSetSharedMemConfig(config: cudaSharedMemConfig) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetByPCIBusId(
-        device: *mut ::std::os::raw::c_int,
-        pciBusId: *const ::std::os::raw::c_char,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetPCIBusId(
-        pciBusId: *mut ::std::os::raw::c_char,
-        len: ::std::os::raw::c_int,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaIpcGetEventHandle(
-        handle: *mut cudaIpcEventHandle_t,
-        event: cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaIpcOpenEventHandle(
-        event: *mut cudaEvent_t,
-        handle: cudaIpcEventHandle_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaIpcGetMemHandle(
-        handle: *mut cudaIpcMemHandle_t,
-        devPtr: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaIpcOpenMemHandle(
-        devPtr: *mut *mut ::std::os::raw::c_void,
-        handle: cudaIpcMemHandle_t,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaIpcCloseMemHandle(devPtr: *mut ::std::os::raw::c_void) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceFlushGPUDirectRDMAWrites(
-        target: cudaFlushGPUDirectRDMAWritesTarget,
-        scope: cudaFlushGPUDirectRDMAWritesScope,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadExit() -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadSynchronize() -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadSetLimit(limit: cudaLimit, value: usize) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadGetLimit(pValue: *mut usize, limit: cudaLimit) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadGetCacheConfig(pCacheConfig: *mut cudaFuncCache) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadSetCacheConfig(cacheConfig: cudaFuncCache) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetLastError() -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaPeekAtLastError() -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetErrorName(error: cudaError_t) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn cudaGetErrorString(error: cudaError_t) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn cudaGetDeviceCount(count: *mut ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetDeviceProperties_v2(
-        prop: *mut cudaDeviceProp,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetAttribute(
-        value: *mut ::std::os::raw::c_int,
-        attr: cudaDeviceAttr,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetDefaultMemPool(
-        memPool: *mut cudaMemPool_t,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceSetMemPool(
-        device: ::std::os::raw::c_int,
-        memPool: cudaMemPool_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetMemPool(
-        memPool: *mut cudaMemPool_t,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::std::os::raw::c_void,
-        device: ::std::os::raw::c_int,
-        flags: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetP2PAttribute(
-        value: *mut ::std::os::raw::c_int,
-        attr: cudaDeviceP2PAttr,
-        srcDevice: ::std::os::raw::c_int,
-        dstDevice: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaChooseDevice(
-        device: *mut ::std::os::raw::c_int,
-        prop: *const cudaDeviceProp,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaInitDevice(
-        device: ::std::os::raw::c_int,
-        deviceFlags: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaSetDevice(device: ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetDevice(device: *mut ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaSetValidDevices(
-        device_arr: *mut ::std::os::raw::c_int,
-        len: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaSetDeviceFlags(flags: ::std::os::raw::c_uint) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetDeviceFlags(flags: *mut ::std::os::raw::c_uint) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamCreate(pStream: *mut cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamCreateWithFlags(
-        pStream: *mut cudaStream_t,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamCreateWithPriority(
-        pStream: *mut cudaStream_t,
-        flags: ::std::os::raw::c_uint,
-        priority: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamGetPriority(
-        hStream: cudaStream_t,
-        priority: *mut ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamGetFlags(
-        hStream: cudaStream_t,
-        flags: *mut ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamGetId(
-        hStream: cudaStream_t,
-        streamId: *mut ::std::os::raw::c_ulonglong,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaCtxResetPersistingL2Cache() -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamCopyAttributes(dst: cudaStream_t, src: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamGetAttribute(
-        hStream: cudaStream_t,
-        attr: cudaLaunchAttributeID,
-        value_out: *mut cudaLaunchAttributeValue,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamSetAttribute(
-        hStream: cudaStream_t,
-        attr: cudaLaunchAttributeID,
-        value: *const cudaLaunchAttributeValue,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamDestroy(stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamWaitEvent(
-        stream: cudaStream_t,
-        event: cudaEvent_t,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-pub type cudaStreamCallback_t = ::std::option::Option<
+pub use self::cudaDataType_t as cudaDataType;
+pub type cudaStreamCallback_t = ::core::option::Option<
     unsafe extern "C" fn(
         stream: cudaStream_t,
         status: cudaError_t,
-        userData: *mut ::std::os::raw::c_void,
+        userData: *mut ::core::ffi::c_void,
     ),
 >;
-extern "C" {
-    pub fn cudaStreamAddCallback(
+extern crate libloading;
+pub struct Lib {
+    __library: ::libloading::Library,
+    pub cudaDeviceReset: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaDeviceSynchronize: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaDeviceSetLimit: Result<
+        unsafe extern "C" fn(limit: cudaLimit, value: usize) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetLimit: Result<
+        unsafe extern "C" fn(pValue: *mut usize, limit: cudaLimit) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetTexture1DLinearMaxWidth: Result<
+        unsafe extern "C" fn(
+            maxWidthInElements: *mut usize,
+            fmtDesc: *const cudaChannelFormatDesc,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetCacheConfig: Result<
+        unsafe extern "C" fn(pCacheConfig: *mut cudaFuncCache) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetStreamPriorityRange: Result<
+        unsafe extern "C" fn(
+            leastPriority: *mut ::core::ffi::c_int,
+            greatestPriority: *mut ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceSetCacheConfig: Result<
+        unsafe extern "C" fn(cacheConfig: cudaFuncCache) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetSharedMemConfig: Result<
+        unsafe extern "C" fn(pConfig: *mut cudaSharedMemConfig) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceSetSharedMemConfig: Result<
+        unsafe extern "C" fn(config: cudaSharedMemConfig) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetByPCIBusId: Result<
+        unsafe extern "C" fn(
+            device: *mut ::core::ffi::c_int,
+            pciBusId: *const ::core::ffi::c_char,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetPCIBusId: Result<
+        unsafe extern "C" fn(
+            pciBusId: *mut ::core::ffi::c_char,
+            len: ::core::ffi::c_int,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaIpcGetEventHandle: Result<
+        unsafe extern "C" fn(handle: *mut cudaIpcEventHandle_t, event: cudaEvent_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaIpcOpenEventHandle: Result<
+        unsafe extern "C" fn(event: *mut cudaEvent_t, handle: cudaIpcEventHandle_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaIpcGetMemHandle: Result<
+        unsafe extern "C" fn(
+            handle: *mut cudaIpcMemHandle_t,
+            devPtr: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaIpcOpenMemHandle: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            handle: cudaIpcMemHandle_t,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaIpcCloseMemHandle: Result<
+        unsafe extern "C" fn(devPtr: *mut ::core::ffi::c_void) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceFlushGPUDirectRDMAWrites: Result<
+        unsafe extern "C" fn(
+            target: cudaFlushGPUDirectRDMAWritesTarget,
+            scope: cudaFlushGPUDirectRDMAWritesScope,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaThreadExit: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaThreadSynchronize: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaThreadSetLimit: Result<
+        unsafe extern "C" fn(limit: cudaLimit, value: usize) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaThreadGetLimit: Result<
+        unsafe extern "C" fn(pValue: *mut usize, limit: cudaLimit) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaThreadGetCacheConfig: Result<
+        unsafe extern "C" fn(pCacheConfig: *mut cudaFuncCache) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaThreadSetCacheConfig: Result<
+        unsafe extern "C" fn(cacheConfig: cudaFuncCache) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetLastError: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaPeekAtLastError: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaGetErrorName: Result<
+        unsafe extern "C" fn(error: cudaError_t) -> *const ::core::ffi::c_char,
+        ::libloading::Error,
+    >,
+    pub cudaGetErrorString: Result<
+        unsafe extern "C" fn(error: cudaError_t) -> *const ::core::ffi::c_char,
+        ::libloading::Error,
+    >,
+    pub cudaGetDeviceCount: Result<
+        unsafe extern "C" fn(count: *mut ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetDeviceProperties_v2: Result<
+        unsafe extern "C" fn(prop: *mut cudaDeviceProp, device: ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetAttribute: Result<
+        unsafe extern "C" fn(
+            value: *mut ::core::ffi::c_int,
+            attr: cudaDeviceAttr,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetDefaultMemPool: Result<
+        unsafe extern "C" fn(
+            memPool: *mut cudaMemPool_t,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceSetMemPool: Result<
+        unsafe extern "C" fn(device: ::core::ffi::c_int, memPool: cudaMemPool_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetMemPool: Result<
+        unsafe extern "C" fn(
+            memPool: *mut cudaMemPool_t,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetNvSciSyncAttributes: Result<
+        unsafe extern "C" fn(
+            nvSciSyncAttrList: *mut ::core::ffi::c_void,
+            device: ::core::ffi::c_int,
+            flags: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetP2PAttribute: Result<
+        unsafe extern "C" fn(
+            value: *mut ::core::ffi::c_int,
+            attr: cudaDeviceP2PAttr,
+            srcDevice: ::core::ffi::c_int,
+            dstDevice: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaChooseDevice: Result<
+        unsafe extern "C" fn(
+            device: *mut ::core::ffi::c_int,
+            prop: *const cudaDeviceProp,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaInitDevice: Result<
+        unsafe extern "C" fn(
+            device: ::core::ffi::c_int,
+            deviceFlags: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaSetDevice: Result<
+        unsafe extern "C" fn(device: ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetDevice: Result<
+        unsafe extern "C" fn(device: *mut ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaSetValidDevices: Result<
+        unsafe extern "C" fn(
+            device_arr: *mut ::core::ffi::c_int,
+            len: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaSetDeviceFlags: Result<
+        unsafe extern "C" fn(flags: ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetDeviceFlags: Result<
+        unsafe extern "C" fn(flags: *mut ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamCreate: Result<
+        unsafe extern "C" fn(pStream: *mut cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamCreateWithFlags: Result<
+        unsafe extern "C" fn(pStream: *mut cudaStream_t, flags: ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamCreateWithPriority: Result<
+        unsafe extern "C" fn(
+            pStream: *mut cudaStream_t,
+            flags: ::core::ffi::c_uint,
+            priority: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamGetPriority: Result<
+        unsafe extern "C" fn(
+            hStream: cudaStream_t,
+            priority: *mut ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamGetFlags: Result<
+        unsafe extern "C" fn(hStream: cudaStream_t, flags: *mut ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamGetId: Result<
+        unsafe extern "C" fn(
+            hStream: cudaStream_t,
+            streamId: *mut ::core::ffi::c_ulonglong,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaCtxResetPersistingL2Cache:
+        Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaStreamCopyAttributes: Result<
+        unsafe extern "C" fn(dst: cudaStream_t, src: cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamGetAttribute: Result<
+        unsafe extern "C" fn(
+            hStream: cudaStream_t,
+            attr: cudaLaunchAttributeID,
+            value_out: *mut cudaLaunchAttributeValue,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamSetAttribute: Result<
+        unsafe extern "C" fn(
+            hStream: cudaStream_t,
+            attr: cudaLaunchAttributeID,
+            value: *const cudaLaunchAttributeValue,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamDestroy:
+        Result<unsafe extern "C" fn(stream: cudaStream_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaStreamWaitEvent: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            event: cudaEvent_t,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamAddCallback: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            callback: cudaStreamCallback_t,
+            userData: *mut ::core::ffi::c_void,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamSynchronize:
+        Result<unsafe extern "C" fn(stream: cudaStream_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaStreamQuery:
+        Result<unsafe extern "C" fn(stream: cudaStream_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaStreamAttachMemAsync: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            devPtr: *mut ::core::ffi::c_void,
+            length: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamBeginCapture: Result<
+        unsafe extern "C" fn(stream: cudaStream_t, mode: cudaStreamCaptureMode) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaThreadExchangeStreamCaptureMode: Result<
+        unsafe extern "C" fn(mode: *mut cudaStreamCaptureMode) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamEndCapture: Result<
+        unsafe extern "C" fn(stream: cudaStream_t, pGraph: *mut cudaGraph_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamIsCapturing: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            pCaptureStatus: *mut cudaStreamCaptureStatus,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamGetCaptureInfo_v2: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            captureStatus_out: *mut cudaStreamCaptureStatus,
+            id_out: *mut ::core::ffi::c_ulonglong,
+            graph_out: *mut cudaGraph_t,
+            dependencies_out: *mut *const cudaGraphNode_t,
+            numDependencies_out: *mut usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaStreamUpdateCaptureDependencies: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            dependencies: *mut cudaGraphNode_t,
+            numDependencies: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaEventCreate:
+        Result<unsafe extern "C" fn(event: *mut cudaEvent_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaEventCreateWithFlags: Result<
+        unsafe extern "C" fn(event: *mut cudaEvent_t, flags: ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaEventRecord: Result<
+        unsafe extern "C" fn(event: cudaEvent_t, stream: cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaEventRecordWithFlags: Result<
+        unsafe extern "C" fn(
+            event: cudaEvent_t,
+            stream: cudaStream_t,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaEventQuery:
+        Result<unsafe extern "C" fn(event: cudaEvent_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaEventSynchronize:
+        Result<unsafe extern "C" fn(event: cudaEvent_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaEventDestroy:
+        Result<unsafe extern "C" fn(event: cudaEvent_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaEventElapsedTime: Result<
+        unsafe extern "C" fn(ms: *mut f32, start: cudaEvent_t, end: cudaEvent_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaImportExternalMemory: Result<
+        unsafe extern "C" fn(
+            extMem_out: *mut cudaExternalMemory_t,
+            memHandleDesc: *const cudaExternalMemoryHandleDesc,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaExternalMemoryGetMappedBuffer: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            extMem: cudaExternalMemory_t,
+            bufferDesc: *const cudaExternalMemoryBufferDesc,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaExternalMemoryGetMappedMipmappedArray: Result<
+        unsafe extern "C" fn(
+            mipmap: *mut cudaMipmappedArray_t,
+            extMem: cudaExternalMemory_t,
+            mipmapDesc: *const cudaExternalMemoryMipmappedArrayDesc,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDestroyExternalMemory: Result<
+        unsafe extern "C" fn(extMem: cudaExternalMemory_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaImportExternalSemaphore: Result<
+        unsafe extern "C" fn(
+            extSem_out: *mut cudaExternalSemaphore_t,
+            semHandleDesc: *const cudaExternalSemaphoreHandleDesc,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaSignalExternalSemaphoresAsync_v2: Result<
+        unsafe extern "C" fn(
+            extSemArray: *const cudaExternalSemaphore_t,
+            paramsArray: *const cudaExternalSemaphoreSignalParams,
+            numExtSems: ::core::ffi::c_uint,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaWaitExternalSemaphoresAsync_v2: Result<
+        unsafe extern "C" fn(
+            extSemArray: *const cudaExternalSemaphore_t,
+            paramsArray: *const cudaExternalSemaphoreWaitParams,
+            numExtSems: ::core::ffi::c_uint,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDestroyExternalSemaphore: Result<
+        unsafe extern "C" fn(extSem: cudaExternalSemaphore_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaLaunchKernel: Result<
+        unsafe extern "C" fn(
+            func: *const ::core::ffi::c_void,
+            gridDim: dim3,
+            blockDim: dim3,
+            args: *mut *mut ::core::ffi::c_void,
+            sharedMem: usize,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaLaunchKernelExC: Result<
+        unsafe extern "C" fn(
+            config: *const cudaLaunchConfig_t,
+            func: *const ::core::ffi::c_void,
+            args: *mut *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaLaunchCooperativeKernel: Result<
+        unsafe extern "C" fn(
+            func: *const ::core::ffi::c_void,
+            gridDim: dim3,
+            blockDim: dim3,
+            args: *mut *mut ::core::ffi::c_void,
+            sharedMem: usize,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaLaunchCooperativeKernelMultiDevice: Result<
+        unsafe extern "C" fn(
+            launchParamsList: *mut cudaLaunchParams,
+            numDevices: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFuncSetCacheConfig: Result<
+        unsafe extern "C" fn(
+            func: *const ::core::ffi::c_void,
+            cacheConfig: cudaFuncCache,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFuncSetSharedMemConfig: Result<
+        unsafe extern "C" fn(
+            func: *const ::core::ffi::c_void,
+            config: cudaSharedMemConfig,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFuncGetAttributes: Result<
+        unsafe extern "C" fn(
+            attr: *mut cudaFuncAttributes,
+            func: *const ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFuncSetAttribute: Result<
+        unsafe extern "C" fn(
+            func: *const ::core::ffi::c_void,
+            attr: cudaFuncAttribute,
+            value: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaSetDoubleForDevice:
+        Result<unsafe extern "C" fn(d: *mut f64) -> cudaError_t, ::libloading::Error>,
+    pub cudaSetDoubleForHost:
+        Result<unsafe extern "C" fn(d: *mut f64) -> cudaError_t, ::libloading::Error>,
+    pub cudaLaunchHostFunc: Result<
+        unsafe extern "C" fn(
+            stream: cudaStream_t,
+            fn_: cudaHostFn_t,
+            userData: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaOccupancyMaxActiveBlocksPerMultiprocessor: Result<
+        unsafe extern "C" fn(
+            numBlocks: *mut ::core::ffi::c_int,
+            func: *const ::core::ffi::c_void,
+            blockSize: ::core::ffi::c_int,
+            dynamicSMemSize: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaOccupancyAvailableDynamicSMemPerBlock: Result<
+        unsafe extern "C" fn(
+            dynamicSmemSize: *mut usize,
+            func: *const ::core::ffi::c_void,
+            numBlocks: ::core::ffi::c_int,
+            blockSize: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags: Result<
+        unsafe extern "C" fn(
+            numBlocks: *mut ::core::ffi::c_int,
+            func: *const ::core::ffi::c_void,
+            blockSize: ::core::ffi::c_int,
+            dynamicSMemSize: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaOccupancyMaxPotentialClusterSize: Result<
+        unsafe extern "C" fn(
+            clusterSize: *mut ::core::ffi::c_int,
+            func: *const ::core::ffi::c_void,
+            launchConfig: *const cudaLaunchConfig_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaOccupancyMaxActiveClusters: Result<
+        unsafe extern "C" fn(
+            numClusters: *mut ::core::ffi::c_int,
+            func: *const ::core::ffi::c_void,
+            launchConfig: *const cudaLaunchConfig_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMallocManaged: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            size: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMalloc: Result<
+        unsafe extern "C" fn(devPtr: *mut *mut ::core::ffi::c_void, size: usize) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMallocHost: Result<
+        unsafe extern "C" fn(ptr: *mut *mut ::core::ffi::c_void, size: usize) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMallocPitch: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            pitch: *mut usize,
+            width: usize,
+            height: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMallocArray: Result<
+        unsafe extern "C" fn(
+            array: *mut cudaArray_t,
+            desc: *const cudaChannelFormatDesc,
+            width: usize,
+            height: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFree: Result<
+        unsafe extern "C" fn(devPtr: *mut ::core::ffi::c_void) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFreeHost: Result<
+        unsafe extern "C" fn(ptr: *mut ::core::ffi::c_void) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFreeArray:
+        Result<unsafe extern "C" fn(array: cudaArray_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaFreeMipmappedArray: Result<
+        unsafe extern "C" fn(mipmappedArray: cudaMipmappedArray_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaHostAlloc: Result<
+        unsafe extern "C" fn(
+            pHost: *mut *mut ::core::ffi::c_void,
+            size: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaHostRegister: Result<
+        unsafe extern "C" fn(
+            ptr: *mut ::core::ffi::c_void,
+            size: usize,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaHostUnregister: Result<
+        unsafe extern "C" fn(ptr: *mut ::core::ffi::c_void) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaHostGetDevicePointer: Result<
+        unsafe extern "C" fn(
+            pDevice: *mut *mut ::core::ffi::c_void,
+            pHost: *mut ::core::ffi::c_void,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaHostGetFlags: Result<
+        unsafe extern "C" fn(
+            pFlags: *mut ::core::ffi::c_uint,
+            pHost: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMalloc3D: Result<
+        unsafe extern "C" fn(pitchedDevPtr: *mut cudaPitchedPtr, extent: cudaExtent) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMalloc3DArray: Result<
+        unsafe extern "C" fn(
+            array: *mut cudaArray_t,
+            desc: *const cudaChannelFormatDesc,
+            extent: cudaExtent,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMallocMipmappedArray: Result<
+        unsafe extern "C" fn(
+            mipmappedArray: *mut cudaMipmappedArray_t,
+            desc: *const cudaChannelFormatDesc,
+            extent: cudaExtent,
+            numLevels: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetMipmappedArrayLevel: Result<
+        unsafe extern "C" fn(
+            levelArray: *mut cudaArray_t,
+            mipmappedArray: cudaMipmappedArray_const_t,
+            level: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy3D: Result<
+        unsafe extern "C" fn(p: *const cudaMemcpy3DParms) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy3DPeer: Result<
+        unsafe extern "C" fn(p: *const cudaMemcpy3DPeerParms) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy3DAsync: Result<
+        unsafe extern "C" fn(p: *const cudaMemcpy3DParms, stream: cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy3DPeerAsync: Result<
+        unsafe extern "C" fn(p: *const cudaMemcpy3DPeerParms, stream: cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemGetInfo: Result<
+        unsafe extern "C" fn(free: *mut usize, total: *mut usize) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaArrayGetInfo: Result<
+        unsafe extern "C" fn(
+            desc: *mut cudaChannelFormatDesc,
+            extent: *mut cudaExtent,
+            flags: *mut ::core::ffi::c_uint,
+            array: cudaArray_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaArrayGetPlane: Result<
+        unsafe extern "C" fn(
+            pPlaneArray: *mut cudaArray_t,
+            hArray: cudaArray_t,
+            planeIdx: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaArrayGetMemoryRequirements: Result<
+        unsafe extern "C" fn(
+            memoryRequirements: *mut cudaArrayMemoryRequirements,
+            array: cudaArray_t,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMipmappedArrayGetMemoryRequirements: Result<
+        unsafe extern "C" fn(
+            memoryRequirements: *mut cudaArrayMemoryRequirements,
+            mipmap: cudaMipmappedArray_t,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaArrayGetSparseProperties: Result<
+        unsafe extern "C" fn(
+            sparseProperties: *mut cudaArraySparseProperties,
+            array: cudaArray_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMipmappedArrayGetSparseProperties: Result<
+        unsafe extern "C" fn(
+            sparseProperties: *mut cudaArraySparseProperties,
+            mipmap: cudaMipmappedArray_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyPeer: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            dstDevice: ::core::ffi::c_int,
+            src: *const ::core::ffi::c_void,
+            srcDevice: ::core::ffi::c_int,
+            count: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2D: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            dpitch: usize,
+            src: *const ::core::ffi::c_void,
+            spitch: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2DToArray: Result<
+        unsafe extern "C" fn(
+            dst: cudaArray_t,
+            wOffset: usize,
+            hOffset: usize,
+            src: *const ::core::ffi::c_void,
+            spitch: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2DFromArray: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            dpitch: usize,
+            src: cudaArray_const_t,
+            wOffset: usize,
+            hOffset: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2DArrayToArray: Result<
+        unsafe extern "C" fn(
+            dst: cudaArray_t,
+            wOffsetDst: usize,
+            hOffsetDst: usize,
+            src: cudaArray_const_t,
+            wOffsetSrc: usize,
+            hOffsetSrc: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyToSymbol: Result<
+        unsafe extern "C" fn(
+            symbol: *const ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyFromSymbol: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            symbol: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyAsync: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyPeerAsync: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            dstDevice: ::core::ffi::c_int,
+            src: *const ::core::ffi::c_void,
+            srcDevice: ::core::ffi::c_int,
+            count: usize,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2DAsync: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            dpitch: usize,
+            src: *const ::core::ffi::c_void,
+            spitch: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2DToArrayAsync: Result<
+        unsafe extern "C" fn(
+            dst: cudaArray_t,
+            wOffset: usize,
+            hOffset: usize,
+            src: *const ::core::ffi::c_void,
+            spitch: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpy2DFromArrayAsync: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            dpitch: usize,
+            src: cudaArray_const_t,
+            wOffset: usize,
+            hOffset: usize,
+            width: usize,
+            height: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyToSymbolAsync: Result<
+        unsafe extern "C" fn(
+            symbol: *const ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyFromSymbolAsync: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            symbol: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemset: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut ::core::ffi::c_void,
+            value: ::core::ffi::c_int,
+            count: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemset2D: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut ::core::ffi::c_void,
+            pitch: usize,
+            value: ::core::ffi::c_int,
+            width: usize,
+            height: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemset3D: Result<
+        unsafe extern "C" fn(
+            pitchedDevPtr: cudaPitchedPtr,
+            value: ::core::ffi::c_int,
+            extent: cudaExtent,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemsetAsync: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut ::core::ffi::c_void,
+            value: ::core::ffi::c_int,
+            count: usize,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemset2DAsync: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut ::core::ffi::c_void,
+            pitch: usize,
+            value: ::core::ffi::c_int,
+            width: usize,
+            height: usize,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemset3DAsync: Result<
+        unsafe extern "C" fn(
+            pitchedDevPtr: cudaPitchedPtr,
+            value: ::core::ffi::c_int,
+            extent: cudaExtent,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetSymbolAddress: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            symbol: *const ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetSymbolSize: Result<
+        unsafe extern "C" fn(size: *mut usize, symbol: *const ::core::ffi::c_void) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPrefetchAsync: Result<
+        unsafe extern "C" fn(
+            devPtr: *const ::core::ffi::c_void,
+            count: usize,
+            dstDevice: ::core::ffi::c_int,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPrefetchAsync_v2: Result<
+        unsafe extern "C" fn(
+            devPtr: *const ::core::ffi::c_void,
+            count: usize,
+            location: cudaMemLocation,
+            flags: ::core::ffi::c_uint,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemAdvise: Result<
+        unsafe extern "C" fn(
+            devPtr: *const ::core::ffi::c_void,
+            count: usize,
+            advice: cudaMemoryAdvise,
+            device: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemAdvise_v2: Result<
+        unsafe extern "C" fn(
+            devPtr: *const ::core::ffi::c_void,
+            count: usize,
+            advice: cudaMemoryAdvise,
+            location: cudaMemLocation,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemRangeGetAttribute: Result<
+        unsafe extern "C" fn(
+            data: *mut ::core::ffi::c_void,
+            dataSize: usize,
+            attribute: cudaMemRangeAttribute,
+            devPtr: *const ::core::ffi::c_void,
+            count: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemRangeGetAttributes: Result<
+        unsafe extern "C" fn(
+            data: *mut *mut ::core::ffi::c_void,
+            dataSizes: *mut usize,
+            attributes: *mut cudaMemRangeAttribute,
+            numAttributes: usize,
+            devPtr: *const ::core::ffi::c_void,
+            count: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyToArray: Result<
+        unsafe extern "C" fn(
+            dst: cudaArray_t,
+            wOffset: usize,
+            hOffset: usize,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyFromArray: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            src: cudaArray_const_t,
+            wOffset: usize,
+            hOffset: usize,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyArrayToArray: Result<
+        unsafe extern "C" fn(
+            dst: cudaArray_t,
+            wOffsetDst: usize,
+            hOffsetDst: usize,
+            src: cudaArray_const_t,
+            wOffsetSrc: usize,
+            hOffsetSrc: usize,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyToArrayAsync: Result<
+        unsafe extern "C" fn(
+            dst: cudaArray_t,
+            wOffset: usize,
+            hOffset: usize,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemcpyFromArrayAsync: Result<
+        unsafe extern "C" fn(
+            dst: *mut ::core::ffi::c_void,
+            src: cudaArray_const_t,
+            wOffset: usize,
+            hOffset: usize,
+            count: usize,
+            kind: cudaMemcpyKind,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMallocAsync: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            size: usize,
+            hStream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaFreeAsync: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut ::core::ffi::c_void,
+            hStream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolTrimTo: Result<
+        unsafe extern "C" fn(memPool: cudaMemPool_t, minBytesToKeep: usize) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolSetAttribute: Result<
+        unsafe extern "C" fn(
+            memPool: cudaMemPool_t,
+            attr: cudaMemPoolAttr,
+            value: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolGetAttribute: Result<
+        unsafe extern "C" fn(
+            memPool: cudaMemPool_t,
+            attr: cudaMemPoolAttr,
+            value: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolSetAccess: Result<
+        unsafe extern "C" fn(
+            memPool: cudaMemPool_t,
+            descList: *const cudaMemAccessDesc,
+            count: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolGetAccess: Result<
+        unsafe extern "C" fn(
+            flags: *mut cudaMemAccessFlags,
+            memPool: cudaMemPool_t,
+            location: *mut cudaMemLocation,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolCreate: Result<
+        unsafe extern "C" fn(
+            memPool: *mut cudaMemPool_t,
+            poolProps: *const cudaMemPoolProps,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolDestroy:
+        Result<unsafe extern "C" fn(memPool: cudaMemPool_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaMallocFromPoolAsync: Result<
+        unsafe extern "C" fn(
+            ptr: *mut *mut ::core::ffi::c_void,
+            size: usize,
+            memPool: cudaMemPool_t,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolExportToShareableHandle: Result<
+        unsafe extern "C" fn(
+            shareableHandle: *mut ::core::ffi::c_void,
+            memPool: cudaMemPool_t,
+            handleType: cudaMemAllocationHandleType,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolImportFromShareableHandle: Result<
+        unsafe extern "C" fn(
+            memPool: *mut cudaMemPool_t,
+            shareableHandle: *mut ::core::ffi::c_void,
+            handleType: cudaMemAllocationHandleType,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolExportPointer: Result<
+        unsafe extern "C" fn(
+            exportData: *mut cudaMemPoolPtrExportData,
+            ptr: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaMemPoolImportPointer: Result<
+        unsafe extern "C" fn(
+            ptr: *mut *mut ::core::ffi::c_void,
+            memPool: cudaMemPool_t,
+            exportData: *mut cudaMemPoolPtrExportData,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaPointerGetAttributes: Result<
+        unsafe extern "C" fn(
+            attributes: *mut cudaPointerAttributes,
+            ptr: *const ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceCanAccessPeer: Result<
+        unsafe extern "C" fn(
+            canAccessPeer: *mut ::core::ffi::c_int,
+            device: ::core::ffi::c_int,
+            peerDevice: ::core::ffi::c_int,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceEnablePeerAccess: Result<
+        unsafe extern "C" fn(
+            peerDevice: ::core::ffi::c_int,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceDisablePeerAccess: Result<
+        unsafe extern "C" fn(peerDevice: ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsUnregisterResource: Result<
+        unsafe extern "C" fn(resource: cudaGraphicsResource_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsResourceSetMapFlags: Result<
+        unsafe extern "C" fn(
+            resource: cudaGraphicsResource_t,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsMapResources: Result<
+        unsafe extern "C" fn(
+            count: ::core::ffi::c_int,
+            resources: *mut cudaGraphicsResource_t,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsUnmapResources: Result<
+        unsafe extern "C" fn(
+            count: ::core::ffi::c_int,
+            resources: *mut cudaGraphicsResource_t,
+            stream: cudaStream_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsResourceGetMappedPointer: Result<
+        unsafe extern "C" fn(
+            devPtr: *mut *mut ::core::ffi::c_void,
+            size: *mut usize,
+            resource: cudaGraphicsResource_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsSubResourceGetMappedArray: Result<
+        unsafe extern "C" fn(
+            array: *mut cudaArray_t,
+            resource: cudaGraphicsResource_t,
+            arrayIndex: ::core::ffi::c_uint,
+            mipLevel: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphicsResourceGetMappedMipmappedArray: Result<
+        unsafe extern "C" fn(
+            mipmappedArray: *mut cudaMipmappedArray_t,
+            resource: cudaGraphicsResource_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetChannelDesc: Result<
+        unsafe extern "C" fn(
+            desc: *mut cudaChannelFormatDesc,
+            array: cudaArray_const_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaCreateChannelDesc: Result<
+        unsafe extern "C" fn(
+            x: ::core::ffi::c_int,
+            y: ::core::ffi::c_int,
+            z: ::core::ffi::c_int,
+            w: ::core::ffi::c_int,
+            f: cudaChannelFormatKind,
+        ) -> cudaChannelFormatDesc,
+        ::libloading::Error,
+    >,
+    pub cudaCreateTextureObject: Result<
+        unsafe extern "C" fn(
+            pTexObject: *mut cudaTextureObject_t,
+            pResDesc: *const cudaResourceDesc,
+            pTexDesc: *const cudaTextureDesc,
+            pResViewDesc: *const cudaResourceViewDesc,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDestroyTextureObject: Result<
+        unsafe extern "C" fn(texObject: cudaTextureObject_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetTextureObjectResourceDesc: Result<
+        unsafe extern "C" fn(
+            pResDesc: *mut cudaResourceDesc,
+            texObject: cudaTextureObject_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetTextureObjectTextureDesc: Result<
+        unsafe extern "C" fn(
+            pTexDesc: *mut cudaTextureDesc,
+            texObject: cudaTextureObject_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetTextureObjectResourceViewDesc: Result<
+        unsafe extern "C" fn(
+            pResViewDesc: *mut cudaResourceViewDesc,
+            texObject: cudaTextureObject_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaCreateSurfaceObject: Result<
+        unsafe extern "C" fn(
+            pSurfObject: *mut cudaSurfaceObject_t,
+            pResDesc: *const cudaResourceDesc,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDestroySurfaceObject: Result<
+        unsafe extern "C" fn(surfObject: cudaSurfaceObject_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetSurfaceObjectResourceDesc: Result<
+        unsafe extern "C" fn(
+            pResDesc: *mut cudaResourceDesc,
+            surfObject: cudaSurfaceObject_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDriverGetVersion: Result<
+        unsafe extern "C" fn(driverVersion: *mut ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaRuntimeGetVersion: Result<
+        unsafe extern "C" fn(runtimeVersion: *mut ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphCreate: Result<
+        unsafe extern "C" fn(pGraph: *mut cudaGraph_t, flags: ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddKernelNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            pNodeParams: *const cudaKernelNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphKernelNodeGetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *mut cudaKernelNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphKernelNodeSetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaKernelNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphKernelNodeCopyAttributes: Result<
+        unsafe extern "C" fn(hSrc: cudaGraphNode_t, hDst: cudaGraphNode_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphKernelNodeGetAttribute: Result<
+        unsafe extern "C" fn(
+            hNode: cudaGraphNode_t,
+            attr: cudaLaunchAttributeID,
+            value_out: *mut cudaLaunchAttributeValue,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphKernelNodeSetAttribute: Result<
+        unsafe extern "C" fn(
+            hNode: cudaGraphNode_t,
+            attr: cudaLaunchAttributeID,
+            value: *const cudaLaunchAttributeValue,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemcpyNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            pCopyParams: *const cudaMemcpy3DParms,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemcpyNodeToSymbol: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            symbol: *const ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemcpyNodeFromSymbol: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            dst: *mut ::core::ffi::c_void,
+            symbol: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemcpyNode1D: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            dst: *mut ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemcpyNodeGetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *mut cudaMemcpy3DParms,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemcpyNodeSetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaMemcpy3DParms,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemcpyNodeSetParamsToSymbol: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            symbol: *const ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemcpyNodeSetParamsFromSymbol: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            dst: *mut ::core::ffi::c_void,
+            symbol: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemcpyNodeSetParams1D: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            dst: *mut ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemsetNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            pMemsetParams: *const cudaMemsetParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemsetNodeGetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *mut cudaMemsetParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemsetNodeSetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaMemsetParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddHostNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            pNodeParams: *const cudaHostNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphHostNodeGetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *mut cudaHostNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphHostNodeSetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaHostNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddChildGraphNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            childGraph: cudaGraph_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphChildGraphNodeGetGraph: Result<
+        unsafe extern "C" fn(node: cudaGraphNode_t, pGraph: *mut cudaGraph_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddEmptyNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddEventRecordNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            event: cudaEvent_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphEventRecordNodeGetEvent: Result<
+        unsafe extern "C" fn(node: cudaGraphNode_t, event_out: *mut cudaEvent_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphEventRecordNodeSetEvent: Result<
+        unsafe extern "C" fn(node: cudaGraphNode_t, event: cudaEvent_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddEventWaitNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            event: cudaEvent_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphEventWaitNodeGetEvent: Result<
+        unsafe extern "C" fn(node: cudaGraphNode_t, event_out: *mut cudaEvent_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphEventWaitNodeSetEvent: Result<
+        unsafe extern "C" fn(node: cudaGraphNode_t, event: cudaEvent_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddExternalSemaphoresSignalNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            nodeParams: *const cudaExternalSemaphoreSignalNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExternalSemaphoresSignalNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: cudaGraphNode_t,
+            params_out: *mut cudaExternalSemaphoreSignalNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExternalSemaphoresSignalNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: cudaGraphNode_t,
+            nodeParams: *const cudaExternalSemaphoreSignalNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddExternalSemaphoresWaitNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            nodeParams: *const cudaExternalSemaphoreWaitNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExternalSemaphoresWaitNodeGetParams: Result<
+        unsafe extern "C" fn(
+            hNode: cudaGraphNode_t,
+            params_out: *mut cudaExternalSemaphoreWaitNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExternalSemaphoresWaitNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hNode: cudaGraphNode_t,
+            nodeParams: *const cudaExternalSemaphoreWaitNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemAllocNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            nodeParams: *mut cudaMemAllocNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemAllocNodeGetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            params_out: *mut cudaMemAllocNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddMemFreeNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            dptr: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphMemFreeNodeGetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            dptr_out: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGraphMemTrim: Result<
+        unsafe extern "C" fn(device: ::core::ffi::c_int) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceGetGraphMemAttribute: Result<
+        unsafe extern "C" fn(
+            device: ::core::ffi::c_int,
+            attr: cudaGraphMemAttributeType,
+            value: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaDeviceSetGraphMemAttribute: Result<
+        unsafe extern "C" fn(
+            device: ::core::ffi::c_int,
+            attr: cudaGraphMemAttributeType,
+            value: *mut ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphClone: Result<
+        unsafe extern "C" fn(
+            pGraphClone: *mut cudaGraph_t,
+            originalGraph: cudaGraph_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeFindInClone: Result<
+        unsafe extern "C" fn(
+            pNode: *mut cudaGraphNode_t,
+            originalNode: cudaGraphNode_t,
+            clonedGraph: cudaGraph_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeGetType: Result<
+        unsafe extern "C" fn(node: cudaGraphNode_t, pType: *mut cudaGraphNodeType) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphGetNodes: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            nodes: *mut cudaGraphNode_t,
+            numNodes: *mut usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphGetRootNodes: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            pRootNodes: *mut cudaGraphNode_t,
+            pNumRootNodes: *mut usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphGetEdges: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            from: *mut cudaGraphNode_t,
+            to: *mut cudaGraphNode_t,
+            numEdges: *mut usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeGetDependencies: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pDependencies: *mut cudaGraphNode_t,
+            pNumDependencies: *mut usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeGetDependentNodes: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            pDependentNodes: *mut cudaGraphNode_t,
+            pNumDependentNodes: *mut usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddDependencies: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            from: *const cudaGraphNode_t,
+            to: *const cudaGraphNode_t,
+            numDependencies: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphRemoveDependencies: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            from: *const cudaGraphNode_t,
+            to: *const cudaGraphNode_t,
+            numDependencies: usize,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphDestroyNode:
+        Result<unsafe extern "C" fn(node: cudaGraphNode_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaGraphInstantiate: Result<
+        unsafe extern "C" fn(
+            pGraphExec: *mut cudaGraphExec_t,
+            graph: cudaGraph_t,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphInstantiateWithFlags: Result<
+        unsafe extern "C" fn(
+            pGraphExec: *mut cudaGraphExec_t,
+            graph: cudaGraph_t,
+            flags: ::core::ffi::c_ulonglong,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphInstantiateWithParams: Result<
+        unsafe extern "C" fn(
+            pGraphExec: *mut cudaGraphExec_t,
+            graph: cudaGraph_t,
+            instantiateParams: *mut cudaGraphInstantiateParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecGetFlags: Result<
+        unsafe extern "C" fn(
+            graphExec: cudaGraphExec_t,
+            flags: *mut ::core::ffi::c_ulonglong,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecKernelNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaKernelNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecMemcpyNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaMemcpy3DParms,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecMemcpyNodeSetParamsToSymbol: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            symbol: *const ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecMemcpyNodeSetParamsFromSymbol: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            dst: *mut ::core::ffi::c_void,
+            symbol: *const ::core::ffi::c_void,
+            count: usize,
+            offset: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecMemcpyNodeSetParams1D: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            dst: *mut ::core::ffi::c_void,
+            src: *const ::core::ffi::c_void,
+            count: usize,
+            kind: cudaMemcpyKind,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecMemsetNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaMemsetParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecHostNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            pNodeParams: *const cudaHostNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecChildGraphNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            childGraph: cudaGraph_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecEventRecordNodeSetEvent: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hNode: cudaGraphNode_t,
+            event: cudaEvent_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecEventWaitNodeSetEvent: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hNode: cudaGraphNode_t,
+            event: cudaEvent_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecExternalSemaphoresSignalNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hNode: cudaGraphNode_t,
+            nodeParams: *const cudaExternalSemaphoreSignalNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecExternalSemaphoresWaitNodeSetParams: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hNode: cudaGraphNode_t,
+            nodeParams: *const cudaExternalSemaphoreWaitNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeSetEnabled: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hNode: cudaGraphNode_t,
+            isEnabled: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeGetEnabled: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hNode: cudaGraphNode_t,
+            isEnabled: *mut ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecUpdate: Result<
+        unsafe extern "C" fn(
+            hGraphExec: cudaGraphExec_t,
+            hGraph: cudaGraph_t,
+            resultInfo: *mut cudaGraphExecUpdateResultInfo,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphUpload: Result<
+        unsafe extern "C" fn(graphExec: cudaGraphExec_t, stream: cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphLaunch: Result<
+        unsafe extern "C" fn(graphExec: cudaGraphExec_t, stream: cudaStream_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecDestroy: Result<
+        unsafe extern "C" fn(graphExec: cudaGraphExec_t) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphDestroy:
+        Result<unsafe extern "C" fn(graph: cudaGraph_t) -> cudaError_t, ::libloading::Error>,
+    pub cudaGraphDebugDotPrint: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            path: *const ::core::ffi::c_char,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaUserObjectCreate: Result<
+        unsafe extern "C" fn(
+            object_out: *mut cudaUserObject_t,
+            ptr: *mut ::core::ffi::c_void,
+            destroy: cudaHostFn_t,
+            initialRefcount: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaUserObjectRetain: Result<
+        unsafe extern "C" fn(object: cudaUserObject_t, count: ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaUserObjectRelease: Result<
+        unsafe extern "C" fn(object: cudaUserObject_t, count: ::core::ffi::c_uint) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphRetainUserObject: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            object: cudaUserObject_t,
+            count: ::core::ffi::c_uint,
+            flags: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphReleaseUserObject: Result<
+        unsafe extern "C" fn(
+            graph: cudaGraph_t,
+            object: cudaUserObject_t,
+            count: ::core::ffi::c_uint,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphAddNode: Result<
+        unsafe extern "C" fn(
+            pGraphNode: *mut cudaGraphNode_t,
+            graph: cudaGraph_t,
+            pDependencies: *const cudaGraphNode_t,
+            numDependencies: usize,
+            nodeParams: *mut cudaGraphNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphNodeSetParams: Result<
+        unsafe extern "C" fn(
+            node: cudaGraphNode_t,
+            nodeParams: *mut cudaGraphNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGraphExecNodeSetParams: Result<
+        unsafe extern "C" fn(
+            graphExec: cudaGraphExec_t,
+            node: cudaGraphNode_t,
+            nodeParams: *mut cudaGraphNodeParams,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetDriverEntryPoint: Result<
+        unsafe extern "C" fn(
+            symbol: *const ::core::ffi::c_char,
+            funcPtr: *mut *mut ::core::ffi::c_void,
+            flags: ::core::ffi::c_ulonglong,
+            driverStatus: *mut cudaDriverEntryPointQueryResult,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetExportTable: Result<
+        unsafe extern "C" fn(
+            ppExportTable: *mut *const ::core::ffi::c_void,
+            pExportTableId: *const cudaUUID_t,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetFuncBySymbol: Result<
+        unsafe extern "C" fn(
+            functionPtr: *mut cudaFunction_t,
+            symbolPtr: *const ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaGetKernel: Result<
+        unsafe extern "C" fn(
+            kernelPtr: *mut cudaKernel_t,
+            entryFuncAddr: *const ::core::ffi::c_void,
+        ) -> cudaError_t,
+        ::libloading::Error,
+    >,
+    pub cudaProfilerStart: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+    pub cudaProfilerStop: Result<unsafe extern "C" fn() -> cudaError_t, ::libloading::Error>,
+}
+impl Lib {
+    pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
+    where
+        P: AsRef<::std::ffi::OsStr>,
+    {
+        let library = ::libloading::Library::new(path)?;
+        Self::from_library(library)
+    }
+    pub unsafe fn from_library<L>(library: L) -> Result<Self, ::libloading::Error>
+    where
+        L: Into<::libloading::Library>,
+    {
+        let __library = library.into();
+        let cudaDeviceReset = __library.get(b"cudaDeviceReset\0").map(|sym| *sym);
+        let cudaDeviceSynchronize = __library.get(b"cudaDeviceSynchronize\0").map(|sym| *sym);
+        let cudaDeviceSetLimit = __library.get(b"cudaDeviceSetLimit\0").map(|sym| *sym);
+        let cudaDeviceGetLimit = __library.get(b"cudaDeviceGetLimit\0").map(|sym| *sym);
+        let cudaDeviceGetTexture1DLinearMaxWidth = __library
+            .get(b"cudaDeviceGetTexture1DLinearMaxWidth\0")
+            .map(|sym| *sym);
+        let cudaDeviceGetCacheConfig = __library.get(b"cudaDeviceGetCacheConfig\0").map(|sym| *sym);
+        let cudaDeviceGetStreamPriorityRange = __library
+            .get(b"cudaDeviceGetStreamPriorityRange\0")
+            .map(|sym| *sym);
+        let cudaDeviceSetCacheConfig = __library.get(b"cudaDeviceSetCacheConfig\0").map(|sym| *sym);
+        let cudaDeviceGetSharedMemConfig = __library
+            .get(b"cudaDeviceGetSharedMemConfig\0")
+            .map(|sym| *sym);
+        let cudaDeviceSetSharedMemConfig = __library
+            .get(b"cudaDeviceSetSharedMemConfig\0")
+            .map(|sym| *sym);
+        let cudaDeviceGetByPCIBusId = __library.get(b"cudaDeviceGetByPCIBusId\0").map(|sym| *sym);
+        let cudaDeviceGetPCIBusId = __library.get(b"cudaDeviceGetPCIBusId\0").map(|sym| *sym);
+        let cudaIpcGetEventHandle = __library.get(b"cudaIpcGetEventHandle\0").map(|sym| *sym);
+        let cudaIpcOpenEventHandle = __library.get(b"cudaIpcOpenEventHandle\0").map(|sym| *sym);
+        let cudaIpcGetMemHandle = __library.get(b"cudaIpcGetMemHandle\0").map(|sym| *sym);
+        let cudaIpcOpenMemHandle = __library.get(b"cudaIpcOpenMemHandle\0").map(|sym| *sym);
+        let cudaIpcCloseMemHandle = __library.get(b"cudaIpcCloseMemHandle\0").map(|sym| *sym);
+        let cudaDeviceFlushGPUDirectRDMAWrites = __library
+            .get(b"cudaDeviceFlushGPUDirectRDMAWrites\0")
+            .map(|sym| *sym);
+        let cudaThreadExit = __library.get(b"cudaThreadExit\0").map(|sym| *sym);
+        let cudaThreadSynchronize = __library.get(b"cudaThreadSynchronize\0").map(|sym| *sym);
+        let cudaThreadSetLimit = __library.get(b"cudaThreadSetLimit\0").map(|sym| *sym);
+        let cudaThreadGetLimit = __library.get(b"cudaThreadGetLimit\0").map(|sym| *sym);
+        let cudaThreadGetCacheConfig = __library.get(b"cudaThreadGetCacheConfig\0").map(|sym| *sym);
+        let cudaThreadSetCacheConfig = __library.get(b"cudaThreadSetCacheConfig\0").map(|sym| *sym);
+        let cudaGetLastError = __library.get(b"cudaGetLastError\0").map(|sym| *sym);
+        let cudaPeekAtLastError = __library.get(b"cudaPeekAtLastError\0").map(|sym| *sym);
+        let cudaGetErrorName = __library.get(b"cudaGetErrorName\0").map(|sym| *sym);
+        let cudaGetErrorString = __library.get(b"cudaGetErrorString\0").map(|sym| *sym);
+        let cudaGetDeviceCount = __library.get(b"cudaGetDeviceCount\0").map(|sym| *sym);
+        let cudaGetDeviceProperties_v2 = __library
+            .get(b"cudaGetDeviceProperties_v2\0")
+            .map(|sym| *sym);
+        let cudaDeviceGetAttribute = __library.get(b"cudaDeviceGetAttribute\0").map(|sym| *sym);
+        let cudaDeviceGetDefaultMemPool = __library
+            .get(b"cudaDeviceGetDefaultMemPool\0")
+            .map(|sym| *sym);
+        let cudaDeviceSetMemPool = __library.get(b"cudaDeviceSetMemPool\0").map(|sym| *sym);
+        let cudaDeviceGetMemPool = __library.get(b"cudaDeviceGetMemPool\0").map(|sym| *sym);
+        let cudaDeviceGetNvSciSyncAttributes = __library
+            .get(b"cudaDeviceGetNvSciSyncAttributes\0")
+            .map(|sym| *sym);
+        let cudaDeviceGetP2PAttribute = __library
+            .get(b"cudaDeviceGetP2PAttribute\0")
+            .map(|sym| *sym);
+        let cudaChooseDevice = __library.get(b"cudaChooseDevice\0").map(|sym| *sym);
+        let cudaInitDevice = __library.get(b"cudaInitDevice\0").map(|sym| *sym);
+        let cudaSetDevice = __library.get(b"cudaSetDevice\0").map(|sym| *sym);
+        let cudaGetDevice = __library.get(b"cudaGetDevice\0").map(|sym| *sym);
+        let cudaSetValidDevices = __library.get(b"cudaSetValidDevices\0").map(|sym| *sym);
+        let cudaSetDeviceFlags = __library.get(b"cudaSetDeviceFlags\0").map(|sym| *sym);
+        let cudaGetDeviceFlags = __library.get(b"cudaGetDeviceFlags\0").map(|sym| *sym);
+        let cudaStreamCreate = __library.get(b"cudaStreamCreate\0").map(|sym| *sym);
+        let cudaStreamCreateWithFlags = __library
+            .get(b"cudaStreamCreateWithFlags\0")
+            .map(|sym| *sym);
+        let cudaStreamCreateWithPriority = __library
+            .get(b"cudaStreamCreateWithPriority\0")
+            .map(|sym| *sym);
+        let cudaStreamGetPriority = __library.get(b"cudaStreamGetPriority\0").map(|sym| *sym);
+        let cudaStreamGetFlags = __library.get(b"cudaStreamGetFlags\0").map(|sym| *sym);
+        let cudaStreamGetId = __library.get(b"cudaStreamGetId\0").map(|sym| *sym);
+        let cudaCtxResetPersistingL2Cache = __library
+            .get(b"cudaCtxResetPersistingL2Cache\0")
+            .map(|sym| *sym);
+        let cudaStreamCopyAttributes = __library.get(b"cudaStreamCopyAttributes\0").map(|sym| *sym);
+        let cudaStreamGetAttribute = __library.get(b"cudaStreamGetAttribute\0").map(|sym| *sym);
+        let cudaStreamSetAttribute = __library.get(b"cudaStreamSetAttribute\0").map(|sym| *sym);
+        let cudaStreamDestroy = __library.get(b"cudaStreamDestroy\0").map(|sym| *sym);
+        let cudaStreamWaitEvent = __library.get(b"cudaStreamWaitEvent\0").map(|sym| *sym);
+        let cudaStreamAddCallback = __library.get(b"cudaStreamAddCallback\0").map(|sym| *sym);
+        let cudaStreamSynchronize = __library.get(b"cudaStreamSynchronize\0").map(|sym| *sym);
+        let cudaStreamQuery = __library.get(b"cudaStreamQuery\0").map(|sym| *sym);
+        let cudaStreamAttachMemAsync = __library.get(b"cudaStreamAttachMemAsync\0").map(|sym| *sym);
+        let cudaStreamBeginCapture = __library.get(b"cudaStreamBeginCapture\0").map(|sym| *sym);
+        let cudaThreadExchangeStreamCaptureMode = __library
+            .get(b"cudaThreadExchangeStreamCaptureMode\0")
+            .map(|sym| *sym);
+        let cudaStreamEndCapture = __library.get(b"cudaStreamEndCapture\0").map(|sym| *sym);
+        let cudaStreamIsCapturing = __library.get(b"cudaStreamIsCapturing\0").map(|sym| *sym);
+        let cudaStreamGetCaptureInfo_v2 = __library
+            .get(b"cudaStreamGetCaptureInfo_v2\0")
+            .map(|sym| *sym);
+        let cudaStreamUpdateCaptureDependencies = __library
+            .get(b"cudaStreamUpdateCaptureDependencies\0")
+            .map(|sym| *sym);
+        let cudaEventCreate = __library.get(b"cudaEventCreate\0").map(|sym| *sym);
+        let cudaEventCreateWithFlags = __library.get(b"cudaEventCreateWithFlags\0").map(|sym| *sym);
+        let cudaEventRecord = __library.get(b"cudaEventRecord\0").map(|sym| *sym);
+        let cudaEventRecordWithFlags = __library.get(b"cudaEventRecordWithFlags\0").map(|sym| *sym);
+        let cudaEventQuery = __library.get(b"cudaEventQuery\0").map(|sym| *sym);
+        let cudaEventSynchronize = __library.get(b"cudaEventSynchronize\0").map(|sym| *sym);
+        let cudaEventDestroy = __library.get(b"cudaEventDestroy\0").map(|sym| *sym);
+        let cudaEventElapsedTime = __library.get(b"cudaEventElapsedTime\0").map(|sym| *sym);
+        let cudaImportExternalMemory = __library.get(b"cudaImportExternalMemory\0").map(|sym| *sym);
+        let cudaExternalMemoryGetMappedBuffer = __library
+            .get(b"cudaExternalMemoryGetMappedBuffer\0")
+            .map(|sym| *sym);
+        let cudaExternalMemoryGetMappedMipmappedArray = __library
+            .get(b"cudaExternalMemoryGetMappedMipmappedArray\0")
+            .map(|sym| *sym);
+        let cudaDestroyExternalMemory = __library
+            .get(b"cudaDestroyExternalMemory\0")
+            .map(|sym| *sym);
+        let cudaImportExternalSemaphore = __library
+            .get(b"cudaImportExternalSemaphore\0")
+            .map(|sym| *sym);
+        let cudaSignalExternalSemaphoresAsync_v2 = __library
+            .get(b"cudaSignalExternalSemaphoresAsync_v2\0")
+            .map(|sym| *sym);
+        let cudaWaitExternalSemaphoresAsync_v2 = __library
+            .get(b"cudaWaitExternalSemaphoresAsync_v2\0")
+            .map(|sym| *sym);
+        let cudaDestroyExternalSemaphore = __library
+            .get(b"cudaDestroyExternalSemaphore\0")
+            .map(|sym| *sym);
+        let cudaLaunchKernel = __library.get(b"cudaLaunchKernel\0").map(|sym| *sym);
+        let cudaLaunchKernelExC = __library.get(b"cudaLaunchKernelExC\0").map(|sym| *sym);
+        let cudaLaunchCooperativeKernel = __library
+            .get(b"cudaLaunchCooperativeKernel\0")
+            .map(|sym| *sym);
+        let cudaLaunchCooperativeKernelMultiDevice = __library
+            .get(b"cudaLaunchCooperativeKernelMultiDevice\0")
+            .map(|sym| *sym);
+        let cudaFuncSetCacheConfig = __library.get(b"cudaFuncSetCacheConfig\0").map(|sym| *sym);
+        let cudaFuncSetSharedMemConfig = __library
+            .get(b"cudaFuncSetSharedMemConfig\0")
+            .map(|sym| *sym);
+        let cudaFuncGetAttributes = __library.get(b"cudaFuncGetAttributes\0").map(|sym| *sym);
+        let cudaFuncSetAttribute = __library.get(b"cudaFuncSetAttribute\0").map(|sym| *sym);
+        let cudaSetDoubleForDevice = __library.get(b"cudaSetDoubleForDevice\0").map(|sym| *sym);
+        let cudaSetDoubleForHost = __library.get(b"cudaSetDoubleForHost\0").map(|sym| *sym);
+        let cudaLaunchHostFunc = __library.get(b"cudaLaunchHostFunc\0").map(|sym| *sym);
+        let cudaOccupancyMaxActiveBlocksPerMultiprocessor = __library
+            .get(b"cudaOccupancyMaxActiveBlocksPerMultiprocessor\0")
+            .map(|sym| *sym);
+        let cudaOccupancyAvailableDynamicSMemPerBlock = __library
+            .get(b"cudaOccupancyAvailableDynamicSMemPerBlock\0")
+            .map(|sym| *sym);
+        let cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags = __library
+            .get(b"cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags\0")
+            .map(|sym| *sym);
+        let cudaOccupancyMaxPotentialClusterSize = __library
+            .get(b"cudaOccupancyMaxPotentialClusterSize\0")
+            .map(|sym| *sym);
+        let cudaOccupancyMaxActiveClusters = __library
+            .get(b"cudaOccupancyMaxActiveClusters\0")
+            .map(|sym| *sym);
+        let cudaMallocManaged = __library.get(b"cudaMallocManaged\0").map(|sym| *sym);
+        let cudaMalloc = __library.get(b"cudaMalloc\0").map(|sym| *sym);
+        let cudaMallocHost = __library.get(b"cudaMallocHost\0").map(|sym| *sym);
+        let cudaMallocPitch = __library.get(b"cudaMallocPitch\0").map(|sym| *sym);
+        let cudaMallocArray = __library.get(b"cudaMallocArray\0").map(|sym| *sym);
+        let cudaFree = __library.get(b"cudaFree\0").map(|sym| *sym);
+        let cudaFreeHost = __library.get(b"cudaFreeHost\0").map(|sym| *sym);
+        let cudaFreeArray = __library.get(b"cudaFreeArray\0").map(|sym| *sym);
+        let cudaFreeMipmappedArray = __library.get(b"cudaFreeMipmappedArray\0").map(|sym| *sym);
+        let cudaHostAlloc = __library.get(b"cudaHostAlloc\0").map(|sym| *sym);
+        let cudaHostRegister = __library.get(b"cudaHostRegister\0").map(|sym| *sym);
+        let cudaHostUnregister = __library.get(b"cudaHostUnregister\0").map(|sym| *sym);
+        let cudaHostGetDevicePointer = __library.get(b"cudaHostGetDevicePointer\0").map(|sym| *sym);
+        let cudaHostGetFlags = __library.get(b"cudaHostGetFlags\0").map(|sym| *sym);
+        let cudaMalloc3D = __library.get(b"cudaMalloc3D\0").map(|sym| *sym);
+        let cudaMalloc3DArray = __library.get(b"cudaMalloc3DArray\0").map(|sym| *sym);
+        let cudaMallocMipmappedArray = __library.get(b"cudaMallocMipmappedArray\0").map(|sym| *sym);
+        let cudaGetMipmappedArrayLevel = __library
+            .get(b"cudaGetMipmappedArrayLevel\0")
+            .map(|sym| *sym);
+        let cudaMemcpy3D = __library.get(b"cudaMemcpy3D\0").map(|sym| *sym);
+        let cudaMemcpy3DPeer = __library.get(b"cudaMemcpy3DPeer\0").map(|sym| *sym);
+        let cudaMemcpy3DAsync = __library.get(b"cudaMemcpy3DAsync\0").map(|sym| *sym);
+        let cudaMemcpy3DPeerAsync = __library.get(b"cudaMemcpy3DPeerAsync\0").map(|sym| *sym);
+        let cudaMemGetInfo = __library.get(b"cudaMemGetInfo\0").map(|sym| *sym);
+        let cudaArrayGetInfo = __library.get(b"cudaArrayGetInfo\0").map(|sym| *sym);
+        let cudaArrayGetPlane = __library.get(b"cudaArrayGetPlane\0").map(|sym| *sym);
+        let cudaArrayGetMemoryRequirements = __library
+            .get(b"cudaArrayGetMemoryRequirements\0")
+            .map(|sym| *sym);
+        let cudaMipmappedArrayGetMemoryRequirements = __library
+            .get(b"cudaMipmappedArrayGetMemoryRequirements\0")
+            .map(|sym| *sym);
+        let cudaArrayGetSparseProperties = __library
+            .get(b"cudaArrayGetSparseProperties\0")
+            .map(|sym| *sym);
+        let cudaMipmappedArrayGetSparseProperties = __library
+            .get(b"cudaMipmappedArrayGetSparseProperties\0")
+            .map(|sym| *sym);
+        let cudaMemcpy = __library.get(b"cudaMemcpy\0").map(|sym| *sym);
+        let cudaMemcpyPeer = __library.get(b"cudaMemcpyPeer\0").map(|sym| *sym);
+        let cudaMemcpy2D = __library.get(b"cudaMemcpy2D\0").map(|sym| *sym);
+        let cudaMemcpy2DToArray = __library.get(b"cudaMemcpy2DToArray\0").map(|sym| *sym);
+        let cudaMemcpy2DFromArray = __library.get(b"cudaMemcpy2DFromArray\0").map(|sym| *sym);
+        let cudaMemcpy2DArrayToArray = __library.get(b"cudaMemcpy2DArrayToArray\0").map(|sym| *sym);
+        let cudaMemcpyToSymbol = __library.get(b"cudaMemcpyToSymbol\0").map(|sym| *sym);
+        let cudaMemcpyFromSymbol = __library.get(b"cudaMemcpyFromSymbol\0").map(|sym| *sym);
+        let cudaMemcpyAsync = __library.get(b"cudaMemcpyAsync\0").map(|sym| *sym);
+        let cudaMemcpyPeerAsync = __library.get(b"cudaMemcpyPeerAsync\0").map(|sym| *sym);
+        let cudaMemcpy2DAsync = __library.get(b"cudaMemcpy2DAsync\0").map(|sym| *sym);
+        let cudaMemcpy2DToArrayAsync = __library.get(b"cudaMemcpy2DToArrayAsync\0").map(|sym| *sym);
+        let cudaMemcpy2DFromArrayAsync = __library
+            .get(b"cudaMemcpy2DFromArrayAsync\0")
+            .map(|sym| *sym);
+        let cudaMemcpyToSymbolAsync = __library.get(b"cudaMemcpyToSymbolAsync\0").map(|sym| *sym);
+        let cudaMemcpyFromSymbolAsync = __library
+            .get(b"cudaMemcpyFromSymbolAsync\0")
+            .map(|sym| *sym);
+        let cudaMemset = __library.get(b"cudaMemset\0").map(|sym| *sym);
+        let cudaMemset2D = __library.get(b"cudaMemset2D\0").map(|sym| *sym);
+        let cudaMemset3D = __library.get(b"cudaMemset3D\0").map(|sym| *sym);
+        let cudaMemsetAsync = __library.get(b"cudaMemsetAsync\0").map(|sym| *sym);
+        let cudaMemset2DAsync = __library.get(b"cudaMemset2DAsync\0").map(|sym| *sym);
+        let cudaMemset3DAsync = __library.get(b"cudaMemset3DAsync\0").map(|sym| *sym);
+        let cudaGetSymbolAddress = __library.get(b"cudaGetSymbolAddress\0").map(|sym| *sym);
+        let cudaGetSymbolSize = __library.get(b"cudaGetSymbolSize\0").map(|sym| *sym);
+        let cudaMemPrefetchAsync = __library.get(b"cudaMemPrefetchAsync\0").map(|sym| *sym);
+        let cudaMemPrefetchAsync_v2 = __library.get(b"cudaMemPrefetchAsync_v2\0").map(|sym| *sym);
+        let cudaMemAdvise = __library.get(b"cudaMemAdvise\0").map(|sym| *sym);
+        let cudaMemAdvise_v2 = __library.get(b"cudaMemAdvise_v2\0").map(|sym| *sym);
+        let cudaMemRangeGetAttribute = __library.get(b"cudaMemRangeGetAttribute\0").map(|sym| *sym);
+        let cudaMemRangeGetAttributes = __library
+            .get(b"cudaMemRangeGetAttributes\0")
+            .map(|sym| *sym);
+        let cudaMemcpyToArray = __library.get(b"cudaMemcpyToArray\0").map(|sym| *sym);
+        let cudaMemcpyFromArray = __library.get(b"cudaMemcpyFromArray\0").map(|sym| *sym);
+        let cudaMemcpyArrayToArray = __library.get(b"cudaMemcpyArrayToArray\0").map(|sym| *sym);
+        let cudaMemcpyToArrayAsync = __library.get(b"cudaMemcpyToArrayAsync\0").map(|sym| *sym);
+        let cudaMemcpyFromArrayAsync = __library.get(b"cudaMemcpyFromArrayAsync\0").map(|sym| *sym);
+        let cudaMallocAsync = __library.get(b"cudaMallocAsync\0").map(|sym| *sym);
+        let cudaFreeAsync = __library.get(b"cudaFreeAsync\0").map(|sym| *sym);
+        let cudaMemPoolTrimTo = __library.get(b"cudaMemPoolTrimTo\0").map(|sym| *sym);
+        let cudaMemPoolSetAttribute = __library.get(b"cudaMemPoolSetAttribute\0").map(|sym| *sym);
+        let cudaMemPoolGetAttribute = __library.get(b"cudaMemPoolGetAttribute\0").map(|sym| *sym);
+        let cudaMemPoolSetAccess = __library.get(b"cudaMemPoolSetAccess\0").map(|sym| *sym);
+        let cudaMemPoolGetAccess = __library.get(b"cudaMemPoolGetAccess\0").map(|sym| *sym);
+        let cudaMemPoolCreate = __library.get(b"cudaMemPoolCreate\0").map(|sym| *sym);
+        let cudaMemPoolDestroy = __library.get(b"cudaMemPoolDestroy\0").map(|sym| *sym);
+        let cudaMallocFromPoolAsync = __library.get(b"cudaMallocFromPoolAsync\0").map(|sym| *sym);
+        let cudaMemPoolExportToShareableHandle = __library
+            .get(b"cudaMemPoolExportToShareableHandle\0")
+            .map(|sym| *sym);
+        let cudaMemPoolImportFromShareableHandle = __library
+            .get(b"cudaMemPoolImportFromShareableHandle\0")
+            .map(|sym| *sym);
+        let cudaMemPoolExportPointer = __library.get(b"cudaMemPoolExportPointer\0").map(|sym| *sym);
+        let cudaMemPoolImportPointer = __library.get(b"cudaMemPoolImportPointer\0").map(|sym| *sym);
+        let cudaPointerGetAttributes = __library.get(b"cudaPointerGetAttributes\0").map(|sym| *sym);
+        let cudaDeviceCanAccessPeer = __library.get(b"cudaDeviceCanAccessPeer\0").map(|sym| *sym);
+        let cudaDeviceEnablePeerAccess = __library
+            .get(b"cudaDeviceEnablePeerAccess\0")
+            .map(|sym| *sym);
+        let cudaDeviceDisablePeerAccess = __library
+            .get(b"cudaDeviceDisablePeerAccess\0")
+            .map(|sym| *sym);
+        let cudaGraphicsUnregisterResource = __library
+            .get(b"cudaGraphicsUnregisterResource\0")
+            .map(|sym| *sym);
+        let cudaGraphicsResourceSetMapFlags = __library
+            .get(b"cudaGraphicsResourceSetMapFlags\0")
+            .map(|sym| *sym);
+        let cudaGraphicsMapResources = __library.get(b"cudaGraphicsMapResources\0").map(|sym| *sym);
+        let cudaGraphicsUnmapResources = __library
+            .get(b"cudaGraphicsUnmapResources\0")
+            .map(|sym| *sym);
+        let cudaGraphicsResourceGetMappedPointer = __library
+            .get(b"cudaGraphicsResourceGetMappedPointer\0")
+            .map(|sym| *sym);
+        let cudaGraphicsSubResourceGetMappedArray = __library
+            .get(b"cudaGraphicsSubResourceGetMappedArray\0")
+            .map(|sym| *sym);
+        let cudaGraphicsResourceGetMappedMipmappedArray = __library
+            .get(b"cudaGraphicsResourceGetMappedMipmappedArray\0")
+            .map(|sym| *sym);
+        let cudaGetChannelDesc = __library.get(b"cudaGetChannelDesc\0").map(|sym| *sym);
+        let cudaCreateChannelDesc = __library.get(b"cudaCreateChannelDesc\0").map(|sym| *sym);
+        let cudaCreateTextureObject = __library.get(b"cudaCreateTextureObject\0").map(|sym| *sym);
+        let cudaDestroyTextureObject = __library.get(b"cudaDestroyTextureObject\0").map(|sym| *sym);
+        let cudaGetTextureObjectResourceDesc = __library
+            .get(b"cudaGetTextureObjectResourceDesc\0")
+            .map(|sym| *sym);
+        let cudaGetTextureObjectTextureDesc = __library
+            .get(b"cudaGetTextureObjectTextureDesc\0")
+            .map(|sym| *sym);
+        let cudaGetTextureObjectResourceViewDesc = __library
+            .get(b"cudaGetTextureObjectResourceViewDesc\0")
+            .map(|sym| *sym);
+        let cudaCreateSurfaceObject = __library.get(b"cudaCreateSurfaceObject\0").map(|sym| *sym);
+        let cudaDestroySurfaceObject = __library.get(b"cudaDestroySurfaceObject\0").map(|sym| *sym);
+        let cudaGetSurfaceObjectResourceDesc = __library
+            .get(b"cudaGetSurfaceObjectResourceDesc\0")
+            .map(|sym| *sym);
+        let cudaDriverGetVersion = __library.get(b"cudaDriverGetVersion\0").map(|sym| *sym);
+        let cudaRuntimeGetVersion = __library.get(b"cudaRuntimeGetVersion\0").map(|sym| *sym);
+        let cudaGraphCreate = __library.get(b"cudaGraphCreate\0").map(|sym| *sym);
+        let cudaGraphAddKernelNode = __library.get(b"cudaGraphAddKernelNode\0").map(|sym| *sym);
+        let cudaGraphKernelNodeGetParams = __library
+            .get(b"cudaGraphKernelNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphKernelNodeSetParams = __library
+            .get(b"cudaGraphKernelNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphKernelNodeCopyAttributes = __library
+            .get(b"cudaGraphKernelNodeCopyAttributes\0")
+            .map(|sym| *sym);
+        let cudaGraphKernelNodeGetAttribute = __library
+            .get(b"cudaGraphKernelNodeGetAttribute\0")
+            .map(|sym| *sym);
+        let cudaGraphKernelNodeSetAttribute = __library
+            .get(b"cudaGraphKernelNodeSetAttribute\0")
+            .map(|sym| *sym);
+        let cudaGraphAddMemcpyNode = __library.get(b"cudaGraphAddMemcpyNode\0").map(|sym| *sym);
+        let cudaGraphAddMemcpyNodeToSymbol = __library
+            .get(b"cudaGraphAddMemcpyNodeToSymbol\0")
+            .map(|sym| *sym);
+        let cudaGraphAddMemcpyNodeFromSymbol = __library
+            .get(b"cudaGraphAddMemcpyNodeFromSymbol\0")
+            .map(|sym| *sym);
+        let cudaGraphAddMemcpyNode1D = __library.get(b"cudaGraphAddMemcpyNode1D\0").map(|sym| *sym);
+        let cudaGraphMemcpyNodeGetParams = __library
+            .get(b"cudaGraphMemcpyNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphMemcpyNodeSetParams = __library
+            .get(b"cudaGraphMemcpyNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphMemcpyNodeSetParamsToSymbol = __library
+            .get(b"cudaGraphMemcpyNodeSetParamsToSymbol\0")
+            .map(|sym| *sym);
+        let cudaGraphMemcpyNodeSetParamsFromSymbol = __library
+            .get(b"cudaGraphMemcpyNodeSetParamsFromSymbol\0")
+            .map(|sym| *sym);
+        let cudaGraphMemcpyNodeSetParams1D = __library
+            .get(b"cudaGraphMemcpyNodeSetParams1D\0")
+            .map(|sym| *sym);
+        let cudaGraphAddMemsetNode = __library.get(b"cudaGraphAddMemsetNode\0").map(|sym| *sym);
+        let cudaGraphMemsetNodeGetParams = __library
+            .get(b"cudaGraphMemsetNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphMemsetNodeSetParams = __library
+            .get(b"cudaGraphMemsetNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphAddHostNode = __library.get(b"cudaGraphAddHostNode\0").map(|sym| *sym);
+        let cudaGraphHostNodeGetParams = __library
+            .get(b"cudaGraphHostNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphHostNodeSetParams = __library
+            .get(b"cudaGraphHostNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphAddChildGraphNode = __library
+            .get(b"cudaGraphAddChildGraphNode\0")
+            .map(|sym| *sym);
+        let cudaGraphChildGraphNodeGetGraph = __library
+            .get(b"cudaGraphChildGraphNodeGetGraph\0")
+            .map(|sym| *sym);
+        let cudaGraphAddEmptyNode = __library.get(b"cudaGraphAddEmptyNode\0").map(|sym| *sym);
+        let cudaGraphAddEventRecordNode = __library
+            .get(b"cudaGraphAddEventRecordNode\0")
+            .map(|sym| *sym);
+        let cudaGraphEventRecordNodeGetEvent = __library
+            .get(b"cudaGraphEventRecordNodeGetEvent\0")
+            .map(|sym| *sym);
+        let cudaGraphEventRecordNodeSetEvent = __library
+            .get(b"cudaGraphEventRecordNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cudaGraphAddEventWaitNode = __library
+            .get(b"cudaGraphAddEventWaitNode\0")
+            .map(|sym| *sym);
+        let cudaGraphEventWaitNodeGetEvent = __library
+            .get(b"cudaGraphEventWaitNodeGetEvent\0")
+            .map(|sym| *sym);
+        let cudaGraphEventWaitNodeSetEvent = __library
+            .get(b"cudaGraphEventWaitNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cudaGraphAddExternalSemaphoresSignalNode = __library
+            .get(b"cudaGraphAddExternalSemaphoresSignalNode\0")
+            .map(|sym| *sym);
+        let cudaGraphExternalSemaphoresSignalNodeGetParams = __library
+            .get(b"cudaGraphExternalSemaphoresSignalNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExternalSemaphoresSignalNodeSetParams = __library
+            .get(b"cudaGraphExternalSemaphoresSignalNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphAddExternalSemaphoresWaitNode = __library
+            .get(b"cudaGraphAddExternalSemaphoresWaitNode\0")
+            .map(|sym| *sym);
+        let cudaGraphExternalSemaphoresWaitNodeGetParams = __library
+            .get(b"cudaGraphExternalSemaphoresWaitNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExternalSemaphoresWaitNodeSetParams = __library
+            .get(b"cudaGraphExternalSemaphoresWaitNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphAddMemAllocNode = __library.get(b"cudaGraphAddMemAllocNode\0").map(|sym| *sym);
+        let cudaGraphMemAllocNodeGetParams = __library
+            .get(b"cudaGraphMemAllocNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphAddMemFreeNode = __library.get(b"cudaGraphAddMemFreeNode\0").map(|sym| *sym);
+        let cudaGraphMemFreeNodeGetParams = __library
+            .get(b"cudaGraphMemFreeNodeGetParams\0")
+            .map(|sym| *sym);
+        let cudaDeviceGraphMemTrim = __library.get(b"cudaDeviceGraphMemTrim\0").map(|sym| *sym);
+        let cudaDeviceGetGraphMemAttribute = __library
+            .get(b"cudaDeviceGetGraphMemAttribute\0")
+            .map(|sym| *sym);
+        let cudaDeviceSetGraphMemAttribute = __library
+            .get(b"cudaDeviceSetGraphMemAttribute\0")
+            .map(|sym| *sym);
+        let cudaGraphClone = __library.get(b"cudaGraphClone\0").map(|sym| *sym);
+        let cudaGraphNodeFindInClone = __library.get(b"cudaGraphNodeFindInClone\0").map(|sym| *sym);
+        let cudaGraphNodeGetType = __library.get(b"cudaGraphNodeGetType\0").map(|sym| *sym);
+        let cudaGraphGetNodes = __library.get(b"cudaGraphGetNodes\0").map(|sym| *sym);
+        let cudaGraphGetRootNodes = __library.get(b"cudaGraphGetRootNodes\0").map(|sym| *sym);
+        let cudaGraphGetEdges = __library.get(b"cudaGraphGetEdges\0").map(|sym| *sym);
+        let cudaGraphNodeGetDependencies = __library
+            .get(b"cudaGraphNodeGetDependencies\0")
+            .map(|sym| *sym);
+        let cudaGraphNodeGetDependentNodes = __library
+            .get(b"cudaGraphNodeGetDependentNodes\0")
+            .map(|sym| *sym);
+        let cudaGraphAddDependencies = __library.get(b"cudaGraphAddDependencies\0").map(|sym| *sym);
+        let cudaGraphRemoveDependencies = __library
+            .get(b"cudaGraphRemoveDependencies\0")
+            .map(|sym| *sym);
+        let cudaGraphDestroyNode = __library.get(b"cudaGraphDestroyNode\0").map(|sym| *sym);
+        let cudaGraphInstantiate = __library.get(b"cudaGraphInstantiate\0").map(|sym| *sym);
+        let cudaGraphInstantiateWithFlags = __library
+            .get(b"cudaGraphInstantiateWithFlags\0")
+            .map(|sym| *sym);
+        let cudaGraphInstantiateWithParams = __library
+            .get(b"cudaGraphInstantiateWithParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecGetFlags = __library.get(b"cudaGraphExecGetFlags\0").map(|sym| *sym);
+        let cudaGraphExecKernelNodeSetParams = __library
+            .get(b"cudaGraphExecKernelNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecMemcpyNodeSetParams = __library
+            .get(b"cudaGraphExecMemcpyNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecMemcpyNodeSetParamsToSymbol = __library
+            .get(b"cudaGraphExecMemcpyNodeSetParamsToSymbol\0")
+            .map(|sym| *sym);
+        let cudaGraphExecMemcpyNodeSetParamsFromSymbol = __library
+            .get(b"cudaGraphExecMemcpyNodeSetParamsFromSymbol\0")
+            .map(|sym| *sym);
+        let cudaGraphExecMemcpyNodeSetParams1D = __library
+            .get(b"cudaGraphExecMemcpyNodeSetParams1D\0")
+            .map(|sym| *sym);
+        let cudaGraphExecMemsetNodeSetParams = __library
+            .get(b"cudaGraphExecMemsetNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecHostNodeSetParams = __library
+            .get(b"cudaGraphExecHostNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecChildGraphNodeSetParams = __library
+            .get(b"cudaGraphExecChildGraphNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecEventRecordNodeSetEvent = __library
+            .get(b"cudaGraphExecEventRecordNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cudaGraphExecEventWaitNodeSetEvent = __library
+            .get(b"cudaGraphExecEventWaitNodeSetEvent\0")
+            .map(|sym| *sym);
+        let cudaGraphExecExternalSemaphoresSignalNodeSetParams = __library
+            .get(b"cudaGraphExecExternalSemaphoresSignalNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphExecExternalSemaphoresWaitNodeSetParams = __library
+            .get(b"cudaGraphExecExternalSemaphoresWaitNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGraphNodeSetEnabled = __library.get(b"cudaGraphNodeSetEnabled\0").map(|sym| *sym);
+        let cudaGraphNodeGetEnabled = __library.get(b"cudaGraphNodeGetEnabled\0").map(|sym| *sym);
+        let cudaGraphExecUpdate = __library.get(b"cudaGraphExecUpdate\0").map(|sym| *sym);
+        let cudaGraphUpload = __library.get(b"cudaGraphUpload\0").map(|sym| *sym);
+        let cudaGraphLaunch = __library.get(b"cudaGraphLaunch\0").map(|sym| *sym);
+        let cudaGraphExecDestroy = __library.get(b"cudaGraphExecDestroy\0").map(|sym| *sym);
+        let cudaGraphDestroy = __library.get(b"cudaGraphDestroy\0").map(|sym| *sym);
+        let cudaGraphDebugDotPrint = __library.get(b"cudaGraphDebugDotPrint\0").map(|sym| *sym);
+        let cudaUserObjectCreate = __library.get(b"cudaUserObjectCreate\0").map(|sym| *sym);
+        let cudaUserObjectRetain = __library.get(b"cudaUserObjectRetain\0").map(|sym| *sym);
+        let cudaUserObjectRelease = __library.get(b"cudaUserObjectRelease\0").map(|sym| *sym);
+        let cudaGraphRetainUserObject = __library
+            .get(b"cudaGraphRetainUserObject\0")
+            .map(|sym| *sym);
+        let cudaGraphReleaseUserObject = __library
+            .get(b"cudaGraphReleaseUserObject\0")
+            .map(|sym| *sym);
+        let cudaGraphAddNode = __library.get(b"cudaGraphAddNode\0").map(|sym| *sym);
+        let cudaGraphNodeSetParams = __library.get(b"cudaGraphNodeSetParams\0").map(|sym| *sym);
+        let cudaGraphExecNodeSetParams = __library
+            .get(b"cudaGraphExecNodeSetParams\0")
+            .map(|sym| *sym);
+        let cudaGetDriverEntryPoint = __library.get(b"cudaGetDriverEntryPoint\0").map(|sym| *sym);
+        let cudaGetExportTable = __library.get(b"cudaGetExportTable\0").map(|sym| *sym);
+        let cudaGetFuncBySymbol = __library.get(b"cudaGetFuncBySymbol\0").map(|sym| *sym);
+        let cudaGetKernel = __library.get(b"cudaGetKernel\0").map(|sym| *sym);
+        let cudaProfilerStart = __library.get(b"cudaProfilerStart\0").map(|sym| *sym);
+        let cudaProfilerStop = __library.get(b"cudaProfilerStop\0").map(|sym| *sym);
+        Ok(Lib {
+            __library,
+            cudaDeviceReset,
+            cudaDeviceSynchronize,
+            cudaDeviceSetLimit,
+            cudaDeviceGetLimit,
+            cudaDeviceGetTexture1DLinearMaxWidth,
+            cudaDeviceGetCacheConfig,
+            cudaDeviceGetStreamPriorityRange,
+            cudaDeviceSetCacheConfig,
+            cudaDeviceGetSharedMemConfig,
+            cudaDeviceSetSharedMemConfig,
+            cudaDeviceGetByPCIBusId,
+            cudaDeviceGetPCIBusId,
+            cudaIpcGetEventHandle,
+            cudaIpcOpenEventHandle,
+            cudaIpcGetMemHandle,
+            cudaIpcOpenMemHandle,
+            cudaIpcCloseMemHandle,
+            cudaDeviceFlushGPUDirectRDMAWrites,
+            cudaThreadExit,
+            cudaThreadSynchronize,
+            cudaThreadSetLimit,
+            cudaThreadGetLimit,
+            cudaThreadGetCacheConfig,
+            cudaThreadSetCacheConfig,
+            cudaGetLastError,
+            cudaPeekAtLastError,
+            cudaGetErrorName,
+            cudaGetErrorString,
+            cudaGetDeviceCount,
+            cudaGetDeviceProperties_v2,
+            cudaDeviceGetAttribute,
+            cudaDeviceGetDefaultMemPool,
+            cudaDeviceSetMemPool,
+            cudaDeviceGetMemPool,
+            cudaDeviceGetNvSciSyncAttributes,
+            cudaDeviceGetP2PAttribute,
+            cudaChooseDevice,
+            cudaInitDevice,
+            cudaSetDevice,
+            cudaGetDevice,
+            cudaSetValidDevices,
+            cudaSetDeviceFlags,
+            cudaGetDeviceFlags,
+            cudaStreamCreate,
+            cudaStreamCreateWithFlags,
+            cudaStreamCreateWithPriority,
+            cudaStreamGetPriority,
+            cudaStreamGetFlags,
+            cudaStreamGetId,
+            cudaCtxResetPersistingL2Cache,
+            cudaStreamCopyAttributes,
+            cudaStreamGetAttribute,
+            cudaStreamSetAttribute,
+            cudaStreamDestroy,
+            cudaStreamWaitEvent,
+            cudaStreamAddCallback,
+            cudaStreamSynchronize,
+            cudaStreamQuery,
+            cudaStreamAttachMemAsync,
+            cudaStreamBeginCapture,
+            cudaThreadExchangeStreamCaptureMode,
+            cudaStreamEndCapture,
+            cudaStreamIsCapturing,
+            cudaStreamGetCaptureInfo_v2,
+            cudaStreamUpdateCaptureDependencies,
+            cudaEventCreate,
+            cudaEventCreateWithFlags,
+            cudaEventRecord,
+            cudaEventRecordWithFlags,
+            cudaEventQuery,
+            cudaEventSynchronize,
+            cudaEventDestroy,
+            cudaEventElapsedTime,
+            cudaImportExternalMemory,
+            cudaExternalMemoryGetMappedBuffer,
+            cudaExternalMemoryGetMappedMipmappedArray,
+            cudaDestroyExternalMemory,
+            cudaImportExternalSemaphore,
+            cudaSignalExternalSemaphoresAsync_v2,
+            cudaWaitExternalSemaphoresAsync_v2,
+            cudaDestroyExternalSemaphore,
+            cudaLaunchKernel,
+            cudaLaunchKernelExC,
+            cudaLaunchCooperativeKernel,
+            cudaLaunchCooperativeKernelMultiDevice,
+            cudaFuncSetCacheConfig,
+            cudaFuncSetSharedMemConfig,
+            cudaFuncGetAttributes,
+            cudaFuncSetAttribute,
+            cudaSetDoubleForDevice,
+            cudaSetDoubleForHost,
+            cudaLaunchHostFunc,
+            cudaOccupancyMaxActiveBlocksPerMultiprocessor,
+            cudaOccupancyAvailableDynamicSMemPerBlock,
+            cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags,
+            cudaOccupancyMaxPotentialClusterSize,
+            cudaOccupancyMaxActiveClusters,
+            cudaMallocManaged,
+            cudaMalloc,
+            cudaMallocHost,
+            cudaMallocPitch,
+            cudaMallocArray,
+            cudaFree,
+            cudaFreeHost,
+            cudaFreeArray,
+            cudaFreeMipmappedArray,
+            cudaHostAlloc,
+            cudaHostRegister,
+            cudaHostUnregister,
+            cudaHostGetDevicePointer,
+            cudaHostGetFlags,
+            cudaMalloc3D,
+            cudaMalloc3DArray,
+            cudaMallocMipmappedArray,
+            cudaGetMipmappedArrayLevel,
+            cudaMemcpy3D,
+            cudaMemcpy3DPeer,
+            cudaMemcpy3DAsync,
+            cudaMemcpy3DPeerAsync,
+            cudaMemGetInfo,
+            cudaArrayGetInfo,
+            cudaArrayGetPlane,
+            cudaArrayGetMemoryRequirements,
+            cudaMipmappedArrayGetMemoryRequirements,
+            cudaArrayGetSparseProperties,
+            cudaMipmappedArrayGetSparseProperties,
+            cudaMemcpy,
+            cudaMemcpyPeer,
+            cudaMemcpy2D,
+            cudaMemcpy2DToArray,
+            cudaMemcpy2DFromArray,
+            cudaMemcpy2DArrayToArray,
+            cudaMemcpyToSymbol,
+            cudaMemcpyFromSymbol,
+            cudaMemcpyAsync,
+            cudaMemcpyPeerAsync,
+            cudaMemcpy2DAsync,
+            cudaMemcpy2DToArrayAsync,
+            cudaMemcpy2DFromArrayAsync,
+            cudaMemcpyToSymbolAsync,
+            cudaMemcpyFromSymbolAsync,
+            cudaMemset,
+            cudaMemset2D,
+            cudaMemset3D,
+            cudaMemsetAsync,
+            cudaMemset2DAsync,
+            cudaMemset3DAsync,
+            cudaGetSymbolAddress,
+            cudaGetSymbolSize,
+            cudaMemPrefetchAsync,
+            cudaMemPrefetchAsync_v2,
+            cudaMemAdvise,
+            cudaMemAdvise_v2,
+            cudaMemRangeGetAttribute,
+            cudaMemRangeGetAttributes,
+            cudaMemcpyToArray,
+            cudaMemcpyFromArray,
+            cudaMemcpyArrayToArray,
+            cudaMemcpyToArrayAsync,
+            cudaMemcpyFromArrayAsync,
+            cudaMallocAsync,
+            cudaFreeAsync,
+            cudaMemPoolTrimTo,
+            cudaMemPoolSetAttribute,
+            cudaMemPoolGetAttribute,
+            cudaMemPoolSetAccess,
+            cudaMemPoolGetAccess,
+            cudaMemPoolCreate,
+            cudaMemPoolDestroy,
+            cudaMallocFromPoolAsync,
+            cudaMemPoolExportToShareableHandle,
+            cudaMemPoolImportFromShareableHandle,
+            cudaMemPoolExportPointer,
+            cudaMemPoolImportPointer,
+            cudaPointerGetAttributes,
+            cudaDeviceCanAccessPeer,
+            cudaDeviceEnablePeerAccess,
+            cudaDeviceDisablePeerAccess,
+            cudaGraphicsUnregisterResource,
+            cudaGraphicsResourceSetMapFlags,
+            cudaGraphicsMapResources,
+            cudaGraphicsUnmapResources,
+            cudaGraphicsResourceGetMappedPointer,
+            cudaGraphicsSubResourceGetMappedArray,
+            cudaGraphicsResourceGetMappedMipmappedArray,
+            cudaGetChannelDesc,
+            cudaCreateChannelDesc,
+            cudaCreateTextureObject,
+            cudaDestroyTextureObject,
+            cudaGetTextureObjectResourceDesc,
+            cudaGetTextureObjectTextureDesc,
+            cudaGetTextureObjectResourceViewDesc,
+            cudaCreateSurfaceObject,
+            cudaDestroySurfaceObject,
+            cudaGetSurfaceObjectResourceDesc,
+            cudaDriverGetVersion,
+            cudaRuntimeGetVersion,
+            cudaGraphCreate,
+            cudaGraphAddKernelNode,
+            cudaGraphKernelNodeGetParams,
+            cudaGraphKernelNodeSetParams,
+            cudaGraphKernelNodeCopyAttributes,
+            cudaGraphKernelNodeGetAttribute,
+            cudaGraphKernelNodeSetAttribute,
+            cudaGraphAddMemcpyNode,
+            cudaGraphAddMemcpyNodeToSymbol,
+            cudaGraphAddMemcpyNodeFromSymbol,
+            cudaGraphAddMemcpyNode1D,
+            cudaGraphMemcpyNodeGetParams,
+            cudaGraphMemcpyNodeSetParams,
+            cudaGraphMemcpyNodeSetParamsToSymbol,
+            cudaGraphMemcpyNodeSetParamsFromSymbol,
+            cudaGraphMemcpyNodeSetParams1D,
+            cudaGraphAddMemsetNode,
+            cudaGraphMemsetNodeGetParams,
+            cudaGraphMemsetNodeSetParams,
+            cudaGraphAddHostNode,
+            cudaGraphHostNodeGetParams,
+            cudaGraphHostNodeSetParams,
+            cudaGraphAddChildGraphNode,
+            cudaGraphChildGraphNodeGetGraph,
+            cudaGraphAddEmptyNode,
+            cudaGraphAddEventRecordNode,
+            cudaGraphEventRecordNodeGetEvent,
+            cudaGraphEventRecordNodeSetEvent,
+            cudaGraphAddEventWaitNode,
+            cudaGraphEventWaitNodeGetEvent,
+            cudaGraphEventWaitNodeSetEvent,
+            cudaGraphAddExternalSemaphoresSignalNode,
+            cudaGraphExternalSemaphoresSignalNodeGetParams,
+            cudaGraphExternalSemaphoresSignalNodeSetParams,
+            cudaGraphAddExternalSemaphoresWaitNode,
+            cudaGraphExternalSemaphoresWaitNodeGetParams,
+            cudaGraphExternalSemaphoresWaitNodeSetParams,
+            cudaGraphAddMemAllocNode,
+            cudaGraphMemAllocNodeGetParams,
+            cudaGraphAddMemFreeNode,
+            cudaGraphMemFreeNodeGetParams,
+            cudaDeviceGraphMemTrim,
+            cudaDeviceGetGraphMemAttribute,
+            cudaDeviceSetGraphMemAttribute,
+            cudaGraphClone,
+            cudaGraphNodeFindInClone,
+            cudaGraphNodeGetType,
+            cudaGraphGetNodes,
+            cudaGraphGetRootNodes,
+            cudaGraphGetEdges,
+            cudaGraphNodeGetDependencies,
+            cudaGraphNodeGetDependentNodes,
+            cudaGraphAddDependencies,
+            cudaGraphRemoveDependencies,
+            cudaGraphDestroyNode,
+            cudaGraphInstantiate,
+            cudaGraphInstantiateWithFlags,
+            cudaGraphInstantiateWithParams,
+            cudaGraphExecGetFlags,
+            cudaGraphExecKernelNodeSetParams,
+            cudaGraphExecMemcpyNodeSetParams,
+            cudaGraphExecMemcpyNodeSetParamsToSymbol,
+            cudaGraphExecMemcpyNodeSetParamsFromSymbol,
+            cudaGraphExecMemcpyNodeSetParams1D,
+            cudaGraphExecMemsetNodeSetParams,
+            cudaGraphExecHostNodeSetParams,
+            cudaGraphExecChildGraphNodeSetParams,
+            cudaGraphExecEventRecordNodeSetEvent,
+            cudaGraphExecEventWaitNodeSetEvent,
+            cudaGraphExecExternalSemaphoresSignalNodeSetParams,
+            cudaGraphExecExternalSemaphoresWaitNodeSetParams,
+            cudaGraphNodeSetEnabled,
+            cudaGraphNodeGetEnabled,
+            cudaGraphExecUpdate,
+            cudaGraphUpload,
+            cudaGraphLaunch,
+            cudaGraphExecDestroy,
+            cudaGraphDestroy,
+            cudaGraphDebugDotPrint,
+            cudaUserObjectCreate,
+            cudaUserObjectRetain,
+            cudaUserObjectRelease,
+            cudaGraphRetainUserObject,
+            cudaGraphReleaseUserObject,
+            cudaGraphAddNode,
+            cudaGraphNodeSetParams,
+            cudaGraphExecNodeSetParams,
+            cudaGetDriverEntryPoint,
+            cudaGetExportTable,
+            cudaGetFuncBySymbol,
+            cudaGetKernel,
+            cudaProfilerStart,
+            cudaProfilerStop,
+        })
+    }
+    pub unsafe fn cudaDeviceReset(&self) -> cudaError_t {
+        (self
+            .cudaDeviceReset
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaDeviceSynchronize(&self) -> cudaError_t {
+        (self
+            .cudaDeviceSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaDeviceSetLimit(&self, limit: cudaLimit, value: usize) -> cudaError_t {
+        (self
+            .cudaDeviceSetLimit
+            .as_ref()
+            .expect("Expected function, got error."))(limit, value)
+    }
+    pub unsafe fn cudaDeviceGetLimit(&self, pValue: *mut usize, limit: cudaLimit) -> cudaError_t {
+        (self
+            .cudaDeviceGetLimit
+            .as_ref()
+            .expect("Expected function, got error."))(pValue, limit)
+    }
+    pub unsafe fn cudaDeviceGetTexture1DLinearMaxWidth(
+        &self,
+        maxWidthInElements: *mut usize,
+        fmtDesc: *const cudaChannelFormatDesc,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetTexture1DLinearMaxWidth
+            .as_ref()
+            .expect("Expected function, got error."))(maxWidthInElements, fmtDesc, device)
+    }
+    pub unsafe fn cudaDeviceGetCacheConfig(&self, pCacheConfig: *mut cudaFuncCache) -> cudaError_t {
+        (self
+            .cudaDeviceGetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(pCacheConfig)
+    }
+    pub unsafe fn cudaDeviceGetStreamPriorityRange(
+        &self,
+        leastPriority: *mut ::core::ffi::c_int,
+        greatestPriority: *mut ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetStreamPriorityRange
+            .as_ref()
+            .expect("Expected function, got error."))(leastPriority, greatestPriority)
+    }
+    pub unsafe fn cudaDeviceSetCacheConfig(&self, cacheConfig: cudaFuncCache) -> cudaError_t {
+        (self
+            .cudaDeviceSetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(cacheConfig)
+    }
+    pub unsafe fn cudaDeviceGetSharedMemConfig(
+        &self,
+        pConfig: *mut cudaSharedMemConfig,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetSharedMemConfig
+            .as_ref()
+            .expect("Expected function, got error."))(pConfig)
+    }
+    pub unsafe fn cudaDeviceSetSharedMemConfig(&self, config: cudaSharedMemConfig) -> cudaError_t {
+        (self
+            .cudaDeviceSetSharedMemConfig
+            .as_ref()
+            .expect("Expected function, got error."))(config)
+    }
+    pub unsafe fn cudaDeviceGetByPCIBusId(
+        &self,
+        device: *mut ::core::ffi::c_int,
+        pciBusId: *const ::core::ffi::c_char,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetByPCIBusId
+            .as_ref()
+            .expect("Expected function, got error."))(device, pciBusId)
+    }
+    pub unsafe fn cudaDeviceGetPCIBusId(
+        &self,
+        pciBusId: *mut ::core::ffi::c_char,
+        len: ::core::ffi::c_int,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetPCIBusId
+            .as_ref()
+            .expect("Expected function, got error."))(pciBusId, len, device)
+    }
+    pub unsafe fn cudaIpcGetEventHandle(
+        &self,
+        handle: *mut cudaIpcEventHandle_t,
+        event: cudaEvent_t,
+    ) -> cudaError_t {
+        (self
+            .cudaIpcGetEventHandle
+            .as_ref()
+            .expect("Expected function, got error."))(handle, event)
+    }
+    pub unsafe fn cudaIpcOpenEventHandle(
+        &self,
+        event: *mut cudaEvent_t,
+        handle: cudaIpcEventHandle_t,
+    ) -> cudaError_t {
+        (self
+            .cudaIpcOpenEventHandle
+            .as_ref()
+            .expect("Expected function, got error."))(event, handle)
+    }
+    pub unsafe fn cudaIpcGetMemHandle(
+        &self,
+        handle: *mut cudaIpcMemHandle_t,
+        devPtr: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaIpcGetMemHandle
+            .as_ref()
+            .expect("Expected function, got error."))(handle, devPtr)
+    }
+    pub unsafe fn cudaIpcOpenMemHandle(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
+        handle: cudaIpcMemHandle_t,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaIpcOpenMemHandle
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, handle, flags)
+    }
+    pub unsafe fn cudaIpcCloseMemHandle(&self, devPtr: *mut ::core::ffi::c_void) -> cudaError_t {
+        (self
+            .cudaIpcCloseMemHandle
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr)
+    }
+    pub unsafe fn cudaDeviceFlushGPUDirectRDMAWrites(
+        &self,
+        target: cudaFlushGPUDirectRDMAWritesTarget,
+        scope: cudaFlushGPUDirectRDMAWritesScope,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceFlushGPUDirectRDMAWrites
+            .as_ref()
+            .expect("Expected function, got error."))(target, scope)
+    }
+    pub unsafe fn cudaThreadExit(&self) -> cudaError_t {
+        (self
+            .cudaThreadExit
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaThreadSynchronize(&self) -> cudaError_t {
+        (self
+            .cudaThreadSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaThreadSetLimit(&self, limit: cudaLimit, value: usize) -> cudaError_t {
+        (self
+            .cudaThreadSetLimit
+            .as_ref()
+            .expect("Expected function, got error."))(limit, value)
+    }
+    pub unsafe fn cudaThreadGetLimit(&self, pValue: *mut usize, limit: cudaLimit) -> cudaError_t {
+        (self
+            .cudaThreadGetLimit
+            .as_ref()
+            .expect("Expected function, got error."))(pValue, limit)
+    }
+    pub unsafe fn cudaThreadGetCacheConfig(&self, pCacheConfig: *mut cudaFuncCache) -> cudaError_t {
+        (self
+            .cudaThreadGetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(pCacheConfig)
+    }
+    pub unsafe fn cudaThreadSetCacheConfig(&self, cacheConfig: cudaFuncCache) -> cudaError_t {
+        (self
+            .cudaThreadSetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(cacheConfig)
+    }
+    pub unsafe fn cudaGetLastError(&self) -> cudaError_t {
+        (self
+            .cudaGetLastError
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaPeekAtLastError(&self) -> cudaError_t {
+        (self
+            .cudaPeekAtLastError
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaGetErrorName(&self, error: cudaError_t) -> *const ::core::ffi::c_char {
+        (self
+            .cudaGetErrorName
+            .as_ref()
+            .expect("Expected function, got error."))(error)
+    }
+    pub unsafe fn cudaGetErrorString(&self, error: cudaError_t) -> *const ::core::ffi::c_char {
+        (self
+            .cudaGetErrorString
+            .as_ref()
+            .expect("Expected function, got error."))(error)
+    }
+    pub unsafe fn cudaGetDeviceCount(&self, count: *mut ::core::ffi::c_int) -> cudaError_t {
+        (self
+            .cudaGetDeviceCount
+            .as_ref()
+            .expect("Expected function, got error."))(count)
+    }
+    pub unsafe fn cudaGetDeviceProperties_v2(
+        &self,
+        prop: *mut cudaDeviceProp,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaGetDeviceProperties_v2
+            .as_ref()
+            .expect("Expected function, got error."))(prop, device)
+    }
+    pub unsafe fn cudaDeviceGetAttribute(
+        &self,
+        value: *mut ::core::ffi::c_int,
+        attr: cudaDeviceAttr,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(value, attr, device)
+    }
+    pub unsafe fn cudaDeviceGetDefaultMemPool(
+        &self,
+        memPool: *mut cudaMemPool_t,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetDefaultMemPool
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, device)
+    }
+    pub unsafe fn cudaDeviceSetMemPool(
+        &self,
+        device: ::core::ffi::c_int,
+        memPool: cudaMemPool_t,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceSetMemPool
+            .as_ref()
+            .expect("Expected function, got error."))(device, memPool)
+    }
+    pub unsafe fn cudaDeviceGetMemPool(
+        &self,
+        memPool: *mut cudaMemPool_t,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetMemPool
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, device)
+    }
+    pub unsafe fn cudaDeviceGetNvSciSyncAttributes(
+        &self,
+        nvSciSyncAttrList: *mut ::core::ffi::c_void,
+        device: ::core::ffi::c_int,
+        flags: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetNvSciSyncAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(nvSciSyncAttrList, device, flags)
+    }
+    pub unsafe fn cudaDeviceGetP2PAttribute(
+        &self,
+        value: *mut ::core::ffi::c_int,
+        attr: cudaDeviceP2PAttr,
+        srcDevice: ::core::ffi::c_int,
+        dstDevice: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetP2PAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(value, attr, srcDevice, dstDevice)
+    }
+    pub unsafe fn cudaChooseDevice(
+        &self,
+        device: *mut ::core::ffi::c_int,
+        prop: *const cudaDeviceProp,
+    ) -> cudaError_t {
+        (self
+            .cudaChooseDevice
+            .as_ref()
+            .expect("Expected function, got error."))(device, prop)
+    }
+    pub unsafe fn cudaInitDevice(
+        &self,
+        device: ::core::ffi::c_int,
+        deviceFlags: ::core::ffi::c_uint,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaInitDevice
+            .as_ref()
+            .expect("Expected function, got error."))(device, deviceFlags, flags)
+    }
+    pub unsafe fn cudaSetDevice(&self, device: ::core::ffi::c_int) -> cudaError_t {
+        (self
+            .cudaSetDevice
+            .as_ref()
+            .expect("Expected function, got error."))(device)
+    }
+    pub unsafe fn cudaGetDevice(&self, device: *mut ::core::ffi::c_int) -> cudaError_t {
+        (self
+            .cudaGetDevice
+            .as_ref()
+            .expect("Expected function, got error."))(device)
+    }
+    pub unsafe fn cudaSetValidDevices(
+        &self,
+        device_arr: *mut ::core::ffi::c_int,
+        len: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaSetValidDevices
+            .as_ref()
+            .expect("Expected function, got error."))(device_arr, len)
+    }
+    pub unsafe fn cudaSetDeviceFlags(&self, flags: ::core::ffi::c_uint) -> cudaError_t {
+        (self
+            .cudaSetDeviceFlags
+            .as_ref()
+            .expect("Expected function, got error."))(flags)
+    }
+    pub unsafe fn cudaGetDeviceFlags(&self, flags: *mut ::core::ffi::c_uint) -> cudaError_t {
+        (self
+            .cudaGetDeviceFlags
+            .as_ref()
+            .expect("Expected function, got error."))(flags)
+    }
+    pub unsafe fn cudaStreamCreate(&self, pStream: *mut cudaStream_t) -> cudaError_t {
+        (self
+            .cudaStreamCreate
+            .as_ref()
+            .expect("Expected function, got error."))(pStream)
+    }
+    pub unsafe fn cudaStreamCreateWithFlags(
+        &self,
+        pStream: *mut cudaStream_t,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamCreateWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(pStream, flags)
+    }
+    pub unsafe fn cudaStreamCreateWithPriority(
+        &self,
+        pStream: *mut cudaStream_t,
+        flags: ::core::ffi::c_uint,
+        priority: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamCreateWithPriority
+            .as_ref()
+            .expect("Expected function, got error."))(pStream, flags, priority)
+    }
+    pub unsafe fn cudaStreamGetPriority(
+        &self,
+        hStream: cudaStream_t,
+        priority: *mut ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamGetPriority
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, priority)
+    }
+    pub unsafe fn cudaStreamGetFlags(
+        &self,
+        hStream: cudaStream_t,
+        flags: *mut ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, flags)
+    }
+    pub unsafe fn cudaStreamGetId(
+        &self,
+        hStream: cudaStream_t,
+        streamId: *mut ::core::ffi::c_ulonglong,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamGetId
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, streamId)
+    }
+    pub unsafe fn cudaCtxResetPersistingL2Cache(&self) -> cudaError_t {
+        (self
+            .cudaCtxResetPersistingL2Cache
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaStreamCopyAttributes(
+        &self,
+        dst: cudaStream_t,
+        src: cudaStream_t,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamCopyAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src)
+    }
+    pub unsafe fn cudaStreamGetAttribute(
+        &self,
+        hStream: cudaStream_t,
+        attr: cudaLaunchAttributeID,
+        value_out: *mut cudaLaunchAttributeValue,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, attr, value_out)
+    }
+    pub unsafe fn cudaStreamSetAttribute(
+        &self,
+        hStream: cudaStream_t,
+        attr: cudaLaunchAttributeID,
+        value: *const cudaLaunchAttributeValue,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hStream, attr, value)
+    }
+    pub unsafe fn cudaStreamDestroy(&self, stream: cudaStream_t) -> cudaError_t {
+        (self
+            .cudaStreamDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(stream)
+    }
+    pub unsafe fn cudaStreamWaitEvent(
+        &self,
+        stream: cudaStream_t,
+        event: cudaEvent_t,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamWaitEvent
+            .as_ref()
+            .expect("Expected function, got error."))(stream, event, flags)
+    }
+    pub unsafe fn cudaStreamAddCallback(
+        &self,
         stream: cudaStream_t,
         callback: cudaStreamCallback_t,
-        userData: *mut ::std::os::raw::c_void,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamSynchronize(stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamQuery(stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamAttachMemAsync(
+        userData: *mut ::core::ffi::c_void,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamAddCallback
+            .as_ref()
+            .expect("Expected function, got error."))(stream, callback, userData, flags)
+    }
+    pub unsafe fn cudaStreamSynchronize(&self, stream: cudaStream_t) -> cudaError_t {
+        (self
+            .cudaStreamSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))(stream)
+    }
+    pub unsafe fn cudaStreamQuery(&self, stream: cudaStream_t) -> cudaError_t {
+        (self
+            .cudaStreamQuery
+            .as_ref()
+            .expect("Expected function, got error."))(stream)
+    }
+    pub unsafe fn cudaStreamAttachMemAsync(
+        &self,
         stream: cudaStream_t,
-        devPtr: *mut ::std::os::raw::c_void,
+        devPtr: *mut ::core::ffi::c_void,
         length: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamBeginCapture(stream: cudaStream_t, mode: cudaStreamCaptureMode)
-        -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaThreadExchangeStreamCaptureMode(mode: *mut cudaStreamCaptureMode) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamEndCapture(stream: cudaStream_t, pGraph: *mut cudaGraph_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamIsCapturing(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamAttachMemAsync
+            .as_ref()
+            .expect("Expected function, got error."))(stream, devPtr, length, flags)
+    }
+    pub unsafe fn cudaStreamBeginCapture(
+        &self,
+        stream: cudaStream_t,
+        mode: cudaStreamCaptureMode,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamBeginCapture
+            .as_ref()
+            .expect("Expected function, got error."))(stream, mode)
+    }
+    pub unsafe fn cudaThreadExchangeStreamCaptureMode(
+        &self,
+        mode: *mut cudaStreamCaptureMode,
+    ) -> cudaError_t {
+        (self
+            .cudaThreadExchangeStreamCaptureMode
+            .as_ref()
+            .expect("Expected function, got error."))(mode)
+    }
+    pub unsafe fn cudaStreamEndCapture(
+        &self,
+        stream: cudaStream_t,
+        pGraph: *mut cudaGraph_t,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamEndCapture
+            .as_ref()
+            .expect("Expected function, got error."))(stream, pGraph)
+    }
+    pub unsafe fn cudaStreamIsCapturing(
+        &self,
         stream: cudaStream_t,
         pCaptureStatus: *mut cudaStreamCaptureStatus,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamGetCaptureInfo_v2(
+    ) -> cudaError_t {
+        (self
+            .cudaStreamIsCapturing
+            .as_ref()
+            .expect("Expected function, got error."))(stream, pCaptureStatus)
+    }
+    pub unsafe fn cudaStreamGetCaptureInfo_v2(
+        &self,
         stream: cudaStream_t,
         captureStatus_out: *mut cudaStreamCaptureStatus,
-        id_out: *mut ::std::os::raw::c_ulonglong,
+        id_out: *mut ::core::ffi::c_ulonglong,
         graph_out: *mut cudaGraph_t,
         dependencies_out: *mut *const cudaGraphNode_t,
         numDependencies_out: *mut usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaStreamUpdateCaptureDependencies(
+    ) -> cudaError_t {
+        (self
+            .cudaStreamGetCaptureInfo_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            stream,
+            captureStatus_out,
+            id_out,
+            graph_out,
+            dependencies_out,
+            numDependencies_out,
+        )
+    }
+    pub unsafe fn cudaStreamUpdateCaptureDependencies(
+        &self,
         stream: cudaStream_t,
         dependencies: *mut cudaGraphNode_t,
         numDependencies: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventCreate(event: *mut cudaEvent_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventCreateWithFlags(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaStreamUpdateCaptureDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(
+            stream, dependencies, numDependencies, flags
+        )
+    }
+    pub unsafe fn cudaEventCreate(&self, event: *mut cudaEvent_t) -> cudaError_t {
+        (self
+            .cudaEventCreate
+            .as_ref()
+            .expect("Expected function, got error."))(event)
+    }
+    pub unsafe fn cudaEventCreateWithFlags(
+        &self,
         event: *mut cudaEvent_t,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventRecord(event: cudaEvent_t, stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventRecordWithFlags(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaEventCreateWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(event, flags)
+    }
+    pub unsafe fn cudaEventRecord(&self, event: cudaEvent_t, stream: cudaStream_t) -> cudaError_t {
+        (self
+            .cudaEventRecord
+            .as_ref()
+            .expect("Expected function, got error."))(event, stream)
+    }
+    pub unsafe fn cudaEventRecordWithFlags(
+        &self,
         event: cudaEvent_t,
         stream: cudaStream_t,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventQuery(event: cudaEvent_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventSynchronize(event: cudaEvent_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventDestroy(event: cudaEvent_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaEventElapsedTime(ms: *mut f32, start: cudaEvent_t, end: cudaEvent_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaImportExternalMemory(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaEventRecordWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(event, stream, flags)
+    }
+    pub unsafe fn cudaEventQuery(&self, event: cudaEvent_t) -> cudaError_t {
+        (self
+            .cudaEventQuery
+            .as_ref()
+            .expect("Expected function, got error."))(event)
+    }
+    pub unsafe fn cudaEventSynchronize(&self, event: cudaEvent_t) -> cudaError_t {
+        (self
+            .cudaEventSynchronize
+            .as_ref()
+            .expect("Expected function, got error."))(event)
+    }
+    pub unsafe fn cudaEventDestroy(&self, event: cudaEvent_t) -> cudaError_t {
+        (self
+            .cudaEventDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(event)
+    }
+    pub unsafe fn cudaEventElapsedTime(
+        &self,
+        ms: *mut f32,
+        start: cudaEvent_t,
+        end: cudaEvent_t,
+    ) -> cudaError_t {
+        (self
+            .cudaEventElapsedTime
+            .as_ref()
+            .expect("Expected function, got error."))(ms, start, end)
+    }
+    pub unsafe fn cudaImportExternalMemory(
+        &self,
         extMem_out: *mut cudaExternalMemory_t,
         memHandleDesc: *const cudaExternalMemoryHandleDesc,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaExternalMemoryGetMappedBuffer(
-        devPtr: *mut *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaImportExternalMemory
+            .as_ref()
+            .expect("Expected function, got error."))(extMem_out, memHandleDesc)
+    }
+    pub unsafe fn cudaExternalMemoryGetMappedBuffer(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
         extMem: cudaExternalMemory_t,
         bufferDesc: *const cudaExternalMemoryBufferDesc,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaExternalMemoryGetMappedMipmappedArray(
+    ) -> cudaError_t {
+        (self
+            .cudaExternalMemoryGetMappedBuffer
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, extMem, bufferDesc)
+    }
+    pub unsafe fn cudaExternalMemoryGetMappedMipmappedArray(
+        &self,
         mipmap: *mut cudaMipmappedArray_t,
         extMem: cudaExternalMemory_t,
         mipmapDesc: *const cudaExternalMemoryMipmappedArrayDesc,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDestroyExternalMemory(extMem: cudaExternalMemory_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaImportExternalSemaphore(
+    ) -> cudaError_t {
+        (self
+            .cudaExternalMemoryGetMappedMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(mipmap, extMem, mipmapDesc)
+    }
+    pub unsafe fn cudaDestroyExternalMemory(&self, extMem: cudaExternalMemory_t) -> cudaError_t {
+        (self
+            .cudaDestroyExternalMemory
+            .as_ref()
+            .expect("Expected function, got error."))(extMem)
+    }
+    pub unsafe fn cudaImportExternalSemaphore(
+        &self,
         extSem_out: *mut cudaExternalSemaphore_t,
         semHandleDesc: *const cudaExternalSemaphoreHandleDesc,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaSignalExternalSemaphoresAsync_v2(
+    ) -> cudaError_t {
+        (self
+            .cudaImportExternalSemaphore
+            .as_ref()
+            .expect("Expected function, got error."))(extSem_out, semHandleDesc)
+    }
+    pub unsafe fn cudaSignalExternalSemaphoresAsync_v2(
+        &self,
         extSemArray: *const cudaExternalSemaphore_t,
         paramsArray: *const cudaExternalSemaphoreSignalParams,
-        numExtSems: ::std::os::raw::c_uint,
+        numExtSems: ::core::ffi::c_uint,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaWaitExternalSemaphoresAsync_v2(
+    ) -> cudaError_t {
+        (self
+            .cudaSignalExternalSemaphoresAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            extSemArray, paramsArray, numExtSems, stream
+        )
+    }
+    pub unsafe fn cudaWaitExternalSemaphoresAsync_v2(
+        &self,
         extSemArray: *const cudaExternalSemaphore_t,
         paramsArray: *const cudaExternalSemaphoreWaitParams,
-        numExtSems: ::std::os::raw::c_uint,
+        numExtSems: ::core::ffi::c_uint,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDestroyExternalSemaphore(extSem: cudaExternalSemaphore_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaLaunchKernel(
-        func: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaWaitExternalSemaphoresAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(
+            extSemArray, paramsArray, numExtSems, stream
+        )
+    }
+    pub unsafe fn cudaDestroyExternalSemaphore(
+        &self,
+        extSem: cudaExternalSemaphore_t,
+    ) -> cudaError_t {
+        (self
+            .cudaDestroyExternalSemaphore
+            .as_ref()
+            .expect("Expected function, got error."))(extSem)
+    }
+    pub unsafe fn cudaLaunchKernel(
+        &self,
+        func: *const ::core::ffi::c_void,
         gridDim: dim3,
         blockDim: dim3,
-        args: *mut *mut ::std::os::raw::c_void,
+        args: *mut *mut ::core::ffi::c_void,
         sharedMem: usize,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaLaunchKernelExC(
+    ) -> cudaError_t {
+        (self
+            .cudaLaunchKernel
+            .as_ref()
+            .expect("Expected function, got error."))(
+            func, gridDim, blockDim, args, sharedMem, stream,
+        )
+    }
+    pub unsafe fn cudaLaunchKernelExC(
+        &self,
         config: *const cudaLaunchConfig_t,
-        func: *const ::std::os::raw::c_void,
-        args: *mut *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaLaunchCooperativeKernel(
-        func: *const ::std::os::raw::c_void,
+        func: *const ::core::ffi::c_void,
+        args: *mut *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaLaunchKernelExC
+            .as_ref()
+            .expect("Expected function, got error."))(config, func, args)
+    }
+    pub unsafe fn cudaLaunchCooperativeKernel(
+        &self,
+        func: *const ::core::ffi::c_void,
         gridDim: dim3,
         blockDim: dim3,
-        args: *mut *mut ::std::os::raw::c_void,
+        args: *mut *mut ::core::ffi::c_void,
         sharedMem: usize,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaLaunchCooperativeKernelMultiDevice(
+    ) -> cudaError_t {
+        (self
+            .cudaLaunchCooperativeKernel
+            .as_ref()
+            .expect("Expected function, got error."))(
+            func, gridDim, blockDim, args, sharedMem, stream,
+        )
+    }
+    pub unsafe fn cudaLaunchCooperativeKernelMultiDevice(
+        &self,
         launchParamsList: *mut cudaLaunchParams,
-        numDevices: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFuncSetCacheConfig(
-        func: *const ::std::os::raw::c_void,
+        numDevices: ::core::ffi::c_uint,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaLaunchCooperativeKernelMultiDevice
+            .as_ref()
+            .expect("Expected function, got error."))(launchParamsList, numDevices, flags)
+    }
+    pub unsafe fn cudaFuncSetCacheConfig(
+        &self,
+        func: *const ::core::ffi::c_void,
         cacheConfig: cudaFuncCache,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFuncSetSharedMemConfig(
-        func: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaFuncSetCacheConfig
+            .as_ref()
+            .expect("Expected function, got error."))(func, cacheConfig)
+    }
+    pub unsafe fn cudaFuncSetSharedMemConfig(
+        &self,
+        func: *const ::core::ffi::c_void,
         config: cudaSharedMemConfig,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFuncGetAttributes(
+    ) -> cudaError_t {
+        (self
+            .cudaFuncSetSharedMemConfig
+            .as_ref()
+            .expect("Expected function, got error."))(func, config)
+    }
+    pub unsafe fn cudaFuncGetAttributes(
+        &self,
         attr: *mut cudaFuncAttributes,
-        func: *const ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFuncSetAttribute(
-        func: *const ::std::os::raw::c_void,
+        func: *const ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaFuncGetAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(attr, func)
+    }
+    pub unsafe fn cudaFuncSetAttribute(
+        &self,
+        func: *const ::core::ffi::c_void,
         attr: cudaFuncAttribute,
-        value: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaSetDoubleForDevice(d: *mut f64) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaSetDoubleForHost(d: *mut f64) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaLaunchHostFunc(
+        value: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaFuncSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(func, attr, value)
+    }
+    pub unsafe fn cudaSetDoubleForDevice(&self, d: *mut f64) -> cudaError_t {
+        (self
+            .cudaSetDoubleForDevice
+            .as_ref()
+            .expect("Expected function, got error."))(d)
+    }
+    pub unsafe fn cudaSetDoubleForHost(&self, d: *mut f64) -> cudaError_t {
+        (self
+            .cudaSetDoubleForHost
+            .as_ref()
+            .expect("Expected function, got error."))(d)
+    }
+    pub unsafe fn cudaLaunchHostFunc(
+        &self,
         stream: cudaStream_t,
         fn_: cudaHostFn_t,
-        userData: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaOccupancyMaxActiveBlocksPerMultiprocessor(
-        numBlocks: *mut ::std::os::raw::c_int,
-        func: *const ::std::os::raw::c_void,
-        blockSize: ::std::os::raw::c_int,
+        userData: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaLaunchHostFunc
+            .as_ref()
+            .expect("Expected function, got error."))(stream, fn_, userData)
+    }
+    pub unsafe fn cudaOccupancyMaxActiveBlocksPerMultiprocessor(
+        &self,
+        numBlocks: *mut ::core::ffi::c_int,
+        func: *const ::core::ffi::c_void,
+        blockSize: ::core::ffi::c_int,
         dynamicSMemSize: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaOccupancyAvailableDynamicSMemPerBlock(
+    ) -> cudaError_t {
+        (self
+            .cudaOccupancyMaxActiveBlocksPerMultiprocessor
+            .as_ref()
+            .expect("Expected function, got error."))(
+            numBlocks, func, blockSize, dynamicSMemSize
+        )
+    }
+    pub unsafe fn cudaOccupancyAvailableDynamicSMemPerBlock(
+        &self,
         dynamicSmemSize: *mut usize,
-        func: *const ::std::os::raw::c_void,
-        numBlocks: ::std::os::raw::c_int,
-        blockSize: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
-        numBlocks: *mut ::std::os::raw::c_int,
-        func: *const ::std::os::raw::c_void,
-        blockSize: ::std::os::raw::c_int,
+        func: *const ::core::ffi::c_void,
+        numBlocks: ::core::ffi::c_int,
+        blockSize: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaOccupancyAvailableDynamicSMemPerBlock
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dynamicSmemSize, func, numBlocks, blockSize
+        )
+    }
+    pub unsafe fn cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+        &self,
+        numBlocks: *mut ::core::ffi::c_int,
+        func: *const ::core::ffi::c_void,
+        blockSize: ::core::ffi::c_int,
         dynamicSMemSize: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaOccupancyMaxPotentialClusterSize(
-        clusterSize: *mut ::std::os::raw::c_int,
-        func: *const ::std::os::raw::c_void,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(
+            numBlocks,
+            func,
+            blockSize,
+            dynamicSMemSize,
+            flags,
+        )
+    }
+    pub unsafe fn cudaOccupancyMaxPotentialClusterSize(
+        &self,
+        clusterSize: *mut ::core::ffi::c_int,
+        func: *const ::core::ffi::c_void,
         launchConfig: *const cudaLaunchConfig_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaOccupancyMaxActiveClusters(
-        numClusters: *mut ::std::os::raw::c_int,
-        func: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaOccupancyMaxPotentialClusterSize
+            .as_ref()
+            .expect("Expected function, got error."))(clusterSize, func, launchConfig)
+    }
+    pub unsafe fn cudaOccupancyMaxActiveClusters(
+        &self,
+        numClusters: *mut ::core::ffi::c_int,
+        func: *const ::core::ffi::c_void,
         launchConfig: *const cudaLaunchConfig_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocManaged(
-        devPtr: *mut *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaOccupancyMaxActiveClusters
+            .as_ref()
+            .expect("Expected function, got error."))(numClusters, func, launchConfig)
+    }
+    pub unsafe fn cudaMallocManaged(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
         size: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMalloc(devPtr: *mut *mut ::std::os::raw::c_void, size: usize) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocHost(ptr: *mut *mut ::std::os::raw::c_void, size: usize) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocPitch(
-        devPtr: *mut *mut ::std::os::raw::c_void,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaMallocManaged
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, size, flags)
+    }
+    pub unsafe fn cudaMalloc(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
+        size: usize,
+    ) -> cudaError_t {
+        (self
+            .cudaMalloc
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, size)
+    }
+    pub unsafe fn cudaMallocHost(
+        &self,
+        ptr: *mut *mut ::core::ffi::c_void,
+        size: usize,
+    ) -> cudaError_t {
+        (self
+            .cudaMallocHost
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size)
+    }
+    pub unsafe fn cudaMallocPitch(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
         pitch: *mut usize,
         width: usize,
         height: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocArray(
+    ) -> cudaError_t {
+        (self
+            .cudaMallocPitch
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, pitch, width, height)
+    }
+    pub unsafe fn cudaMallocArray(
+        &self,
         array: *mut cudaArray_t,
         desc: *const cudaChannelFormatDesc,
         width: usize,
         height: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFree(devPtr: *mut ::std::os::raw::c_void) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFreeHost(ptr: *mut ::std::os::raw::c_void) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFreeArray(array: cudaArray_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFreeMipmappedArray(mipmappedArray: cudaMipmappedArray_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaHostAlloc(
-        pHost: *mut *mut ::std::os::raw::c_void,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaMallocArray
+            .as_ref()
+            .expect("Expected function, got error."))(array, desc, width, height, flags)
+    }
+    pub unsafe fn cudaFree(&self, devPtr: *mut ::core::ffi::c_void) -> cudaError_t {
+        (self
+            .cudaFree
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr)
+    }
+    pub unsafe fn cudaFreeHost(&self, ptr: *mut ::core::ffi::c_void) -> cudaError_t {
+        (self
+            .cudaFreeHost
+            .as_ref()
+            .expect("Expected function, got error."))(ptr)
+    }
+    pub unsafe fn cudaFreeArray(&self, array: cudaArray_t) -> cudaError_t {
+        (self
+            .cudaFreeArray
+            .as_ref()
+            .expect("Expected function, got error."))(array)
+    }
+    pub unsafe fn cudaFreeMipmappedArray(
+        &self,
+        mipmappedArray: cudaMipmappedArray_t,
+    ) -> cudaError_t {
+        (self
+            .cudaFreeMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(mipmappedArray)
+    }
+    pub unsafe fn cudaHostAlloc(
+        &self,
+        pHost: *mut *mut ::core::ffi::c_void,
         size: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaHostRegister(
-        ptr: *mut ::std::os::raw::c_void,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaHostAlloc
+            .as_ref()
+            .expect("Expected function, got error."))(pHost, size, flags)
+    }
+    pub unsafe fn cudaHostRegister(
+        &self,
+        ptr: *mut ::core::ffi::c_void,
         size: usize,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaHostUnregister(ptr: *mut ::std::os::raw::c_void) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaHostGetDevicePointer(
-        pDevice: *mut *mut ::std::os::raw::c_void,
-        pHost: *mut ::std::os::raw::c_void,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaHostGetFlags(
-        pFlags: *mut ::std::os::raw::c_uint,
-        pHost: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMalloc3D(pitchedDevPtr: *mut cudaPitchedPtr, extent: cudaExtent) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMalloc3DArray(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaHostRegister
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size, flags)
+    }
+    pub unsafe fn cudaHostUnregister(&self, ptr: *mut ::core::ffi::c_void) -> cudaError_t {
+        (self
+            .cudaHostUnregister
+            .as_ref()
+            .expect("Expected function, got error."))(ptr)
+    }
+    pub unsafe fn cudaHostGetDevicePointer(
+        &self,
+        pDevice: *mut *mut ::core::ffi::c_void,
+        pHost: *mut ::core::ffi::c_void,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaHostGetDevicePointer
+            .as_ref()
+            .expect("Expected function, got error."))(pDevice, pHost, flags)
+    }
+    pub unsafe fn cudaHostGetFlags(
+        &self,
+        pFlags: *mut ::core::ffi::c_uint,
+        pHost: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaHostGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(pFlags, pHost)
+    }
+    pub unsafe fn cudaMalloc3D(
+        &self,
+        pitchedDevPtr: *mut cudaPitchedPtr,
+        extent: cudaExtent,
+    ) -> cudaError_t {
+        (self
+            .cudaMalloc3D
+            .as_ref()
+            .expect("Expected function, got error."))(pitchedDevPtr, extent)
+    }
+    pub unsafe fn cudaMalloc3DArray(
+        &self,
         array: *mut cudaArray_t,
         desc: *const cudaChannelFormatDesc,
         extent: cudaExtent,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocMipmappedArray(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaMalloc3DArray
+            .as_ref()
+            .expect("Expected function, got error."))(array, desc, extent, flags)
+    }
+    pub unsafe fn cudaMallocMipmappedArray(
+        &self,
         mipmappedArray: *mut cudaMipmappedArray_t,
         desc: *const cudaChannelFormatDesc,
         extent: cudaExtent,
-        numLevels: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetMipmappedArrayLevel(
+        numLevels: ::core::ffi::c_uint,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaMallocMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            mipmappedArray,
+            desc,
+            extent,
+            numLevels,
+            flags,
+        )
+    }
+    pub unsafe fn cudaGetMipmappedArrayLevel(
+        &self,
         levelArray: *mut cudaArray_t,
         mipmappedArray: cudaMipmappedArray_const_t,
-        level: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy3D(p: *const cudaMemcpy3DParms) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy3DPeer(p: *const cudaMemcpy3DPeerParms) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy3DAsync(p: *const cudaMemcpy3DParms, stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy3DPeerAsync(
+        level: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGetMipmappedArrayLevel
+            .as_ref()
+            .expect("Expected function, got error."))(levelArray, mipmappedArray, level)
+    }
+    pub unsafe fn cudaMemcpy3D(&self, p: *const cudaMemcpy3DParms) -> cudaError_t {
+        (self
+            .cudaMemcpy3D
+            .as_ref()
+            .expect("Expected function, got error."))(p)
+    }
+    pub unsafe fn cudaMemcpy3DPeer(&self, p: *const cudaMemcpy3DPeerParms) -> cudaError_t {
+        (self
+            .cudaMemcpy3DPeer
+            .as_ref()
+            .expect("Expected function, got error."))(p)
+    }
+    pub unsafe fn cudaMemcpy3DAsync(
+        &self,
+        p: *const cudaMemcpy3DParms,
+        stream: cudaStream_t,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy3DAsync
+            .as_ref()
+            .expect("Expected function, got error."))(p, stream)
+    }
+    pub unsafe fn cudaMemcpy3DPeerAsync(
+        &self,
         p: *const cudaMemcpy3DPeerParms,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemGetInfo(free: *mut usize, total: *mut usize) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaArrayGetInfo(
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy3DPeerAsync
+            .as_ref()
+            .expect("Expected function, got error."))(p, stream)
+    }
+    pub unsafe fn cudaMemGetInfo(&self, free: *mut usize, total: *mut usize) -> cudaError_t {
+        (self
+            .cudaMemGetInfo
+            .as_ref()
+            .expect("Expected function, got error."))(free, total)
+    }
+    pub unsafe fn cudaArrayGetInfo(
+        &self,
         desc: *mut cudaChannelFormatDesc,
         extent: *mut cudaExtent,
-        flags: *mut ::std::os::raw::c_uint,
+        flags: *mut ::core::ffi::c_uint,
         array: cudaArray_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaArrayGetPlane(
+    ) -> cudaError_t {
+        (self
+            .cudaArrayGetInfo
+            .as_ref()
+            .expect("Expected function, got error."))(desc, extent, flags, array)
+    }
+    pub unsafe fn cudaArrayGetPlane(
+        &self,
         pPlaneArray: *mut cudaArray_t,
         hArray: cudaArray_t,
-        planeIdx: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaArrayGetMemoryRequirements(
+        planeIdx: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaArrayGetPlane
+            .as_ref()
+            .expect("Expected function, got error."))(pPlaneArray, hArray, planeIdx)
+    }
+    pub unsafe fn cudaArrayGetMemoryRequirements(
+        &self,
         memoryRequirements: *mut cudaArrayMemoryRequirements,
         array: cudaArray_t,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMipmappedArrayGetMemoryRequirements(
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaArrayGetMemoryRequirements
+            .as_ref()
+            .expect("Expected function, got error."))(memoryRequirements, array, device)
+    }
+    pub unsafe fn cudaMipmappedArrayGetMemoryRequirements(
+        &self,
         memoryRequirements: *mut cudaArrayMemoryRequirements,
         mipmap: cudaMipmappedArray_t,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaArrayGetSparseProperties(
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaMipmappedArrayGetMemoryRequirements
+            .as_ref()
+            .expect("Expected function, got error."))(memoryRequirements, mipmap, device)
+    }
+    pub unsafe fn cudaArrayGetSparseProperties(
+        &self,
         sparseProperties: *mut cudaArraySparseProperties,
         array: cudaArray_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMipmappedArrayGetSparseProperties(
+    ) -> cudaError_t {
+        (self
+            .cudaArrayGetSparseProperties
+            .as_ref()
+            .expect("Expected function, got error."))(sparseProperties, array)
+    }
+    pub unsafe fn cudaMipmappedArrayGetSparseProperties(
+        &self,
         sparseProperties: *mut cudaArraySparseProperties,
         mipmap: cudaMipmappedArray_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy(
-        dst: *mut ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMipmappedArrayGetSparseProperties
+            .as_ref()
+            .expect("Expected function, got error."))(sparseProperties, mipmap)
+    }
+    pub unsafe fn cudaMemcpy(
+        &self,
+        dst: *mut ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyPeer(
-        dst: *mut ::std::os::raw::c_void,
-        dstDevice: ::std::os::raw::c_int,
-        src: *const ::std::os::raw::c_void,
-        srcDevice: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src, count, kind)
+    }
+    pub unsafe fn cudaMemcpyPeer(
+        &self,
+        dst: *mut ::core::ffi::c_void,
+        dstDevice: ::core::ffi::c_int,
+        src: *const ::core::ffi::c_void,
+        srcDevice: ::core::ffi::c_int,
         count: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2D(
-        dst: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyPeer
+            .as_ref()
+            .expect("Expected function, got error."))(dst, dstDevice, src, srcDevice, count)
+    }
+    pub unsafe fn cudaMemcpy2D(
+        &self,
+        dst: *mut ::core::ffi::c_void,
         dpitch: usize,
-        src: *const ::std::os::raw::c_void,
+        src: *const ::core::ffi::c_void,
         spitch: usize,
         width: usize,
         height: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2DToArray(
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2D
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, dpitch, src, spitch, width, height, kind
+        )
+    }
+    pub unsafe fn cudaMemcpy2DToArray(
+        &self,
         dst: cudaArray_t,
         wOffset: usize,
         hOffset: usize,
-        src: *const ::std::os::raw::c_void,
+        src: *const ::core::ffi::c_void,
         spitch: usize,
         width: usize,
         height: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2DFromArray(
-        dst: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2DToArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, wOffset, hOffset, src, spitch, width, height, kind,
+        )
+    }
+    pub unsafe fn cudaMemcpy2DFromArray(
+        &self,
+        dst: *mut ::core::ffi::c_void,
         dpitch: usize,
         src: cudaArray_const_t,
         wOffset: usize,
@@ -8551,10 +12005,16 @@ extern "C" {
         width: usize,
         height: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2DArrayToArray(
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2DFromArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, dpitch, src, wOffset, hOffset, width, height, kind,
+        )
+    }
+    pub unsafe fn cudaMemcpy2DArrayToArray(
+        &self,
         dst: cudaArray_t,
         wOffsetDst: usize,
         hOffsetDst: usize,
@@ -8564,73 +12024,109 @@ extern "C" {
         width: usize,
         height: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyToSymbol(
-        symbol: *const ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2DArrayToArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, wOffsetDst, hOffsetDst, src, wOffsetSrc, hOffsetSrc, width, height, kind,
+        )
+    }
+    pub unsafe fn cudaMemcpyToSymbol(
+        &self,
+        symbol: *const ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyFromSymbol(
-        dst: *mut ::std::os::raw::c_void,
-        symbol: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyToSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(symbol, src, count, offset, kind)
+    }
+    pub unsafe fn cudaMemcpyFromSymbol(
+        &self,
+        dst: *mut ::core::ffi::c_void,
+        symbol: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyAsync(
-        dst: *mut ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyFromSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(dst, symbol, count, offset, kind)
+    }
+    pub unsafe fn cudaMemcpyAsync(
+        &self,
+        dst: *mut ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyPeerAsync(
-        dst: *mut ::std::os::raw::c_void,
-        dstDevice: ::std::os::raw::c_int,
-        src: *const ::std::os::raw::c_void,
-        srcDevice: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyAsync
+            .as_ref()
+            .expect("Expected function, got error."))(dst, src, count, kind, stream)
+    }
+    pub unsafe fn cudaMemcpyPeerAsync(
+        &self,
+        dst: *mut ::core::ffi::c_void,
+        dstDevice: ::core::ffi::c_int,
+        src: *const ::core::ffi::c_void,
+        srcDevice: ::core::ffi::c_int,
         count: usize,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2DAsync(
-        dst: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyPeerAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, dstDevice, src, srcDevice, count, stream
+        )
+    }
+    pub unsafe fn cudaMemcpy2DAsync(
+        &self,
+        dst: *mut ::core::ffi::c_void,
         dpitch: usize,
-        src: *const ::std::os::raw::c_void,
+        src: *const ::core::ffi::c_void,
         spitch: usize,
         width: usize,
         height: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2DToArrayAsync(
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2DAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, dpitch, src, spitch, width, height, kind, stream,
+        )
+    }
+    pub unsafe fn cudaMemcpy2DToArrayAsync(
+        &self,
         dst: cudaArray_t,
         wOffset: usize,
         hOffset: usize,
-        src: *const ::std::os::raw::c_void,
+        src: *const ::core::ffi::c_void,
         spitch: usize,
         width: usize,
         height: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpy2DFromArrayAsync(
-        dst: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2DToArrayAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, wOffset, hOffset, src, spitch, width, height, kind, stream,
+        )
+    }
+    pub unsafe fn cudaMemcpy2DFromArrayAsync(
+        &self,
+        dst: *mut ::core::ffi::c_void,
         dpitch: usize,
         src: cudaArray_const_t,
         wOffset: usize,
@@ -8639,163 +12135,260 @@ extern "C" {
         height: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyToSymbolAsync(
-        symbol: *const ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpy2DFromArrayAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, dpitch, src, wOffset, hOffset, width, height, kind, stream,
+        )
+    }
+    pub unsafe fn cudaMemcpyToSymbolAsync(
+        &self,
+        symbol: *const ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyFromSymbolAsync(
-        dst: *mut ::std::os::raw::c_void,
-        symbol: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyToSymbolAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            symbol, src, count, offset, kind, stream
+        )
+    }
+    pub unsafe fn cudaMemcpyFromSymbolAsync(
+        &self,
+        dst: *mut ::core::ffi::c_void,
+        symbol: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemset(
-        devPtr: *mut ::std::os::raw::c_void,
-        value: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyFromSymbolAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, symbol, count, offset, kind, stream
+        )
+    }
+    pub unsafe fn cudaMemset(
+        &self,
+        devPtr: *mut ::core::ffi::c_void,
+        value: ::core::ffi::c_int,
         count: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemset2D(
-        devPtr: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemset
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, value, count)
+    }
+    pub unsafe fn cudaMemset2D(
+        &self,
+        devPtr: *mut ::core::ffi::c_void,
         pitch: usize,
-        value: ::std::os::raw::c_int,
+        value: ::core::ffi::c_int,
         width: usize,
         height: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemset3D(
+    ) -> cudaError_t {
+        (self
+            .cudaMemset2D
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, pitch, value, width, height)
+    }
+    pub unsafe fn cudaMemset3D(
+        &self,
         pitchedDevPtr: cudaPitchedPtr,
-        value: ::std::os::raw::c_int,
+        value: ::core::ffi::c_int,
         extent: cudaExtent,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemsetAsync(
-        devPtr: *mut ::std::os::raw::c_void,
-        value: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaMemset3D
+            .as_ref()
+            .expect("Expected function, got error."))(pitchedDevPtr, value, extent)
+    }
+    pub unsafe fn cudaMemsetAsync(
+        &self,
+        devPtr: *mut ::core::ffi::c_void,
+        value: ::core::ffi::c_int,
         count: usize,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemset2DAsync(
-        devPtr: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemsetAsync
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, value, count, stream)
+    }
+    pub unsafe fn cudaMemset2DAsync(
+        &self,
+        devPtr: *mut ::core::ffi::c_void,
         pitch: usize,
-        value: ::std::os::raw::c_int,
+        value: ::core::ffi::c_int,
         width: usize,
         height: usize,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemset3DAsync(
+    ) -> cudaError_t {
+        (self
+            .cudaMemset2DAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            devPtr, pitch, value, width, height, stream
+        )
+    }
+    pub unsafe fn cudaMemset3DAsync(
+        &self,
         pitchedDevPtr: cudaPitchedPtr,
-        value: ::std::os::raw::c_int,
+        value: ::core::ffi::c_int,
         extent: cudaExtent,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetSymbolAddress(
-        devPtr: *mut *mut ::std::os::raw::c_void,
-        symbol: *const ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetSymbolSize(
+    ) -> cudaError_t {
+        (self
+            .cudaMemset3DAsync
+            .as_ref()
+            .expect("Expected function, got error."))(pitchedDevPtr, value, extent, stream)
+    }
+    pub unsafe fn cudaGetSymbolAddress(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
+        symbol: *const ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGetSymbolAddress
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, symbol)
+    }
+    pub unsafe fn cudaGetSymbolSize(
+        &self,
         size: *mut usize,
-        symbol: *const ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPrefetchAsync(
-        devPtr: *const ::std::os::raw::c_void,
+        symbol: *const ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGetSymbolSize
+            .as_ref()
+            .expect("Expected function, got error."))(size, symbol)
+    }
+    pub unsafe fn cudaMemPrefetchAsync(
+        &self,
+        devPtr: *const ::core::ffi::c_void,
         count: usize,
-        dstDevice: ::std::os::raw::c_int,
+        dstDevice: ::core::ffi::c_int,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPrefetchAsync_v2(
-        devPtr: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPrefetchAsync
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, dstDevice, stream)
+    }
+    pub unsafe fn cudaMemPrefetchAsync_v2(
+        &self,
+        devPtr: *const ::core::ffi::c_void,
         count: usize,
         location: cudaMemLocation,
-        flags: ::std::os::raw::c_uint,
+        flags: ::core::ffi::c_uint,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemAdvise(
-        devPtr: *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPrefetchAsync_v2
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, location, flags, stream)
+    }
+    pub unsafe fn cudaMemAdvise(
+        &self,
+        devPtr: *const ::core::ffi::c_void,
         count: usize,
         advice: cudaMemoryAdvise,
-        device: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemAdvise_v2(
-        devPtr: *const ::std::os::raw::c_void,
+        device: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaMemAdvise
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, advice, device)
+    }
+    pub unsafe fn cudaMemAdvise_v2(
+        &self,
+        devPtr: *const ::core::ffi::c_void,
         count: usize,
         advice: cudaMemoryAdvise,
         location: cudaMemLocation,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemRangeGetAttribute(
-        data: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemAdvise_v2
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, count, advice, location)
+    }
+    pub unsafe fn cudaMemRangeGetAttribute(
+        &self,
+        data: *mut ::core::ffi::c_void,
         dataSize: usize,
         attribute: cudaMemRangeAttribute,
-        devPtr: *const ::std::os::raw::c_void,
+        devPtr: *const ::core::ffi::c_void,
         count: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemRangeGetAttributes(
-        data: *mut *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemRangeGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(
+            data, dataSize, attribute, devPtr, count
+        )
+    }
+    pub unsafe fn cudaMemRangeGetAttributes(
+        &self,
+        data: *mut *mut ::core::ffi::c_void,
         dataSizes: *mut usize,
         attributes: *mut cudaMemRangeAttribute,
         numAttributes: usize,
-        devPtr: *const ::std::os::raw::c_void,
+        devPtr: *const ::core::ffi::c_void,
         count: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyToArray(
+    ) -> cudaError_t {
+        (self
+            .cudaMemRangeGetAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(
+            data,
+            dataSizes,
+            attributes,
+            numAttributes,
+            devPtr,
+            count,
+        )
+    }
+    pub unsafe fn cudaMemcpyToArray(
+        &self,
         dst: cudaArray_t,
         wOffset: usize,
         hOffset: usize,
-        src: *const ::std::os::raw::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyFromArray(
-        dst: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyToArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, wOffset, hOffset, src, count, kind
+        )
+    }
+    pub unsafe fn cudaMemcpyFromArray(
+        &self,
+        dst: *mut ::core::ffi::c_void,
         src: cudaArray_const_t,
         wOffset: usize,
         hOffset: usize,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyArrayToArray(
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyFromArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, src, wOffset, hOffset, count, kind
+        )
+    }
+    pub unsafe fn cudaMemcpyArrayToArray(
+        &self,
         dst: cudaArray_t,
         wOffsetDst: usize,
         hOffsetDst: usize,
@@ -8804,890 +12397,1578 @@ extern "C" {
         hOffsetSrc: usize,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyToArrayAsync(
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyArrayToArray
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, wOffsetDst, hOffsetDst, src, wOffsetSrc, hOffsetSrc, count, kind,
+        )
+    }
+    pub unsafe fn cudaMemcpyToArrayAsync(
+        &self,
         dst: cudaArray_t,
         wOffset: usize,
         hOffset: usize,
-        src: *const ::std::os::raw::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemcpyFromArrayAsync(
-        dst: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyToArrayAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, wOffset, hOffset, src, count, kind, stream,
+        )
+    }
+    pub unsafe fn cudaMemcpyFromArrayAsync(
+        &self,
+        dst: *mut ::core::ffi::c_void,
         src: cudaArray_const_t,
         wOffset: usize,
         hOffset: usize,
         count: usize,
         kind: cudaMemcpyKind,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocAsync(
-        devPtr: *mut *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemcpyFromArrayAsync
+            .as_ref()
+            .expect("Expected function, got error."))(
+            dst, src, wOffset, hOffset, count, kind, stream,
+        )
+    }
+    pub unsafe fn cudaMallocAsync(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
         size: usize,
         hStream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaFreeAsync(devPtr: *mut ::std::os::raw::c_void, hStream: cudaStream_t)
-        -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolTrimTo(memPool: cudaMemPool_t, minBytesToKeep: usize) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolSetAttribute(
+    ) -> cudaError_t {
+        (self
+            .cudaMallocAsync
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, size, hStream)
+    }
+    pub unsafe fn cudaFreeAsync(
+        &self,
+        devPtr: *mut ::core::ffi::c_void,
+        hStream: cudaStream_t,
+    ) -> cudaError_t {
+        (self
+            .cudaFreeAsync
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, hStream)
+    }
+    pub unsafe fn cudaMemPoolTrimTo(
+        &self,
+        memPool: cudaMemPool_t,
+        minBytesToKeep: usize,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolTrimTo
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, minBytesToKeep)
+    }
+    pub unsafe fn cudaMemPoolSetAttribute(
+        &self,
         memPool: cudaMemPool_t,
         attr: cudaMemPoolAttr,
-        value: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolGetAttribute(
+        value: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, attr, value)
+    }
+    pub unsafe fn cudaMemPoolGetAttribute(
+        &self,
         memPool: cudaMemPool_t,
         attr: cudaMemPoolAttr,
-        value: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolSetAccess(
+        value: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, attr, value)
+    }
+    pub unsafe fn cudaMemPoolSetAccess(
+        &self,
         memPool: cudaMemPool_t,
         descList: *const cudaMemAccessDesc,
         count: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolGetAccess(
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolSetAccess
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, descList, count)
+    }
+    pub unsafe fn cudaMemPoolGetAccess(
+        &self,
         flags: *mut cudaMemAccessFlags,
         memPool: cudaMemPool_t,
         location: *mut cudaMemLocation,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolCreate(
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolGetAccess
+            .as_ref()
+            .expect("Expected function, got error."))(flags, memPool, location)
+    }
+    pub unsafe fn cudaMemPoolCreate(
+        &self,
         memPool: *mut cudaMemPool_t,
         poolProps: *const cudaMemPoolProps,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolDestroy(memPool: cudaMemPool_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMallocFromPoolAsync(
-        ptr: *mut *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolCreate
+            .as_ref()
+            .expect("Expected function, got error."))(memPool, poolProps)
+    }
+    pub unsafe fn cudaMemPoolDestroy(&self, memPool: cudaMemPool_t) -> cudaError_t {
+        (self
+            .cudaMemPoolDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(memPool)
+    }
+    pub unsafe fn cudaMallocFromPoolAsync(
+        &self,
+        ptr: *mut *mut ::core::ffi::c_void,
         size: usize,
         memPool: cudaMemPool_t,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolExportToShareableHandle(
-        shareableHandle: *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMallocFromPoolAsync
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, size, memPool, stream)
+    }
+    pub unsafe fn cudaMemPoolExportToShareableHandle(
+        &self,
+        shareableHandle: *mut ::core::ffi::c_void,
         memPool: cudaMemPool_t,
         handleType: cudaMemAllocationHandleType,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolImportFromShareableHandle(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolExportToShareableHandle
+            .as_ref()
+            .expect("Expected function, got error."))(
+            shareableHandle, memPool, handleType, flags
+        )
+    }
+    pub unsafe fn cudaMemPoolImportFromShareableHandle(
+        &self,
         memPool: *mut cudaMemPool_t,
-        shareableHandle: *mut ::std::os::raw::c_void,
+        shareableHandle: *mut ::core::ffi::c_void,
         handleType: cudaMemAllocationHandleType,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolExportPointer(
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolImportFromShareableHandle
+            .as_ref()
+            .expect("Expected function, got error."))(
+            memPool, shareableHandle, handleType, flags
+        )
+    }
+    pub unsafe fn cudaMemPoolExportPointer(
+        &self,
         exportData: *mut cudaMemPoolPtrExportData,
-        ptr: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaMemPoolImportPointer(
-        ptr: *mut *mut ::std::os::raw::c_void,
+        ptr: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolExportPointer
+            .as_ref()
+            .expect("Expected function, got error."))(exportData, ptr)
+    }
+    pub unsafe fn cudaMemPoolImportPointer(
+        &self,
+        ptr: *mut *mut ::core::ffi::c_void,
         memPool: cudaMemPool_t,
         exportData: *mut cudaMemPoolPtrExportData,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaPointerGetAttributes(
+    ) -> cudaError_t {
+        (self
+            .cudaMemPoolImportPointer
+            .as_ref()
+            .expect("Expected function, got error."))(ptr, memPool, exportData)
+    }
+    pub unsafe fn cudaPointerGetAttributes(
+        &self,
         attributes: *mut cudaPointerAttributes,
-        ptr: *const ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceCanAccessPeer(
-        canAccessPeer: *mut ::std::os::raw::c_int,
-        device: ::std::os::raw::c_int,
-        peerDevice: ::std::os::raw::c_int,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceEnablePeerAccess(
-        peerDevice: ::std::os::raw::c_int,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceDisablePeerAccess(peerDevice: ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsUnregisterResource(resource: cudaGraphicsResource_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsResourceSetMapFlags(
+        ptr: *const ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaPointerGetAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(attributes, ptr)
+    }
+    pub unsafe fn cudaDeviceCanAccessPeer(
+        &self,
+        canAccessPeer: *mut ::core::ffi::c_int,
+        device: ::core::ffi::c_int,
+        peerDevice: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceCanAccessPeer
+            .as_ref()
+            .expect("Expected function, got error."))(canAccessPeer, device, peerDevice)
+    }
+    pub unsafe fn cudaDeviceEnablePeerAccess(
+        &self,
+        peerDevice: ::core::ffi::c_int,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceEnablePeerAccess
+            .as_ref()
+            .expect("Expected function, got error."))(peerDevice, flags)
+    }
+    pub unsafe fn cudaDeviceDisablePeerAccess(
+        &self,
+        peerDevice: ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceDisablePeerAccess
+            .as_ref()
+            .expect("Expected function, got error."))(peerDevice)
+    }
+    pub unsafe fn cudaGraphicsUnregisterResource(
+        &self,
         resource: cudaGraphicsResource_t,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsMapResources(
-        count: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsUnregisterResource
+            .as_ref()
+            .expect("Expected function, got error."))(resource)
+    }
+    pub unsafe fn cudaGraphicsResourceSetMapFlags(
+        &self,
+        resource: cudaGraphicsResource_t,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsResourceSetMapFlags
+            .as_ref()
+            .expect("Expected function, got error."))(resource, flags)
+    }
+    pub unsafe fn cudaGraphicsMapResources(
+        &self,
+        count: ::core::ffi::c_int,
         resources: *mut cudaGraphicsResource_t,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsUnmapResources(
-        count: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsMapResources
+            .as_ref()
+            .expect("Expected function, got error."))(count, resources, stream)
+    }
+    pub unsafe fn cudaGraphicsUnmapResources(
+        &self,
+        count: ::core::ffi::c_int,
         resources: *mut cudaGraphicsResource_t,
         stream: cudaStream_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsResourceGetMappedPointer(
-        devPtr: *mut *mut ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsUnmapResources
+            .as_ref()
+            .expect("Expected function, got error."))(count, resources, stream)
+    }
+    pub unsafe fn cudaGraphicsResourceGetMappedPointer(
+        &self,
+        devPtr: *mut *mut ::core::ffi::c_void,
         size: *mut usize,
         resource: cudaGraphicsResource_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsSubResourceGetMappedArray(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsResourceGetMappedPointer
+            .as_ref()
+            .expect("Expected function, got error."))(devPtr, size, resource)
+    }
+    pub unsafe fn cudaGraphicsSubResourceGetMappedArray(
+        &self,
         array: *mut cudaArray_t,
         resource: cudaGraphicsResource_t,
-        arrayIndex: ::std::os::raw::c_uint,
-        mipLevel: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphicsResourceGetMappedMipmappedArray(
+        arrayIndex: ::core::ffi::c_uint,
+        mipLevel: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsSubResourceGetMappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(array, resource, arrayIndex, mipLevel)
+    }
+    pub unsafe fn cudaGraphicsResourceGetMappedMipmappedArray(
+        &self,
         mipmappedArray: *mut cudaMipmappedArray_t,
         resource: cudaGraphicsResource_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetChannelDesc(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphicsResourceGetMappedMipmappedArray
+            .as_ref()
+            .expect("Expected function, got error."))(mipmappedArray, resource)
+    }
+    pub unsafe fn cudaGetChannelDesc(
+        &self,
         desc: *mut cudaChannelFormatDesc,
         array: cudaArray_const_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaCreateChannelDesc(
-        x: ::std::os::raw::c_int,
-        y: ::std::os::raw::c_int,
-        z: ::std::os::raw::c_int,
-        w: ::std::os::raw::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaGetChannelDesc
+            .as_ref()
+            .expect("Expected function, got error."))(desc, array)
+    }
+    pub unsafe fn cudaCreateChannelDesc(
+        &self,
+        x: ::core::ffi::c_int,
+        y: ::core::ffi::c_int,
+        z: ::core::ffi::c_int,
+        w: ::core::ffi::c_int,
         f: cudaChannelFormatKind,
-    ) -> cudaChannelFormatDesc;
-}
-extern "C" {
-    pub fn cudaCreateTextureObject(
+    ) -> cudaChannelFormatDesc {
+        (self
+            .cudaCreateChannelDesc
+            .as_ref()
+            .expect("Expected function, got error."))(x, y, z, w, f)
+    }
+    pub unsafe fn cudaCreateTextureObject(
+        &self,
         pTexObject: *mut cudaTextureObject_t,
         pResDesc: *const cudaResourceDesc,
         pTexDesc: *const cudaTextureDesc,
         pResViewDesc: *const cudaResourceViewDesc,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDestroyTextureObject(texObject: cudaTextureObject_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetTextureObjectResourceDesc(
+    ) -> cudaError_t {
+        (self
+            .cudaCreateTextureObject
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pTexObject, pResDesc, pTexDesc, pResViewDesc
+        )
+    }
+    pub unsafe fn cudaDestroyTextureObject(&self, texObject: cudaTextureObject_t) -> cudaError_t {
+        (self
+            .cudaDestroyTextureObject
+            .as_ref()
+            .expect("Expected function, got error."))(texObject)
+    }
+    pub unsafe fn cudaGetTextureObjectResourceDesc(
+        &self,
         pResDesc: *mut cudaResourceDesc,
         texObject: cudaTextureObject_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetTextureObjectTextureDesc(
+    ) -> cudaError_t {
+        (self
+            .cudaGetTextureObjectResourceDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pResDesc, texObject)
+    }
+    pub unsafe fn cudaGetTextureObjectTextureDesc(
+        &self,
         pTexDesc: *mut cudaTextureDesc,
         texObject: cudaTextureObject_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetTextureObjectResourceViewDesc(
+    ) -> cudaError_t {
+        (self
+            .cudaGetTextureObjectTextureDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pTexDesc, texObject)
+    }
+    pub unsafe fn cudaGetTextureObjectResourceViewDesc(
+        &self,
         pResViewDesc: *mut cudaResourceViewDesc,
         texObject: cudaTextureObject_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaCreateSurfaceObject(
+    ) -> cudaError_t {
+        (self
+            .cudaGetTextureObjectResourceViewDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pResViewDesc, texObject)
+    }
+    pub unsafe fn cudaCreateSurfaceObject(
+        &self,
         pSurfObject: *mut cudaSurfaceObject_t,
         pResDesc: *const cudaResourceDesc,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDestroySurfaceObject(surfObject: cudaSurfaceObject_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetSurfaceObjectResourceDesc(
+    ) -> cudaError_t {
+        (self
+            .cudaCreateSurfaceObject
+            .as_ref()
+            .expect("Expected function, got error."))(pSurfObject, pResDesc)
+    }
+    pub unsafe fn cudaDestroySurfaceObject(&self, surfObject: cudaSurfaceObject_t) -> cudaError_t {
+        (self
+            .cudaDestroySurfaceObject
+            .as_ref()
+            .expect("Expected function, got error."))(surfObject)
+    }
+    pub unsafe fn cudaGetSurfaceObjectResourceDesc(
+        &self,
         pResDesc: *mut cudaResourceDesc,
         surfObject: cudaSurfaceObject_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDriverGetVersion(driverVersion: *mut ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaRuntimeGetVersion(runtimeVersion: *mut ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphCreate(pGraph: *mut cudaGraph_t, flags: ::std::os::raw::c_uint) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddKernelNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGetSurfaceObjectResourceDesc
+            .as_ref()
+            .expect("Expected function, got error."))(pResDesc, surfObject)
+    }
+    pub unsafe fn cudaDriverGetVersion(
+        &self,
+        driverVersion: *mut ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaDriverGetVersion
+            .as_ref()
+            .expect("Expected function, got error."))(driverVersion)
+    }
+    pub unsafe fn cudaRuntimeGetVersion(
+        &self,
+        runtimeVersion: *mut ::core::ffi::c_int,
+    ) -> cudaError_t {
+        (self
+            .cudaRuntimeGetVersion
+            .as_ref()
+            .expect("Expected function, got error."))(runtimeVersion)
+    }
+    pub unsafe fn cudaGraphCreate(
+        &self,
+        pGraph: *mut cudaGraph_t,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphCreate
+            .as_ref()
+            .expect("Expected function, got error."))(pGraph, flags)
+    }
+    pub unsafe fn cudaGraphAddKernelNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         pNodeParams: *const cudaKernelNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphKernelNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddKernelNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            pNodeParams,
+        )
+    }
+    pub unsafe fn cudaGraphKernelNodeGetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *mut cudaKernelNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphKernelNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphKernelNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphKernelNodeSetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaKernelNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphKernelNodeCopyAttributes(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphKernelNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphKernelNodeCopyAttributes(
+        &self,
         hSrc: cudaGraphNode_t,
         hDst: cudaGraphNode_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphKernelNodeGetAttribute(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphKernelNodeCopyAttributes
+            .as_ref()
+            .expect("Expected function, got error."))(hSrc, hDst)
+    }
+    pub unsafe fn cudaGraphKernelNodeGetAttribute(
+        &self,
         hNode: cudaGraphNode_t,
         attr: cudaLaunchAttributeID,
         value_out: *mut cudaLaunchAttributeValue,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphKernelNodeSetAttribute(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphKernelNodeGetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, attr, value_out)
+    }
+    pub unsafe fn cudaGraphKernelNodeSetAttribute(
+        &self,
         hNode: cudaGraphNode_t,
         attr: cudaLaunchAttributeID,
         value: *const cudaLaunchAttributeValue,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemcpyNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphKernelNodeSetAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, attr, value)
+    }
+    pub unsafe fn cudaGraphAddMemcpyNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         pCopyParams: *const cudaMemcpy3DParms,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemcpyNodeToSymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemcpyNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            pCopyParams,
+        )
+    }
+    pub unsafe fn cudaGraphAddMemcpyNodeToSymbol(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
-        symbol: *const ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+        symbol: *const ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemcpyNodeFromSymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemcpyNodeToSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            symbol,
+            src,
+            count,
+            offset,
+            kind,
+        )
+    }
+    pub unsafe fn cudaGraphAddMemcpyNodeFromSymbol(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
-        dst: *mut ::std::os::raw::c_void,
-        symbol: *const ::std::os::raw::c_void,
+        dst: *mut ::core::ffi::c_void,
+        symbol: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemcpyNode1D(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemcpyNodeFromSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            dst,
+            symbol,
+            count,
+            offset,
+            kind,
+        )
+    }
+    pub unsafe fn cudaGraphAddMemcpyNode1D(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
-        dst: *mut ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+        dst: *mut ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemcpyNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemcpyNode1D
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            dst,
+            src,
+            count,
+            kind,
+        )
+    }
+    pub unsafe fn cudaGraphMemcpyNodeGetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *mut cudaMemcpy3DParms,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemcpyNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemcpyNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphMemcpyNodeSetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaMemcpy3DParms,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemcpyNodeSetParamsToSymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemcpyNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphMemcpyNodeSetParamsToSymbol(
+        &self,
         node: cudaGraphNode_t,
-        symbol: *const ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+        symbol: *const ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemcpyNodeSetParamsFromSymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemcpyNodeSetParamsToSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(node, symbol, src, count, offset, kind)
+    }
+    pub unsafe fn cudaGraphMemcpyNodeSetParamsFromSymbol(
+        &self,
         node: cudaGraphNode_t,
-        dst: *mut ::std::os::raw::c_void,
-        symbol: *const ::std::os::raw::c_void,
+        dst: *mut ::core::ffi::c_void,
+        symbol: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemcpyNodeSetParams1D(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemcpyNodeSetParamsFromSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(node, dst, symbol, count, offset, kind)
+    }
+    pub unsafe fn cudaGraphMemcpyNodeSetParams1D(
+        &self,
         node: cudaGraphNode_t,
-        dst: *mut ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+        dst: *mut ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemsetNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemcpyNodeSetParams1D
+            .as_ref()
+            .expect("Expected function, got error."))(node, dst, src, count, kind)
+    }
+    pub unsafe fn cudaGraphAddMemsetNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         pMemsetParams: *const cudaMemsetParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemsetNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemsetNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            pMemsetParams,
+        )
+    }
+    pub unsafe fn cudaGraphMemsetNodeGetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *mut cudaMemsetParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemsetNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemsetNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphMemsetNodeSetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaMemsetParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddHostNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemsetNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphAddHostNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         pNodeParams: *const cudaHostNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphHostNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddHostNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            pNodeParams,
+        )
+    }
+    pub unsafe fn cudaGraphHostNodeGetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *mut cudaHostNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphHostNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphHostNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphHostNodeSetParams(
+        &self,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaHostNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddChildGraphNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphHostNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphAddChildGraphNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         childGraph: cudaGraph_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphChildGraphNodeGetGraph(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddChildGraphNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            childGraph,
+        )
+    }
+    pub unsafe fn cudaGraphChildGraphNodeGetGraph(
+        &self,
         node: cudaGraphNode_t,
         pGraph: *mut cudaGraph_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddEmptyNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphChildGraphNodeGetGraph
+            .as_ref()
+            .expect("Expected function, got error."))(node, pGraph)
+    }
+    pub unsafe fn cudaGraphAddEmptyNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddEventRecordNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddEmptyNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+        )
+    }
+    pub unsafe fn cudaGraphAddEventRecordNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         event: cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphEventRecordNodeGetEvent(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddEventRecordNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            event,
+        )
+    }
+    pub unsafe fn cudaGraphEventRecordNodeGetEvent(
+        &self,
         node: cudaGraphNode_t,
         event_out: *mut cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphEventRecordNodeSetEvent(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphEventRecordNodeGetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(node, event_out)
+    }
+    pub unsafe fn cudaGraphEventRecordNodeSetEvent(
+        &self,
         node: cudaGraphNode_t,
         event: cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddEventWaitNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphEventRecordNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(node, event)
+    }
+    pub unsafe fn cudaGraphAddEventWaitNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         event: cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphEventWaitNodeGetEvent(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddEventWaitNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            event,
+        )
+    }
+    pub unsafe fn cudaGraphEventWaitNodeGetEvent(
+        &self,
         node: cudaGraphNode_t,
         event_out: *mut cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphEventWaitNodeSetEvent(node: cudaGraphNode_t, event: cudaEvent_t)
-        -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddExternalSemaphoresSignalNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphEventWaitNodeGetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(node, event_out)
+    }
+    pub unsafe fn cudaGraphEventWaitNodeSetEvent(
+        &self,
+        node: cudaGraphNode_t,
+        event: cudaEvent_t,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphEventWaitNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(node, event)
+    }
+    pub unsafe fn cudaGraphAddExternalSemaphoresSignalNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         nodeParams: *const cudaExternalSemaphoreSignalNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExternalSemaphoresSignalNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddExternalSemaphoresSignalNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cudaGraphExternalSemaphoresSignalNodeGetParams(
+        &self,
         hNode: cudaGraphNode_t,
         params_out: *mut cudaExternalSemaphoreSignalNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExternalSemaphoresSignalNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExternalSemaphoresSignalNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, params_out)
+    }
+    pub unsafe fn cudaGraphExternalSemaphoresSignalNodeSetParams(
+        &self,
         hNode: cudaGraphNode_t,
         nodeParams: *const cudaExternalSemaphoreSignalNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddExternalSemaphoresWaitNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExternalSemaphoresSignalNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cudaGraphAddExternalSemaphoresWaitNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         nodeParams: *const cudaExternalSemaphoreWaitNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExternalSemaphoresWaitNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddExternalSemaphoresWaitNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cudaGraphExternalSemaphoresWaitNodeGetParams(
+        &self,
         hNode: cudaGraphNode_t,
         params_out: *mut cudaExternalSemaphoreWaitNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExternalSemaphoresWaitNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExternalSemaphoresWaitNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, params_out)
+    }
+    pub unsafe fn cudaGraphExternalSemaphoresWaitNodeSetParams(
+        &self,
         hNode: cudaGraphNode_t,
         nodeParams: *const cudaExternalSemaphoreWaitNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemAllocNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExternalSemaphoresWaitNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hNode, nodeParams)
+    }
+    pub unsafe fn cudaGraphAddMemAllocNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         nodeParams: *mut cudaMemAllocNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemAllocNodeGetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemAllocNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cudaGraphMemAllocNodeGetParams(
+        &self,
         node: cudaGraphNode_t,
         params_out: *mut cudaMemAllocNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddMemFreeNode(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemAllocNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, params_out)
+    }
+    pub unsafe fn cudaGraphAddMemFreeNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
-        dptr: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphMemFreeNodeGetParams(
+        dptr: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddMemFreeNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            dptr,
+        )
+    }
+    pub unsafe fn cudaGraphMemFreeNodeGetParams(
+        &self,
         node: cudaGraphNode_t,
-        dptr_out: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGraphMemTrim(device: ::std::os::raw::c_int) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceGetGraphMemAttribute(
-        device: ::std::os::raw::c_int,
+        dptr_out: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphMemFreeNodeGetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, dptr_out)
+    }
+    pub unsafe fn cudaDeviceGraphMemTrim(&self, device: ::core::ffi::c_int) -> cudaError_t {
+        (self
+            .cudaDeviceGraphMemTrim
+            .as_ref()
+            .expect("Expected function, got error."))(device)
+    }
+    pub unsafe fn cudaDeviceGetGraphMemAttribute(
+        &self,
+        device: ::core::ffi::c_int,
         attr: cudaGraphMemAttributeType,
-        value: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaDeviceSetGraphMemAttribute(
-        device: ::std::os::raw::c_int,
+        value: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceGetGraphMemAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(device, attr, value)
+    }
+    pub unsafe fn cudaDeviceSetGraphMemAttribute(
+        &self,
+        device: ::core::ffi::c_int,
         attr: cudaGraphMemAttributeType,
-        value: *mut ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphClone(pGraphClone: *mut cudaGraph_t, originalGraph: cudaGraph_t)
-        -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeFindInClone(
+        value: *mut ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaDeviceSetGraphMemAttribute
+            .as_ref()
+            .expect("Expected function, got error."))(device, attr, value)
+    }
+    pub unsafe fn cudaGraphClone(
+        &self,
+        pGraphClone: *mut cudaGraph_t,
+        originalGraph: cudaGraph_t,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphClone
+            .as_ref()
+            .expect("Expected function, got error."))(pGraphClone, originalGraph)
+    }
+    pub unsafe fn cudaGraphNodeFindInClone(
+        &self,
         pNode: *mut cudaGraphNode_t,
         originalNode: cudaGraphNode_t,
         clonedGraph: cudaGraph_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeGetType(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeFindInClone
+            .as_ref()
+            .expect("Expected function, got error."))(pNode, originalNode, clonedGraph)
+    }
+    pub unsafe fn cudaGraphNodeGetType(
+        &self,
         node: cudaGraphNode_t,
         pType: *mut cudaGraphNodeType,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphGetNodes(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeGetType
+            .as_ref()
+            .expect("Expected function, got error."))(node, pType)
+    }
+    pub unsafe fn cudaGraphGetNodes(
+        &self,
         graph: cudaGraph_t,
         nodes: *mut cudaGraphNode_t,
         numNodes: *mut usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphGetRootNodes(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphGetNodes
+            .as_ref()
+            .expect("Expected function, got error."))(graph, nodes, numNodes)
+    }
+    pub unsafe fn cudaGraphGetRootNodes(
+        &self,
         graph: cudaGraph_t,
         pRootNodes: *mut cudaGraphNode_t,
         pNumRootNodes: *mut usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphGetEdges(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphGetRootNodes
+            .as_ref()
+            .expect("Expected function, got error."))(graph, pRootNodes, pNumRootNodes)
+    }
+    pub unsafe fn cudaGraphGetEdges(
+        &self,
         graph: cudaGraph_t,
         from: *mut cudaGraphNode_t,
         to: *mut cudaGraphNode_t,
         numEdges: *mut usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeGetDependencies(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphGetEdges
+            .as_ref()
+            .expect("Expected function, got error."))(graph, from, to, numEdges)
+    }
+    pub unsafe fn cudaGraphNodeGetDependencies(
+        &self,
         node: cudaGraphNode_t,
         pDependencies: *mut cudaGraphNode_t,
         pNumDependencies: *mut usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeGetDependentNodes(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeGetDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(node, pDependencies, pNumDependencies)
+    }
+    pub unsafe fn cudaGraphNodeGetDependentNodes(
+        &self,
         node: cudaGraphNode_t,
         pDependentNodes: *mut cudaGraphNode_t,
         pNumDependentNodes: *mut usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddDependencies(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeGetDependentNodes
+            .as_ref()
+            .expect("Expected function, got error."))(
+            node, pDependentNodes, pNumDependentNodes
+        )
+    }
+    pub unsafe fn cudaGraphAddDependencies(
+        &self,
         graph: cudaGraph_t,
         from: *const cudaGraphNode_t,
         to: *const cudaGraphNode_t,
         numDependencies: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphRemoveDependencies(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(graph, from, to, numDependencies)
+    }
+    pub unsafe fn cudaGraphRemoveDependencies(
+        &self,
         graph: cudaGraph_t,
         from: *const cudaGraphNode_t,
         to: *const cudaGraphNode_t,
         numDependencies: usize,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphDestroyNode(node: cudaGraphNode_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphInstantiate(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphRemoveDependencies
+            .as_ref()
+            .expect("Expected function, got error."))(graph, from, to, numDependencies)
+    }
+    pub unsafe fn cudaGraphDestroyNode(&self, node: cudaGraphNode_t) -> cudaError_t {
+        (self
+            .cudaGraphDestroyNode
+            .as_ref()
+            .expect("Expected function, got error."))(node)
+    }
+    pub unsafe fn cudaGraphInstantiate(
+        &self,
         pGraphExec: *mut cudaGraphExec_t,
         graph: cudaGraph_t,
-        flags: ::std::os::raw::c_ulonglong,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphInstantiateWithFlags(
+        flags: ::core::ffi::c_ulonglong,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphInstantiate
+            .as_ref()
+            .expect("Expected function, got error."))(pGraphExec, graph, flags)
+    }
+    pub unsafe fn cudaGraphInstantiateWithFlags(
+        &self,
         pGraphExec: *mut cudaGraphExec_t,
         graph: cudaGraph_t,
-        flags: ::std::os::raw::c_ulonglong,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphInstantiateWithParams(
+        flags: ::core::ffi::c_ulonglong,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphInstantiateWithFlags
+            .as_ref()
+            .expect("Expected function, got error."))(pGraphExec, graph, flags)
+    }
+    pub unsafe fn cudaGraphInstantiateWithParams(
+        &self,
         pGraphExec: *mut cudaGraphExec_t,
         graph: cudaGraph_t,
         instantiateParams: *mut cudaGraphInstantiateParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecGetFlags(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphInstantiateWithParams
+            .as_ref()
+            .expect("Expected function, got error."))(pGraphExec, graph, instantiateParams)
+    }
+    pub unsafe fn cudaGraphExecGetFlags(
+        &self,
         graphExec: cudaGraphExec_t,
-        flags: *mut ::std::os::raw::c_ulonglong,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecKernelNodeSetParams(
+        flags: *mut ::core::ffi::c_ulonglong,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecGetFlags
+            .as_ref()
+            .expect("Expected function, got error."))(graphExec, flags)
+    }
+    pub unsafe fn cudaGraphExecKernelNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaKernelNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecMemcpyNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecKernelNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphExecMemcpyNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaMemcpy3DParms,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecMemcpyNodeSetParamsToSymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecMemcpyNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphExecMemcpyNodeSetParamsToSymbol(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
-        symbol: *const ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+        symbol: *const ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecMemcpyNodeSetParamsFromSymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecMemcpyNodeSetParamsToSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hGraphExec, node, symbol, src, count, offset, kind,
+        )
+    }
+    pub unsafe fn cudaGraphExecMemcpyNodeSetParamsFromSymbol(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
-        dst: *mut ::std::os::raw::c_void,
-        symbol: *const ::std::os::raw::c_void,
+        dst: *mut ::core::ffi::c_void,
+        symbol: *const ::core::ffi::c_void,
         count: usize,
         offset: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecMemcpyNodeSetParams1D(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecMemcpyNodeSetParamsFromSymbol
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hGraphExec, node, dst, symbol, count, offset, kind,
+        )
+    }
+    pub unsafe fn cudaGraphExecMemcpyNodeSetParams1D(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
-        dst: *mut ::std::os::raw::c_void,
-        src: *const ::std::os::raw::c_void,
+        dst: *mut ::core::ffi::c_void,
+        src: *const ::core::ffi::c_void,
         count: usize,
         kind: cudaMemcpyKind,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecMemsetNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecMemcpyNodeSetParams1D
+            .as_ref()
+            .expect("Expected function, got error."))(
+            hGraphExec, node, dst, src, count, kind
+        )
+    }
+    pub unsafe fn cudaGraphExecMemsetNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaMemsetParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecHostNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecMemsetNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphExecHostNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
         pNodeParams: *const cudaHostNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecChildGraphNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecHostNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, node, pNodeParams)
+    }
+    pub unsafe fn cudaGraphExecChildGraphNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
         childGraph: cudaGraph_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecEventRecordNodeSetEvent(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecChildGraphNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, node, childGraph)
+    }
+    pub unsafe fn cudaGraphExecEventRecordNodeSetEvent(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hNode: cudaGraphNode_t,
         event: cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecEventWaitNodeSetEvent(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecEventRecordNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, event)
+    }
+    pub unsafe fn cudaGraphExecEventWaitNodeSetEvent(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hNode: cudaGraphNode_t,
         event: cudaEvent_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecExternalSemaphoresSignalNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecEventWaitNodeSetEvent
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, event)
+    }
+    pub unsafe fn cudaGraphExecExternalSemaphoresSignalNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hNode: cudaGraphNode_t,
         nodeParams: *const cudaExternalSemaphoreSignalNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecExternalSemaphoresWaitNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecExternalSemaphoresSignalNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cudaGraphExecExternalSemaphoresWaitNodeSetParams(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hNode: cudaGraphNode_t,
         nodeParams: *const cudaExternalSemaphoreWaitNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeSetEnabled(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecExternalSemaphoresWaitNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, nodeParams)
+    }
+    pub unsafe fn cudaGraphNodeSetEnabled(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hNode: cudaGraphNode_t,
-        isEnabled: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeGetEnabled(
+        isEnabled: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeSetEnabled
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, isEnabled)
+    }
+    pub unsafe fn cudaGraphNodeGetEnabled(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hNode: cudaGraphNode_t,
-        isEnabled: *mut ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecUpdate(
+        isEnabled: *mut ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeGetEnabled
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hNode, isEnabled)
+    }
+    pub unsafe fn cudaGraphExecUpdate(
+        &self,
         hGraphExec: cudaGraphExec_t,
         hGraph: cudaGraph_t,
         resultInfo: *mut cudaGraphExecUpdateResultInfo,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphUpload(graphExec: cudaGraphExec_t, stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphLaunch(graphExec: cudaGraphExec_t, stream: cudaStream_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecDestroy(graphExec: cudaGraphExec_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphDestroy(graph: cudaGraph_t) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphDebugDotPrint(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecUpdate
+            .as_ref()
+            .expect("Expected function, got error."))(hGraphExec, hGraph, resultInfo)
+    }
+    pub unsafe fn cudaGraphUpload(
+        &self,
+        graphExec: cudaGraphExec_t,
+        stream: cudaStream_t,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphUpload
+            .as_ref()
+            .expect("Expected function, got error."))(graphExec, stream)
+    }
+    pub unsafe fn cudaGraphLaunch(
+        &self,
+        graphExec: cudaGraphExec_t,
+        stream: cudaStream_t,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphLaunch
+            .as_ref()
+            .expect("Expected function, got error."))(graphExec, stream)
+    }
+    pub unsafe fn cudaGraphExecDestroy(&self, graphExec: cudaGraphExec_t) -> cudaError_t {
+        (self
+            .cudaGraphExecDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(graphExec)
+    }
+    pub unsafe fn cudaGraphDestroy(&self, graph: cudaGraph_t) -> cudaError_t {
+        (self
+            .cudaGraphDestroy
+            .as_ref()
+            .expect("Expected function, got error."))(graph)
+    }
+    pub unsafe fn cudaGraphDebugDotPrint(
+        &self,
         graph: cudaGraph_t,
-        path: *const ::std::os::raw::c_char,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaUserObjectCreate(
+        path: *const ::core::ffi::c_char,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphDebugDotPrint
+            .as_ref()
+            .expect("Expected function, got error."))(graph, path, flags)
+    }
+    pub unsafe fn cudaUserObjectCreate(
+        &self,
         object_out: *mut cudaUserObject_t,
-        ptr: *mut ::std::os::raw::c_void,
+        ptr: *mut ::core::ffi::c_void,
         destroy: cudaHostFn_t,
-        initialRefcount: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaUserObjectRetain(
+        initialRefcount: ::core::ffi::c_uint,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaUserObjectCreate
+            .as_ref()
+            .expect("Expected function, got error."))(
+            object_out,
+            ptr,
+            destroy,
+            initialRefcount,
+            flags,
+        )
+    }
+    pub unsafe fn cudaUserObjectRetain(
+        &self,
         object: cudaUserObject_t,
-        count: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaUserObjectRelease(
+        count: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaUserObjectRetain
+            .as_ref()
+            .expect("Expected function, got error."))(object, count)
+    }
+    pub unsafe fn cudaUserObjectRelease(
+        &self,
         object: cudaUserObject_t,
-        count: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphRetainUserObject(
+        count: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaUserObjectRelease
+            .as_ref()
+            .expect("Expected function, got error."))(object, count)
+    }
+    pub unsafe fn cudaGraphRetainUserObject(
+        &self,
         graph: cudaGraph_t,
         object: cudaUserObject_t,
-        count: ::std::os::raw::c_uint,
-        flags: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphReleaseUserObject(
+        count: ::core::ffi::c_uint,
+        flags: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphRetainUserObject
+            .as_ref()
+            .expect("Expected function, got error."))(graph, object, count, flags)
+    }
+    pub unsafe fn cudaGraphReleaseUserObject(
+        &self,
         graph: cudaGraph_t,
         object: cudaUserObject_t,
-        count: ::std::os::raw::c_uint,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphAddNode(
+        count: ::core::ffi::c_uint,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphReleaseUserObject
+            .as_ref()
+            .expect("Expected function, got error."))(graph, object, count)
+    }
+    pub unsafe fn cudaGraphAddNode(
+        &self,
         pGraphNode: *mut cudaGraphNode_t,
         graph: cudaGraph_t,
         pDependencies: *const cudaGraphNode_t,
         numDependencies: usize,
         nodeParams: *mut cudaGraphNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphAddNode
+            .as_ref()
+            .expect("Expected function, got error."))(
+            pGraphNode,
+            graph,
+            pDependencies,
+            numDependencies,
+            nodeParams,
+        )
+    }
+    pub unsafe fn cudaGraphNodeSetParams(
+        &self,
         node: cudaGraphNode_t,
         nodeParams: *mut cudaGraphNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGraphExecNodeSetParams(
+    ) -> cudaError_t {
+        (self
+            .cudaGraphNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(node, nodeParams)
+    }
+    pub unsafe fn cudaGraphExecNodeSetParams(
+        &self,
         graphExec: cudaGraphExec_t,
         node: cudaGraphNode_t,
         nodeParams: *mut cudaGraphNodeParams,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetDriverEntryPoint(
-        symbol: *const ::std::os::raw::c_char,
-        funcPtr: *mut *mut ::std::os::raw::c_void,
-        flags: ::std::os::raw::c_ulonglong,
+    ) -> cudaError_t {
+        (self
+            .cudaGraphExecNodeSetParams
+            .as_ref()
+            .expect("Expected function, got error."))(graphExec, node, nodeParams)
+    }
+    pub unsafe fn cudaGetDriverEntryPoint(
+        &self,
+        symbol: *const ::core::ffi::c_char,
+        funcPtr: *mut *mut ::core::ffi::c_void,
+        flags: ::core::ffi::c_ulonglong,
         driverStatus: *mut cudaDriverEntryPointQueryResult,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetExportTable(
-        ppExportTable: *mut *const ::std::os::raw::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGetDriverEntryPoint
+            .as_ref()
+            .expect("Expected function, got error."))(symbol, funcPtr, flags, driverStatus)
+    }
+    pub unsafe fn cudaGetExportTable(
+        &self,
+        ppExportTable: *mut *const ::core::ffi::c_void,
         pExportTableId: *const cudaUUID_t,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetFuncBySymbol(
+    ) -> cudaError_t {
+        (self
+            .cudaGetExportTable
+            .as_ref()
+            .expect("Expected function, got error."))(ppExportTable, pExportTableId)
+    }
+    pub unsafe fn cudaGetFuncBySymbol(
+        &self,
         functionPtr: *mut cudaFunction_t,
-        symbolPtr: *const ::std::os::raw::c_void,
-    ) -> cudaError_t;
-}
-extern "C" {
-    pub fn cudaGetKernel(
+        symbolPtr: *const ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGetFuncBySymbol
+            .as_ref()
+            .expect("Expected function, got error."))(functionPtr, symbolPtr)
+    }
+    pub unsafe fn cudaGetKernel(
+        &self,
         kernelPtr: *mut cudaKernel_t,
-        entryFuncAddr: *const ::std::os::raw::c_void,
-    ) -> cudaError_t;
+        entryFuncAddr: *const ::core::ffi::c_void,
+    ) -> cudaError_t {
+        (self
+            .cudaGetKernel
+            .as_ref()
+            .expect("Expected function, got error."))(kernelPtr, entryFuncAddr)
+    }
+    pub unsafe fn cudaProfilerStart(&self) -> cudaError_t {
+        (self
+            .cudaProfilerStart
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
+    pub unsafe fn cudaProfilerStop(&self) -> cudaError_t {
+        (self
+            .cudaProfilerStop
+            .as_ref()
+            .expect("Expected function, got error."))()
+    }
 }
