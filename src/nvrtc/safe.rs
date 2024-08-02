@@ -190,6 +190,7 @@ pub struct CompileOptions {
     pub prec_sqrt: Option<bool>,
     pub prec_div: Option<bool>,
     pub fmad: Option<bool>,
+    pub options: Vec<String>,
     pub use_fast_math: Option<bool>,
     pub maxrregcount: Option<usize>,
     pub include_paths: Vec<String>,
@@ -230,6 +231,10 @@ impl CompileOptions {
 
         if let Some(arch) = self.arch {
             options.push(std::format!("--gpu-architecture={arch}"))
+        }
+
+        for option in self.options {
+            options.push(option);
         }
 
         options
