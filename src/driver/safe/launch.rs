@@ -157,11 +157,11 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// 1. `params` can be changed regardless of `&` or `&mut` usage.
     /// 2. `params` will be changed at some later point after the
-    /// function returns because the kernel is executed async.
+    ///    function returns because the kernel is executed async.
     /// 3. There are no guaruntees that the `params`
-    /// are the correct number/types/order for `func`.
+    ///    are the correct number/types/order for `func`.
     /// 4. Specifying the wrong values for [LaunchConfig] can result
-    /// in accessing/modifying values past memory limits.
+    ///    in accessing/modifying values past memory limits.
     ///
     /// ## Asynchronous mutation
     ///
