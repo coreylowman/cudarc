@@ -981,10 +981,10 @@ pub mod event {
 ///
 /// 1. The cuda function must be a valid handle returned from a non-unloaded module.
 /// 2. This is asynchronous, so the results of calling this function happen
-/// at a later point after this function returns.
+///    at a later point after this function returns.
 /// 3. All parameters used for this kernel should have been allocated by stream (I think?)
 /// 4. The cuda kernel has mutable access to every parameter, that means every parameter
-/// can change at a later point after callign this function. *Even non-mutable references*.
+///    can change at a later point after callign this function. *Even non-mutable references*.
 #[inline]
 pub unsafe fn launch_kernel(
     f: sys::CUfunction,

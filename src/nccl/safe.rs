@@ -1,5 +1,5 @@
 use super::{result, sys};
-use crate::driver::{CudaDevice, CudaSlice};
+use crate::driver::{CudaDevice, DevicePtr, DevicePtrMut};
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::{sync::Arc, vec, vec::Vec};
@@ -204,15 +204,15 @@ impl Comm {
 }
 
 impl Comm {
-    pub fn send<T: NcclType>(
+    pub fn send<S: DevicePtr<T>, T: NcclType>(
         &self,
-        data: &CudaSlice<T>,
+        data: &S,
         peer: i32,
     ) -> Result<(), result::NcclError> {
         unsafe {
             result::send(
-                data.cu_device_ptr as *mut _,
-                data.len,
+                *data.device_ptr() as *mut _,
+                data.len(),
                 T::as_nccl_type(),
                 peer,
                 self.comm,
@@ -222,15 +222,15 @@ impl Comm {
         Ok(())
     }
 
-    pub fn recv<T: NcclType>(
+    pub fn recv<R: DevicePtrMut<T>, T: NcclType>(
         &self,
-        buff: &mut CudaSlice<T>,
+        buff: &mut R,
         peer: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             result::recv(
-                buff.cu_device_ptr as *mut _,
-                buff.len,
+                *buff.device_ptr_mut() as *mut _,
+                buff.len(),
                 T::as_nccl_type(),
                 peer,
                 self.comm,
@@ -239,21 +239,21 @@ impl Comm {
         }
     }
 
-    pub fn broadcast<T: NcclType>(
+    pub fn broadcast<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
-        sendbuff: &Option<CudaSlice<T>>,
-        recvbuff: &mut CudaSlice<T>,
+        sendbuff: &Option<S>,
+        recvbuff: &mut R,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             let send_ptr = match sendbuff {
-                Some(buffer) => buffer.cu_device_ptr as *mut _,
+                Some(buffer) => *buffer.device_ptr() as *mut _,
                 None => ptr::null(),
             };
             result::broadcast(
                 send_ptr,
-                recvbuff.cu_device_ptr as *mut _,
-                recvbuff.len,
+                *recvbuff.device_ptr_mut() as *mut _,
+                recvbuff.len(),
                 T::as_nccl_type(),
                 root,
                 self.comm,
@@ -262,16 +262,16 @@ impl Comm {
         }
     }
 
-    pub fn all_gather<T: NcclType>(
+    pub fn all_gather<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
-        sendbuff: &CudaSlice<T>,
-        recvbuff: &mut CudaSlice<T>,
+        sendbuff: &S,
+        recvbuff: &mut R,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             result::all_gather(
-                sendbuff.cu_device_ptr as *mut _,
-                recvbuff.cu_device_ptr as *mut _,
-                sendbuff.len,
+                *sendbuff.device_ptr() as *mut _,
+                *recvbuff.device_ptr_mut() as *mut _,
+                sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
                 self.device.stream as *mut _,
@@ -279,17 +279,17 @@ impl Comm {
         }
     }
 
-    pub fn all_reduce<T: NcclType>(
+    pub fn all_reduce<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
-        sendbuff: &CudaSlice<T>,
-        recvbuff: &mut CudaSlice<T>,
+        sendbuff: &S,
+        recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             result::all_reduce(
-                sendbuff.cu_device_ptr as *mut _,
-                recvbuff.cu_device_ptr as *mut _,
-                sendbuff.len,
+                *sendbuff.device_ptr() as *mut _,
+                *recvbuff.device_ptr_mut() as *mut _,
+                sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
@@ -298,18 +298,18 @@ impl Comm {
         }
     }
 
-    pub fn reduce<T: NcclType>(
+    pub fn reduce<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
-        sendbuff: &CudaSlice<T>,
-        recvbuff: &mut CudaSlice<T>,
+        sendbuff: &S,
+        recvbuff: &mut R,
         reduce_op: &ReduceOp,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             result::reduce(
-                sendbuff.cu_device_ptr as *mut _,
-                recvbuff.cu_device_ptr as *mut _,
-                sendbuff.len,
+                *sendbuff.device_ptr() as *mut _,
+                *recvbuff.device_ptr_mut() as *mut _,
+                sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
@@ -319,17 +319,17 @@ impl Comm {
         }
     }
 
-    pub fn reduce_scatter<T: NcclType>(
+    pub fn reduce_scatter<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
-        sendbuff: &CudaSlice<T>,
-        recvbuff: &mut CudaSlice<T>,
+        sendbuff: &S,
+        recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
         unsafe {
             result::reduce_scatter(
-                sendbuff.cu_device_ptr as *mut _,
-                recvbuff.cu_device_ptr as *mut _,
-                recvbuff.len,
+                *sendbuff.device_ptr() as *mut _,
+                *recvbuff.device_ptr_mut() as *mut _,
+                recvbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
@@ -373,6 +373,37 @@ mod tests {
                     let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
                     let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
                     comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
+                        .unwrap();
+
+                    let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+
+                    assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
+                })
+            })
+            .collect();
+        for t in threads {
+            t.join().unwrap()
+        }
+    }
+
+    #[test]
+    fn test_all_reduce_views() {
+        let n = 2;
+        let n_devices = CudaDevice::count().unwrap() as usize;
+        let id = Id::new().unwrap();
+        let threads: Vec<_> = (0..n_devices)
+            .map(|i| {
+                println!("III {i}");
+                std::thread::spawn(move || {
+                    println!("Within thread {i}");
+                    let dev = CudaDevice::new(i).unwrap();
+                    let comm = Comm::from_rank(dev.clone(), i, n_devices, id).unwrap();
+                    let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+                    let slice_view = slice.slice(..);
+                    let mut slice_receive_view = slice_receive.slice_mut(..);
+
+                    comm.all_reduce(&slice_view, &mut slice_receive_view, &ReduceOp::Sum)
                         .unwrap();
 
                     let out = dev.dtoh_sync_copy(&slice_receive).unwrap();

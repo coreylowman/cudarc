@@ -29,9 +29,9 @@ use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 /// # Safety
 /// 1. impl [Drop] to call all the corresponding resource cleanup methods
 /// 2. Doesn't impl clone, so you can't have multiple device pointers
-/// hanging around.
+///    hanging around.
 /// 3. Any allocations enforce that self is an [Arc], meaning no allocation
-/// can outlive the [CudaDevice]
+///    can outlive the [CudaDevice]
 #[derive(Debug)]
 pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,

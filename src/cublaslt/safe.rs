@@ -12,7 +12,7 @@ use std::sync::Arc;
 ///
 /// 1. Create with [CudaBlasLT::new()]
 /// 2. Execute matmul kernel with matmul. f32 is supported. f16 and bf16 are supported
-/// if feature `half` is activated
+///    if feature `half` is activated
 ///
 /// Note: This maintains a instance of [`Arc<CudaDevice>`], so will prevent the device
 /// from being dropped. Kernels will be launched on the device device default stream.

@@ -11,7 +11,7 @@
 //! ```
 //!
 //! 2. Allocate device memory with host data with [CudaDevice::htod_copy()], [CudaDevice::alloc_zeros()],
-//! or [CudaDevice::htod_sync_copy()].
+//!    or [CudaDevice::htod_sync_copy()].
 //!
 //! You can also copy data to CudaSlice using [CudaDevice::htod_sync_copy_into()]
 //!
@@ -24,7 +24,7 @@
 //! ```
 //!
 //! 3. Transfer to host memory with [CudaDevice::sync_reclaim()], [CudaDevice::dtoh_sync_copy()],
-//! or [CudaDevice::dtoh_sync_copy_into()]
+//!    or [CudaDevice::dtoh_sync_copy_into()]
 //!
 //! ```rust
 //! # use cudarc::driver::*;
