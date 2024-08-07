@@ -6,7 +6,9 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
     println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
 
-    let (major, minor): (usize, usize) = if cfg!(feature = "cuda-12050") {
+    let (major, minor): (usize, usize) = if cfg!(feature = "cuda-12060") {
+        (12, 6)
+    } else if cfg!(feature = "cuda-12050") {
         (12, 5)
     } else if cfg!(feature = "cuda-12040") {
         (12, 4)
@@ -30,7 +32,7 @@ fn main() {
         (11, 4)
     } else {
         #[cfg(not(feature = "cuda-version-from-build-system"))]
-        panic!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070, cuda-11060, cuda-11050, cuda-11040]");
+        panic!("Must specify one of the following features: [cuda-version-from-build-system, cuda-12060, cuda-12050, cuda-12040, cuda-12030, cuda-12020, cuda-12010, cuda-12000, cuda-11080, cuda-11070, cuda-11060, cuda-11050, cuda-11040]");
 
         #[cfg(feature = "cuda-version-from-build-system")]
         {
@@ -68,6 +70,7 @@ fn cuda_version_from_build_system() -> (usize, usize) {
     let version_number = release_section.split(' ').nth(1).unwrap();
 
     match version_number {
+        "12.6" => (12, 6),
         "12.5" => (12, 5),
         "12.4" => (12, 4),
         "12.3" => (12, 3),
