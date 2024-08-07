@@ -16,7 +16,7 @@ pub struct PoolingDescriptor<T> {
 impl Cudnn {
     pub fn create_poolingnd<T: CudnnDataType>(
         self: &Arc<Cudnn>,
-        input: &[std::ffi::c_int],
+        filter: &[std::ffi::c_int],
         pads: &[std::ffi::c_int],
         strides: &[std::ffi::c_int],
         mode: sys::cudnnPoolingMode_t,
@@ -33,8 +33,8 @@ impl Cudnn {
             desc.desc,
             mode,
             nan_propagation,
-            input.len() as std::ffi::c_int,
-            input,
+            filter.len() as std::ffi::c_int,
+            filter,
             pads,
             strides,
         )?;
@@ -55,15 +55,15 @@ where
     X: CudnnDataType,
     Y: CudnnDataType,
 {
-    pub fn launch<Input, Output>(
+    pub fn launch<Src, Dst>(
         &self,
         (alpha, beta): (Y, Y),
-        input: &Input,
-        output: &mut Output,
+        src: &Src,
+        y: &mut Dst,
     ) -> Result<(), CudnnError>
     where
-        Input: DevicePtr<X>,
-        Output: DevicePtrMut<Y>,
+        Src: DevicePtr<X>,
+        Dst: DevicePtrMut<Y>,
     {
         let alpha = alpha.into_scaling_parameter();
         let beta = beta.into_scaling_parameter();
@@ -72,10 +72,10 @@ where
             self.pooling.desc,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            *input.device_ptr() as *const X as *const std::ffi::c_void,
+            *src.device_ptr() as *const X as *const std::ffi::c_void,
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.y.desc,
-            *output.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
+            *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
         )
     }
 }

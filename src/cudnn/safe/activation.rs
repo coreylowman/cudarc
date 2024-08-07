@@ -3,6 +3,32 @@ use crate::driver::{DevicePtr, DevicePtrMut};
 use core::marker::PhantomData;
 use std::sync::Arc;
 
+#[derive(Debug)]
+pub struct ActivationDescriptor<T> {
+    pub(crate) desc: sys::cudnnActivationDescriptor_t,
+    #[allow(unused)]
+    pub(crate) handle: Arc<Cudnn>,
+    pub(crate) marker: PhantomData<T>,
+}
+
+impl Cudnn {
+    pub fn create_activation<T: CudnnDataType>(
+        self: &Arc<Cudnn>,
+        mode: sys::cudnnActivationMode_t,
+        nan_propagation: sys::cudnnNanPropagation_t,
+        coef: f64,
+    ) -> Result<ActivationDescriptor<T>, CudnnError> {
+        let desc = result::create_activation_descriptor()?;
+        let desc = ActivationDescriptor {
+            desc,
+            handle: self.clone(),
+            marker: PhantomData,
+        };
+        result::set_activation_descriptor(desc.desc, mode, nan_propagation, coef)?;
+        Ok(desc)
+    }
+}
+
 pub struct ActivationForward<'a, A: CudnnDataType, X: CudnnDataType, Y: CudnnDataType> {
     /// Activation function.
     pub act: &'a ActivationDescriptor<A>,
@@ -38,31 +64,5 @@ where
             self.y.desc,
             *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
         )
-    }
-}
-
-#[derive(Debug)]
-pub struct ActivationDescriptor<T> {
-    pub(crate) desc: sys::cudnnActivationDescriptor_t,
-    #[allow(unused)]
-    pub(crate) handle: Arc<Cudnn>,
-    pub(crate) marker: PhantomData<T>,
-}
-
-impl Cudnn {
-    pub fn create_activation<T: CudnnDataType>(
-        self: &Arc<Cudnn>,
-        mode: sys::cudnnActivationMode_t,
-        nan_propagation: sys::cudnnNanPropagation_t,
-        coef: f64,
-    ) -> Result<ActivationDescriptor<T>, CudnnError> {
-        let desc = result::create_activation_descriptor()?;
-        let desc = ActivationDescriptor {
-            desc,
-            handle: self.clone(),
-            marker: PhantomData,
-        };
-        result::set_activation_descriptor(desc.desc, mode, nan_propagation, coef)?;
-        Ok(desc)
     }
 }
