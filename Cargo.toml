@@ -56,5 +56,5 @@ f16 = ["dep:half"]
 [dependencies]
 spin = { version = "0.9.8", optional = true, features = ["rwlock"], default-features = false }
 no-std-compat = { version = "0.4.1", optional = true, features = [ "alloc" ] }
-half = { version = "2.3.1", optional = true, default-features = false, features = ["num-traits", "rand_distr"] }
-libloading = "0.8.3"
+half = { version = "2.4.1", optional = true, default-features = false, features = ["num-traits", "rand_distr"] }
+libloading = "0.8.5"
