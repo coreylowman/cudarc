@@ -1011,6 +1011,44 @@ pub unsafe fn launch_kernel(
         .result()
 }
 
+/// Launches a cuda functions
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1g06d753134145c4584c0c62525c1894cb)
+///
+/// # Safety
+/// This method is **very unsafe**.
+///
+/// 1. The cuda function must be a valid handle returned from a non-unloaded module.
+/// 2. This is asynchronous, so the results of calling this function happen
+/// at a later point after this function returns.
+/// 3. All parameters used for this kernel should have been allocated by stream (I think?)
+/// 4. The cuda kernel has mutable access to every parameter, that means every parameter
+/// can change at a later point after callign this function. *Even non-mutable references*.
+#[inline]
+pub unsafe fn launch_cooperative_kernel(
+    f: sys::CUfunction,
+    grid_dim: (c_uint, c_uint, c_uint),
+    block_dim: (c_uint, c_uint, c_uint),
+    shared_mem_bytes: c_uint,
+    stream: sys::CUstream,
+    kernel_params: &mut [*mut c_void],
+) -> Result<(), DriverError> {
+    lib()
+        .cuLaunchCooperativeKernel(
+            f,
+            grid_dim.0,
+            grid_dim.1,
+            grid_dim.2,
+            block_dim.0,
+            block_dim.1,
+            block_dim.2,
+            shared_mem_bytes,
+            stream,
+            kernel_params.as_mut_ptr(),
+        )
+        .result()
+}
+
 pub mod external_memory {
     use std::mem::MaybeUninit;
 
