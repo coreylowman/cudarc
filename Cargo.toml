@@ -24,7 +24,7 @@ keywords = [
 features = ["cuda-12050", "f16", "cudnn"]
 
 [features]
-default = ["std", "cublas", "cublaslt", "curand", "driver", "nvrtc"]
+default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc"]
 
 cuda-version-from-build-system = []
 cuda-11040 = []
