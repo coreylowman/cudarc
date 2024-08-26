@@ -1,6 +1,6 @@
 [package]
 name = "cudarc"
-version = "0.11.8"
+version = "0.12.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
@@ -24,7 +24,7 @@ keywords = [
 features = ["cuda-12050", "f16", "cudnn"]
 
 [features]
-default = ["std", "cublas", "cublaslt", "cudnn", "curand", "driver", "runtime", "nccl", "nvrtc"]
+default = ["std", "cublas", "cublaslt", "curand", "driver", "nvrtc"]
 
 cuda-version-from-build-system = []
 cuda-11040 = []
@@ -57,5 +57,5 @@ f16 = ["dep:half"]
 [dependencies]
 spin = { version = "0.9.8", optional = true, features = ["rwlock"], default-features = false }
 no-std-compat = { version = "0.4.1", optional = true, features = [ "alloc" ] }
-half = { version = "2.3.1", optional = true, default-features = false, features = ["num-traits", "rand_distr"] }
-libloading = "0.8.3"
+half = { version = "2.4.1", optional = true, default-features = false, features = ["num-traits", "rand_distr"] }
+libloading = "0.8.5"
