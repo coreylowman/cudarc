@@ -50,6 +50,37 @@ impl CudaBlas {
             None => result::set_stream(self.handle, self.device.stream as *mut _),
         }
     }
+
+    /// Set the handle's pointer mode.
+    /// ref: <https://docs.nvidia.com/cuda/cublas/#cublassetpointermode>
+    ///
+    /// Some cublas functions require the pointer mode to be set to `cublasPointerMode_t::CUBLAS_POINTER_MODE_DEVICE`
+    /// when passing a device memory result buffer into the function, such as `cublas<t>asum()`.
+    /// Otherwise the operation will panic with `SIGSEGV: invalid memory reference`,
+    /// or one has to use a host memory reference, which has performance implications.
+    pub fn set_pointer_mode(
+        &self,
+        pointer_mode: sys::cublasPointerMode_t,
+    ) -> Result<(), CublasError> {
+        unsafe {
+            sys::lib()
+                .cublasSetPointerMode_v2(self.handle, pointer_mode)
+                .result()?;
+        }
+        Ok(())
+    }
+
+    /// Get the handle's current pointer mode.
+    /// ref: <https://docs.nvidia.com/cuda/cublas/#cublasgetpointermode>
+    pub fn get_pointer_mode(&self) -> Result<sys::cublasPointerMode_t, CublasError> {
+        unsafe {
+            let mut mode = ::core::mem::MaybeUninit::uninit();
+            sys::lib()
+                .cublasGetPointerMode_v2(self.handle, mode.as_mut_ptr())
+                .result()?;
+            return Ok(mode.assume_init());
+        }
+    }
 }
 
 impl Drop for CudaBlas {
@@ -864,5 +895,24 @@ mod tests {
                 assert!((c_host[m * N + n] - c[m][n]) <= 1e-10);
             }
         }
+    }
+
+    #[test]
+    fn cublas_pointer_mode() {
+        let dev = CudaDevice::new(0).unwrap();
+        let blas = CudaBlas::new(dev.clone()).unwrap();
+        assert_eq!(
+            blas.get_pointer_mode().unwrap(),
+            sys::cublasPointerMode_t::CUBLAS_POINTER_MODE_HOST,
+            "The default pointer mode uses host pointers"
+        );
+
+        blas.set_pointer_mode(sys::cublasPointerMode_t::CUBLAS_POINTER_MODE_DEVICE)
+            .unwrap();
+        assert_eq!(
+            blas.get_pointer_mode().unwrap(),
+            sys::cublasPointerMode_t::CUBLAS_POINTER_MODE_DEVICE,
+            "We have set the mode to use device pointers"
+        );
     }
 }
