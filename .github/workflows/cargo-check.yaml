@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        version: [cuda-11040,cuda-11050,cuda-11060,cuda-11070,cuda-11080,cuda-12000,cuda-12010,cuda-12020,cuda-12030,cuda-12040,cuda-12050]
+        version: [cuda-11040,cuda-11050,cuda-11060,cuda-11070,cuda-11080,cuda-12000,cuda-12010,cuda-12020,cuda-12030,cuda-12040,cuda-12050,cuda-12060]
 
     steps:
       - uses: actions/checkout@v2
