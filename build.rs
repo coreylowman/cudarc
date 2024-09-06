@@ -138,6 +138,8 @@ fn dynamic_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=dylib=cublasLt");
     #[cfg(feature = "cudnn")]
     println!("cargo:rustc-link-lib=dylib=cudnn");
+    #[cfg(feature = "runtime")]
+    println!("cargo:rustc-link-lib=dylib=cudart");
 }
 
 #[allow(unused)]
