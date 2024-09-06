@@ -78,7 +78,7 @@ impl CudaBlas {
             sys::lib()
                 .cublasGetPointerMode_v2(self.handle, mode.as_mut_ptr())
                 .result()?;
-            return Ok(mode.assume_init());
+            Ok(mode.assume_init())
         }
     }
 }
