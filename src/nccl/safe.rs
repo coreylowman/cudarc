@@ -262,6 +262,24 @@ impl Comm {
         }
     }
 
+    pub fn broadcast_in_place<R: DevicePtrMut<T>, T: NcclType>(
+        &self,
+        recvbuff: &mut R,
+        root: i32,
+    ) -> Result<result::NcclStatus, result::NcclError> {
+        unsafe {
+            result::broadcast(
+                *recvbuff.device_ptr_mut() as *const _,
+                *recvbuff.device_ptr_mut() as *mut _,
+                recvbuff.len(),
+                T::as_nccl_type(),
+                root,
+                self.comm,
+                self.device.stream as *mut _,
+            )
+        }
+    }
+
     pub fn all_gather<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
@@ -310,6 +328,26 @@ impl Comm {
                 *sendbuff.device_ptr() as *mut _,
                 *recvbuff.device_ptr_mut() as *mut _,
                 sendbuff.len(),
+                T::as_nccl_type(),
+                convert_to_nccl_reduce_op(reduce_op),
+                root,
+                self.comm,
+                self.device.stream as *mut _,
+            )
+        }
+    }
+
+    pub fn reduce_in_place<R: DevicePtrMut<T>, T: NcclType>(
+        &self,
+        recvbuff: &mut R,
+        reduce_op: &ReduceOp,
+        root: i32,
+    ) -> Result<result::NcclStatus, result::NcclError> {
+        unsafe {
+            result::reduce(
+                *recvbuff.device_ptr_mut() as *mut _,
+                *recvbuff.device_ptr_mut() as *mut _,
+                recvbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
