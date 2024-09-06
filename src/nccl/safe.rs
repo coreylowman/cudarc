@@ -1,6 +1,5 @@
 use super::{result, sys};
 use crate::driver::{CudaDevice, DevicePtr, DevicePtrMut};
-use std::io::BufRead;
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::{sync::Arc, vec, vec::Vec};
