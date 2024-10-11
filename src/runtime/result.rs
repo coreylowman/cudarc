@@ -100,6 +100,7 @@ pub enum CudaDeviceFlags {
     CudaDeviceMapHost = sys::cudaDeviceMapHost as isize,
     CudaDeviceLmemResizeToMax = sys::cudaDeviceLmemResizeToMax as isize,
     #[cfg(not(any(
+        feature = "cuda-12000",
         feature = "cuda-11080",
         feature = "cuda-11070",
         feature = "cuda-11060",
@@ -205,6 +206,13 @@ pub mod device {
                 .result()?;
             Ok(prop.assume_init())
         }
+        #[cfg(any(
+            feature = "cuda-11080",
+            feature = "cuda-11070",
+            feature = "cuda-11060",
+            feature = "cuda-11050",
+            feature = "cuda-11040"
+        ))]
         unsafe {
             lib()
                 .cudaGetDeviceProperties(prop.as_mut_ptr(), ordinal)
