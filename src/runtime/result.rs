@@ -103,7 +103,8 @@ pub enum CudaDeviceFlags {
         feature = "cuda-11080",
         feature = "cuda-11070",
         feature = "cuda-11060",
-        feature = "cuda-11050"
+        feature = "cuda-11050",
+        feature = "cuda-11040"
     )))]
     CudaDeviceSyncMemops = sys::cudaDeviceSyncMemops as isize,
 }
@@ -195,7 +196,8 @@ pub mod device {
             feature = "cuda-11080",
             feature = "cuda-11070",
             feature = "cuda-11060",
-            feature = "cuda-11050"
+            feature = "cuda-11050",
+            feature = "cuda-11040"
         )))]
         unsafe {
             lib()

@@ -1,3 +1,18 @@
+#[cfg(feature = "cuda-11040")]
+mod sys_11040;
+#[cfg(feature = "cuda-11040")]
+pub use sys_11040::*;
+
+#[cfg(feature = "cuda-11050")]
+mod sys_11050;
+#[cfg(feature = "cuda-11050")]
+pub use sys_11050::*;
+
+#[cfg(feature = "cuda-11060")]
+mod sys_11060;
+#[cfg(feature = "cuda-11060")]
+pub use sys_11060::*;
+
 #[cfg(feature = "cuda-11070")]
 mod sys_11070;
 #[cfg(feature = "cuda-11070")]
@@ -38,18 +53,18 @@ mod sys_12050;
 #[cfg(feature = "cuda-12050")]
 pub use sys_12050::*;
 
+#[cfg(feature = "cuda-12060")]
+mod sys_12060;
+#[cfg(feature = "cuda-12060")]
+pub use sys_12060::*;
+
 pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
     LIB.get_or_init(|| {
         let lib_name = "cudart";
-        let choices = crate::get_lib_name_candidates(lib_name);
-        for choice in choices.iter() {
-            if let Ok(lib) = Lib::new(choice) {
-                return lib;
-            }
+        if let Ok(lib) = Lib::new(libloading::library_filename(lib_name)) {
+            return lib;
         }
-        panic!(
-            "Unable to find {lib_name} lib under the names {choices:?}. Please open GitHub issue."
-        );
+        crate::panic_no_lib_found(lib_name, &[lib_name]);
     })
 }
