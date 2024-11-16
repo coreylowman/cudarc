@@ -47,6 +47,58 @@ fn main() {
 
     #[cfg(feature = "dynamic-linking")]
     dynamic_linking(major, minor);
+
+    #[cfg(feature = "nvtx")]
+    nvtx();
+}
+
+#[allow(unused)]
+fn nvtx() {
+    let output_path = PathBuf::from(std::env::var("OUT_DIR").unwrap());
+    let obj_path = output_path.join("extern.o");
+    let clang_output = std::process::Command::new("clang")
+        .arg("-O")
+        .arg("-c")
+        .arg("-o")
+        .arg(&obj_path)
+        .arg("-I/usr/local/cuda/include")
+        .arg("src/nvtx/sys/extern.c")
+        .output()
+        .unwrap();
+        
+    if !clang_output.status.success() {
+        panic!(
+            "Could not compile object file:\n{}",
+            String::from_utf8_lossy(&clang_output.stderr)
+        );
+    }
+
+    // Turn the object file into a static library
+    #[cfg(not(target_os = "windows"))]
+    let lib_output = std::process::Command::new("ar")
+        .arg("rcs")
+        .arg(output_path.join("libextern.a"))
+        .arg(obj_path)
+        .output()
+        .unwrap();
+    #[cfg(target_os = "windows")]
+    let lib_output = std::process::Command::new("LIB")
+        .arg(obj_path)
+        .arg(format!("/OUT:{}", output_path.join("libextern.lib").display()))
+        .output()
+        .unwrap();
+    if !lib_output.status.success() {
+        panic!(
+            "Could not emit library file:\n{}",
+            String::from_utf8_lossy(&lib_output.stderr)
+        );
+    }
+
+    // Tell cargo to statically link against the `libextern` static library.
+    let output_path = output_path.as_os_str().to_str().unwrap();
+    println!("cargo:rustc-link-search=native={output_path}");
+    println!("cargo:rustc-link-lib=static=extern");
+
 }
 
 #[allow(unused)]
