@@ -3,6 +3,11 @@
 //! 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
 //! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
 //! 4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
+//! 5. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
+//! 6. [NCCL API](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
+//! 7. [cuDNN](https://docs.nvidia.com/cudnn/index.html)
+//! 8. [nvtx](https://github.com/NVIDIA/NVTX)
+    
 //!
 //! # crate organization
 //!
@@ -18,7 +23,7 @@
 //! | cublaslt | [cublaslt::safe] | [cublaslt::result] | [cublaslt::sys] |
 //! | nvrtc | [nvrtc::safe] | [nvrtc::result] | [nvrtc::sys] |
 //! | curand | [curand::safe] | [curand::result] | [curand::sys] |
-//! | cudnn | - | [cudnn::result] | [cudnn::sys] |
+//! | cudnn | [cudnn::safe] | [cudnn::result] | [cudnn::sys] |
 //!
 //! # Core Concepts
 //!
@@ -91,6 +96,8 @@ pub mod driver;
 pub mod nccl;
 #[cfg(feature = "nvrtc")]
 pub mod nvrtc;
+#[cfg(feature = "nvtx")]
+pub mod nvtx;
 
 pub mod types;
 

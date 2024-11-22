@@ -49,6 +49,7 @@ cublaslt = ["driver"]
 cudnn = ["driver"]
 curand = ["driver"]
 nccl = ["driver"]
+nvtx = []
 
 std = []
 no-std = ["no-std-compat/std", "dep:spin"]

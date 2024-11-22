@@ -13,7 +13,9 @@ Safe abstractions over:
 4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
 5. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
 6. [NCCL API](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
-
+7. [cuDNN](https://docs.nvidia.com/cudnn/index.html)
+8. [nvtx](https://github.com/NVIDIA/NVTX)
+ 
 **Pre-alpha state**, expect breaking changes and not all cuda functions
 contain a safe wrapper. **Contributions welcome for any that aren't included!**
 
