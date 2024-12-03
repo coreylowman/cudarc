@@ -67,7 +67,7 @@ where
     /// # Safety
     /// The arguments must match the data type/layout specified in the
     /// descriptors in `self.
-    pub fn launch<Src, Dst>(
+    pub unsafe fn launch<Src, Dst>(
         &self,
         (alpha, beta): (Y, Y),
         src: &Src,

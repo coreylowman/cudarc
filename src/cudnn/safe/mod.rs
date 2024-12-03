@@ -374,4 +374,47 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn test_pooling() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let pooling = cudnn.create_poolingnd::<f32>(
+            &[2, 2],
+            &[0, 0],
+            &[2, 2],
+            cudnn::sys::cudnnPoolingMode_t::CUDNN_POOLING_MAX,
+            cudnn::sys::cudnnNanPropagation_t::CUDNN_PROPAGATE_NAN,
+        )?;
+
+        // Create input, filter and output tensors
+        let x = dev
+            .htod_copy(vec![
+                1.0, 1.0, 2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 3.0, 2.0, 1.0, 0.0, 1.0, 2.0, 3.0, 4.0,
+            ])
+            .unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(&[32, 3, 4, 4], &[32 * 3 * 4, 3 * 4, 4, 1])?;
+        let mut y = dev.alloc_zeros::<f32>(32 * 3 * 2 * 2).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(&[32, 3, 2, 2], &[3 * 2 * 2, 2 * 2, 2, 1])?;
+
+        {
+            let op = PoolingForward {
+                pooling: &pooling,
+                x: &x_desc,
+                y: &y_desc,
+            };
+
+            // Launch conv operation
+            unsafe {
+                op.launch((1.0, 0.0), &x, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 32 * 3 * 2 * 2);
+            assert_eq!(y_host[0], 6.0);
+        }
+
+        Ok(())
+    }
 }
