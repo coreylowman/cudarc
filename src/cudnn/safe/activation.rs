@@ -1,4 +1,4 @@
-use crate::cudnn::{result, sys, ConvForward, Cudnn, CudnnDataType, CudnnError, TensorDescriptor};
+use crate::cudnn::{result, sys, Cudnn, CudnnDataType, CudnnError, TensorDescriptor};
 use crate::driver::{DevicePtr, DevicePtrMut};
 use core::marker::PhantomData;
 use std::sync::Arc;
