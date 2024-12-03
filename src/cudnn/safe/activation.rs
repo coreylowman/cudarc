@@ -1,8 +1,9 @@
-use crate::cudnn::{result, sys, Cudnn, CudnnDataType, CudnnError, TensorDescriptor};
+use crate::cudnn::{result, sys, ConvForward, Cudnn, CudnnDataType, CudnnError, TensorDescriptor};
 use crate::driver::{DevicePtr, DevicePtrMut};
 use core::marker::PhantomData;
 use std::sync::Arc;
 
+/// A descriptor of the activation operation. Create with [`Cudnn::create_activation()`]
 #[derive(Debug)]
 pub struct ActivationDescriptor<T> {
     pub(crate) desc: sys::cudnnActivationDescriptor_t,
@@ -29,6 +30,8 @@ impl Cudnn {
     }
 }
 
+/// The activation forward operation. Pass in references to descriptors
+/// directly, and then call [`ConvForward::launch()`] .
 pub struct ActivationForward<'a, A: CudnnDataType, X: CudnnDataType, Y: CudnnDataType> {
     /// Activation function.
     pub act: &'a ActivationDescriptor<A>,
@@ -42,6 +45,14 @@ where
     X: CudnnDataType,
     Y: CudnnDataType,
 {
+    /// Launches the operation.
+    ///
+    /// - `src` is the input tensor
+    /// - `y` is the output
+    ///
+    /// # Safety
+    /// The arguments must match the data type/layout specified in the
+    /// descriptors in `self.
     pub fn launch<Src, Dst>(
         &self,
         (alpha, beta): (Y, Y),

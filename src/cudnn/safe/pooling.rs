@@ -3,9 +3,10 @@ use crate::{
     driver::{DevicePtr, DevicePtrMut},
 };
 
-use crate::cudnn::{result, Cudnn, CudnnDataType, TensorDescriptor};
+use crate::cudnn::{result, ConvForward, Cudnn, CudnnDataType, TensorDescriptor};
 use std::{marker::PhantomData, sync::Arc};
 
+/// A descriptor of the window for pooling operation. Create with [`Cudnn::create_poolingnd()`]
 pub struct PoolingDescriptor<T> {
     desc: sys::cudnnPoolingDescriptor_t,
     #[allow(unused)]
@@ -14,9 +15,10 @@ pub struct PoolingDescriptor<T> {
 }
 
 impl Cudnn {
+    /// Create a window nd descriptor.
     pub fn create_poolingnd<T: CudnnDataType>(
         self: &Arc<Cudnn>,
-        filter: &[std::ffi::c_int],
+        window: &[std::ffi::c_int],
         pads: &[std::ffi::c_int],
         strides: &[std::ffi::c_int],
         mode: sys::cudnnPoolingMode_t,
@@ -33,8 +35,8 @@ impl Cudnn {
             desc.desc,
             mode,
             nan_propagation,
-            filter.len() as std::ffi::c_int,
-            filter,
+            window.len() as std::ffi::c_int,
+            window,
             pads,
             strides,
         )?;
@@ -43,6 +45,8 @@ impl Cudnn {
     }
 }
 
+/// The pooling forward operation. Pass in references to descriptors
+/// directly, and then call [`PoolingForward::launch()`].
 pub struct PoolingForward<'a, P, X, Y> {
     pub pooling: &'a PoolingDescriptor<P>,
     pub x: &'a TensorDescriptor<X>,
@@ -55,6 +59,14 @@ where
     X: CudnnDataType,
     Y: CudnnDataType,
 {
+    /// Launches the operation.
+    ///
+    /// - `src` is the input tensor
+    /// - `y` is the output
+    ///
+    /// # Safety
+    /// The arguments must match the data type/layout specified in the
+    /// descriptors in `self.
     pub fn launch<Src, Dst>(
         &self,
         (alpha, beta): (Y, Y),

@@ -527,6 +527,12 @@ impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilte
     }
 }
 
+/// The bias + convolution + activation forward operation.
+/// The full computation follows the equation `y = act (alpha1 * conv(x) + alpha2 * z + bias)`.
+/// Pass in references to descriptors directly, and then call:
+/// 1. [`ConvForward::pick_algorithm()`] to use cudnn heuristics to select the algorithm
+/// 2. [`ConvForward::get_workspace_size()`] to get required workspace size.
+/// 3. [`ConvForward::launch()`] to execute it
 #[derive(Debug)]
 pub struct ConvBiasActivationForward<
     'a,
@@ -583,6 +589,15 @@ where
         conv.get_workspace_size(algo)
     }
 
+    /// Launches the operation.
+    ///
+    /// - `src` is the input tensor
+    /// - `filter` is the convolution kernels
+    /// - `y` is the output
+    ///
+    /// # Safety
+    /// The src/filter/y arguments must match the data type/layout specified in the
+    /// descriptors in `self.
     pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionFwdAlgo_t,

@@ -839,8 +839,8 @@ pub fn set_pooling_descriptor(
     desc: sys::cudnnPoolingDescriptor_t,
     mode: sys::cudnnPoolingMode_t,
     nan_propagation: sys::cudnnNanPropagation_t,
-    dims: std::ffi::c_int,
-    input: &[std::ffi::c_int],
+    nb_dims: std::ffi::c_int,
+    window_dims: &[std::ffi::c_int],
     pads: &[std::ffi::c_int],
     strides: &[std::ffi::c_int],
 ) -> Result<(), CudnnError> {
@@ -850,8 +850,8 @@ pub fn set_pooling_descriptor(
                 desc,
                 mode,
                 nan_propagation,
-                dims,
-                input.as_ptr(),
+                nb_dims,
+                window_dims.as_ptr(),
                 pads.as_ptr(),
                 strides.as_ptr(),
             )
