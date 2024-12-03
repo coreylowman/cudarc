@@ -417,4 +417,44 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn test_activation() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let act = cudnn.create_activation::<f32>(
+            cudnn::sys::cudnnActivationMode_t::CUDNN_ACTIVATION_RELU,
+            cudnn::sys::cudnnNanPropagation_t::CUDNN_NOT_PROPAGATE_NAN,
+            f64::MAX,
+        )?;
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![-1.0, 2.0, -3.0, 100.0]).unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
+        let mut y = dev.alloc_zeros::<f32>(4).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
+
+        {
+            let op = ActivationForward {
+                act: &act,
+                x: &x_desc,
+                y: &y_desc,
+            };
+
+            // Launch conv operation
+            unsafe {
+                op.launch((1.0, 0.0), &x, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 2 * 2);
+            assert_eq!(y_host[0], 0.0);
+            assert_eq!(y_host[1], 2.0);
+            assert_eq!(y_host[2], 0.0);
+            assert_eq!(y_host[3], 100.0);
+        }
+
+        Ok(())
+    }
 }
