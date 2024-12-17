@@ -16,8 +16,10 @@
 //!
 //! # Reductions
 
+mod activation;
 mod conv;
 mod core;
+mod pooling;
 mod reduce;
 
 #[allow(deprecated)]
@@ -30,13 +32,16 @@ pub use self::conv::{
     // Current APIs
     ConvBackwardData,
     ConvBackwardFilter,
+    ConvBiasActivationForward,
     ConvDescriptor,
     ConvForward,
     FilterDescriptor,
 };
 pub use self::core::{Cudnn, CudnnDataType, TensorDescriptor};
+pub use self::pooling::{PoolingDescriptor, PoolingForward};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
 pub use super::result::CudnnError;
+pub use activation::{ActivationDescriptor, ActivationForward};
 
 #[cfg(test)]
 mod tests {
@@ -287,5 +292,169 @@ mod tests {
         let c_host = dev.sync_reclaim(c).unwrap();
         assert_eq!(c_host.len(), 1);
         assert_eq!(c_host[0], 21.0);
+    }
+
+    #[test]
+    fn test_conv_bias_activation() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let conv = cudnn.create_convnd::<f32>(
+            &[0; 3],
+            &[1; 3],
+            &[1; 3],
+            cudnn::sys::cudnnConvolutionMode_t::CUDNN_CROSS_CORRELATION,
+        )?;
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![1.0f32; 32 * 3 * 64 * 64 * 64]).unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 3, 64, 64, 64],
+            &[3 * 64 * 64 * 64, 64 * 64 * 64, 64 * 64, 64, 1],
+        )?;
+        let filter = dev.htod_copy(vec![1.0f32; 32 * 3 * 4 * 4 * 4]).unwrap();
+        let filter_desc = cudnn.create_nd_filter::<f32>(
+            cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
+            &[32, 3, 4, 4, 4],
+        )?;
+        let bias = dev.htod_copy(vec![1.0f32; 32]).unwrap();
+        let bias_desc = cudnn.create_nd_tensor::<f32>(&[1, 32, 1, 1, 1], &[32, 1, 1, 1, 1])?;
+        let activation_desc = cudnn.create_activation::<f32>(
+            cudnn::sys::cudnnActivationMode_t::CUDNN_ACTIVATION_RELU,
+            cudnn::sys::cudnnNanPropagation_t::CUDNN_NOT_PROPAGATE_NAN,
+            f64::MAX,
+        )?;
+        let z = dev.htod_copy(vec![0.0f32; 32 * 32 * 61 * 61 * 61]).unwrap();
+        let z_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 32, 61, 61, 61],
+            &[32 * 61 * 61 * 61, 61 * 61 * 61, 61 * 61, 61, 1],
+        )?;
+        let mut y = dev.alloc_zeros::<f32>(32 * 32 * 61 * 61 * 61).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(
+            &[32, 32, 61, 61, 61],
+            &[32 * 61 * 61 * 61, 61 * 61 * 61, 61 * 61, 61, 1],
+        )?;
+
+        {
+            let op = ConvBiasActivationForward {
+                conv: &conv,
+                act: &activation_desc,
+                x: &x_desc,
+                w: &filter_desc,
+                y: &y_desc,
+                z: &z_desc,
+                bias: &bias_desc,
+            };
+
+            // Pick algorithm
+            let algo = op.pick_algorithm()?;
+
+            // Get workspace size
+            let workspace_size = op.get_workspace_size(algo)?;
+            let mut workspace = dev.alloc_zeros::<u8>(workspace_size).unwrap();
+
+            // Launch conv operation
+            unsafe {
+                op.launch(
+                    algo,
+                    Some(&mut workspace),
+                    (1.0, 0.0),
+                    &x,
+                    &filter,
+                    &z,
+                    &bias,
+                    &mut y,
+                )?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 32 * 32 * 61 * 61 * 61);
+            assert_eq!(y_host[0], 3.0 * 4.0 * 4.0 * 4.0 + 1.0);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_pooling() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let pooling = cudnn.create_poolingnd::<f32>(
+            &[2, 2],
+            &[0, 0],
+            &[2, 2],
+            cudnn::sys::cudnnPoolingMode_t::CUDNN_POOLING_MAX,
+            cudnn::sys::cudnnNanPropagation_t::CUDNN_PROPAGATE_NAN,
+        )?;
+
+        // Create input, filter and output tensors
+        let x = dev
+            .htod_copy(vec![
+                1.0, 1.0, 2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 3.0, 2.0, 1.0, 0.0, 1.0, 2.0, 3.0, 4.0,
+            ])
+            .unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(&[32, 3, 4, 4], &[32 * 3 * 4, 3 * 4, 4, 1])?;
+        let mut y = dev.alloc_zeros::<f32>(32 * 3 * 2 * 2).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(&[32, 3, 2, 2], &[3 * 2 * 2, 2 * 2, 2, 1])?;
+
+        {
+            let op = PoolingForward {
+                pooling: &pooling,
+                x: &x_desc,
+                y: &y_desc,
+            };
+
+            // Launch conv operation
+            unsafe {
+                op.launch((1.0, 0.0), &x, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 32 * 3 * 2 * 2);
+            assert_eq!(y_host[0], 6.0);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_activation() -> Result<(), CudnnError> {
+        let dev = CudaDevice::new(0).unwrap();
+        let cudnn = Cudnn::new(dev.clone())?;
+
+        let act = cudnn.create_activation::<f32>(
+            cudnn::sys::cudnnActivationMode_t::CUDNN_ACTIVATION_RELU,
+            cudnn::sys::cudnnNanPropagation_t::CUDNN_NOT_PROPAGATE_NAN,
+            f64::MAX,
+        )?;
+
+        // Create input, filter and output tensors
+        let x = dev.htod_copy(vec![-1.0, 2.0, -3.0, 100.0]).unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
+        let mut y = dev.alloc_zeros::<f32>(4).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
+
+        {
+            let op = ActivationForward {
+                act: &act,
+                x: &x_desc,
+                y: &y_desc,
+            };
+
+            // Launch conv operation
+            unsafe {
+                op.launch((1.0, 0.0), &x, &mut y)?;
+            }
+
+            let y_host = dev.sync_reclaim(y).unwrap();
+            assert_eq!(y_host.len(), 2 * 2);
+            assert_eq!(y_host[0], 0.0);
+            assert_eq!(y_host[1], 2.0);
+            assert_eq!(y_host[2], 0.0);
+            assert_eq!(y_host[3], 100.0);
+        }
+
+        Ok(())
     }
 }
