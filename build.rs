@@ -176,6 +176,7 @@ fn root_candidates() -> impl Iterator<Item = PathBuf> {
 fn lib_candidates(root: &Path, major: usize, minor: usize) -> Vec<PathBuf> {
     [
         "lib".into(),
+        "lib/stubs".into(),
         "lib/x64".into(),
         "lib/Win32".into(),
         "lib/x86_64".into(),
