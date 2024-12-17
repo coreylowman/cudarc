@@ -54,14 +54,14 @@ unsafe impl<T: DeviceRepr> DeviceRepr for &CudaSlice<T> {
     }
 }
 
-unsafe impl<'a, T: DeviceRepr> DeviceRepr for &CudaView<'a, T> {
+unsafe impl<T: DeviceRepr> DeviceRepr for &CudaView<'_, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
 }
 
-unsafe impl<'a, T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'a, T> {
+unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'_, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void

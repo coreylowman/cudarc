@@ -180,7 +180,7 @@ pub mod device {
     ///
     /// # Safety
     /// 1. Must be a device pointer returned from `cudaMalloc()`, `cudaMallocPitch()`,
-    /// `cudaMallocManaged()`, `cudaMallocAsync()`, `cudaMallocFromPoolAsync()`.
+    ///    `cudaMallocManaged()`, `cudaMallocAsync()`, `cudaMallocFromPoolAsync()`.
     ///
     /// # Note
     /// if device_ptr is 0, no operation is performed.

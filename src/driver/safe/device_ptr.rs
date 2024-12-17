@@ -18,13 +18,13 @@ impl<T> DeviceSlice<T> for CudaSlice<T> {
     }
 }
 
-impl<'a, T> DeviceSlice<T> for CudaView<'a, T> {
+impl<T> DeviceSlice<T> for CudaView<'_, T> {
     fn len(&self) -> usize {
         self.len
     }
 }
 
-impl<'a, T> DeviceSlice<T> for CudaViewMut<'a, T> {
+impl<T> DeviceSlice<T> for CudaViewMut<'_, T> {
     fn len(&self) -> usize {
         self.len
     }
@@ -41,13 +41,13 @@ impl<T> DevicePtr<T> for CudaSlice<T> {
     }
 }
 
-impl<'a, T> DevicePtr<T> for CudaView<'a, T> {
+impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.ptr
     }
 }
 
-impl<'a, T> DevicePtr<T> for CudaViewMut<'a, T> {
+impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.ptr
     }
@@ -64,7 +64,7 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
     }
 }
 
-impl<'a, T> DevicePtrMut<T> for CudaViewMut<'a, T> {
+impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
     fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
         &mut self.ptr
     }
