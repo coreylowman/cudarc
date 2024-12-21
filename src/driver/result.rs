@@ -173,6 +173,16 @@ pub mod device {
         let name = CStr::from_bytes_until_nul(&buf).expect("No null byte was present");
         Ok(String::from_utf8_lossy(name.to_bytes()).into())
     }
+
+    pub fn get_uuid(dev: sys::CUdevice) -> Result<sys::CUuuid, DriverError> {
+        let id: sys::CUuuid;
+        unsafe {
+            let mut uuid = MaybeUninit::uninit();
+            lib().cuDeviceGetUuid(uuid.as_mut_ptr(), dev).result()?;
+            id = uuid.assume_init();
+        }
+        Ok(id)
+    }
 }
 
 pub mod function {
