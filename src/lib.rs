@@ -87,12 +87,12 @@ pub mod cudnn;
 pub mod curand;
 #[cfg(feature = "driver")]
 pub mod driver;
-#[cfg(feature = "runtime")]
-pub mod runtime;
 #[cfg(feature = "nccl")]
 pub mod nccl;
 #[cfg(feature = "nvrtc")]
 pub mod nvrtc;
+#[cfg(feature = "runtime")]
+pub mod runtime;
 
 pub mod types;
 
