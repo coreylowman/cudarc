@@ -985,8 +985,8 @@ pub mod external_memory {
         let mut external_memory = MaybeUninit::uninit();
         let handle_description = sys::cudaExternalMemoryHandleDesc {
             type_: sys::cudaExternalMemoryHandleType::cudaExternalMemoryHandleTypeOpaqueWin32,
-            handle: sys::cudaExternalMemoryHandleDesc_st__bindgen_ty_1 {
-                win32: sys::cudaExternalMemoryHandleDesc_st__bindgen_ty_1__bindgen_ty_1 {
+            handle: sys::cudaExternalMemoryHandleDesc__bindgen_ty_1 {
+                win32: sys::cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1 {
                     handle,
                     name: std::ptr::null(),
                 },
@@ -994,7 +994,8 @@ pub mod external_memory {
             size,
             ..Default::default()
         };
-        sys::cudaImportExternalMemory(external_memory.as_mut_ptr(), &handle_description)
+        lib()
+            .cudaImportExternalMemory(external_memory.as_mut_ptr(), &handle_description)
             .result()?;
         Ok(external_memory.assume_init())
     }
