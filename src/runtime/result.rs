@@ -994,8 +994,8 @@ pub mod external_memory {
             size,
             ..Default::default()
         };
-       lib()
-           .cudaImportExternalMemory(external_memory.as_mut_ptr(), &handle_description)
+        lib()
+            .cudaImportExternalMemory(external_memory.as_mut_ptr(), &handle_description)
             .result()?;
         Ok(external_memory.assume_init())
     }

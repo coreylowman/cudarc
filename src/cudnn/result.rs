@@ -458,6 +458,9 @@ pub unsafe fn convolution_forward(
         .result()
 }
 
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn convolution_bias_activation_forward(
     handle: sys::cudnnHandle_t,
@@ -846,7 +849,10 @@ pub fn create_pooling_descriptor() -> Result<sys::cudnnPoolingDescriptor_t, Cudn
     }
 }
 
-pub fn set_pooling_descriptor(
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
+pub unsafe fn set_pooling_descriptor(
     desc: sys::cudnnPoolingDescriptor_t,
     mode: sys::cudnnPoolingMode_t,
     nan_propagation: sys::cudnnNanPropagation_t,
@@ -855,22 +861,24 @@ pub fn set_pooling_descriptor(
     pads: &[std::ffi::c_int],
     strides: &[std::ffi::c_int],
 ) -> Result<(), CudnnError> {
-    unsafe {
-        lib()
-            .cudnnSetPoolingNdDescriptor(
-                desc,
-                mode,
-                nan_propagation,
-                nb_dims,
-                window_dims.as_ptr(),
-                pads.as_ptr(),
-                strides.as_ptr(),
-            )
-            .result()
-    }
+    lib()
+        .cudnnSetPoolingNdDescriptor(
+            desc,
+            mode,
+            nan_propagation,
+            nb_dims,
+            window_dims.as_ptr(),
+            pads.as_ptr(),
+            strides.as_ptr(),
+        )
+        .result()
 }
 
-pub fn pooling_forward(
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn pooling_forward(
     handle: sys::cudnnHandle_t,
     pooling_desc: sys::cudnnPoolingDescriptor_t,
     alpha: *const ::core::ffi::c_void,
@@ -880,11 +888,9 @@ pub fn pooling_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    unsafe {
-        lib()
-            .cudnnPoolingForward(handle, pooling_desc, alpha, x_desc, x, beta, y_desc, y)
-            .result()
-    }
+    lib()
+        .cudnnPoolingForward(handle, pooling_desc, alpha, x_desc, x, beta, y_desc, y)
+        .result()
 }
 
 pub fn create_activation_descriptor() -> Result<sys::cudnnActivationDescriptor_t, CudnnError> {
@@ -897,20 +903,25 @@ pub fn create_activation_descriptor() -> Result<sys::cudnnActivationDescriptor_t
     }
 }
 
-pub fn set_activation_descriptor(
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
+pub unsafe fn set_activation_descriptor(
     desc: sys::cudnnActivationDescriptor_t,
     mode: sys::cudnnActivationMode_t,
     nan_propagation: sys::cudnnNanPropagation_t,
     coef: f64,
 ) -> Result<(), CudnnError> {
-    unsafe {
-        lib()
-            .cudnnSetActivationDescriptor(desc, mode, nan_propagation, coef)
-            .result()
-    }
+    lib()
+        .cudnnSetActivationDescriptor(desc, mode, nan_propagation, coef)
+        .result()
 }
 
-pub fn activation_forward(
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn activation_forward(
     handle: sys::cudnnHandle_t,
     activation_desc: sys::cudnnActivationDescriptor_t,
     alpha: *const ::core::ffi::c_void,
@@ -920,9 +931,7 @@ pub fn activation_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    unsafe {
-        lib()
-            .cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y)
-            .result()
-    }
+    lib()
+        .cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y)
+        .result()
 }

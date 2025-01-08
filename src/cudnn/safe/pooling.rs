@@ -31,15 +31,17 @@ impl Cudnn {
             marker: PhantomData,
         };
 
-        result::set_pooling_descriptor(
-            desc.desc,
-            mode,
-            nan_propagation,
-            window.len() as std::ffi::c_int,
-            window,
-            pads,
-            strides,
-        )?;
+        unsafe {
+            result::set_pooling_descriptor(
+                desc.desc,
+                mode,
+                nan_propagation,
+                window.len() as std::ffi::c_int,
+                window,
+                pads,
+                strides,
+            )
+        }?;
 
         Ok(desc)
     }
@@ -53,7 +55,7 @@ pub struct PoolingForward<'a, P, X, Y> {
     pub y: &'a TensorDescriptor<Y>,
 }
 
-impl<'a, P, X, Y> PoolingForward<'a, P, X, Y>
+impl<P, X, Y> PoolingForward<'_, P, X, Y>
 where
     P: CudnnDataType,
     X: CudnnDataType,

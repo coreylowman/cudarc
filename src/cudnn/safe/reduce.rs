@@ -103,7 +103,7 @@ pub struct ReduceTensor<'a, T: CudnnDataType, Idx> {
     pub c: &'a TensorDescriptor<T>,
 }
 
-impl<'a, T: CudnnDataType> ReduceTensor<'a, T, FlatIndices> {
+impl<T: CudnnDataType> ReduceTensor<'_, T, FlatIndices> {
     /// Get's the size of the indices tensor required for this operation.
     ///
     /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetReductionIndicesSize).
@@ -119,7 +119,7 @@ impl<'a, T: CudnnDataType> ReduceTensor<'a, T, FlatIndices> {
     }
 }
 
-impl<'a, T: CudnnDataType, Idx> ReduceTensor<'a, T, Idx> {
+impl<T: CudnnDataType, Idx> ReduceTensor<'_, T, Idx> {
     /// Gets the size of the workspace for this operation.
     ///
     /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetReductionWorkspaceSize)
@@ -135,7 +135,7 @@ impl<'a, T: CudnnDataType, Idx> ReduceTensor<'a, T, Idx> {
     }
 }
 
-impl<'a, T: CudnnDataType> ReduceTensor<'a, T, FlatIndices> {
+impl<T: CudnnDataType> ReduceTensor<'_, T, FlatIndices> {
     /// Launches the operation with indices.
     ///
     /// # Safety
@@ -172,7 +172,7 @@ impl<'a, T: CudnnDataType> ReduceTensor<'a, T, FlatIndices> {
     }
 }
 
-impl<'a, T: CudnnDataType> ReduceTensor<'a, T, NoIndices> {
+impl<T: CudnnDataType> ReduceTensor<'_, T, NoIndices> {
     /// Launches the operation with no indices.
     ///
     /// # Safety

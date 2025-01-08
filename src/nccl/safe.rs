@@ -108,7 +108,6 @@ impl Comm {
     ///     let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
     ///     comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
     ///         .unwrap();
-
     /// });
     /// group_start().unwrap();
     /// ```
@@ -170,9 +169,7 @@ impl Comm {
     /// let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
     /// comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
     ///     .unwrap();
-
     /// let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
-
     /// assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
     /// ```
     pub fn from_rank(

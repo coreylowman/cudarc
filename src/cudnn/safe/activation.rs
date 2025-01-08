@@ -25,7 +25,7 @@ impl Cudnn {
             handle: self.clone(),
             marker: PhantomData,
         };
-        result::set_activation_descriptor(desc.desc, mode, nan_propagation, coef)?;
+        unsafe { result::set_activation_descriptor(desc.desc, mode, nan_propagation, coef) }?;
         Ok(desc)
     }
 }
@@ -39,7 +39,7 @@ pub struct ActivationForward<'a, A: CudnnDataType, X: CudnnDataType, Y: CudnnDat
     pub y: &'a TensorDescriptor<Y>,
 }
 
-impl<'a, A, X, Y> ActivationForward<'a, A, X, Y>
+impl<A, X, Y> ActivationForward<'_, A, X, Y>
 where
     A: CudnnDataType,
     X: CudnnDataType,
