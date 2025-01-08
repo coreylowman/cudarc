@@ -208,7 +208,7 @@ pub struct ConvForward<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType>
 #[deprecated(note = "use ConvForward instead. This will be removed in future versions")]
 pub type Conv2dForward<'a, X, C, Y> = ConvForward<'a, X, C, Y>;
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'a, X, C, Y> {
+impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'_, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
     pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionFwdAlgo_t, CudnnError> {
         const NUM_ALGOS: usize = 8;
@@ -322,7 +322,7 @@ pub struct ConvBackwardData<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnData
 #[deprecated(note = "use ConvBackwardData instead. This will be removed in future versions")]
 pub type Conv2dBackwardData<'a, X, C, Y> = ConvBackwardData<'a, X, C, Y>;
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'a, X, C, Y> {
+impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'_, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
     pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionBwdDataAlgo_t, CudnnError> {
         const NUM_ALGOS: usize = 6;
@@ -436,7 +436,7 @@ pub struct ConvBackwardFilter<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDa
 #[deprecated(note = "use ConvBackwardFilter instead. This will be removed in future versions")]
 pub type Conv2dBackwardFilter<'a, X, C, Y> = ConvBackwardFilter<'a, X, C, Y>;
 
-impl<'a, X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'a, X, C, Y> {
+impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'_, X, C, Y> {
     /// Picks the fastest algorithm from all available cuDNN algorithms based on cudnn heuristics.
     pub fn pick_algorithm(&self) -> Result<sys::cudnnConvolutionBwdFilterAlgo_t, CudnnError> {
         const NUM_ALGOS: usize = 7;
@@ -557,7 +557,7 @@ pub struct ConvBiasActivationForward<
     pub y: &'a TensorDescriptor<Y>,
 }
 
-impl<'a, X, C, A, Y> ConvBiasActivationForward<'a, X, C, A, Y>
+impl<X, C, A, Y> ConvBiasActivationForward<'_, X, C, A, Y>
 where
     X: CudnnDataType,
     C: CudnnDataType,
@@ -598,6 +598,7 @@ where
     /// # Safety
     /// The src/filter/y arguments must match the data type/layout specified in the
     /// descriptors in `self.
+    #[allow(clippy::too_many_arguments)]
     pub unsafe fn launch<Workspace, Src, Filter, Dst>(
         &self,
         algo: sys::cudnnConvolutionFwdAlgo_t,
