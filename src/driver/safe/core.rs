@@ -134,6 +134,11 @@ impl CudaDevice {
         result::device::get_name(self.cu_device)
     }
 
+    /// Get the UUID of this device.
+    pub fn uuid(&self) -> Result<sys::CUuuid, result::DriverError> {
+        result::device::get_uuid(self.cu_device)
+    }
+
     /// Get the underlying [sys::CUdevice] of this [CudaDevice].
     ///
     /// # Safety
