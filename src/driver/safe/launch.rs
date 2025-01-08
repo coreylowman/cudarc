@@ -123,7 +123,7 @@ impl LaunchConfig {
     /// - shared_mem_bytes == `0`
     pub fn for_num_elems(n: u32) -> Self {
         const NUM_THREADS: u32 = 1024;
-        let num_blocks = (n + NUM_THREADS - 1).div_ceil(NUM_THREADS);
+        let num_blocks = n.div_ceil(NUM_THREADS);
         Self {
             grid_dim: (num_blocks, 1, 1),
             block_dim: (NUM_THREADS, 1, 1),
