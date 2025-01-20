@@ -58,6 +58,14 @@ mod sys_12060;
 #[cfg(feature = "cuda-12060")]
 pub use sys_12060::*;
 
+/// Check if the driver library is available on the system.
+pub fn is_available() -> bool {
+    let lib_name = "cuda";
+    let mut choices = crate::get_lib_name_candidates(lib_name);
+    choices.extend(crate::get_lib_name_candidates("nvcuda"));
+    choices.iter().any(|x| unsafe { Lib::new(x).is_ok() })
+}
+
 pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
     LIB.get_or_init(|| {
