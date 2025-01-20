@@ -1,5 +1,3 @@
-use std::env::consts::{DLL_PREFIX, DLL_SUFFIX};
-
 #[cfg(feature = "cuda-11040")]
 mod sys_11040;
 #[cfg(feature = "cuda-11040")]
@@ -64,12 +62,10 @@ pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
     LIB.get_or_init(|| {
         let lib_name = "cuda";
-        // See issue #296
-        let choices = [
-            std::format!("{DLL_PREFIX}{lib_name}{DLL_SUFFIX}"),
-            std::format!("{DLL_PREFIX}nvcuda{DLL_SUFFIX}"),
-            std::format!("{DLL_PREFIX}{lib_name}{DLL_SUFFIX}.1"),
-        ];
+
+        let mut choices = crate::get_lib_name_candidates(lib_name);
+        choices.extend(crate::get_lib_name_candidates("nvcuda"));
+
         for choice in choices.iter() {
             if let Ok(lib) = Lib::new(choice) {
                 return lib;
