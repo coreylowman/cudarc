@@ -58,16 +58,22 @@ mod sys_12060;
 #[cfg(feature = "cuda-12060")]
 pub use sys_12060::*;
 
+pub const LIB_NAME: &str = "cuda";
+pub const LIB_NAME_CHOICES: &[&str] = &[LIB_NAME, "nvcuda"];
+
+pub fn load_lib() -> Option<Lib> {
+    for choice in LIB_NAME_CHOICES {
+        if let Ok(lib) = unsafe { Lib::new(libloading::library_filename(choice)) } {
+            return Some(lib);
+        }
+    }
+    None
+}
+
 pub unsafe fn lib() -> &'static Lib {
     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
-    LIB.get_or_init(|| {
-        let lib_name = "cuda";
-        let choices = [lib_name, "nvcuda"];
-        for choice in choices {
-            if let Ok(lib) = Lib::new(libloading::library_filename(choice)) {
-                return lib;
-            }
-        }
-        crate::panic_no_lib_found(lib_name, &choices);
+    LIB.get_or_init(|| match load_lib() {
+        Some(lib) => lib,
+        None => crate::panic_no_lib_found(LIB_NAME, LIB_NAME_CHOICES),
     })
 }

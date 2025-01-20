@@ -169,3 +169,8 @@ pub mod safe;
 pub mod sys;
 
 pub use safe::*;
+
+/// Check if the driver library is available on the system.
+pub fn is_available() -> bool {
+    sys::load_lib().is_some()
+}
