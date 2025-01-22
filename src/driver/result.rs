@@ -967,6 +967,28 @@ pub mod event {
         Ok(ms)
     }
 
+    /// Queries an event's status.
+    /// Returns `Ok` if all captured work has been completed, or `Err`: `CUDA_ERROR_NOT_READY` if
+    /// any captured work is incomplete.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g6f0704d755066b0ee705749ae911deef)
+    ///
+    /// # Safety
+    /// This function is unsafe because event can be a null event, in which case
+    pub unsafe fn query(event: sys::CUevent) -> Result<(), DriverError> {
+        unsafe { lib().cuEventQuery(event).result() }
+    }
+
+    /// Waits for an event to complete.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g9e520d34e51af7f5375610bca4add99c)
+    ///
+    /// # Safety
+    /// This function is unsafe because event can be a null event, in which case
+    pub unsafe fn synchronize(event: sys::CUevent) -> Result<(), DriverError> {
+        unsafe { lib().cuEventSynchronize(event).result() }
+    }
+
     /// Destroys an event.
     ///
     /// > An event may be destroyed before it is complete (i.e., while cuEventQuery() would return CUDA_ERROR_NOT_READY).
