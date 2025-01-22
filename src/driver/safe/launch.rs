@@ -14,7 +14,7 @@ impl CudaDevice {
 
         modules
             .get(module_name)
-            .map_or(false, |module| module.has_func(func_name))
+            .is_some_and(|module| module.has_func(func_name))
     }
 
     /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
