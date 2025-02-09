@@ -10,18 +10,12 @@ documentation = "https://docs.rs/cudarc"
 repository = "https://github.com/coreylowman/cudarc"
 readme = "README.md"
 
-keywords = [
-    "cuda",
-    "nvidia",
-    "gpu",
-    "nvrtc",
-    "cublas",
-]
+keywords = ["cuda", "nvidia", "gpu", "nvrtc", "cublas"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package.metadata.docs.rs]
-features = ["cuda-12060", "f16", "cudnn"]
+features = ["cuda-12080", "f16", "cudnn"]
 
 [features]
 default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc"]
@@ -39,6 +33,7 @@ cuda-12030 = []
 cuda-12040 = []
 cuda-12050 = []
 cuda-12060 = []
+cuda-12080 = []
 
 dynamic-linking = []
 
@@ -56,7 +51,12 @@ no-std = ["no-std-compat/std", "dep:spin"]
 f16 = ["dep:half"]
 
 [dependencies]
-spin = { version = "0.9.8", optional = true, features = ["rwlock"], default-features = false }
-no-std-compat = { version = "0.4.1", optional = true, features = [ "alloc" ] }
-half = { version = "2.4.1", optional = true, default-features = false, features = ["num-traits", "rand_distr"] }
+spin = { version = "0.9.8", optional = true, features = [
+    "rwlock",
+], default-features = false }
+no-std-compat = { version = "0.4.1", optional = true, features = ["alloc"] }
+half = { version = "2.4.1", optional = true, default-features = false, features = [
+    "num-traits",
+    "rand_distr",
+] }
 libloading = "0.8.5"
