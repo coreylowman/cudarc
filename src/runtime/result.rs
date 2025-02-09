@@ -342,6 +342,19 @@ pub mod function {
             Ok(func.assume_init())
         }
     }
+
+    /// Sets the cache config of a CUDA function.
+    ///
+    /// See [cudaFuncSetCacheConfig() docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html#group__CUDART__EXECUTION_1g6699ca1943ac2655effa0d571b2f4f15)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn set_function_cache_config(
+        func: *const c_void,
+        attribute: sys::cudaFuncCache,
+    ) -> Result<(), RuntimeError> {
+        lib().cudaFuncSetCacheConfig(func, attribute).result()
+    }
 }
 
 pub mod occupancy {

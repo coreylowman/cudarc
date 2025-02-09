@@ -1,6 +1,6 @@
 use crate::driver::{
     result,
-    sys::{self, lib, CUfunction_attribute_enum},
+    sys::{self, lib, CUfunc_cache_enum, CUfunction_attribute_enum},
 };
 
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
@@ -463,6 +463,18 @@ impl CudaFunction {
     ) -> Result<(), result::DriverError> {
         unsafe {
             result::function::set_function_attribute(self.cu_function, attribute, value)?;
+        }
+
+        Ok(())
+    }
+
+    /// Set the cache config of this [CudaFunction].
+    pub fn set_function_cache_config(
+        &self,
+        attribute: CUfunc_cache_enum,
+    ) -> Result<(), result::DriverError> {
+        unsafe {
+            result::function::set_function_cache_config(self.cu_function, attribute)?;
         }
 
         Ok(())
