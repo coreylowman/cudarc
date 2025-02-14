@@ -186,7 +186,7 @@ pub mod device {
 }
 
 pub mod function {
-    use super::sys::{self, lib, CUfunction_attribute_enum};
+    use super::sys::{self, lib, CUfunc_cache_enum, CUfunction_attribute_enum};
 
     /// Sets the specific attribute of a cuda function.
     ///
@@ -201,6 +201,23 @@ pub mod function {
     ) -> Result<(), super::DriverError> {
         unsafe {
             lib().cuFuncSetAttribute(f, attribute, value).result()?;
+        }
+
+        Ok(())
+    }
+
+    /// Sets the cache config of a CUDA function.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html#group__CUDART__EXECUTION_1g6699ca1943ac2655effa0d571b2f4f15)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn set_function_cache_config(
+        f: sys::CUfunction,
+        attribute: CUfunc_cache_enum,
+    ) -> Result<(), super::DriverError> {
+        unsafe {
+            lib().cuFuncSetCacheConfig(f, attribute).result()?;
         }
 
         Ok(())
