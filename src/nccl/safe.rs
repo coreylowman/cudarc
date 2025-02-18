@@ -92,7 +92,7 @@ define_nccl_type!(half::bf16, sys::ncclDataType_t::ncclBfloat16);
 impl Comm {
     /// Primitive to create new communication link on a single thread.
     /// WARNING: You are likely to get limited throughput using a single core
-    /// to control multiple GPUs
+    /// to control multiple GPUs (see issue #169).
     /// ```
     /// # use cudarc::driver::safe::{CudaDevice};
     /// # use cudarc::nccl::safe::{Comm, ReduceOp, group_start, group_end};
@@ -151,7 +151,7 @@ impl Comm {
     ///
     /// WARNING: If using threads, uou are likely to get limited throughput using a single core
     /// to control multiple GPUs. Cuda drivers effectively use a global mutex thrashing
-    /// performance on multi threaded multi GPU.
+    /// performance on multi threaded multi GPU (see issue #169).
     /// ```
     /// # use cudarc::driver::safe::{CudaDevice};
     /// # use cudarc::nccl::safe::{Comm, Id, ReduceOp};
