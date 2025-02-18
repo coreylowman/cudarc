@@ -241,6 +241,8 @@ impl Comm {
     /// on non-root ranks.
     ///
     /// sendbuff must be Some on root rank!
+    ///
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#broadcast)
     pub fn broadcast<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: Option<&S>,
@@ -265,6 +267,8 @@ impl Comm {
         }
     }
 
+    /// In place version of [Comm::broadcast()].
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#broadcast)
     pub fn broadcast_in_place<R: DevicePtrMut<T>, T: NcclType>(
         &self,
         recvbuff: &mut R,
@@ -283,6 +287,7 @@ impl Comm {
         }
     }
 
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allgather)
     pub fn all_gather<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
@@ -300,6 +305,7 @@ impl Comm {
         }
     }
 
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allreduce)
     pub fn all_reduce<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
@@ -319,10 +325,32 @@ impl Comm {
         }
     }
 
+    /// In place version of [Comm::all_reduce()].
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allreduce)
+    pub fn all_reduce_in_place<R: DevicePtrMut<T>, T: NcclType>(
+        &self,
+        buff: &mut R,
+        reduce_op: &ReduceOp,
+    ) -> Result<result::NcclStatus, result::NcclError> {
+        unsafe {
+            result::all_reduce(
+                *buff.device_ptr_mut() as *mut _,
+                *buff.device_ptr_mut() as *mut _,
+                buff.len(),
+                T::as_nccl_type(),
+                convert_to_nccl_reduce_op(reduce_op),
+                self.comm,
+                self.device.stream as *mut _,
+            )
+        }
+    }
+
     /// Reduces the sendbuff from all ranks into the recvbuff on the
     /// `root` rank.
     ///
     /// recvbuff must be Some on the root rank!
+    ///
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#reduce)
     pub fn reduce<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
@@ -349,6 +377,8 @@ impl Comm {
         }
     }
 
+    /// In place version of [Comm::reduce()].
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#reduce)
     pub fn reduce_in_place<R: DevicePtrMut<T>, T: NcclType>(
         &self,
         recvbuff: &mut R,
@@ -369,6 +399,7 @@ impl Comm {
         }
     }
 
+    /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#reducescatter)
     pub fn reduce_scatter<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
