@@ -70,6 +70,7 @@ pub enum cudnnStatus_t {
     CUDNN_STATUS_BAD_PARAM_DUPLICATED_ENTRIES = 2009,
     CUDNN_STATUS_BAD_PARAM_ATTRIBUTE_TYPE = 2010,
     CUDNN_STATUS_BAD_PARAM_CUDA_GRAPH_MISMATCH = 2011,
+    CUDNN_STATUS_BAD_PARAM_DESCRIPTOR_TYPE = 2012,
     CUDNN_STATUS_NOT_SUPPORTED = 3000,
     CUDNN_STATUS_NOT_SUPPORTED_GRAPH_PATTERN = 3001,
     CUDNN_STATUS_NOT_SUPPORTED_SHAPE = 3002,
@@ -128,6 +129,8 @@ pub enum cudnnDataType_t {
     CUDNN_DATA_FP8_E4M3 = 12,
     CUDNN_DATA_FP8_E5M2 = 13,
     CUDNN_DATA_FAST_FLOAT_FOR_FP8 = 14,
+    CUDNN_DATA_FP8_E8M0 = 15,
+    CUDNN_DATA_FP4_E2M1 = 16,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -203,33 +206,6 @@ pub struct cudnnDebugStruct {
     pub cudaDeviceId: ::core::ffi::c_int,
     pub reserved: [::core::ffi::c_int; 15usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudnnDebugStruct"][::core::mem::size_of::<cudnnDebugStruct>() - 120usize];
-    ["Alignment of cudnnDebugStruct"][::core::mem::align_of::<cudnnDebugStruct>() - 8usize];
-    ["Offset of field: cudnnDebugStruct::cudnn_version"]
-        [::core::mem::offset_of!(cudnnDebugStruct, cudnn_version) - 0usize];
-    ["Offset of field: cudnnDebugStruct::cudnnStatus"]
-        [::core::mem::offset_of!(cudnnDebugStruct, cudnnStatus) - 4usize];
-    ["Offset of field: cudnnDebugStruct::time_sec"]
-        [::core::mem::offset_of!(cudnnDebugStruct, time_sec) - 8usize];
-    ["Offset of field: cudnnDebugStruct::time_usec"]
-        [::core::mem::offset_of!(cudnnDebugStruct, time_usec) - 12usize];
-    ["Offset of field: cudnnDebugStruct::time_delta"]
-        [::core::mem::offset_of!(cudnnDebugStruct, time_delta) - 16usize];
-    ["Offset of field: cudnnDebugStruct::handle"]
-        [::core::mem::offset_of!(cudnnDebugStruct, handle) - 24usize];
-    ["Offset of field: cudnnDebugStruct::stream"]
-        [::core::mem::offset_of!(cudnnDebugStruct, stream) - 32usize];
-    ["Offset of field: cudnnDebugStruct::pid"]
-        [::core::mem::offset_of!(cudnnDebugStruct, pid) - 40usize];
-    ["Offset of field: cudnnDebugStruct::tid"]
-        [::core::mem::offset_of!(cudnnDebugStruct, tid) - 48usize];
-    ["Offset of field: cudnnDebugStruct::cudaDeviceId"]
-        [::core::mem::offset_of!(cudnnDebugStruct, cudaDeviceId) - 56usize];
-    ["Offset of field: cudnnDebugStruct::reserved"]
-        [::core::mem::offset_of!(cudnnDebugStruct, reserved) - 60usize];
-};
 impl Default for cudnnDebugStruct {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -267,15 +243,6 @@ pub struct cudnnFractionStruct {
     pub numerator: i64,
     pub denominator: i64,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudnnFractionStruct"][::core::mem::size_of::<cudnnFractionStruct>() - 16usize];
-    ["Alignment of cudnnFractionStruct"][::core::mem::align_of::<cudnnFractionStruct>() - 8usize];
-    ["Offset of field: cudnnFractionStruct::numerator"]
-        [::core::mem::offset_of!(cudnnFractionStruct, numerator) - 0usize];
-    ["Offset of field: cudnnFractionStruct::denominator"]
-        [::core::mem::offset_of!(cudnnFractionStruct, denominator) - 8usize];
-};
 pub type cudnnFraction_t = cudnnFractionStruct;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -464,6 +431,7 @@ pub enum cudnnBackendAttributeName_t {
     CUDNN_ATTR_OPERATIONGRAPH_OPS = 801,
     CUDNN_ATTR_OPERATIONGRAPH_ENGINE_GLOBAL_COUNT = 802,
     CUDNN_ATTR_OPERATIONGRAPH_IS_DYNAMIC_SHAPE_ENABLED = 803,
+    CUDNN_ATTR_OPERATIONGRAPH_IS_SAME_TOPOLOGY = 804,
     CUDNN_ATTR_TENSOR_BYTE_ALIGNMENT = 900,
     CUDNN_ATTR_TENSOR_DATA_TYPE = 901,
     CUDNN_ATTR_TENSOR_DIMENSIONS = 902,
@@ -594,6 +562,17 @@ pub enum cudnnBackendAttributeName_t {
     CUDNN_ATTR_OPERATION_RNG_OFFSET_DESC = 2313,
     CUDNN_ATTR_KERNEL_CACHE_OPERATION_GRAPH = 2400,
     CUDNN_ATTR_KERNEL_CACHE_IS_ENGINECFG_KERNEL_CACHED = 2401,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_QUANTIZE_XDESC = 2500,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_QUANTIZE_YDESC = 2501,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_QUANTIZE_SCALE_DESC = 2502,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_QUANTIZE_MATH_PREC = 2503,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_QUANTIZE_BLOCK_SIZE = 2504,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_QUANTIZE_DENOM_FACTOR_MODE = 2505,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_DEQUANTIZE_XDESC = 2600,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_DEQUANTIZE_SCALE_DESC = 2601,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_DEQUANTIZE_YDESC = 2602,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_DEQUANTIZE_MATH_PREC = 2603,
+    CUDNN_ATTR_OPERATION_BLOCK_SCALE_DEQUANTIZE_BLOCK_SIZE = 2604,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -668,6 +647,8 @@ pub enum cudnnBackendDescriptorType_t {
     CUDNN_BACKEND_OPERATION_RNG_DESCRIPTOR = 33,
     CUDNN_BACKEND_KERNEL_CACHE_DESCRIPTOR = 34,
     CUDNN_BACKEND_OPERATION_PAGED_CACHE_LOAD_DESCRIPTOR = 35,
+    CUDNN_BACKEND_OPERATION_BLOCK_SCALE_QUANTIZE_DESCRIPTOR = 36,
+    CUDNN_BACKEND_OPERATION_BLOCK_SCALE_DEQUANTIZE_DESCRIPTOR = 37,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -733,7 +714,13 @@ pub enum cudnnBackendKnobType_t {
     CUDNN_KNOB_TYPE_TILE_ROWS = 34,
     CUDNN_KNOB_TYPE_TILE_COLS = 35,
     CUDNN_KNOB_TYPE_LOAD_SIZE = 36,
-    CUDNN_KNOB_TYPE_COUNTS = 37,
+    CUDNN_KNOB_TYPE_CTA_COUNT = 37,
+    CUDNN_KNOB_TYPE_STREAM_K = 38,
+    CUDNN_KNOB_TYPE_SPLIT_P_SLC = 39,
+    CUDNN_KNOB_TYPE_TILE_M = 40,
+    CUDNN_KNOB_TYPE_TILE_N = 41,
+    CUDNN_KNOB_TYPE_WARP_SPEC_CFG = 42,
+    CUDNN_KNOB_TYPE_COUNTS = 43,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -759,6 +746,7 @@ pub enum cudnnBackendTensorReordering_t {
     CUDNN_TENSOR_REORDERING_NONE = 0,
     CUDNN_TENSOR_REORDERING_INT8x32 = 1,
     CUDNN_TENSOR_REORDERING_F16x16 = 2,
+    CUDNN_TENSOR_REORDERING_F8_128x4 = 3,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -775,6 +763,7 @@ pub enum cudnnBackendNormMode_t {
     CUDNN_BATCH_NORM = 2,
     CUDNN_GROUP_NORM = 3,
     CUDNN_RMS_NORM = 4,
+    CUDNN_ADA_LAYER_NORM = 5,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1124,27 +1113,6 @@ pub struct cudnnConvolutionFwdAlgoPerfStruct {
     pub mathType: cudnnMathType_t,
     pub reserved: [::core::ffi::c_int; 3usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudnnConvolutionFwdAlgoPerfStruct"]
-        [::core::mem::size_of::<cudnnConvolutionFwdAlgoPerfStruct>() - 48usize];
-    ["Alignment of cudnnConvolutionFwdAlgoPerfStruct"]
-        [::core::mem::align_of::<cudnnConvolutionFwdAlgoPerfStruct>() - 8usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::algo"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, algo) - 0usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::status"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, status) - 4usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::time"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, time) - 8usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::memory"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, memory) - 16usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::determinism"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, determinism) - 24usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::mathType"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, mathType) - 28usize];
-    ["Offset of field: cudnnConvolutionFwdAlgoPerfStruct::reserved"]
-        [::core::mem::offset_of!(cudnnConvolutionFwdAlgoPerfStruct, reserved) - 32usize];
-};
 impl Default for cudnnConvolutionFwdAlgoPerfStruct {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1166,27 +1134,6 @@ pub struct cudnnConvolutionBwdDataAlgoPerfStruct {
     pub mathType: cudnnMathType_t,
     pub reserved: [::core::ffi::c_int; 3usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudnnConvolutionBwdDataAlgoPerfStruct"]
-        [::core::mem::size_of::<cudnnConvolutionBwdDataAlgoPerfStruct>() - 48usize];
-    ["Alignment of cudnnConvolutionBwdDataAlgoPerfStruct"]
-        [::core::mem::align_of::<cudnnConvolutionBwdDataAlgoPerfStruct>() - 8usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::algo"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, algo) - 0usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::status"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, status) - 4usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::time"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, time) - 8usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::memory"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, memory) - 16usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::determinism"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, determinism) - 24usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::mathType"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, mathType) - 28usize];
-    ["Offset of field: cudnnConvolutionBwdDataAlgoPerfStruct::reserved"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdDataAlgoPerfStruct, reserved) - 32usize];
-};
 impl Default for cudnnConvolutionBwdDataAlgoPerfStruct {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1319,27 +1266,6 @@ pub struct cudnnConvolutionBwdFilterAlgoPerfStruct {
     pub mathType: cudnnMathType_t,
     pub reserved: [::core::ffi::c_int; 3usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudnnConvolutionBwdFilterAlgoPerfStruct"]
-        [::core::mem::size_of::<cudnnConvolutionBwdFilterAlgoPerfStruct>() - 48usize];
-    ["Alignment of cudnnConvolutionBwdFilterAlgoPerfStruct"]
-        [::core::mem::align_of::<cudnnConvolutionBwdFilterAlgoPerfStruct>() - 8usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::algo"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, algo) - 0usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::status"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, status) - 4usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::time"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, time) - 8usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::memory"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, memory) - 16usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::determinism"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, determinism) - 24usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::mathType"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, mathType) - 28usize];
-    ["Offset of field: cudnnConvolutionBwdFilterAlgoPerfStruct::reserved"]
-        [::core::mem::offset_of!(cudnnConvolutionBwdFilterAlgoPerfStruct, reserved) - 32usize];
-};
 impl Default for cudnnConvolutionBwdFilterAlgoPerfStruct {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();

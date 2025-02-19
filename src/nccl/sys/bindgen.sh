@@ -14,6 +14,7 @@ BINDGEN_EXTRA_CLANG_ARGS="-D__CUDA_BF16_TYPES_EXIST__" \
     --with-derive-ord \
     --use-core \
     --dynamic-loading Lib \
+    --no-layout-tests \
     wrapper.h -- -I$CUDA_INCLUDES -I/usr/lib/gcc/x86_64-linux-gnu/12/include/ \
     >tmp.rs
 

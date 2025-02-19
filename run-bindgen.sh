@@ -1,4 +1,4 @@
-if [ -z "${CUDA_ROOT}" ]; then
+if [ -z "${CUDA_ROOT}" && -d "${CUDA_ROOT}" ]; then
     CUDA_DIR=$CUDA_ROOT
 elif [ -d "/opt/cuda" ]; then
     CUDA_DIR="/opt/cuda"
