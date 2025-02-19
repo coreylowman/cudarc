@@ -29,13 +29,5 @@ Launch whatever docker image you want to generate bindings for:
 
 ```bash
 cd cudarc
-docker run -it -v .:/cudarc -w /cudarc <image tag> /bin/bash
-```
-
-This command will bind your current working directory to the cudarc directory in the image.
-
-Then once inside you can run:
-
-```bash
-bash install-bindgen.sh && . "$HOME/.cargo/env" && bash run-bindgen.sh
+docker run -it -v .:/cudarc -w /cudarc <image tag> bash docker-bindgen.sh
 ```
