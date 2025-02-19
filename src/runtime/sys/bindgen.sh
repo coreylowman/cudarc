@@ -14,6 +14,7 @@ bindgen \
     --with-derive-ord \
     --use-core \
     --dynamic-loading Lib \
+    --no-layout-tests \
     wrapper.h -- -I$CUDA_INCLUDES \
     >tmp.rs
 

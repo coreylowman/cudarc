@@ -88,14 +88,6 @@ pub struct dim3 {
     pub y: ::core::ffi::c_uint,
     pub z: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of dim3"][::core::mem::size_of::<dim3>() - 12usize];
-    ["Alignment of dim3"][::core::mem::align_of::<dim3>() - 4usize];
-    ["Offset of field: dim3::x"][::core::mem::offset_of!(dim3, x) - 0usize];
-    ["Offset of field: dim3::y"][::core::mem::offset_of!(dim3, y) - 4usize];
-    ["Offset of field: dim3::z"][::core::mem::offset_of!(dim3, z) - 8usize];
-};
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaError {
@@ -279,22 +271,6 @@ pub struct cudaChannelFormatDesc {
     pub w: ::core::ffi::c_int,
     pub f: cudaChannelFormatKind,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaChannelFormatDesc"][::core::mem::size_of::<cudaChannelFormatDesc>() - 20usize];
-    ["Alignment of cudaChannelFormatDesc"]
-        [::core::mem::align_of::<cudaChannelFormatDesc>() - 4usize];
-    ["Offset of field: cudaChannelFormatDesc::x"]
-        [::core::mem::offset_of!(cudaChannelFormatDesc, x) - 0usize];
-    ["Offset of field: cudaChannelFormatDesc::y"]
-        [::core::mem::offset_of!(cudaChannelFormatDesc, y) - 4usize];
-    ["Offset of field: cudaChannelFormatDesc::z"]
-        [::core::mem::offset_of!(cudaChannelFormatDesc, z) - 8usize];
-    ["Offset of field: cudaChannelFormatDesc::w"]
-        [::core::mem::offset_of!(cudaChannelFormatDesc, w) - 12usize];
-    ["Offset of field: cudaChannelFormatDesc::f"]
-        [::core::mem::offset_of!(cudaChannelFormatDesc, f) - 16usize];
-};
 impl Default for cudaChannelFormatDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -334,36 +310,6 @@ pub struct cudaArraySparseProperties__bindgen_ty_1 {
     pub height: ::core::ffi::c_uint,
     pub depth: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaArraySparseProperties__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaArraySparseProperties__bindgen_ty_1>() - 12usize];
-    ["Alignment of cudaArraySparseProperties__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaArraySparseProperties__bindgen_ty_1>() - 4usize];
-    ["Offset of field: cudaArraySparseProperties__bindgen_ty_1::width"]
-        [::core::mem::offset_of!(cudaArraySparseProperties__bindgen_ty_1, width) - 0usize];
-    ["Offset of field: cudaArraySparseProperties__bindgen_ty_1::height"]
-        [::core::mem::offset_of!(cudaArraySparseProperties__bindgen_ty_1, height) - 4usize];
-    ["Offset of field: cudaArraySparseProperties__bindgen_ty_1::depth"]
-        [::core::mem::offset_of!(cudaArraySparseProperties__bindgen_ty_1, depth) - 8usize];
-};
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaArraySparseProperties"]
-        [::core::mem::size_of::<cudaArraySparseProperties>() - 48usize];
-    ["Alignment of cudaArraySparseProperties"]
-        [::core::mem::align_of::<cudaArraySparseProperties>() - 8usize];
-    ["Offset of field: cudaArraySparseProperties::tileExtent"]
-        [::core::mem::offset_of!(cudaArraySparseProperties, tileExtent) - 0usize];
-    ["Offset of field: cudaArraySparseProperties::miptailFirstLevel"]
-        [::core::mem::offset_of!(cudaArraySparseProperties, miptailFirstLevel) - 12usize];
-    ["Offset of field: cudaArraySparseProperties::miptailSize"]
-        [::core::mem::offset_of!(cudaArraySparseProperties, miptailSize) - 16usize];
-    ["Offset of field: cudaArraySparseProperties::flags"]
-        [::core::mem::offset_of!(cudaArraySparseProperties, flags) - 24usize];
-    ["Offset of field: cudaArraySparseProperties::reserved"]
-        [::core::mem::offset_of!(cudaArraySparseProperties, reserved) - 28usize];
-};
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaArrayMemoryRequirements {
@@ -371,19 +317,6 @@ pub struct cudaArrayMemoryRequirements {
     pub alignment: usize,
     pub reserved: [::core::ffi::c_uint; 4usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaArrayMemoryRequirements"]
-        [::core::mem::size_of::<cudaArrayMemoryRequirements>() - 32usize];
-    ["Alignment of cudaArrayMemoryRequirements"]
-        [::core::mem::align_of::<cudaArrayMemoryRequirements>() - 8usize];
-    ["Offset of field: cudaArrayMemoryRequirements::size"]
-        [::core::mem::offset_of!(cudaArrayMemoryRequirements, size) - 0usize];
-    ["Offset of field: cudaArrayMemoryRequirements::alignment"]
-        [::core::mem::offset_of!(cudaArrayMemoryRequirements, alignment) - 8usize];
-    ["Offset of field: cudaArrayMemoryRequirements::reserved"]
-        [::core::mem::offset_of!(cudaArrayMemoryRequirements, reserved) - 16usize];
-};
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaMemoryType {
@@ -409,18 +342,6 @@ pub struct cudaPitchedPtr {
     pub xsize: usize,
     pub ysize: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaPitchedPtr"][::core::mem::size_of::<cudaPitchedPtr>() - 32usize];
-    ["Alignment of cudaPitchedPtr"][::core::mem::align_of::<cudaPitchedPtr>() - 8usize];
-    ["Offset of field: cudaPitchedPtr::ptr"][::core::mem::offset_of!(cudaPitchedPtr, ptr) - 0usize];
-    ["Offset of field: cudaPitchedPtr::pitch"]
-        [::core::mem::offset_of!(cudaPitchedPtr, pitch) - 8usize];
-    ["Offset of field: cudaPitchedPtr::xsize"]
-        [::core::mem::offset_of!(cudaPitchedPtr, xsize) - 16usize];
-    ["Offset of field: cudaPitchedPtr::ysize"]
-        [::core::mem::offset_of!(cudaPitchedPtr, ysize) - 24usize];
-};
 impl Default for cudaPitchedPtr {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -437,14 +358,6 @@ pub struct cudaExtent {
     pub height: usize,
     pub depth: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExtent"][::core::mem::size_of::<cudaExtent>() - 24usize];
-    ["Alignment of cudaExtent"][::core::mem::align_of::<cudaExtent>() - 8usize];
-    ["Offset of field: cudaExtent::width"][::core::mem::offset_of!(cudaExtent, width) - 0usize];
-    ["Offset of field: cudaExtent::height"][::core::mem::offset_of!(cudaExtent, height) - 8usize];
-    ["Offset of field: cudaExtent::depth"][::core::mem::offset_of!(cudaExtent, depth) - 16usize];
-};
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaPos {
@@ -452,14 +365,6 @@ pub struct cudaPos {
     pub y: usize,
     pub z: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaPos"][::core::mem::size_of::<cudaPos>() - 24usize];
-    ["Alignment of cudaPos"][::core::mem::align_of::<cudaPos>() - 8usize];
-    ["Offset of field: cudaPos::x"][::core::mem::offset_of!(cudaPos, x) - 0usize];
-    ["Offset of field: cudaPos::y"][::core::mem::offset_of!(cudaPos, y) - 8usize];
-    ["Offset of field: cudaPos::z"][::core::mem::offset_of!(cudaPos, z) - 16usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemcpy3DParms {
@@ -472,27 +377,6 @@ pub struct cudaMemcpy3DParms {
     pub extent: cudaExtent,
     pub kind: cudaMemcpyKind,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DParms"][::core::mem::size_of::<cudaMemcpy3DParms>() - 160usize];
-    ["Alignment of cudaMemcpy3DParms"][::core::mem::align_of::<cudaMemcpy3DParms>() - 8usize];
-    ["Offset of field: cudaMemcpy3DParms::srcArray"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, srcArray) - 0usize];
-    ["Offset of field: cudaMemcpy3DParms::srcPos"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, srcPos) - 8usize];
-    ["Offset of field: cudaMemcpy3DParms::srcPtr"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, srcPtr) - 32usize];
-    ["Offset of field: cudaMemcpy3DParms::dstArray"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, dstArray) - 64usize];
-    ["Offset of field: cudaMemcpy3DParms::dstPos"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, dstPos) - 72usize];
-    ["Offset of field: cudaMemcpy3DParms::dstPtr"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, dstPtr) - 96usize];
-    ["Offset of field: cudaMemcpy3DParms::extent"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, extent) - 128usize];
-    ["Offset of field: cudaMemcpy3DParms::kind"]
-        [::core::mem::offset_of!(cudaMemcpy3DParms, kind) - 152usize];
-};
 impl Default for cudaMemcpy3DParms {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -509,17 +393,6 @@ pub struct cudaMemcpyNodeParams {
     pub reserved: [::core::ffi::c_int; 3usize],
     pub copyParams: cudaMemcpy3DParms,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpyNodeParams"][::core::mem::size_of::<cudaMemcpyNodeParams>() - 176usize];
-    ["Alignment of cudaMemcpyNodeParams"][::core::mem::align_of::<cudaMemcpyNodeParams>() - 8usize];
-    ["Offset of field: cudaMemcpyNodeParams::flags"]
-        [::core::mem::offset_of!(cudaMemcpyNodeParams, flags) - 0usize];
-    ["Offset of field: cudaMemcpyNodeParams::reserved"]
-        [::core::mem::offset_of!(cudaMemcpyNodeParams, reserved) - 4usize];
-    ["Offset of field: cudaMemcpyNodeParams::copyParams"]
-        [::core::mem::offset_of!(cudaMemcpyNodeParams, copyParams) - 16usize];
-};
 impl Default for cudaMemcpyNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -542,30 +415,6 @@ pub struct cudaMemcpy3DPeerParms {
     pub dstDevice: ::core::ffi::c_int,
     pub extent: cudaExtent,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DPeerParms"][::core::mem::size_of::<cudaMemcpy3DPeerParms>() - 168usize];
-    ["Alignment of cudaMemcpy3DPeerParms"]
-        [::core::mem::align_of::<cudaMemcpy3DPeerParms>() - 8usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::srcArray"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, srcArray) - 0usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::srcPos"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, srcPos) - 8usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::srcPtr"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, srcPtr) - 32usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::srcDevice"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, srcDevice) - 64usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::dstArray"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, dstArray) - 72usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::dstPos"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, dstPos) - 80usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::dstPtr"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, dstPtr) - 104usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::dstDevice"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, dstDevice) - 136usize];
-    ["Offset of field: cudaMemcpy3DPeerParms::extent"]
-        [::core::mem::offset_of!(cudaMemcpy3DPeerParms, extent) - 144usize];
-};
 impl Default for cudaMemcpy3DPeerParms {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -585,23 +434,6 @@ pub struct cudaMemsetParams {
     pub width: usize,
     pub height: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemsetParams"][::core::mem::size_of::<cudaMemsetParams>() - 40usize];
-    ["Alignment of cudaMemsetParams"][::core::mem::align_of::<cudaMemsetParams>() - 8usize];
-    ["Offset of field: cudaMemsetParams::dst"]
-        [::core::mem::offset_of!(cudaMemsetParams, dst) - 0usize];
-    ["Offset of field: cudaMemsetParams::pitch"]
-        [::core::mem::offset_of!(cudaMemsetParams, pitch) - 8usize];
-    ["Offset of field: cudaMemsetParams::value"]
-        [::core::mem::offset_of!(cudaMemsetParams, value) - 16usize];
-    ["Offset of field: cudaMemsetParams::elementSize"]
-        [::core::mem::offset_of!(cudaMemsetParams, elementSize) - 20usize];
-    ["Offset of field: cudaMemsetParams::width"]
-        [::core::mem::offset_of!(cudaMemsetParams, width) - 24usize];
-    ["Offset of field: cudaMemsetParams::height"]
-        [::core::mem::offset_of!(cudaMemsetParams, height) - 32usize];
-};
 impl Default for cudaMemsetParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -621,23 +453,6 @@ pub struct cudaMemsetParamsV2 {
     pub width: usize,
     pub height: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemsetParamsV2"][::core::mem::size_of::<cudaMemsetParamsV2>() - 40usize];
-    ["Alignment of cudaMemsetParamsV2"][::core::mem::align_of::<cudaMemsetParamsV2>() - 8usize];
-    ["Offset of field: cudaMemsetParamsV2::dst"]
-        [::core::mem::offset_of!(cudaMemsetParamsV2, dst) - 0usize];
-    ["Offset of field: cudaMemsetParamsV2::pitch"]
-        [::core::mem::offset_of!(cudaMemsetParamsV2, pitch) - 8usize];
-    ["Offset of field: cudaMemsetParamsV2::value"]
-        [::core::mem::offset_of!(cudaMemsetParamsV2, value) - 16usize];
-    ["Offset of field: cudaMemsetParamsV2::elementSize"]
-        [::core::mem::offset_of!(cudaMemsetParamsV2, elementSize) - 20usize];
-    ["Offset of field: cudaMemsetParamsV2::width"]
-        [::core::mem::offset_of!(cudaMemsetParamsV2, width) - 24usize];
-    ["Offset of field: cudaMemsetParamsV2::height"]
-        [::core::mem::offset_of!(cudaMemsetParamsV2, height) - 32usize];
-};
 impl Default for cudaMemsetParamsV2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -663,22 +478,6 @@ pub struct cudaAccessPolicyWindow {
     pub hitProp: cudaAccessProperty,
     pub missProp: cudaAccessProperty,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaAccessPolicyWindow"][::core::mem::size_of::<cudaAccessPolicyWindow>() - 32usize];
-    ["Alignment of cudaAccessPolicyWindow"]
-        [::core::mem::align_of::<cudaAccessPolicyWindow>() - 8usize];
-    ["Offset of field: cudaAccessPolicyWindow::base_ptr"]
-        [::core::mem::offset_of!(cudaAccessPolicyWindow, base_ptr) - 0usize];
-    ["Offset of field: cudaAccessPolicyWindow::num_bytes"]
-        [::core::mem::offset_of!(cudaAccessPolicyWindow, num_bytes) - 8usize];
-    ["Offset of field: cudaAccessPolicyWindow::hitRatio"]
-        [::core::mem::offset_of!(cudaAccessPolicyWindow, hitRatio) - 16usize];
-    ["Offset of field: cudaAccessPolicyWindow::hitProp"]
-        [::core::mem::offset_of!(cudaAccessPolicyWindow, hitProp) - 20usize];
-    ["Offset of field: cudaAccessPolicyWindow::missProp"]
-        [::core::mem::offset_of!(cudaAccessPolicyWindow, missProp) - 24usize];
-};
 impl Default for cudaAccessPolicyWindow {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -696,15 +495,6 @@ pub struct cudaHostNodeParams {
     pub fn_: cudaHostFn_t,
     pub userData: *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaHostNodeParams"][::core::mem::size_of::<cudaHostNodeParams>() - 16usize];
-    ["Alignment of cudaHostNodeParams"][::core::mem::align_of::<cudaHostNodeParams>() - 8usize];
-    ["Offset of field: cudaHostNodeParams::fn_"]
-        [::core::mem::offset_of!(cudaHostNodeParams, fn_) - 0usize];
-    ["Offset of field: cudaHostNodeParams::userData"]
-        [::core::mem::offset_of!(cudaHostNodeParams, userData) - 8usize];
-};
 impl Default for cudaHostNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -720,15 +510,6 @@ pub struct cudaHostNodeParamsV2 {
     pub fn_: cudaHostFn_t,
     pub userData: *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaHostNodeParamsV2"][::core::mem::size_of::<cudaHostNodeParamsV2>() - 16usize];
-    ["Alignment of cudaHostNodeParamsV2"][::core::mem::align_of::<cudaHostNodeParamsV2>() - 8usize];
-    ["Offset of field: cudaHostNodeParamsV2::fn_"]
-        [::core::mem::offset_of!(cudaHostNodeParamsV2, fn_) - 0usize];
-    ["Offset of field: cudaHostNodeParamsV2::userData"]
-        [::core::mem::offset_of!(cudaHostNodeParamsV2, userData) - 8usize];
-};
 impl Default for cudaHostNodeParamsV2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -880,15 +661,6 @@ pub union cudaResourceDesc__bindgen_ty_1 {
 pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_1 {
     pub array: cudaArray_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceDesc__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1>() - 8usize];
-    ["Alignment of cudaResourceDesc__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_1::array"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_1, array) - 0usize];
-};
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -903,15 +675,6 @@ impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_1 {
 pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_2 {
     pub mipmap: cudaMipmappedArray_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceDesc__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2>() - 8usize];
-    ["Alignment of cudaResourceDesc__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_2>() - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_2::mipmap"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_2, mipmap) - 0usize];
-};
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -928,21 +691,6 @@ pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_3 {
     pub desc: cudaChannelFormatDesc,
     pub sizeInBytes: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceDesc__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3>() - 40usize];
-    ["Alignment of cudaResourceDesc__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_3>() - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_3::devPtr"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_3, devPtr) - 0usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_3::desc"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_3, desc) - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_3::sizeInBytes"][::core::mem::offset_of!(
-        cudaResourceDesc__bindgen_ty_1__bindgen_ty_3,
-        sizeInBytes
-    ) - 32usize];
-};
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -961,25 +709,6 @@ pub struct cudaResourceDesc__bindgen_ty_1__bindgen_ty_4 {
     pub height: usize,
     pub pitchInBytes: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceDesc__bindgen_ty_1__bindgen_ty_4"]
-        [::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4>() - 56usize];
-    ["Alignment of cudaResourceDesc__bindgen_ty_1__bindgen_ty_4"]
-        [::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1__bindgen_ty_4>() - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_4::devPtr"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_4, devPtr) - 0usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_4::desc"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_4, desc) - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_4::width"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_4, width) - 32usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_4::height"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1__bindgen_ty_4, height) - 40usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1__bindgen_ty_4::pitchInBytes"][::core::mem::offset_of!(
-        cudaResourceDesc__bindgen_ty_1__bindgen_ty_4,
-        pitchInBytes
-    ) - 48usize];
-};
 impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -989,21 +718,6 @@ impl Default for cudaResourceDesc__bindgen_ty_1__bindgen_ty_4 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceDesc__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaResourceDesc__bindgen_ty_1>() - 56usize];
-    ["Alignment of cudaResourceDesc__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaResourceDesc__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1::array"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1, array) - 0usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1::mipmap"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1, mipmap) - 0usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1::linear"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1, linear) - 0usize];
-    ["Offset of field: cudaResourceDesc__bindgen_ty_1::pitch2D"]
-        [::core::mem::offset_of!(cudaResourceDesc__bindgen_ty_1, pitch2D) - 0usize];
-};
 impl Default for cudaResourceDesc__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1013,15 +727,6 @@ impl Default for cudaResourceDesc__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceDesc"][::core::mem::size_of::<cudaResourceDesc>() - 64usize];
-    ["Alignment of cudaResourceDesc"][::core::mem::align_of::<cudaResourceDesc>() - 8usize];
-    ["Offset of field: cudaResourceDesc::resType"]
-        [::core::mem::offset_of!(cudaResourceDesc, resType) - 0usize];
-    ["Offset of field: cudaResourceDesc::res"]
-        [::core::mem::offset_of!(cudaResourceDesc, res) - 8usize];
-};
 impl Default for cudaResourceDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1043,27 +748,6 @@ pub struct cudaResourceViewDesc {
     pub firstLayer: ::core::ffi::c_uint,
     pub lastLayer: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaResourceViewDesc"][::core::mem::size_of::<cudaResourceViewDesc>() - 48usize];
-    ["Alignment of cudaResourceViewDesc"][::core::mem::align_of::<cudaResourceViewDesc>() - 8usize];
-    ["Offset of field: cudaResourceViewDesc::format"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, format) - 0usize];
-    ["Offset of field: cudaResourceViewDesc::width"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, width) - 8usize];
-    ["Offset of field: cudaResourceViewDesc::height"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, height) - 16usize];
-    ["Offset of field: cudaResourceViewDesc::depth"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, depth) - 24usize];
-    ["Offset of field: cudaResourceViewDesc::firstMipmapLevel"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, firstMipmapLevel) - 32usize];
-    ["Offset of field: cudaResourceViewDesc::lastMipmapLevel"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, lastMipmapLevel) - 36usize];
-    ["Offset of field: cudaResourceViewDesc::firstLayer"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, firstLayer) - 40usize];
-    ["Offset of field: cudaResourceViewDesc::lastLayer"]
-        [::core::mem::offset_of!(cudaResourceViewDesc, lastLayer) - 44usize];
-};
 impl Default for cudaResourceViewDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1081,20 +765,6 @@ pub struct cudaPointerAttributes {
     pub devicePointer: *mut ::core::ffi::c_void,
     pub hostPointer: *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaPointerAttributes"][::core::mem::size_of::<cudaPointerAttributes>() - 24usize];
-    ["Alignment of cudaPointerAttributes"]
-        [::core::mem::align_of::<cudaPointerAttributes>() - 8usize];
-    ["Offset of field: cudaPointerAttributes::type_"]
-        [::core::mem::offset_of!(cudaPointerAttributes, type_) - 0usize];
-    ["Offset of field: cudaPointerAttributes::device"]
-        [::core::mem::offset_of!(cudaPointerAttributes, device) - 4usize];
-    ["Offset of field: cudaPointerAttributes::devicePointer"]
-        [::core::mem::offset_of!(cudaPointerAttributes, devicePointer) - 8usize];
-    ["Offset of field: cudaPointerAttributes::hostPointer"]
-        [::core::mem::offset_of!(cudaPointerAttributes, hostPointer) - 16usize];
-};
 impl Default for cudaPointerAttributes {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1125,45 +795,6 @@ pub struct cudaFuncAttributes {
     pub nonPortableClusterSizeAllowed: ::core::ffi::c_int,
     pub reserved: [::core::ffi::c_int; 16usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaFuncAttributes"][::core::mem::size_of::<cudaFuncAttributes>() - 144usize];
-    ["Alignment of cudaFuncAttributes"][::core::mem::align_of::<cudaFuncAttributes>() - 8usize];
-    ["Offset of field: cudaFuncAttributes::sharedSizeBytes"]
-        [::core::mem::offset_of!(cudaFuncAttributes, sharedSizeBytes) - 0usize];
-    ["Offset of field: cudaFuncAttributes::constSizeBytes"]
-        [::core::mem::offset_of!(cudaFuncAttributes, constSizeBytes) - 8usize];
-    ["Offset of field: cudaFuncAttributes::localSizeBytes"]
-        [::core::mem::offset_of!(cudaFuncAttributes, localSizeBytes) - 16usize];
-    ["Offset of field: cudaFuncAttributes::maxThreadsPerBlock"]
-        [::core::mem::offset_of!(cudaFuncAttributes, maxThreadsPerBlock) - 24usize];
-    ["Offset of field: cudaFuncAttributes::numRegs"]
-        [::core::mem::offset_of!(cudaFuncAttributes, numRegs) - 28usize];
-    ["Offset of field: cudaFuncAttributes::ptxVersion"]
-        [::core::mem::offset_of!(cudaFuncAttributes, ptxVersion) - 32usize];
-    ["Offset of field: cudaFuncAttributes::binaryVersion"]
-        [::core::mem::offset_of!(cudaFuncAttributes, binaryVersion) - 36usize];
-    ["Offset of field: cudaFuncAttributes::cacheModeCA"]
-        [::core::mem::offset_of!(cudaFuncAttributes, cacheModeCA) - 40usize];
-    ["Offset of field: cudaFuncAttributes::maxDynamicSharedSizeBytes"]
-        [::core::mem::offset_of!(cudaFuncAttributes, maxDynamicSharedSizeBytes) - 44usize];
-    ["Offset of field: cudaFuncAttributes::preferredShmemCarveout"]
-        [::core::mem::offset_of!(cudaFuncAttributes, preferredShmemCarveout) - 48usize];
-    ["Offset of field: cudaFuncAttributes::clusterDimMustBeSet"]
-        [::core::mem::offset_of!(cudaFuncAttributes, clusterDimMustBeSet) - 52usize];
-    ["Offset of field: cudaFuncAttributes::requiredClusterWidth"]
-        [::core::mem::offset_of!(cudaFuncAttributes, requiredClusterWidth) - 56usize];
-    ["Offset of field: cudaFuncAttributes::requiredClusterHeight"]
-        [::core::mem::offset_of!(cudaFuncAttributes, requiredClusterHeight) - 60usize];
-    ["Offset of field: cudaFuncAttributes::requiredClusterDepth"]
-        [::core::mem::offset_of!(cudaFuncAttributes, requiredClusterDepth) - 64usize];
-    ["Offset of field: cudaFuncAttributes::clusterSchedulingPolicyPreference"]
-        [::core::mem::offset_of!(cudaFuncAttributes, clusterSchedulingPolicyPreference) - 68usize];
-    ["Offset of field: cudaFuncAttributes::nonPortableClusterSizeAllowed"]
-        [::core::mem::offset_of!(cudaFuncAttributes, nonPortableClusterSizeAllowed) - 72usize];
-    ["Offset of field: cudaFuncAttributes::reserved"]
-        [::core::mem::offset_of!(cudaFuncAttributes, reserved) - 76usize];
-};
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaFuncAttribute {
@@ -1431,14 +1062,6 @@ pub struct cudaMemLocation {
     pub type_: cudaMemLocationType,
     pub id: ::core::ffi::c_int,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemLocation"][::core::mem::size_of::<cudaMemLocation>() - 8usize];
-    ["Alignment of cudaMemLocation"][::core::mem::align_of::<cudaMemLocation>() - 4usize];
-    ["Offset of field: cudaMemLocation::type_"]
-        [::core::mem::offset_of!(cudaMemLocation, type_) - 0usize];
-    ["Offset of field: cudaMemLocation::id"][::core::mem::offset_of!(cudaMemLocation, id) - 4usize];
-};
 impl Default for cudaMemLocation {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1461,15 +1084,6 @@ pub struct cudaMemAccessDesc {
     pub location: cudaMemLocation,
     pub flags: cudaMemAccessFlags,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemAccessDesc"][::core::mem::size_of::<cudaMemAccessDesc>() - 12usize];
-    ["Alignment of cudaMemAccessDesc"][::core::mem::align_of::<cudaMemAccessDesc>() - 4usize];
-    ["Offset of field: cudaMemAccessDesc::location"]
-        [::core::mem::offset_of!(cudaMemAccessDesc, location) - 0usize];
-    ["Offset of field: cudaMemAccessDesc::flags"]
-        [::core::mem::offset_of!(cudaMemAccessDesc, flags) - 8usize];
-};
 impl Default for cudaMemAccessDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1506,25 +1120,6 @@ pub struct cudaMemPoolProps {
     pub usage: ::core::ffi::c_ushort,
     pub reserved: [::core::ffi::c_uchar; 54usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemPoolProps"][::core::mem::size_of::<cudaMemPoolProps>() - 88usize];
-    ["Alignment of cudaMemPoolProps"][::core::mem::align_of::<cudaMemPoolProps>() - 8usize];
-    ["Offset of field: cudaMemPoolProps::allocType"]
-        [::core::mem::offset_of!(cudaMemPoolProps, allocType) - 0usize];
-    ["Offset of field: cudaMemPoolProps::handleTypes"]
-        [::core::mem::offset_of!(cudaMemPoolProps, handleTypes) - 4usize];
-    ["Offset of field: cudaMemPoolProps::location"]
-        [::core::mem::offset_of!(cudaMemPoolProps, location) - 8usize];
-    ["Offset of field: cudaMemPoolProps::win32SecurityAttributes"]
-        [::core::mem::offset_of!(cudaMemPoolProps, win32SecurityAttributes) - 16usize];
-    ["Offset of field: cudaMemPoolProps::maxSize"]
-        [::core::mem::offset_of!(cudaMemPoolProps, maxSize) - 24usize];
-    ["Offset of field: cudaMemPoolProps::usage"]
-        [::core::mem::offset_of!(cudaMemPoolProps, usage) - 32usize];
-    ["Offset of field: cudaMemPoolProps::reserved"]
-        [::core::mem::offset_of!(cudaMemPoolProps, reserved) - 34usize];
-};
 impl Default for cudaMemPoolProps {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1539,15 +1134,6 @@ impl Default for cudaMemPoolProps {
 pub struct cudaMemPoolPtrExportData {
     pub reserved: [::core::ffi::c_uchar; 64usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemPoolPtrExportData"]
-        [::core::mem::size_of::<cudaMemPoolPtrExportData>() - 64usize];
-    ["Alignment of cudaMemPoolPtrExportData"]
-        [::core::mem::align_of::<cudaMemPoolPtrExportData>() - 1usize];
-    ["Offset of field: cudaMemPoolPtrExportData::reserved"]
-        [::core::mem::offset_of!(cudaMemPoolPtrExportData, reserved) - 0usize];
-};
 impl Default for cudaMemPoolPtrExportData {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1566,22 +1152,6 @@ pub struct cudaMemAllocNodeParams {
     pub bytesize: usize,
     pub dptr: *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemAllocNodeParams"][::core::mem::size_of::<cudaMemAllocNodeParams>() - 120usize];
-    ["Alignment of cudaMemAllocNodeParams"]
-        [::core::mem::align_of::<cudaMemAllocNodeParams>() - 8usize];
-    ["Offset of field: cudaMemAllocNodeParams::poolProps"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParams, poolProps) - 0usize];
-    ["Offset of field: cudaMemAllocNodeParams::accessDescs"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParams, accessDescs) - 88usize];
-    ["Offset of field: cudaMemAllocNodeParams::accessDescCount"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParams, accessDescCount) - 96usize];
-    ["Offset of field: cudaMemAllocNodeParams::bytesize"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParams, bytesize) - 104usize];
-    ["Offset of field: cudaMemAllocNodeParams::dptr"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParams, dptr) - 112usize];
-};
 impl Default for cudaMemAllocNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1600,23 +1170,6 @@ pub struct cudaMemAllocNodeParamsV2 {
     pub bytesize: usize,
     pub dptr: *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemAllocNodeParamsV2"]
-        [::core::mem::size_of::<cudaMemAllocNodeParamsV2>() - 120usize];
-    ["Alignment of cudaMemAllocNodeParamsV2"]
-        [::core::mem::align_of::<cudaMemAllocNodeParamsV2>() - 8usize];
-    ["Offset of field: cudaMemAllocNodeParamsV2::poolProps"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParamsV2, poolProps) - 0usize];
-    ["Offset of field: cudaMemAllocNodeParamsV2::accessDescs"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParamsV2, accessDescs) - 88usize];
-    ["Offset of field: cudaMemAllocNodeParamsV2::accessDescCount"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParamsV2, accessDescCount) - 96usize];
-    ["Offset of field: cudaMemAllocNodeParamsV2::bytesize"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParamsV2, bytesize) - 104usize];
-    ["Offset of field: cudaMemAllocNodeParamsV2::dptr"]
-        [::core::mem::offset_of!(cudaMemAllocNodeParamsV2, dptr) - 112usize];
-};
 impl Default for cudaMemAllocNodeParamsV2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1631,14 +1184,6 @@ impl Default for cudaMemAllocNodeParamsV2 {
 pub struct cudaMemFreeNodeParams {
     pub dptr: *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemFreeNodeParams"][::core::mem::size_of::<cudaMemFreeNodeParams>() - 8usize];
-    ["Alignment of cudaMemFreeNodeParams"]
-        [::core::mem::align_of::<cudaMemFreeNodeParams>() - 8usize];
-    ["Offset of field: cudaMemFreeNodeParams::dptr"]
-        [::core::mem::offset_of!(cudaMemFreeNodeParams, dptr) - 0usize];
-};
 impl Default for cudaMemFreeNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1679,19 +1224,6 @@ pub struct cudaMemcpyAttributes {
     pub dstLocHint: cudaMemLocation,
     pub flags: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpyAttributes"][::core::mem::size_of::<cudaMemcpyAttributes>() - 24usize];
-    ["Alignment of cudaMemcpyAttributes"][::core::mem::align_of::<cudaMemcpyAttributes>() - 4usize];
-    ["Offset of field: cudaMemcpyAttributes::srcAccessOrder"]
-        [::core::mem::offset_of!(cudaMemcpyAttributes, srcAccessOrder) - 0usize];
-    ["Offset of field: cudaMemcpyAttributes::srcLocHint"]
-        [::core::mem::offset_of!(cudaMemcpyAttributes, srcLocHint) - 4usize];
-    ["Offset of field: cudaMemcpyAttributes::dstLocHint"]
-        [::core::mem::offset_of!(cudaMemcpyAttributes, dstLocHint) - 12usize];
-    ["Offset of field: cudaMemcpyAttributes::flags"]
-        [::core::mem::offset_of!(cudaMemcpyAttributes, flags) - 20usize];
-};
 impl Default for cudaMemcpyAttributes {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1715,14 +1247,6 @@ pub struct cudaOffset3D {
     pub y: usize,
     pub z: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaOffset3D"][::core::mem::size_of::<cudaOffset3D>() - 24usize];
-    ["Alignment of cudaOffset3D"][::core::mem::align_of::<cudaOffset3D>() - 8usize];
-    ["Offset of field: cudaOffset3D::x"][::core::mem::offset_of!(cudaOffset3D, x) - 0usize];
-    ["Offset of field: cudaOffset3D::y"][::core::mem::offset_of!(cudaOffset3D, y) - 8usize];
-    ["Offset of field: cudaOffset3D::z"][::core::mem::offset_of!(cudaOffset3D, z) - 16usize];
-};
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct cudaMemcpy3DOperand {
@@ -1743,27 +1267,6 @@ pub struct cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1 {
     pub layerHeight: usize,
     pub locHint: cudaMemLocation,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1>() - 32usize];
-    ["Alignment of cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1::ptr"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1, ptr) - 0usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1::rowLength"][::core::mem::offset_of!(
-        cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1,
-        rowLength
-    ) - 8usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1::layerHeight"][::core::mem::offset_of!(
-        cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1,
-        layerHeight
-    ) - 16usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1::locHint"][::core::mem::offset_of!(
-        cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1,
-        locHint
-    ) - 24usize];
-};
 impl Default for cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1779,17 +1282,6 @@ pub struct cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2 {
     pub array: cudaArray_t,
     pub offset: cudaOffset3D,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::size_of::<cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2>() - 32usize];
-    ["Alignment of cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2>() - 8usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2::array"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2, array) - 0usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2::offset"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2, offset) - 8usize];
-};
 impl Default for cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1799,17 +1291,6 @@ impl Default for cudaMemcpy3DOperand__bindgen_ty_1__bindgen_ty_2 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DOperand__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaMemcpy3DOperand__bindgen_ty_1>() - 32usize];
-    ["Alignment of cudaMemcpy3DOperand__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaMemcpy3DOperand__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1::ptr"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand__bindgen_ty_1, ptr) - 0usize];
-    ["Offset of field: cudaMemcpy3DOperand__bindgen_ty_1::array"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand__bindgen_ty_1, array) - 0usize];
-};
 impl Default for cudaMemcpy3DOperand__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1819,15 +1300,6 @@ impl Default for cudaMemcpy3DOperand__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DOperand"][::core::mem::size_of::<cudaMemcpy3DOperand>() - 40usize];
-    ["Alignment of cudaMemcpy3DOperand"][::core::mem::align_of::<cudaMemcpy3DOperand>() - 8usize];
-    ["Offset of field: cudaMemcpy3DOperand::type_"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand, type_) - 0usize];
-    ["Offset of field: cudaMemcpy3DOperand::op"]
-        [::core::mem::offset_of!(cudaMemcpy3DOperand, op) - 8usize];
-};
 impl Default for cudaMemcpy3DOperand {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1846,21 +1318,6 @@ pub struct cudaMemcpy3DBatchOp {
     pub srcAccessOrder: cudaMemcpySrcAccessOrder,
     pub flags: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemcpy3DBatchOp"][::core::mem::size_of::<cudaMemcpy3DBatchOp>() - 112usize];
-    ["Alignment of cudaMemcpy3DBatchOp"][::core::mem::align_of::<cudaMemcpy3DBatchOp>() - 8usize];
-    ["Offset of field: cudaMemcpy3DBatchOp::src"]
-        [::core::mem::offset_of!(cudaMemcpy3DBatchOp, src) - 0usize];
-    ["Offset of field: cudaMemcpy3DBatchOp::dst"]
-        [::core::mem::offset_of!(cudaMemcpy3DBatchOp, dst) - 40usize];
-    ["Offset of field: cudaMemcpy3DBatchOp::extent"]
-        [::core::mem::offset_of!(cudaMemcpy3DBatchOp, extent) - 80usize];
-    ["Offset of field: cudaMemcpy3DBatchOp::srcAccessOrder"]
-        [::core::mem::offset_of!(cudaMemcpy3DBatchOp, srcAccessOrder) - 104usize];
-    ["Offset of field: cudaMemcpy3DBatchOp::flags"]
-        [::core::mem::offset_of!(cudaMemcpy3DBatchOp, flags) - 108usize];
-};
 impl Default for cudaMemcpy3DBatchOp {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1883,12 +1340,6 @@ pub enum cudaDeviceP2PAttr {
 pub struct CUuuid_st {
     pub bytes: [::core::ffi::c_char; 16usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of CUuuid_st"][::core::mem::size_of::<CUuuid_st>() - 16usize];
-    ["Alignment of CUuuid_st"][::core::mem::align_of::<CUuuid_st>() - 1usize];
-    ["Offset of field: CUuuid_st::bytes"][::core::mem::offset_of!(CUuuid_st, bytes) - 0usize];
-};
 pub type cudaUUID_t = CUuuid_st;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1988,201 +1439,6 @@ pub struct cudaDeviceProp {
     pub unifiedFunctionPointers: ::core::ffi::c_int,
     pub reserved: [::core::ffi::c_int; 63usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaDeviceProp"][::core::mem::size_of::<cudaDeviceProp>() - 1032usize];
-    ["Alignment of cudaDeviceProp"][::core::mem::align_of::<cudaDeviceProp>() - 8usize];
-    ["Offset of field: cudaDeviceProp::name"]
-        [::core::mem::offset_of!(cudaDeviceProp, name) - 0usize];
-    ["Offset of field: cudaDeviceProp::uuid"]
-        [::core::mem::offset_of!(cudaDeviceProp, uuid) - 256usize];
-    ["Offset of field: cudaDeviceProp::luid"]
-        [::core::mem::offset_of!(cudaDeviceProp, luid) - 272usize];
-    ["Offset of field: cudaDeviceProp::luidDeviceNodeMask"]
-        [::core::mem::offset_of!(cudaDeviceProp, luidDeviceNodeMask) - 280usize];
-    ["Offset of field: cudaDeviceProp::totalGlobalMem"]
-        [::core::mem::offset_of!(cudaDeviceProp, totalGlobalMem) - 288usize];
-    ["Offset of field: cudaDeviceProp::sharedMemPerBlock"]
-        [::core::mem::offset_of!(cudaDeviceProp, sharedMemPerBlock) - 296usize];
-    ["Offset of field: cudaDeviceProp::regsPerBlock"]
-        [::core::mem::offset_of!(cudaDeviceProp, regsPerBlock) - 304usize];
-    ["Offset of field: cudaDeviceProp::warpSize"]
-        [::core::mem::offset_of!(cudaDeviceProp, warpSize) - 308usize];
-    ["Offset of field: cudaDeviceProp::memPitch"]
-        [::core::mem::offset_of!(cudaDeviceProp, memPitch) - 312usize];
-    ["Offset of field: cudaDeviceProp::maxThreadsPerBlock"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxThreadsPerBlock) - 320usize];
-    ["Offset of field: cudaDeviceProp::maxThreadsDim"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxThreadsDim) - 324usize];
-    ["Offset of field: cudaDeviceProp::maxGridSize"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxGridSize) - 336usize];
-    ["Offset of field: cudaDeviceProp::clockRate"]
-        [::core::mem::offset_of!(cudaDeviceProp, clockRate) - 348usize];
-    ["Offset of field: cudaDeviceProp::totalConstMem"]
-        [::core::mem::offset_of!(cudaDeviceProp, totalConstMem) - 352usize];
-    ["Offset of field: cudaDeviceProp::major"]
-        [::core::mem::offset_of!(cudaDeviceProp, major) - 360usize];
-    ["Offset of field: cudaDeviceProp::minor"]
-        [::core::mem::offset_of!(cudaDeviceProp, minor) - 364usize];
-    ["Offset of field: cudaDeviceProp::textureAlignment"]
-        [::core::mem::offset_of!(cudaDeviceProp, textureAlignment) - 368usize];
-    ["Offset of field: cudaDeviceProp::texturePitchAlignment"]
-        [::core::mem::offset_of!(cudaDeviceProp, texturePitchAlignment) - 376usize];
-    ["Offset of field: cudaDeviceProp::deviceOverlap"]
-        [::core::mem::offset_of!(cudaDeviceProp, deviceOverlap) - 384usize];
-    ["Offset of field: cudaDeviceProp::multiProcessorCount"]
-        [::core::mem::offset_of!(cudaDeviceProp, multiProcessorCount) - 388usize];
-    ["Offset of field: cudaDeviceProp::kernelExecTimeoutEnabled"]
-        [::core::mem::offset_of!(cudaDeviceProp, kernelExecTimeoutEnabled) - 392usize];
-    ["Offset of field: cudaDeviceProp::integrated"]
-        [::core::mem::offset_of!(cudaDeviceProp, integrated) - 396usize];
-    ["Offset of field: cudaDeviceProp::canMapHostMemory"]
-        [::core::mem::offset_of!(cudaDeviceProp, canMapHostMemory) - 400usize];
-    ["Offset of field: cudaDeviceProp::computeMode"]
-        [::core::mem::offset_of!(cudaDeviceProp, computeMode) - 404usize];
-    ["Offset of field: cudaDeviceProp::maxTexture1D"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture1D) - 408usize];
-    ["Offset of field: cudaDeviceProp::maxTexture1DMipmap"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture1DMipmap) - 412usize];
-    ["Offset of field: cudaDeviceProp::maxTexture1DLinear"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture1DLinear) - 416usize];
-    ["Offset of field: cudaDeviceProp::maxTexture2D"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture2D) - 420usize];
-    ["Offset of field: cudaDeviceProp::maxTexture2DMipmap"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture2DMipmap) - 428usize];
-    ["Offset of field: cudaDeviceProp::maxTexture2DLinear"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture2DLinear) - 436usize];
-    ["Offset of field: cudaDeviceProp::maxTexture2DGather"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture2DGather) - 448usize];
-    ["Offset of field: cudaDeviceProp::maxTexture3D"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture3D) - 456usize];
-    ["Offset of field: cudaDeviceProp::maxTexture3DAlt"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture3DAlt) - 468usize];
-    ["Offset of field: cudaDeviceProp::maxTextureCubemap"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTextureCubemap) - 480usize];
-    ["Offset of field: cudaDeviceProp::maxTexture1DLayered"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture1DLayered) - 484usize];
-    ["Offset of field: cudaDeviceProp::maxTexture2DLayered"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTexture2DLayered) - 492usize];
-    ["Offset of field: cudaDeviceProp::maxTextureCubemapLayered"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxTextureCubemapLayered) - 504usize];
-    ["Offset of field: cudaDeviceProp::maxSurface1D"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurface1D) - 512usize];
-    ["Offset of field: cudaDeviceProp::maxSurface2D"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurface2D) - 516usize];
-    ["Offset of field: cudaDeviceProp::maxSurface3D"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurface3D) - 524usize];
-    ["Offset of field: cudaDeviceProp::maxSurface1DLayered"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurface1DLayered) - 536usize];
-    ["Offset of field: cudaDeviceProp::maxSurface2DLayered"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurface2DLayered) - 544usize];
-    ["Offset of field: cudaDeviceProp::maxSurfaceCubemap"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurfaceCubemap) - 556usize];
-    ["Offset of field: cudaDeviceProp::maxSurfaceCubemapLayered"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxSurfaceCubemapLayered) - 560usize];
-    ["Offset of field: cudaDeviceProp::surfaceAlignment"]
-        [::core::mem::offset_of!(cudaDeviceProp, surfaceAlignment) - 568usize];
-    ["Offset of field: cudaDeviceProp::concurrentKernels"]
-        [::core::mem::offset_of!(cudaDeviceProp, concurrentKernels) - 576usize];
-    ["Offset of field: cudaDeviceProp::ECCEnabled"]
-        [::core::mem::offset_of!(cudaDeviceProp, ECCEnabled) - 580usize];
-    ["Offset of field: cudaDeviceProp::pciBusID"]
-        [::core::mem::offset_of!(cudaDeviceProp, pciBusID) - 584usize];
-    ["Offset of field: cudaDeviceProp::pciDeviceID"]
-        [::core::mem::offset_of!(cudaDeviceProp, pciDeviceID) - 588usize];
-    ["Offset of field: cudaDeviceProp::pciDomainID"]
-        [::core::mem::offset_of!(cudaDeviceProp, pciDomainID) - 592usize];
-    ["Offset of field: cudaDeviceProp::tccDriver"]
-        [::core::mem::offset_of!(cudaDeviceProp, tccDriver) - 596usize];
-    ["Offset of field: cudaDeviceProp::asyncEngineCount"]
-        [::core::mem::offset_of!(cudaDeviceProp, asyncEngineCount) - 600usize];
-    ["Offset of field: cudaDeviceProp::unifiedAddressing"]
-        [::core::mem::offset_of!(cudaDeviceProp, unifiedAddressing) - 604usize];
-    ["Offset of field: cudaDeviceProp::memoryClockRate"]
-        [::core::mem::offset_of!(cudaDeviceProp, memoryClockRate) - 608usize];
-    ["Offset of field: cudaDeviceProp::memoryBusWidth"]
-        [::core::mem::offset_of!(cudaDeviceProp, memoryBusWidth) - 612usize];
-    ["Offset of field: cudaDeviceProp::l2CacheSize"]
-        [::core::mem::offset_of!(cudaDeviceProp, l2CacheSize) - 616usize];
-    ["Offset of field: cudaDeviceProp::persistingL2CacheMaxSize"]
-        [::core::mem::offset_of!(cudaDeviceProp, persistingL2CacheMaxSize) - 620usize];
-    ["Offset of field: cudaDeviceProp::maxThreadsPerMultiProcessor"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxThreadsPerMultiProcessor) - 624usize];
-    ["Offset of field: cudaDeviceProp::streamPrioritiesSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, streamPrioritiesSupported) - 628usize];
-    ["Offset of field: cudaDeviceProp::globalL1CacheSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, globalL1CacheSupported) - 632usize];
-    ["Offset of field: cudaDeviceProp::localL1CacheSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, localL1CacheSupported) - 636usize];
-    ["Offset of field: cudaDeviceProp::sharedMemPerMultiprocessor"]
-        [::core::mem::offset_of!(cudaDeviceProp, sharedMemPerMultiprocessor) - 640usize];
-    ["Offset of field: cudaDeviceProp::regsPerMultiprocessor"]
-        [::core::mem::offset_of!(cudaDeviceProp, regsPerMultiprocessor) - 648usize];
-    ["Offset of field: cudaDeviceProp::managedMemory"]
-        [::core::mem::offset_of!(cudaDeviceProp, managedMemory) - 652usize];
-    ["Offset of field: cudaDeviceProp::isMultiGpuBoard"]
-        [::core::mem::offset_of!(cudaDeviceProp, isMultiGpuBoard) - 656usize];
-    ["Offset of field: cudaDeviceProp::multiGpuBoardGroupID"]
-        [::core::mem::offset_of!(cudaDeviceProp, multiGpuBoardGroupID) - 660usize];
-    ["Offset of field: cudaDeviceProp::hostNativeAtomicSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, hostNativeAtomicSupported) - 664usize];
-    ["Offset of field: cudaDeviceProp::singleToDoublePrecisionPerfRatio"]
-        [::core::mem::offset_of!(cudaDeviceProp, singleToDoublePrecisionPerfRatio) - 668usize];
-    ["Offset of field: cudaDeviceProp::pageableMemoryAccess"]
-        [::core::mem::offset_of!(cudaDeviceProp, pageableMemoryAccess) - 672usize];
-    ["Offset of field: cudaDeviceProp::concurrentManagedAccess"]
-        [::core::mem::offset_of!(cudaDeviceProp, concurrentManagedAccess) - 676usize];
-    ["Offset of field: cudaDeviceProp::computePreemptionSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, computePreemptionSupported) - 680usize];
-    ["Offset of field: cudaDeviceProp::canUseHostPointerForRegisteredMem"]
-        [::core::mem::offset_of!(cudaDeviceProp, canUseHostPointerForRegisteredMem) - 684usize];
-    ["Offset of field: cudaDeviceProp::cooperativeLaunch"]
-        [::core::mem::offset_of!(cudaDeviceProp, cooperativeLaunch) - 688usize];
-    ["Offset of field: cudaDeviceProp::cooperativeMultiDeviceLaunch"]
-        [::core::mem::offset_of!(cudaDeviceProp, cooperativeMultiDeviceLaunch) - 692usize];
-    ["Offset of field: cudaDeviceProp::sharedMemPerBlockOptin"]
-        [::core::mem::offset_of!(cudaDeviceProp, sharedMemPerBlockOptin) - 696usize];
-    ["Offset of field: cudaDeviceProp::pageableMemoryAccessUsesHostPageTables"][::core::mem::offset_of!(
-        cudaDeviceProp,
-        pageableMemoryAccessUsesHostPageTables
-    ) - 704usize];
-    ["Offset of field: cudaDeviceProp::directManagedMemAccessFromHost"]
-        [::core::mem::offset_of!(cudaDeviceProp, directManagedMemAccessFromHost) - 708usize];
-    ["Offset of field: cudaDeviceProp::maxBlocksPerMultiProcessor"]
-        [::core::mem::offset_of!(cudaDeviceProp, maxBlocksPerMultiProcessor) - 712usize];
-    ["Offset of field: cudaDeviceProp::accessPolicyMaxWindowSize"]
-        [::core::mem::offset_of!(cudaDeviceProp, accessPolicyMaxWindowSize) - 716usize];
-    ["Offset of field: cudaDeviceProp::reservedSharedMemPerBlock"]
-        [::core::mem::offset_of!(cudaDeviceProp, reservedSharedMemPerBlock) - 720usize];
-    ["Offset of field: cudaDeviceProp::hostRegisterSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, hostRegisterSupported) - 728usize];
-    ["Offset of field: cudaDeviceProp::sparseCudaArraySupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, sparseCudaArraySupported) - 732usize];
-    ["Offset of field: cudaDeviceProp::hostRegisterReadOnlySupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, hostRegisterReadOnlySupported) - 736usize];
-    ["Offset of field: cudaDeviceProp::timelineSemaphoreInteropSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, timelineSemaphoreInteropSupported) - 740usize];
-    ["Offset of field: cudaDeviceProp::memoryPoolsSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, memoryPoolsSupported) - 744usize];
-    ["Offset of field: cudaDeviceProp::gpuDirectRDMASupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, gpuDirectRDMASupported) - 748usize];
-    ["Offset of field: cudaDeviceProp::gpuDirectRDMAFlushWritesOptions"]
-        [::core::mem::offset_of!(cudaDeviceProp, gpuDirectRDMAFlushWritesOptions) - 752usize];
-    ["Offset of field: cudaDeviceProp::gpuDirectRDMAWritesOrdering"]
-        [::core::mem::offset_of!(cudaDeviceProp, gpuDirectRDMAWritesOrdering) - 756usize];
-    ["Offset of field: cudaDeviceProp::memoryPoolSupportedHandleTypes"]
-        [::core::mem::offset_of!(cudaDeviceProp, memoryPoolSupportedHandleTypes) - 760usize];
-    ["Offset of field: cudaDeviceProp::deferredMappingCudaArraySupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, deferredMappingCudaArraySupported) - 764usize];
-    ["Offset of field: cudaDeviceProp::ipcEventSupported"]
-        [::core::mem::offset_of!(cudaDeviceProp, ipcEventSupported) - 768usize];
-    ["Offset of field: cudaDeviceProp::clusterLaunch"]
-        [::core::mem::offset_of!(cudaDeviceProp, clusterLaunch) - 772usize];
-    ["Offset of field: cudaDeviceProp::unifiedFunctionPointers"]
-        [::core::mem::offset_of!(cudaDeviceProp, unifiedFunctionPointers) - 776usize];
-    ["Offset of field: cudaDeviceProp::reserved"]
-        [::core::mem::offset_of!(cudaDeviceProp, reserved) - 780usize];
-};
 impl Default for cudaDeviceProp {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2197,14 +1453,6 @@ impl Default for cudaDeviceProp {
 pub struct cudaIpcEventHandle_st {
     pub reserved: [::core::ffi::c_char; 64usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaIpcEventHandle_st"][::core::mem::size_of::<cudaIpcEventHandle_st>() - 64usize];
-    ["Alignment of cudaIpcEventHandle_st"]
-        [::core::mem::align_of::<cudaIpcEventHandle_st>() - 1usize];
-    ["Offset of field: cudaIpcEventHandle_st::reserved"]
-        [::core::mem::offset_of!(cudaIpcEventHandle_st, reserved) - 0usize];
-};
 impl Default for cudaIpcEventHandle_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2220,13 +1468,6 @@ pub type cudaIpcEventHandle_t = cudaIpcEventHandle_st;
 pub struct cudaIpcMemHandle_st {
     pub reserved: [::core::ffi::c_char; 64usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaIpcMemHandle_st"][::core::mem::size_of::<cudaIpcMemHandle_st>() - 64usize];
-    ["Alignment of cudaIpcMemHandle_st"][::core::mem::align_of::<cudaIpcMemHandle_st>() - 1usize];
-    ["Offset of field: cudaIpcMemHandle_st::reserved"]
-        [::core::mem::offset_of!(cudaIpcMemHandle_st, reserved) - 0usize];
-};
 impl Default for cudaIpcMemHandle_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2242,14 +1483,6 @@ pub type cudaIpcMemHandle_t = cudaIpcMemHandle_st;
 pub struct cudaMemFabricHandle_st {
     pub reserved: [::core::ffi::c_char; 64usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaMemFabricHandle_st"][::core::mem::size_of::<cudaMemFabricHandle_st>() - 64usize];
-    ["Alignment of cudaMemFabricHandle_st"]
-        [::core::mem::align_of::<cudaMemFabricHandle_st>() - 1usize];
-    ["Offset of field: cudaMemFabricHandle_st::reserved"]
-        [::core::mem::offset_of!(cudaMemFabricHandle_st, reserved) - 0usize];
-};
 impl Default for cudaMemFabricHandle_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2293,24 +1526,6 @@ pub struct cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1 {
     pub handle: *mut ::core::ffi::c_void,
     pub name: *const ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1"][::core::mem::size_of::<
-        cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    >() - 16usize];
-    ["Alignment of cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1"][::core::mem::align_of::<
-        cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    >() - 8usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1::handle"][::core::mem::offset_of!(
-        cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1,
-        handle
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1::name"][::core::mem::offset_of!(
-        cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1,
-        name
-    ) - 8usize];
-};
 impl Default for cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2320,21 +1535,6 @@ impl Default for cudaExternalMemoryHandleDesc__bindgen_ty_1__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalMemoryHandleDesc__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1>() - 16usize];
-    ["Alignment of cudaExternalMemoryHandleDesc__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalMemoryHandleDesc__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc__bindgen_ty_1::fd"]
-        [::core::mem::offset_of!(cudaExternalMemoryHandleDesc__bindgen_ty_1, fd) - 0usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc__bindgen_ty_1::win32"]
-        [::core::mem::offset_of!(cudaExternalMemoryHandleDesc__bindgen_ty_1, win32) - 0usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc__bindgen_ty_1::nvSciBufObject"][::core::mem::offset_of!(
-        cudaExternalMemoryHandleDesc__bindgen_ty_1,
-        nvSciBufObject
-    ) - 0usize];
-};
 impl Default for cudaExternalMemoryHandleDesc__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2344,21 +1544,6 @@ impl Default for cudaExternalMemoryHandleDesc__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalMemoryHandleDesc"]
-        [::core::mem::size_of::<cudaExternalMemoryHandleDesc>() - 40usize];
-    ["Alignment of cudaExternalMemoryHandleDesc"]
-        [::core::mem::align_of::<cudaExternalMemoryHandleDesc>() - 8usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc::type_"]
-        [::core::mem::offset_of!(cudaExternalMemoryHandleDesc, type_) - 0usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc::handle"]
-        [::core::mem::offset_of!(cudaExternalMemoryHandleDesc, handle) - 8usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc::size"]
-        [::core::mem::offset_of!(cudaExternalMemoryHandleDesc, size) - 24usize];
-    ["Offset of field: cudaExternalMemoryHandleDesc::flags"]
-        [::core::mem::offset_of!(cudaExternalMemoryHandleDesc, flags) - 32usize];
-};
 impl Default for cudaExternalMemoryHandleDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2375,19 +1560,6 @@ pub struct cudaExternalMemoryBufferDesc {
     pub size: ::core::ffi::c_ulonglong,
     pub flags: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalMemoryBufferDesc"]
-        [::core::mem::size_of::<cudaExternalMemoryBufferDesc>() - 24usize];
-    ["Alignment of cudaExternalMemoryBufferDesc"]
-        [::core::mem::align_of::<cudaExternalMemoryBufferDesc>() - 8usize];
-    ["Offset of field: cudaExternalMemoryBufferDesc::offset"]
-        [::core::mem::offset_of!(cudaExternalMemoryBufferDesc, offset) - 0usize];
-    ["Offset of field: cudaExternalMemoryBufferDesc::size"]
-        [::core::mem::offset_of!(cudaExternalMemoryBufferDesc, size) - 8usize];
-    ["Offset of field: cudaExternalMemoryBufferDesc::flags"]
-        [::core::mem::offset_of!(cudaExternalMemoryBufferDesc, flags) - 16usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaExternalMemoryMipmappedArrayDesc {
@@ -2397,23 +1569,6 @@ pub struct cudaExternalMemoryMipmappedArrayDesc {
     pub flags: ::core::ffi::c_uint,
     pub numLevels: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalMemoryMipmappedArrayDesc"]
-        [::core::mem::size_of::<cudaExternalMemoryMipmappedArrayDesc>() - 64usize];
-    ["Alignment of cudaExternalMemoryMipmappedArrayDesc"]
-        [::core::mem::align_of::<cudaExternalMemoryMipmappedArrayDesc>() - 8usize];
-    ["Offset of field: cudaExternalMemoryMipmappedArrayDesc::offset"]
-        [::core::mem::offset_of!(cudaExternalMemoryMipmappedArrayDesc, offset) - 0usize];
-    ["Offset of field: cudaExternalMemoryMipmappedArrayDesc::formatDesc"]
-        [::core::mem::offset_of!(cudaExternalMemoryMipmappedArrayDesc, formatDesc) - 8usize];
-    ["Offset of field: cudaExternalMemoryMipmappedArrayDesc::extent"]
-        [::core::mem::offset_of!(cudaExternalMemoryMipmappedArrayDesc, extent) - 32usize];
-    ["Offset of field: cudaExternalMemoryMipmappedArrayDesc::flags"]
-        [::core::mem::offset_of!(cudaExternalMemoryMipmappedArrayDesc, flags) - 56usize];
-    ["Offset of field: cudaExternalMemoryMipmappedArrayDesc::numLevels"]
-        [::core::mem::offset_of!(cudaExternalMemoryMipmappedArrayDesc, numLevels) - 60usize];
-};
 impl Default for cudaExternalMemoryMipmappedArrayDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2457,25 +1612,6 @@ pub struct cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1 {
     pub handle: *mut ::core::ffi::c_void,
     pub name: *const ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1"][::core::mem::size_of::<
-        cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1,
-    >() - 16usize];
-    ["Alignment of cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1::handle"][::core::mem::offset_of!(
-        cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1,
-        handle
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1::name"][::core::mem::offset_of!(
-        cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1,
-        name
-    )
-        - 8usize];
-};
 impl Default for cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2485,21 +1621,6 @@ impl Default for cudaExternalSemaphoreHandleDesc__bindgen_ty_1__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreHandleDesc__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1>() - 16usize];
-    ["Alignment of cudaExternalSemaphoreHandleDesc__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreHandleDesc__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc__bindgen_ty_1::fd"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreHandleDesc__bindgen_ty_1, fd) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc__bindgen_ty_1::win32"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreHandleDesc__bindgen_ty_1, win32) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc__bindgen_ty_1::nvSciSyncObj"][::core::mem::offset_of!(
-        cudaExternalSemaphoreHandleDesc__bindgen_ty_1,
-        nvSciSyncObj
-    ) - 0usize];
-};
 impl Default for cudaExternalSemaphoreHandleDesc__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2509,19 +1630,6 @@ impl Default for cudaExternalSemaphoreHandleDesc__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreHandleDesc"]
-        [::core::mem::size_of::<cudaExternalSemaphoreHandleDesc>() - 32usize];
-    ["Alignment of cudaExternalSemaphoreHandleDesc"]
-        [::core::mem::align_of::<cudaExternalSemaphoreHandleDesc>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc::type_"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreHandleDesc, type_) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc::handle"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreHandleDesc, handle) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreHandleDesc::flags"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreHandleDesc, flags) - 24usize];
-};
 impl Default for cudaExternalSemaphoreHandleDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2549,41 +1657,12 @@ pub struct cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1 {
 pub struct cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1 {
     pub value: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1>(
-        ) - 8usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1>(
-        ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1::value"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_1,
-        value
-    )
-        - 0usize];
-};
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2 {
     pub fence: *mut ::core::ffi::c_void,
     pub reserved: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2>(
-        ) - 8usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2>(
-        ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2::fence"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2,
-        fence
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2::reserved"] [:: core :: mem :: offset_of ! (cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2 , reserved) - 0usize] ;
-};
 impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2598,40 +1677,6 @@ impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_
 pub struct cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3 {
     pub key: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3>(
-        ) - 8usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3>(
-        ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3::key"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1__bindgen_ty_3,
-        key
-    )
-        - 0usize];
-};
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1>() - 24usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1::fence"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1,
-        fence
-    ) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1::nvSciSync"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1,
-        nvSciSync
-    ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1::keyedMutex"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1,
-        keyedMutex
-    )
-        - 16usize];
-};
 impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2641,17 +1686,6 @@ impl Default for cudaExternalSemaphoreSignalParams_v1__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams_v1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams_v1>() - 32usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams_v1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams_v1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1::params"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalParams_v1, params) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams_v1::flags"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalParams_v1, flags) - 24usize];
-};
 impl Default for cudaExternalSemaphoreSignalParams_v1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2679,45 +1713,12 @@ pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1 {
 pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1 {
     pub value: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1"][::core::mem::size_of::<
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1::value"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_1,
-        value
-    )
-        - 0usize];
-};
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2 {
     pub fence: *mut ::core::ffi::c_void,
     pub reserved: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2"][::core::mem::size_of::<
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2::fence"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2,
-        fence
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2::reserved"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2,
-        reserved
-    )
-        - 0usize];
-};
 impl Default for cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2733,38 +1734,6 @@ pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3 {
     pub key: ::core::ffi::c_ulonglong,
     pub timeoutMs: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3"][::core::mem::size_of::<
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3,
-    >() - 16usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3::key"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3,
-        key
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3::timeoutMs"] [:: core :: mem :: offset_of ! (cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3 , timeoutMs) - 8usize] ;
-};
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1>() - 32usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1::fence"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1, fence) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1::nvSciSync"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1,
-        nvSciSync
-    ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1::keyedMutex"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1,
-        keyedMutex
-    ) - 16usize];
-};
 impl Default for cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2774,17 +1743,6 @@ impl Default for cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams_v1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreWaitParams_v1>() - 40usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams_v1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams_v1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1::params"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams_v1, params) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams_v1::flags"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams_v1, flags) - 32usize];
-};
 impl Default for cudaExternalSemaphoreWaitParams_v1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2814,45 +1772,12 @@ pub struct cudaExternalSemaphoreSignalParams__bindgen_ty_1 {
 pub struct cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1 {
     pub value: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1"][::core::mem::size_of::<
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1::value"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_1,
-        value
-    )
-        - 0usize];
-};
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2 {
     pub fence: *mut ::core::ffi::c_void,
     pub reserved: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2"][::core::mem::size_of::<
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2::fence"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2,
-        fence
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2::reserved"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2,
-        reserved
-    )
-        - 0usize];
-};
 impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2867,41 +1792,6 @@ impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_2 {
 pub struct cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3 {
     pub key: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3"][::core::mem::size_of::<
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3::key"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1__bindgen_ty_3,
-        key
-    )
-        - 0usize];
-};
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1>() - 72usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1::fence"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalParams__bindgen_ty_1, fence) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1::nvSciSync"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1,
-        nvSciSync
-    ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1::keyedMutex"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1,
-        keyedMutex
-    ) - 16usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams__bindgen_ty_1::reserved"][::core::mem::offset_of!(
-        cudaExternalSemaphoreSignalParams__bindgen_ty_1,
-        reserved
-    ) - 24usize];
-};
 impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2911,19 +1801,6 @@ impl Default for cudaExternalSemaphoreSignalParams__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalParams"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalParams>() - 144usize];
-    ["Alignment of cudaExternalSemaphoreSignalParams"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalParams>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams::params"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalParams, params) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams::flags"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalParams, flags) - 72usize];
-    ["Offset of field: cudaExternalSemaphoreSignalParams::reserved"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalParams, reserved) - 76usize];
-};
 impl Default for cudaExternalSemaphoreSignalParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2953,45 +1830,12 @@ pub struct cudaExternalSemaphoreWaitParams__bindgen_ty_1 {
 pub struct cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1 {
     pub value: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1"][::core::mem::size_of::<
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1::value"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_1,
-        value
-    )
-        - 0usize];
-};
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2 {
     pub fence: *mut ::core::ffi::c_void,
     pub reserved: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2"][::core::mem::size_of::<
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2,
-    >() - 8usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2::fence"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2,
-        fence
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2::reserved"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2,
-        reserved
-    )
-        - 0usize];
-};
 impl Default for cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3007,46 +1851,6 @@ pub struct cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3 {
     pub key: ::core::ffi::c_ulonglong,
     pub timeoutMs: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3"][::core::mem::size_of::<
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3,
-    >() - 16usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3>()
-            - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3::key"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3,
-        key
-    )
-        - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3::timeoutMs"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1__bindgen_ty_3,
-        timeoutMs
-    )
-        - 8usize];
-};
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1>() - 72usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1::fence"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams__bindgen_ty_1, fence) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1::nvSciSync"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1,
-        nvSciSync
-    ) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1::keyedMutex"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1,
-        keyedMutex
-    ) - 16usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams__bindgen_ty_1::reserved"][::core::mem::offset_of!(
-        cudaExternalSemaphoreWaitParams__bindgen_ty_1,
-        reserved
-    ) - 32usize];
-};
 impl Default for cudaExternalSemaphoreWaitParams__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3056,19 +1860,6 @@ impl Default for cudaExternalSemaphoreWaitParams__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitParams"]
-        [::core::mem::size_of::<cudaExternalSemaphoreWaitParams>() - 144usize];
-    ["Alignment of cudaExternalSemaphoreWaitParams"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitParams>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams::params"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams, params) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams::flags"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams, flags) - 72usize];
-    ["Offset of field: cudaExternalSemaphoreWaitParams::reserved"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitParams, reserved) - 76usize];
-};
 impl Default for cudaExternalSemaphoreWaitParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3170,30 +1961,6 @@ pub struct cudalibraryHostUniversalFunctionAndDataTable {
     pub dataTable: *mut ::core::ffi::c_void,
     pub dataWindowSize: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudalibraryHostUniversalFunctionAndDataTable"]
-        [::core::mem::size_of::<cudalibraryHostUniversalFunctionAndDataTable>() - 32usize];
-    ["Alignment of cudalibraryHostUniversalFunctionAndDataTable"]
-        [::core::mem::align_of::<cudalibraryHostUniversalFunctionAndDataTable>() - 8usize];
-    ["Offset of field: cudalibraryHostUniversalFunctionAndDataTable::functionTable"][::core::mem::offset_of!(
-        cudalibraryHostUniversalFunctionAndDataTable,
-        functionTable
-    ) - 0usize];
-    ["Offset of field: cudalibraryHostUniversalFunctionAndDataTable::functionWindowSize"][::core::mem::offset_of!(
-        cudalibraryHostUniversalFunctionAndDataTable,
-        functionWindowSize
-    )
-        - 8usize];
-    ["Offset of field: cudalibraryHostUniversalFunctionAndDataTable::dataTable"][::core::mem::offset_of!(
-        cudalibraryHostUniversalFunctionAndDataTable,
-        dataTable
-    ) - 16usize];
-    ["Offset of field: cudalibraryHostUniversalFunctionAndDataTable::dataWindowSize"][::core::mem::offset_of!(
-        cudalibraryHostUniversalFunctionAndDataTable,
-        dataWindowSize
-    ) - 24usize];
-};
 impl Default for cudalibraryHostUniversalFunctionAndDataTable {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3245,23 +2012,6 @@ pub struct cudaLaunchParams {
     pub sharedMem: usize,
     pub stream: cudaStream_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchParams"][::core::mem::size_of::<cudaLaunchParams>() - 56usize];
-    ["Alignment of cudaLaunchParams"][::core::mem::align_of::<cudaLaunchParams>() - 8usize];
-    ["Offset of field: cudaLaunchParams::func"]
-        [::core::mem::offset_of!(cudaLaunchParams, func) - 0usize];
-    ["Offset of field: cudaLaunchParams::gridDim"]
-        [::core::mem::offset_of!(cudaLaunchParams, gridDim) - 8usize];
-    ["Offset of field: cudaLaunchParams::blockDim"]
-        [::core::mem::offset_of!(cudaLaunchParams, blockDim) - 20usize];
-    ["Offset of field: cudaLaunchParams::args"]
-        [::core::mem::offset_of!(cudaLaunchParams, args) - 32usize];
-    ["Offset of field: cudaLaunchParams::sharedMem"]
-        [::core::mem::offset_of!(cudaLaunchParams, sharedMem) - 40usize];
-    ["Offset of field: cudaLaunchParams::stream"]
-        [::core::mem::offset_of!(cudaLaunchParams, stream) - 48usize];
-};
 impl Default for cudaLaunchParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3281,23 +2031,6 @@ pub struct cudaKernelNodeParams {
     pub kernelParams: *mut *mut ::core::ffi::c_void,
     pub extra: *mut *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaKernelNodeParams"][::core::mem::size_of::<cudaKernelNodeParams>() - 56usize];
-    ["Alignment of cudaKernelNodeParams"][::core::mem::align_of::<cudaKernelNodeParams>() - 8usize];
-    ["Offset of field: cudaKernelNodeParams::func"]
-        [::core::mem::offset_of!(cudaKernelNodeParams, func) - 0usize];
-    ["Offset of field: cudaKernelNodeParams::gridDim"]
-        [::core::mem::offset_of!(cudaKernelNodeParams, gridDim) - 8usize];
-    ["Offset of field: cudaKernelNodeParams::blockDim"]
-        [::core::mem::offset_of!(cudaKernelNodeParams, blockDim) - 20usize];
-    ["Offset of field: cudaKernelNodeParams::sharedMemBytes"]
-        [::core::mem::offset_of!(cudaKernelNodeParams, sharedMemBytes) - 32usize];
-    ["Offset of field: cudaKernelNodeParams::kernelParams"]
-        [::core::mem::offset_of!(cudaKernelNodeParams, kernelParams) - 40usize];
-    ["Offset of field: cudaKernelNodeParams::extra"]
-        [::core::mem::offset_of!(cudaKernelNodeParams, extra) - 48usize];
-};
 impl Default for cudaKernelNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3317,24 +2050,6 @@ pub struct cudaKernelNodeParamsV2 {
     pub kernelParams: *mut *mut ::core::ffi::c_void,
     pub extra: *mut *mut ::core::ffi::c_void,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaKernelNodeParamsV2"][::core::mem::size_of::<cudaKernelNodeParamsV2>() - 56usize];
-    ["Alignment of cudaKernelNodeParamsV2"]
-        [::core::mem::align_of::<cudaKernelNodeParamsV2>() - 8usize];
-    ["Offset of field: cudaKernelNodeParamsV2::func"]
-        [::core::mem::offset_of!(cudaKernelNodeParamsV2, func) - 0usize];
-    ["Offset of field: cudaKernelNodeParamsV2::gridDim"]
-        [::core::mem::offset_of!(cudaKernelNodeParamsV2, gridDim) - 8usize];
-    ["Offset of field: cudaKernelNodeParamsV2::blockDim"]
-        [::core::mem::offset_of!(cudaKernelNodeParamsV2, blockDim) - 20usize];
-    ["Offset of field: cudaKernelNodeParamsV2::sharedMemBytes"]
-        [::core::mem::offset_of!(cudaKernelNodeParamsV2, sharedMemBytes) - 32usize];
-    ["Offset of field: cudaKernelNodeParamsV2::kernelParams"]
-        [::core::mem::offset_of!(cudaKernelNodeParamsV2, kernelParams) - 40usize];
-    ["Offset of field: cudaKernelNodeParamsV2::extra"]
-        [::core::mem::offset_of!(cudaKernelNodeParamsV2, extra) - 48usize];
-};
 impl Default for cudaKernelNodeParamsV2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3351,19 +2066,6 @@ pub struct cudaExternalSemaphoreSignalNodeParams {
     pub paramsArray: *const cudaExternalSemaphoreSignalParams,
     pub numExtSems: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalNodeParams"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalNodeParams>() - 24usize];
-    ["Alignment of cudaExternalSemaphoreSignalNodeParams"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalNodeParams>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalNodeParams::extSemArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalNodeParams, extSemArray) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalNodeParams::paramsArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalNodeParams, paramsArray) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalNodeParams::numExtSems"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalNodeParams, numExtSems) - 16usize];
-};
 impl Default for cudaExternalSemaphoreSignalNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3380,19 +2082,6 @@ pub struct cudaExternalSemaphoreSignalNodeParamsV2 {
     pub paramsArray: *const cudaExternalSemaphoreSignalParams,
     pub numExtSems: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreSignalNodeParamsV2"]
-        [::core::mem::size_of::<cudaExternalSemaphoreSignalNodeParamsV2>() - 24usize];
-    ["Alignment of cudaExternalSemaphoreSignalNodeParamsV2"]
-        [::core::mem::align_of::<cudaExternalSemaphoreSignalNodeParamsV2>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalNodeParamsV2::extSemArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalNodeParamsV2, extSemArray) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreSignalNodeParamsV2::paramsArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalNodeParamsV2, paramsArray) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreSignalNodeParamsV2::numExtSems"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreSignalNodeParamsV2, numExtSems) - 16usize];
-};
 impl Default for cudaExternalSemaphoreSignalNodeParamsV2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3409,19 +2098,6 @@ pub struct cudaExternalSemaphoreWaitNodeParams {
     pub paramsArray: *const cudaExternalSemaphoreWaitParams,
     pub numExtSems: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitNodeParams"]
-        [::core::mem::size_of::<cudaExternalSemaphoreWaitNodeParams>() - 24usize];
-    ["Alignment of cudaExternalSemaphoreWaitNodeParams"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitNodeParams>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitNodeParams::extSemArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitNodeParams, extSemArray) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitNodeParams::paramsArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitNodeParams, paramsArray) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitNodeParams::numExtSems"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitNodeParams, numExtSems) - 16usize];
-};
 impl Default for cudaExternalSemaphoreWaitNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3438,19 +2114,6 @@ pub struct cudaExternalSemaphoreWaitNodeParamsV2 {
     pub paramsArray: *const cudaExternalSemaphoreWaitParams,
     pub numExtSems: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaExternalSemaphoreWaitNodeParamsV2"]
-        [::core::mem::size_of::<cudaExternalSemaphoreWaitNodeParamsV2>() - 24usize];
-    ["Alignment of cudaExternalSemaphoreWaitNodeParamsV2"]
-        [::core::mem::align_of::<cudaExternalSemaphoreWaitNodeParamsV2>() - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitNodeParamsV2::extSemArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitNodeParamsV2, extSemArray) - 0usize];
-    ["Offset of field: cudaExternalSemaphoreWaitNodeParamsV2::paramsArray"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitNodeParamsV2, paramsArray) - 8usize];
-    ["Offset of field: cudaExternalSemaphoreWaitNodeParamsV2::numExtSems"]
-        [::core::mem::offset_of!(cudaExternalSemaphoreWaitNodeParamsV2, numExtSems) - 16usize];
-};
 impl Default for cudaExternalSemaphoreWaitNodeParamsV2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3480,21 +2143,6 @@ pub struct cudaConditionalNodeParams {
     pub size: ::core::ffi::c_uint,
     pub phGraph_out: *mut cudaGraph_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaConditionalNodeParams"]
-        [::core::mem::size_of::<cudaConditionalNodeParams>() - 24usize];
-    ["Alignment of cudaConditionalNodeParams"]
-        [::core::mem::align_of::<cudaConditionalNodeParams>() - 8usize];
-    ["Offset of field: cudaConditionalNodeParams::handle"]
-        [::core::mem::offset_of!(cudaConditionalNodeParams, handle) - 0usize];
-    ["Offset of field: cudaConditionalNodeParams::type_"]
-        [::core::mem::offset_of!(cudaConditionalNodeParams, type_) - 8usize];
-    ["Offset of field: cudaConditionalNodeParams::size"]
-        [::core::mem::offset_of!(cudaConditionalNodeParams, size) - 12usize];
-    ["Offset of field: cudaConditionalNodeParams::phGraph_out"]
-        [::core::mem::offset_of!(cudaConditionalNodeParams, phGraph_out) - 16usize];
-};
 impl Default for cudaConditionalNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3527,15 +2175,6 @@ pub enum cudaGraphNodeType {
 pub struct cudaChildGraphNodeParams {
     pub graph: cudaGraph_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaChildGraphNodeParams"]
-        [::core::mem::size_of::<cudaChildGraphNodeParams>() - 8usize];
-    ["Alignment of cudaChildGraphNodeParams"]
-        [::core::mem::align_of::<cudaChildGraphNodeParams>() - 8usize];
-    ["Offset of field: cudaChildGraphNodeParams::graph"]
-        [::core::mem::offset_of!(cudaChildGraphNodeParams, graph) - 0usize];
-};
 impl Default for cudaChildGraphNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3550,15 +2189,6 @@ impl Default for cudaChildGraphNodeParams {
 pub struct cudaEventRecordNodeParams {
     pub event: cudaEvent_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaEventRecordNodeParams"]
-        [::core::mem::size_of::<cudaEventRecordNodeParams>() - 8usize];
-    ["Alignment of cudaEventRecordNodeParams"]
-        [::core::mem::align_of::<cudaEventRecordNodeParams>() - 8usize];
-    ["Offset of field: cudaEventRecordNodeParams::event"]
-        [::core::mem::offset_of!(cudaEventRecordNodeParams, event) - 0usize];
-};
 impl Default for cudaEventRecordNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3573,14 +2203,6 @@ impl Default for cudaEventRecordNodeParams {
 pub struct cudaEventWaitNodeParams {
     pub event: cudaEvent_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaEventWaitNodeParams"][::core::mem::size_of::<cudaEventWaitNodeParams>() - 8usize];
-    ["Alignment of cudaEventWaitNodeParams"]
-        [::core::mem::align_of::<cudaEventWaitNodeParams>() - 8usize];
-    ["Offset of field: cudaEventWaitNodeParams::event"]
-        [::core::mem::offset_of!(cudaEventWaitNodeParams, event) - 0usize];
-};
 impl Default for cudaEventWaitNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3615,39 +2237,6 @@ pub union cudaGraphNodeParams__bindgen_ty_1 {
     pub free: cudaMemFreeNodeParams,
     pub conditional: cudaConditionalNodeParams,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphNodeParams__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaGraphNodeParams__bindgen_ty_1>() - 232usize];
-    ["Alignment of cudaGraphNodeParams__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaGraphNodeParams__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::reserved1"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, reserved1) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::kernel"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, kernel) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::memcpy"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, memcpy) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::memset"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, memset) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::host"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, host) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::graph"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, graph) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::eventWait"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, eventWait) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::eventRecord"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, eventRecord) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::extSemSignal"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, extSemSignal) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::extSemWait"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, extSemWait) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::alloc"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, alloc) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::free"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, free) - 0usize];
-    ["Offset of field: cudaGraphNodeParams__bindgen_ty_1::conditional"]
-        [::core::mem::offset_of!(cudaGraphNodeParams__bindgen_ty_1, conditional) - 0usize];
-};
 impl Default for cudaGraphNodeParams__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3657,17 +2246,6 @@ impl Default for cudaGraphNodeParams__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphNodeParams"][::core::mem::size_of::<cudaGraphNodeParams>() - 256usize];
-    ["Alignment of cudaGraphNodeParams"][::core::mem::align_of::<cudaGraphNodeParams>() - 8usize];
-    ["Offset of field: cudaGraphNodeParams::type_"]
-        [::core::mem::offset_of!(cudaGraphNodeParams, type_) - 0usize];
-    ["Offset of field: cudaGraphNodeParams::reserved0"]
-        [::core::mem::offset_of!(cudaGraphNodeParams, reserved0) - 4usize];
-    ["Offset of field: cudaGraphNodeParams::reserved2"]
-        [::core::mem::offset_of!(cudaGraphNodeParams, reserved2) - 248usize];
-};
 impl Default for cudaGraphNodeParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3692,19 +2270,6 @@ pub struct cudaGraphEdgeData_st {
     pub type_: ::core::ffi::c_uchar,
     pub reserved: [::core::ffi::c_uchar; 5usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphEdgeData_st"][::core::mem::size_of::<cudaGraphEdgeData_st>() - 8usize];
-    ["Alignment of cudaGraphEdgeData_st"][::core::mem::align_of::<cudaGraphEdgeData_st>() - 1usize];
-    ["Offset of field: cudaGraphEdgeData_st::from_port"]
-        [::core::mem::offset_of!(cudaGraphEdgeData_st, from_port) - 0usize];
-    ["Offset of field: cudaGraphEdgeData_st::to_port"]
-        [::core::mem::offset_of!(cudaGraphEdgeData_st, to_port) - 1usize];
-    ["Offset of field: cudaGraphEdgeData_st::type_"]
-        [::core::mem::offset_of!(cudaGraphEdgeData_st, type_) - 2usize];
-    ["Offset of field: cudaGraphEdgeData_st::reserved"]
-        [::core::mem::offset_of!(cudaGraphEdgeData_st, reserved) - 3usize];
-};
 pub type cudaGraphEdgeData = cudaGraphEdgeData_st;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -3743,21 +2308,6 @@ pub struct cudaGraphInstantiateParams_st {
     pub errNode_out: cudaGraphNode_t,
     pub result_out: cudaGraphInstantiateResult,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphInstantiateParams_st"]
-        [::core::mem::size_of::<cudaGraphInstantiateParams_st>() - 32usize];
-    ["Alignment of cudaGraphInstantiateParams_st"]
-        [::core::mem::align_of::<cudaGraphInstantiateParams_st>() - 8usize];
-    ["Offset of field: cudaGraphInstantiateParams_st::flags"]
-        [::core::mem::offset_of!(cudaGraphInstantiateParams_st, flags) - 0usize];
-    ["Offset of field: cudaGraphInstantiateParams_st::uploadStream"]
-        [::core::mem::offset_of!(cudaGraphInstantiateParams_st, uploadStream) - 8usize];
-    ["Offset of field: cudaGraphInstantiateParams_st::errNode_out"]
-        [::core::mem::offset_of!(cudaGraphInstantiateParams_st, errNode_out) - 16usize];
-    ["Offset of field: cudaGraphInstantiateParams_st::result_out"]
-        [::core::mem::offset_of!(cudaGraphInstantiateParams_st, result_out) - 24usize];
-};
 impl Default for cudaGraphInstantiateParams_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3775,19 +2325,6 @@ pub struct cudaGraphExecUpdateResultInfo_st {
     pub errorNode: cudaGraphNode_t,
     pub errorFromNode: cudaGraphNode_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphExecUpdateResultInfo_st"]
-        [::core::mem::size_of::<cudaGraphExecUpdateResultInfo_st>() - 24usize];
-    ["Alignment of cudaGraphExecUpdateResultInfo_st"]
-        [::core::mem::align_of::<cudaGraphExecUpdateResultInfo_st>() - 8usize];
-    ["Offset of field: cudaGraphExecUpdateResultInfo_st::result"]
-        [::core::mem::offset_of!(cudaGraphExecUpdateResultInfo_st, result) - 0usize];
-    ["Offset of field: cudaGraphExecUpdateResultInfo_st::errorNode"]
-        [::core::mem::offset_of!(cudaGraphExecUpdateResultInfo_st, errorNode) - 8usize];
-    ["Offset of field: cudaGraphExecUpdateResultInfo_st::errorFromNode"]
-        [::core::mem::offset_of!(cudaGraphExecUpdateResultInfo_st, errorFromNode) - 16usize];
-};
 impl Default for cudaGraphExecUpdateResultInfo_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3833,25 +2370,6 @@ pub struct cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1 {
     pub offset: usize,
     pub size: usize,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1>() - 24usize];
-    ["Alignment of cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1::pValue"][::core::mem::offset_of!(
-        cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1,
-        pValue
-    ) - 0usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1::offset"][::core::mem::offset_of!(
-        cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1,
-        offset
-    ) - 8usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1::size"][::core::mem::offset_of!(
-        cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1,
-        size
-    ) - 16usize];
-};
 impl Default for cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3861,19 +2379,6 @@ impl Default for cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphKernelNodeUpdate__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaGraphKernelNodeUpdate__bindgen_ty_1>() - 24usize];
-    ["Alignment of cudaGraphKernelNodeUpdate__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaGraphKernelNodeUpdate__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate__bindgen_ty_1::gridDim"]
-        [::core::mem::offset_of!(cudaGraphKernelNodeUpdate__bindgen_ty_1, gridDim) - 0usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate__bindgen_ty_1::param"]
-        [::core::mem::offset_of!(cudaGraphKernelNodeUpdate__bindgen_ty_1, param) - 0usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate__bindgen_ty_1::isEnabled"]
-        [::core::mem::offset_of!(cudaGraphKernelNodeUpdate__bindgen_ty_1, isEnabled) - 0usize];
-};
 impl Default for cudaGraphKernelNodeUpdate__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3883,19 +2388,6 @@ impl Default for cudaGraphKernelNodeUpdate__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaGraphKernelNodeUpdate"]
-        [::core::mem::size_of::<cudaGraphKernelNodeUpdate>() - 40usize];
-    ["Alignment of cudaGraphKernelNodeUpdate"]
-        [::core::mem::align_of::<cudaGraphKernelNodeUpdate>() - 8usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate::node"]
-        [::core::mem::offset_of!(cudaGraphKernelNodeUpdate, node) - 0usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate::field"]
-        [::core::mem::offset_of!(cudaGraphKernelNodeUpdate, field) - 8usize];
-    ["Offset of field: cudaGraphKernelNodeUpdate::updateData"]
-        [::core::mem::offset_of!(cudaGraphKernelNodeUpdate, updateData) - 16usize];
-};
 impl Default for cudaGraphKernelNodeUpdate {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -3954,17 +2446,6 @@ pub struct cudaLaunchMemSyncDomainMap_st {
     pub default_: ::core::ffi::c_uchar,
     pub remote: ::core::ffi::c_uchar,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchMemSyncDomainMap_st"]
-        [::core::mem::size_of::<cudaLaunchMemSyncDomainMap_st>() - 2usize];
-    ["Alignment of cudaLaunchMemSyncDomainMap_st"]
-        [::core::mem::align_of::<cudaLaunchMemSyncDomainMap_st>() - 1usize];
-    ["Offset of field: cudaLaunchMemSyncDomainMap_st::default_"]
-        [::core::mem::offset_of!(cudaLaunchMemSyncDomainMap_st, default_) - 0usize];
-    ["Offset of field: cudaLaunchMemSyncDomainMap_st::remote"]
-        [::core::mem::offset_of!(cudaLaunchMemSyncDomainMap_st, remote) - 1usize];
-};
 pub type cudaLaunchMemSyncDomainMap = cudaLaunchMemSyncDomainMap_st;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -4011,19 +2492,6 @@ pub struct cudaLaunchAttributeValue__bindgen_ty_1 {
     pub y: ::core::ffi::c_uint,
     pub z: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttributeValue__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_1>() - 12usize];
-    ["Alignment of cudaLaunchAttributeValue__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_1>() - 4usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_1::x"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_1, x) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_1::y"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_1, y) - 4usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_1::z"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_1, z) - 8usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchAttributeValue__bindgen_ty_2 {
@@ -4031,21 +2499,6 @@ pub struct cudaLaunchAttributeValue__bindgen_ty_2 {
     pub flags: ::core::ffi::c_int,
     pub triggerAtBlockStart: ::core::ffi::c_int,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttributeValue__bindgen_ty_2"]
-        [::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_2>() - 16usize];
-    ["Alignment of cudaLaunchAttributeValue__bindgen_ty_2"]
-        [::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_2>() - 8usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_2::event"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_2, event) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_2::flags"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_2, flags) - 8usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_2::triggerAtBlockStart"][::core::mem::offset_of!(
-        cudaLaunchAttributeValue__bindgen_ty_2,
-        triggerAtBlockStart
-    ) - 12usize];
-};
 impl Default for cudaLaunchAttributeValue__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4062,36 +2515,12 @@ pub struct cudaLaunchAttributeValue__bindgen_ty_3 {
     pub y: ::core::ffi::c_uint,
     pub z: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttributeValue__bindgen_ty_3"]
-        [::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_3>() - 12usize];
-    ["Alignment of cudaLaunchAttributeValue__bindgen_ty_3"]
-        [::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_3>() - 4usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_3::x"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_3, x) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_3::y"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_3, y) - 4usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_3::z"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_3, z) - 8usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchAttributeValue__bindgen_ty_4 {
     pub event: cudaEvent_t,
     pub flags: ::core::ffi::c_int,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttributeValue__bindgen_ty_4"]
-        [::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_4>() - 16usize];
-    ["Alignment of cudaLaunchAttributeValue__bindgen_ty_4"]
-        [::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_4>() - 8usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_4::event"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_4, event) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_4::flags"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_4, flags) - 8usize];
-};
 impl Default for cudaLaunchAttributeValue__bindgen_ty_4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4107,17 +2536,6 @@ pub struct cudaLaunchAttributeValue__bindgen_ty_5 {
     pub deviceUpdatable: ::core::ffi::c_int,
     pub devNode: cudaGraphDeviceNode_t,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttributeValue__bindgen_ty_5"]
-        [::core::mem::size_of::<cudaLaunchAttributeValue__bindgen_ty_5>() - 16usize];
-    ["Alignment of cudaLaunchAttributeValue__bindgen_ty_5"]
-        [::core::mem::align_of::<cudaLaunchAttributeValue__bindgen_ty_5>() - 8usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_5::deviceUpdatable"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_5, deviceUpdatable) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue__bindgen_ty_5::devNode"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue__bindgen_ty_5, devNode) - 8usize];
-};
 impl Default for cudaLaunchAttributeValue__bindgen_ty_5 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4127,48 +2545,6 @@ impl Default for cudaLaunchAttributeValue__bindgen_ty_5 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttributeValue"]
-        [::core::mem::size_of::<cudaLaunchAttributeValue>() - 64usize];
-    ["Alignment of cudaLaunchAttributeValue"]
-        [::core::mem::align_of::<cudaLaunchAttributeValue>() - 8usize];
-    ["Offset of field: cudaLaunchAttributeValue::pad"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, pad) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::accessPolicyWindow"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, accessPolicyWindow) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::cooperative"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, cooperative) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::syncPolicy"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, syncPolicy) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::clusterDim"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, clusterDim) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::clusterSchedulingPolicyPreference"][::core::mem::offset_of!(
-        cudaLaunchAttributeValue,
-        clusterSchedulingPolicyPreference
-    ) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::programmaticStreamSerializationAllowed"][::core::mem::offset_of!(
-        cudaLaunchAttributeValue,
-        programmaticStreamSerializationAllowed
-    )
-        - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::programmaticEvent"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, programmaticEvent) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::priority"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, priority) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::memSyncDomainMap"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, memSyncDomainMap) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::memSyncDomain"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, memSyncDomain) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::preferredClusterDim"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, preferredClusterDim) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::launchCompletionEvent"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, launchCompletionEvent) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::deviceUpdatableKernelNode"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, deviceUpdatableKernelNode) - 0usize];
-    ["Offset of field: cudaLaunchAttributeValue::sharedMemCarveout"]
-        [::core::mem::offset_of!(cudaLaunchAttributeValue, sharedMemCarveout) - 0usize];
-};
 impl Default for cudaLaunchAttributeValue {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4185,18 +2561,6 @@ pub struct cudaLaunchAttribute_st {
     pub pad: [::core::ffi::c_char; 4usize],
     pub val: cudaLaunchAttributeValue,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchAttribute_st"][::core::mem::size_of::<cudaLaunchAttribute_st>() - 72usize];
-    ["Alignment of cudaLaunchAttribute_st"]
-        [::core::mem::align_of::<cudaLaunchAttribute_st>() - 8usize];
-    ["Offset of field: cudaLaunchAttribute_st::id"]
-        [::core::mem::offset_of!(cudaLaunchAttribute_st, id) - 0usize];
-    ["Offset of field: cudaLaunchAttribute_st::pad"]
-        [::core::mem::offset_of!(cudaLaunchAttribute_st, pad) - 4usize];
-    ["Offset of field: cudaLaunchAttribute_st::val"]
-        [::core::mem::offset_of!(cudaLaunchAttribute_st, val) - 8usize];
-};
 impl Default for cudaLaunchAttribute_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4217,23 +2581,6 @@ pub struct cudaLaunchConfig_st {
     pub attrs: *mut cudaLaunchAttribute,
     pub numAttrs: ::core::ffi::c_uint,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaLaunchConfig_st"][::core::mem::size_of::<cudaLaunchConfig_st>() - 56usize];
-    ["Alignment of cudaLaunchConfig_st"][::core::mem::align_of::<cudaLaunchConfig_st>() - 8usize];
-    ["Offset of field: cudaLaunchConfig_st::gridDim"]
-        [::core::mem::offset_of!(cudaLaunchConfig_st, gridDim) - 0usize];
-    ["Offset of field: cudaLaunchConfig_st::blockDim"]
-        [::core::mem::offset_of!(cudaLaunchConfig_st, blockDim) - 12usize];
-    ["Offset of field: cudaLaunchConfig_st::dynamicSmemBytes"]
-        [::core::mem::offset_of!(cudaLaunchConfig_st, dynamicSmemBytes) - 24usize];
-    ["Offset of field: cudaLaunchConfig_st::stream"]
-        [::core::mem::offset_of!(cudaLaunchConfig_st, stream) - 32usize];
-    ["Offset of field: cudaLaunchConfig_st::attrs"]
-        [::core::mem::offset_of!(cudaLaunchConfig_st, attrs) - 40usize];
-    ["Offset of field: cudaLaunchConfig_st::numAttrs"]
-        [::core::mem::offset_of!(cudaLaunchConfig_st, numAttrs) - 48usize];
-};
 impl Default for cudaLaunchConfig_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4278,27 +2625,6 @@ pub union cudaAsyncNotificationInfo__bindgen_ty_1 {
 pub struct cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1 {
     pub bytesOverBudget: ::core::ffi::c_ulonglong,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1>() - 8usize];
-    ["Alignment of cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1::bytesOverBudget"][::core::mem::offset_of!(
-        cudaAsyncNotificationInfo__bindgen_ty_1__bindgen_ty_1,
-        bytesOverBudget
-    )
-        - 0usize];
-};
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaAsyncNotificationInfo__bindgen_ty_1"]
-        [::core::mem::size_of::<cudaAsyncNotificationInfo__bindgen_ty_1>() - 8usize];
-    ["Alignment of cudaAsyncNotificationInfo__bindgen_ty_1"]
-        [::core::mem::align_of::<cudaAsyncNotificationInfo__bindgen_ty_1>() - 8usize];
-    ["Offset of field: cudaAsyncNotificationInfo__bindgen_ty_1::overBudget"]
-        [::core::mem::offset_of!(cudaAsyncNotificationInfo__bindgen_ty_1, overBudget) - 0usize];
-};
 impl Default for cudaAsyncNotificationInfo__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4308,17 +2634,6 @@ impl Default for cudaAsyncNotificationInfo__bindgen_ty_1 {
         }
     }
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaAsyncNotificationInfo"]
-        [::core::mem::size_of::<cudaAsyncNotificationInfo>() - 16usize];
-    ["Alignment of cudaAsyncNotificationInfo"]
-        [::core::mem::align_of::<cudaAsyncNotificationInfo>() - 8usize];
-    ["Offset of field: cudaAsyncNotificationInfo::type_"]
-        [::core::mem::offset_of!(cudaAsyncNotificationInfo, type_) - 0usize];
-    ["Offset of field: cudaAsyncNotificationInfo::info"]
-        [::core::mem::offset_of!(cudaAsyncNotificationInfo, info) - 8usize];
-};
 impl Default for cudaAsyncNotificationInfo {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -4387,37 +2702,6 @@ pub struct cudaTextureDesc {
     pub disableTrilinearOptimization: ::core::ffi::c_int,
     pub seamlessCubemap: ::core::ffi::c_int,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cudaTextureDesc"][::core::mem::size_of::<cudaTextureDesc>() - 72usize];
-    ["Alignment of cudaTextureDesc"][::core::mem::align_of::<cudaTextureDesc>() - 4usize];
-    ["Offset of field: cudaTextureDesc::addressMode"]
-        [::core::mem::offset_of!(cudaTextureDesc, addressMode) - 0usize];
-    ["Offset of field: cudaTextureDesc::filterMode"]
-        [::core::mem::offset_of!(cudaTextureDesc, filterMode) - 12usize];
-    ["Offset of field: cudaTextureDesc::readMode"]
-        [::core::mem::offset_of!(cudaTextureDesc, readMode) - 16usize];
-    ["Offset of field: cudaTextureDesc::sRGB"]
-        [::core::mem::offset_of!(cudaTextureDesc, sRGB) - 20usize];
-    ["Offset of field: cudaTextureDesc::borderColor"]
-        [::core::mem::offset_of!(cudaTextureDesc, borderColor) - 24usize];
-    ["Offset of field: cudaTextureDesc::normalizedCoords"]
-        [::core::mem::offset_of!(cudaTextureDesc, normalizedCoords) - 40usize];
-    ["Offset of field: cudaTextureDesc::maxAnisotropy"]
-        [::core::mem::offset_of!(cudaTextureDesc, maxAnisotropy) - 44usize];
-    ["Offset of field: cudaTextureDesc::mipmapFilterMode"]
-        [::core::mem::offset_of!(cudaTextureDesc, mipmapFilterMode) - 48usize];
-    ["Offset of field: cudaTextureDesc::mipmapLevelBias"]
-        [::core::mem::offset_of!(cudaTextureDesc, mipmapLevelBias) - 52usize];
-    ["Offset of field: cudaTextureDesc::minMipmapLevelClamp"]
-        [::core::mem::offset_of!(cudaTextureDesc, minMipmapLevelClamp) - 56usize];
-    ["Offset of field: cudaTextureDesc::maxMipmapLevelClamp"]
-        [::core::mem::offset_of!(cudaTextureDesc, maxMipmapLevelClamp) - 60usize];
-    ["Offset of field: cudaTextureDesc::disableTrilinearOptimization"]
-        [::core::mem::offset_of!(cudaTextureDesc, disableTrilinearOptimization) - 64usize];
-    ["Offset of field: cudaTextureDesc::seamlessCubemap"]
-        [::core::mem::offset_of!(cudaTextureDesc, seamlessCubemap) - 68usize];
-};
 impl Default for cudaTextureDesc {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
