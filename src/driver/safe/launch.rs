@@ -46,6 +46,56 @@ impl CudaModule {
     }
 }
 
+impl CudaStream {
+    pub unsafe fn launch<'a, Params>(
+        &self,
+        func: CudaFunction,
+        cfg: LaunchConfig,
+        params: Params,
+    ) -> Result<(), result::DriverError>
+    where
+        Params: IntoIterator<Item = &'a dyn DeviceRepr>,
+    {
+        self.device.bind_to_thread()?;
+        let mut params = params
+            .into_iter()
+            .map(|p| p.as_kernel_param())
+            .collect::<Vec<_>>();
+        result::launch_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            params.as_mut_slice(),
+        )
+    }
+
+    pub unsafe fn launch_cooperative<'a, Params>(
+        &self,
+        func: CudaFunction,
+        cfg: LaunchConfig,
+        params: Params,
+    ) -> Result<(), result::DriverError>
+    where
+        Params: IntoIterator<Item = &'a dyn DeviceRepr>,
+    {
+        self.device.bind_to_thread()?;
+        let mut params = params
+            .into_iter()
+            .map(|p| p.as_kernel_param())
+            .collect::<Vec<_>>();
+        result::launch_cooperative_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            params.as_mut_slice(),
+        )
+    }
+}
+
 impl CudaFunction {
     #[inline(always)]
     unsafe fn launch_async_impl(
@@ -94,7 +144,7 @@ impl CudaFunction {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            stream.stream,
+            stream.cu_stream,
             params,
         )
     }

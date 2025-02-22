@@ -37,6 +37,7 @@ pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
     pub(crate) cu_primary_ctx: sys::CUcontext,
     /// The stream that all work is executed on.
+    #[deprecated]
     pub(crate) stream: sys::CUstream,
     /// Used to synchronize with stream
     pub(crate) event: sys::CUevent,
@@ -84,6 +85,7 @@ impl CudaDevice {
     }
 
     /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
+    #[deprecated]
     pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
         result::init()?;
 
@@ -172,6 +174,7 @@ impl CudaDevice {
     ///
     /// **You must not free/release the stream pointer**, as it is still
     /// owned by the [CudaDevice].
+    #[deprecated]
     pub fn cu_stream(&self) -> &sys::CUstream {
         &self.stream
     }
@@ -242,7 +245,7 @@ impl Drop for CudaDevice {
 pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) device: Arc<CudaDevice>,
+    pub(crate) stream: CudaStream,
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
@@ -251,29 +254,23 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        self.device.bind_to_thread().unwrap();
-        unsafe {
-            if self.device.is_async {
-                result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
-            } else {
-                result::free_sync(self.cu_device_ptr).unwrap();
-            }
-        }
+        self.stream.device.bind_to_thread().unwrap();
+        unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
     }
 }
 
 impl<T> CudaSlice<T> {
     /// Get a clone of the underlying [CudaDevice].
     pub fn device(&self) -> Arc<CudaDevice> {
-        self.device.clone()
+        self.stream.device.clone()
     }
 }
 
 impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
     pub fn try_clone(&self) -> Result<Self, result::DriverError> {
-        let mut dst = unsafe { self.device.alloc(self.len) }?;
-        self.device.dtod_copy(self, &mut dst)?;
+        let mut dst = unsafe { self.stream.device.alloc(self.len) }?;
+        self.stream.device.dtod_copy(self, &mut dst)?;
         Ok(dst)
     }
 }
@@ -287,7 +284,7 @@ impl<T: DeviceRepr> Clone for CudaSlice<T> {
 impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
-        value.device.clone().sync_reclaim(value)
+        value.stream.device.clone().sync_reclaim(value)
     }
 }
 
@@ -559,13 +556,28 @@ unsafe impl Sync for CudaFunction {}
 /// See [6.6. Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html)
 /// See [Out-of-order execution](https://en.wikipedia.org/wiki/Out-of-order_execution)
 /// See [Dependence analysis](https://en.wikipedia.org/wiki/Dependence_analysis)
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CudaStream {
-    pub stream: sys::CUstream,
-    device: Arc<CudaDevice>,
+    pub cu_stream: sys::CUstream,
+    pub device: Arc<CudaDevice>,
 }
 
 impl CudaDevice {
+    pub fn default_stream(self: &Arc<Self>) -> CudaStream {
+        CudaStream {
+            cu_stream: std::ptr::null_mut(),
+            device: self.clone(),
+        }
+    }
+
+    pub fn new_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
+        self.bind_to_thread()?;
+        Ok(CudaStream {
+            cu_stream: result::stream::create(result::stream::StreamKind::NonBlocking)?,
+            device: self.clone(),
+        })
+    }
+
     /// Allocates a new stream that can execute kernels concurrently to the default stream.
     ///
     /// The synchronization with default stream happens in **code order**. See [CudaStream] docstring.
@@ -575,10 +587,7 @@ impl CudaDevice {
     /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
     pub fn fork_default_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
         self.bind_to_thread()?;
-        let stream = CudaStream {
-            stream: result::stream::create(result::stream::StreamKind::NonBlocking)?,
-            device: self.clone(),
-        };
+        let stream = self.new_stream()?;
         stream.wait_for_default()?;
         Ok(stream)
     }
@@ -586,10 +595,11 @@ impl CudaDevice {
     /// Forces [CudaStream] to drop, causing the default work stream to block on `stream`'s completion.
     /// **This is asynchronous with respect to the host.**
     #[allow(unused_variables)]
+    #[deprecated]
     pub fn wait_for(self: &Arc<Self>, stream: &CudaStream) -> Result<(), result::DriverError> {
         self.bind_to_thread()?;
         unsafe {
-            result::event::record(self.event, stream.stream)?;
+            result::event::record(self.event, stream.cu_stream)?;
             result::stream::wait_event(
                 self.stream,
                 self.event,
@@ -602,12 +612,19 @@ impl CudaDevice {
 impl CudaStream {
     /// Records the current default stream's workload, and then causes `self`
     /// to wait for the default stream to finish that recorded workload.
+    pub fn wait_for(&self, other: &Self) -> Result<(), result::DriverError> {
+        todo!()
+    }
+
+    /// Records the current default stream's workload, and then causes `self`
+    /// to wait for the default stream to finish that recorded workload.
+    #[deprecated]
     pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
         self.device.bind_to_thread()?;
         unsafe {
             result::event::record(self.device.event, self.device.stream)?;
             result::stream::wait_event(
-                self.stream,
+                self.cu_stream,
                 self.device.event,
                 sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
             )
@@ -619,7 +636,7 @@ impl Drop for CudaStream {
     fn drop(&mut self) {
         self.device.wait_for(self).unwrap();
         unsafe {
-            result::stream::destroy(self.stream).unwrap();
+            result::stream::destroy(self.cu_stream).unwrap();
         }
     }
 }

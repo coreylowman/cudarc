@@ -46,7 +46,7 @@ impl CudaBlas {
     /// write to the same memory address.
     pub unsafe fn set_stream(&self, opt_stream: Option<&CudaStream>) -> Result<(), CublasError> {
         match opt_stream {
-            Some(s) => result::set_stream(self.handle, s.stream as *mut _),
+            Some(s) => result::set_stream(self.handle, s.cu_stream as *mut _),
             None => result::set_stream(self.handle, self.device.stream as *mut _),
         }
     }
