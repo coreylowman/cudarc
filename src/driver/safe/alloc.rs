@@ -18,6 +18,10 @@ pub unsafe trait DeviceRepr {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         self as *const Self as *mut _
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        None
+    }
 }
 
 unsafe impl DeviceRepr for bool {}
@@ -45,12 +49,20 @@ unsafe impl<T: DeviceRepr> DeviceRepr for CudaSlice<T> {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaSlice<T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
     }
 }
 
@@ -59,12 +71,20 @@ unsafe impl<T: DeviceRepr> DeviceRepr for &CudaSlice<T> {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for CudaView<'_, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
     }
 }
 
@@ -73,6 +93,10 @@ unsafe impl<T: DeviceRepr> DeviceRepr for &CudaView<'_, T> {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for CudaViewMut<'_, T> {
@@ -80,12 +104,20 @@ unsafe impl<T: DeviceRepr> DeviceRepr for CudaViewMut<'_, T> {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'_, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
     }
 }
 
@@ -472,6 +504,9 @@ impl CudaStream {
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         self.device.bind_to_thread()?;
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         unsafe {
             result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.cu_stream)
         }
@@ -495,6 +530,12 @@ impl CudaStream {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.device.bind_to_thread()?;
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         unsafe {
             result::memcpy_dtod_async(
                 *dst.device_ptr_mut(),
@@ -534,8 +575,14 @@ impl CudaStream {
         dst: &mut CudaSlice<T>,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        dst.host_buf = Some(Pin::new(src));
         self.device.bind_to_thread()?;
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
+        if dst.host_buf.is_some() {
+            todo!()
+        }
+        dst.host_buf = Some(Pin::new(src));
         unsafe {
             result::memcpy_htod_async(
                 dst.cu_device_ptr,
@@ -580,11 +627,10 @@ impl CudaStream {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.device.bind_to_thread()?;
-        if self.device.is_async {
-            unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.cu_stream) }?;
-        } else {
-            unsafe { result::memcpy_htod_sync(*dst.device_ptr_mut(), src) }?;
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
         }
+        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.cu_stream) }?;
         self.synchronize()
     }
 
@@ -599,6 +645,9 @@ impl CudaStream {
         &self,
         src: &Src,
     ) -> Result<Vec<T>, result::DriverError> {
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         let mut dst = Vec::with_capacity(src.len());
         unsafe { dst.set_len(src.len()) };
         self.dtoh_sync_copy_into(src, &mut dst)?;
@@ -624,6 +673,9 @@ impl CudaStream {
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
         self.device.bind_to_thread()?;
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.cu_stream) }?;
         self.synchronize()
     }
@@ -643,6 +695,9 @@ impl CudaStream {
             b.resize(src.len, Default::default());
             Pin::new(b)
         });
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         self.dtoh_sync_copy_into(&src, &mut buf)?;
         Ok(Pin::into_inner(buf))
     }

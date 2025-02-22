@@ -47,20 +47,25 @@ impl CudaModule {
 }
 
 impl CudaStream {
-    pub unsafe fn launch<'a, Params>(
+    pub unsafe fn launch<'a, Args>(
         &self,
         func: CudaFunction,
         cfg: LaunchConfig,
-        params: Params,
+        args: Args,
     ) -> Result<(), result::DriverError>
     where
-        Params: IntoIterator<Item = &'a dyn DeviceRepr>,
+        Args: IntoIterator<Item = &'a dyn DeviceRepr>,
     {
         self.device.bind_to_thread()?;
-        let mut params = params
-            .into_iter()
-            .map(|p| p.as_kernel_param())
-            .collect::<Vec<_>>();
+        let mut params = Vec::new();
+        for arg in args.into_iter() {
+            if let Some(arg_stream) = arg.maybe_stream() {
+                if arg_stream.cu_stream != self.cu_stream {
+                    todo!();
+                }
+            }
+            params.push(arg.as_kernel_param());
+        }
         result::launch_kernel(
             func.cu_function,
             cfg.grid_dim,
@@ -71,20 +76,25 @@ impl CudaStream {
         )
     }
 
-    pub unsafe fn launch_cooperative<'a, Params>(
+    pub unsafe fn launch_cooperative<'a, Args>(
         &self,
         func: CudaFunction,
         cfg: LaunchConfig,
-        params: Params,
+        args: Args,
     ) -> Result<(), result::DriverError>
     where
-        Params: IntoIterator<Item = &'a dyn DeviceRepr>,
+        Args: IntoIterator<Item = &'a dyn DeviceRepr>,
     {
         self.device.bind_to_thread()?;
-        let mut params = params
-            .into_iter()
-            .map(|p| p.as_kernel_param())
-            .collect::<Vec<_>>();
+        let mut params = Vec::new();
+        for arg in args.into_iter() {
+            if let Some(arg_stream) = arg.maybe_stream() {
+                if arg_stream.cu_stream != self.cu_stream {
+                    todo!();
+                }
+            }
+            params.push(arg.as_kernel_param());
+        }
         result::launch_cooperative_kernel(
             func.cu_function,
             cfg.grid_dim,

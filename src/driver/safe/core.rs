@@ -585,6 +585,7 @@ impl CudaDevice {
     /// This stream synchronizes in the following way:
     /// 1. On creation it adds a wait for any existing work on the default work stream to complete
     /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
+    #[deprecated]
     pub fn fork_default_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
         self.bind_to_thread()?;
         let stream = self.new_stream()?;
@@ -610,6 +611,12 @@ impl CudaDevice {
 }
 
 impl CudaStream {
+    pub fn fork(&self) -> Result<CudaStream, result::DriverError> {
+        let stream = self.device.new_stream()?;
+        stream.wait_for(&self)?;
+        Ok(stream)
+    }
+
     /// Records the current default stream's workload, and then causes `self`
     /// to wait for the default stream to finish that recorded workload.
     pub fn wait_for(&self, other: &Self) -> Result<(), result::DriverError> {
@@ -634,6 +641,7 @@ impl CudaStream {
 
 impl Drop for CudaStream {
     fn drop(&mut self) {
+        // TODO don't call this - this is breaking change
         self.device.wait_for(self).unwrap();
         unsafe {
             result::stream::destroy(self.cu_stream).unwrap();
@@ -646,6 +654,7 @@ impl Drop for CudaStream {
 /// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaView<'a, T> {
+    pub(crate) stream: &'a CudaStream,
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
     marker: PhantomData<&'a [T]>,
@@ -687,6 +696,7 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice()].
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            stream: &self.stream,
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -702,6 +712,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            stream: &self.stream,
             ptr: self.cu_device_ptr,
             len,
             marker: PhantomData,
@@ -732,6 +743,7 @@ impl<'a, T> CudaView<'a, T> {
     /// Fallible version of [CudaView::slice]
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            stream: &self.stream,
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -747,6 +759,7 @@ impl<'a, T> CudaView<'a, T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            stream: &self.stream,
             ptr: self.ptr,
             len,
             marker: PhantomData,
@@ -759,6 +772,7 @@ impl<'a, T> CudaView<'a, T> {
 /// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
+    pub(crate) stream: &'a CudaStream,
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
     marker: PhantomData<&'a mut [T]>,
@@ -813,6 +827,7 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            stream: &self.stream,
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -828,6 +843,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
+            stream: &self.stream,
             ptr: self.cu_device_ptr,
             len,
             marker: PhantomData,
@@ -864,11 +880,13 @@ impl<T> CudaSlice<T> {
         }
         Some((
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.cu_device_ptr,
                 len: mid,
                 marker: PhantomData,
             },
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
                 marker: PhantomData,
@@ -914,6 +932,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Fallible version of [CudaViewMut::slice]
     pub fn try_slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            stream: &self.stream,
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -929,6 +948,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            stream: &self.stream,
             ptr: self.ptr,
             len,
             marker: PhantomData,
@@ -948,6 +968,7 @@ impl<'a, T> CudaViewMut<'a, T> {
         range: impl RangeBounds<usize>,
     ) -> Option<CudaViewMut<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            stream: &self.stream,
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -987,11 +1008,13 @@ impl<'a, T> CudaViewMut<'a, T> {
         }
         Some((
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.ptr,
                 len: mid,
                 marker: PhantomData,
             },
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
                 marker: PhantomData,
@@ -1008,6 +1031,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
+            stream: &self.stream,
             ptr: self.ptr,
             len,
             marker: PhantomData,
