@@ -998,6 +998,37 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 }
 
+pub struct PageLockedHostSlice<T> {
+    pub(crate) ptr: *mut T,
+    pub(crate) len: usize,
+    #[allow(unused)]
+    pub(crate) device: Arc<CudaDevice>,
+}
+
+impl<T> PageLockedHostSlice<T> {
+    pub fn as_ptr(&self) -> *const T {
+        self.ptr
+    }
+
+    pub fn as_mut_ptr(&mut self) -> *mut T {
+        self.ptr
+    }
+
+    pub unsafe fn as_slice(&self) -> &[T] {
+        std::slice::from_raw_parts(self.ptr, self.len)
+    }
+
+    pub unsafe fn as_mut_slice(&mut self) -> &mut [T] {
+        std::slice::from_raw_parts_mut(self.ptr, self.len)
+    }
+}
+
+impl<T> Drop for PageLockedHostSlice<T> {
+    fn drop(&mut self) {
+        unsafe { result::free_host(self.ptr as _) }.unwrap();
+    }
+}
+
 trait RangeHelper: RangeBounds<usize> {
     fn inclusive_start(&self, valid_start: usize) -> usize;
     fn exclusive_end(&self, valid_end: usize) -> usize;
