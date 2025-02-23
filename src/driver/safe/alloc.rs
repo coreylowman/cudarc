@@ -1,6 +1,6 @@
 use crate::driver::{result, sys};
 
-use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut};
+use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut, PageLockedHostSlice};
 use super::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
 
 use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
@@ -144,6 +144,24 @@ impl CudaDevice {
             len,
             device: self.clone(),
             host_buf: None,
+        })
+    }
+
+    /// Allocates page locked host memory with `sys::CU_MEMHOSTALLOC_WRITECOMBINED` flags.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
+    pub unsafe fn alloc_host<T: DeviceRepr>(
+        self: &Arc<Self>,
+        len: usize,
+    ) -> Result<PageLockedHostSlice<T>, result::DriverError> {
+        result::malloc_host(
+            len * std::mem::size_of::<T>(),
+            sys::CU_MEMHOSTALLOC_WRITECOMBINED,
+        )
+        .map(|ptr| PageLockedHostSlice {
+            ptr: ptr as _,
+            len,
+            device: self.clone(),
         })
     }
 
