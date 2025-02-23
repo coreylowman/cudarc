@@ -36,13 +36,9 @@ use std::{collections::BTreeMap, marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
 pub struct CudaDevice {
     pub(crate) cu_device: sys::CUdevice,
     pub(crate) cu_primary_ctx: sys::CUcontext,
-    /// The stream that all work is executed on.
-    pub(crate) stream: sys::CUstream,
-    /// Used to synchronize with stream
-    pub(crate) event: sys::CUevent,
     pub(crate) modules: RwLock<BTreeMap<String, CudaModule>>,
     pub(crate) ordinal: usize,
-    pub(crate) is_async: bool,
+    pub(crate) has_async_alloc: bool,
 }
 
 unsafe impl Send for CudaDevice {}
@@ -60,67 +56,31 @@ impl CudaDevice {
 
         unsafe { result::ctx::set_current(cu_primary_ctx) }.unwrap();
 
-        // can fail with OOM
-        let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
-
-        let value = unsafe {
+        let memory_pools_supported = unsafe {
             result::device::get_attribute(
                 cu_device,
                 sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
             )?
         };
-        let is_async = value > 0;
 
         let device = CudaDevice {
             cu_device,
             cu_primary_ctx,
-            stream: std::ptr::null_mut(),
-            event,
             modules: RwLock::new(BTreeMap::new()),
             ordinal,
-            is_async,
+            has_async_alloc: memory_pools_supported > 0,
         };
         Ok(Arc::new(device))
     }
 
     /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
+    #[deprecated]
     pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
-        result::init()?;
-
-        let cu_device = result::device::get(ordinal as i32)?;
-
-        // primary context initialization, can fail with OOM
-        let cu_primary_ctx = unsafe { result::primary_ctx::retain(cu_device) }?;
-
-        unsafe { result::ctx::set_current(cu_primary_ctx) }.unwrap();
-
-        // can fail with OOM
-        let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
-
-        let value = unsafe {
-            result::device::get_attribute(
-                cu_device,
-                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
-            )?
-        };
-        let is_async = value > 0;
-
-        let stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
-
-        let device = CudaDevice {
-            cu_device,
-            cu_primary_ctx,
-            stream,
-            event,
-            modules: RwLock::new(BTreeMap::new()),
-            ordinal,
-            is_async,
-        };
-        Ok(Arc::new(device))
+        Self::new(ordinal)
     }
 
     pub fn count() -> Result<i32, result::DriverError> {
-        result::init().unwrap();
+        result::init()?;
         result::device::get_count()
     }
 
@@ -172,8 +132,9 @@ impl CudaDevice {
     ///
     /// **You must not free/release the stream pointer**, as it is still
     /// owned by the [CudaDevice].
+    #[deprecated]
     pub fn cu_stream(&self) -> &sys::CUstream {
-        &self.stream
+        &std::ptr::null_mut()
     }
 
     /// Get the value of the specified attribute of this [CudaDevice].
@@ -194,16 +155,6 @@ impl Drop for CudaDevice {
             unsafe { result::module::unload(module.cu_module) }.unwrap();
         }
         modules.clear();
-
-        let stream = std::mem::replace(&mut self.stream, std::ptr::null_mut());
-        if !stream.is_null() {
-            unsafe { result::stream::destroy(stream) }.unwrap();
-        }
-
-        let event = std::mem::replace(&mut self.event, std::ptr::null_mut());
-        if !event.is_null() {
-            unsafe { result::event::destroy(event) }.unwrap();
-        }
 
         let ctx = std::mem::replace(&mut self.cu_primary_ctx, std::ptr::null_mut());
         if !ctx.is_null() {
@@ -242,7 +193,7 @@ impl Drop for CudaDevice {
 pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) device: Arc<CudaDevice>,
+    pub(crate) stream: CudaStream,
     pub(crate) host_buf: Option<Pin<Vec<T>>>,
 }
 
@@ -251,29 +202,23 @@ unsafe impl<T: Sync> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        self.device.bind_to_thread().unwrap();
-        unsafe {
-            if self.device.is_async {
-                result::free_async(self.cu_device_ptr, self.device.stream).unwrap();
-            } else {
-                result::free_sync(self.cu_device_ptr).unwrap();
-            }
-        }
+        self.stream.device.bind_to_thread().unwrap();
+        unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
     }
 }
 
 impl<T> CudaSlice<T> {
     /// Get a clone of the underlying [CudaDevice].
     pub fn device(&self) -> Arc<CudaDevice> {
-        self.device.clone()
+        self.stream.device.clone()
     }
 }
 
 impl<T: DeviceRepr> CudaSlice<T> {
     /// Allocates copy of self and schedules a device to device copy of memory.
     pub fn try_clone(&self) -> Result<Self, result::DriverError> {
-        let mut dst = unsafe { self.device.alloc(self.len) }?;
-        self.device.dtod_copy(self, &mut dst)?;
+        let mut dst = unsafe { self.stream.alloc(self.len) }?;
+        self.stream.dtod_copy(self, &mut dst)?;
         Ok(dst)
     }
 }
@@ -287,7 +232,8 @@ impl<T: DeviceRepr> Clone for CudaSlice<T> {
 impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
-        value.device.clone().sync_reclaim(value)
+        let stream = value.stream.clone();
+        stream.sync_reclaim(value)
     }
 }
 
@@ -378,7 +324,7 @@ impl CudaFunction {
             blockDimY: config.block_dim.1,
             blockDimZ: config.block_dim.2,
             sharedMemBytes: shared_mem_size as std::ffi::c_uint,
-            hStream: self.device.stream,
+            hStream: std::ptr::null_mut(), // TODO: call this with a stream?
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
         };
@@ -441,7 +387,7 @@ impl CudaFunction {
             blockDimY: config.block_dim.1,
             blockDimZ: config.block_dim.2,
             sharedMemBytes: shared_mem_size as std::ffi::c_uint,
-            hStream: self.device.stream,
+            hStream: std::ptr::null_mut(), // TODO: call this with a stream?
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
         };
@@ -559,13 +505,32 @@ unsafe impl Sync for CudaFunction {}
 /// See [6.6. Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html)
 /// See [Out-of-order execution](https://en.wikipedia.org/wiki/Out-of-order_execution)
 /// See [Dependence analysis](https://en.wikipedia.org/wiki/Dependence_analysis)
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CudaStream {
-    pub stream: sys::CUstream,
-    device: Arc<CudaDevice>,
+    pub cu_stream: sys::CUstream,
+    pub forked_from: Option<sys::CUstream>,
+    pub device: Arc<CudaDevice>,
 }
 
 impl CudaDevice {
+    #[inline]
+    pub fn default_stream(self: &Arc<Self>) -> CudaStream {
+        CudaStream {
+            cu_stream: std::ptr::null_mut(),
+            forked_from: None,
+            device: self.clone(),
+        }
+    }
+
+    pub fn new_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
+        self.bind_to_thread()?;
+        Ok(CudaStream {
+            cu_stream: result::stream::create(result::stream::StreamKind::NonBlocking)?,
+            forked_from: None,
+            device: self.clone(),
+        })
+    }
+
     /// Allocates a new stream that can execute kernels concurrently to the default stream.
     ///
     /// The synchronization with default stream happens in **code order**. See [CudaStream] docstring.
@@ -573,54 +538,63 @@ impl CudaDevice {
     /// This stream synchronizes in the following way:
     /// 1. On creation it adds a wait for any existing work on the default work stream to complete
     /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
+    #[deprecated]
     pub fn fork_default_stream(self: &Arc<Self>) -> Result<CudaStream, result::DriverError> {
-        self.bind_to_thread()?;
-        let stream = CudaStream {
-            stream: result::stream::create(result::stream::StreamKind::NonBlocking)?,
-            device: self.clone(),
-        };
-        stream.wait_for_default()?;
-        Ok(stream)
+        self.default_stream().fork()
     }
 
     /// Forces [CudaStream] to drop, causing the default work stream to block on `stream`'s completion.
     /// **This is asynchronous with respect to the host.**
     #[allow(unused_variables)]
+    #[deprecated]
     pub fn wait_for(self: &Arc<Self>, stream: &CudaStream) -> Result<(), result::DriverError> {
-        self.bind_to_thread()?;
-        unsafe {
-            result::event::record(self.event, stream.stream)?;
-            result::stream::wait_event(
-                self.stream,
-                self.event,
-                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-            )
-        }
+        self.default_stream().wait_for(stream)
     }
 }
 
 impl CudaStream {
+    pub fn fork(&self) -> Result<CudaStream, result::DriverError> {
+        let mut stream = self.device.new_stream()?;
+        stream.forked_from = Some(self.cu_stream);
+        stream.wait_for(&self)?;
+        Ok(stream)
+    }
+
     /// Records the current default stream's workload, and then causes `self`
     /// to wait for the default stream to finish that recorded workload.
-    pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
-        self.device.bind_to_thread()?;
+    pub fn wait_for(&self, other: &Self) -> Result<(), result::DriverError> {
+        let event = result::event::create(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING)?;
         unsafe {
-            result::event::record(self.device.event, self.device.stream)?;
+            result::event::record(event, other.cu_stream)?;
             result::stream::wait_event(
-                self.stream,
-                self.device.event,
+                self.cu_stream,
+                event,
                 sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-            )
+            )?;
+            // TODO test that this is safe
+            result::event::destroy(event)
         }
+    }
+
+    /// Records the current default stream's workload, and then causes `self`
+    /// to wait for the default stream to finish that recorded workload.
+    #[deprecated]
+    pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
+        self.wait_for(&self.device.default_stream())
     }
 }
 
 impl Drop for CudaStream {
     fn drop(&mut self) {
-        self.device.wait_for(self).unwrap();
-        unsafe {
-            result::stream::destroy(self.stream).unwrap();
+        if let Some(forked_from) = self.forked_from {
+            let source = CudaStream {
+                cu_stream: forked_from,
+                forked_from: None,
+                device: self.device.clone(),
+            };
+            source.wait_for(self).unwrap();
         }
+        unsafe { result::stream::destroy(self.cu_stream).unwrap() };
     }
 }
 
@@ -629,6 +603,7 @@ impl Drop for CudaStream {
 /// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaView<'a, T> {
+    pub(crate) stream: &'a CudaStream,
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
     marker: PhantomData<&'a [T]>,
@@ -670,6 +645,7 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice()].
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            stream: &self.stream,
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -685,6 +661,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            stream: &self.stream,
             ptr: self.cu_device_ptr,
             len,
             marker: PhantomData,
@@ -715,6 +692,7 @@ impl<'a, T> CudaView<'a, T> {
     /// Fallible version of [CudaView::slice]
     pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            stream: &self.stream,
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -730,6 +708,7 @@ impl<'a, T> CudaView<'a, T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            stream: &self.stream,
             ptr: self.ptr,
             len,
             marker: PhantomData,
@@ -742,6 +721,7 @@ impl<'a, T> CudaView<'a, T> {
 /// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
 #[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
+    pub(crate) stream: &'a CudaStream,
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
     marker: PhantomData<&'a mut [T]>,
@@ -796,6 +776,7 @@ impl<T> CudaSlice<T> {
     /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            stream: &self.stream,
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -811,6 +792,7 @@ impl<T> CudaSlice<T> {
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
+            stream: &self.stream,
             ptr: self.cu_device_ptr,
             len,
             marker: PhantomData,
@@ -847,11 +829,13 @@ impl<T> CudaSlice<T> {
         }
         Some((
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.cu_device_ptr,
                 len: mid,
                 marker: PhantomData,
             },
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
                 marker: PhantomData,
@@ -897,6 +881,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Fallible version of [CudaViewMut::slice]
     pub fn try_slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
+            stream: &self.stream,
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -912,6 +897,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            stream: &self.stream,
             ptr: self.ptr,
             len,
             marker: PhantomData,
@@ -931,6 +917,7 @@ impl<'a, T> CudaViewMut<'a, T> {
         range: impl RangeBounds<usize>,
     ) -> Option<CudaViewMut<'a, T>> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            stream: &self.stream,
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             marker: PhantomData,
@@ -970,11 +957,13 @@ impl<'a, T> CudaViewMut<'a, T> {
         }
         Some((
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.ptr,
                 len: mid,
                 marker: PhantomData,
             },
             CudaViewMut {
+                stream: &self.stream,
                 ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
                 marker: PhantomData,
@@ -991,6 +980,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
+            stream: &self.stream,
             ptr: self.ptr,
             len,
             marker: PhantomData,

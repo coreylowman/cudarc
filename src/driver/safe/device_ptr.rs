@@ -1,8 +1,9 @@
 use crate::driver::sys;
 
-use super::core::{CudaSlice, CudaView, CudaViewMut};
+use super::core::{CudaSlice, CudaStream, CudaView, CudaViewMut};
 
 pub trait DeviceSlice<T> {
+    fn stream(&self) -> &CudaStream;
     fn len(&self) -> usize;
     fn num_bytes(&self) -> usize {
         self.len() * std::mem::size_of::<T>()
@@ -13,18 +14,29 @@ pub trait DeviceSlice<T> {
 }
 
 impl<T> DeviceSlice<T> for CudaSlice<T> {
+    fn stream(&self) -> &CudaStream {
+        &self.stream
+    }
     fn len(&self) -> usize {
         self.len
     }
 }
 
 impl<T> DeviceSlice<T> for CudaView<'_, T> {
+    fn stream(&self) -> &CudaStream {
+        self.stream
+    }
+
     fn len(&self) -> usize {
         self.len
     }
 }
 
 impl<T> DeviceSlice<T> for CudaViewMut<'_, T> {
+    fn stream(&self) -> &CudaStream {
+        self.stream
+    }
+
     fn len(&self) -> usize {
         self.len
     }

@@ -28,9 +28,7 @@ impl CudaBlas {
     pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
         device.bind_to_thread().unwrap();
         let handle = result::create_handle()?;
-        let blas = Self { handle, device };
-        unsafe { result::set_stream(handle, blas.device.stream as *mut _) }?;
-        Ok(blas)
+        Ok(Self { handle, device })
     }
 
     /// Returns a reference to the underlying cublas handle.
@@ -46,8 +44,11 @@ impl CudaBlas {
     /// write to the same memory address.
     pub unsafe fn set_stream(&self, opt_stream: Option<&CudaStream>) -> Result<(), CublasError> {
         match opt_stream {
-            Some(s) => result::set_stream(self.handle, s.stream as *mut _),
-            None => result::set_stream(self.handle, self.device.stream as *mut _),
+            Some(s) => {
+                assert_eq!(self.device.ordinal(), s.device.ordinal());
+                result::set_stream(self.handle, s.cu_stream as *mut _)
+            }
+            None => result::set_stream(self.handle, std::ptr::null_mut()),
         }
     }
 

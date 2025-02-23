@@ -46,6 +46,60 @@ impl CudaModule {
     }
 }
 
+impl CudaStream {
+    pub unsafe fn launch<const NUM_ARGS: usize>(
+        &self,
+        func: CudaFunction,
+        cfg: LaunchConfig,
+        args: [&dyn DeviceRepr; NUM_ARGS],
+    ) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
+        let mut params = Vec::new();
+        for arg in args.into_iter() {
+            if let Some(arg_stream) = arg.maybe_stream() {
+                if arg_stream.cu_stream != self.cu_stream {
+                    todo!();
+                }
+            }
+            params.push(arg.as_kernel_param());
+        }
+        result::launch_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            params.as_mut_slice(),
+        )
+    }
+
+    pub unsafe fn launch_cooperative<const NUM_ARGS: usize>(
+        &self,
+        func: CudaFunction,
+        cfg: LaunchConfig,
+        args: [&dyn DeviceRepr; NUM_ARGS],
+    ) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
+        let mut params = Vec::new();
+        for arg in args.into_iter() {
+            if let Some(arg_stream) = arg.maybe_stream() {
+                if arg_stream.cu_stream != self.cu_stream {
+                    todo!();
+                }
+            }
+            params.push(arg.as_kernel_param());
+        }
+        result::launch_cooperative_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            params.as_mut_slice(),
+        )
+    }
+}
+
 impl CudaFunction {
     #[inline(always)]
     unsafe fn launch_async_impl(
@@ -59,7 +113,7 @@ impl CudaFunction {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.device.stream,
+            std::ptr::null_mut(),
             params,
         )
     }
@@ -76,7 +130,7 @@ impl CudaFunction {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.device.stream,
+            std::ptr::null_mut(),
             params,
         )
     }
@@ -94,7 +148,7 @@ impl CudaFunction {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            stream.stream,
+            stream.cu_stream,
             params,
         )
     }
@@ -162,6 +216,7 @@ impl LaunchConfig {
 /// such as `&CudaSlice<T>`.
 ///
 /// See [LaunchAsync::launch] for more details
+#[deprecated]
 pub unsafe trait LaunchAsync<Params> {
     /// Launches the [CudaFunction] with the corresponding `Params`.
     ///

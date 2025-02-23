@@ -1,6 +1,6 @@
 use crate::driver::{result, sys};
 
-use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut};
+use super::core::{CudaDevice, CudaSlice, CudaStream, CudaView, CudaViewMut};
 use super::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
 
 use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
@@ -17,6 +17,10 @@ pub unsafe trait DeviceRepr {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         self as *const Self as *mut _
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        None
     }
 }
 
@@ -40,10 +44,25 @@ unsafe impl DeviceRepr for half::f16 {}
 #[cfg(feature = "f16")]
 unsafe impl DeviceRepr for half::bf16 {}
 
+unsafe impl<T: DeviceRepr> DeviceRepr for CudaSlice<T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
+}
+
 unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaSlice<T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
     }
 }
 
@@ -52,6 +71,21 @@ unsafe impl<T: DeviceRepr> DeviceRepr for &CudaSlice<T> {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.cu_device_ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
+}
+
+unsafe impl<T: DeviceRepr> DeviceRepr for CudaView<'_, T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &CudaView<'_, T> {
@@ -59,12 +93,31 @@ unsafe impl<T: DeviceRepr> DeviceRepr for &CudaView<'_, T> {
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
     }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
+}
+
+unsafe impl<T: DeviceRepr> DeviceRepr for CudaViewMut<'_, T> {
+    #[inline(always)]
+    fn as_kernel_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
+    }
 }
 
 unsafe impl<T: DeviceRepr> DeviceRepr for &mut CudaViewMut<'_, T> {
     #[inline(always)]
     fn as_kernel_param(&self) -> *mut std::ffi::c_void {
         (&self.ptr) as *const sys::CUdeviceptr as *mut std::ffi::c_void
+    }
+    #[inline(always)]
+    fn maybe_stream(&self) -> Option<&'_ CudaStream> {
+        Some(&self.stream)
     }
 }
 
@@ -92,6 +145,7 @@ impl CudaDevice {
     /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
     /// - The memory may not be valid for type `T`, so some sort of memset operation
     ///   should be called on the memory.
+    #[deprecated]
     pub unsafe fn upgrade_device_ptr<T>(
         self: &Arc<Self>,
         cu_device_ptr: sys::CUdeviceptr,
@@ -100,7 +154,30 @@ impl CudaDevice {
         CudaSlice {
             cu_device_ptr,
             len,
-            device: self.clone(),
+            stream: self.default_stream(),
+            host_buf: None,
+        }
+    }
+}
+
+impl CudaStream {
+    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
+    /// [`CudaSlice::leak()`].
+    ///
+    /// # Safety
+    /// - `cu_device_ptr` must be a valid allocation
+    /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
+    /// - The memory may not be valid for type `T`, so some sort of memset operation
+    ///   should be called on the memory.
+    pub unsafe fn upgrade_device_ptr<T>(
+        &self,
+        cu_device_ptr: sys::CUdeviceptr,
+        len: usize,
+    ) -> CudaSlice<T> {
+        CudaSlice {
+            cu_device_ptr,
+            len,
+            stream: self.clone(),
             host_buf: None,
         }
     }
@@ -108,11 +185,200 @@ impl CudaDevice {
 
 impl CudaDevice {
     /// Allocates an empty [CudaSlice] with 0 length.
+    #[deprecated]
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
-        self.bind_to_thread()?;
+        self.default_stream().null()
+    }
+
+    /// Allocates device memory and increments the reference counter of [CudaDevice].
+    ///
+    /// # Safety
+    /// This is unsafe because the device memory is unset after this call.
+    #[deprecated]
+    pub unsafe fn alloc<T: DeviceRepr>(
+        self: &Arc<Self>,
+        len: usize,
+    ) -> Result<CudaSlice<T>, result::DriverError> {
+        self.default_stream().alloc(len)
+    }
+
+    /// Allocates device memory with no associated host memory, and memsets
+    /// the device memory to all 0s.
+    ///
+    /// # Safety
+    /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn alloc_zeros<T: ValidAsZeroBits + DeviceRepr>(
+        self: &Arc<Self>,
+        len: usize,
+    ) -> Result<CudaSlice<T>, result::DriverError> {
+        self.default_stream().alloc_zeros(len)
+    }
+
+    /// Sets all memory to 0 asynchronously.
+    ///
+    /// # Safety
+    /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn memset_zeros<T: ValidAsZeroBits + DeviceRepr, Dst: DevicePtrMut<T>>(
+        self: &Arc<Self>,
+        dst: &mut Dst,
+    ) -> Result<(), result::DriverError> {
+        self.default_stream().memset_zeros(dst)
+    }
+
+    /// Device to device copy (safe version of [result::memcpy_dtod_async]).
+    ///
+    /// # Panics
+    ///
+    /// If the length of the two values are different
+    ///
+    /// # Safety
+    /// 1. We are guarunteed that `src` and `dst` are pointers to the same underlying
+    ///     type `T`
+    /// 2. Since they are both references, they can't have been freed
+    /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn dtod_copy<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
+        self: &Arc<Self>,
+        src: &Src,
+        dst: &mut Dst,
+    ) -> Result<(), result::DriverError> {
+        self.default_stream().dtod_copy(src, dst)
+    }
+
+    /// Takes ownership of the host data and copies it to device data asynchronously.
+    ///
+    /// # Safety
+    ///
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn htod_copy<T: Unpin + DeviceRepr>(
+        self: &Arc<Self>,
+        src: Vec<T>,
+    ) -> Result<CudaSlice<T>, result::DriverError> {
+        self.default_stream().htod_copy(src)
+    }
+
+    /// Takes ownership of the host data and copies it to device data asynchronously.
+    ///
+    /// # Safety
+    ///
+    /// 1. Since `src` is owned by this funcion, it is safe to copy data. Any actions executed
+    ///    after this will take place after the data has been successfully copied.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn htod_copy_into<T: DeviceRepr + Unpin>(
+        self: &Arc<Self>,
+        src: Vec<T>,
+        dst: &mut CudaSlice<T>,
+    ) -> Result<(), result::DriverError> {
+        self.default_stream().htod_copy_into(src, dst)
+    }
+
+    /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
+    ///
+    /// If you want an asynchronous copy, see [CudaDevice::htod_copy()].
+    ///
+    /// # Safety
+    ///
+    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn htod_sync_copy<T: DeviceRepr>(
+        self: &Arc<Self>,
+        src: &[T],
+    ) -> Result<CudaSlice<T>, result::DriverError> {
+        self.default_stream().htod_sync_copy(src)
+    }
+
+    /// Synchronously copies data from `src` into the new allocation.
+    ///
+    /// If you want an asynchronous copy, see [CudaDevice::htod_copy()].
+    ///
+    /// # Panics
+    ///
+    /// If the lengths of slices are not equal, this method panics.
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `src` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn htod_sync_copy_into<T: DeviceRepr, Dst: DevicePtrMut<T>>(
+        self: &Arc<Self>,
+        src: &[T],
+        dst: &mut Dst,
+    ) -> Result<(), result::DriverError> {
+        self.default_stream().htod_sync_copy_into(src, dst)
+    }
+
+    /// Synchronously copies device memory into host memory.
+    /// Unlike [`CudaDevice::dtoh_sync_copy_into`] this returns a [`Vec<T>`].
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `dst` (after returning) it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[allow(clippy::uninit_vec)]
+    #[deprecated]
+    pub fn dtoh_sync_copy<T: DeviceRepr, Src: DevicePtr<T>>(
+        self: &Arc<Self>,
+        src: &Src,
+    ) -> Result<Vec<T>, result::DriverError> {
+        self.default_stream().dtoh_sync_copy(src)
+    }
+
+    /// Synchronously copies device memory into host memory
+    ///
+    /// Use [`CudaDevice::dtoh_sync_copy`] if you need [`Vec<T>`] and can't provide
+    /// a correctly sized slice.
+    ///
+    /// # Panics
+    ///
+    /// If the lengths of slices are not equal, this method panics.
+    ///
+    /// # Safety
+    /// 1. Since this function doesn't own `dst` it is executed synchronously.
+    /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn dtoh_sync_copy_into<T: DeviceRepr, Src: DevicePtr<T>>(
+        self: &Arc<Self>,
+        src: &Src,
+        dst: &mut [T],
+    ) -> Result<(), result::DriverError> {
+        self.default_stream().dtoh_sync_copy_into(src, dst)
+    }
+
+    /// Synchronously de-allocates `src` and converts it into it's host value.
+    /// You can just [drop] the slice if you don't need the host data.
+    ///
+    /// # Safety
+    /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
+    #[deprecated]
+    pub fn sync_reclaim<T: Clone + Default + DeviceRepr + Unpin>(
+        self: &Arc<Self>,
+        src: CudaSlice<T>,
+    ) -> Result<Vec<T>, result::DriverError> {
+        self.default_stream().sync_reclaim(src)
+    }
+
+    /// Synchronizes the stream.
+    #[deprecated]
+    pub fn synchronize(self: &Arc<Self>) -> Result<(), result::DriverError> {
+        self.default_stream().synchronize()
+    }
+}
+
+impl CudaStream {
+    /// Allocates an empty [CudaSlice] with 0 length.
+    pub fn null<T>(&self) -> Result<CudaSlice<T>, result::DriverError> {
+        self.device.bind_to_thread()?;
         let cu_device_ptr = unsafe {
-            if self.is_async {
-                result::malloc_async(self.stream, 0)?
+            if self.device.has_async_alloc {
+                result::malloc_async(self.cu_stream, 0)?
             } else {
                 result::malloc_sync(0)?
             }
@@ -120,7 +386,7 @@ impl CudaDevice {
         Ok(CudaSlice {
             cu_device_ptr,
             len: 0,
-            device: self.clone(),
+            stream: self.clone(),
             host_buf: None,
         })
     }
@@ -130,19 +396,19 @@ impl CudaDevice {
     /// # Safety
     /// This is unsafe because the device memory is unset after this call.
     pub unsafe fn alloc<T: DeviceRepr>(
-        self: &Arc<Self>,
+        &self,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
-        self.bind_to_thread()?;
-        let cu_device_ptr = if self.is_async {
-            result::malloc_async(self.stream, len * std::mem::size_of::<T>())?
+        self.device.bind_to_thread()?;
+        let cu_device_ptr = if self.device.has_async_alloc {
+            result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
         Ok(CudaSlice {
             cu_device_ptr,
             len,
-            device: self.clone(),
+            stream: self.clone(),
             host_buf: None,
         })
     }
@@ -154,7 +420,7 @@ impl CudaDevice {
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn alloc_zeros<T: ValidAsZeroBits + DeviceRepr>(
-        self: &Arc<Self>,
+        &self,
         len: usize,
     ) -> Result<CudaSlice<T>, result::DriverError> {
         let mut dst = unsafe { self.alloc(len) }?;
@@ -168,16 +434,15 @@ impl CudaDevice {
     /// 1. `T` is marked as [ValidAsZeroBits], so the device memory is valid to use
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn memset_zeros<T: ValidAsZeroBits + DeviceRepr, Dst: DevicePtrMut<T>>(
-        self: &Arc<Self>,
+        &self,
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
-        self.bind_to_thread()?;
-        if self.is_async {
-            unsafe {
-                result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.stream)
-            }
-        } else {
-            unsafe { result::memset_d8_sync(*dst.device_ptr_mut(), 0, dst.num_bytes()) }
+        self.device.bind_to_thread()?;
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
+        unsafe {
+            result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.cu_stream)
         }
     }
 
@@ -193,29 +458,25 @@ impl CudaDevice {
     /// 2. Since they are both references, they can't have been freed
     /// 3. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn dtod_copy<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
-        self: &Arc<Self>,
+        &self,
         src: &Src,
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
-        if self.is_async {
-            unsafe {
-                result::memcpy_dtod_async(
-                    *dst.device_ptr_mut(),
-                    *src.device_ptr(),
-                    src.len() * std::mem::size_of::<T>(),
-                    self.stream,
-                )
-            }
-        } else {
-            unsafe {
-                result::memcpy_dtod_sync(
-                    *dst.device_ptr_mut(),
-                    *src.device_ptr(),
-                    src.len() * std::mem::size_of::<T>(),
-                )
-            }
+        self.device.bind_to_thread()?;
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
+        unsafe {
+            result::memcpy_dtod_async(
+                *dst.device_ptr_mut(),
+                *src.device_ptr(),
+                src.len() * std::mem::size_of::<T>(),
+                self.cu_stream,
+            )
         }
     }
 
@@ -227,7 +488,7 @@ impl CudaDevice {
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn htod_copy<T: Unpin + DeviceRepr>(
-        self: &Arc<Self>,
+        &self,
         src: Vec<T>,
     ) -> Result<CudaSlice<T>, result::DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
@@ -243,25 +504,26 @@ impl CudaDevice {
     ///    after this will take place after the data has been successfully copied.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn htod_copy_into<T: DeviceRepr + Unpin>(
-        self: &Arc<Self>,
+        &self,
         src: Vec<T>,
         dst: &mut CudaSlice<T>,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        dst.host_buf = Some(Pin::new(src));
-        self.bind_to_thread()?;
-        if self.is_async {
-            unsafe {
-                result::memcpy_htod_async(
-                    dst.cu_device_ptr,
-                    dst.host_buf.as_ref().unwrap(),
-                    self.stream,
-                )
-            }?
-        } else {
-            unsafe { result::memcpy_htod_sync(dst.cu_device_ptr, dst.host_buf.as_ref().unwrap()) }?
+        self.device.bind_to_thread()?;
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
         }
-        Ok(())
+        if dst.host_buf.is_some() {
+            todo!()
+        }
+        dst.host_buf = Some(Pin::new(src));
+        unsafe {
+            result::memcpy_htod_async(
+                dst.cu_device_ptr,
+                dst.host_buf.as_ref().unwrap(),
+                self.cu_stream,
+            )
+        }
     }
 
     /// Allocates new device memory and synchronously copies data from `src` into the new allocation.
@@ -273,7 +535,7 @@ impl CudaDevice {
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn htod_sync_copy<T: DeviceRepr>(
-        self: &Arc<Self>,
+        &self,
         src: &[T],
     ) -> Result<CudaSlice<T>, result::DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
@@ -293,17 +555,16 @@ impl CudaDevice {
     /// 1. Since this function doesn't own `src` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn htod_sync_copy_into<T: DeviceRepr, Dst: DevicePtrMut<T>>(
-        self: &Arc<Self>,
+        &self,
         src: &[T],
         dst: &mut Dst,
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
-        if self.is_async {
-            unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.stream) }?;
-        } else {
-            unsafe { result::memcpy_htod_sync(*dst.device_ptr_mut(), src) }?;
+        self.device.bind_to_thread()?;
+        if dst.stream().cu_stream != self.cu_stream {
+            todo!();
         }
+        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.cu_stream) }?;
         self.synchronize()
     }
 
@@ -315,9 +576,12 @@ impl CudaDevice {
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     #[allow(clippy::uninit_vec)]
     pub fn dtoh_sync_copy<T: DeviceRepr, Src: DevicePtr<T>>(
-        self: &Arc<Self>,
+        &self,
         src: &Src,
     ) -> Result<Vec<T>, result::DriverError> {
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         let mut dst = Vec::with_capacity(src.len());
         unsafe { dst.set_len(src.len()) };
         self.dtoh_sync_copy_into(src, &mut dst)?;
@@ -337,17 +601,16 @@ impl CudaDevice {
     /// 1. Since this function doesn't own `dst` it is executed synchronously.
     /// 2. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn dtoh_sync_copy_into<T: DeviceRepr, Src: DevicePtr<T>>(
-        self: &Arc<Self>,
+        &self,
         src: &Src,
         dst: &mut [T],
     ) -> Result<(), result::DriverError> {
         assert_eq!(src.len(), dst.len());
-        self.bind_to_thread()?;
-        if self.is_async {
-            unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.stream) }?;
-        } else {
-            unsafe { result::memcpy_dtoh_sync(dst, *src.device_ptr()) }?;
+        self.device.bind_to_thread()?;
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
         }
+        unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.cu_stream) }?;
         self.synchronize()
     }
 
@@ -357,7 +620,7 @@ impl CudaDevice {
     /// # Safety
     /// 1. Self is [`Arc<Self>`], and this method increments the rc for self
     pub fn sync_reclaim<T: Clone + Default + DeviceRepr + Unpin>(
-        self: &Arc<Self>,
+        &self,
         mut src: CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {
         let buf = src.host_buf.take();
@@ -366,14 +629,17 @@ impl CudaDevice {
             b.resize(src.len, Default::default());
             Pin::new(b)
         });
+        if src.stream().cu_stream != self.cu_stream {
+            todo!();
+        }
         self.dtoh_sync_copy_into(&src, &mut buf)?;
         Ok(Pin::into_inner(buf))
     }
 
     /// Synchronizes the stream.
-    pub fn synchronize(self: &Arc<Self>) -> Result<(), result::DriverError> {
-        self.bind_to_thread()?;
-        unsafe { result::stream::synchronize(self.stream) }
+    pub fn synchronize(&self) -> Result<(), result::DriverError> {
+        self.device.bind_to_thread()?;
+        unsafe { result::stream::synchronize(self.cu_stream) }
     }
 }
 
@@ -542,18 +808,22 @@ mod tests {
     #[test]
     fn test_leak_and_upgrade() {
         let dev = CudaDevice::new(0).unwrap();
+        let stream = dev.default_stream();
 
-        let a = dev
+        let a = stream
             .htod_copy(std::vec![1.0f32, 2.0, 3.0, 4.0, 5.0])
             .unwrap();
 
         let ptr = a.leak();
-        let b = unsafe { dev.upgrade_device_ptr::<f32>(ptr, 3) };
-        assert_eq!(dev.dtoh_sync_copy(&b).unwrap(), &[1.0, 2.0, 3.0]);
+        let b = unsafe { stream.upgrade_device_ptr::<f32>(ptr, 3) };
+        assert_eq!(stream.dtoh_sync_copy(&b).unwrap(), &[1.0, 2.0, 3.0]);
 
         let ptr = b.leak();
-        let c = unsafe { dev.upgrade_device_ptr::<f32>(ptr, 5) };
-        assert_eq!(dev.dtoh_sync_copy(&c).unwrap(), &[1.0, 2.0, 3.0, 4.0, 5.0]);
+        let c = unsafe { stream.upgrade_device_ptr::<f32>(ptr, 5) };
+        assert_eq!(
+            stream.dtoh_sync_copy(&c).unwrap(),
+            &[1.0, 2.0, 3.0, 4.0, 5.0]
+        );
     }
 
     /// See https://github.com/coreylowman/cudarc/issues/160

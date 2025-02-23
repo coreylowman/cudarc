@@ -1,5 +1,5 @@
 use super::{result, sys};
-use crate::driver::{CudaDevice, DevicePtr, DevicePtrMut};
+use crate::driver::{CudaDevice, CudaStream, DevicePtr, DevicePtrMut};
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::{sync::Arc, vec, vec::Vec};
@@ -9,7 +9,7 @@ pub use result::{group_end, group_start};
 #[derive(Debug)]
 pub struct Comm {
     comm: sys::ncclComm_t,
-    device: Arc<CudaDevice>,
+    stream: CudaStream,
     rank: usize,
     world_size: usize,
 }
@@ -125,7 +125,7 @@ impl Comm {
             .enumerate()
             .map(|(rank, (comm, device))| Self {
                 comm,
-                device,
+                stream: device.default_stream(),
                 rank,
                 world_size: n_devices,
             })
@@ -135,7 +135,7 @@ impl Comm {
     }
 
     pub fn device(&self) -> Arc<CudaDevice> {
-        self.device.clone()
+        self.stream.device.clone()
     }
 
     pub fn rank(&self) -> usize {
@@ -144,6 +144,11 @@ impl Comm {
 
     pub fn world_size(&self) -> usize {
         self.world_size
+    }
+
+    pub fn set_stream(&mut self, stream: CudaStream) {
+        assert_eq!(self.stream.device.ordinal(), stream.device.ordinal());
+        self.stream = stream;
     }
 
     /// Primitive to create new communication link on each process (threads are possible but not
@@ -193,7 +198,7 @@ impl Comm {
         };
         Ok(Self {
             comm,
-            device,
+            stream: device.default_stream(),
             rank,
             world_size,
         })
@@ -213,7 +218,7 @@ impl Comm {
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )?;
         }
         Ok(())
@@ -231,7 +236,7 @@ impl Comm {
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -262,7 +267,7 @@ impl Comm {
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -282,7 +287,7 @@ impl Comm {
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -300,7 +305,7 @@ impl Comm {
                 sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -320,7 +325,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -340,7 +345,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -372,7 +377,7 @@ impl Comm {
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -394,7 +399,7 @@ impl Comm {
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }
@@ -414,7 +419,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream as *mut _,
+                self.stream.cu_stream as _,
             )
         }
     }

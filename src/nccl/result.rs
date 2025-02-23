@@ -370,7 +370,7 @@ mod tests {
                     sys::ncclDataType_t::ncclFloat32,
                     sys::ncclRedOp_t::ncclSum,
                     comms[i],
-                    dev.stream as sys::cudaStream_t,
+                    std::ptr::null_mut(),
                 )
                 .unwrap();
             }
@@ -410,7 +410,7 @@ mod tests {
                             sys::ncclDataType_t::ncclFloat32,
                             sys::ncclRedOp_t::ncclSum,
                             comm,
-                            dev.stream as sys::cudaStream_t,
+                            std::ptr::null_mut(),
                         )
                         .unwrap();
                     }

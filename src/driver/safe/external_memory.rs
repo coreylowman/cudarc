@@ -3,7 +3,7 @@ use std::fs::File;
 use std::ops::Range;
 use std::sync::Arc;
 
-use super::{CudaDevice, DevicePtr, DeviceSlice};
+use super::{CudaDevice, CudaStream, DevicePtr, DeviceSlice};
 use crate::driver::{result, sys, DriverError};
 
 impl CudaDevice {
@@ -102,6 +102,7 @@ impl ExternalMemory {
             )
         }?;
         Ok(MappedBuffer {
+            stream: self.device.default_stream(),
             device_ptr,
             len: range.len(),
             external_memory: self,
@@ -115,6 +116,7 @@ impl ExternalMemory {
 /// The underlying mapped buffer will be freed when this struct is dropped.
 #[derive(Debug)]
 pub struct MappedBuffer {
+    stream: CudaStream,
     device_ptr: sys::CUdeviceptr,
     len: usize,
     external_memory: ExternalMemory,
@@ -128,6 +130,10 @@ impl Drop for MappedBuffer {
 }
 
 impl DeviceSlice<u8> for MappedBuffer {
+    fn stream(&self) -> &super::CudaStream {
+        &self.stream
+    }
+
     fn len(&self) -> usize {
         self.len
     }
