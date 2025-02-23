@@ -3,7 +3,7 @@
 use super::{result, result::CublasError, sys};
 use crate::cublaslt::result::set_matrix_layout_attribute;
 use crate::driver::sys::{CUdevice_attribute, CUdeviceptr, CUstream};
-use crate::driver::{CudaDevice, CudaSlice, DevicePtr, DevicePtrMut, DriverError};
+use crate::driver::{CudaDevice, CudaSlice, CudaStream, DevicePtr, DevicePtrMut, DriverError};
 use core::ffi::c_int;
 use core::mem;
 use std::sync::Arc;
@@ -20,7 +20,7 @@ use std::sync::Arc;
 pub struct CudaBlasLT {
     handle: sys::cublasLtHandle_t,
     workspace: Workspace,
-    device: Arc<CudaDevice>,
+    stream: CudaStream,
 }
 
 unsafe impl Send for CudaBlasLT {}
@@ -30,14 +30,19 @@ unsafe impl Sync for CudaBlasLT {}
 impl CudaBlasLT {
     /// Creates a new cublasLt handle.
     pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
+        device.bind_to_thread().unwrap();
         let handle = result::create_handle()?;
         let workspace = Workspace::new(device.clone()).unwrap();
-
         Ok(Self {
             handle,
             workspace,
-            device,
+            stream: device.default_stream(),
         })
+    }
+
+    pub fn set_stream(&mut self, stream: CudaStream) {
+        assert_eq!(self.stream.device.ordinal(), stream.device.ordinal());
+        self.stream = stream;
     }
 }
 
@@ -415,7 +420,7 @@ impl MatmulShared for CudaBlasLT {
     }
 
     fn stream(&self) -> &CUstream {
-        &self.device.stream
+        &self.stream.cu_stream
     }
 }
 

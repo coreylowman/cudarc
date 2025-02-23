@@ -1,7 +1,7 @@
 //! Safe abstractions around [crate::curand::result] with [CudaRng].
 
 use super::{result, sys};
-use crate::driver::{CudaDevice, DevicePtrMut};
+use crate::driver::{CudaDevice, CudaStream, DevicePtrMut};
 use std::sync::Arc;
 
 /// Host side RNG that can fill [CudaSlice] with random values.
@@ -37,8 +37,17 @@ impl CudaRng {
         let gen = result::create_generator()?;
         let mut rng = Self { gen, device };
         rng.set_seed(seed)?;
-        unsafe { result::set_stream(rng.gen, rng.device.stream as *mut _) }?;
         Ok(rng)
+    }
+
+    pub fn set_stream(&self, opt_stream: Option<&CudaStream>) -> Result<(), result::CurandError> {
+        match opt_stream {
+            Some(s) => unsafe {
+                assert_eq!(self.device.ordinal(), s.device.ordinal());
+                result::set_stream(self.gen, s.cu_stream as *mut _)
+            },
+            None => unsafe { result::set_stream(self.gen, std::ptr::null_mut()) },
+        }
     }
 
     /// Re-seed the RNG.
