@@ -53,6 +53,10 @@ fn main() {
 
 #[allow(unused)]
 fn cuda_version_from_build_system() -> (usize, usize) {
+    if std::env::var("DOCS_RS").is_ok() {
+        return (12, 8);
+    }
+
     let output = std::process::Command::new("nvcc")
         .arg("--version")
         .output()
