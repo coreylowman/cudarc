@@ -998,6 +998,12 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 }
 
+/// Rust side data that the `cuda` driver knows is pinned. This is different
+/// than `Pin<Vec<T>>` mainly because cuda driver manages this memory and ensures
+/// it is page locked.
+///
+/// Allocate this with [CudaDevice::alloc_pinned()], and do device copies with
+/// [CudaDevice::htod_copy_pinned()]
 pub struct PinnedHostSlice<T> {
     ptr: *mut T,
     len: usize,
@@ -1006,37 +1012,46 @@ pub struct PinnedHostSlice<T> {
 }
 
 impl<T> PinnedHostSlice<T> {
-    pub fn new(ptr: *mut T, len: usize, device: Arc<CudaDevice>) -> Self {
+    /// Creates a new pinned host slice.
+    ///
+    /// # Safety
+    /// 1. `ptr` should be returned from [result::malloc_host()].
+    pub unsafe fn new(ptr: *mut T, len: usize, device: Arc<CudaDevice>) -> Self {
         assert!(!ptr.is_null());
         assert!(len * std::mem::size_of::<T>() < isize::MAX as usize);
         assert!(ptr.is_aligned());
         Self { ptr, len, device }
     }
 
+    /// The size of the slice
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// The raw pointer underlying the slice
     pub fn as_ptr(&self) -> *const T {
         self.ptr
     }
 
+    /// The raw pointer underlying the slice
     pub fn as_mut_ptr(&mut self) -> *mut T {
         self.ptr
     }
 }
 
 impl<T: ValidAsZeroBits> PinnedHostSlice<T> {
+    /// Views this as a regular rust slice.
+    ///
     /// # Safety
-    /// Conditions are checked by [PageLockedHostSlice::new()].
-    /// Same requirements as [std::slice::from_raw_parts()].
+    /// The conditions required by [std::slice::from_raw_parts()] are checked by [PinnedHostSlice::new()]
     pub fn as_slice(&self) -> &[T] {
         unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
     }
 
+    /// Views this as a regular rust slice.
+    ///
     /// # Safety
-    /// Conditions are checked by [PageLockedHostSlice::new()]
-    /// Same requirements as [std::slice::from_raw_parts_mut()].
+    /// The conditions required by [std::slice::from_raw_parts_mut()] are checked by [PinnedHostSlice::new()]
     pub fn as_mut_slice(&mut self) -> &mut [T] {
         unsafe { std::slice::from_raw_parts_mut(self.ptr, self.len) }
     }

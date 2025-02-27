@@ -150,11 +150,13 @@ impl CudaDevice {
     /// Allocates page locked host memory with `sys::CU_MEMHOSTALLOC_WRITECOMBINED` flags.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
+    ///
+    /// # Safety
+    /// 1. This is unsafe because the memory is unset after this call.
     pub unsafe fn alloc_pinned<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
     ) -> Result<PinnedHostSlice<T>, result::DriverError> {
-        // TODO
         result::malloc_host(
             len * std::mem::size_of::<T>(),
             sys::CU_MEMHOSTALLOC_WRITECOMBINED,
@@ -250,6 +252,12 @@ impl CudaDevice {
         Ok(dst)
     }
 
+    /// Asynchronously copies pinned host data (allocated with [CudaDevice::alloc_pinned()] to the device.
+    ///
+    /// This is generally at least 2x as fast as synchronous copies.
+    ///
+    /// # Safety
+    /// 1. We don't have to synchronize at all here because the cuda driver allocated the [PinnedHostSlice].
     pub fn htod_copy_pinned<T: DeviceRepr + ValidAsZeroBits>(
         self: &Arc<Self>,
         src: &PinnedHostSlice<T>,
