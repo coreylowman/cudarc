@@ -644,6 +644,11 @@ mod tests {
         }
         let pinned_elapsed = start.elapsed() / n_samples;
 
-        assert!(unpinned_elapsed < pinned_elapsed);
+        // pinned memory transfer speed should be at least 2x faster, but this depends
+        // on device
+        assert!(
+            pinned_elapsed.as_secs_f32() * 1.5 < unpinned_elapsed.as_secs_f32(),
+            "{unpinned_elapsed:?} vs {pinned_elapsed:?}"
+        );
     }
 }
