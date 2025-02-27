@@ -624,6 +624,8 @@ pub unsafe fn malloc_managed(
 }
 
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
+/// # Safety
+/// 1. The memory return by this is unset, which may be invalid for `T`.
 pub unsafe fn malloc_host(num_bytes: usize, flags: c_uint) -> Result<*mut c_void, DriverError> {
     let mut host_ptr = MaybeUninit::uninit();
     lib()
@@ -633,6 +635,9 @@ pub unsafe fn malloc_host(num_bytes: usize, flags: c_uint) -> Result<*mut c_void
 }
 
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g62e0fdbe181dab6b1c90fa1a51c7b92c)
+/// # Safety
+/// 1. `host_ptr` must have been returned by [malloc_host]
+/// 2. `host_ptr` should not be null.
 pub unsafe fn free_host(host_ptr: *mut c_void) -> Result<(), DriverError> {
     lib().cuMemFreeHost(host_ptr).result()
 }
