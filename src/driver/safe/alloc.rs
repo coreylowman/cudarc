@@ -1,6 +1,6 @@
 use crate::driver::{result, sys};
 
-use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut, PageLockedHostSlice};
+use super::core::{CudaDevice, CudaSlice, CudaView, CudaViewMut, PinnedHostSlice};
 use super::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
 
 use std::{marker::Unpin, pin::Pin, sync::Arc, vec::Vec};
@@ -150,19 +150,16 @@ impl CudaDevice {
     /// Allocates page locked host memory with `sys::CU_MEMHOSTALLOC_WRITECOMBINED` flags.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
-    pub unsafe fn alloc_host<T: DeviceRepr>(
+    pub unsafe fn alloc_pinned<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
-    ) -> Result<PageLockedHostSlice<T>, result::DriverError> {
+    ) -> Result<PinnedHostSlice<T>, result::DriverError> {
+        // TODO
         result::malloc_host(
             len * std::mem::size_of::<T>(),
             sys::CU_MEMHOSTALLOC_WRITECOMBINED,
         )
-        .map(|ptr| PageLockedHostSlice {
-            ptr: ptr as _,
-            len,
-            device: self.clone(),
-        })
+        .map(|ptr| PinnedHostSlice::new(ptr as _, len, self.clone()))
     }
 
     /// Allocates device memory with no associated host memory, and memsets
@@ -250,6 +247,16 @@ impl CudaDevice {
     ) -> Result<CudaSlice<T>, result::DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
         self.htod_copy_into(src, &mut dst)?;
+        Ok(dst)
+    }
+
+    pub fn htod_copy_pinned<T: DeviceRepr + ValidAsZeroBits>(
+        self: &Arc<Self>,
+        src: &PinnedHostSlice<T>,
+    ) -> Result<CudaSlice<T>, result::DriverError> {
+        let mut dst = unsafe { self.alloc(src.len()) }?;
+        assert_eq!(src.len(), dst.len());
+        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src.as_slice(), self.stream) }?;
         Ok(dst)
     }
 
@@ -443,6 +450,8 @@ impl_tuples!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
+    use std::time::Instant;
+
     use super::*;
     #[cfg(feature = "no-std")]
     use no_std_compat::vec;
@@ -598,5 +607,43 @@ mod tests {
         let _dev1 = CudaDevice::new(1).unwrap();
         let slice = dev0.htod_copy(vec![1.0; 10]).unwrap();
         let _out = dev0.dtoh_sync_copy(&slice).unwrap();
+    }
+
+    #[test]
+    fn test_htod_copy_pinned() {
+        let truth = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0];
+        let dev = CudaDevice::new(0).unwrap();
+        let mut pinned = unsafe { dev.alloc_pinned::<f32>(10) }.unwrap();
+        pinned.as_mut_slice().clone_from_slice(&truth);
+        assert_eq!(pinned.as_slice(), &truth);
+        let dst = dev.htod_copy_pinned(&pinned).unwrap();
+        let host = dev.dtoh_sync_copy(&dst).unwrap();
+        assert_eq!(&host, &truth);
+    }
+
+    #[test]
+    fn test_pinned_copy_is_faster() {
+        let dev = CudaDevice::new(0).unwrap();
+        let n = 100_000;
+        let n_samples = 5;
+        let not_pinned = vec![0.0f32; n];
+
+        let start = Instant::now();
+        for _ in 0..n_samples {
+            let _ = dev.htod_sync_copy(&not_pinned).unwrap();
+            dev.synchronize().unwrap();
+        }
+        let unpinned_elapsed = start.elapsed() / n_samples;
+
+        let pinned = unsafe { dev.alloc_pinned::<f32>(n) }.unwrap();
+
+        let start = Instant::now();
+        for _ in 0..n_samples {
+            let _ = dev.htod_copy_pinned(&pinned).unwrap();
+            dev.synchronize().unwrap();
+        }
+        let pinned_elapsed = start.elapsed() / n_samples;
+
+        assert!(unpinned_elapsed < pinned_elapsed);
     }
 }

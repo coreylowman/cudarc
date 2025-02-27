@@ -3,7 +3,7 @@ use crate::driver::{
     sys::{self, lib, CUfunc_cache_enum, CUfunction_attribute_enum},
 };
 
-use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
+use super::{alloc::DeviceRepr, device_ptr::DeviceSlice, ValidAsZeroBits};
 
 use std::{
     marker::PhantomData,
@@ -998,14 +998,25 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 }
 
-pub struct PageLockedHostSlice<T> {
-    pub(crate) ptr: *mut T,
-    pub(crate) len: usize,
+pub struct PinnedHostSlice<T> {
+    ptr: *mut T,
+    len: usize,
     #[allow(unused)]
-    pub(crate) device: Arc<CudaDevice>,
+    device: Arc<CudaDevice>,
 }
 
-impl<T> PageLockedHostSlice<T> {
+impl<T> PinnedHostSlice<T> {
+    pub fn new(ptr: *mut T, len: usize, device: Arc<CudaDevice>) -> Self {
+        assert!(!ptr.is_null());
+        assert!(len * std::mem::size_of::<T>() < isize::MAX as usize);
+        assert!(ptr.is_aligned());
+        Self { ptr, len, device }
+    }
+
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
     pub fn as_ptr(&self) -> *const T {
         self.ptr
     }
@@ -1013,17 +1024,25 @@ impl<T> PageLockedHostSlice<T> {
     pub fn as_mut_ptr(&mut self) -> *mut T {
         self.ptr
     }
+}
 
-    pub unsafe fn as_slice(&self) -> &[T] {
-        std::slice::from_raw_parts(self.ptr, self.len)
+impl<T: ValidAsZeroBits> PinnedHostSlice<T> {
+    /// # Safety
+    /// Conditions are checked by [PageLockedHostSlice::new()].
+    /// Same requirements as [std::slice::from_raw_parts()].
+    pub fn as_slice(&self) -> &[T] {
+        unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
     }
 
-    pub unsafe fn as_mut_slice(&mut self) -> &mut [T] {
-        std::slice::from_raw_parts_mut(self.ptr, self.len)
+    /// # Safety
+    /// Conditions are checked by [PageLockedHostSlice::new()]
+    /// Same requirements as [std::slice::from_raw_parts_mut()].
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        unsafe { std::slice::from_raw_parts_mut(self.ptr, self.len) }
     }
 }
 
-impl<T> Drop for PageLockedHostSlice<T> {
+impl<T> Drop for PinnedHostSlice<T> {
     fn drop(&mut self) {
         unsafe { result::free_host(self.ptr as _) }.unwrap();
     }
