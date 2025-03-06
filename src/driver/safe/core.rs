@@ -1002,6 +1002,156 @@ impl<T> CudaSlice<T> {
     }
 }
 
+impl<'a, T> CudaViewMut<'a, T> {
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range` and `0...self.len()` are not overlapping.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: &mut CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// let mut view2 = view.slice_mut(0..25);
+    /// do_something(&mut view2);
+    /// ```
+    ///
+    /// One cannot slice twice into the same [CudaViewMut]:
+    /// ```rust,compile_fail
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// // cannot borrow twice from same view
+    /// let mut view1 = slice.slice_mut(0..25);
+    /// let mut view2 = slice.slice_mut(25..50);
+    /// do_something(view1, view2);
+    /// ```
+    /// If you need non-overlapping mutable views into a [CudaViewMut], you can use [CudaViewMut::split_at_mut()].
+    pub fn slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
+        self.try_slice(range).unwrap()
+    }
+
+    /// Fallible version of [CudaViewMut::slice]
+    pub fn try_slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaView {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: self.event,
+            stream: self.stream,
+            marker: PhantomData,
+        })
+    }
+
+    /// Reinterprets the slice of memory into a different type. `len` is the number
+    /// of elements of the new type `S` that are expected. If not enough bytes
+    /// are allocated in `self` for the view, then this returns `None`.
+    ///
+    /// # Safety
+    /// This is unsafe because not the memory for the view may not be a valid interpretation
+    /// for the type `S`.
+    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
+        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
+            ptr: self.ptr,
+            len,
+            event: self.event,
+            stream: self.stream,
+            marker: PhantomData,
+        })
+    }
+
+    /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range` and `0...self.len()` are not overlapping.
+    pub fn slice_mut<'b: 'a>(&'b mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'a, T> {
+        self.try_slice_mut(range).unwrap()
+    }
+
+    /// Fallible version of [CudaViewMut::slice_mut]
+    pub fn try_slice_mut<'b: 'a>(
+        &'b mut self,
+        range: impl RangeBounds<usize>,
+    ) -> Option<CudaViewMut<'a, T>> {
+        range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: self.event,
+            stream: self.stream,
+            marker: PhantomData,
+        })
+    }
+
+    /// Splits the [CudaViewMut] into two at the given index.
+    ///
+    /// Panics if `mid > self.len`.
+    ///
+    /// This method can be used to create non-overlapping mutable views into a [CudaViewMut].
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice_mut(0..50);
+    /// // split the view into two non-overlapping, mutable views
+    /// let (mut view1, mut view2) = view.split_at_mut(25);
+    /// do_something(view1, view2);
+    pub fn split_at_mut<'b: 'a>(
+        &'b mut self,
+        mid: usize,
+    ) -> (CudaViewMut<'a, T>, CudaViewMut<'a, T>) {
+        self.try_split_at_mut(mid).unwrap()
+    }
+
+    /// Fallible version of [CudaViewMut::split_at_mut].
+    ///
+    /// Returns `None` if `mid > self.len`
+    pub fn try_split_at_mut<'b: 'a>(
+        &'b mut self,
+        mid: usize,
+    ) -> Option<(CudaViewMut<'a, T>, CudaViewMut<'a, T>)> {
+        if mid > self.len() {
+            return None;
+        }
+        Some((
+            CudaViewMut {
+                ptr: self.ptr,
+                len: mid,
+                event: self.event,
+                stream: self.stream,
+                marker: PhantomData,
+            },
+            CudaViewMut {
+                ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: self.len - mid,
+                event: self.event,
+                stream: self.stream,
+                marker: PhantomData,
+            },
+        ))
+    }
+
+    /// Reinterprets the slice of memory into a different type. `len` is the number
+    /// of elements of the new type `S` that are expected. If not enough bytes
+    /// are allocated in `self` for the view, then this returns `None`.
+    ///
+    /// # Safety
+    /// This is unsafe because not the memory for the view may not be a valid interpretation
+    /// for the type `S`.
+    pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
+        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
+            ptr: self.ptr,
+            len,
+            event: self.event,
+            stream: self.stream,
+            marker: PhantomData,
+        })
+    }
+}
+
 trait RangeHelper: RangeBounds<usize> {
     fn inclusive_start(&self, valid_start: usize) -> usize;
     fn exclusive_end(&self, valid_end: usize) -> usize;
@@ -1054,14 +1204,24 @@ mod tests {
     #[test]
     fn test_transmutes() {
         let dev = CudaDevice::new(0).unwrap();
-        let slice = dev.alloc_zeros::<u8>(100).unwrap();
+        let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
         assert!(unsafe { slice.transmute::<f32>(25) }.is_some());
         assert!(unsafe { slice.transmute::<f32>(26) }.is_none());
+        assert!(unsafe { slice.transmute_mut::<f32>(25) }.is_some());
+        assert!(unsafe { slice.transmute_mut::<f32>(26) }.is_none());
 
         {
             let view = slice.slice(0..100);
             assert!(unsafe { view.transmute::<f32>(25) }.is_some());
             assert!(unsafe { view.transmute::<f32>(26) }.is_none());
+        }
+
+        {
+            let mut view_mut = slice.slice_mut(0..100);
+            assert!(unsafe { view_mut.transmute::<f32>(25) }.is_some());
+            assert!(unsafe { view_mut.transmute::<f32>(26) }.is_none());
+            assert!(unsafe { view_mut.transmute_mut::<f32>(25) }.is_some());
+            assert!(unsafe { view_mut.transmute_mut::<f32>(26) }.is_none());
         }
     }
 }
