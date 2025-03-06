@@ -964,34 +964,34 @@ impl<T> CudaSlice<T> {
     ///
     /// This method can be used to create non-overlapping mutable views into a [CudaSlice].
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
-    /// # fn do_something(view: CudaView<u8>, view2: CudaView<u8>) {}
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
     /// # let dev = CudaDevice::new(0).unwrap();
     /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
     /// // split the slice into two non-overlapping, mutable views
     /// let (view1, view2) = slice.split_at(50);
     /// do_something(view1, view2);
     /// ```
-    pub fn split_at(&self, mid: usize) -> (CudaView<'_, T>, CudaView<'_, T>) {
-        self.try_split_at(mid).unwrap()
+    pub fn split_at_mut(&self, mid: usize) -> (CudaViewMut<'_, T>, CudaViewMut<'_, T>) {
+        self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaSlice::split_at].
     ///
     /// Returns `None` if `mid > self.len`.
-    pub fn try_split_at(&self, mid: usize) -> Option<(CudaView<'_, T>, CudaView<'_, T>)> {
+    pub fn try_split_at_mut(&self, mid: usize) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
         if mid > self.len() {
             return None;
         }
         Some((
-            CudaView {
+            CudaViewMut {
                 ptr: self.cu_device_ptr,
                 len: mid,
                 event: &self.event,
                 stream: &self.stream,
                 marker: PhantomData,
             },
-            CudaView {
+            CudaViewMut {
                 ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
                 event: &self.event,
