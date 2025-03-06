@@ -969,17 +969,20 @@ impl<T> CudaSlice<T> {
     /// # let dev = CudaDevice::new(0).unwrap();
     /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
     /// // split the slice into two non-overlapping, mutable views
-    /// let (view1, view2) = slice.split_at(50);
+    /// let (mut view1, mut view2) = slice.split_at_mut(50);
     /// do_something(view1, view2);
     /// ```
-    pub fn split_at_mut(&self, mid: usize) -> (CudaViewMut<'_, T>, CudaViewMut<'_, T>) {
+    pub fn split_at_mut(&mut self, mid: usize) -> (CudaViewMut<'_, T>, CudaViewMut<'_, T>) {
         self.try_split_at_mut(mid).unwrap()
     }
 
-    /// Fallible version of [CudaSlice::split_at].
+    /// Fallible version of [CudaSlice::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`.
-    pub fn try_split_at_mut(&self, mid: usize) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
+    pub fn try_split_at_mut(
+        &mut self,
+        mid: usize,
+    ) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
         if mid > self.len() {
             return None;
         }
