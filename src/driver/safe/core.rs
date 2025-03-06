@@ -273,6 +273,10 @@ impl CudaDevice {
         &self.stream.ctx.cu_ctx
     }
 
+    pub fn stream(&self) -> &CudaStream {
+        &self.stream
+    }
+
     /// Get the underlying [sys::CUstream] that this [CudaDevice] executes
     /// all of its work on.
     ///

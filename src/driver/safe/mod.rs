@@ -17,7 +17,7 @@ pub use self::core::{
 };
 pub use self::device_ptr::{DevicePtr, DevicePtrMut, DeviceSlice};
 pub use self::external_memory::{ExternalMemory, MappedBuffer};
-pub use self::launch::{AsLaunchParam, LaunchConfig};
+pub use self::launch::{LaunchArgs, LaunchConfig, PushKernelArg};
 pub use self::profile::{profiler_start, profiler_stop, Profiler};
 pub use host_slice::{HostSlice, PinnedHostSlice};
 
