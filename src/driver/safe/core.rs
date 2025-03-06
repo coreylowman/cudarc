@@ -223,7 +223,7 @@ impl CudaDevice {
     /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
     pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
         let ctx = CudaContext::new(ordinal)?;
-        let stream = ctx.new_stream()?;
+        let stream = unsafe { ctx.new_stream() }?;
         Ok(Arc::new(CudaDevice {
             stream,
             modules: RwLock::new(BTreeMap::new()),
@@ -326,7 +326,8 @@ impl CudaDevice {
 pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) event: CudaEvent,
+    pub(crate) read: CudaEvent,
+    pub(crate) write: CudaEvent,
     pub(crate) stream: Arc<CudaStream>,
     pub(crate) marker: PhantomData<*const T>,
 }
@@ -336,18 +337,19 @@ unsafe impl<T> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        self.stream.wait(&self.event).unwrap();
+        self.stream.wait(&self.read).unwrap();
+        self.stream.wait(&self.write).unwrap();
         unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
     }
 }
 
 impl<T> CudaSlice<T> {
     pub fn ordinal(&self) -> usize {
-        self.event.ctx.ordinal
+        self.stream.ctx.ordinal
     }
 
     pub fn context(&self) -> &Arc<CudaContext> {
-        &self.event.ctx
+        &self.stream.ctx
     }
 }
 
@@ -676,7 +678,17 @@ impl CudaContext {
         })
     }
 
-    pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
+    /// # Safety
+    /// This is **super** unsafe because previous kernel launches and operations
+    /// do not necessarily record their events onto slices/views if the slices/views
+    /// are contained on the stream.
+    ///
+    /// This stream needs to be properly synchronized with other streams.
+    ///
+    /// It is up to the user to ensure this new stream correctly synchronizes with other streams.
+    ///
+    /// Prefer [CudaStream::fork()].
+    pub unsafe fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         Ok(Arc::new(CudaStream {
@@ -688,7 +700,7 @@ impl CudaContext {
 
 impl CudaStream {
     pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
-        let stream = self.ctx.new_stream()?;
+        let stream = unsafe { self.ctx.new_stream() }?;
         stream.wait(&self.record_event(None)?)?;
         Ok(stream)
     }
@@ -760,7 +772,8 @@ impl CudaStream {
 pub struct CudaView<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) event: &'a CudaEvent,
+    pub(crate) read: &'a CudaEvent,
+    pub(crate) write: &'a CudaEvent,
     pub(crate) stream: &'a Arc<CudaStream>,
     marker: PhantomData<&'a [T]>,
 }
@@ -803,7 +816,8 @@ impl<T> CudaSlice<T> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
-            event: &self.event,
+            read: &self.read,
+            write: &self.write,
             stream: &self.stream,
             marker: PhantomData,
         })
@@ -820,7 +834,8 @@ impl<T> CudaSlice<T> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
             ptr: self.cu_device_ptr,
             len,
-            event: &self.event,
+            read: &self.read,
+            write: &self.write,
             stream: &self.stream,
             marker: PhantomData,
         })
@@ -852,7 +867,8 @@ impl<'a, T> CudaView<'a, T> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
-            event: self.event,
+            read: self.read,
+            write: self.write,
             stream: self.stream,
             marker: PhantomData,
         })
@@ -869,7 +885,8 @@ impl<'a, T> CudaView<'a, T> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
             ptr: self.ptr,
             len,
-            event: self.event,
+            read: self.read,
+            write: self.write,
             stream: self.stream,
             marker: PhantomData,
         })
@@ -883,7 +900,8 @@ impl<'a, T> CudaView<'a, T> {
 pub struct CudaViewMut<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) event: &'a CudaEvent,
+    pub(crate) read: &'a CudaEvent,
+    pub(crate) write: &'a CudaEvent,
     pub(crate) stream: &'a Arc<CudaStream>,
     marker: PhantomData<&'a mut [T]>,
 }
@@ -939,7 +957,8 @@ impl<T> CudaSlice<T> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
-            event: &self.event,
+            read: &self.read,
+            write: &self.write,
             stream: &self.stream,
             marker: PhantomData,
         })
@@ -956,7 +975,8 @@ impl<T> CudaSlice<T> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
             ptr: self.cu_device_ptr,
             len,
-            event: &self.event,
+            read: &self.read,
+            write: &mut self.write,
             stream: &self.stream,
             marker: PhantomData,
         })
@@ -994,14 +1014,16 @@ impl<T> CudaSlice<T> {
             CudaViewMut {
                 ptr: self.cu_device_ptr,
                 len: mid,
-                event: &self.event,
+                read: &self.read,
+                write: &self.write,
                 stream: &self.stream,
                 marker: PhantomData,
             },
             CudaViewMut {
                 ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
-                event: &self.event,
+                read: &self.read,
+                write: &self.write,
                 stream: &self.stream,
                 marker: PhantomData,
             },
@@ -1048,7 +1070,8 @@ impl<'a, T> CudaViewMut<'a, T> {
         range.bounds(..self.len()).map(|(start, end)| CudaView {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
-            event: self.event,
+            read: self.read,
+            write: self.write,
             stream: self.stream,
             marker: PhantomData,
         })
@@ -1065,7 +1088,8 @@ impl<'a, T> CudaViewMut<'a, T> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
             ptr: self.ptr,
             len,
-            event: self.event,
+            read: self.read,
+            write: self.write,
             stream: self.stream,
             marker: PhantomData,
         })
@@ -1086,7 +1110,8 @@ impl<'a, T> CudaViewMut<'a, T> {
         range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
-            event: self.event,
+            read: self.read,
+            write: self.write,
             stream: self.stream,
             marker: PhantomData,
         })
@@ -1127,14 +1152,16 @@ impl<'a, T> CudaViewMut<'a, T> {
             CudaViewMut {
                 ptr: self.ptr,
                 len: mid,
-                event: self.event,
+                read: self.read,
+                write: self.write,
                 stream: self.stream,
                 marker: PhantomData,
             },
             CudaViewMut {
                 ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: self.len - mid,
-                event: self.event,
+                read: self.read,
+                write: self.write,
                 stream: self.stream,
                 marker: PhantomData,
             },
@@ -1152,7 +1179,8 @@ impl<'a, T> CudaViewMut<'a, T> {
         (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
             ptr: self.ptr,
             len,
-            event: self.event,
+            read: self.read,
+            write: self.write,
             stream: self.stream,
             marker: PhantomData,
         })

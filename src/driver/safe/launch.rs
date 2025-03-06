@@ -104,8 +104,10 @@ impl_push!(half::bf16);
 unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaSlice<T>) -> &mut Self {
-        self.waits.push(&arg.event);
-        self.records.push(&arg.event);
+        self.waits.push(&arg.write);
+        if self.stream != arg.stream.as_ref() {
+            self.records.push(&arg.read);
+        }
         self.args
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
@@ -115,8 +117,12 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
 unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b mut CudaSlice<T>) -> &mut Self {
-        self.waits.push(&arg.event);
-        self.records.push(&arg.event);
+        self.waits.push(&arg.read);
+        self.waits.push(&arg.write);
+        if self.stream != arg.stream.as_ref() {
+            self.records.push(&arg.read);
+            self.records.push(&arg.write);
+        }
         self.args
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
@@ -126,8 +132,10 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a
 unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b CudaView<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaView<'c, T>) -> &mut Self {
-        self.waits.push(&arg.event);
-        self.records.push(&arg.event);
+        self.waits.push(arg.write);
+        if self.stream != arg.stream.as_ref() {
+            self.records.push(arg.read);
+        }
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
@@ -136,8 +144,12 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b CudaView<'c, T>> for Launch
 unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b mut CudaViewMut<'c, T>) -> &mut Self {
-        self.waits.push(&arg.event);
-        self.records.push(&arg.event);
+        self.waits.push(arg.read);
+        self.waits.push(arg.write);
+        if self.stream != arg.stream.as_ref() {
+            self.records.push(arg.read);
+            self.records.push(arg.write);
+        }
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
@@ -220,7 +232,7 @@ impl<'a> LaunchArgs<'a> {
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
     pub unsafe fn launch(&mut self, cfg: LaunchConfig) -> Result<(), DriverError> {
-        for event in self.waits.iter() {
+        for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
         result::launch_kernel(
@@ -231,7 +243,7 @@ impl<'a> LaunchArgs<'a> {
             self.stream.cu_stream,
             &mut self.args,
         )?;
-        for event in self.records.iter() {
+        for &event in self.records.iter() {
             event.record(self.stream)?;
         }
         Ok(())

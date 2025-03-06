@@ -155,9 +155,6 @@ impl DeviceSlice<u8> for MappedBuffer {
     fn cu_device_ptr(&self) -> sys::CUdeviceptr {
         self.device_ptr
     }
-    fn event(&self) -> &CudaEvent {
-        &self.event
-    }
     fn stream(&self) -> &CudaStream {
         &self.stream
     }
@@ -166,5 +163,11 @@ impl DeviceSlice<u8> for MappedBuffer {
 impl DevicePtr<u8> for MappedBuffer {
     fn device_ptr(&self) -> &sys::CUdeviceptr {
         &self.device_ptr
+    }
+    fn read_event(&self) -> &CudaEvent {
+        &self.event
+    }
+    fn block_for_read(&self, _stream: &CudaStream) -> Result<(), DriverError> {
+        Ok(())
     }
 }

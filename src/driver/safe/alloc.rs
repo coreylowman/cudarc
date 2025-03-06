@@ -138,11 +138,13 @@ impl CudaStream {
         cu_device_ptr: sys::CUdeviceptr,
         len: usize,
     ) -> CudaSlice<T> {
-        let event = self.ctx.empty_event(None).unwrap();
+        let read = self.ctx.empty_event(None).unwrap();
+        let write = self.ctx.empty_event(None).unwrap();
         CudaSlice {
             cu_device_ptr,
             len,
-            event,
+            read,
+            write,
             stream: self.clone(),
             marker: PhantomData,
         }
@@ -366,11 +368,13 @@ impl CudaStream {
         } else {
             unsafe { result::malloc_sync(0) }?
         };
-        let event = self.ctx.empty_event(None)?;
+        let read = self.ctx.empty_event(None)?;
+        let write = self.ctx.empty_event(None)?;
         Ok(CudaSlice {
             cu_device_ptr,
             len: 0,
-            event,
+            read,
+            write,
             stream: self.clone(),
             marker: PhantomData,
         })
@@ -386,11 +390,13 @@ impl CudaStream {
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
-        let event = self.ctx.empty_event(None)?;
+        let read = self.ctx.empty_event(None)?;
+        let write = self.ctx.empty_event(None)?;
         Ok(CudaSlice {
             cu_device_ptr,
             len,
-            event,
+            read,
+            write,
             stream: self.clone(),
             marker: PhantomData,
         })
@@ -409,11 +415,11 @@ impl CudaStream {
         self: &Arc<Self>,
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
-        self.wait(dst.event())?;
+        dst.block_for_write(self)?;
         unsafe {
             result::memset_d8_async(dst.cu_device_ptr(), 0, dst.num_bytes(), self.cu_stream)
         }?;
-        dst.record_use(self)?;
+        dst.record_write(self)?;
         Ok(())
     }
 
@@ -432,10 +438,10 @@ impl CudaStream {
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
         let src = unsafe { src.stream_synced_slice(self) }?;
-        self.wait(dst.event())?;
+        dst.block_for_write(self)?;
         unsafe { result::memcpy_htod_async(dst.cu_device_ptr(), src, self.cu_stream) }?;
         src.record_use(self)?;
-        dst.record_use(self)?;
+        dst.record_write(self)?;
         Ok(())
     }
 
@@ -456,9 +462,9 @@ impl CudaStream {
     ) -> Result<(), DriverError> {
         let dst = unsafe { dst.stream_synced_mut_slice(self) }?;
         assert!(dst.len() >= src.len());
-        self.wait(src.event())?;
+        src.block_for_read(self)?;
         unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr(), self.cu_stream) }?;
-        src.record_use(self)?;
+        src.record_read(self)?;
         dst.record_use(self)?;
         Ok(())
     }
@@ -468,8 +474,8 @@ impl CudaStream {
         src: &Src,
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
-        self.wait(src.event())?;
-        self.wait(dst.event())?;
+        src.block_for_read(self)?;
+        dst.block_for_write(self)?;
         unsafe {
             result::memcpy_dtod_async(
                 dst.cu_device_ptr(),
@@ -478,8 +484,8 @@ impl CudaStream {
                 self.cu_stream,
             )
         }?;
-        src.record_use(self)?;
-        dst.record_use(self)?;
+        src.record_read(self)?;
+        dst.record_write(self)?;
         Ok(())
     }
 
