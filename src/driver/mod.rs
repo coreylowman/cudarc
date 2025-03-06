@@ -168,4 +168,6 @@ pub mod safe;
 #[allow(warnings)]
 pub mod sys;
 
+pub mod safe_v2;
+
 pub use safe::*;

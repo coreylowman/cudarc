@@ -1,104 +1,11 @@
-use crate::driver::{result, sys};
+use crate::driver::{
+    result::{self, DriverError},
+    sys,
+};
 
-use super::alloc::DeviceRepr;
-use super::core::{CudaDevice, CudaFunction, CudaModule, CudaStream};
+use super::{CudaDevice, CudaFunction, CudaSlice, CudaStream, CudaView, CudaViewMut, DeviceSlice};
 
-use std::{sync::Arc, vec::Vec};
-
-impl CudaDevice {
-    /// Whether a module and function are currently loaded into the device.
-    pub fn has_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> bool {
-        let modules = self.modules.read();
-        #[cfg(not(feature = "no-std"))]
-        let modules = modules.unwrap();
-
-        modules
-            .get(module_name)
-            .is_some_and(|module| module.has_func(func_name))
-    }
-
-    /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
-    pub fn get_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> Option<CudaFunction> {
-        let modules = self.modules.read();
-        #[cfg(not(feature = "no-std"))]
-        let modules = modules.unwrap();
-
-        modules
-            .get(module_name)
-            .and_then(|m| m.get_func(func_name))
-            .map(|cu_function| CudaFunction {
-                cu_function,
-                device: self.clone(),
-            })
-    }
-}
-
-impl CudaModule {
-    /// Returns reference to function with `name`. If function
-    /// was not already loaded into CudaModule, then `None`
-    /// is returned.
-    pub(crate) fn get_func(&self, name: &str) -> Option<sys::CUfunction> {
-        self.functions.get(name).cloned()
-    }
-
-    pub(crate) fn has_func(&self, name: &str) -> bool {
-        self.functions.contains_key(name)
-    }
-}
-
-impl CudaFunction {
-    #[inline(always)]
-    unsafe fn launch_async_impl(
-        self,
-        cfg: LaunchConfig,
-        params: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::DriverError> {
-        self.device.bind_to_thread()?;
-        result::launch_kernel(
-            self.cu_function,
-            cfg.grid_dim,
-            cfg.block_dim,
-            cfg.shared_mem_bytes,
-            self.device.stream,
-            params,
-        )
-    }
-
-    #[inline(always)]
-    unsafe fn launch_cooperative_async_impl(
-        self,
-        cfg: LaunchConfig,
-        params: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::DriverError> {
-        self.device.bind_to_thread()?;
-        result::launch_cooperative_kernel(
-            self.cu_function,
-            cfg.grid_dim,
-            cfg.block_dim,
-            cfg.shared_mem_bytes,
-            self.device.stream,
-            params,
-        )
-    }
-
-    #[inline(always)]
-    unsafe fn par_launch_async_impl(
-        self,
-        stream: &CudaStream,
-        cfg: LaunchConfig,
-        params: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::DriverError> {
-        self.device.bind_to_thread()?;
-        result::launch_kernel(
-            self.cu_function,
-            cfg.grid_dim,
-            cfg.block_dim,
-            cfg.shared_mem_bytes,
-            stream.stream,
-            params,
-        )
-    }
-}
+use std::sync::Arc;
 
 /// Configuration for [result::launch_kernel]
 ///
@@ -132,37 +39,135 @@ impl LaunchConfig {
     }
 }
 
-/// Consumes a [CudaFunction] to execute asychronously on the device with
-/// params determined by generic parameter `Params`.
-///
-/// This is impl'd multiple times for different number and types of params. In
-/// general, `Params` should impl [DeviceRepr].
-///
-/// ```ignore
-/// # use cudarc::driver::*;
-/// # let dev = CudaDevice::new(0).unwrap();
-/// let my_kernel: CudaFunction = dev.get_func("my_module", "my_kernel").unwrap();
-/// let cfg: LaunchConfig = LaunchConfig {
-///     grid_dim: (1, 1, 1),
-///     block_dim: (1, 1, 1),
-///     shared_mem_bytes: 0,
-/// };
-/// let params = (1i32, 2u64, 3usize);
-/// unsafe { my_kernel.launch(cfg, params) }.unwrap();
-/// ```
+/// Something that can be copied to device memory and
+/// turned into a parameter for [result::launch_kernel].
 ///
 /// # Safety
 ///
-/// This is not safe really ever, because there's no garuntee that `Params`
-/// will work for any [CudaFunction] passed in. Great care should be taken
-/// to ensure that [CudaFunction] works with `Params` and that the correct
-/// parameters have `&mut` in front of them.
-///
-/// Additionally, kernels can mutate data that is marked as immutable,
-/// such as `&CudaSlice<T>`.
-///
-/// See [LaunchAsync::launch] for more details
-pub unsafe trait LaunchAsync<Params> {
+/// This is unsafe because a struct should likely
+/// be `#[repr(C)]` to be represented in cuda memory,
+/// and not all types are valid.
+pub unsafe trait AsLaunchParam {
+    fn sync_stream(&self, _stream: &CudaStream) -> Result<(), DriverError> {
+        Ok(())
+    }
+    fn record_use(&self, _stream: &CudaStream) -> Result<(), DriverError> {
+        Ok(())
+    }
+    #[inline(always)]
+    fn as_launch_param(&self) -> *mut std::ffi::c_void {
+        self as *const Self as *mut _
+    }
+}
+
+unsafe impl AsLaunchParam for bool {}
+unsafe impl AsLaunchParam for i8 {}
+unsafe impl AsLaunchParam for i16 {}
+unsafe impl AsLaunchParam for i32 {}
+unsafe impl AsLaunchParam for i64 {}
+unsafe impl AsLaunchParam for i128 {}
+unsafe impl AsLaunchParam for isize {}
+unsafe impl AsLaunchParam for u8 {}
+unsafe impl AsLaunchParam for u16 {}
+unsafe impl AsLaunchParam for u32 {}
+unsafe impl AsLaunchParam for u64 {}
+unsafe impl AsLaunchParam for u128 {}
+unsafe impl AsLaunchParam for usize {}
+unsafe impl AsLaunchParam for f32 {}
+unsafe impl AsLaunchParam for f64 {}
+#[cfg(feature = "f16")]
+unsafe impl AsLaunchParam for half::f16 {}
+#[cfg(feature = "f16")]
+unsafe impl AsLaunchParam for half::bf16 {}
+
+unsafe impl<T> AsLaunchParam for CudaSlice<T> {
+    fn sync_stream(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        stream.wait(&self.event)
+    }
+    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        DeviceSlice::record_use(self, stream)
+    }
+    #[inline(always)]
+    fn as_launch_param(&self) -> *mut std::ffi::c_void {
+        (&self.cu_device_ptr) as *const sys::CUdeviceptr as _
+    }
+}
+
+unsafe impl<'a, T> AsLaunchParam for CudaView<'a, T> {
+    fn sync_stream(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        stream.wait(&self.event)
+    }
+    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        DeviceSlice::record_use(self, stream)
+    }
+    #[inline(always)]
+    fn as_launch_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as _
+    }
+}
+
+unsafe impl<'a, T> AsLaunchParam for CudaViewMut<'a, T> {
+    fn sync_stream(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        stream.wait(&self.event)
+    }
+    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        DeviceSlice::record_use(self, stream)
+    }
+    #[inline(always)]
+    fn as_launch_param(&self) -> *mut std::ffi::c_void {
+        (&self.ptr) as *const sys::CUdeviceptr as _
+    }
+}
+
+impl CudaDevice {
+    /// See [CudaStream::launch()]
+    ///
+    /// # Safety
+    /// VERY unsafe! Can mutate anything. Please see [CudaStream::launch()]
+    pub unsafe fn launch<const NUM_ARGS: usize>(
+        self: &Arc<Self>,
+        func: &CudaFunction,
+        cfg: LaunchConfig,
+        args: [&dyn AsLaunchParam; NUM_ARGS],
+    ) -> Result<(), DriverError> {
+        self.stream.launch(func, cfg, args)
+    }
+}
+
+impl CudaStream {
+    /// Consumes a [CudaFunction] to execute asychronously on the device with
+    /// params determined by generic parameter `Params`.
+    ///
+    /// This is impl'd multiple times for different number and types of params. In
+    /// general, `Params` should impl [DeviceRepr].
+    ///
+    /// ```ignore
+    /// # use cudarc::driver::*;
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let my_kernel: CudaFunction = dev.get_func("my_module", "my_kernel").unwrap();
+    /// let cfg: LaunchConfig = LaunchConfig {
+    ///     grid_dim: (1, 1, 1),
+    ///     block_dim: (1, 1, 1),
+    ///     shared_mem_bytes: 0,
+    /// };
+    /// let params = (1i32, 2u64, 3usize);
+    /// unsafe { my_kernel.launch(cfg, params) }.unwrap();
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// This is not safe really ever, because there's no garuntee that `Params`
+    /// will work for any [CudaFunction] passed in. Great care should be taken
+    /// to ensure that [CudaFunction] works with `Params` and that the correct
+    /// parameters have `&mut` in front of them.
+    ///
+    /// Additionally, kernels can mutate data that is marked as immutable,
+    /// such as `&CudaSlice<T>`.
+    ///
+    /// See [LaunchAsync::launch] for more details
+    ///
+    /// # TODO Pt 2
+    ///
     /// Launches the [CudaFunction] with the corresponding `Params`.
     ///
     /// # Safety
@@ -205,275 +210,37 @@ pub unsafe trait LaunchAsync<Params> {
     ///
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
-    unsafe fn launch(self, cfg: LaunchConfig, params: Params) -> Result<(), result::DriverError>;
-
-    /// Launch the function on a stream concurrent to the device's default
-    /// work stream.
-    ///
-    /// # Safety
-    /// This method is even more unsafe than [LaunchAsync::launch], all the same rules apply,
-    /// except now things are executing in parallel to each other.
-    ///
-    /// That means that if any of the kernels modify the same memory location, you'll get race
-    /// conditions or potentially undefined behavior.
-    unsafe fn launch_on_stream(
-        self,
-        stream: &CudaStream,
+    pub unsafe fn launch<const NUM_ARGS: usize>(
+        self: &Arc<Self>,
+        func: &CudaFunction,
         cfg: LaunchConfig,
-        params: Params,
-    ) -> Result<(), result::DriverError>;
-
-    /// Launch the cooperative function on a stream concurrent to the device's default
-    /// work stream.
-    ///
-    /// # Safety
-    /// This method is even more unsafe than [LaunchAsync::launch_cooperative], all the same rules apply,
-    /// except now things are executing in parallel to each other.
-    ///
-    /// That means that if any of the kernels modify the same memory location, you'll get race
-    /// conditions or potentially undefined behavior.
-    unsafe fn launch_cooperative(
-        self,
-        cfg: LaunchConfig,
-        params: Params,
-    ) -> Result<(), result::DriverError>;
-}
-
-unsafe impl LaunchAsync<&mut [*mut std::ffi::c_void]> for CudaFunction {
-    #[inline(always)]
-    unsafe fn launch(
-        self,
-        cfg: LaunchConfig,
-        args: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::DriverError> {
-        self.launch_async_impl(cfg, args)
-    }
-
-    #[inline(always)]
-    unsafe fn launch_on_stream(
-        self,
-        stream: &CudaStream,
-        cfg: LaunchConfig,
-        args: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::DriverError> {
-        self.par_launch_async_impl(stream, cfg, args)
-    }
-
-    #[inline(always)]
-    unsafe fn launch_cooperative(
-        self,
-        cfg: LaunchConfig,
-        args: &mut [*mut std::ffi::c_void],
-    ) -> Result<(), result::DriverError> {
-        self.launch_cooperative_async_impl(cfg, args)
+        args: [&dyn AsLaunchParam; NUM_ARGS],
+    ) -> Result<(), DriverError> {
+        for arg in args.iter() {
+            arg.sync_stream(self)?;
+        }
+        let mut params = args.map(|arg| arg.as_launch_param());
+        result::launch_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            &mut params,
+        )?;
+        for arg in args.iter() {
+            arg.record_use(self)?;
+        }
+        Ok(())
     }
 }
-
-unsafe impl LaunchAsync<&mut Vec<*mut std::ffi::c_void>> for CudaFunction {
-    #[inline(always)]
-    unsafe fn launch(
-        self,
-        cfg: LaunchConfig,
-        args: &mut Vec<*mut std::ffi::c_void>,
-    ) -> Result<(), result::DriverError> {
-        self.launch_async_impl(cfg, args)
-    }
-
-    #[inline(always)]
-    unsafe fn launch_on_stream(
-        self,
-        stream: &CudaStream,
-        cfg: LaunchConfig,
-        args: &mut Vec<*mut std::ffi::c_void>,
-    ) -> Result<(), result::DriverError> {
-        self.par_launch_async_impl(stream, cfg, args)
-    }
-
-    #[inline(always)]
-    unsafe fn launch_cooperative(
-        self,
-        cfg: LaunchConfig,
-        args: &mut Vec<*mut std::ffi::c_void>,
-    ) -> Result<(), result::DriverError> {
-        self.launch_cooperative_async_impl(cfg, args)
-    }
-}
-
-macro_rules! impl_launch {
-    ([$($Vars:tt),*], [$($Idx:tt),*]) => {
-unsafe impl<$($Vars: DeviceRepr),*> LaunchAsync<($($Vars, )*)> for CudaFunction {
-    #[inline(always)]
-    unsafe fn launch(
-        self,
-        cfg: LaunchConfig,
-        args: ($($Vars, )*)
-    ) -> Result<(), result::DriverError> {
-        let params = &mut [$(args.$Idx.as_kernel_param(), )*];
-        self.launch_async_impl(cfg, params)
-    }
-
-    #[inline(always)]
-    unsafe fn launch_cooperative(
-        self,
-        cfg: LaunchConfig,
-        args: ($($Vars, )*)
-    ) -> Result<(), result::DriverError> {
-        let params = &mut [$(args.$Idx.as_kernel_param(), )*];
-        self.launch_cooperative_async_impl(cfg, params)
-    }
-
-    #[inline(always)]
-    unsafe fn launch_on_stream(
-        self,
-        stream: &CudaStream,
-        cfg: LaunchConfig,
-        args: ($($Vars, )*)
-    ) -> Result<(), result::DriverError> {
-        let params = &mut [$(args.$Idx.as_kernel_param(), )*];
-        self.par_launch_async_impl(stream, cfg, params)
-    }
-}
-    };
-}
-
-impl_launch!([A], [0]);
-impl_launch!([A, B], [0, 1]);
-impl_launch!([A, B, C], [0, 1, 2]);
-impl_launch!([A, B, C, D], [0, 1, 2, 3]);
-impl_launch!([A, B, C, D, E], [0, 1, 2, 3, 4]);
-impl_launch!([A, B, C, D, E, F], [0, 1, 2, 3, 4, 5]);
-impl_launch!([A, B, C, D, E, F, G], [0, 1, 2, 3, 4, 5, 6]);
-impl_launch!([A, B, C, D, E, F, G, H], [0, 1, 2, 3, 4, 5, 6, 7]);
-impl_launch!([A, B, C, D, E, F, G, H, I], [0, 1, 2, 3, 4, 5, 6, 7, 8]);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y],
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25
-    ]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26
-    ]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26, 27
-    ]
-);
-impl_launch!(
-    [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB, AC],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26, 27, 28
-    ]
-);
-impl_launch!(
-    [
-        A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB, AC,
-        AD
-    ],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26, 27, 28, 29
-    ]
-);
-impl_launch!(
-    [
-        A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB, AC,
-        AD, AE
-    ],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26, 27, 28, 29, 30
-    ]
-);
-impl_launch!(
-    [
-        A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB, AC,
-        AD, AE, AF
-    ],
-    [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26, 27, 28, 29, 30, 31
-    ]
-);
 
 #[cfg(test)]
 mod tests {
     use std::time::Instant;
 
     use crate::{
-        driver::{DeviceSlice, DriverError},
+        driver::{CudaDevice, DeviceSlice, DriverError},
         nvrtc::compile_ptx_with_opts,
     };
 
@@ -485,7 +252,7 @@ mod tests {
         let t = device.htod_copy([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = (&t).as_kernel_param();
+        let _ = (&t).as_launch_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
@@ -495,7 +262,7 @@ mod tests {
         let t = device.htod_copy([0.0f32; 1].to_vec()).unwrap();
         let _r = t.clone();
         assert_eq!(Arc::strong_count(&device), 3);
-        let _ = (&t).as_kernel_param();
+        let _ = (&t).as_launch_param();
         assert_eq!(Arc::strong_count(&device), 3);
     }
 
@@ -519,12 +286,13 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
         let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
 
-        let mut b_dev = a_dev.clone();
+        let b_dev = a_dev.clone();
 
         unsafe {
-            sin_kernel.launch(
+            dev.launch(
+                &sin_kernel,
                 LaunchConfig::for_num_elems(10),
-                (&mut b_dev, &a_dev, 10usize),
+                [&b_dev, &a_dev, &10usize],
             )
         }
         .unwrap();
@@ -549,11 +317,11 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             a.resize(numel, 1.0f32);
 
             let a = dev.htod_copy(a).unwrap();
-            let mut b = dev.alloc_zeros::<f32>(numel).unwrap();
+            let b = dev.alloc_zeros::<f32>(numel).unwrap();
 
             let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
             let cfg = LaunchConfig::for_num_elems(numel as u32);
-            unsafe { sin_kernel.launch(cfg, (&mut b, &a, numel)) }.unwrap();
+            unsafe { dev.launch(&sin_kernel, cfg, [&b, &a, &numel]) }.unwrap();
 
             let b = dev.sync_reclaim(b).unwrap();
             for v in b {
@@ -575,11 +343,17 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         for i in 0..5 {
             let a_sub = a_dev.try_slice(i * 2..).unwrap();
             assert_eq!(a_sub.len, 10 - 2 * i);
-            let mut b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
+            let b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
             assert_eq!(b_sub.len, 10 - 2 * i);
             let f = dev.get_func("sin", "sin_kernel").unwrap();
-            unsafe { f.launch(LaunchConfig::for_num_elems(2), (&mut b_sub, &a_sub, 2usize)) }
-                .unwrap();
+            unsafe {
+                dev.launch(
+                    &f,
+                    LaunchConfig::for_num_elems(2),
+                    [&b_sub, &a_sub, &2usize],
+                )
+            }
+            .unwrap();
         }
 
         let b_host = dev.sync_reclaim(b_dev).unwrap();
@@ -634,9 +408,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         dev.load_ptx(ptx, "tests", &["int_8bit"]).unwrap();
         let f = dev.get_func("tests", "int_8bit").unwrap();
         unsafe {
-            f.launch(
+            dev.launch(
+                &f,
                 LaunchConfig::for_num_elems(1),
-                (i8::MIN, i8::MAX, u8::MIN, u8::MAX),
+                [&i8::MIN, &i8::MAX, &u8::MIN, &u8::MAX],
             )
         }
         .unwrap();
@@ -651,9 +426,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         dev.load_ptx(ptx, "tests", &["int_16bit"]).unwrap();
         let f = dev.get_func("tests", "int_16bit").unwrap();
         unsafe {
-            f.launch(
+            dev.launch(
+                &f,
                 LaunchConfig::for_num_elems(1),
-                (i16::MIN, i16::MAX, u16::MIN, u16::MAX),
+                [&i16::MIN, &i16::MAX, &u16::MIN, &u16::MAX],
             )
         }
         .unwrap();
@@ -667,9 +443,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         dev.load_ptx(ptx, "tests", &["int_32bit"]).unwrap();
         let f = dev.get_func("tests", "int_32bit").unwrap();
         unsafe {
-            f.launch(
+            dev.launch(
+                &f,
                 LaunchConfig::for_num_elems(1),
-                (i32::MIN, i32::MAX, u32::MIN, u32::MAX),
+                [&i32::MIN, &i32::MAX, &u32::MIN, &u32::MAX],
             )
         }
         .unwrap();
@@ -683,9 +460,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         dev.load_ptx(ptx, "tests", &["int_64bit"]).unwrap();
         let f = dev.get_func("tests", "int_64bit").unwrap();
         unsafe {
-            f.launch(
+            dev.launch(
+                &f,
                 LaunchConfig::for_num_elems(1),
-                (i64::MIN, i64::MAX, u64::MIN, u64::MAX),
+                [&i64::MIN, &i64::MAX, &u64::MIN, &u64::MAX],
             )
         }
         .unwrap();
@@ -699,9 +477,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         dev.load_ptx(ptx, "tests", &["floating"]).unwrap();
         let f = dev.get_func("tests", "floating").unwrap();
         unsafe {
-            f.launch(
+            dev.launch(
+                &f,
                 LaunchConfig::for_num_elems(1),
-                (1.2345678f32, -10.123456789876543f64),
+                [&1.2345678f32, &-10.123456789876543f64],
             )
         }
         .unwrap();
@@ -735,9 +514,10 @@ extern \"C\" __global__ void halfs(__half h) {
         dev.load_ptx(ptx, "tests", &["halfs"]).unwrap();
         let f = dev.get_func("tests", "halfs").unwrap();
         unsafe {
-            f.launch(
+            dev.launch(
+                &f,
                 LaunchConfig::for_num_elems(1),
-                (half::f16::from_f32(1.234),),
+                [&half::f16::from_f32(1.234)],
             )
         }
         .unwrap();
@@ -760,17 +540,16 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let dev = CudaDevice::new(0).unwrap();
         dev.load_ptx(ptx, "tests", &["slow_worker"]).unwrap();
         let slice = dev.alloc_zeros::<f32>(1000)?;
-        let mut a = dev.alloc_zeros::<f32>(1)?;
-        let mut b = dev.alloc_zeros::<f32>(1)?;
+        let a = dev.alloc_zeros::<f32>(1)?;
+        let b = dev.alloc_zeros::<f32>(1)?;
         let cfg = LaunchConfig::for_num_elems(1);
 
         let start = Instant::now();
         {
             // launch two kernels on the default stream
             let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
-            let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch(cfg, (&slice, slice.len(), &mut b))? };
+            unsafe { dev.launch(&f, cfg, [&slice, &slice.len(), &a])? };
+            unsafe { dev.launch(&f, cfg, [&slice, &slice.len(), &b])? };
             dev.synchronize()?;
         }
         let double_launch_s = start.elapsed().as_secs_f64();
@@ -780,9 +559,8 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
             // create a new stream & launch them concurrently
             let stream = dev.fork_default_stream()?;
             let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch(cfg, (&slice, slice.len(), &mut a))? };
-            let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe { f.launch_on_stream(&stream, cfg, (&slice, slice.len(), &mut b))? };
+            unsafe { dev.launch(&f, cfg, [&slice, &slice.len(), &a])? };
+            unsafe { stream.launch(&f, cfg, [&slice, &slice.len(), &b])? };
             dev.wait_for(&stream)?;
             dev.synchronize()?;
         }

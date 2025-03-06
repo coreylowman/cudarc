@@ -1,9 +1,12 @@
 use crate::{
-    driver::result,
+    driver::{result, sys},
     nvrtc::{Ptx, PtxKind},
 };
 
-use super::core::{CudaDevice, CudaModule};
+use super::{
+    core::{CudaDevice, CudaModule},
+    CudaFunction,
+};
 
 use std::ffi::CString;
 use std::{collections::BTreeMap, sync::Arc};
@@ -18,7 +21,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         ptx: Ptx,
         module_name: &str,
-        func_names: &[&'static str],
+        func_names: &[&str],
     ) -> Result<(), result::DriverError> {
         self.bind_to_thread()?;
 
@@ -39,12 +42,13 @@ impl CudaDevice {
         for &fn_name in func_names.iter() {
             let fn_name_c = CString::new(fn_name).unwrap();
             let cu_function = unsafe { result::module::get_function(cu_module, fn_name_c) }?;
-            functions.insert(fn_name, cu_function);
+            functions.insert(fn_name.into(), cu_function);
         }
-        let module = CudaModule {
+        let module = Arc::new(CudaModule {
             cu_module,
             functions,
-        };
+            ctx: self.stream.ctx.clone(),
+        });
         #[allow(unused_mut)]
         {
             let mut modules = self.modules.write();
@@ -53,5 +57,48 @@ impl CudaDevice {
             modules.insert(module_name.into(), module);
         }
         Ok(())
+    }
+}
+
+impl CudaDevice {
+    /// Whether a module and function are currently loaded into the device.
+    pub fn has_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> bool {
+        let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
+
+        modules
+            .get(module_name)
+            .is_some_and(|module| module.has_func(func_name))
+    }
+
+    /// Retrieves a [CudaFunction] that was registered under `module_name` and `func_name`.
+    pub fn get_func(self: &Arc<Self>, module_name: &str, func_name: &str) -> Option<CudaFunction> {
+        let modules = self.modules.read();
+        #[cfg(not(feature = "no-std"))]
+        let modules = modules.unwrap();
+
+        modules
+            .get(module_name)
+            .and_then(|m| match m.get_func(func_name) {
+                Some(cu_function) => Some(CudaFunction {
+                    cu_function,
+                    module: m.clone(),
+                }),
+                None => None,
+            })
+    }
+}
+
+impl CudaModule {
+    /// Returns reference to function with `name`. If function
+    /// was not already loaded into CudaModule, then `None`
+    /// is returned.
+    pub(crate) fn get_func(&self, name: &str) -> Option<sys::CUfunction> {
+        self.functions.get(name).cloned()
+    }
+
+    pub(crate) fn has_func(&self, name: &str) -> bool {
+        self.functions.contains_key(name)
     }
 }

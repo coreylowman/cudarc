@@ -114,7 +114,7 @@ impl Comm {
     pub fn from_devices(devices: Vec<Arc<CudaDevice>>) -> Result<Vec<Self>, result::NcclError> {
         let n_devices = devices.len();
         let mut comms = vec![std::ptr::null_mut(); n_devices];
-        let ordinals: Vec<_> = devices.iter().map(|d| d.ordinal as i32).collect();
+        let ordinals: Vec<_> = devices.iter().map(|d| d.ordinal() as i32).collect();
         unsafe {
             result::comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr())?;
         }
@@ -213,7 +213,7 @@ impl Comm {
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )?;
         }
         Ok(())
@@ -231,7 +231,7 @@ impl Comm {
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -262,7 +262,7 @@ impl Comm {
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -282,7 +282,7 @@ impl Comm {
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -300,7 +300,7 @@ impl Comm {
                 sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -320,7 +320,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -340,7 +340,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -372,7 +372,7 @@ impl Comm {
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -394,7 +394,7 @@ impl Comm {
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }
@@ -414,7 +414,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream as *mut _,
+                self.device.stream.cu_stream as *mut _,
             )
         }
     }

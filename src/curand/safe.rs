@@ -37,7 +37,7 @@ impl CudaRng {
         let gen = result::create_generator()?;
         let mut rng = Self { gen, device };
         rng.set_seed(seed)?;
-        unsafe { result::set_stream(rng.gen, rng.device.stream as *mut _) }?;
+        unsafe { result::set_stream(rng.gen, rng.device.stream.cu_stream as *mut _) }?;
         Ok(rng)
     }
 

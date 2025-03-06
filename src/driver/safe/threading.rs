@@ -1,12 +1,10 @@
 use super::{CudaDevice, DriverError};
 
-use crate::driver::result;
-
 impl CudaDevice {
     /// Binds the device to the calling thread. You must call this before
     /// using the device on a separate thread!
     pub fn bind_to_thread(&self) -> Result<(), DriverError> {
-        unsafe { result::ctx::set_current(self.cu_primary_ctx) }
+        self.stream.ctx.bind_to_thread()
     }
 }
 
