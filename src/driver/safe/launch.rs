@@ -132,6 +132,15 @@ impl CudaDevice {
     ) -> Result<(), DriverError> {
         self.stream.launch(func, cfg, args)
     }
+
+    pub unsafe fn launch_cooperative<const NUM_ARGS: usize>(
+        self: &Arc<Self>,
+        func: &CudaFunction,
+        cfg: LaunchConfig,
+        args: [&dyn AsLaunchParam; NUM_ARGS],
+    ) -> Result<(), DriverError> {
+        self.stream.launch_cooperative(func, cfg, args)
+    }
 }
 
 impl CudaStream {
@@ -221,6 +230,30 @@ impl CudaStream {
         }
         let mut params = args.map(|arg| arg.as_launch_param());
         result::launch_kernel(
+            func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.cu_stream,
+            &mut params,
+        )?;
+        for arg in args.iter() {
+            arg.record_use(self)?;
+        }
+        Ok(())
+    }
+
+    pub unsafe fn launch_cooperative<const NUM_ARGS: usize>(
+        self: &Arc<Self>,
+        func: &CudaFunction,
+        cfg: LaunchConfig,
+        args: [&dyn AsLaunchParam; NUM_ARGS],
+    ) -> Result<(), DriverError> {
+        for arg in args.iter() {
+            arg.sync_stream(self)?;
+        }
+        let mut params = args.map(|arg| arg.as_launch_param());
+        result::launch_cooperative_kernel(
             func.cu_function,
             cfg.grid_dim,
             cfg.block_dim,
