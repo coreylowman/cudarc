@@ -46,8 +46,7 @@ pub struct LaunchArgs<'a> {
     waits: Vec<&'a CudaEvent>,
     records: Vec<&'a CudaEvent>,
     args: Vec<*mut std::ffi::c_void>,
-    start_event: Option<&'a CudaEvent>,
-    end_event: Option<&'a CudaEvent>,
+    flags: Option<sys::CUevent_flags>,
 }
 
 impl CudaStream {
@@ -58,8 +57,7 @@ impl CudaStream {
             waits: Vec::new(),
             records: Vec::new(),
             args: Vec::new(),
-            start_event: None,
-            end_event: None,
+            flags: None,
         }
     }
 }
@@ -129,13 +127,8 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for
 }
 
 impl<'a> LaunchArgs<'a> {
-    pub fn record_start(&mut self, event: &'a CudaEvent) -> &mut Self {
-        self.start_event = Some(event);
-        self
-    }
-
-    pub fn record_end(&mut self, event: &'a CudaEvent) -> &mut Self {
-        self.end_event = Some(event);
+    pub fn record_kernel_launch(&mut self, flags: sys::CUevent_flags) -> &mut Self {
+        self.flags = Some(flags);
         self
     }
 
@@ -214,14 +207,18 @@ impl<'a> LaunchArgs<'a> {
     ///
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
-    pub unsafe fn launch(&mut self, cfg: LaunchConfig) -> Result<(), DriverError> {
+    pub unsafe fn launch(
+        &mut self,
+        cfg: LaunchConfig,
+    ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
         self.stream.ctx.bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
-        if let Some(event) = self.start_event {
-            event.record(self.stream)?;
-        }
+        let start_event = self
+            .flags
+            .map(|flags| self.stream.record_event(Some(flags)))
+            .transpose()?;
         result::launch_kernel(
             self.func.cu_function,
             cfg.grid_dim,
@@ -230,13 +227,14 @@ impl<'a> LaunchArgs<'a> {
             self.stream.cu_stream,
             &mut self.args,
         )?;
-        if let Some(event) = self.end_event {
-            event.record(self.stream)?;
-        }
+        let end_event = self
+            .flags
+            .map(|flags| self.stream.record_event(Some(flags)))
+            .transpose()?;
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        Ok(())
+        Ok(start_event.zip(end_event))
     }
 
     /// Launch a Cooperative kernel. See [LaunchArgs::launch()]
@@ -244,14 +242,18 @@ impl<'a> LaunchArgs<'a> {
     /// # Safety
     ///
     /// See [LaunchArgs::launch()]
-    pub unsafe fn launch_cooperative(&mut self, cfg: LaunchConfig) -> Result<(), DriverError> {
+    pub unsafe fn launch_cooperative(
+        &mut self,
+        cfg: LaunchConfig,
+    ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
         self.stream.ctx.bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
-        if let Some(event) = self.start_event {
-            event.record(self.stream)?;
-        }
+        let start_event = self
+            .flags
+            .map(|flags| self.stream.record_event(Some(flags)))
+            .transpose()?;
         result::launch_cooperative_kernel(
             self.func.cu_function,
             cfg.grid_dim,
@@ -260,20 +262,19 @@ impl<'a> LaunchArgs<'a> {
             self.stream.cu_stream,
             &mut self.args,
         )?;
-        if let Some(event) = self.end_event {
-            event.record(self.stream)?;
-        }
+        let end_event = self
+            .flags
+            .map(|flags| self.stream.record_event(Some(flags)))
+            .transpose()?;
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        Ok(())
+        Ok(start_event.zip(end_event))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
-
     use crate::{
         driver::{CudaContext, CudaDevice, DeviceSlice, DriverError},
         nvrtc::compile_ptx_with_opts,
@@ -569,8 +570,6 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     fn test_par_launch() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
         let ctx = CudaContext::new(0)?;
-        ctx.set_blocking_synchronize()?;
-
         let module = ctx.load_ptx(ptx, &["slow_worker"]).unwrap();
         let f = module.get_func("slow_worker").unwrap();
 
@@ -582,9 +581,9 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
 
         let cfg = LaunchConfig::for_num_elems(1);
 
-        let start = Instant::now();
-        {
+        let double_launch_ms = {
             // launch two kernels on the default stream
+            let start = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
             unsafe {
                 stream
                     .launch_builder(&f)
@@ -601,14 +600,15 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                     .arg(&mut b)
                     .launch(cfg)?
             };
+            let end = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
             stream.synchronize()?;
-        }
-        let double_launch_s = start.elapsed().as_secs_f64();
+            start.elapsed_ms(&end)?
+        };
 
         let stream2 = stream.fork()?;
-        let start = Instant::now();
-        {
+        let par_launch_ms = {
             // create a new stream & launch them concurrently
+            let start = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
             unsafe {
                 stream
                     .launch_builder(&f)
@@ -625,16 +625,17 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                     .arg(&mut b)
                     .launch(cfg)?
             };
+            stream.join(&stream2)?;
+            let end = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
             stream.synchronize()?;
-            stream2.synchronize()?;
-        }
-        let par_launch_s = start.elapsed().as_secs_f64();
+            start.elapsed_ms(&end)?
+        };
 
         assert!(
-            (double_launch_s - 2.0 * par_launch_s).abs() < 20.0 / 100.0,
+            (double_launch_ms - 2.0 * par_launch_ms).abs() < 20.0 / 100.0,
             "par={:?} dbl={:?}",
-            par_launch_s,
-            double_launch_s
+            par_launch_ms,
+            double_launch_ms
         );
         Ok(())
     }
@@ -645,11 +646,6 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let ctx = CudaContext::new(0)?;
         let module = ctx.load_ptx(ptx, &["slow_worker"])?;
         let f = module.get_func("slow_worker").unwrap();
-
-        let stream1_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-        let stream1_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-        let stream2_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-        let stream2_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
 
         let stream1 = ctx.new_stream()?;
 
@@ -666,18 +662,16 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
             .arg(&src)
             .arg(src.len())
             .arg(&mut dst1)
-            .record_start(&stream1_start)
-            .record_end(&stream1_finish);
-        unsafe { builder.launch(cfg) }?;
+            .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
+        let (_, stream1_finish) = unsafe { builder.launch(cfg) }?.unwrap();
 
         let mut builder = stream2.launch_builder(&f);
         builder
             .arg(&src)
             .arg(src.len())
             .arg(&mut dst2)
-            .record_start(&stream2_start)
-            .record_end(&stream2_finish);
-        unsafe { builder.launch(cfg) }?;
+            .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
+        let (stream2_start, _) = unsafe { builder.launch(cfg) }?.unwrap();
 
         stream1.synchronize()?;
         stream2.synchronize()?;
@@ -693,11 +687,6 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let module = ctx.load_ptx(ptx, &["slow_worker"])?;
         let f = module.get_func("slow_worker").unwrap();
 
-        let stream1_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-        let stream1_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-        let stream2_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-        let stream2_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
-
         let stream1 = ctx.new_stream()?;
 
         let src = stream1.alloc_zeros::<f32>(1000)?;
@@ -711,24 +700,21 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
             .arg(&src)
             .arg(src.len())
             .arg(&mut dst)
-            .record_start(&stream1_start)
-            .record_end(&stream1_finish);
-        unsafe { builder.launch(cfg) }?;
+            .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
+        let (_, stream1_finish) = unsafe { builder.launch(cfg) }?.unwrap();
 
         let mut builder = stream2.launch_builder(&f);
         builder
             .arg(&src)
             .arg(src.len())
             .arg(&mut dst)
-            .record_start(&stream2_start)
-            .record_end(&stream2_finish);
-        unsafe { builder.launch(cfg) }?;
+            .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
+        let (stream2_start, _) = unsafe { builder.launch(cfg) }?.unwrap();
 
         stream1.synchronize()?;
         stream2.synchronize()?;
 
-        let elapsed_ms = stream1_finish.elapsed_ms(&stream2_start)?;
-        assert!(elapsed_ms >= 0.0, "{elapsed_ms}");
+        assert!(stream1_finish.elapsed_ms(&stream2_start)? >= 0.0);
         Ok(())
     }
 }
