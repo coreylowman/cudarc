@@ -1,3 +1,5 @@
+use std::vec::Vec;
+
 use crate::driver::{
     result::{self, DriverError},
     sys,

@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{sync::Arc, vec::Vec};
 
 use super::{CudaContext, CudaEvent, CudaStream, DeviceRepr, DriverError, ValidAsZeroBits};
 

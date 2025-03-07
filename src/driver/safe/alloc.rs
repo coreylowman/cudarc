@@ -348,7 +348,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         src: CudaSlice<T>,
     ) -> Result<Vec<T>, result::DriverError> {
-        let mut dst = vec![Default::default(); src.len];
+        let mut dst = std::vec![Default::default(); src.len];
         self.stream.memcpy_dtoh(&src, &mut dst)?;
         Ok(dst)
     }
