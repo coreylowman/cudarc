@@ -126,7 +126,7 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for
     }
 }
 
-impl<'a> LaunchArgs<'a> {
+impl LaunchArgs<'_> {
     pub fn record_kernel_launch(&mut self, flags: sys::CUevent_flags) -> &mut Self {
         self.flags = Some(flags);
         self
