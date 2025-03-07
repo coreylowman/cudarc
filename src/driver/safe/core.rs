@@ -121,10 +121,26 @@ impl CudaContext {
         result::ctx::synchronize()
     }
 
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000"
+    )))]
     pub fn set_blocking_synchronize(&self) -> Result<(), DriverError> {
         self.set_flags(sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC)
     }
 
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000"
+    )))]
     pub fn set_flags(&self, flags: sys::CUctx_flags) -> Result<(), DriverError> {
         self.bind_to_thread()?;
         result::ctx::set_flags(flags)

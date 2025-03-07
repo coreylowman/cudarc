@@ -458,6 +458,14 @@ pub mod ctx {
     }
 
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g66655c37602c8628eae3e40c82619f1e)
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000"
+    )))]
     pub fn set_flags(flags: sys::CUctx_flags) -> Result<(), DriverError> {
         unsafe { lib().cuCtxSetFlags(flags as u32).result() }
     }
