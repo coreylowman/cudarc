@@ -49,10 +49,7 @@ pub trait DevicePtr<T>: DeviceSlice<T> {
     fn read_event(&self) -> &CudaEvent;
     fn block_for_read(&self, stream: &CudaStream) -> Result<(), DriverError>;
     fn record_read(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        if self.stream() != stream {
-            self.read_event().record(stream)?;
-        }
-        Ok(())
+        self.read_event().record(stream)
     }
 }
 
@@ -98,11 +95,7 @@ pub trait DevicePtrMut<T>: DevicePtr<T> {
     fn write_event(&self) -> &CudaEvent;
     fn block_for_write(&self, stream: &CudaStream) -> Result<(), DriverError>;
     fn record_write(&mut self, stream: &CudaStream) -> Result<(), DriverError> {
-        if self.stream() != stream {
-            self.read_event().record(stream)?;
-            self.write_event().record(stream)?;
-        }
-        Ok(())
+        self.write_event().record(stream)
     }
 }
 

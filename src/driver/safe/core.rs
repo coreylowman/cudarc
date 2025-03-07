@@ -224,7 +224,7 @@ impl CudaDevice {
     /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
     pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
         let ctx = CudaContext::new(ordinal)?;
-        let stream = unsafe { ctx.new_stream() }?;
+        let stream = ctx.new_stream()?;
         Ok(Arc::new(CudaDevice {
             stream,
             modules: RwLock::new(BTreeMap::new()),
@@ -679,17 +679,7 @@ impl CudaContext {
         })
     }
 
-    /// # Safety
-    /// This is **super** unsafe because previous kernel launches and operations
-    /// do not necessarily record their events onto slices/views if the slices/views
-    /// are contained on the stream.
-    ///
-    /// This stream needs to be properly synchronized with other streams.
-    ///
-    /// It is up to the user to ensure this new stream correctly synchronizes with other streams.
-    ///
-    /// Prefer [CudaStream::fork()].
-    pub unsafe fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
+    pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         Ok(Arc::new(CudaStream {
@@ -701,7 +691,7 @@ impl CudaContext {
 
 impl CudaStream {
     pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
-        let stream = unsafe { self.ctx.new_stream() }?;
+        let stream = self.ctx.new_stream()?;
         stream.wait(&self.record_event(None)?)?;
         Ok(stream)
     }

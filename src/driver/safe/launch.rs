@@ -37,6 +37,7 @@ impl LaunchConfig {
     }
 }
 
+#[derive(Debug)]
 pub struct LaunchArgs<'a> {
     stream: &'a CudaStream,
     func: &'a CudaFunction,
@@ -80,9 +81,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaSlice<T>) -> &mut Self {
         self.waits.push(&arg.write);
-        if self.stream != arg.stream.as_ref() {
-            self.records.push(&arg.read);
-        }
+        self.records.push(&arg.read);
         self.args
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
@@ -94,10 +93,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a
     fn arg(&mut self, arg: &'b mut CudaSlice<T>) -> &mut Self {
         self.waits.push(&arg.read);
         self.waits.push(&arg.write);
-        if self.stream != arg.stream.as_ref() {
-            self.records.push(&arg.read);
-            self.records.push(&arg.write);
-        }
+        self.records.push(&arg.write);
         self.args
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
@@ -108,9 +104,7 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b CudaView<'c, T>> for Launch
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaView<'c, T>) -> &mut Self {
         self.waits.push(arg.write);
-        if self.stream != arg.stream.as_ref() {
-            self.records.push(arg.read);
-        }
+        self.records.push(arg.read);
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
@@ -121,10 +115,7 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for
     fn arg(&mut self, arg: &'b mut CudaViewMut<'c, T>) -> &mut Self {
         self.waits.push(arg.read);
         self.waits.push(arg.write);
-        if self.stream != arg.stream.as_ref() {
-            self.records.push(arg.read);
-            self.records.push(arg.write);
-        }
+        self.records.push(arg.write);
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
@@ -255,7 +246,7 @@ mod tests {
     use std::time::Instant;
 
     use crate::{
-        driver::{CudaDevice, DeviceSlice, DriverError},
+        driver::{CudaContext, CudaDevice, DeviceSlice, DriverError},
         nvrtc::compile_ptx_with_opts,
     };
 
@@ -611,6 +602,63 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
             par_launch_s,
             double_launch_s
         );
+        Ok(())
+    }
+
+    #[test]
+    fn test_multi_stream_concurrent_reads() -> Result<(), DriverError> {
+        let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
+        let ctx = CudaContext::new(0)?;
+        let module = ctx.load_ptx(ptx, &["slow_worker"])?;
+        let f = module.get_func("slow_worker").unwrap();
+
+        let stream = ctx.default_stream();
+        let stream2 = stream.fork()?;
+
+        let src = stream.alloc_zeros::<f32>(1000)?;
+        let cfg = LaunchConfig::for_num_elems(1);
+
+        let mut dst1 = stream.alloc_zeros::<f32>(1)?;
+        let mut builder = stream.launch_builder(&f);
+        builder.arg(&src).arg(src.len()).arg(&mut dst1);
+        unsafe { builder.launch(cfg) }?;
+        let stream1_finish = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+
+        let mut dst2 = stream2.alloc_zeros::<f32>(1)?;
+        let mut builder = stream2.launch_builder(&f);
+        builder.arg(&src).arg(src.len()).arg(&mut dst2);
+        let stream2_start = stream2.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        unsafe { builder.launch(cfg) }?;
+
+        assert!(stream2_start.elapsed_ms(&stream1_finish)? >= 0.0);
+        Ok(())
+    }
+
+    #[test]
+    fn test_multi_stream_writes_block() -> Result<(), DriverError> {
+        let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
+        let ctx = CudaContext::new(0)?;
+        let module = ctx.load_ptx(ptx, &["slow_worker"])?;
+        let f = module.get_func("slow_worker").unwrap();
+
+        let stream = ctx.default_stream();
+        let stream2 = stream.fork()?;
+
+        let src = stream.alloc_zeros::<f32>(1000)?;
+        let mut dst = stream.alloc_zeros::<f32>(1)?;
+        let cfg = LaunchConfig::for_num_elems(1);
+
+        let mut builder = stream.launch_builder(&f);
+        builder.arg(&src).arg(src.len()).arg(&mut dst);
+        unsafe { builder.launch(cfg) }?;
+        let stream1_finish = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+
+        let mut builder = stream2.launch_builder(&f);
+        builder.arg(&src).arg(src.len()).arg(&mut dst);
+        let stream2_start = stream2.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        unsafe { builder.launch(cfg) }?;
+
+        assert!(stream1_finish.elapsed_ms(&stream2_start)? >= 0.0);
         Ok(())
     }
 }
