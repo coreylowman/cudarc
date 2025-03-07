@@ -490,7 +490,6 @@ impl CudaFunction {
     pub fn occupancy_max_active_clusters(
         &self,
         config: crate::driver::LaunchConfig,
-        shared_mem_size: u32,
         stream: &CudaStream,
     ) -> Result<u32, result::DriverError> {
         let mut num_clusters: std::ffi::c_int = 0;
@@ -502,7 +501,7 @@ impl CudaFunction {
             blockDimX: config.block_dim.0,
             blockDimY: config.block_dim.1,
             blockDimZ: config.block_dim.2,
-            sharedMemBytes: shared_mem_size as std::ffi::c_uint,
+            sharedMemBytes: config.shared_mem_bytes,
             hStream: stream.cu_stream,
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
@@ -554,7 +553,6 @@ impl CudaFunction {
     pub fn occupancy_max_potential_cluster_size(
         &self,
         config: crate::driver::LaunchConfig,
-        shared_mem_size: u32,
         stream: &CudaStream,
     ) -> Result<u32, result::DriverError> {
         let mut cluster_size: std::ffi::c_int = 0;
@@ -566,7 +564,7 @@ impl CudaFunction {
             blockDimX: config.block_dim.0,
             blockDimY: config.block_dim.1,
             blockDimZ: config.block_dim.2,
-            sharedMemBytes: shared_mem_size as std::ffi::c_uint,
+            sharedMemBytes: config.shared_mem_bytes,
             hStream: stream.cu_stream,
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
