@@ -44,6 +44,8 @@ pub struct LaunchArgs<'a> {
     waits: Vec<&'a CudaEvent>,
     records: Vec<&'a CudaEvent>,
     args: Vec<*mut std::ffi::c_void>,
+    start_event: Option<&'a CudaEvent>,
+    end_event: Option<&'a CudaEvent>,
 }
 
 impl CudaStream {
@@ -54,6 +56,8 @@ impl CudaStream {
             waits: Vec::new(),
             records: Vec::new(),
             args: Vec::new(),
+            start_event: None,
+            end_event: None,
         }
     }
 }
@@ -70,7 +74,8 @@ pub unsafe trait PushKernelArg<T> {
     fn arg(&mut self, arg: T) -> &mut Self;
 }
 
-unsafe impl<'a, T: DeviceRepr> PushKernelArg<T> for LaunchArgs<'a> {
+unsafe impl<'a, 'b: 'a, T: DeviceRepr> PushKernelArg<T> for LaunchArgs<'a> {
+    #[inline(always)]
     fn arg(&mut self, arg: T) -> &mut Self {
         self.args.push((&arg) as *const _ as *mut _);
         self
@@ -122,6 +127,16 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for
 }
 
 impl<'a> LaunchArgs<'a> {
+    pub fn record_start(&mut self, event: &'a CudaEvent) -> &mut Self {
+        self.start_event = Some(event);
+        self
+    }
+
+    pub fn record_end(&mut self, event: &'a CudaEvent) -> &mut Self {
+        self.end_event = Some(event);
+        self
+    }
+
     /// Consumes a [CudaFunction] to execute asychronously on the device with
     /// params determined by generic parameter `Params`.
     ///
@@ -202,6 +217,9 @@ impl<'a> LaunchArgs<'a> {
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
+        if let Some(event) = self.start_event {
+            event.record(&self.stream)?;
+        }
         result::launch_kernel(
             self.func.cu_function,
             cfg.grid_dim,
@@ -210,6 +228,9 @@ impl<'a> LaunchArgs<'a> {
             self.stream.cu_stream,
             &mut self.args,
         )?;
+        if let Some(event) = self.end_event {
+            event.record(&self.stream)?;
+        }
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
@@ -226,6 +247,9 @@ impl<'a> LaunchArgs<'a> {
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
+        if let Some(event) = self.start_event {
+            event.record(&self.stream)?;
+        }
         result::launch_cooperative_kernel(
             self.func.cu_function,
             cfg.grid_dim,
@@ -234,6 +258,9 @@ impl<'a> LaunchArgs<'a> {
             self.stream.cu_stream,
             &mut self.args,
         )?;
+        if let Some(event) = self.end_event {
+            event.record(&self.stream)?;
+        }
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
@@ -539,44 +566,25 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     #[test]
     fn test_par_launch() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["slow_worker"]).unwrap();
-        let slice = dev.alloc_zeros::<f32>(1000)?;
-        let mut a = dev.alloc_zeros::<f32>(1)?;
-        let mut b = dev.alloc_zeros::<f32>(1)?;
+        let ctx = CudaContext::new(0)?;
+        ctx.set_blocking_synchronize()?;
+
+        let module = ctx.load_ptx(ptx, &["slow_worker"]).unwrap();
+        let f = module.get_func("slow_worker").unwrap();
+
+        let stream = ctx.new_stream()?;
+        let slice = stream.alloc_zeros::<f32>(1000)?;
+        let mut a = stream.alloc_zeros::<f32>(1)?;
+        let mut b = stream.alloc_zeros::<f32>(1)?;
+        stream.synchronize()?;
+
         let cfg = LaunchConfig::for_num_elems(1);
 
         let start = Instant::now();
         {
             // launch two kernels on the default stream
-            let f = dev.get_func("tests", "slow_worker").unwrap();
             unsafe {
-                dev.stream()
-                    .launch_builder(&f)
-                    .arg(&slice)
-                    .arg(slice.len())
-                    .arg(&mut a)
-                    .launch(cfg)?
-            };
-            unsafe {
-                dev.stream()
-                    .launch_builder(&f)
-                    .arg(&slice)
-                    .arg(slice.len())
-                    .arg(&mut b)
-                    .launch(cfg)?
-            };
-            dev.synchronize()?;
-        }
-        let double_launch_s = start.elapsed().as_secs_f64();
-
-        let start = Instant::now();
-        {
-            // create a new stream & launch them concurrently
-            let stream = dev.fork_default_stream()?;
-            let f = dev.get_func("tests", "slow_worker").unwrap();
-            unsafe {
-                dev.stream()
+                stream
                     .launch_builder(&f)
                     .arg(&slice)
                     .arg(slice.len())
@@ -591,8 +599,32 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                     .arg(&mut b)
                     .launch(cfg)?
             };
-            dev.wait_for(&stream)?;
-            dev.synchronize()?;
+            stream.synchronize()?;
+        }
+        let double_launch_s = start.elapsed().as_secs_f64();
+
+        let stream2 = stream.fork()?;
+        let start = Instant::now();
+        {
+            // create a new stream & launch them concurrently
+            unsafe {
+                stream
+                    .launch_builder(&f)
+                    .arg(&slice)
+                    .arg(slice.len())
+                    .arg(&mut a)
+                    .launch(cfg)?
+            };
+            unsafe {
+                stream2
+                    .launch_builder(&f)
+                    .arg(&slice)
+                    .arg(slice.len())
+                    .arg(&mut b)
+                    .launch(cfg)?
+            };
+            stream.synchronize()?;
+            stream2.synchronize()?;
         }
         let par_launch_s = start.elapsed().as_secs_f64();
 
@@ -612,23 +644,41 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let module = ctx.load_ptx(ptx, &["slow_worker"])?;
         let f = module.get_func("slow_worker").unwrap();
 
-        let stream = ctx.default_stream();
-        let stream2 = stream.fork()?;
+        let stream1_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        let stream1_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        let stream2_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        let stream2_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
 
-        let src = stream.alloc_zeros::<f32>(1000)?;
+        let stream1 = ctx.new_stream()?;
+
+        let src = stream1.alloc_zeros::<f32>(1000)?;
+        let mut dst1 = stream1.alloc_zeros::<f32>(1)?;
+        let mut dst2 = stream1.alloc_zeros::<f32>(1)?;
+
+        let stream2 = stream1.fork()?;
+
         let cfg = LaunchConfig::for_num_elems(1);
 
-        let mut dst1 = stream.alloc_zeros::<f32>(1)?;
-        let mut builder = stream.launch_builder(&f);
-        builder.arg(&src).arg(src.len()).arg(&mut dst1);
+        let mut builder = stream1.launch_builder(&f);
+        builder
+            .arg(&src)
+            .arg(src.len())
+            .arg(&mut dst1)
+            .record_start(&stream1_start)
+            .record_end(&stream1_finish);
         unsafe { builder.launch(cfg) }?;
-        let stream1_finish = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
 
-        let mut dst2 = stream2.alloc_zeros::<f32>(1)?;
         let mut builder = stream2.launch_builder(&f);
-        builder.arg(&src).arg(src.len()).arg(&mut dst2);
-        let stream2_start = stream2.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        builder
+            .arg(&src)
+            .arg(src.len())
+            .arg(&mut dst2)
+            .record_start(&stream2_start)
+            .record_end(&stream2_finish);
         unsafe { builder.launch(cfg) }?;
+
+        stream1.synchronize()?;
+        stream2.synchronize()?;
 
         assert!(stream2_start.elapsed_ms(&stream1_finish)? >= 0.0);
         Ok(())
@@ -641,24 +691,42 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let module = ctx.load_ptx(ptx, &["slow_worker"])?;
         let f = module.get_func("slow_worker").unwrap();
 
-        let stream = ctx.default_stream();
-        let stream2 = stream.fork()?;
+        let stream1_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        let stream1_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        let stream2_start = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        let stream2_finish = ctx.empty_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
 
-        let src = stream.alloc_zeros::<f32>(1000)?;
-        let mut dst = stream.alloc_zeros::<f32>(1)?;
+        let stream1 = ctx.new_stream()?;
+
+        let src = stream1.alloc_zeros::<f32>(1000)?;
+        let mut dst = stream1.alloc_zeros::<f32>(1)?;
         let cfg = LaunchConfig::for_num_elems(1);
 
-        let mut builder = stream.launch_builder(&f);
-        builder.arg(&src).arg(src.len()).arg(&mut dst);
+        let stream2 = stream1.fork()?;
+
+        let mut builder = stream1.launch_builder(&f);
+        builder
+            .arg(&src)
+            .arg(src.len())
+            .arg(&mut dst)
+            .record_start(&stream1_start)
+            .record_end(&stream1_finish);
         unsafe { builder.launch(cfg) }?;
-        let stream1_finish = stream.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
 
         let mut builder = stream2.launch_builder(&f);
-        builder.arg(&src).arg(src.len()).arg(&mut dst);
-        let stream2_start = stream2.record_event(Some(sys::CUevent_flags::CU_EVENT_DEFAULT))?;
+        builder
+            .arg(&src)
+            .arg(src.len())
+            .arg(&mut dst)
+            .record_start(&stream2_start)
+            .record_end(&stream2_finish);
         unsafe { builder.launch(cfg) }?;
 
-        assert!(stream1_finish.elapsed_ms(&stream2_start)? >= 0.0);
+        stream1.synchronize()?;
+        stream2.synchronize()?;
+
+        let elapsed_ms = stream1_finish.elapsed_ms(&stream2_start)?;
+        assert!(elapsed_ms >= 0.0, "{elapsed_ms}");
         Ok(())
     }
 }

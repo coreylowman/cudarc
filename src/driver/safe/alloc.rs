@@ -499,11 +499,6 @@ impl CudaStream {
         self.memcpy_dtod(src, &mut dst)?;
         Ok(dst)
     }
-
-    pub fn synchronize(&self) -> Result<(), DriverError> {
-        self.ctx.bind_to_thread()?;
-        unsafe { result::stream::synchronize(self.cu_stream) }
-    }
 }
 
 #[cfg(test)]

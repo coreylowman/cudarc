@@ -114,9 +114,20 @@ impl CudaContext {
         unsafe { result::device::get_attribute(self.cu_device, attrib) }
     }
 
+    /// Synchronize this context. Will only block CPU if you call [CudaContext::set_flags()] with
+    /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
     pub fn synchronize(&self) -> Result<(), DriverError> {
         self.bind_to_thread()?;
         result::ctx::synchronize()
+    }
+
+    pub fn set_blocking_synchronize(&self) -> Result<(), DriverError> {
+        self.set_flags(sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC)
+    }
+
+    pub fn set_flags(&self, flags: sys::CUctx_flags) -> Result<(), DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::set_flags(flags)
     }
 }
 
@@ -168,6 +179,7 @@ impl CudaEvent {
         unsafe { result::event::record(self.cu_event, stream.cu_stream) }
     }
 
+    /// Will only block CPU thraed if [sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC] was used to create this event.
     pub fn synchronize(&self) -> Result<(), DriverError> {
         self.ctx.bind_to_thread()?;
         unsafe { result::event::synchronize(self.cu_event) }
@@ -274,8 +286,12 @@ impl CudaDevice {
         &self.stream.ctx.cu_ctx
     }
 
-    pub fn stream(&self) -> &CudaStream {
+    pub fn stream(&self) -> &Arc<CudaStream> {
         &self.stream
+    }
+
+    pub fn context(&self) -> &Arc<CudaContext> {
+        self.stream.context()
     }
 
     /// Get the underlying [sys::CUstream] that this [CudaDevice] executes
@@ -702,6 +718,13 @@ impl CudaStream {
 
     pub fn context(&self) -> &Arc<CudaContext> {
         &self.ctx
+    }
+
+    /// Will only block CPU if you call [CudaContext::set_flags()] with
+    /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
+    pub fn synchronize(&self) -> Result<(), DriverError> {
+        self.ctx.bind_to_thread()?;
+        unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
     pub fn record_event(

@@ -457,6 +457,12 @@ pub mod ctx {
         }
     }
 
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g66655c37602c8628eae3e40c82619f1e)
+    pub fn set_flags(flags: sys::CUctx_flags) -> Result<(), DriverError> {
+        unsafe { lib().cuCtxSetFlags(flags as u32).result() }
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g7a54725f28d34b8c6299f0c6ca579616)
     pub fn synchronize() -> Result<(), DriverError> {
         unsafe { lib().cuCtxSynchronize() }.result()
     }
