@@ -456,6 +456,24 @@ pub mod ctx {
             }
         }
     }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g66655c37602c8628eae3e40c82619f1e)
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000"
+    )))]
+    pub fn set_flags(flags: sys::CUctx_flags) -> Result<(), DriverError> {
+        unsafe { lib().cuCtxSetFlags(flags as u32).result() }
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g7a54725f28d34b8c6299f0c6ca579616)
+    pub fn synchronize() -> Result<(), DriverError> {
+        unsafe { lib().cuCtxSynchronize() }.result()
+    }
 }
 
 pub mod stream {
@@ -570,6 +588,18 @@ pub mod stream {
         lib()
             .cuStreamAttachMemAsync(stream, dptr, num_bytes, flags as u32)
             .result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1gab95a78143bae7f21eebb978f91e7f3f)
+    ///
+    /// # Safety
+    /// See docs, it's really unsafe ya'll.
+    pub unsafe fn launch_host_function(
+        stream: sys::CUstream,
+        func: unsafe extern "C" fn(*mut ::core::ffi::c_void),
+        arg: *mut std::ffi::c_void,
+    ) -> Result<(), DriverError> {
+        lib().cuLaunchHostFunc(stream, Some(func), arg).result()
     }
 }
 

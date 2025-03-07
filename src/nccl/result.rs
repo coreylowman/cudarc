@@ -355,7 +355,7 @@ mod tests {
             devs.push(dev);
         }
         let mut comms = vec![std::ptr::null_mut(); n_devices];
-        let ordinals: Vec<_> = devs.iter().map(|d| d.ordinal as i32).collect();
+        let ordinals: Vec<_> = devs.iter().map(|d| d.ordinal() as i32).collect();
         unsafe {
             comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr()).unwrap();
 
@@ -370,7 +370,7 @@ mod tests {
                     sys::ncclDataType_t::ncclFloat32,
                     sys::ncclRedOp_t::ncclSum,
                     comms[i],
-                    dev.stream as sys::cudaStream_t,
+                    dev.stream.cu_stream as sys::cudaStream_t,
                 )
                 .unwrap();
             }
@@ -410,7 +410,7 @@ mod tests {
                             sys::ncclDataType_t::ncclFloat32,
                             sys::ncclRedOp_t::ncclSum,
                             comm,
-                            dev.stream as sys::cudaStream_t,
+                            dev.stream.cu_stream as sys::cudaStream_t,
                         )
                         .unwrap();
                     }

@@ -1,38 +1,41 @@
 use cudarc::{
-    driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig},
+    driver::{CudaContext, DriverError, LaunchConfig, PushKernelArg},
     nvrtc::Ptx,
 };
 
 fn main() -> Result<(), DriverError> {
-    let dev = CudaDevice::new(0)?;
-    dev.load_ptx(Ptx::from_file("./examples/sin.ptx"), "sin", &["sin_kernel"])?;
+    let ctx = CudaContext::new(0)?;
+    let stream = ctx.default_stream();
+
+    let module = ctx.load_ptx(Ptx::from_file("./examples/sin.ptx"), &["sin_kernel"])?;
+    let f = module.get_func("sin_kernel").unwrap();
 
     let n = 3;
-    let cfg = LaunchConfig::for_num_elems(n);
-
     let a_host = [1.0, 2.0, 3.0];
-    let a_dev = dev.htod_copy(a_host.into())?;
-    let mut b_dev = a_dev.clone();
+    let a_dev = stream.memcpy_stod(&a_host)?;
+    let mut b_dev = stream.alloc_zeros::<f32>(n)?;
 
-    // create a stream with `fork_default_stream()`
-    // This synchronizes with the default stream, so since
-    // we put this call **after** the `htod_copy` & `clone` above,
-    // cuda will complete those orders **before** work on this stream
-    // can start.
-    let stream = dev.fork_default_stream()?;
+    // we can safely create a second stream using [CudaStream::fork()].
+    // This synchronizes with the source stream, so
+    // the `memcpy_vtod` & `alloc_zeros` above will complete **before**
+    // work on this stream can start.
+    let stream2 = stream.fork()?;
 
-    let f = dev.get_func("sin", "sin_kernel").unwrap();
+    // now we launch this work on the other stream
+    let mut builder = stream2.launch_builder(&f);
+    builder.arg(&mut b_dev); // NOTE: tells cudarc that we are mutating this.
+    builder.arg(&a_dev); // NOTE: tells cudarc that we are reading from this slice
+    builder.arg(n as i32);
+    unsafe { builder.launch(LaunchConfig::for_num_elems(n as u32)) }?;
 
-    // we launch it differently too
-    unsafe { f.launch_on_stream(&stream, cfg, (&mut b_dev, &a_dev, n as i32)) }?;
-
-    // and we must join with the default work stream in order for copies
-    // to work corrently.
-    // NOTE: this is actually async with respect to the host!
-    dev.wait_for(&stream)?;
-
-    let a_host_2 = dev.sync_reclaim(a_dev)?;
-    let b_host = dev.sync_reclaim(b_dev)?;
+    // cudarc automatically manages multi stream synchronization,
+    // so even though we launched the above on a separate stream,
+    // doing this device to host transfer will still properly synchronize.
+    // a_dev doesn't need to synchronize at all since we specified it is just
+    // being read from.
+    // b_dev DOES need to be synchronized, because it was mutated on a different stream.
+    let a_host_2 = stream.memcpy_dtov(&a_dev)?;
+    let b_host = stream.memcpy_dtov(&b_dev)?;
 
     println!("Found {:?}", b_host);
     println!("Expected {:?}", a_host.map(f32::sin));
