@@ -1,19 +1,18 @@
-use cudarc::driver::{CudaDevice, CudaSlice, DriverError};
+use cudarc::driver::{CudaContext, CudaSlice, DriverError};
 
 fn main() -> Result<(), DriverError> {
-    let dev = CudaDevice::new(0)?;
+    let ctx = CudaContext::new(0)?;
+    let stream = ctx.default_stream();
 
     // unsafe initialization of unset memory
-    let _: CudaSlice<f32> = unsafe { dev.alloc::<f32>(10) }?;
+    let _: CudaSlice<f32> = unsafe { stream.alloc::<f32>(10) }?;
 
     // this will have memory initialized as 0
-    let _: CudaSlice<f64> = dev.alloc_zeros::<f64>(10)?;
+    let _: CudaSlice<f64> = stream.alloc_zeros::<f64>(10)?;
 
-    // initialize with a rust vec
-    let _: CudaSlice<usize> = dev.htod_copy(vec![0; 10])?;
-
-    // or finially, initialize with a slice. this is synchronous though.
-    let _: CudaSlice<u32> = dev.htod_sync_copy(&[1, 2, 3])?;
+    // initialize with slices!
+    let _: CudaSlice<usize> = stream.memcpy_stod(&vec![0; 10])?;
+    let _: CudaSlice<u32> = stream.memcpy_stod(&[1, 2, 3])?;
 
     Ok(())
 }

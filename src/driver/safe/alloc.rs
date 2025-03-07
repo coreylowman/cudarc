@@ -236,7 +236,7 @@ impl CudaDevice {
         self: &Arc<Self>,
         src: Vec<T>,
     ) -> Result<CudaSlice<T>, result::DriverError> {
-        self.stream.memcpy_vtod(src)
+        self.stream.memcpy_stod(&src)
     }
 
     /// Asynchronously copies pinned host data (allocated with [CudaDevice::alloc_pinned()] to the device.
@@ -417,18 +417,19 @@ impl CudaStream {
     ) -> Result<(), DriverError> {
         dst.block_for_write(self)?;
         unsafe {
-            result::memset_d8_async(dst.cu_device_ptr(), 0, dst.num_bytes(), self.cu_stream)
+            result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.cu_stream)
         }?;
         dst.record_write(self)?;
         Ok(())
     }
 
-    pub fn memcpy_vtod<T: DeviceRepr>(
+    /// Transfer a rust **s**lice to **d**evice
+    pub fn memcpy_stod<T: DeviceRepr>(
         self: &Arc<Self>,
-        src: Vec<T>,
+        src: &[T],
     ) -> Result<CudaSlice<T>, DriverError> {
         let mut dst = unsafe { self.alloc(src.len()) }?;
-        self.memcpy_htod(&src, &mut dst)?;
+        self.memcpy_htod(src, &mut dst)?;
         Ok(dst)
     }
 
@@ -439,12 +440,13 @@ impl CudaStream {
     ) -> Result<(), DriverError> {
         let src = unsafe { src.stream_synced_slice(self) }?;
         dst.block_for_write(self)?;
-        unsafe { result::memcpy_htod_async(dst.cu_device_ptr(), src, self.cu_stream) }?;
+        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.cu_stream) }?;
         src.record_use(self)?;
         dst.record_write(self)?;
         Ok(())
     }
 
+    /// Transfer a **d**evice to rust **v**ec
     pub fn memcpy_dtov<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -463,7 +465,7 @@ impl CudaStream {
         let dst = unsafe { dst.stream_synced_mut_slice(self) }?;
         assert!(dst.len() >= src.len());
         src.block_for_read(self)?;
-        unsafe { result::memcpy_dtoh_async(dst, src.cu_device_ptr(), self.cu_stream) }?;
+        unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.cu_stream) }?;
         src.record_read(self)?;
         dst.record_use(self)?;
         Ok(())
@@ -478,8 +480,8 @@ impl CudaStream {
         dst.block_for_write(self)?;
         unsafe {
             result::memcpy_dtod_async(
-                dst.cu_device_ptr(),
-                src.cu_device_ptr(),
+                *dst.device_ptr_mut(),
+                *src.device_ptr(),
                 src.num_bytes(),
                 self.cu_stream,
             )

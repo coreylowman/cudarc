@@ -1,4 +1,4 @@
-use cudarc::driver::{CudaDevice, DriverError, LaunchAsync, LaunchConfig};
+use cudarc::driver::{CudaContext, DriverError, LaunchConfig, PushKernelArg};
 use cudarc::nvrtc::compile_ptx;
 
 const PTX_SRC: &str = "
@@ -25,31 +25,37 @@ fn main() -> Result<(), DriverError> {
     let ptx = compile_ptx(PTX_SRC).unwrap();
     println!("Compilation succeeded in {:?}", start.elapsed());
 
-    let dev = CudaDevice::new(0)?;
+    let ctx = CudaContext::new(0)?;
+    let stream = ctx.default_stream();
     println!("Built in {:?}", start.elapsed());
 
-    dev.load_ptx(ptx, "matmul", &["matmul"])?;
-    let f = dev.get_func("matmul", "matmul").unwrap();
+    let module = ctx.load_ptx(ptx, &["matmul"])?;
+    let f = module.get_func("matmul").unwrap();
     println!("Loaded in {:?}", start.elapsed());
 
     let a_host = [1.0f32, 2.0, 3.0, 4.0];
     let b_host = [1.0f32, 2.0, 3.0, 4.0];
     let mut c_host = [0.0f32; 4];
 
-    let a_dev = dev.htod_sync_copy(&a_host)?;
-    let b_dev = dev.htod_sync_copy(&b_host)?;
-    let mut c_dev = dev.htod_sync_copy(&c_host)?;
+    let a_dev = stream.memcpy_stod(&a_host)?;
+    let b_dev = stream.memcpy_stod(&b_host)?;
+    let mut c_dev = stream.memcpy_stod(&c_host)?;
 
     println!("Copied in {:?}", start.elapsed());
 
+    let mut builder = stream.launch_builder(&f);
+    builder.arg(&a_dev);
+    builder.arg(&b_dev);
+    builder.arg(&mut c_dev);
+    builder.arg(2i32);
     let cfg = LaunchConfig {
         block_dim: (2, 2, 1),
         grid_dim: (1, 1, 1),
         shared_mem_bytes: 0,
     };
-    unsafe { f.launch(cfg, (&a_dev, &b_dev, &mut c_dev, 2i32)) }?;
+    unsafe { builder.launch(cfg) }?;
 
-    dev.dtoh_sync_copy_into(&c_dev, &mut c_host)?;
+    stream.memcpy_dtoh(&c_dev, &mut c_host)?;
     println!("Found {:?} in {:?}", c_host, start.elapsed());
     Ok(())
 }

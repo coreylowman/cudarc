@@ -13,17 +13,12 @@ pub trait DeviceSlice<T> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
-
-    fn cu_device_ptr(&self) -> sys::CUdeviceptr;
     fn stream(&self) -> &CudaStream;
 }
 
 impl<T> DeviceSlice<T> for CudaSlice<T> {
     fn len(&self) -> usize {
         self.len
-    }
-    fn cu_device_ptr(&self) -> sys::CUdeviceptr {
-        self.cu_device_ptr
     }
     fn stream(&self) -> &CudaStream {
         &self.stream
@@ -34,9 +29,6 @@ impl<T> DeviceSlice<T> for CudaView<'_, T> {
     fn len(&self) -> usize {
         self.len
     }
-    fn cu_device_ptr(&self) -> sys::CUdeviceptr {
-        self.ptr
-    }
     fn stream(&self) -> &CudaStream {
         self.stream
     }
@@ -45,9 +37,6 @@ impl<T> DeviceSlice<T> for CudaView<'_, T> {
 impl<T> DeviceSlice<T> for CudaViewMut<'_, T> {
     fn len(&self) -> usize {
         self.len
-    }
-    fn cu_device_ptr(&self) -> sys::CUdeviceptr {
-        self.ptr
     }
     fn stream(&self) -> &CudaStream {
         self.stream

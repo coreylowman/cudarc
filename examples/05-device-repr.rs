@@ -30,10 +30,12 @@ extern \"C\" __global__ void my_custom_kernel(MyCoolStruct thing) {
 ";
 
 fn main() -> Result<(), DriverError> {
-    let dev = CudaDevice::new(0)?;
+    let ctx = CudaContext::new(0)?;
+    let stream = ctx.default_stream();
 
     let ptx = compile_ptx(PTX_SRC).unwrap();
-    dev.load_ptx(ptx, "module", &["my_custom_kernel"])?;
+    let module = ctx.load_ptx(ptx, &["my_custom_kernel"])?;
+    let f = module.get_func("my_custom_kernel").unwrap();
 
     // try changing some of these values to see a device assert
     let thing = MyCoolRustStruct {
@@ -43,10 +45,10 @@ fn main() -> Result<(), DriverError> {
         d: 420,
     };
 
-    let f = dev.get_func("module", "my_custom_kernel").unwrap();
-
+    let mut builder = stream.launch_builder(&f);
     // since MyCoolRustStruct implements DeviceRepr, we can pass it to launch.
-    unsafe { f.launch(LaunchConfig::for_num_elems(1), (thing,)) }?;
+    builder.arg(thing);
+    unsafe { builder.launch(LaunchConfig::for_num_elems(1)) }?;
 
     Ok(())
 }

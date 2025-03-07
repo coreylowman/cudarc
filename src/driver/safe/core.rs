@@ -115,7 +115,8 @@ impl CudaContext {
     }
 
     pub fn synchronize(&self) -> Result<(), DriverError> {
-        todo!()
+        self.bind_to_thread()?;
+        result::ctx::synchronize()
     }
 }
 
@@ -734,6 +735,10 @@ impl CudaStream {
                 sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
             )
         }
+    }
+
+    pub fn join(&self, other: &CudaStream) -> Result<(), DriverError> {
+        self.wait(&other.record_event(None)?)
     }
 }
 

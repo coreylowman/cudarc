@@ -3,7 +3,7 @@ use crate::driver::{
     sys,
 };
 
-use super::{CudaEvent, CudaFunction, CudaSlice, CudaStream, CudaView, CudaViewMut};
+use super::{CudaEvent, CudaFunction, CudaSlice, CudaStream, CudaView, CudaViewMut, DeviceRepr};
 
 /// Configuration for [result::launch_kernel]
 ///
@@ -69,37 +69,12 @@ pub unsafe trait PushKernelArg<T> {
     fn arg(&mut self, arg: T) -> &mut Self;
 }
 
-macro_rules! impl_push {
-    ($Var:ty) => {
-        unsafe impl<'a> PushKernelArg<$Var> for LaunchArgs<'a> {
-            #[inline(always)]
-            fn arg(&mut self, arg: $Var) -> &mut Self {
-                self.args.push((&arg) as *const _ as *mut _);
-                self
-            }
-        }
-    };
+unsafe impl<'a, T: DeviceRepr> PushKernelArg<T> for LaunchArgs<'a> {
+    fn arg(&mut self, arg: T) -> &mut Self {
+        self.args.push((&arg) as *const _ as *mut _);
+        self
+    }
 }
-
-impl_push!(bool);
-impl_push!(i8);
-impl_push!(i16);
-impl_push!(i32);
-impl_push!(i64);
-impl_push!(i128);
-impl_push!(isize);
-impl_push!(u8);
-impl_push!(u16);
-impl_push!(u32);
-impl_push!(u64);
-impl_push!(u128);
-impl_push!(usize);
-impl_push!(f32);
-impl_push!(f64);
-#[cfg(feature = "f16")]
-impl_push!(half::f16);
-#[cfg(feature = "f16")]
-impl_push!(half::bf16);
 
 unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
@@ -232,6 +207,7 @@ impl<'a> LaunchArgs<'a> {
     /// **If you launch a kernel or drop a value on a different stream
     /// this may not hold**
     pub unsafe fn launch(&mut self, cfg: LaunchConfig) -> Result<(), DriverError> {
+        self.stream.ctx.bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
@@ -255,6 +231,7 @@ impl<'a> LaunchArgs<'a> {
     ///
     /// See [LaunchArgs::launch()]
     pub unsafe fn launch_cooperative(&mut self, cfg: LaunchConfig) -> Result<(), DriverError> {
+        self.stream.ctx.bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }

@@ -456,6 +456,10 @@ pub mod ctx {
             }
         }
     }
+
+    pub fn synchronize() -> Result<(), DriverError> {
+        unsafe { lib().cuCtxSynchronize() }.result()
+    }
 }
 
 pub mod stream {

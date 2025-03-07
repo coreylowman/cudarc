@@ -152,9 +152,6 @@ impl DeviceSlice<u8> for MappedBuffer {
     fn len(&self) -> usize {
         self.len
     }
-    fn cu_device_ptr(&self) -> sys::CUdeviceptr {
-        self.device_ptr
-    }
     fn stream(&self) -> &CudaStream {
         &self.stream
     }

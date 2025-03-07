@@ -13,6 +13,23 @@ pub trait HostSlice<T> {
     fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError>;
 }
 
+impl<T, const N: usize> HostSlice<T> for [T; N] {
+    unsafe fn stream_synced_slice(&self, _stream: &CudaStream) -> Result<&[T], DriverError> {
+        Ok(self)
+    }
+
+    unsafe fn stream_synced_mut_slice(
+        &mut self,
+        _stream: &CudaStream,
+    ) -> Result<&mut [T], DriverError> {
+        Ok(self)
+    }
+
+    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        stream.synchronize()
+    }
+}
+
 impl<T> HostSlice<T> for [T] {
     unsafe fn stream_synced_slice(&self, _stream: &CudaStream) -> Result<&[T], DriverError> {
         Ok(self)
