@@ -380,6 +380,8 @@ impl CudaStream {
         })
     }
 
+    /// # Safety
+    /// This is unsafe because the memory is unset.
     pub unsafe fn alloc<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
@@ -452,7 +454,10 @@ impl CudaStream {
         src: &Src,
     ) -> Result<Vec<T>, DriverError> {
         let mut dst = Vec::with_capacity(src.len());
-        unsafe { dst.set_len(src.len()) };
+        #[allow(clippy::uninit_vec)]
+        unsafe {
+            dst.set_len(src.len())
+        };
         self.memcpy_dtoh(src, &mut dst)?;
         Ok(dst)
     }

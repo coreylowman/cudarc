@@ -5,7 +5,13 @@ use super::{CudaContext, CudaEvent, CudaStream, DeviceRepr, DriverError, ValidAs
 use crate::driver::{result, sys};
 
 pub trait HostSlice<T> {
+    /// # Safety
+    /// This is **only** safe if the resulting slice is used with `stream`. Otherwise
+    /// You may run into device synchronization errors
     unsafe fn stream_synced_slice(&self, stream: &CudaStream) -> Result<&[T], DriverError>;
+    /// # Safety
+    /// This is **only** safe if the resulting slice is used with `stream`. Otherwise
+    /// You may run into device synchronization errors
     unsafe fn stream_synced_mut_slice(
         &mut self,
         stream: &CudaStream,
@@ -75,6 +81,12 @@ impl<T> Drop for PinnedHostSlice<T> {
 }
 
 impl CudaContext {
+    /// Allocates page locked host memory with [sys::CU_MEMHOSTALLOC_WRITECOMBINED] flags.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
+    ///
+    /// # Safety
+    /// 1. This is unsafe because the memory is unset after this call.
     pub unsafe fn alloc_pinned<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
@@ -108,6 +120,10 @@ impl<T> PinnedHostSlice<T> {
     /// The size of the slice
     pub fn len(&self) -> usize {
         self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 

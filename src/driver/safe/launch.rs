@@ -74,7 +74,7 @@ pub unsafe trait PushKernelArg<T> {
     fn arg(&mut self, arg: T) -> &mut Self;
 }
 
-unsafe impl<'a, 'b: 'a, T: DeviceRepr> PushKernelArg<T> for LaunchArgs<'a> {
+unsafe impl<T: DeviceRepr> PushKernelArg<T> for LaunchArgs<'_> {
     #[inline(always)]
     fn arg(&mut self, arg: T) -> &mut Self {
         self.args.push((&arg) as *const _ as *mut _);
@@ -218,7 +218,7 @@ impl<'a> LaunchArgs<'a> {
             self.stream.wait(event)?;
         }
         if let Some(event) = self.start_event {
-            event.record(&self.stream)?;
+            event.record(self.stream)?;
         }
         result::launch_kernel(
             self.func.cu_function,
@@ -229,7 +229,7 @@ impl<'a> LaunchArgs<'a> {
             &mut self.args,
         )?;
         if let Some(event) = self.end_event {
-            event.record(&self.stream)?;
+            event.record(self.stream)?;
         }
         for &event in self.records.iter() {
             event.record(self.stream)?;
@@ -248,7 +248,7 @@ impl<'a> LaunchArgs<'a> {
             self.stream.wait(event)?;
         }
         if let Some(event) = self.start_event {
-            event.record(&self.stream)?;
+            event.record(self.stream)?;
         }
         result::launch_cooperative_kernel(
             self.func.cu_function,
@@ -259,7 +259,7 @@ impl<'a> LaunchArgs<'a> {
             &mut self.args,
         )?;
         if let Some(event) = self.end_event {
-            event.record(&self.stream)?;
+            event.record(self.stream)?;
         }
         for &event in self.records.iter() {
             event.record(self.stream)?;
