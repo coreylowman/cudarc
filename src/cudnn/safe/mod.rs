@@ -333,7 +333,7 @@ mod tests {
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[32, 3, 4, 4, 4],
         )?;
-        let bias = stream.memcpy_stod(&vec![1.0f32; 32]).unwrap();
+        let bias = stream.memcpy_stod(&[1.0f32; 32]).unwrap();
         let bias_desc = cudnn.create_nd_tensor::<f32>(&[1, 32, 1, 1, 1], &[32, 1, 1, 1, 1])?;
         let activation_desc = cudnn.create_activation::<f32>(
             cudnn::sys::cudnnActivationMode_t::CUDNN_ACTIVATION_RELU,
@@ -450,7 +450,7 @@ mod tests {
         )?;
 
         // Create input, filter and output tensors
-        let x = stream.memcpy_stod(&vec![-1.0, 2.0, -3.0, 100.0]).unwrap();
+        let x = stream.memcpy_stod(&[-1.0, 2.0, -3.0, 100.0]).unwrap();
         let x_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
         let mut y = stream.alloc_zeros::<f32>(4).unwrap();
         let y_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
