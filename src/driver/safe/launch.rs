@@ -282,6 +282,59 @@ mod tests {
 
     use super::*;
 
+    #[test]
+    fn test_launch_arrays() -> Result<(), DriverError> {
+        #[repr(C)]
+        struct TensorMeta {
+            num_dims: usize,
+            strides: [usize; 128],
+            shape: [usize; 128],
+        }
+        unsafe impl DeviceRepr for TensorMeta {}
+
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+
+        let ptx = compile_ptx_with_opts(
+            "
+struct TensorMeta {
+    size_t num_dims;
+    size_t shape[128];
+    size_t strides[128];
+};
+
+extern \"C\" __global__ void kernel(const TensorMeta meta) {
+    for (int i = 0;i < meta.num_dims;i++) {
+        assert(meta.shape[i] == i);
+        assert(meta.strides[i] == i);
+    }
+}
+        ",
+            Default::default(),
+        )
+        .unwrap();
+
+        let module = ctx.load_ptx(ptx, &["kernel"]).unwrap();
+        let f = module.get_func("kernel").unwrap();
+
+        let meta = TensorMeta {
+            num_dims: 128,
+            shape: std::array::from_fn(|i| i),
+            strides: std::array::from_fn(|i| i),
+        };
+
+        unsafe {
+            stream
+                .launch_builder(&f)
+                .arg(meta)
+                .launch(LaunchConfig::for_num_elems(1))
+        }?;
+
+        stream.synchronize()?;
+
+        Ok(())
+    }
+
     const SIN_CU: &str = "
 extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t numel) {
     size_t i = blockIdx.x * blockDim.x + threadIdx.x;
