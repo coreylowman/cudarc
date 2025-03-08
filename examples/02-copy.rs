@@ -1,4 +1,4 @@
-use cudarc::driver::{CudaContext, CudaSlice, DriverError};
+use cudarc::driver::{CudaContext, CudaSlice, DeviceSlice, DriverError};
 
 fn main() -> Result<(), DriverError> {
     let ctx = CudaContext::new(0)?;
@@ -11,7 +11,7 @@ fn main() -> Result<(), DriverError> {
     stream.memcpy_dtod(&a, &mut b)?;
 
     // but also host to device copys with already allocated buffers
-    stream.memcpy_htod(&vec![2.0; 10], &mut b)?;
+    stream.memcpy_htod(&vec![2.0; b.len()], &mut b)?;
     // you can use any type of slice
     stream.memcpy_htod(&[3.0; 10], &mut b)?;
 
