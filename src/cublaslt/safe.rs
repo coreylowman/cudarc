@@ -281,7 +281,7 @@ pub trait MatmulShared {
     fn workspace(&self) -> &Workspace;
 
     /// Returns a reference to the underlying stream
-    fn stream(&self) -> &CudaStream;
+    fn stream(&self) -> &Arc<CudaStream>;
 }
 
 /// Configuration for [Matmul]
@@ -423,7 +423,7 @@ impl MatmulShared for CudaBlasLT {
         &self.workspace
     }
 
-    fn stream(&self) -> &CudaStream {
+    fn stream(&self) -> &Arc<CudaStream> {
         &self.stream
     }
 }
