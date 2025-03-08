@@ -79,6 +79,9 @@ where
         Src: DevicePtr<X>,
         Dst: DevicePtrMut<Y>,
     {
+        let stream = &self.x.handle.stream;
+        src.block_for_read(stream).unwrap();
+        y.block_for_write(stream).unwrap();
         let alpha = alpha.into_scaling_parameter();
         let beta = beta.into_scaling_parameter();
         result::pooling_forward(
@@ -90,6 +93,9 @@ where
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.y.desc,
             *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
-        )
+        )?;
+        src.record_read(stream).unwrap();
+        y.record_write(stream).unwrap();
+        Ok(())
     }
 }
