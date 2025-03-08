@@ -63,6 +63,8 @@ where
         Src: DevicePtr<A>,
         Dst: DevicePtrMut<A>,
     {
+        x.block_for_read(&self.act.handle.stream).unwrap();
+        y.block_for_write(&self.act.handle.stream).unwrap();
         let alpha = alpha.into_scaling_parameter();
         let beta = beta.into_scaling_parameter();
         result::activation_forward(
@@ -74,6 +76,9 @@ where
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.y.desc,
             *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
-        )
+        )?;
+        x.record_read(&self.act.handle.stream).unwrap();
+        y.record_write(&self.act.handle.stream).unwrap();
+        Ok(())
     }
 }

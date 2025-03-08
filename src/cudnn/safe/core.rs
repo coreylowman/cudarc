@@ -1,6 +1,6 @@
 use crate::{
     cudnn::{result, result::CudnnError, sys},
-    driver::{CudaDevice, CudaStream},
+    driver::CudaStream,
 };
 
 use std::{marker::PhantomData, sync::Arc};
@@ -11,17 +11,17 @@ use std::{marker::PhantomData, sync::Arc};
 #[derive(Debug)]
 pub struct Cudnn {
     pub(crate) handle: sys::cudnnHandle_t,
-    pub(crate) device: Arc<CudaDevice>,
+    pub(crate) stream: Arc<CudaStream>,
 }
 
 impl Cudnn {
     /// Creates a new cudnn handle and sets the stream to the `device`'s stream.
     #[allow(clippy::arc_with_non_send_sync)]
-    pub fn new(device: Arc<CudaDevice>) -> Result<Arc<Self>, CudnnError> {
-        device.bind_to_thread().unwrap();
+    pub fn new(stream: Arc<CudaStream>) -> Result<Arc<Self>, CudnnError> {
+        stream.context().bind_to_thread().unwrap();
         let handle = result::create_handle()?;
-        unsafe { result::set_stream(handle, device.stream.cu_stream as *mut _) }?;
-        Ok(Arc::new(Self { handle, device }))
+        unsafe { result::set_stream(handle, stream.cu_stream as *mut _) }?;
+        Ok(Arc::new(Self { handle, stream }))
     }
 
     /// Sets the handle's current to either the stream specified, or the device's default work
@@ -30,11 +30,9 @@ impl Cudnn {
     /// # Safety
     /// This is unsafe because you can end up scheduling multiple concurrent kernels that all
     /// write to the same memory address.
-    pub unsafe fn set_stream(&self, opt_stream: Option<&CudaStream>) -> Result<(), CudnnError> {
-        match opt_stream {
-            Some(s) => result::set_stream(self.handle, s.cu_stream as *mut _),
-            None => result::set_stream(self.handle, self.device.stream.cu_stream as *mut _),
-        }
+    pub unsafe fn set_stream(&mut self, stream: Arc<CudaStream>) -> Result<(), CudnnError> {
+        self.stream = stream;
+        unsafe { result::set_stream(self.handle, self.stream.cu_stream as *mut _) }
     }
 }
 
