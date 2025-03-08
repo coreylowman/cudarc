@@ -152,7 +152,7 @@ impl DeviceSlice<u8> for MappedBuffer {
     fn len(&self) -> usize {
         self.len
     }
-    fn stream(&self) -> &CudaStream {
+    fn stream(&self) -> &Arc<CudaStream> {
         &self.stream
     }
 }

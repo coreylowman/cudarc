@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::driver::{result::DriverError, sys};
 
 use super::{
@@ -13,14 +15,14 @@ pub trait DeviceSlice<T> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
-    fn stream(&self) -> &CudaStream;
+    fn stream(&self) -> &Arc<CudaStream>;
 }
 
 impl<T> DeviceSlice<T> for CudaSlice<T> {
     fn len(&self) -> usize {
         self.len
     }
-    fn stream(&self) -> &CudaStream {
+    fn stream(&self) -> &Arc<CudaStream> {
         &self.stream
     }
 }
@@ -29,7 +31,7 @@ impl<T> DeviceSlice<T> for CudaView<'_, T> {
     fn len(&self) -> usize {
         self.len
     }
-    fn stream(&self) -> &CudaStream {
+    fn stream(&self) -> &Arc<CudaStream> {
         self.stream
     }
 }
@@ -38,7 +40,7 @@ impl<T> DeviceSlice<T> for CudaViewMut<'_, T> {
     fn len(&self) -> usize {
         self.len
     }
-    fn stream(&self) -> &CudaStream {
+    fn stream(&self) -> &Arc<CudaStream> {
         self.stream
     }
 }
