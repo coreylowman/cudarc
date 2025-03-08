@@ -2,7 +2,7 @@
 #![allow(clippy::too_many_arguments)]
 
 use super::{result, result::CublasError, sys};
-use crate::driver::{CudaDevice, CudaStream, DevicePtr, DevicePtrMut};
+use crate::driver::{CudaStream, DevicePtr, DevicePtrMut};
 use core::ffi::{c_int, c_longlong};
 use std::sync::Arc;
 
@@ -17,7 +17,7 @@ use std::sync::Arc;
 #[derive(Debug)]
 pub struct CudaBlas {
     pub(crate) handle: sys::cublasHandle_t,
-    pub(crate) device: Arc<CudaDevice>,
+    pub(crate) stream: Arc<CudaStream>,
 }
 
 unsafe impl Send for CudaBlas {}
@@ -25,11 +25,11 @@ unsafe impl Sync for CudaBlas {}
 
 impl CudaBlas {
     /// Creates a new cublas handle and sets the stream to the `device`'s stream.
-    pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
-        device.bind_to_thread().unwrap();
+    pub fn new(stream: Arc<CudaStream>) -> Result<Self, CublasError> {
+        stream.context().bind_to_thread().unwrap();
         let handle = result::create_handle()?;
-        let blas = Self { handle, device };
-        unsafe { result::set_stream(handle, blas.device.stream.cu_stream as *mut _) }?;
+        unsafe { result::set_stream(handle, stream.cu_stream() as _) }?;
+        let blas = Self { handle, stream };
         Ok(blas)
     }
 
@@ -44,11 +44,9 @@ impl CudaBlas {
     /// # Safety
     /// This is unsafe because you can end up scheduling multiple concurrent kernels that all
     /// write to the same memory address.
-    pub unsafe fn set_stream(&self, opt_stream: Option<&CudaStream>) -> Result<(), CublasError> {
-        match opt_stream {
-            Some(s) => result::set_stream(self.handle, s.cu_stream as *mut _),
-            None => result::set_stream(self.handle, self.device.stream.cu_stream as *mut _),
-        }
+    pub unsafe fn set_stream(&mut self, stream: Arc<CudaStream>) -> Result<(), CublasError> {
+        self.stream = stream;
+        unsafe { result::set_stream(self.handle, self.stream.cu_stream() as _) }
     }
 
     /// Set the handle's pointer mode.
@@ -129,6 +127,9 @@ impl Gemv<f32> for CudaBlas {
         x: &X,
         y: &mut Y,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        x.block_for_read(&self.stream).unwrap();
+        y.block_for_write(&self.stream).unwrap();
         result::sgemv(
             self.handle,
             cfg.trans,
@@ -142,7 +143,11 @@ impl Gemv<f32> for CudaBlas {
             (&cfg.beta) as *const _,
             *y.device_ptr_mut() as *mut _,
             cfg.incy,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        x.record_read(&self.stream).unwrap();
+        y.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
@@ -154,6 +159,9 @@ impl Gemv<f64> for CudaBlas {
         x: &X,
         y: &mut Y,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        x.block_for_read(&self.stream).unwrap();
+        y.block_for_write(&self.stream).unwrap();
         result::dgemv(
             self.handle,
             cfg.trans,
@@ -167,7 +175,11 @@ impl Gemv<f64> for CudaBlas {
             (&cfg.beta) as *const _,
             *y.device_ptr_mut() as *mut _,
             cfg.incy,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        x.record_read(&self.stream).unwrap();
+        y.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
@@ -236,6 +248,9 @@ impl Gemm<half::f16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.alpha.to_f32();
         let beta: f32 = cfg.beta.to_f32();
         result::gemm_ex(
@@ -258,7 +273,11 @@ impl Gemm<half::f16> for CudaBlas {
             cfg.ldc,
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
     unsafe fn gemm_strided_batched<
         A: DevicePtr<half::f16>,
@@ -271,6 +290,9 @@ impl Gemm<half::f16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.gemm.alpha.to_f32();
         let beta: f32 = cfg.gemm.beta.to_f32();
         result::gemm_strided_batched_ex(
@@ -297,7 +319,11 @@ impl Gemm<half::f16> for CudaBlas {
             cfg.batch_size,
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
@@ -314,6 +340,9 @@ impl Gemm<half::bf16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.alpha.to_f32();
         let beta: f32 = cfg.beta.to_f32();
         result::gemm_ex(
@@ -336,7 +365,11 @@ impl Gemm<half::bf16> for CudaBlas {
             cfg.ldc,
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
     unsafe fn gemm_strided_batched<
         A: DevicePtr<half::bf16>,
@@ -349,6 +382,9 @@ impl Gemm<half::bf16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.gemm.alpha.to_f32();
         let beta: f32 = cfg.gemm.beta.to_f32();
         result::gemm_strided_batched_ex(
@@ -375,7 +411,11 @@ impl Gemm<half::bf16> for CudaBlas {
             cfg.batch_size,
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
@@ -387,6 +427,9 @@ impl Gemm<f32> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         result::sgemm(
             self.handle,
             cfg.transa,
@@ -402,7 +445,11 @@ impl Gemm<f32> for CudaBlas {
             (&cfg.beta) as *const _,
             *c.device_ptr_mut() as *mut _,
             cfg.ldc,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
 
     unsafe fn gemm_strided_batched<A: DevicePtr<f32>, B: DevicePtr<f32>, C: DevicePtrMut<f32>>(
@@ -412,6 +459,9 @@ impl Gemm<f32> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         result::sgemm_strided_batched(
             self.handle,
             cfg.gemm.transa,
@@ -431,7 +481,11 @@ impl Gemm<f32> for CudaBlas {
             cfg.gemm.ldc,
             cfg.stride_c,
             cfg.batch_size,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
@@ -443,6 +497,9 @@ impl Gemm<f64> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         result::dgemm(
             self.handle,
             cfg.transa,
@@ -458,7 +515,11 @@ impl Gemm<f64> for CudaBlas {
             (&cfg.beta) as *const _,
             *c.device_ptr_mut() as *mut _,
             cfg.ldc,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
 
     unsafe fn gemm_strided_batched<A: DevicePtr<f64>, B: DevicePtr<f64>, C: DevicePtrMut<f64>>(
@@ -468,6 +529,9 @@ impl Gemm<f64> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
+        a.block_for_read(&self.stream).unwrap();
+        b.block_for_read(&self.stream).unwrap();
+        c.block_for_write(&self.stream).unwrap();
         result::dgemm_strided_batched(
             self.handle,
             cfg.gemm.transa,
@@ -487,13 +551,19 @@ impl Gemm<f64> for CudaBlas {
             cfg.gemm.ldc,
             cfg.stride_c,
             cfg.batch_size,
-        )
+        )?;
+        a.record_read(&self.stream).unwrap();
+        b.record_read(&self.stream).unwrap();
+        c.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     #![allow(clippy::needless_range_loop)]
+
+    use crate::driver::CudaContext;
 
     use super::*;
 
@@ -541,8 +611,9 @@ mod tests {
 
     #[test]
     fn test_sgemv() {
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlas::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlas::new(stream.clone()).unwrap();
         const M: usize = 2;
         const N: usize = 5;
         let a: [[f32; N]; M] = [
@@ -555,12 +626,12 @@ mod tests {
         gemv_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.htod_sync_copy(&[
+        let a_dev = stream.memcpy_stod(&[
             0.9314776, 0.10300648, -0.620774, 1.527075, 0.0259804,
             0.16820757, -0.94463515, -1.3850101, 1.0600523, 1.5124008,
         ]).unwrap();
-        let b_dev = dev.htod_sync_copy(&b).unwrap();
-        let mut c_dev = dev.alloc_zeros(M).unwrap();
+        let b_dev = stream.memcpy_stod(&b).unwrap();
+        let mut c_dev = stream.alloc_zeros(M).unwrap();
         unsafe {
             blas.gemv(
                 GemvConfig {
@@ -580,7 +651,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-6);
         }
@@ -588,8 +659,9 @@ mod tests {
 
     #[test]
     fn test_dgemv() {
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlas::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlas::new(stream.clone()).unwrap();
         const M: usize = 8;
         const N: usize = 3;
         let a: [[f64; N]; M] = [
@@ -608,7 +680,7 @@ mod tests {
         gemv_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.htod_sync_copy(&[
+        let a_dev = stream.memcpy_stod(&[
             0.96151888, -0.36771390, 0.94069099,
             2.20621538, -0.16479775, -1.78425562,
             0.41080803, -0.56567699, -0.72781092,
@@ -618,8 +690,8 @@ mod tests {
             -1.84258616, 0.24096519, -0.04563522,
             -0.53364468, -1.07902217, 0.46823528,
         ]).unwrap();
-        let b_dev = dev.htod_sync_copy(&b).unwrap();
-        let mut c_dev = dev.alloc_zeros(M).unwrap();
+        let b_dev = stream.memcpy_stod(&b).unwrap();
+        let mut c_dev = stream.alloc_zeros(M).unwrap();
         unsafe {
             blas.gemv(
                 GemvConfig {
@@ -639,7 +711,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-8);
         }
@@ -771,8 +843,9 @@ mod tests {
 
     #[test]
     fn test_sgemm() {
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlas::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlas::new(stream.clone()).unwrap();
         const M: usize = 3;
         const K: usize = 4;
         const N: usize = 5;
@@ -791,19 +864,19 @@ mod tests {
         gemm_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.htod_sync_copy::<f32>(&[
+        let a_dev = stream.memcpy_stod::<f32>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
             -1.6661372, -0.4568837, -0.9043474, 0.39125723,
         ]).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.htod_sync_copy::<f32>(&[
+        let b_dev = stream.memcpy_stod::<f32>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
-        let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
+        let mut c_dev = stream.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
             blas.gemm(
                 GemmConfig {
@@ -825,7 +898,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 assert!((c_host[m * N + n] - c[m][n]) <= 1e-6);
@@ -835,8 +908,9 @@ mod tests {
 
     #[test]
     fn test_dgemm() {
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlas::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlas::new(stream.clone()).unwrap();
         const M: usize = 4;
         const K: usize = 3;
         const N: usize = 2;
@@ -855,19 +929,19 @@ mod tests {
         gemm_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = dev.htod_sync_copy::<f64>(&[
+        let a_dev = stream.memcpy_stod::<f64>(&[
             -0.70925030, -1.01357541, -0.64827034,
             2.18493467, -0.61584842, -1.43844327,
             -1.34792593, 0.68840750, -0.48057214,
             1.22180992, 1.16245157, 0.01253436,
         ]).unwrap();
         #[rustfmt::skip]
-        let b_dev = dev.htod_sync_copy::<f64>(&[
+        let b_dev = stream.memcpy_stod::<f64>(&[
             -0.72735474, 1.35931170,
             1.71798307, -0.13296247,
             0.26855612, -1.95189980,
         ]).unwrap();
-        let mut c_dev = dev.alloc_zeros::<f64>(M * N).unwrap();
+        let mut c_dev = stream.alloc_zeros::<f64>(M * N).unwrap();
         unsafe {
             blas.gemm(
                 GemmConfig {
@@ -889,7 +963,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 assert!((c_host[m * N + n] - c[m][n]) <= 1e-10);
@@ -899,8 +973,9 @@ mod tests {
 
     #[test]
     fn cublas_pointer_mode() {
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlas::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlas::new(stream.clone()).unwrap();
         assert_eq!(
             blas.get_pointer_mode().unwrap(),
             sys::cublasPointerMode_t::CUBLAS_POINTER_MODE_HOST,
