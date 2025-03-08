@@ -2,8 +2,8 @@
 
 use super::{result, result::CublasError, sys};
 use crate::cublaslt::result::set_matrix_layout_attribute;
-use crate::driver::sys::{CUdevice_attribute, CUdeviceptr, CUstream};
-use crate::driver::{CudaDevice, CudaSlice, DevicePtr, DevicePtrMut, DriverError};
+use crate::driver::sys::{CUdevice_attribute, CUdeviceptr};
+use crate::driver::{CudaSlice, CudaStream, DevicePtr, DevicePtrMut, DriverError};
 use core::ffi::c_int;
 use core::mem;
 use std::sync::Arc;
@@ -20,23 +20,21 @@ use std::sync::Arc;
 pub struct CudaBlasLT {
     handle: sys::cublasLtHandle_t,
     workspace: Workspace,
-    device: Arc<CudaDevice>,
+    stream: Arc<CudaStream>,
 }
 
 unsafe impl Send for CudaBlasLT {}
-
 unsafe impl Sync for CudaBlasLT {}
 
 impl CudaBlasLT {
     /// Creates a new cublasLt handle.
-    pub fn new(device: Arc<CudaDevice>) -> Result<Self, CublasError> {
+    pub fn new(stream: Arc<CudaStream>) -> Result<Self, CublasError> {
         let handle = result::create_handle()?;
-        let workspace = Workspace::new(device.clone()).unwrap();
-
+        let workspace = Workspace::new(stream.clone()).unwrap();
         Ok(Self {
             handle,
             workspace,
-            device,
+            stream,
         })
     }
 }
@@ -63,14 +61,15 @@ pub struct Workspace {
 
 impl Workspace {
     /// Creates a CublasLt workspace buffer on the provided device
-    pub fn new(device: Arc<CudaDevice>) -> Result<Self, DriverError> {
-        device.bind_to_thread()?;
+    pub fn new(stream: Arc<CudaStream>) -> Result<Self, DriverError> {
+        stream.context().bind_to_thread()?;
 
-        let major =
-            device.attribute(CUdevice_attribute::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR)?;
+        let major = stream
+            .context()
+            .attribute(CUdevice_attribute::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR)?;
         let workspace_size = if major >= 9 { 33_554_432 } else { 4_194_304 };
 
-        let buffer = unsafe { device.alloc::<u8>(workspace_size)? };
+        let buffer = unsafe { stream.alloc::<u8>(workspace_size)? };
         Ok(Self {
             buffer,
             size: workspace_size,
@@ -282,7 +281,7 @@ pub trait MatmulShared {
     fn workspace(&self) -> &Workspace;
 
     /// Returns a reference to the underlying stream
-    fn stream(&self) -> &CUstream;
+    fn stream(&self) -> &CudaStream;
 }
 
 /// Configuration for [Matmul]
@@ -328,6 +327,10 @@ pub trait Matmul<T>: MatmulShared {
         bias: Option<&I>,
         act: Option<&Activation>,
     ) -> Result<(), CublasError> {
+        a.block_for_read(self.stream()).unwrap();
+        b.block_for_read(self.stream()).unwrap();
+        c.block_for_write(self.stream()).unwrap();
+
         let (a_rows, a_cols) = if cfg.transa {
             (cfg.k, cfg.m)
         } else {
@@ -400,8 +403,14 @@ pub trait Matmul<T>: MatmulShared {
             (&heuristic.algo) as *const _,
             *self.workspace().buffer.device_ptr() as *const CUdeviceptr as *mut _,
             self.workspace().size,
-            *self.stream() as *mut _,
-        )
+            self.stream().cu_stream() as *mut _,
+        )?;
+
+        a.record_read(self.stream()).unwrap();
+        b.record_read(self.stream()).unwrap();
+        c.record_write(self.stream()).unwrap();
+
+        Ok(())
     }
 }
 
@@ -414,8 +423,8 @@ impl MatmulShared for CudaBlasLT {
         &self.workspace
     }
 
-    fn stream(&self) -> &CUstream {
-        &self.device.stream.cu_stream
+    fn stream(&self) -> &CudaStream {
+        &self.stream
     }
 }
 
@@ -455,6 +464,8 @@ impl Matmul<half::bf16> for CudaBlasLT {
 mod tests {
     #![allow(clippy::needless_range_loop)]
 
+    use crate::driver::CudaContext;
+
     use super::sys::lib;
     use super::*;
     use std::ffi::CString;
@@ -493,8 +504,9 @@ mod tests {
                 .unwrap()
         };
 
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlasLT::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlasLT::new(stream.clone()).unwrap();
         const M: usize = 3;
         const K: usize = 4;
         const N: usize = 5;
@@ -513,22 +525,22 @@ mod tests {
         matmul_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-            let a_dev = dev.htod_sync_copy::<f32>(&[
+            let a_dev = stream.memcpy_stod::<f32>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
             -1.6661372, -0.4568837, -0.9043474, 0.39125723,
         ]).unwrap();
         #[rustfmt::skip]
-            let b_dev = dev.htod_sync_copy::<f32>(&[
+            let b_dev = stream.memcpy_stod::<f32>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
         #[rustfmt::skip]
-            let bias = dev.alloc_zeros::<f32>(N).unwrap();
+            let bias = stream.alloc_zeros::<f32>(N).unwrap();
 
-        let mut c_dev = dev.alloc_zeros::<f32>(M * N).unwrap();
+        let mut c_dev = stream.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
             blas.matmul(
                 MatmulConfig {
@@ -557,7 +569,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
@@ -582,8 +594,9 @@ mod tests {
                 .unwrap()
         };
 
-        let dev = CudaDevice::new(0).unwrap();
-        let blas = CudaBlasLT::new(dev.clone()).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlasLT::new(stream.clone()).unwrap();
         const M: usize = 2;
         const K: usize = 4;
         const N: usize = 6;
@@ -637,19 +650,19 @@ mod tests {
         );
 
         #[rustfmt::skip]
-            let a_dev = dev.htod_sync_copy::<half::f16>(&[
+            let a_dev = stream.memcpy_stod::<half::f16>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::f16::from_f32)).unwrap();
         #[rustfmt::skip]
-            let b_dev = dev.htod_sync_copy::<half::f16>(&[
+            let b_dev = stream.memcpy_stod::<half::f16>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792, 0.39125723,
         ].map(half::f16::from_f32)).unwrap();
-        let bias = dev.alloc_zeros::<half::f16>(N).unwrap();
-        let mut c_dev = dev.alloc_zeros::<half::f16>(M * N).unwrap();
+        let bias = stream.alloc_zeros::<half::f16>(N).unwrap();
+        let mut c_dev = stream.alloc_zeros::<half::f16>(M * N).unwrap();
         unsafe {
             blas.matmul(
                 MatmulConfig {
@@ -678,7 +691,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
@@ -691,19 +704,19 @@ mod tests {
         }
 
         #[rustfmt::skip]
-            let a_dev = dev.htod_sync_copy::<half::bf16>(&[
+            let a_dev = dev.memcpy_stod::<half::bf16>(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::bf16::from_f32)).unwrap();
         #[rustfmt::skip]
-            let b_dev = dev.htod_sync_copy::<half::bf16>(&[
+            let b_dev = dev.memcpy_stod::<half::bf16>(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792, 0.39125723,
         ].map(half::bf16::from_f32)).unwrap();
-        let bias = dev.alloc_zeros::<half::bf16>(N).unwrap();
-        let mut c_dev = dev.alloc_zeros::<half::bf16>(M * N).unwrap();
+        let bias = stream.alloc_zeros::<half::bf16>(N).unwrap();
+        let mut c_dev = stream.alloc_zeros::<half::bf16>(M * N).unwrap();
         unsafe {
             blas.matmul(
                 MatmulConfig {
@@ -731,7 +744,7 @@ mod tests {
             )
         }
         .unwrap();
-        let c_host = dev.sync_reclaim(c_dev).unwrap();
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
