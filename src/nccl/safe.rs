@@ -1,5 +1,5 @@
 use super::{result, sys};
-use crate::driver::{CudaDevice, DevicePtr, DevicePtrMut};
+use crate::driver::{CudaContext, CudaStream, DevicePtr, DevicePtrMut};
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::{sync::Arc, vec, vec::Vec};
@@ -9,7 +9,7 @@ pub use result::{group_end, group_start};
 #[derive(Debug)]
 pub struct Comm {
     comm: sys::ncclComm_t,
-    device: Arc<CudaDevice>,
+    stream: Arc<CudaStream>,
     rank: usize,
     world_size: usize,
 }
@@ -111,31 +111,42 @@ impl Comm {
     /// });
     /// group_start().unwrap();
     /// ```
-    pub fn from_devices(devices: Vec<Arc<CudaDevice>>) -> Result<Vec<Self>, result::NcclError> {
-        let n_devices = devices.len();
-        let mut comms = vec![std::ptr::null_mut(); n_devices];
-        let ordinals: Vec<_> = devices.iter().map(|d| d.ordinal() as i32).collect();
+    pub fn from_devices(streams: Vec<Arc<CudaStream>>) -> Result<Vec<Self>, result::NcclError> {
+        let n_streams = streams.len();
+        let mut comms = vec![std::ptr::null_mut(); n_streams];
+        let ordinals: Vec<_> = streams
+            .iter()
+            .map(|d| d.context().ordinal() as i32)
+            .collect();
         unsafe {
-            result::comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr())?;
+            result::comm_init_all(comms.as_mut_ptr(), n_streams as i32, ordinals.as_ptr())?;
         }
 
         let comms: Vec<Self> = comms
             .into_iter()
-            .zip(devices.iter().cloned())
+            .zip(streams.iter().cloned())
             .enumerate()
-            .map(|(rank, (comm, device))| Self {
+            .map(|(rank, (comm, stream))| Self {
                 comm,
-                device,
+                stream,
                 rank,
-                world_size: n_devices,
+                world_size: n_streams,
             })
             .collect();
 
         Ok(comms)
     }
 
-    pub fn device(&self) -> Arc<CudaDevice> {
-        self.device.clone()
+    pub fn stream(&self) -> Arc<CudaStream> {
+        self.stream.clone()
+    }
+
+    pub fn context(&self) -> &Arc<CudaContext> {
+        self.stream.context()
+    }
+
+    pub fn ordinal(&self) -> usize {
+        self.stream.ctx.ordinal
     }
 
     pub fn rank(&self) -> usize {
@@ -173,7 +184,7 @@ impl Comm {
     /// assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
     /// ```
     pub fn from_rank(
-        device: Arc<CudaDevice>,
+        stream: Arc<CudaStream>,
         rank: usize,
         world_size: usize,
         id: Id,
@@ -193,7 +204,7 @@ impl Comm {
         };
         Ok(Self {
             comm,
-            device,
+            stream,
             rank,
             world_size,
         })
@@ -206,16 +217,18 @@ impl Comm {
         data: &S,
         peer: i32,
     ) -> Result<(), result::NcclError> {
+        data.block_for_read(&self.stream).unwrap();
         unsafe {
             result::send(
-                *data.device_ptr() as *mut _,
+                *data.device_ptr() as _,
                 data.len(),
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
-            )?;
-        }
+                self.stream.cu_stream as _,
+            )
+        }?;
+        data.record_read(&self.stream).unwrap();
         Ok(())
     }
 
@@ -224,16 +237,19 @@ impl Comm {
         buff: &mut R,
         peer: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        buff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::recv(
-                *buff.device_ptr_mut() as *mut _,
+                *buff.device_ptr_mut() as _,
                 buff.len(),
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        buff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// Broadcasts a value from `root` rank to every other ranks `recvbuff`.
@@ -250,21 +266,33 @@ impl Comm {
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         debug_assert!(sendbuff.is_some() || self.rank != root as usize);
+
+        if let Some(buff) = sendbuff {
+            buff.block_for_read(&self.stream).unwrap();
+        }
+        recvbuff.block_for_write(&self.stream).unwrap();
+
         let send_ptr = match sendbuff {
-            Some(buffer) => *buffer.device_ptr() as *mut _,
+            Some(buffer) => *buffer.device_ptr() as _,
             None => ptr::null(),
         };
-        unsafe {
+
+        let result = unsafe {
             result::broadcast(
                 send_ptr,
-                *recvbuff.device_ptr_mut() as *mut _,
+                *recvbuff.device_ptr_mut() as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
+        };
+        if let Some(buff) = sendbuff {
+            buff.record_read(&self.stream).unwrap();
         }
+        recvbuff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// In place version of [Comm::broadcast()].
@@ -274,17 +302,22 @@ impl Comm {
         recvbuff: &mut R,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        recvbuff.block_for_read(&self.stream).unwrap();
+        recvbuff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::broadcast(
-                *recvbuff.device_ptr_mut() as *const _,
-                *recvbuff.device_ptr_mut() as *mut _,
+                *recvbuff.device_ptr_mut() as _,
+                *recvbuff.device_ptr_mut() as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        recvbuff.record_read(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allgather)
@@ -293,16 +326,21 @@ impl Comm {
         sendbuff: &S,
         recvbuff: &mut R,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        sendbuff.block_for_read(&self.stream).unwrap();
+        recvbuff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::all_gather(
-                *sendbuff.device_ptr() as *mut _,
-                *recvbuff.device_ptr_mut() as *mut _,
+                *sendbuff.device_ptr() as _,
+                *recvbuff.device_ptr_mut() as _,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        sendbuff.record_read(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allreduce)
@@ -312,17 +350,22 @@ impl Comm {
         recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        sendbuff.block_for_read(&self.stream).unwrap();
+        recvbuff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::all_reduce(
-                *sendbuff.device_ptr() as *mut _,
-                *recvbuff.device_ptr_mut() as *mut _,
+                *sendbuff.device_ptr() as _,
+                *recvbuff.device_ptr_mut() as _,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        sendbuff.record_read(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// In place version of [Comm::all_reduce()].
@@ -332,17 +375,22 @@ impl Comm {
         buff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        buff.block_for_read(&self.stream).unwrap();
+        buff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::all_reduce(
-                *buff.device_ptr_mut() as *mut _,
-                *buff.device_ptr_mut() as *mut _,
+                *buff.device_ptr_mut() as _,
+                *buff.device_ptr_mut() as _,
                 buff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        buff.record_read(&self.stream).unwrap();
+        buff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// Reduces the sendbuff from all ranks into the recvbuff on the
@@ -354,27 +402,41 @@ impl Comm {
     pub fn reduce<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
-        recvbuff: Option<&mut R>,
+        mut recvbuff: Option<&mut R>,
         reduce_op: &ReduceOp,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         debug_assert!(recvbuff.is_some() || self.rank != root as usize);
-        let recv_ptr = match recvbuff {
-            Some(buffer) => *buffer.device_ptr_mut() as *mut _,
-            None => ptr::null_mut(),
-        };
-        unsafe {
+
+        sendbuff.block_for_read(&self.stream).unwrap();
+        if let Some(buff) = recvbuff.as_ref() {
+            buff.block_for_write(&self.stream).unwrap();
+        }
+
+        let recv_ptr = recvbuff
+            .as_mut()
+            .map(|buff| *(*buff).device_ptr_mut() as _)
+            .unwrap_or(ptr::null_mut());
+
+        let result = unsafe {
             result::reduce(
-                *sendbuff.device_ptr() as *mut _,
+                *sendbuff.device_ptr() as _,
                 recv_ptr,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
+        };
+
+        sendbuff.record_read(&self.stream).unwrap();
+        if let Some(buff) = recvbuff {
+            buff.record_write(&self.stream).unwrap();
         }
+
+        result
     }
 
     /// In place version of [Comm::reduce()].
@@ -385,18 +447,23 @@ impl Comm {
         reduce_op: &ReduceOp,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        recvbuff.block_for_read(&self.stream).unwrap();
+        recvbuff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::reduce(
-                *recvbuff.device_ptr_mut() as *mut _,
-                *recvbuff.device_ptr_mut() as *mut _,
+                *recvbuff.device_ptr_mut() as _,
+                *recvbuff.device_ptr_mut() as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        recvbuff.record_read(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream).unwrap();
+        result
     }
 
     /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#reducescatter)
@@ -406,17 +473,22 @@ impl Comm {
         recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        unsafe {
+        sendbuff.block_for_read(&self.stream).unwrap();
+        recvbuff.block_for_write(&self.stream).unwrap();
+        let result = unsafe {
             result::reduce_scatter(
-                *sendbuff.device_ptr() as *mut _,
-                *recvbuff.device_ptr_mut() as *mut _,
+                *sendbuff.device_ptr() as _,
+                *recvbuff.device_ptr_mut() as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.device.stream.cu_stream as *mut _,
+                self.stream.cu_stream as _,
             )
-        }
+        };
+        sendbuff.record_read(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream).unwrap();
+        result
     }
 }
 
@@ -442,21 +514,22 @@ mod tests {
     #[test]
     fn test_all_reduce() {
         let n = 2;
-        let n_devices = CudaDevice::count().unwrap() as usize;
+        let n_devices = CudaContext::device_count().unwrap() as usize;
         let id = Id::new().unwrap();
         let threads: Vec<_> = (0..n_devices)
             .map(|i| {
                 println!("III {i}");
                 std::thread::spawn(move || {
                     println!("Within thread {i}");
-                    let dev = CudaDevice::new(i).unwrap();
-                    let comm = Comm::from_rank(dev.clone(), i, n_devices, id).unwrap();
-                    let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
-                    let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+                    let ctx = CudaContext::new(i).unwrap();
+                    let stream = ctx.default_stream();
+                    let comm = Comm::from_rank(stream.clone(), i, n_devices, id).unwrap();
+                    let slice = stream.memcpy_stod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let mut slice_receive = stream.alloc_zeros::<f32>(n).unwrap();
                     comm.all_reduce(&slice, &mut slice_receive, &ReduceOp::Sum)
                         .unwrap();
 
-                    let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+                    let out = stream.memcpy_dtov(&slice_receive).unwrap();
 
                     assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
                 })
@@ -470,24 +543,25 @@ mod tests {
     #[test]
     fn test_all_reduce_views() {
         let n = 2;
-        let n_devices = CudaDevice::count().unwrap() as usize;
+        let n_devices = CudaContext::device_count().unwrap() as usize;
         let id = Id::new().unwrap();
         let threads: Vec<_> = (0..n_devices)
             .map(|i| {
                 println!("III {i}");
                 std::thread::spawn(move || {
                     println!("Within thread {i}");
-                    let dev = CudaDevice::new(i).unwrap();
-                    let comm = Comm::from_rank(dev.clone(), i, n_devices, id).unwrap();
-                    let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
-                    let mut slice_receive = dev.alloc_zeros::<f32>(n).unwrap();
+                    let ctx = CudaContext::new(i).unwrap();
+                    let stream = ctx.default_stream();
+                    let comm = Comm::from_rank(stream.clone(), i, n_devices, id).unwrap();
+                    let slice = stream.memcpy_stod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let mut slice_receive = stream.alloc_zeros::<f32>(n).unwrap();
                     let slice_view = slice.slice(..);
                     let mut slice_receive_view = slice_receive.slice_mut(..);
 
                     comm.all_reduce(&slice_view, &mut slice_receive_view, &ReduceOp::Sum)
                         .unwrap();
 
-                    let out = dev.dtoh_sync_copy(&slice_receive).unwrap();
+                    let out = stream.memcpy_dtov(&slice_receive).unwrap();
 
                     assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
                 })
