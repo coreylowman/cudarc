@@ -27,7 +27,6 @@ use std::sync::Arc;
 /// 3. LogNormal - [CudaRng::fill_with_log_normal()]
 pub struct CudaRng {
     pub(crate) gen: sys::curandGenerator_t,
-    #[allow(unused)]
     pub(crate) stream: Arc<CudaStream>,
 }
 
@@ -69,7 +68,10 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::UniformFill<T>,
     {
-        unsafe { result::UniformFill::fill(self.gen, *dst.device_ptr_mut() as *mut T, dst.len()) }
+        dst.block_for_write(&self.stream).unwrap();
+        unsafe { result::UniformFill::fill(self.gen, *dst.device_ptr_mut() as *mut T, dst.len()) }?;
+        dst.record_write(&self.stream).unwrap();
+        Ok(())
     }
 
     /// Fill the [CudaSlice] with data from a `Normal(mean, std)` distribution.
@@ -82,6 +84,7 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::NormalFill<T>,
     {
+        dst.block_for_write(&self.stream).unwrap();
         unsafe {
             result::NormalFill::fill(
                 self.gen,
@@ -90,7 +93,9 @@ impl CudaRng {
                 mean,
                 std,
             )
-        }
+        }?;
+        dst.record_write(&self.stream).unwrap();
+        Ok(())
     }
 
     /// Fill the `CudaRc` with data from a `LogNormal(mean, std)` distribution.
@@ -103,6 +108,7 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::LogNormalFill<T>,
     {
+        dst.block_for_write(&self.stream).unwrap();
         unsafe {
             result::LogNormalFill::fill(
                 self.gen,
@@ -111,7 +117,9 @@ impl CudaRng {
                 mean,
                 std,
             )
-        }
+        }?;
+        dst.record_write(&self.stream).unwrap();
+        Ok(())
     }
 }
 
