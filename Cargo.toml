@@ -47,13 +47,10 @@ curand = ["driver"]
 nccl = ["driver"]
 
 std = []
-no-std = ["no-std-compat/std", "dep:spin"]
+no-std = ["no-std-compat/std"]
 f16 = ["dep:half"]
 
 [dependencies]
-spin = { version = "0.9.8", optional = true, features = [
-    "rwlock",
-], default-features = false }
 no-std-compat = { version = "0.4.1", optional = true, features = ["alloc"] }
 half = { version = "2.4.1", optional = true, default-features = false, features = [
     "num-traits",

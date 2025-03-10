@@ -6,6 +6,10 @@ use crate::driver::{result, sys};
 
 pub trait HostSlice<T> {
     fn len(&self) -> usize;
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     /// # Safety
     /// This is **only** safe if the resulting slice is used with `stream`. Otherwise
     /// You may run into device synchronization errors
