@@ -3,15 +3,15 @@ use crate::driver::{
     sys::{self, lib, CUfunc_cache_enum, CUfunction_attribute_enum},
 };
 
-use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
-
 use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
     string::String,
+    sync::Arc,
+    vec::Vec,
 };
 
-use std::{collections::BTreeMap, sync::Arc, vec::Vec};
+use super::DeviceRepr;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct CudaContext {
@@ -288,7 +288,7 @@ impl<T: DeviceRepr> Clone for CudaSlice<T> {
     }
 }
 
-impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
+impl<T: Clone + Default + DeviceRepr> TryFrom<CudaSlice<T>> for Vec<T> {
     type Error = result::DriverError;
     fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
         value.stream.memcpy_dtov(&value)
@@ -302,7 +302,6 @@ impl<T: Clone + Default + DeviceRepr + Unpin> TryFrom<CudaSlice<T>> for Vec<T> {
 #[derive(Debug)]
 pub struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
-    pub(crate) functions: BTreeMap<String, sys::CUfunction>,
     pub(crate) ctx: Arc<CudaContext>,
 }
 
@@ -323,6 +322,9 @@ pub struct CudaFunction {
     #[allow(unused)]
     pub(crate) module: Arc<CudaModule>,
 }
+
+unsafe impl Send for CudaFunction {}
+unsafe impl Sync for CudaFunction {}
 
 impl CudaFunction {
     pub fn occupancy_available_dynamic_smem_per_block(
@@ -493,9 +495,6 @@ impl CudaFunction {
         Ok(())
     }
 }
-
-unsafe impl Send for CudaFunction {}
-unsafe impl Sync for CudaFunction {}
 
 /// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
 /// upon the completion of this stream's work.
@@ -734,14 +733,16 @@ impl<T> CudaSlice<T> {
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
-            ptr: self.cu_device_ptr,
-            len,
-            read: &self.read,
-            write: &self.write,
-            stream: &self.stream,
-            marker: PhantomData,
-        })
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaView {
+                ptr: self.cu_device_ptr,
+                len,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            },
+        )
     }
 }
 
@@ -785,14 +786,16 @@ impl<'a, T> CudaView<'a, T> {
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
-            ptr: self.ptr,
-            len,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        })
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaView {
+                ptr: self.ptr,
+                len,
+                read: self.read,
+                write: self.write,
+                stream: self.stream,
+                marker: PhantomData,
+            },
+        )
     }
 }
 
@@ -885,14 +888,16 @@ impl<T> CudaSlice<T> {
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
-            ptr: self.cu_device_ptr,
-            len,
-            read: &self.read,
-            write: &mut self.write,
-            stream: &self.stream,
-            marker: PhantomData,
-        })
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaViewMut {
+                ptr: self.cu_device_ptr,
+                len,
+                read: &self.read,
+                write: &mut self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            },
+        )
     }
 
     /// Splits the [CudaSlice] into two at the given index, returning two [CudaViewMut] for the two halves.
@@ -998,14 +1003,16 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaView {
-            ptr: self.ptr,
-            len,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        })
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaView {
+                ptr: self.ptr,
+                len,
+                read: self.read,
+                write: self.write,
+                stream: self.stream,
+                marker: PhantomData,
+            },
+        )
     }
 
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
@@ -1089,14 +1096,16 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.num_bytes()).then_some(CudaViewMut {
-            ptr: self.ptr,
-            len,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        })
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaViewMut {
+                ptr: self.ptr,
+                len,
+                read: self.read,
+                write: self.write,
+                stream: self.stream,
+                marker: PhantomData,
+            },
+        )
     }
 }
 

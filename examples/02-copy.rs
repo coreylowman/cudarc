@@ -1,4 +1,4 @@
-use cudarc::driver::{CudaContext, CudaSlice, DeviceSlice, DriverError};
+use cudarc::driver::{CudaContext, CudaSlice, DriverError};
 
 fn main() -> Result<(), DriverError> {
     let ctx = CudaContext::new(0)?;

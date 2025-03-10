@@ -2,7 +2,7 @@ use crate::driver::{result, sys::lib};
 
 /// Calls [profiler_start()] in [Profiler::new()], and [profiler_stop()] in [Drop].
 #[derive(Default)]
-pub struct Profiler {}
+pub struct Profiler;
 
 impl Profiler {
     /// Enables profile collection by the active profiling tool for the current context. If profiling is already enabled, then Profiler::new() has no effect.

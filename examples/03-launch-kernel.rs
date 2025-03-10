@@ -8,10 +8,10 @@ fn main() -> Result<(), DriverError> {
     let stream = ctx.default_stream();
 
     // You can load a function from a pre-compiled PTX like so:
-    let module = ctx.load_ptx(Ptx::from_file("./examples/sin.ptx"), &["sin_kernel"])?;
+    let module = ctx.load_module(Ptx::from_file("./examples/sin.ptx"))?;
 
-    // and then retrieve the function with `get_func`
-    let f = module.get_func("sin_kernel").unwrap();
+    // and then load a function from it:
+    let f = module.load_function("sin_kernel").unwrap();
 
     let a_host = [1.0, 2.0, 3.0];
 

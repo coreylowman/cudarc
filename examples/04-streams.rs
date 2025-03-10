@@ -7,8 +7,8 @@ fn main() -> Result<(), DriverError> {
     let ctx = CudaContext::new(0)?;
     let stream = ctx.default_stream();
 
-    let module = ctx.load_ptx(Ptx::from_file("./examples/sin.ptx"), &["sin_kernel"])?;
-    let f = module.get_func("sin_kernel").unwrap();
+    let module = ctx.load_module(Ptx::from_file("./examples/sin.ptx"))?;
+    let f = module.load_function("sin_kernel")?;
 
     let n = 3;
     let a_host = [1.0, 2.0, 3.0];
