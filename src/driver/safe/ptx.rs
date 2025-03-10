@@ -3,21 +3,20 @@ use crate::{
     nvrtc::{Ptx, PtxKind},
 };
 
-use super::core::{CudaContext, CudaFunction, CudaModule};
+use super::{
+    core::{CudaContext, CudaFunction, CudaModule},
+    DriverError,
+};
 
 use std::ffi::CString;
-use std::{collections::BTreeMap, sync::Arc};
+use std::sync::Arc;
 
 impl CudaContext {
     /// Dynamically load a set of [crate::driver::CudaFunction] from a jit compiled ptx.
     ///
     /// - `ptx` contains the compiled ptx
     /// - `func_names` is a slice of function names to load into the module during build.
-    pub fn load_ptx(
-        self: &Arc<Self>,
-        ptx: Ptx,
-        func_names: &[&str],
-    ) -> Result<Arc<CudaModule>, result::DriverError> {
+    pub fn load_module(self: &Arc<Self>, ptx: Ptx) -> Result<Arc<CudaModule>, result::DriverError> {
         self.bind_to_thread()?;
 
         let cu_module = match ptx.0 {
@@ -33,35 +32,20 @@ impl CudaContext {
                 result::module::load(name_c)
             }
         }?;
-        let mut functions = BTreeMap::new();
-        for &fn_name in func_names.iter() {
-            let fn_name_c = CString::new(fn_name).unwrap();
-            let cu_function = unsafe { result::module::get_function(cu_module, fn_name_c) }?;
-            functions.insert(fn_name.into(), cu_function);
-        }
         Ok(Arc::new(CudaModule {
             cu_module,
-            functions,
             ctx: self.clone(),
         }))
     }
 }
 
 impl CudaModule {
-    /// Returns reference to function with `name`. If function
-    /// was not already loaded into CudaModule, then `None`
-    /// is returned.
-    pub fn get_func(self: &Arc<Self>, name: &str) -> Option<CudaFunction> {
-        self.functions
-            .get(name)
-            .cloned()
-            .map(|cu_function| CudaFunction {
-                cu_function,
-                module: self.clone(),
-            })
-    }
-
-    pub fn has_func(&self, name: &str) -> bool {
-        self.functions.contains_key(name)
+    pub fn load_function(self: &Arc<Self>, fn_name: &str) -> Result<CudaFunction, DriverError> {
+        let fn_name_c = CString::new(fn_name).unwrap();
+        let cu_function = unsafe { result::module::get_function(self.cu_module, fn_name_c) }?;
+        Ok(CudaFunction {
+            cu_function,
+            module: self.clone(),
+        })
     }
 }

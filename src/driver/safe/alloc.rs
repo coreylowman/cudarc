@@ -246,7 +246,7 @@ impl CudaStream {
         Ok(())
     }
 
-    pub fn memcpy_dtod<T: DeviceRepr, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
+    pub fn memcpy_dtod<T, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         src: &Src,
         dst: &mut Dst,

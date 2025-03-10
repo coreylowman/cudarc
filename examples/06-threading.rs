@@ -15,13 +15,13 @@ fn main() -> Result<(), DriverError> {
         thread::scope(|s| {
             let ptx = compile_ptx(KERNEL_SRC).unwrap();
             let ctx = CudaContext::new(0)?;
-            let module = ctx.load_ptx(ptx, &["hello_world"])?;
+            let module = ctx.load_module(ptx)?;
             for i in 0..10i32 {
                 let thread_ctx = ctx.clone();
                 let thread_module = module.clone();
                 s.spawn(move || {
                     let stream = thread_ctx.default_stream();
-                    let f = thread_module.get_func("hello_world").unwrap();
+                    let f = thread_module.load_function("hello_world")?;
                     unsafe {
                         stream
                             .launch_builder(&f)
@@ -43,9 +43,9 @@ fn main() -> Result<(), DriverError> {
                 s.spawn(move || {
                     let ptx = compile_ptx(KERNEL_SRC).unwrap();
                     let ctx = CudaContext::new(0)?;
-                    let module = ctx.load_ptx(ptx, &["hello_world"])?;
+                    let module = ctx.load_module(ptx)?;
                     let stream = ctx.default_stream();
-                    let f = module.get_func("hello_world").unwrap();
+                    let f = module.load_function("hello_world")?;
                     unsafe {
                         stream
                             .launch_builder(&f)

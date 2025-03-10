@@ -34,8 +34,8 @@ fn main() -> Result<(), DriverError> {
     let stream = ctx.default_stream();
 
     let ptx = compile_ptx(PTX_SRC).unwrap();
-    let module = ctx.load_ptx(ptx, &["my_custom_kernel"])?;
-    let f = module.get_func("my_custom_kernel").unwrap();
+    let module = ctx.load_module(ptx)?;
+    let f = module.load_function("my_custom_kernel")?;
 
     // try changing some of these values to see a device assert
     let thing = MyCoolRustStruct {

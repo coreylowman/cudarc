@@ -29,8 +29,8 @@ fn main() -> Result<(), DriverError> {
     let stream = ctx.default_stream();
     println!("Built in {:?}", start.elapsed());
 
-    let module = ctx.load_ptx(ptx, &["matmul"])?;
-    let f = module.get_func("matmul").unwrap();
+    let module = ctx.load_module(ptx)?;
+    let f = module.load_function("matmul")?;
     println!("Loaded in {:?}", start.elapsed());
 
     let a_host = [1.0f32, 2.0, 3.0, 4.0];

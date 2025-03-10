@@ -141,7 +141,7 @@ impl LaunchArgs<'_> {
     /// ```ignore
     /// # use cudarc::driver::*;
     /// # let dev = CudaDevice::new(0).unwrap();
-    /// let my_kernel: CudaFunction = dev.get_func("my_module", "my_kernel").unwrap();
+    /// let my_kernel: CudaFunction = dev.load_func("my_module", "my_kernel").unwrap();
     /// let cfg: LaunchConfig = LaunchConfig {
     ///     grid_dim: (1, 1, 1),
     ///     block_dim: (1, 1, 1),
@@ -314,8 +314,8 @@ extern \"C\" __global__ void kernel(const TensorMeta meta) {
         )
         .unwrap();
 
-        let module = ctx.load_ptx(ptx, &["kernel"]).unwrap();
-        let f = module.get_func("kernel").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("kernel").unwrap();
 
         let meta = TensorMeta {
             num_dims: 128,
@@ -349,8 +349,8 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         let stream = ctx.default_stream();
 
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["sin_kernel"]).unwrap();
-        let sin_kernel = module.get_func("sin_kernel").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let sin_kernel = module.load_function("sin_kernel").unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
@@ -383,8 +383,8 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         let stream = ctx.default_stream();
 
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["sin_kernel"]).unwrap();
-        let sin_kernel = module.get_func("sin_kernel").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let sin_kernel = module.load_function("sin_kernel").unwrap();
 
         for numel in [256, 512, 1024, 1280, 1536, 2048] {
             let mut a = Vec::with_capacity(numel);
@@ -415,8 +415,8 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         let stream = ctx.default_stream();
 
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["sin_kernel"]).unwrap();
-        let f = module.get_func("sin_kernel").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("sin_kernel").unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
         let a_dev = stream.memcpy_stod(&a_host).unwrap();
@@ -488,8 +488,8 @@ extern \"C\" __global__ void floating(float f, double d) {
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["int_8bit"]).unwrap();
-        let f = module.get_func("int_8bit").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("int_8bit").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)
@@ -508,8 +508,8 @@ extern \"C\" __global__ void floating(float f, double d) {
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["int_16bit"]).unwrap();
-        let f = module.get_func("int_16bit").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("int_16bit").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)
@@ -528,8 +528,8 @@ extern \"C\" __global__ void floating(float f, double d) {
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["int_32bit"]).unwrap();
-        let f = module.get_func("int_32bit").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("int_32bit").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)
@@ -548,8 +548,8 @@ extern \"C\" __global__ void floating(float f, double d) {
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["int_64bit"]).unwrap();
-        let f = module.get_func("int_64bit").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("int_64bit").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)
@@ -568,8 +568,8 @@ extern \"C\" __global__ void floating(float f, double d) {
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let module = ctx.load_ptx(ptx, &["floating"]).unwrap();
-        let f = module.get_func("floating").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("floating").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)
@@ -606,8 +606,8 @@ extern \"C\" __global__ void halfs(__half h) {
         .unwrap();
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
-        let module = ctx.load_ptx(ptx, &["halfs"]).unwrap();
-        let f = module.get_func("halfs").unwrap();
+        let module = ctx.load_ptx(ptx).unwrap();
+        let f = module.load_func("halfs").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)
@@ -632,8 +632,8 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     fn test_par_launch() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
         let ctx = CudaContext::new(0)?;
-        let module = ctx.load_ptx(ptx, &["slow_worker"]).unwrap();
-        let f = module.get_func("slow_worker").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("slow_worker").unwrap();
 
         let stream = ctx.new_stream()?;
         let slice = stream.alloc_zeros::<f32>(1000)?;
@@ -706,8 +706,8 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     fn test_multi_stream_concurrent_reads() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
         let ctx = CudaContext::new(0)?;
-        let module = ctx.load_ptx(ptx, &["slow_worker"])?;
-        let f = module.get_func("slow_worker").unwrap();
+        let module = ctx.load_module(ptx)?;
+        let f = module.load_function("slow_worker")?;
 
         let stream1 = ctx.new_stream()?;
 
@@ -746,8 +746,8 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     fn test_multi_stream_writes_block() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
         let ctx = CudaContext::new(0)?;
-        let module = ctx.load_ptx(ptx, &["slow_worker"])?;
-        let f = module.get_func("slow_worker").unwrap();
+        let module = ctx.load_module(ptx)?;
+        let f = module.load_function("slow_worker")?;
 
         let stream1 = ctx.new_stream()?;
 
