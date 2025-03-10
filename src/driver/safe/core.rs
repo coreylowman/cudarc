@@ -11,12 +11,7 @@ use std::{
     string::String,
 };
 
-#[cfg(feature = "no-std")]
-use spin::RwLock;
-#[cfg(not(feature = "no-std"))]
-use std::sync::RwLock;
-
-use std::{collections::BTreeMap, marker::Unpin, sync::Arc, vec::Vec};
+use std::{collections::BTreeMap, sync::Arc, vec::Vec};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct CudaContext {
@@ -215,120 +210,6 @@ impl CudaEvent {
     }
 }
 
-/// A wrapper around [sys::CUdevice], [sys::CUcontext], [sys::CUstream],
-/// and [CudaFunction].
-///
-/// ```rust
-/// # use cudarc::driver::CudaDevice;
-/// let dev = CudaDevice::new(0).unwrap();
-/// ```
-///
-/// # Safety
-/// 1. impl [Drop] to call all the corresponding resource cleanup methods
-/// 2. Doesn't impl clone, so you can't have multiple device pointers
-///    hanging around.
-/// 3. Any allocations enforce that self is an [Arc], meaning no allocation
-///    can outlive the [CudaDevice]
-#[derive(Debug)]
-pub struct CudaDevice {
-    pub(crate) stream: Arc<CudaStream>,
-    pub(crate) modules: RwLock<BTreeMap<String, Arc<CudaModule>>>,
-}
-
-unsafe impl Send for CudaDevice {}
-unsafe impl Sync for CudaDevice {}
-
-impl CudaDevice {
-    /// Creates a new [CudaDevice] on device index `ordinal`.
-    pub fn new(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
-        let ctx = CudaContext::new(ordinal)?;
-        let stream = ctx.default_stream();
-        Ok(Arc::new(CudaDevice {
-            stream,
-            modules: RwLock::new(BTreeMap::new()),
-        }))
-    }
-
-    /// Creates a new [CudaDevice] on device index `ordinal` on a **non-default stream**.
-    pub fn new_with_stream(ordinal: usize) -> Result<Arc<Self>, result::DriverError> {
-        let ctx = CudaContext::new(ordinal)?;
-        let stream = ctx.new_stream()?;
-        Ok(Arc::new(CudaDevice {
-            stream,
-            modules: RwLock::new(BTreeMap::new()),
-        }))
-    }
-
-    pub fn count() -> Result<i32, result::DriverError> {
-        CudaContext::device_count()
-    }
-
-    /// Get the `ordinal` index of this [CudaDevice].
-    pub fn ordinal(&self) -> usize {
-        self.stream.ctx.ordinal
-    }
-
-    /// Get the name of this device.
-    pub fn name(&self) -> Result<String, result::DriverError> {
-        self.stream.ctx.name()
-    }
-
-    /// Get the UUID of this device.
-    pub fn uuid(&self) -> Result<sys::CUuuid, result::DriverError> {
-        self.stream.ctx.uuid()
-    }
-
-    /// Get the underlying [sys::CUdevice] of this [CudaDevice].
-    ///
-    /// # Safety
-    /// While this function is marked as safe, actually using the
-    /// returned object is unsafe.
-    ///
-    /// **You must not free/release the device pointer**, as it is still
-    /// owned by the [CudaDevice].
-    pub fn cu_device(&self) -> &sys::CUdevice {
-        &self.stream.ctx.cu_device
-    }
-
-    /// Get the underlying [sys::CUcontext] of this [CudaDevice].
-    ///
-    /// # Safety
-    /// While this function is marked as safe, actually using the
-    /// returned object is unsafe.
-    ///
-    /// **You must not free/release the context pointer**, as it is still
-    /// owned by the [CudaDevice].
-    pub fn cu_primary_ctx(&self) -> &sys::CUcontext {
-        &self.stream.ctx.cu_ctx
-    }
-
-    pub fn stream(&self) -> &Arc<CudaStream> {
-        &self.stream
-    }
-
-    pub fn context(&self) -> &Arc<CudaContext> {
-        self.stream.context()
-    }
-
-    /// Get the underlying [sys::CUstream] that this [CudaDevice] executes
-    /// all of its work on.
-    ///
-    /// # Safety
-    /// While this function is marked as safe, actually using the
-    /// returned object is unsafe.
-    ///
-    /// **You must not free/release the stream pointer**, as it is still
-    /// owned by the [CudaDevice].
-    pub fn cu_stream(&self) -> &sys::CUstream {
-        &self.stream.cu_stream
-    }
-
-    /// Get the value of the specified attribute of this [CudaDevice].
-    pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
-        self.stream.ctx.attribute(attrib)
-    }
-}
-
 /// Contains a reference counted pointer to both
 /// device and host memory allocated for type `T`.
 ///
@@ -377,6 +258,14 @@ impl<T> Drop for CudaSlice<T> {
 }
 
 impl<T> CudaSlice<T> {
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
     pub fn ordinal(&self) -> usize {
         self.stream.ctx.ordinal
     }
@@ -769,34 +658,6 @@ impl CudaStream {
     }
 }
 
-impl CudaDevice {
-    /// Allocates a new stream that can execute kernels concurrently to the default stream.
-    ///
-    /// The synchronization with default stream happens in **code order**. See [CudaStream] docstring.
-    ///
-    /// This stream synchronizes in the following way:
-    /// 1. On creation it adds a wait for any existing work on the default work stream to complete
-    /// 2. On drop it adds a wait for any existign work on Self to complete *to the default stream*.
-    pub fn fork_default_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, result::DriverError> {
-        self.stream.fork()
-    }
-
-    /// Forces [CudaStream] to drop, causing the default work stream to block on `stream`'s completion.
-    /// **This is asynchronous with respect to the host.**
-    pub fn wait_for(self: &Arc<Self>, stream: &CudaStream) -> Result<(), result::DriverError> {
-        self.stream.wait(&stream.record_event(None)?)
-    }
-}
-
-impl CudaStream {
-    /// Records the current default stream's workload, and then causes `self`
-    /// to wait for the default stream to finish that recorded workload.
-    pub fn wait_for_default(&self) -> Result<(), result::DriverError> {
-        let default_stream = self.context().default_stream();
-        self.wait(&default_stream.record_event(None)?)
-    }
-}
-
 /// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()] or [CudaSlice::slice()].
 ///
 /// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
@@ -808,6 +669,16 @@ pub struct CudaView<'a, T> {
     pub(crate) write: &'a CudaEvent,
     pub(crate) stream: &'a Arc<CudaStream>,
     marker: PhantomData<&'a [T]>,
+}
+
+impl<T> CudaView<'_, T> {
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
 }
 
 impl<T> CudaSlice<T> {
@@ -936,6 +807,16 @@ pub struct CudaViewMut<'a, T> {
     pub(crate) write: &'a CudaEvent,
     pub(crate) stream: &'a Arc<CudaStream>,
     marker: PhantomData<&'a mut [T]>,
+}
+
+impl<T> CudaViewMut<'_, T> {
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
 }
 
 impl<T> CudaSlice<T> {
@@ -1239,8 +1120,9 @@ mod tests {
 
     #[test]
     fn test_transmutes() {
-        let dev = CudaDevice::new(0).unwrap();
-        let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
         assert!(unsafe { slice.transmute::<f32>(25) }.is_some());
         assert!(unsafe { slice.transmute::<f32>(26) }.is_none());
         assert!(unsafe { slice.transmute_mut::<f32>(25) }.is_some());
@@ -1259,5 +1141,23 @@ mod tests {
             assert!(unsafe { view_mut.transmute_mut::<f32>(25) }.is_some());
             assert!(unsafe { view_mut.transmute_mut::<f32>(26) }.is_none());
         }
+    }
+
+    #[test]
+    fn test_threading() {
+        let ctx1 = CudaContext::new(0).unwrap();
+        let ctx2 = ctx1.clone();
+
+        let thread1 = std::thread::spawn(move || {
+            ctx1.bind_to_thread()?;
+            ctx1.default_stream().alloc_zeros::<f32>(10)
+        });
+        let thread2 = std::thread::spawn(move || {
+            ctx2.bind_to_thread()?;
+            ctx2.default_stream().alloc_zeros::<f32>(10)
+        });
+
+        let _: crate::driver::CudaSlice<f32> = thread1.join().unwrap().unwrap();
+        let _: crate::driver::CudaSlice<f32> = thread2.join().unwrap().unwrap();
     }
 }

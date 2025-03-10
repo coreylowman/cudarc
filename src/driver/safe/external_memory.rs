@@ -1,9 +1,9 @@
-use core::mem::ManuallyDrop;
 use std::fs::File;
+use std::mem::ManuallyDrop;
 use std::ops::Range;
 use std::sync::Arc;
 
-use super::{CudaContext, CudaDevice, CudaEvent, CudaStream, DevicePtr, DeviceSlice};
+use super::{CudaContext, CudaEvent, CudaStream, DevicePtr, DeviceSlice};
 use crate::driver::{result, sys, DriverError};
 
 /// An abstraction for imported external memory.
@@ -72,21 +72,6 @@ impl CudaContext {
             ctx: self.clone(),
             _file: ManuallyDrop::new(file),
         })
-    }
-}
-
-impl CudaDevice {
-    /// Import external memory from a [`File`].
-    ///
-    /// # Safety
-    /// `size` must be the size of the external memory in bytes.
-    #[cfg(any(unix, windows))]
-    pub unsafe fn import_external_memory(
-        self: &Arc<Self>,
-        file: File,
-        size: u64,
-    ) -> Result<ExternalMemory, DriverError> {
-        self.stream.ctx.import_external_memory(file, size)
     }
 }
 

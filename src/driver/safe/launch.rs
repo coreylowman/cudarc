@@ -276,7 +276,7 @@ impl LaunchArgs<'_> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        driver::{CudaContext, CudaDevice, DeviceSlice, DriverError},
+        driver::{CudaContext, DriverError},
         nvrtc::compile_ptx_with_opts,
     };
 
@@ -345,20 +345,20 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
     #[test]
     fn test_launch_with_mut_and_ref_cudarc() {
-        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
 
-        let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
+        let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
+        let module = ctx.load_ptx(ptx, &["sin_kernel"]).unwrap();
+        let sin_kernel = module.get_func("sin_kernel").unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
-        let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
-
+        let a_dev = stream.memcpy_stod(&a_host).unwrap();
         let mut b_dev = a_dev.clone();
 
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&sin_kernel)
                 .arg(&mut b_dev)
                 .arg(&a_dev)
@@ -367,7 +367,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         }
         .unwrap();
 
-        let b_host = dev.sync_reclaim(b_dev).unwrap();
+        let b_host = stream.memcpy_dtov(&b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
@@ -379,19 +379,21 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
     #[test]
     fn test_large_launches() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
+        let module = ctx.load_ptx(ptx, &["sin_kernel"]).unwrap();
+        let sin_kernel = module.get_func("sin_kernel").unwrap();
+
         for numel in [256, 512, 1024, 1280, 1536, 2048] {
             let mut a = Vec::with_capacity(numel);
             a.resize(numel, 1.0f32);
 
-            let a = dev.htod_copy(a).unwrap();
-            let mut b = dev.alloc_zeros::<f32>(numel).unwrap();
-
-            let sin_kernel = dev.get_func("sin", "sin_kernel").unwrap();
+            let a = stream.memcpy_stod(&a).unwrap();
+            let mut b = stream.alloc_zeros::<f32>(numel).unwrap();
             unsafe {
-                dev.stream()
+                stream
                     .launch_builder(&sin_kernel)
                     .arg(&mut b)
                     .arg(&a)
@@ -400,7 +402,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             }
             .unwrap();
 
-            let b = dev.sync_reclaim(b).unwrap();
+            let b = stream.memcpy_dtov(&b).unwrap();
             for v in b {
                 assert_eq!(v, 0.841471);
             }
@@ -409,12 +411,15 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
     #[test]
     fn test_launch_with_views() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+
         let ptx = compile_ptx_with_opts(SIN_CU, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "sin", &["sin_kernel"]).unwrap();
+        let module = ctx.load_ptx(ptx, &["sin_kernel"]).unwrap();
+        let f = module.get_func("sin_kernel").unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
-        let a_dev = dev.htod_copy(a_host.clone().to_vec()).unwrap();
+        let a_dev = stream.memcpy_stod(&a_host).unwrap();
         let mut b_dev = a_dev.clone();
 
         for i in 0..5 {
@@ -422,9 +427,8 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             assert_eq!(a_sub.len, 10 - 2 * i);
             let mut b_sub = b_dev.try_slice_mut(i * 2..).unwrap();
             assert_eq!(b_sub.len, 10 - 2 * i);
-            let f = dev.get_func("sin", "sin_kernel").unwrap();
             unsafe {
-                dev.stream()
+                stream
                     .launch_builder(&f)
                     .arg(&mut b_sub)
                     .arg(&a_sub)
@@ -434,7 +438,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             .unwrap();
         }
 
-        let b_host = dev.sync_reclaim(b_dev).unwrap();
+        let b_host = stream.memcpy_dtov(&b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
@@ -481,12 +485,13 @@ extern \"C\" __global__ void floating(float f, double d) {
 
     #[test]
     fn test_launch_with_8bit() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["int_8bit"]).unwrap();
-        let f = dev.get_func("tests", "int_8bit").unwrap();
+        let module = ctx.load_ptx(ptx, &["int_8bit"]).unwrap();
+        let f = module.get_func("int_8bit").unwrap();
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&f)
                 .arg(i8::MIN)
                 .arg(i8::MAX)
@@ -495,18 +500,18 @@ extern \"C\" __global__ void floating(float f, double d) {
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
-
-        dev.synchronize().unwrap();
+        stream.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_16bit() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["int_16bit"]).unwrap();
-        let f = dev.get_func("tests", "int_16bit").unwrap();
+        let module = ctx.load_ptx(ptx, &["int_16bit"]).unwrap();
+        let f = module.get_func("int_16bit").unwrap();
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&f)
                 .arg(i16::MIN)
                 .arg(i16::MAX)
@@ -515,17 +520,18 @@ extern \"C\" __global__ void floating(float f, double d) {
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
-        dev.synchronize().unwrap();
+        stream.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_32bit() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["int_32bit"]).unwrap();
-        let f = dev.get_func("tests", "int_32bit").unwrap();
+        let module = ctx.load_ptx(ptx, &["int_32bit"]).unwrap();
+        let f = module.get_func("int_32bit").unwrap();
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&f)
                 .arg(i32::MIN)
                 .arg(i32::MAX)
@@ -534,17 +540,18 @@ extern \"C\" __global__ void floating(float f, double d) {
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
-        dev.synchronize().unwrap();
+        stream.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_64bit() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["int_64bit"]).unwrap();
-        let f = dev.get_func("tests", "int_64bit").unwrap();
+        let module = ctx.load_ptx(ptx, &["int_64bit"]).unwrap();
+        let f = module.get_func("int_64bit").unwrap();
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&f)
                 .arg(i64::MIN)
                 .arg(i64::MAX)
@@ -553,24 +560,25 @@ extern \"C\" __global__ void floating(float f, double d) {
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
-        dev.synchronize().unwrap();
+        stream.synchronize().unwrap();
     }
 
     #[test]
     fn test_launch_with_floats() {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
         let ptx = compile_ptx_with_opts(TEST_KERNELS, Default::default()).unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["floating"]).unwrap();
-        let f = dev.get_func("tests", "floating").unwrap();
+        let module = ctx.load_ptx(ptx, &["floating"]).unwrap();
+        let f = module.get_func("floating").unwrap();
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&f)
                 .arg(1.2345678f32)
                 .arg(-10.123456789876543f64)
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
-        dev.synchronize().unwrap();
+        stream.synchronize().unwrap();
     }
 
     #[cfg(feature = "f16")]
@@ -596,17 +604,18 @@ extern \"C\" __global__ void halfs(__half h) {
             },
         )
         .unwrap();
-        let dev = CudaDevice::new(0).unwrap();
-        dev.load_ptx(ptx, "tests", &["halfs"]).unwrap();
-        let f = dev.get_func("tests", "halfs").unwrap();
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let module = ctx.load_ptx(ptx, &["halfs"]).unwrap();
+        let f = module.get_func("halfs").unwrap();
         unsafe {
-            dev.stream()
+            stream
                 .launch_builder(&f)
                 .arg(half::f16::from_f32(1.234))
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
-        dev.synchronize().unwrap();
+        stream.synchronize().unwrap();
     }
 
     const SLOW_KERNELS: &str = "
