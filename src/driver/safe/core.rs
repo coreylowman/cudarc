@@ -839,13 +839,13 @@ impl<T> CudaSlice<T> {
     /// };
     /// do_something(&view);
     /// ```
-    pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'_, T> {
-        self.try_slice(range).unwrap()
+    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> CudaView<'_, T> {
+        self.try_slice(bounds).unwrap()
     }
 
     /// Fallible version of [CudaSlice::slice()].
-    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaView {
+    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
+        to_range(bounds, self.len).map(|(start, end)| CudaView {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             read: &self.read,
@@ -890,13 +890,13 @@ impl<'a, T> CudaView<'a, T> {
     /// let mut view2 = view.slice(0..25);
     /// do_something(&view);
     /// ```
-    pub fn slice(&self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
-        self.try_slice(range).unwrap()
+    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> CudaView<'a, T> {
+        self.try_slice(bounds).unwrap()
     }
 
     /// Fallible version of [CudaView::slice]
-    pub fn try_slice(&self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaView {
+    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
+        to_range(bounds, self.len).map(|(start, end)| CudaView {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             read: self.read,
@@ -980,13 +980,13 @@ impl<T> CudaSlice<T> {
     /// do_something(view1, view2);
     /// ```
     /// If you need non-overlapping mutable views into a [CudaSlice], you can use [CudaSlice::split_at_mut()].
-    pub fn slice_mut(&mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
-        self.try_slice_mut(range).unwrap()
+    pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
+        self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [CudaSlice::slice_mut]
-    pub fn try_slice_mut(&mut self, range: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+    pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
+        to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
             ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             read: &self.read,
@@ -1093,13 +1093,13 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// do_something(view1, view2);
     /// ```
     /// If you need non-overlapping mutable views into a [CudaViewMut], you can use [CudaViewMut::split_at_mut()].
-    pub fn slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> CudaView<'a, T> {
-        self.try_slice(range).unwrap()
+    pub fn slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> CudaView<'a, T> {
+        self.try_slice(bounds).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::slice]
-    pub fn try_slice<'b: 'a>(&'b self, range: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaView {
+    pub fn try_slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
+        to_range(bounds, self.len).map(|(start, end)| CudaView {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             read: self.read,
@@ -1137,9 +1137,9 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Fallible version of [CudaViewMut::slice_mut]
     pub fn try_slice_mut<'b: 'a>(
         &'b mut self,
-        range: impl RangeBounds<usize>,
+        bounds: impl RangeBounds<usize>,
     ) -> Option<CudaViewMut<'a, T>> {
-        range.bounds(..self.len()).map(|(start, end)| CudaViewMut {
+        to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
             read: self.read,
@@ -1219,54 +1219,23 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 }
 
-trait RangeHelper: RangeBounds<usize> {
-    fn inclusive_start(&self, valid_start: usize) -> usize;
-    fn exclusive_end(&self, valid_end: usize) -> usize;
-    fn bounds(&self, valid: impl RangeHelper) -> Option<(usize, usize)> {
-        let vs = valid.inclusive_start(0);
-        let ve = valid.exclusive_end(usize::MAX);
-        let s = self.inclusive_start(vs);
-        let e = self.exclusive_end(ve);
-
-        let inside = s >= vs && e <= ve;
-        let valid = s < e || (s == e && !matches!(self.end_bound(), Bound::Included(_)));
-
-        (inside && valid).then_some((s, e))
-    }
-}
-impl<R: RangeBounds<usize>> RangeHelper for R {
-    fn inclusive_start(&self, valid_start: usize) -> usize {
-        match self.start_bound() {
-            Bound::Included(n) => *n,
-            Bound::Excluded(n) => *n + 1,
-            Bound::Unbounded => valid_start,
-        }
-    }
-    fn exclusive_end(&self, valid_end: usize) -> usize {
-        match self.end_bound() {
-            Bound::Included(n) => *n + 1,
-            Bound::Excluded(n) => *n,
-            Bound::Unbounded => valid_end,
-        }
-    }
+fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
+    let start = match range.start_bound() {
+        Bound::Included(&n) => n,
+        Bound::Excluded(&n) => n + 1,
+        Bound::Unbounded => 0,
+    };
+    let end = match range.end_bound() {
+        Bound::Included(&n) => n + 1,
+        Bound::Excluded(&n) => n,
+        Bound::Unbounded => len,
+    };
+    (end <= len).then_some((start, end))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    #[allow(clippy::reversed_empty_ranges)]
-    fn test_bounds_helper() {
-        assert_eq!((..2usize).bounds(0..usize::MAX), Some((0, 2)));
-        assert_eq!((1..2usize).bounds(..usize::MAX), Some((1, 2)));
-        assert_eq!((..).bounds(1..10), Some((1, 10)));
-        assert_eq!((2..=2usize).bounds(0..usize::MAX), Some((2, 3)));
-        assert_eq!((2..=2usize).bounds(0..=1), None);
-        assert_eq!((2..2usize).bounds(0..usize::MAX), Some((2, 2)));
-        assert_eq!((1..0usize).bounds(0..usize::MAX), None);
-        assert_eq!((1..=0usize).bounds(0..usize::MAX), None);
-    }
 
     #[test]
     fn test_transmutes() {
