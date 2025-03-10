@@ -332,37 +332,41 @@ pub fn group_start() -> Result<NcclStatus, NcclError> {
 
 #[cfg(test)]
 mod tests {
+    use crate::driver::CudaContext;
+
     use super::*;
-    use crate::driver::CudaDevice;
-    #[cfg(feature = "no-std")]
-    use no_std_compat::{vec, vec::Vec};
-    use std::ffi::c_void;
+    use std::{ffi::c_void, vec, vec::Vec};
 
     #[test]
     fn single_thread() {
-        let n_devices = CudaDevice::count().unwrap() as usize;
+        let n_devices = CudaContext::device_count().unwrap() as usize;
         let n = 2;
 
-        let mut devs = vec![];
+        let mut streams = vec![];
         let mut sendslices = vec![];
         let mut recvslices = vec![];
         for i in 0..n_devices {
-            let dev = CudaDevice::new(i).unwrap();
-            let slice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
+            let ctx = CudaContext::new(i).unwrap();
+            let stream = ctx.default_stream();
+            let slice = stream.memcpy_stod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
             sendslices.push(slice);
-            let slice = dev.alloc_zeros::<f32>(n).unwrap();
+            let slice = stream.alloc_zeros::<f32>(n).unwrap();
             recvslices.push(slice);
-            devs.push(dev);
+            streams.push(stream);
         }
         let mut comms = vec![std::ptr::null_mut(); n_devices];
-        let ordinals: Vec<_> = devs.iter().map(|d| d.ordinal() as i32).collect();
+        let ordinals: Vec<_> = streams
+            .iter()
+            .map(|d| d.context().ordinal() as i32)
+            .collect();
         unsafe {
             comm_init_all(comms.as_mut_ptr(), n_devices as i32, ordinals.as_ptr()).unwrap();
 
             group_start().unwrap();
             for i in 0..n_devices {
                 // Very important to set the cuda context to this device.
-                let dev = CudaDevice::new(i).unwrap();
+                let ctx = CudaContext::new(i).unwrap();
+                let stream = ctx.default_stream();
                 all_reduce(
                     sendslices[i].cu_device_ptr as *const c_void,
                     recvslices[i].cu_device_ptr as *mut c_void,
@@ -370,7 +374,7 @@ mod tests {
                     sys::ncclDataType_t::ncclFloat32,
                     sys::ncclRedOp_t::ncclSum,
                     comms[i],
-                    dev.stream.cu_stream as sys::cudaStream_t,
+                    stream.cu_stream as sys::cudaStream_t,
                 )
                 .unwrap();
             }
@@ -378,24 +382,26 @@ mod tests {
         }
         for (i, recv) in recvslices.iter().enumerate() {
             // Get the current device context
-            let dev = CudaDevice::new(i).unwrap();
-            let out = dev.dtoh_sync_copy(recv).unwrap();
+            let ctx = CudaContext::new(i).unwrap();
+            let stream = ctx.default_stream();
+            let out = stream.memcpy_dtov(recv).unwrap();
             assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
         }
     }
 
     #[test]
     fn multi_thread() {
-        let n_devices = CudaDevice::count().unwrap() as usize;
+        let n_devices = CudaContext::device_count().unwrap() as usize;
 
         let n = 2;
         let comm_id = get_uniqueid().unwrap();
         let threads: Vec<_> = (0..n_devices)
             .map(|i| {
                 std::thread::spawn(move || {
-                    let dev = CudaDevice::new(i).unwrap();
-                    let sendslice = dev.htod_copy(vec![(i + 1) as f32 * 1.0; n]).unwrap();
-                    let recvslice = dev.alloc_zeros::<f32>(n).unwrap();
+                    let ctx = CudaContext::new(i).unwrap();
+                    let stream = ctx.default_stream();
+                    let sendslice = stream.memcpy_stod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let recvslice = stream.alloc_zeros::<f32>(n).unwrap();
                     let mut comm = MaybeUninit::uninit();
                     unsafe {
                         comm_init_rank(comm.as_mut_ptr(), n_devices as i32, comm_id, i as i32)
@@ -410,7 +416,7 @@ mod tests {
                             sys::ncclDataType_t::ncclFloat32,
                             sys::ncclRedOp_t::ncclSum,
                             comm,
-                            dev.stream.cu_stream as sys::cudaStream_t,
+                            stream.cu_stream as sys::cudaStream_t,
                         )
                         .unwrap();
                     }

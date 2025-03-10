@@ -5,6 +5,7 @@ use super::{CudaContext, CudaEvent, CudaStream, DeviceRepr, DriverError, ValidAs
 use crate::driver::{result, sys};
 
 pub trait HostSlice<T> {
+    fn len(&self) -> usize;
     /// # Safety
     /// This is **only** safe if the resulting slice is used with `stream`. Otherwise
     /// You may run into device synchronization errors
@@ -20,6 +21,9 @@ pub trait HostSlice<T> {
 }
 
 impl<T, const N: usize> HostSlice<T> for [T; N] {
+    fn len(&self) -> usize {
+        N
+    }
     unsafe fn stream_synced_slice(&self, _stream: &CudaStream) -> Result<&[T], DriverError> {
         Ok(self)
     }
@@ -37,6 +41,9 @@ impl<T, const N: usize> HostSlice<T> for [T; N] {
 }
 
 impl<T> HostSlice<T> for [T] {
+    fn len(&self) -> usize {
+        self.len()
+    }
     unsafe fn stream_synced_slice(&self, _stream: &CudaStream) -> Result<&[T], DriverError> {
         Ok(self)
     }
@@ -52,6 +59,9 @@ impl<T> HostSlice<T> for [T] {
 }
 
 impl<T> HostSlice<T> for Vec<T> {
+    fn len(&self) -> usize {
+        self.len()
+    }
     unsafe fn stream_synced_slice(&self, _stream: &CudaStream) -> Result<&[T], DriverError> {
         Ok(self)
     }
@@ -158,6 +168,10 @@ impl<T: ValidAsZeroBits> PinnedHostSlice<T> {
 }
 
 impl<T> HostSlice<T> for PinnedHostSlice<T> {
+    fn len(&self) -> usize {
+        self.len
+    }
+
     unsafe fn stream_synced_slice(&self, stream: &CudaStream) -> Result<&[T], DriverError> {
         stream.wait(&self.event)?;
         Ok(std::slice::from_raw_parts(self.ptr, self.len))
