@@ -24,20 +24,21 @@
 //!
 //! At the core is the [driver] API, which exposes a bunch of structs, but the main ones are:
 //!
-//! 1. [`driver::CudaDevice`] is a handle to a specific device ordinal (e.g. 0, 1, 2, ...)
-//! 2. [`driver::CudaSlice<T>`], which represents a [`Vec<T>`] on the device, can be allocated
-//!    using the aforementioned CudaDevice.
+//! 1. [`driver::CudaContext`] is a handle to a specific device ordinal (e.g. 0, 1, 2, ...)
+//! 2. [`driver::CudaStream`] is how you submit work to a device
+//! 3. [`driver::CudaSlice<T>`], which represents a [`Vec<T>`] on the device, can be allocated
+//!    using the aforementioned [`driver::CudaStream`].
 //!
 //! Here is a table of similar concepts between CPU and Cuda:
 //!
 //! | Concept | CPU | Cuda |
 //! | --- | --- | --- |
-//! | Memory allocator | [`std::alloc::GlobalAlloc`] | [`driver::CudaDevice`] |
+//! | Memory allocator | [`std::alloc::GlobalAlloc`] | [`driver::CudaContext`] |
 //! | List of values on heap | [`Vec<T>`] | [`driver::CudaSlice<T>`] |
 //! | Slice | `&[T]` | [`driver::CudaView<T>`] |
 //! | Mutable Slice  | `&mut [T]` | [`driver::CudaViewMut<T>`] |
 //! | Function | [`Fn`] | [`driver::CudaFunction`] |
-//! | Calling a function | `my_function(a, b, c)` | [`driver::LaunchAsync::launch()`] |
+//! | Calling a function | `my_function(a, b, c)` | [`driver::LaunchArgs::launch()`] |
 //! | Thread | [`std::thread::Thread`] | [`driver::CudaStream`] |
 //!
 //! # Combining the different APIs
@@ -47,7 +48,7 @@
 //! ## nvrtc
 //!
 //! [`nvrtc::compile_ptx()`] outputs a [`nvrtc::Ptx`], which can
-//! be loaded into a device with [`driver::CudaDevice::load_ptx()`].
+//! be loaded into a device with [`driver::CudaContext::load_module()`].
 //!
 //! ## cublas
 //!

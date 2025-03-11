@@ -8,7 +8,7 @@
 //! because mixing the two is confusing and even more unsafe.
 //!
 //! This module also groups functions into sub-modules
-//! to make naming easier. For example [sys::cuStreamCreate()]
+//! to make naming easier. For example `sys::cuStreamCreate()`
 //! turns into [stream::create()], where [stream] is a module.
 
 use super::sys::{self, lib};

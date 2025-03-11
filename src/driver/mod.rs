@@ -129,7 +129,7 @@
 //! [crate::driver::sys::CUdevice], and [crate::driver::sys::CUstream] all
 //! live the required amount of time (i.e. device outlives context, which outlives stream).
 //!
-//! This is accomplished by putting all of them inside one struct, the [CudaDevice]. There are other ways,
+//! This is accomplished by putting all of them inside one struct, the [CudaContext]. There are other ways,
 //! such as adding newtypes that carry lifetimes with them, but this approach was chosen to make working
 //! with device pointers easier.
 //!

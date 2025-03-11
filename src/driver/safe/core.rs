@@ -116,7 +116,7 @@ impl CudaContext {
         unsafe { result::ctx::set_current(self.cu_ctx) }
     }
 
-    /// Get the value of the specified attribute of this [CudaDevice].
+    /// Get the value of the specified attribute of the device in [CudaContext].
     pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
         unsafe { result::device::get_attribute(self.cu_device, attrib) }
     }

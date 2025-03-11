@@ -18,7 +18,7 @@ use super::{CudaStream, DriverError};
 /// >
 /// > Note that this includes APIs which may appear to be read-only, such as cudaGraphClone() (cuGraphClone()) and cudaGraphInstantiate() (cuGraphInstantiate()). No API or pair of APIs is guaranteed to be safe to call on the same graph object from two different threads without serialization.
 ///
-/// https://docs.nvidia.com/cuda/cuda-driver-api/graphs-thread-safety.html#graphs-thread-safety
+/// <https://docs.nvidia.com/cuda/cuda-driver-api/graphs-thread-safety.html#graphs-thread-safety>
 pub struct CudaGraph {
     cu_graph: sys::CUgraph,
     cu_graph_exec: sys::CUgraphExec,
