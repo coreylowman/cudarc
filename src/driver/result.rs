@@ -601,6 +601,27 @@ pub mod stream {
     ) -> Result<(), DriverError> {
         lib().cuLaunchHostFunc(stream, Some(func), arg).result()
     }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g767167da0bbf07157dc20b6c258a2143)
+    /// # Safety
+    /// Stream must be valid
+    pub unsafe fn begin_capture(
+        stream: sys::CUstream,
+        mode: sys::CUstreamCaptureMode,
+    ) -> Result<(), DriverError> {
+        sys::lib().cuStreamBeginCapture_v2(stream, mode).result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g03dab8b2ba76b00718955177a929970c)
+    /// # Safety
+    /// Stream must be valid
+    pub unsafe fn end_capture(stream: sys::CUstream) -> Result<sys::CUgraph, DriverError> {
+        let mut graph = MaybeUninit::uninit();
+        sys::lib()
+            .cuStreamEndCapture(stream, graph.as_mut_ptr())
+            .result()?;
+        Ok(graph.assume_init())
+    }
 }
 
 /// Allocates memory with stream ordered semantics.
@@ -1252,5 +1273,47 @@ pub mod external_memory {
             )
             .result()?;
         Ok(device_ptr.assume_init())
+    }
+}
+
+pub mod graph {
+    use super::*;
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__GRAPH.html#group__CUDA__GRAPH_1gb53b435e178cccfa37ac87285d2c3fa1)
+    /// # Safety
+    /// graph must be valid
+    pub unsafe fn instantiate(
+        graph: sys::CUgraph,
+        flags: sys::CUgraphInstantiate_flags,
+    ) -> Result<sys::CUgraphExec, DriverError> {
+        let mut graph_exec = MaybeUninit::uninit();
+        sys::lib()
+            .cuGraphInstantiateWithFlags(graph_exec.as_mut_ptr(), graph, flags as u32 as u64)
+            .result()?;
+        Ok(graph_exec.assume_init())
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__GRAPH.html#group__CUDA__GRAPH_1ga32ad4944cc5d408158207c978bc43a7)
+    /// # Safety
+    /// graph_exec must be valid
+    pub unsafe fn exec_destroy(graph_exec: sys::CUgraphExec) -> Result<(), DriverError> {
+        sys::lib().cuGraphExecDestroy(graph_exec).result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__GRAPH.html#group__CUDA__GRAPH_1g718cfd9681f078693d4be2426fd689c8)
+    /// # Safety
+    /// graph must be valid
+    pub unsafe fn destroy(graph: sys::CUgraph) -> Result<(), DriverError> {
+        sys::lib().cuGraphDestroy(graph).result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__GRAPH.html#group__CUDA__GRAPH_1g6b2dceb3901e71a390d2bd8b0491e471)
+    /// # Safety
+    /// graph & stream must be valid
+    pub unsafe fn launch(
+        graph_exec: sys::CUgraphExec,
+        stream: sys::CUstream,
+    ) -> Result<(), DriverError> {
+        sys::lib().cuGraphLaunch(graph_exec, stream).result()
     }
 }

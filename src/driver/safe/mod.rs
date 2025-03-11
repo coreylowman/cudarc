@@ -2,6 +2,7 @@
 
 pub(crate) mod core;
 pub(crate) mod external_memory;
+pub(crate) mod graph;
 pub(crate) mod launch;
 pub(crate) mod profile;
 
