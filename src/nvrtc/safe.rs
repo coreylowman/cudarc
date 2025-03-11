@@ -88,7 +88,7 @@ pub fn compile_ptx_with_opts<S: AsRef<str>>(
     src: S,
     opts: CompileOptions,
 ) -> Result<Ptx, CompileError> {
-    let prog = Program::create(src, opts.name.as_ref().map(|n| n.as_str()))?;
+    let prog = Program::create(src, opts.name.as_deref())?;
     prog.compile(opts)
 }
 
