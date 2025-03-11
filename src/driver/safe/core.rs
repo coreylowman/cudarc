@@ -470,12 +470,35 @@ pub struct CudaView<'a, T> {
     marker: PhantomData<&'a [T]>,
 }
 
+impl<T> CudaSlice<T> {
+    pub fn as_view(&self) -> CudaView<'_, T> {
+        CudaView {
+            ptr: self.cu_device_ptr,
+            len: self.len,
+            read: &self.read,
+            write: &self.write,
+            stream: &self.stream,
+            marker: PhantomData,
+        }
+    }
+}
+
 impl<T> CudaView<'_, T> {
     pub fn len(&self) -> usize {
         self.len
     }
     pub fn is_empty(&self) -> bool {
         self.len == 0
+    }
+    fn resize(&self, start: usize, end: usize) -> Self {
+        Self {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            read: self.read,
+            write: self.write,
+            stream: self.stream,
+            marker: PhantomData,
+        }
     }
 }
 
@@ -492,12 +515,47 @@ pub struct CudaViewMut<'a, T> {
     marker: PhantomData<&'a mut [T]>,
 }
 
+impl<T> CudaSlice<T> {
+    pub fn as_view_mut(&self) -> CudaViewMut<'_, T> {
+        CudaViewMut {
+            ptr: self.cu_device_ptr,
+            len: self.len,
+            read: &self.read,
+            write: &self.write,
+            stream: &self.stream,
+            marker: PhantomData,
+        }
+    }
+}
+
 impl<T> CudaViewMut<'_, T> {
     pub fn len(&self) -> usize {
         self.len
     }
     pub fn is_empty(&self) -> bool {
         self.len == 0
+    }
+
+    pub fn as_view(&self) -> CudaView<'_, T> {
+        CudaView {
+            ptr: self.ptr,
+            len: self.len,
+            read: self.read,
+            write: self.write,
+            stream: self.stream,
+            marker: PhantomData,
+        }
+    }
+
+    fn resize(&self, start: usize, end: usize) -> Self {
+        Self {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            read: self.read,
+            write: self.write,
+            stream: self.stream,
+            marker: PhantomData,
+        }
     }
 }
 
@@ -960,6 +1018,7 @@ impl CudaStream {
         src: &Src,
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
+        assert!(dst.len() >= src.len());
         let src = unsafe { src.stream_synced_slice(self) }?;
         dst.block_for_write(self)?;
         unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.cu_stream) }?;
@@ -987,8 +1046,8 @@ impl CudaStream {
         src: &Src,
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
-        let dst = unsafe { dst.stream_synced_mut_slice(self) }?;
         assert!(dst.len() >= src.len());
+        let dst = unsafe { dst.stream_synced_mut_slice(self) }?;
         src.block_for_read(self)?;
         unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.cu_stream) }?;
         src.record_read(self)?;
@@ -1001,6 +1060,7 @@ impl CudaStream {
         src: &Src,
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
+        assert!(dst.len() >= src.len());
         src.block_for_read(self)?;
         dst.block_for_write(self)?;
         unsafe {
@@ -1056,19 +1116,12 @@ impl<T> CudaSlice<T> {
     /// do_something(&view);
     /// ```
     pub fn slice(&self, bounds: impl RangeBounds<usize>) -> CudaView<'_, T> {
-        self.try_slice(bounds).unwrap()
+        self.as_view().slice(bounds)
     }
 
     /// Fallible version of [CudaSlice::slice()].
     pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'_, T>> {
-        to_range(bounds, self.len).map(|(start, end)| CudaView {
-            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            read: &self.read,
-            write: &self.write,
-            stream: &self.stream,
-            marker: PhantomData,
-        })
+        self.as_view().try_slice(bounds)
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1114,14 +1167,7 @@ impl<'a, T> CudaView<'a, T> {
 
     /// Fallible version of [CudaView::slice]
     pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
-        to_range(bounds, self.len).map(|(start, end)| CudaView {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        })
+        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1193,14 +1239,7 @@ impl<T> CudaSlice<T> {
 
     /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
-        to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
-            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            read: &self.read,
-            write: &self.write,
-            stream: &self.stream,
-            marker: PhantomData,
-        })
+        to_range(bounds, self.len).map(|(start, end)| self.as_view_mut().resize(start, end))
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1248,27 +1287,10 @@ impl<T> CudaSlice<T> {
         &mut self,
         mid: usize,
     ) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
-        if mid > self.len() {
-            return None;
-        }
-        Some((
-            CudaViewMut {
-                ptr: self.cu_device_ptr,
-                len: mid,
-                read: &self.read,
-                write: &self.write,
-                stream: &self.stream,
-                marker: PhantomData,
-            },
-            CudaViewMut {
-                ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
-                len: self.len - mid,
-                read: &self.read,
-                write: &self.write,
-                stream: &self.stream,
-                marker: PhantomData,
-            },
-        ))
+        (mid <= self.len()).then(|| {
+            let view = self.as_view_mut();
+            (view.resize(0, mid), view.resize(mid, self.len))
+        })
     }
 }
 
@@ -1308,14 +1330,7 @@ impl<'a, T> CudaViewMut<'a, T> {
 
     /// Fallible version of [CudaViewMut::slice]
     pub fn try_slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
-        to_range(bounds, self.len).map(|(start, end)| CudaView {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        })
+        to_range(bounds, self.len).map(|(start, end)| self.as_view().resize(start, end))
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1341,23 +1356,13 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
-    pub fn slice_mut<'b: 'a>(&'b mut self, range: impl RangeBounds<usize>) -> CudaViewMut<'a, T> {
-        self.try_slice_mut(range).unwrap()
+    pub fn slice_mut<'b: 'a>(&'b mut self, bounds: impl RangeBounds<usize>) -> Self {
+        self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::slice_mut]
-    pub fn try_slice_mut<'b: 'a>(
-        &'b mut self,
-        bounds: impl RangeBounds<usize>,
-    ) -> Option<CudaViewMut<'a, T>> {
-        to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        })
+    pub fn try_slice_mut<'b: 'a>(&'b mut self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
     /// Splits the [CudaViewMut] into two at the given index.
@@ -1374,41 +1379,15 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// // split the view into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = view.split_at_mut(25);
     /// do_something(view1, view2);
-    pub fn split_at_mut<'b: 'a>(
-        &'b mut self,
-        mid: usize,
-    ) -> (CudaViewMut<'a, T>, CudaViewMut<'a, T>) {
+    pub fn split_at_mut<'b: 'a>(&'b mut self, mid: usize) -> (Self, Self) {
         self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`
-    pub fn try_split_at_mut<'b: 'a>(
-        &'b mut self,
-        mid: usize,
-    ) -> Option<(CudaViewMut<'a, T>, CudaViewMut<'a, T>)> {
-        if mid > self.len() {
-            return None;
-        }
-        Some((
-            CudaViewMut {
-                ptr: self.ptr,
-                len: mid,
-                read: self.read,
-                write: self.write,
-                stream: self.stream,
-                marker: PhantomData,
-            },
-            CudaViewMut {
-                ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
-                len: self.len - mid,
-                read: self.read,
-                write: self.write,
-                stream: self.stream,
-                marker: PhantomData,
-            },
-        ))
+    pub fn try_split_at_mut<'b: 'a>(&'b mut self, mid: usize) -> Option<(Self, Self)> {
+        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
