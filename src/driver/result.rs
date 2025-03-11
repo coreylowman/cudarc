@@ -622,6 +622,19 @@ pub mod stream {
             .result()?;
         Ok(graph.assume_init())
     }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g37823c49206e3704ae23c7ad78560bca)
+    /// # Safety
+    /// Stream must be valid
+    pub unsafe fn is_capturing(
+        stream: sys::CUstream,
+    ) -> Result<sys::CUstreamCaptureStatus, DriverError> {
+        let mut status = MaybeUninit::uninit();
+        sys::lib()
+            .cuStreamIsCapturing(stream, status.as_mut_ptr())
+            .result()?;
+        Ok(status.assume_init())
+    }
 }
 
 /// Allocates memory with stream ordered semantics.

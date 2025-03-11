@@ -41,10 +41,7 @@ impl Drop for CudaGraph {
 
 impl CudaStream {
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g767167da0bbf07157dc20b6c258a2143)
-    pub fn begin_capture(
-        self: &Arc<Self>,
-        mode: sys::CUstreamCaptureMode,
-    ) -> Result<(), DriverError> {
+    pub fn begin_capture(&self, mode: sys::CUstreamCaptureMode) -> Result<(), DriverError> {
         unsafe { result::stream::begin_capture(self.cu_stream, mode) }
     }
 
@@ -65,6 +62,11 @@ impl CudaStream {
             cu_graph_exec,
             stream: self.clone(),
         }))
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g37823c49206e3704ae23c7ad78560bca)
+    pub fn capture_status(&self) -> Result<sys::CUstreamCaptureStatus, DriverError> {
+        unsafe { result::stream::is_capturing(self.cu_stream) }
     }
 }
 
