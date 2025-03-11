@@ -88,7 +88,7 @@ pub fn compile_ptx_with_opts<S: AsRef<str>>(
     src: S,
     opts: CompileOptions,
 ) -> Result<Ptx, CompileError> {
-    let prog = Program::create(src)?;
+    let prog = Program::create(src, opts.name.as_ref().map(|n| n.as_str()))?;
     prog.compile(opts)
 }
 
@@ -97,8 +97,8 @@ pub(crate) struct Program {
 }
 
 impl Program {
-    pub(crate) fn create<S: AsRef<str>>(src: S) -> Result<Self, CompileError> {
-        let prog = result::create_program(src).map_err(CompileError::CreationError)?;
+    pub(crate) fn create<S: AsRef<str>>(src: S, name: Option<&str>) -> Result<Self, CompileError> {
+        let prog = result::create_program(src, name).map_err(CompileError::CreationError)?;
         Ok(Self { prog })
     }
 
@@ -195,6 +195,7 @@ pub struct CompileOptions {
     pub maxrregcount: Option<usize>,
     pub include_paths: Vec<String>,
     pub arch: Option<&'static str>,
+    pub name: Option<String>,
 }
 
 impl CompileOptions {
