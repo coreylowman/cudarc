@@ -12,6 +12,495 @@ use std::{
     vec::Vec,
 };
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct CudaContext {
+    pub(crate) cu_device: sys::CUdevice,
+    pub(crate) cu_ctx: sys::CUcontext,
+    pub(crate) ordinal: usize,
+    pub(crate) has_async_alloc: bool,
+}
+
+unsafe impl Send for CudaContext {}
+unsafe impl Sync for CudaContext {}
+
+impl Drop for CudaContext {
+    fn drop(&mut self) {
+        self.bind_to_thread().unwrap();
+        let ctx = std::mem::replace(&mut self.cu_ctx, std::ptr::null_mut());
+        if !ctx.is_null() {
+            unsafe { result::primary_ctx::release(self.cu_device) }.unwrap();
+        }
+    }
+}
+
+impl CudaContext {
+    pub fn new(ordinal: usize) -> Result<Arc<Self>, DriverError> {
+        result::init()?;
+        let cu_device = result::device::get(ordinal as i32)?;
+        let cu_ctx = unsafe { result::primary_ctx::retain(cu_device) }?;
+        let has_async_alloc = unsafe {
+            let memory_pools_supported = result::device::get_attribute(
+                cu_device,
+                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
+            )?;
+            memory_pools_supported > 0
+        };
+        let ctx = Arc::new(CudaContext {
+            cu_device,
+            cu_ctx,
+            ordinal,
+            has_async_alloc,
+        });
+        ctx.bind_to_thread()?;
+        Ok(ctx)
+    }
+
+    pub fn device_count() -> Result<i32, DriverError> {
+        result::init()?;
+        result::device::get_count()
+    }
+
+    /// Get the `ordinal` index of the device this is on.
+    pub fn ordinal(&self) -> usize {
+        self.ordinal
+    }
+
+    /// Get the name of this device.
+    pub fn name(&self) -> Result<String, result::DriverError> {
+        result::device::get_name(self.cu_device)
+    }
+
+    /// Get the UUID of this device.
+    pub fn uuid(&self) -> Result<sys::CUuuid, result::DriverError> {
+        result::device::get_uuid(self.cu_device)
+    }
+
+    /// Get the underlying [sys::CUdevice] of this [CudaContext].
+    ///
+    /// # Safety
+    /// While this function is marked as safe, actually using the
+    /// returned object is unsafe.
+    ///
+    /// **You must not free/release the device pointer**, as it is still
+    /// owned by the [CudaContext].
+    pub fn cu_device(&self) -> sys::CUdevice {
+        self.cu_device
+    }
+
+    /// Get the underlying [sys::CUcontext] of this [CudaContext].
+    ///
+    /// # Safety
+    /// While this function is marked as safe, actually using the
+    /// returned object is unsafe.
+    ///
+    /// **You must not free/release the context pointer**, as it is still
+    /// owned by the [CudaContext].
+    pub fn cu_ctx(&self) -> sys::CUcontext {
+        self.cu_ctx
+    }
+
+    pub fn bind_to_thread(&self) -> Result<(), DriverError> {
+        unsafe { result::ctx::set_current(self.cu_ctx) }
+    }
+
+    /// Get the value of the specified attribute of this [CudaDevice].
+    pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
+        unsafe { result::device::get_attribute(self.cu_device, attrib) }
+    }
+
+    /// Synchronize this context. Will only block CPU if you call [CudaContext::set_flags()] with
+    /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
+    pub fn synchronize(&self) -> Result<(), DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::synchronize()
+    }
+
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000"
+    )))]
+    pub fn set_blocking_synchronize(&self) -> Result<(), DriverError> {
+        self.set_flags(sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC)
+    }
+
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000"
+    )))]
+    pub fn set_flags(&self, flags: sys::CUctx_flags) -> Result<(), DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::set_flags(flags)
+    }
+}
+
+#[derive(Debug)]
+pub struct CudaEvent {
+    pub(crate) cu_event: sys::CUevent,
+    pub(crate) ctx: Arc<CudaContext>,
+}
+
+unsafe impl Send for CudaEvent {}
+unsafe impl Sync for CudaEvent {}
+
+impl Drop for CudaEvent {
+    fn drop(&mut self) {
+        self.ctx.bind_to_thread().unwrap();
+        unsafe { result::event::destroy(self.cu_event) }.unwrap()
+    }
+}
+
+impl CudaContext {
+    pub fn new_event(
+        self: &Arc<Self>,
+        flags: Option<sys::CUevent_flags>,
+    ) -> Result<CudaEvent, DriverError> {
+        let flags = flags.unwrap_or(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING);
+        self.bind_to_thread()?;
+        let cu_event = result::event::create(flags)?;
+        Ok(CudaEvent {
+            cu_event,
+            ctx: self.clone(),
+        })
+    }
+}
+
+impl CudaEvent {
+    pub fn cu_event(&self) -> sys::CUevent {
+        self.cu_event
+    }
+
+    pub fn context(&self) -> &Arc<CudaContext> {
+        &self.ctx
+    }
+
+    pub fn record(&self, stream: &CudaStream) -> Result<(), DriverError> {
+        if self.ctx != stream.ctx {
+            return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
+        }
+        self.ctx.bind_to_thread()?;
+        unsafe { result::event::record(self.cu_event, stream.cu_stream) }
+    }
+
+    /// Will only block CPU thraed if [sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC] was used to create this event.
+    pub fn synchronize(&self) -> Result<(), DriverError> {
+        self.ctx.bind_to_thread()?;
+        unsafe { result::event::synchronize(self.cu_event) }
+    }
+
+    pub fn elapsed_ms(&self, other: &Self) -> Result<f32, DriverError> {
+        if self.ctx != other.ctx {
+            return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
+        }
+        self.ctx.bind_to_thread()?;
+        self.synchronize()?;
+        other.synchronize()?;
+        unsafe { result::event::elapsed(self.cu_event, other.cu_event) }
+    }
+
+    /// Returns `true` if all recorded work has been completed, `false` otherwise.
+    pub fn is_complete(&self) -> bool {
+        unsafe { result::event::query(self.cu_event) }.is_ok()
+    }
+}
+
+/// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
+/// upon the completion of this stream's work.
+///
+/// Create with [CudaDevice::fork_default_stream].
+///
+/// The synchronization happens in **code order**. E.g.
+/// ```ignore
+/// let stream = dev.fork_default_stream()?; // 0
+/// dev.launch(...)?; // 1
+/// function_1.launch_on_stream(&stream, ...)?; // 2
+/// function_2.launch(...)?; // 3
+/// drop(stream); // 4
+/// dev.launch(...) // 5
+/// ```
+///
+/// - 0 will place a streamWaitEvent(default work stream) on the new stream
+/// - 1 will launch on the default work stream
+/// - 2 will launch concurrently to 1 on `&stream`,
+/// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
+/// - 4 will place a streamWaitEvent(`&stream`) on the default work stream
+/// - 5 will happen on the default stream **after the default stream waits for 2**
+///
+/// **This is asynchronous with respect to the host.**
+///
+/// # Example with wait_for_default and wait_for
+///
+/// There is also a way to synchronize work on non-default streams without dropping them.
+/// It can be interesting to reuse the [CudaStream] streams during the whole
+/// duration of the computation.
+/// To that end, one can use [CudaStream::wait_for_default] and [CudaDevice::wait_for].
+///
+/// Let's suppose that there are 4 streams: stream_1, stream_2, stream_3, stream_4.
+/// There is no work queued on the default stream. All the work is queued on non-default streams.
+/// And let's suppose that the stream dependencies are as follows:
+/// - stream_1 dependencies: []
+/// - stream_2 dependencies: []
+/// - stream_3 dependencies: [stream_1, stream_2]
+/// - stream_4 dependencies: [stream_3]
+///
+/// Pseudo-code:
+/// ```ignore
+/// let stream_1 = dev.fork_default_stream()?; // 0
+/// let stream_2 = dev.fork_default_stream()?; // 1
+/// let stream_3 = dev.fork_default_stream()?; // 2
+/// let stream_4 = dev.fork_default_stream()?; // 3
+///
+/// function_1.launch_on_stream(&stream_1, ...)?; // 4
+/// function_2.launch_on_stream(&stream_2, ...)?; // 5
+/// dev.wait_for(&stream_1); // 6
+/// dev.wait_for(&stream_2); // 7
+///
+/// stream_3.wait_for_default(); // 8
+/// function_3.launch_on_stream(&stream_3, ...)?; // 10
+/// dev.wait_for(&stream_3); // 11
+///
+/// stream_4.wait_for_default(); // 12
+/// function_4.launch_on_stream(&stream_4, ...)?; // 13
+/// dev.wait_for(&stream_4); // 14
+/// ```
+///
+/// - function_1 and function_2 will be executed concurrently.
+/// - function_3 will be executed once function_1 and function_2 have completed their execution.
+/// - function_4 will be executed once function_3 has completed its execution.
+///
+/// This is handy because it can be use to do out-of-order execution of kernels using dependency
+/// analysis. For example, with multi-head attention with 12 heads, each head can be executed
+/// in its own stream.
+///
+/// **This is asynchronous with respect to the host.**
+///
+/// See [CUDA C/C++ Streams and Concurrency](https://developer.download.nvidia.com/CUDA/training/StreamsAndConcurrencyWebinar.pdf)
+/// See [3. Stream synchronization behavior](https://docs.nvidia.com/cuda/cuda-runtime-api/stream-sync-behavior.html)
+/// See [6.6. Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html)
+/// See [Out-of-order execution](https://en.wikipedia.org/wiki/Out-of-order_execution)
+/// See [Dependence analysis](https://en.wikipedia.org/wiki/Dependence_analysis)
+#[derive(Debug, PartialEq, Eq)]
+pub struct CudaStream {
+    pub(crate) cu_stream: sys::CUstream,
+    pub(crate) ctx: Arc<CudaContext>,
+}
+
+unsafe impl Send for CudaStream {}
+unsafe impl Sync for CudaStream {}
+
+impl Drop for CudaStream {
+    fn drop(&mut self) {
+        self.ctx.bind_to_thread().unwrap();
+        if !self.cu_stream.is_null() {
+            unsafe { result::stream::destroy(self.cu_stream).unwrap() };
+        }
+    }
+}
+
+impl CudaContext {
+    pub fn default_stream(self: &Arc<Self>) -> Arc<CudaStream> {
+        Arc::new(CudaStream {
+            cu_stream: std::ptr::null_mut(),
+            ctx: self.clone(),
+        })
+    }
+
+    pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
+        self.bind_to_thread()?;
+        let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+        Ok(Arc::new(CudaStream {
+            cu_stream,
+            ctx: self.clone(),
+        }))
+    }
+}
+
+impl CudaStream {
+    pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
+        let stream = self.ctx.new_stream()?;
+        stream.wait(&self.record_event(None)?)?;
+        Ok(stream)
+    }
+
+    pub fn cu_stream(&self) -> sys::CUstream {
+        self.cu_stream
+    }
+
+    pub fn context(&self) -> &Arc<CudaContext> {
+        &self.ctx
+    }
+
+    /// Will only block CPU if you call [CudaContext::set_flags()] with
+    /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
+    pub fn synchronize(&self) -> Result<(), DriverError> {
+        self.ctx.bind_to_thread()?;
+        unsafe { result::stream::synchronize(self.cu_stream) }
+    }
+
+    pub fn record_event(
+        &self,
+        flags: Option<sys::CUevent_flags>,
+    ) -> Result<CudaEvent, DriverError> {
+        let event = self.ctx.new_event(flags)?;
+        event.record(self)?;
+        Ok(event)
+    }
+
+    pub fn wait(&self, event: &CudaEvent) -> Result<(), DriverError> {
+        if self.ctx != event.ctx {
+            return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
+        }
+        self.ctx.bind_to_thread()?;
+        unsafe {
+            result::stream::wait_event(
+                self.cu_stream,
+                event.cu_event,
+                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
+            )
+        }
+    }
+
+    pub fn join(&self, other: &CudaStream) -> Result<(), DriverError> {
+        self.wait(&other.record_event(None)?)
+    }
+}
+
+/// Contains a reference counted pointer to both
+/// device and host memory allocated for type `T`.
+///
+/// # Host data
+///
+/// *This owns the host data it is associated with*. However
+/// it is possible to create device memory without having
+/// a corresponding host memory, so the host memory is
+/// actually [Option].
+///
+/// # Reclaiming host data
+///
+/// To reclaim the host data for this device data,
+/// use [CudaDevice::sync_reclaim()]. This will
+/// perform necessary synchronization to ensure
+/// that the device data finishes copying over.
+///
+/// # Mutating device data
+///
+/// This can only be done by launching kernels via
+/// [crate::driver::LaunchAsync] which is implemented
+/// by [CudaDevice]. Pass `&mut CudaSlice<T>`
+/// if you want to mutate the rc, and `&CudaSlice<T>` otherwise.
+///
+/// Unfortunately, `&CudaSlice<T>` can **still be mutated
+/// by the [CudaFunction]**.
+#[derive(Debug)]
+pub struct CudaSlice<T> {
+    pub(crate) cu_device_ptr: sys::CUdeviceptr,
+    pub(crate) len: usize,
+    pub(crate) read: CudaEvent,
+    pub(crate) write: CudaEvent,
+    pub(crate) stream: Arc<CudaStream>,
+    pub(crate) marker: PhantomData<*const T>,
+}
+
+unsafe impl<T> Send for CudaSlice<T> {}
+unsafe impl<T> Sync for CudaSlice<T> {}
+
+impl<T> Drop for CudaSlice<T> {
+    fn drop(&mut self) {
+        self.stream.wait(&self.read).unwrap();
+        self.stream.wait(&self.write).unwrap();
+        unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
+    }
+}
+
+impl<T> CudaSlice<T> {
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    pub fn ordinal(&self) -> usize {
+        self.stream.ctx.ordinal
+    }
+
+    pub fn context(&self) -> &Arc<CudaContext> {
+        &self.stream.ctx
+    }
+}
+
+impl<T: DeviceRepr> CudaSlice<T> {
+    /// Allocates copy of self and schedules a device to device copy of memory.
+    pub fn try_clone(&self) -> Result<Self, result::DriverError> {
+        self.stream.clone_dtod(self)
+    }
+}
+
+impl<T: DeviceRepr> Clone for CudaSlice<T> {
+    fn clone(&self) -> Self {
+        self.try_clone().unwrap()
+    }
+}
+
+impl<T: Clone + Default + DeviceRepr> TryFrom<CudaSlice<T>> for Vec<T> {
+    type Error = result::DriverError;
+    fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
+        value.stream.memcpy_dtov(&value)
+    }
+}
+
+/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()] or [CudaSlice::slice()].
+///
+/// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
+#[derive(Debug)]
+pub struct CudaView<'a, T> {
+    pub(crate) ptr: sys::CUdeviceptr,
+    pub(crate) len: usize,
+    pub(crate) read: &'a CudaEvent,
+    pub(crate) write: &'a CudaEvent,
+    pub(crate) stream: &'a Arc<CudaStream>,
+    marker: PhantomData<&'a [T]>,
+}
+
+impl<T> CudaView<'_, T> {
+    pub fn len(&self) -> usize {
+        self.len
+    }
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+}
+
+/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()] or [CudaSlice::slice_mut()].
+///
+/// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
+#[derive(Debug)]
+pub struct CudaViewMut<'a, T> {
+    pub(crate) ptr: sys::CUdeviceptr,
+    pub(crate) len: usize,
+    pub(crate) read: &'a CudaEvent,
+    pub(crate) write: &'a CudaEvent,
+    pub(crate) stream: &'a Arc<CudaStream>,
+    marker: PhantomData<&'a mut [T]>,
+}
+
+impl<T> CudaViewMut<'_, T> {
+    pub fn len(&self) -> usize {
+        self.len
+    }
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+}
+
 /// Marker trait to indicate that the type is valid
 /// when all of its bits are set to 0.
 ///
@@ -217,6 +706,7 @@ pub trait HostSlice<T> {
     /// This is **only** safe if the resulting slice is used with `stream`. Otherwise
     /// You may run into device synchronization errors
     unsafe fn stream_synced_slice(&self, stream: &CudaStream) -> Result<&[T], DriverError>;
+
     /// # Safety
     /// This is **only** safe if the resulting slice is used with `stream`. Otherwise
     /// You may run into device synchronization errors
@@ -224,6 +714,7 @@ pub trait HostSlice<T> {
         &mut self,
         stream: &CudaStream,
     ) -> Result<&mut [T], DriverError>;
+
     fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError>;
 }
 
@@ -234,14 +725,12 @@ impl<T, const N: usize> HostSlice<T> for [T; N] {
     unsafe fn stream_synced_slice(&self, _stream: &CudaStream) -> Result<&[T], DriverError> {
         Ok(self)
     }
-
     unsafe fn stream_synced_mut_slice(
         &mut self,
         _stream: &CudaStream,
     ) -> Result<&mut [T], DriverError> {
         Ok(self)
     }
-
     fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
         stream.synchronize()
     }
@@ -313,23 +802,16 @@ impl CudaContext {
             len * std::mem::size_of::<T>(),
             sys::CU_MEMHOSTALLOC_WRITECOMBINED,
         )?;
-        let event = self.empty_event(None)?;
-        Ok(PinnedHostSlice::new(ptr as _, len, event))
+        let ptr = ptr as *mut T;
+        assert!(!ptr.is_null());
+        assert!(len * std::mem::size_of::<T>() < isize::MAX as usize);
+        assert!(ptr.is_aligned());
+        let event = self.new_event(None)?;
+        Ok(PinnedHostSlice { ptr, len, event })
     }
 }
 
 impl<T> PinnedHostSlice<T> {
-    /// Creates a new pinned host slice.
-    ///
-    /// # Safety
-    /// 1. `ptr` should be returned from [result::malloc_host()].
-    pub unsafe fn new(ptr: *mut T, len: usize, event: CudaEvent) -> Self {
-        assert!(!ptr.is_null());
-        assert!(len * std::mem::size_of::<T>() < isize::MAX as usize);
-        assert!(ptr.is_aligned());
-        Self { ptr, len, event }
-    }
-
     pub fn context(&self) -> &Arc<CudaContext> {
         &self.event.ctx
     }
@@ -397,731 +879,6 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct CudaContext {
-    pub(crate) cu_device: sys::CUdevice,
-    pub(crate) cu_ctx: sys::CUcontext,
-    pub(crate) ordinal: usize,
-    pub(crate) has_async_alloc: bool,
-}
-
-unsafe impl Send for CudaContext {}
-unsafe impl Sync for CudaContext {}
-
-impl Drop for CudaContext {
-    fn drop(&mut self) {
-        self.bind_to_thread().unwrap();
-        let ctx = std::mem::replace(&mut self.cu_ctx, std::ptr::null_mut());
-        if !ctx.is_null() {
-            unsafe { result::primary_ctx::release(self.cu_device) }.unwrap();
-        }
-    }
-}
-
-impl CudaContext {
-    pub fn new(ordinal: usize) -> Result<Arc<Self>, DriverError> {
-        result::init()?;
-        let cu_device = result::device::get(ordinal as i32)?;
-        let cu_ctx = unsafe { result::primary_ctx::retain(cu_device) }?;
-        let has_async_alloc = unsafe {
-            let memory_pools_supported = result::device::get_attribute(
-                cu_device,
-                sys::CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED,
-            )?;
-            memory_pools_supported > 0
-        };
-        let ctx = Arc::new(CudaContext {
-            cu_device,
-            cu_ctx,
-            ordinal,
-            has_async_alloc,
-        });
-        ctx.bind_to_thread()?;
-        Ok(ctx)
-    }
-
-    pub fn device_count() -> Result<i32, DriverError> {
-        result::init()?;
-        result::device::get_count()
-    }
-
-    /// Get the `ordinal` index of the device this is on.
-    pub fn ordinal(&self) -> usize {
-        self.ordinal
-    }
-
-    /// Get the name of this device.
-    pub fn name(&self) -> Result<String, result::DriverError> {
-        result::device::get_name(self.cu_device)
-    }
-
-    /// Get the UUID of this device.
-    pub fn uuid(&self) -> Result<sys::CUuuid, result::DriverError> {
-        result::device::get_uuid(self.cu_device)
-    }
-
-    /// Get the underlying [sys::CUdevice] of this [CudaContext].
-    ///
-    /// # Safety
-    /// While this function is marked as safe, actually using the
-    /// returned object is unsafe.
-    ///
-    /// **You must not free/release the device pointer**, as it is still
-    /// owned by the [CudaContext].
-    pub fn cu_device(&self) -> sys::CUdevice {
-        self.cu_device
-    }
-
-    /// Get the underlying [sys::CUcontext] of this [CudaContext].
-    ///
-    /// # Safety
-    /// While this function is marked as safe, actually using the
-    /// returned object is unsafe.
-    ///
-    /// **You must not free/release the context pointer**, as it is still
-    /// owned by the [CudaContext].
-    pub fn cu_ctx(&self) -> sys::CUcontext {
-        self.cu_ctx
-    }
-
-    pub fn bind_to_thread(&self) -> Result<(), DriverError> {
-        unsafe { result::ctx::set_current(self.cu_ctx) }
-    }
-
-    /// Get the value of the specified attribute of this [CudaDevice].
-    pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
-        unsafe { result::device::get_attribute(self.cu_device, attrib) }
-    }
-
-    /// Synchronize this context. Will only block CPU if you call [CudaContext::set_flags()] with
-    /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
-    pub fn synchronize(&self) -> Result<(), DriverError> {
-        self.bind_to_thread()?;
-        result::ctx::synchronize()
-    }
-
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
-    )))]
-    pub fn set_blocking_synchronize(&self) -> Result<(), DriverError> {
-        self.set_flags(sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC)
-    }
-
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
-    )))]
-    pub fn set_flags(&self, flags: sys::CUctx_flags) -> Result<(), DriverError> {
-        self.bind_to_thread()?;
-        result::ctx::set_flags(flags)
-    }
-}
-
-#[derive(Debug)]
-pub struct CudaEvent {
-    pub(crate) cu_event: sys::CUevent,
-    pub(crate) ctx: Arc<CudaContext>,
-}
-
-unsafe impl Send for CudaEvent {}
-unsafe impl Sync for CudaEvent {}
-
-impl Drop for CudaEvent {
-    fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
-        unsafe { result::event::destroy(self.cu_event) }.unwrap()
-    }
-}
-
-impl CudaContext {
-    pub fn empty_event(
-        self: &Arc<Self>,
-        flags: Option<sys::CUevent_flags>,
-    ) -> Result<CudaEvent, DriverError> {
-        let flags = flags.unwrap_or(sys::CUevent_flags::CU_EVENT_DISABLE_TIMING);
-        self.bind_to_thread()?;
-        let cu_event = result::event::create(flags)?;
-        Ok(CudaEvent {
-            cu_event,
-            ctx: self.clone(),
-        })
-    }
-}
-
-impl CudaEvent {
-    pub fn cu_event(&self) -> sys::CUevent {
-        self.cu_event
-    }
-
-    pub fn context(&self) -> &Arc<CudaContext> {
-        &self.ctx
-    }
-
-    pub fn record(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        if self.ctx != stream.ctx {
-            return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
-        }
-        self.ctx.bind_to_thread()?;
-        unsafe { result::event::record(self.cu_event, stream.cu_stream) }
-    }
-
-    /// Will only block CPU thraed if [sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC] was used to create this event.
-    pub fn synchronize(&self) -> Result<(), DriverError> {
-        self.ctx.bind_to_thread()?;
-        unsafe { result::event::synchronize(self.cu_event) }
-    }
-
-    pub fn elapsed_ms(&self, other: &Self) -> Result<f32, DriverError> {
-        if self.ctx != other.ctx {
-            return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
-        }
-        self.ctx.bind_to_thread()?;
-        unsafe { result::event::elapsed(self.cu_event, other.cu_event) }
-    }
-
-    /// Returns `true` if all recorded work has been completed, `false` otherwise.
-    pub fn is_complete(&self) -> bool {
-        unsafe { result::event::query(self.cu_event) }.is_ok()
-    }
-}
-
-/// Contains a reference counted pointer to both
-/// device and host memory allocated for type `T`.
-///
-/// # Host data
-///
-/// *This owns the host data it is associated with*. However
-/// it is possible to create device memory without having
-/// a corresponding host memory, so the host memory is
-/// actually [Option].
-///
-/// # Reclaiming host data
-///
-/// To reclaim the host data for this device data,
-/// use [CudaDevice::sync_reclaim()]. This will
-/// perform necessary synchronization to ensure
-/// that the device data finishes copying over.
-///
-/// # Mutating device data
-///
-/// This can only be done by launching kernels via
-/// [crate::driver::LaunchAsync] which is implemented
-/// by [CudaDevice]. Pass `&mut CudaSlice<T>`
-/// if you want to mutate the rc, and `&CudaSlice<T>` otherwise.
-///
-/// Unfortunately, `&CudaSlice<T>` can **still be mutated
-/// by the [CudaFunction]**.
-#[derive(Debug)]
-pub struct CudaSlice<T> {
-    pub(crate) cu_device_ptr: sys::CUdeviceptr,
-    pub(crate) len: usize,
-    pub(crate) read: CudaEvent,
-    pub(crate) write: CudaEvent,
-    pub(crate) stream: Arc<CudaStream>,
-    pub(crate) marker: PhantomData<*const T>,
-}
-
-unsafe impl<T> Send for CudaSlice<T> {}
-unsafe impl<T> Sync for CudaSlice<T> {}
-
-impl<T> Drop for CudaSlice<T> {
-    fn drop(&mut self) {
-        self.stream.wait(&self.read).unwrap();
-        self.stream.wait(&self.write).unwrap();
-        unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
-    }
-}
-
-impl<T> CudaSlice<T> {
-    pub fn len(&self) -> usize {
-        self.len
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len == 0
-    }
-
-    pub fn ordinal(&self) -> usize {
-        self.stream.ctx.ordinal
-    }
-
-    pub fn context(&self) -> &Arc<CudaContext> {
-        &self.stream.ctx
-    }
-}
-
-impl<T: DeviceRepr> CudaSlice<T> {
-    /// Allocates copy of self and schedules a device to device copy of memory.
-    pub fn try_clone(&self) -> Result<Self, result::DriverError> {
-        self.stream.clone_dtod(self)
-    }
-}
-
-impl<T: DeviceRepr> Clone for CudaSlice<T> {
-    fn clone(&self) -> Self {
-        self.try_clone().unwrap()
-    }
-}
-
-impl<T: Clone + Default + DeviceRepr> TryFrom<CudaSlice<T>> for Vec<T> {
-    type Error = result::DriverError;
-    fn try_from(value: CudaSlice<T>) -> Result<Self, Self::Error> {
-        value.stream.memcpy_dtov(&value)
-    }
-}
-
-/// Wrapper around [sys::CUmodule] that also contains
-/// the loaded [CudaFunction] associated with this module.
-///
-/// See [CudaModule::get_fn()] for retrieving function handles.
-#[derive(Debug)]
-pub struct CudaModule {
-    pub(crate) cu_module: sys::CUmodule,
-    pub(crate) ctx: Arc<CudaContext>,
-}
-
-unsafe impl Send for CudaModule {}
-unsafe impl Sync for CudaModule {}
-
-impl Drop for CudaModule {
-    fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
-        unsafe { result::module::unload(self.cu_module) }.unwrap();
-    }
-}
-
-impl CudaContext {
-    /// Dynamically load a set of [crate::driver::CudaFunction] from a jit compiled ptx.
-    ///
-    /// - `ptx` contains the compiled ptx
-    /// - `func_names` is a slice of function names to load into the module during build.
-    pub fn load_module(
-        self: &Arc<Self>,
-        ptx: crate::nvrtc::Ptx,
-    ) -> Result<Arc<CudaModule>, result::DriverError> {
-        self.bind_to_thread()?;
-
-        let cu_module = match ptx.0 {
-            crate::nvrtc::PtxKind::Image(image) => unsafe {
-                result::module::load_data(image.as_ptr() as *const _)
-            },
-            crate::nvrtc::PtxKind::Src(src) => {
-                let c_src = CString::new(src).unwrap();
-                unsafe { result::module::load_data(c_src.as_ptr() as *const _) }
-            }
-            crate::nvrtc::PtxKind::File(path) => {
-                let name_c = CString::new(path.to_str().unwrap()).unwrap();
-                result::module::load(name_c)
-            }
-        }?;
-        Ok(Arc::new(CudaModule {
-            cu_module,
-            ctx: self.clone(),
-        }))
-    }
-}
-
-/// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
-#[derive(Debug, Clone)]
-pub struct CudaFunction {
-    pub(crate) cu_function: sys::CUfunction,
-    #[allow(unused)]
-    pub(crate) module: Arc<CudaModule>,
-}
-
-unsafe impl Send for CudaFunction {}
-unsafe impl Sync for CudaFunction {}
-
-impl CudaModule {
-    pub fn load_function(self: &Arc<Self>, fn_name: &str) -> Result<CudaFunction, DriverError> {
-        let fn_name_c = CString::new(fn_name).unwrap();
-        let cu_function = unsafe { result::module::get_function(self.cu_module, fn_name_c) }?;
-        Ok(CudaFunction {
-            cu_function,
-            module: self.clone(),
-        })
-    }
-}
-
-impl CudaFunction {
-    pub fn occupancy_available_dynamic_smem_per_block(
-        &self,
-        num_blocks: u32,
-        block_size: u32,
-    ) -> Result<usize, result::DriverError> {
-        let mut dynamic_smem_size: usize = 0;
-
-        unsafe {
-            lib()
-                .cuOccupancyAvailableDynamicSMemPerBlock(
-                    &mut dynamic_smem_size,
-                    self.cu_function,
-                    num_blocks as std::ffi::c_int,
-                    block_size as std::ffi::c_int,
-                )
-                .result()?
-        };
-
-        Ok(dynamic_smem_size)
-    }
-
-    pub fn occupancy_max_active_blocks_per_multiprocessor(
-        &self,
-        block_size: u32,
-        dynamic_smem_size: usize,
-        flags: Option<sys::CUoccupancy_flags_enum>,
-    ) -> Result<u32, result::DriverError> {
-        let mut num_blocks: std::ffi::c_int = 0;
-        let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
-
-        unsafe {
-            lib()
-                .cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
-                    &mut num_blocks,
-                    self.cu_function,
-                    block_size as std::ffi::c_int,
-                    dynamic_smem_size,
-                    flags as std::ffi::c_uint,
-                )
-                .result()?
-        };
-
-        Ok(num_blocks as u32)
-    }
-
-    #[cfg(not(any(
-        feature = "cuda-11070",
-        feature = "cuda-11060",
-        feature = "cuda-11050",
-        feature = "cuda-11040"
-    )))]
-    pub fn occupancy_max_active_clusters(
-        &self,
-        config: crate::driver::LaunchConfig,
-        stream: &CudaStream,
-    ) -> Result<u32, result::DriverError> {
-        let mut num_clusters: std::ffi::c_int = 0;
-
-        let cfg = sys::CUlaunchConfig {
-            gridDimX: config.grid_dim.0,
-            gridDimY: config.grid_dim.1,
-            gridDimZ: config.grid_dim.2,
-            blockDimX: config.block_dim.0,
-            blockDimY: config.block_dim.1,
-            blockDimZ: config.block_dim.2,
-            sharedMemBytes: config.shared_mem_bytes,
-            hStream: stream.cu_stream,
-            attrs: std::ptr::null_mut(),
-            numAttrs: 0,
-        };
-
-        unsafe {
-            lib()
-                .cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg)
-                .result()?
-        };
-
-        Ok(num_clusters as u32)
-    }
-
-    pub fn occupancy_max_potential_block_size(
-        &self,
-        block_size_to_dynamic_smem_size: extern "C" fn(block_size: std::ffi::c_int) -> usize,
-        dynamic_smem_size: usize,
-        block_size_limit: u32,
-        flags: Option<sys::CUoccupancy_flags_enum>,
-    ) -> Result<(u32, u32), result::DriverError> {
-        let mut min_grid_size: std::ffi::c_int = 0;
-        let mut block_size: std::ffi::c_int = 0;
-        let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
-
-        unsafe {
-            lib()
-                .cuOccupancyMaxPotentialBlockSizeWithFlags(
-                    &mut min_grid_size,
-                    &mut block_size,
-                    self.cu_function,
-                    Some(block_size_to_dynamic_smem_size),
-                    dynamic_smem_size,
-                    block_size_limit as std::ffi::c_int,
-                    flags as std::ffi::c_uint,
-                )
-                .result()?
-        };
-
-        Ok((min_grid_size as u32, block_size as u32))
-    }
-
-    #[cfg(not(any(
-        feature = "cuda-11070",
-        feature = "cuda-11060",
-        feature = "cuda-11050",
-        feature = "cuda-11040"
-    )))]
-    pub fn occupancy_max_potential_cluster_size(
-        &self,
-        config: crate::driver::LaunchConfig,
-        stream: &CudaStream,
-    ) -> Result<u32, result::DriverError> {
-        let mut cluster_size: std::ffi::c_int = 0;
-
-        let cfg = sys::CUlaunchConfig {
-            gridDimX: config.grid_dim.0,
-            gridDimY: config.grid_dim.1,
-            gridDimZ: config.grid_dim.2,
-            blockDimX: config.block_dim.0,
-            blockDimY: config.block_dim.1,
-            blockDimZ: config.block_dim.2,
-            sharedMemBytes: config.shared_mem_bytes,
-            hStream: stream.cu_stream,
-            attrs: std::ptr::null_mut(),
-            numAttrs: 0,
-        };
-
-        unsafe {
-            lib()
-                .cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg)
-                .result()?
-        };
-
-        Ok(cluster_size as u32)
-    }
-
-    /// Set the value of a specific attribute of this [CudaFunction].
-    pub fn set_attribute(
-        &self,
-        attribute: CUfunction_attribute_enum,
-        value: i32,
-    ) -> Result<(), result::DriverError> {
-        unsafe {
-            result::function::set_function_attribute(self.cu_function, attribute, value)?;
-        }
-
-        Ok(())
-    }
-
-    /// Set the cache config of this [CudaFunction].
-    pub fn set_function_cache_config(
-        &self,
-        attribute: CUfunc_cache_enum,
-    ) -> Result<(), result::DriverError> {
-        unsafe {
-            result::function::set_function_cache_config(self.cu_function, attribute)?;
-        }
-
-        Ok(())
-    }
-}
-
-/// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
-/// upon the completion of this stream's work.
-///
-/// Create with [CudaDevice::fork_default_stream].
-///
-/// The synchronization happens in **code order**. E.g.
-/// ```ignore
-/// let stream = dev.fork_default_stream()?; // 0
-/// dev.launch(...)?; // 1
-/// function_1.launch_on_stream(&stream, ...)?; // 2
-/// function_2.launch(...)?; // 3
-/// drop(stream); // 4
-/// dev.launch(...) // 5
-/// ```
-///
-/// - 0 will place a streamWaitEvent(default work stream) on the new stream
-/// - 1 will launch on the default work stream
-/// - 2 will launch concurrently to 1 on `&stream`,
-/// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
-/// - 4 will place a streamWaitEvent(`&stream`) on the default work stream
-/// - 5 will happen on the default stream **after the default stream waits for 2**
-///
-/// **This is asynchronous with respect to the host.**
-///
-/// # Example with wait_for_default and wait_for
-///
-/// There is also a way to synchronize work on non-default streams without dropping them.
-/// It can be interesting to reuse the [CudaStream] streams during the whole
-/// duration of the computation.
-/// To that end, one can use [CudaStream::wait_for_default] and [CudaDevice::wait_for].
-///
-/// Let's suppose that there are 4 streams: stream_1, stream_2, stream_3, stream_4.
-/// There is no work queued on the default stream. All the work is queued on non-default streams.
-/// And let's suppose that the stream dependencies are as follows:
-/// - stream_1 dependencies: []
-/// - stream_2 dependencies: []
-/// - stream_3 dependencies: [stream_1, stream_2]
-/// - stream_4 dependencies: [stream_3]
-///
-/// Pseudo-code:
-/// ```ignore
-/// let stream_1 = dev.fork_default_stream()?; // 0
-/// let stream_2 = dev.fork_default_stream()?; // 1
-/// let stream_3 = dev.fork_default_stream()?; // 2
-/// let stream_4 = dev.fork_default_stream()?; // 3
-///
-/// function_1.launch_on_stream(&stream_1, ...)?; // 4
-/// function_2.launch_on_stream(&stream_2, ...)?; // 5
-/// dev.wait_for(&stream_1); // 6
-/// dev.wait_for(&stream_2); // 7
-///
-/// stream_3.wait_for_default(); // 8
-/// function_3.launch_on_stream(&stream_3, ...)?; // 10
-/// dev.wait_for(&stream_3); // 11
-///
-/// stream_4.wait_for_default(); // 12
-/// function_4.launch_on_stream(&stream_4, ...)?; // 13
-/// dev.wait_for(&stream_4); // 14
-/// ```
-///
-/// - function_1 and function_2 will be executed concurrently.
-/// - function_3 will be executed once function_1 and function_2 have completed their execution.
-/// - function_4 will be executed once function_3 has completed its execution.
-///
-/// This is handy because it can be use to do out-of-order execution of kernels using dependency
-/// analysis. For example, with multi-head attention with 12 heads, each head can be executed
-/// in its own stream.
-///
-/// **This is asynchronous with respect to the host.**
-///
-/// See [CUDA C/C++ Streams and Concurrency](https://developer.download.nvidia.com/CUDA/training/StreamsAndConcurrencyWebinar.pdf)
-/// See [3. Stream synchronization behavior](https://docs.nvidia.com/cuda/cuda-runtime-api/stream-sync-behavior.html)
-/// See [6.6. Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html)
-/// See [Out-of-order execution](https://en.wikipedia.org/wiki/Out-of-order_execution)
-/// See [Dependence analysis](https://en.wikipedia.org/wiki/Dependence_analysis)
-#[derive(Debug, PartialEq, Eq)]
-pub struct CudaStream {
-    pub(crate) cu_stream: sys::CUstream,
-    pub(crate) ctx: Arc<CudaContext>,
-}
-
-unsafe impl Send for CudaStream {}
-unsafe impl Sync for CudaStream {}
-
-impl Drop for CudaStream {
-    fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
-        if !self.cu_stream.is_null() {
-            unsafe { result::stream::destroy(self.cu_stream).unwrap() };
-        }
-    }
-}
-
-impl CudaContext {
-    pub fn default_stream(self: &Arc<Self>) -> Arc<CudaStream> {
-        Arc::new(CudaStream {
-            cu_stream: std::ptr::null_mut(),
-            ctx: self.clone(),
-        })
-    }
-
-    pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
-        self.bind_to_thread()?;
-        let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
-        Ok(Arc::new(CudaStream {
-            cu_stream,
-            ctx: self.clone(),
-        }))
-    }
-}
-
-impl CudaStream {
-    pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
-        let stream = self.ctx.new_stream()?;
-        stream.wait(&self.record_event(None)?)?;
-        Ok(stream)
-    }
-
-    pub fn cu_stream(&self) -> sys::CUstream {
-        self.cu_stream
-    }
-
-    pub fn context(&self) -> &Arc<CudaContext> {
-        &self.ctx
-    }
-
-    /// Will only block CPU if you call [CudaContext::set_flags()] with
-    /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
-    pub fn synchronize(&self) -> Result<(), DriverError> {
-        self.ctx.bind_to_thread()?;
-        unsafe { result::stream::synchronize(self.cu_stream) }
-    }
-
-    pub fn record_event(
-        &self,
-        flags: Option<sys::CUevent_flags>,
-    ) -> Result<CudaEvent, DriverError> {
-        let event = self.ctx.empty_event(flags)?;
-        event.record(self)?;
-        Ok(event)
-    }
-
-    pub fn wait(&self, event: &CudaEvent) -> Result<(), DriverError> {
-        if self.ctx != event.ctx {
-            return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
-        }
-        self.ctx.bind_to_thread()?;
-        unsafe {
-            result::stream::wait_event(
-                self.cu_stream,
-                event.cu_event,
-                sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
-            )
-        }
-    }
-
-    pub fn join(&self, other: &CudaStream) -> Result<(), DriverError> {
-        self.wait(&other.record_event(None)?)
-    }
-}
-
-impl<T> CudaSlice<T> {
-    /// Takes ownership of the underlying [sys::CUdeviceptr]. **It is up
-    /// to the owner to free this value**.
-    ///
-    /// Drops the underlying host_buf if there is one.
-    pub fn leak(self) -> sys::CUdeviceptr {
-        let ptr = self.cu_device_ptr;
-        std::mem::forget(self);
-        ptr
-    }
-}
-
-impl CudaStream {
-    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
-    /// [`CudaSlice::leak()`].
-    ///
-    /// # Safety
-    /// - `cu_device_ptr` must be a valid allocation
-    /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
-    /// - The memory may not be valid for type `T`, so some sort of memset operation
-    ///   should be called on the memory.
-    pub unsafe fn upgrade_device_ptr<T>(
-        self: &Arc<Self>,
-        cu_device_ptr: sys::CUdeviceptr,
-        len: usize,
-    ) -> CudaSlice<T> {
-        let read = self.ctx.empty_event(None).unwrap();
-        let write = self.ctx.empty_event(None).unwrap();
-        CudaSlice {
-            cu_device_ptr,
-            len,
-            read,
-            write,
-            stream: self.clone(),
-            marker: PhantomData,
-        }
-    }
-}
-
 impl CudaStream {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
@@ -1131,8 +888,8 @@ impl CudaStream {
         } else {
             unsafe { result::malloc_sync(0) }?
         };
-        let read = self.ctx.empty_event(None)?;
-        let write = self.ctx.empty_event(None)?;
+        let read = self.ctx.new_event(None)?;
+        let write = self.ctx.new_event(None)?;
         Ok(CudaSlice {
             cu_device_ptr,
             len: 0,
@@ -1155,8 +912,8 @@ impl CudaStream {
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
-        let read = self.ctx.empty_event(None)?;
-        let write = self.ctx.empty_event(None)?;
+        let read = self.ctx.new_event(None)?;
+        let write = self.ctx.new_event(None)?;
         Ok(CudaSlice {
             cu_device_ptr,
             len,
@@ -1266,29 +1023,6 @@ impl CudaStream {
         let mut dst = unsafe { self.alloc(src.len()) }?;
         self.memcpy_dtod(src, &mut dst)?;
         Ok(dst)
-    }
-}
-
-/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()] or [CudaSlice::slice()].
-///
-/// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
-#[derive(Debug)]
-pub struct CudaView<'a, T> {
-    pub(crate) ptr: sys::CUdeviceptr,
-    pub(crate) len: usize,
-    pub(crate) read: &'a CudaEvent,
-    pub(crate) write: &'a CudaEvent,
-    pub(crate) stream: &'a Arc<CudaStream>,
-    marker: PhantomData<&'a [T]>,
-}
-
-impl<T> CudaView<'_, T> {
-    pub fn len(&self) -> usize {
-        self.len
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len == 0
     }
 }
 
@@ -1408,29 +1142,6 @@ impl<'a, T> CudaView<'a, T> {
                 marker: PhantomData,
             },
         )
-    }
-}
-
-/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()] or [CudaSlice::slice_mut()].
-///
-/// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
-#[derive(Debug)]
-pub struct CudaViewMut<'a, T> {
-    pub(crate) ptr: sys::CUdeviceptr,
-    pub(crate) len: usize,
-    pub(crate) read: &'a CudaEvent,
-    pub(crate) write: &'a CudaEvent,
-    pub(crate) stream: &'a Arc<CudaStream>,
-    marker: PhantomData<&'a mut [T]>,
-}
-
-impl<T> CudaViewMut<'_, T> {
-    pub fn len(&self) -> usize {
-        self.len
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len == 0
     }
 }
 
@@ -1733,6 +1444,280 @@ fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)
         Bound::Unbounded => len,
     };
     (end <= len).then_some((start, end))
+}
+
+/// Wrapper around [sys::CUmodule] that also contains
+/// the loaded [CudaFunction] associated with this module.
+///
+/// See [CudaModule::get_fn()] for retrieving function handles.
+#[derive(Debug)]
+pub struct CudaModule {
+    pub(crate) cu_module: sys::CUmodule,
+    pub(crate) ctx: Arc<CudaContext>,
+}
+
+unsafe impl Send for CudaModule {}
+unsafe impl Sync for CudaModule {}
+
+impl Drop for CudaModule {
+    fn drop(&mut self) {
+        self.ctx.bind_to_thread().unwrap();
+        unsafe { result::module::unload(self.cu_module) }.unwrap();
+    }
+}
+
+impl CudaContext {
+    /// Dynamically load a set of [crate::driver::CudaFunction] from a jit compiled ptx.
+    ///
+    /// - `ptx` contains the compiled ptx
+    /// - `func_names` is a slice of function names to load into the module during build.
+    pub fn load_module(
+        self: &Arc<Self>,
+        ptx: crate::nvrtc::Ptx,
+    ) -> Result<Arc<CudaModule>, result::DriverError> {
+        self.bind_to_thread()?;
+
+        let cu_module = match ptx.0 {
+            crate::nvrtc::PtxKind::Image(image) => unsafe {
+                result::module::load_data(image.as_ptr() as *const _)
+            },
+            crate::nvrtc::PtxKind::Src(src) => {
+                let c_src = CString::new(src).unwrap();
+                unsafe { result::module::load_data(c_src.as_ptr() as *const _) }
+            }
+            crate::nvrtc::PtxKind::File(path) => {
+                let name_c = CString::new(path.to_str().unwrap()).unwrap();
+                result::module::load(name_c)
+            }
+        }?;
+        Ok(Arc::new(CudaModule {
+            cu_module,
+            ctx: self.clone(),
+        }))
+    }
+}
+
+/// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
+#[derive(Debug, Clone)]
+pub struct CudaFunction {
+    pub(crate) cu_function: sys::CUfunction,
+    #[allow(unused)]
+    pub(crate) module: Arc<CudaModule>,
+}
+
+unsafe impl Send for CudaFunction {}
+unsafe impl Sync for CudaFunction {}
+
+impl CudaModule {
+    pub fn load_function(self: &Arc<Self>, fn_name: &str) -> Result<CudaFunction, DriverError> {
+        let fn_name_c = CString::new(fn_name).unwrap();
+        let cu_function = unsafe { result::module::get_function(self.cu_module, fn_name_c) }?;
+        Ok(CudaFunction {
+            cu_function,
+            module: self.clone(),
+        })
+    }
+}
+
+impl CudaFunction {
+    pub fn occupancy_available_dynamic_smem_per_block(
+        &self,
+        num_blocks: u32,
+        block_size: u32,
+    ) -> Result<usize, result::DriverError> {
+        let mut dynamic_smem_size: usize = 0;
+
+        unsafe {
+            lib()
+                .cuOccupancyAvailableDynamicSMemPerBlock(
+                    &mut dynamic_smem_size,
+                    self.cu_function,
+                    num_blocks as std::ffi::c_int,
+                    block_size as std::ffi::c_int,
+                )
+                .result()?
+        };
+
+        Ok(dynamic_smem_size)
+    }
+
+    pub fn occupancy_max_active_blocks_per_multiprocessor(
+        &self,
+        block_size: u32,
+        dynamic_smem_size: usize,
+        flags: Option<sys::CUoccupancy_flags_enum>,
+    ) -> Result<u32, result::DriverError> {
+        let mut num_blocks: std::ffi::c_int = 0;
+        let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
+
+        unsafe {
+            lib()
+                .cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+                    &mut num_blocks,
+                    self.cu_function,
+                    block_size as std::ffi::c_int,
+                    dynamic_smem_size,
+                    flags as std::ffi::c_uint,
+                )
+                .result()?
+        };
+
+        Ok(num_blocks as u32)
+    }
+
+    #[cfg(not(any(
+        feature = "cuda-11070",
+        feature = "cuda-11060",
+        feature = "cuda-11050",
+        feature = "cuda-11040"
+    )))]
+    pub fn occupancy_max_active_clusters(
+        &self,
+        config: crate::driver::LaunchConfig,
+        stream: &CudaStream,
+    ) -> Result<u32, result::DriverError> {
+        let mut num_clusters: std::ffi::c_int = 0;
+
+        let cfg = sys::CUlaunchConfig {
+            gridDimX: config.grid_dim.0,
+            gridDimY: config.grid_dim.1,
+            gridDimZ: config.grid_dim.2,
+            blockDimX: config.block_dim.0,
+            blockDimY: config.block_dim.1,
+            blockDimZ: config.block_dim.2,
+            sharedMemBytes: config.shared_mem_bytes,
+            hStream: stream.cu_stream,
+            attrs: std::ptr::null_mut(),
+            numAttrs: 0,
+        };
+
+        unsafe {
+            lib()
+                .cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg)
+                .result()?
+        };
+
+        Ok(num_clusters as u32)
+    }
+
+    pub fn occupancy_max_potential_block_size(
+        &self,
+        block_size_to_dynamic_smem_size: extern "C" fn(block_size: std::ffi::c_int) -> usize,
+        dynamic_smem_size: usize,
+        block_size_limit: u32,
+        flags: Option<sys::CUoccupancy_flags_enum>,
+    ) -> Result<(u32, u32), result::DriverError> {
+        let mut min_grid_size: std::ffi::c_int = 0;
+        let mut block_size: std::ffi::c_int = 0;
+        let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
+
+        unsafe {
+            lib()
+                .cuOccupancyMaxPotentialBlockSizeWithFlags(
+                    &mut min_grid_size,
+                    &mut block_size,
+                    self.cu_function,
+                    Some(block_size_to_dynamic_smem_size),
+                    dynamic_smem_size,
+                    block_size_limit as std::ffi::c_int,
+                    flags as std::ffi::c_uint,
+                )
+                .result()?
+        };
+
+        Ok((min_grid_size as u32, block_size as u32))
+    }
+
+    #[cfg(not(any(
+        feature = "cuda-11070",
+        feature = "cuda-11060",
+        feature = "cuda-11050",
+        feature = "cuda-11040"
+    )))]
+    pub fn occupancy_max_potential_cluster_size(
+        &self,
+        config: crate::driver::LaunchConfig,
+        stream: &CudaStream,
+    ) -> Result<u32, result::DriverError> {
+        let mut cluster_size: std::ffi::c_int = 0;
+
+        let cfg = sys::CUlaunchConfig {
+            gridDimX: config.grid_dim.0,
+            gridDimY: config.grid_dim.1,
+            gridDimZ: config.grid_dim.2,
+            blockDimX: config.block_dim.0,
+            blockDimY: config.block_dim.1,
+            blockDimZ: config.block_dim.2,
+            sharedMemBytes: config.shared_mem_bytes,
+            hStream: stream.cu_stream,
+            attrs: std::ptr::null_mut(),
+            numAttrs: 0,
+        };
+
+        unsafe {
+            lib()
+                .cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg)
+                .result()?
+        };
+
+        Ok(cluster_size as u32)
+    }
+
+    /// Set the value of a specific attribute of this [CudaFunction].
+    pub fn set_attribute(
+        &self,
+        attribute: CUfunction_attribute_enum,
+        value: i32,
+    ) -> Result<(), result::DriverError> {
+        unsafe { result::function::set_function_attribute(self.cu_function, attribute, value) }
+    }
+
+    /// Set the cache config of this [CudaFunction].
+    pub fn set_function_cache_config(
+        &self,
+        attribute: CUfunc_cache_enum,
+    ) -> Result<(), result::DriverError> {
+        unsafe { result::function::set_function_cache_config(self.cu_function, attribute) }
+    }
+}
+
+impl<T> CudaSlice<T> {
+    /// Takes ownership of the underlying [sys::CUdeviceptr]. **It is up
+    /// to the owner to free this value**.
+    ///
+    /// Drops the underlying host_buf if there is one.
+    pub fn leak(self) -> sys::CUdeviceptr {
+        let ptr = self.cu_device_ptr;
+        std::mem::forget(self);
+        ptr
+    }
+}
+
+impl CudaStream {
+    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
+    /// [`CudaSlice::leak()`].
+    ///
+    /// # Safety
+    /// - `cu_device_ptr` must be a valid allocation
+    /// - `cu_device_ptr` must space for `len * std::mem::size_of<T>()` bytes
+    /// - The memory may not be valid for type `T`, so some sort of memset operation
+    ///   should be called on the memory.
+    pub unsafe fn upgrade_device_ptr<T>(
+        self: &Arc<Self>,
+        cu_device_ptr: sys::CUdeviceptr,
+        len: usize,
+    ) -> CudaSlice<T> {
+        let read = self.ctx.new_event(None).unwrap();
+        let write = self.ctx.new_event(None).unwrap();
+        CudaSlice {
+            cu_device_ptr,
+            len,
+            read,
+            write,
+            stream: self.clone(),
+            marker: PhantomData,
+        }
+    }
 }
 
 #[cfg(test)]

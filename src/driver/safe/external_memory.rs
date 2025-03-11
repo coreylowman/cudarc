@@ -101,7 +101,7 @@ impl ExternalMemory {
                 range.len() as u64,
             )
         }?;
-        let event = self.ctx.empty_event(None)?;
+        let event = self.ctx.new_event(None)?;
         let stream = self.ctx.default_stream();
         Ok(MappedBuffer {
             device_ptr,
