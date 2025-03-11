@@ -8,7 +8,7 @@ use crate::driver::{result, sys, DriverError};
 
 /// An abstraction for imported external memory.
 ///
-/// This struct can be created via [`CudaDevice::import_external_memory`].
+/// This struct can be created via [`CudaContext::import_external_memory()`].
 /// The imported external memory will be destroyed when this struct is dropped.
 #[derive(Debug)]
 pub struct ExternalMemory {
@@ -150,6 +150,9 @@ impl DevicePtr<u8> for MappedBuffer {
         &self.event
     }
     fn block_for_read(&self, _stream: &CudaStream) -> Result<(), DriverError> {
+        // Since we only implement [DevicePtr] for this, and not [DevicePtrMut],
+        // this memory can never be written to, only read from. So we don't need
+        // to synchronize here at all.
         Ok(())
     }
 }
