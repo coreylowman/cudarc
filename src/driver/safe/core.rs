@@ -1103,24 +1103,25 @@ impl<T> CudaSlice<T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaView};
     /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice(0..50);
     /// do_something(&view);
     /// ```
     ///
     /// Like a normal slice, borrow checking prevents the underlying [CudaSlice] from being dropped.
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaView};
     /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
     /// let view = {
-    ///     let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
-    ///     let mut view = slice.slice(0..50);
+    ///     let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     ///     // cannot return view, since it borrows from slice
-    ///     view
+    ///     slice.slice(0..50)
     /// };
     /// do_something(&view);
     /// ```
@@ -1140,34 +1141,36 @@ impl<T> CudaSlice<T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: &mut CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// do_something(&mut view);
     /// ```
     ///
     /// Like a normal mutable slice, borrow checking prevents the underlying [CudaSlice] from being dropped.
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: &mut CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
     /// let mut view = {
-    ///     let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
-    ///     let view = slice.slice_mut(0..50);
+    ///     let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     ///     // cannot return view, since it borrows from slice
-    ///     view
+    ///     slice.slice_mut(0..50)
     /// };
     /// do_something(&mut view);
     /// ```
     ///
     /// Like with normal mutable slices, one cannot mutably slice twice into the same [CudaSlice]:
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view1 = slice.slice_mut(0..50);
     /// // cannot borrow twice from slice
     /// let mut view2 = slice.slice_mut(50..100);
@@ -1241,10 +1244,11 @@ impl<T> CudaSlice<T> {
     ///
     /// This method can be used to create non-overlapping mutable views into a [CudaSlice].
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// // split the slice into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = slice.split_at_mut(50);
     /// do_something(view1, view2);
@@ -1275,10 +1279,11 @@ impl<'a, T> CudaView<'a, T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaView};
     /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice(0..50);
     /// let mut view2 = view.slice(0..25);
     /// do_something(&view);
@@ -1332,10 +1337,11 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: &mut CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// let mut view2 = view.slice_mut(0..25);
     /// do_something(&mut view2);
@@ -1343,10 +1349,11 @@ impl<'a, T> CudaViewMut<'a, T> {
     ///
     /// One cannot slice twice into the same [CudaViewMut]:
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// // cannot borrow twice from same view
     /// let mut view1 = slice.slice_mut(0..25);
@@ -1401,10 +1408,11 @@ impl<'a, T> CudaViewMut<'a, T> {
     ///
     /// This method can be used to create non-overlapping mutable views into a [CudaViewMut].
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// // split the view into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = view.split_at_mut(25);
@@ -1790,7 +1798,7 @@ mod tests {
         let stream = ctx.default_stream();
         assert_eq!(Arc::strong_count(&ctx), 2);
         let t = stream.alloc_zeros::<f32>(1).unwrap();
-        assert_eq!(Arc::strong_count(&ctx), 2);
+        assert_eq!(Arc::strong_count(&ctx), 4);
         assert_eq!(Arc::strong_count(&stream), 2);
         drop(t);
         assert_eq!(Arc::strong_count(&ctx), 2);

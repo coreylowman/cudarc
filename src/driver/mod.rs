@@ -25,7 +25,7 @@
 //! # let ctx = CudaContext::new(0).unwrap();
 //! # let stream = ctx.default_stream();
 //! let a_dev: CudaSlice<f32> = stream.alloc_zeros(10).unwrap();
-//! let b_dev: CudaSlice<f32> = steram.memcpy_stod(&[0.0; 10]).unwrap();
+//! let b_dev: CudaSlice<f32> = stream.memcpy_stod(&[0.0; 10]).unwrap();
 //! ```
 //!
 //! 3. Transfer to host memory with [CudaStream::memcpy_dtov()], or [CudaStream::memcpy_dtoh()]
@@ -34,11 +34,11 @@
 //! # use cudarc::driver::*;
 //! # let ctx = CudaContext::new(0).unwrap();
 //! # let stream = ctx.default_stream();
-//! let a_dev: CudaSlice<f32> = device.alloc_zeros(10).unwrap();
+//! let a_dev: CudaSlice<f32> = stream.alloc_zeros(10).unwrap();
 //! let mut a_host: [f32; 10] = [1.0; 10];
 //! stream.memcpy_dtoh(&a_dev, &mut a_host);
 //! assert_eq!(a_host, [0.0; 10]);
-//! let a_host: Vec<f32> = device.memcpy_dtov(&a_dev).unwrap();
+//! let a_host: Vec<f32> = stream.memcpy_dtov(&a_dev).unwrap();
 //! assert_eq!(&a_host, &[0.0; 10]);
 //! ```
 //!
@@ -97,10 +97,11 @@
 //! # use cudarc::{driver::*, nvrtc::*};
 //! # let ptx = compile_ptx("extern \"C\" __global__ void my_function(float *out) { }").unwrap();
 //! # let ctx = CudaContext::new(0).unwrap();
+//! # let stream = ctx.default_stream();
 //! # let module = ctx.load_module(ptx).unwrap();
 //! # let f = module.load_function("my_function").unwrap();
 //! let cfg = LaunchConfig::for_num_elems(10);
-//! let mut a: CudaSlice<f32> = device.alloc_zeros::<f32>(3 * 10).unwrap();
+//! let mut a: CudaSlice<f32> = stream.alloc_zeros::<f32>(3 * 10).unwrap();
 //! for i_batch in 0..3 {
 //!     let mut a_sub_view: CudaViewMut<f32> = a.try_slice_mut(i_batch * 10..).unwrap();
 //!     unsafe { stream.launch_builder(&f).arg(&mut a_sub_view).launch(cfg) }.unwrap();

@@ -74,7 +74,7 @@ pub fn create_program<Src: AsRef<str>>(
 ///
 /// ```rust
 /// # use cudarc::nvrtc::result::*;
-/// let prog = create_program("extern \"C\" __global__ void kernel() { }").unwrap();
+/// let prog = create_program("extern \"C\" __global__ void kernel() { }", None).unwrap();
 /// unsafe { compile_program(prog, &["--ftz=true", "--fmad=true"]) }.unwrap();
 /// ```
 ///

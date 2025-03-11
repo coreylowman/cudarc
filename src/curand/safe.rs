@@ -9,15 +9,17 @@ use std::sync::Arc;
 /// 1. Create:
 /// ```rust
 /// # use cudarc::{driver::*, curand::*};
-/// let device = CudaDevice::new(0).unwrap();
-/// let rng = CudaRng::new(0, device).unwrap();
+/// let ctx = CudaContext::new(0).unwrap();
+/// let stream = ctx.default_stream();
+/// let rng = CudaRng::new(0, stream.clone()).unwrap();
 /// ```
 /// 2. Fill device memory:
 /// ```rust
 /// # use cudarc::{driver::*, curand::*};
-/// # let device = CudaDevice::new(0).unwrap();
-/// # let rng = CudaRng::new(0, device.clone()).unwrap();
-/// let mut a_dev = device.alloc_zeros::<f32>(10).unwrap();
+/// # let ctx = CudaContext::new(0).unwrap();
+/// # let stream = ctx.default_stream();
+/// # let rng = CudaRng::new(0, stream.clone()).unwrap();
+/// let mut a_dev = stream.alloc_zeros::<f32>(10).unwrap();
 /// rng.fill_with_uniform(&mut a_dev).unwrap();
 /// ```
 ///
