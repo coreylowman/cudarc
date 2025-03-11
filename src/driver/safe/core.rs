@@ -1276,12 +1276,12 @@ impl<'a, T> CudaView<'a, T> {
     /// let mut view2 = view.slice(0..25);
     /// do_something(&view);
     /// ```
-    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> CudaView<'a, T> {
+    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> Self {
         self.try_slice(bounds).unwrap()
     }
 
     /// Fallible version of [CudaView::slice]
-    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
+    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<Self> {
         to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
