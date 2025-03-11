@@ -1124,74 +1124,6 @@ impl<T> CudaSlice<T> {
         self.as_view().try_slice(bounds)
     }
 
-    /// Reinterprets the slice of memory into a different type. `len` is the number
-    /// of elements of the new type `S` that are expected. If not enough bytes
-    /// are allocated in `self` for the view, then this returns `None`.
-    ///
-    /// # Safety
-    /// This is unsafe because not the memory for the view may not be a valid interpretation
-    /// for the type `S`.
-    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
-            CudaView {
-                ptr: self.cu_device_ptr,
-                len,
-                read: &self.read,
-                write: &self.write,
-                stream: &self.stream,
-                marker: PhantomData,
-            },
-        )
-    }
-}
-
-impl<'a, T> CudaView<'a, T> {
-    /// Creates a [CudaView] at the specified offset from the start of `self`.
-    ///
-    /// Panics if `range.start >= self.len`.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
-    /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
-    /// let mut view = slice.slice(0..50);
-    /// let mut view2 = view.slice(0..25);
-    /// do_something(&view);
-    /// ```
-    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> CudaView<'a, T> {
-        self.try_slice(bounds).unwrap()
-    }
-
-    /// Fallible version of [CudaView::slice]
-    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
-    }
-
-    /// Reinterprets the slice of memory into a different type. `len` is the number
-    /// of elements of the new type `S` that are expected. If not enough bytes
-    /// are allocated in `self` for the view, then this returns `None`.
-    ///
-    /// # Safety
-    /// This is unsafe because not the memory for the view may not be a valid interpretation
-    /// for the type `S`.
-    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
-        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
-            CudaView {
-                ptr: self.ptr,
-                len,
-                read: self.read,
-                write: self.write,
-                stream: self.stream,
-                marker: PhantomData,
-            },
-        )
-    }
-}
-
-impl<T> CudaSlice<T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
@@ -1249,6 +1181,26 @@ impl<T> CudaSlice<T> {
     /// # Safety
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
+    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaView {
+                ptr: self.cu_device_ptr,
+                len,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            },
+        )
+    }
+
+    /// Reinterprets the slice of memory into a different type. `len` is the number
+    /// of elements of the new type `S` that are expected. If not enough bytes
+    /// are allocated in `self` for the view, then this returns `None`.
+    ///
+    /// # Safety
+    /// This is unsafe because not the memory for the view may not be a valid interpretation
+    /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaViewMut {
@@ -1260,6 +1212,20 @@ impl<T> CudaSlice<T> {
                 marker: PhantomData,
             },
         )
+    }
+
+    pub fn split_at(&self, mid: usize) -> (CudaView<'_, T>, CudaView<'_, T>) {
+        self.try_split_at(mid).unwrap()
+    }
+
+    /// Fallible version of [CudaSlice::split_at].
+    ///
+    /// Returns `None` if `mid > self.len`.
+    pub fn try_split_at(&self, mid: usize) -> Option<(CudaView<'_, T>, CudaView<'_, T>)> {
+        (mid <= self.len()).then(|| {
+            let view = self.as_view();
+            (view.resize(0, mid), view.resize(mid, self.len))
+        })
     }
 
     /// Splits the [CudaSlice] into two at the given index, returning two [CudaViewMut] for the two halves.
@@ -1291,6 +1257,63 @@ impl<T> CudaSlice<T> {
             let view = self.as_view_mut();
             (view.resize(0, mid), view.resize(mid, self.len))
         })
+    }
+}
+
+impl<'a, T> CudaView<'a, T> {
+    /// Creates a [CudaView] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range.start >= self.len`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # fn do_something(view: &CudaView<u8>) {}
+    /// # let dev = CudaDevice::new(0).unwrap();
+    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// let mut view = slice.slice(0..50);
+    /// let mut view2 = view.slice(0..25);
+    /// do_something(&view);
+    /// ```
+    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> Self {
+        self.try_slice(bounds).unwrap()
+    }
+
+    /// Fallible version of [CudaView::slice]
+    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
+    }
+
+    /// Reinterprets the slice of memory into a different type. `len` is the number
+    /// of elements of the new type `S` that are expected. If not enough bytes
+    /// are allocated in `self` for the view, then this returns `None`.
+    ///
+    /// # Safety
+    /// This is unsafe because not the memory for the view may not be a valid interpretation
+    /// for the type `S`.
+    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'a, S>> {
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaView {
+                ptr: self.ptr,
+                len,
+                read: self.read,
+                write: self.write,
+                stream: self.stream,
+                marker: PhantomData,
+            },
+        )
+    }
+
+    pub fn split_at(&self, mid: usize) -> (Self, Self) {
+        self.try_split_at(mid).unwrap()
+    }
+
+    /// Fallible version of [CudaSlice::split_at].
+    ///
+    /// Returns `None` if `mid > self.len`.
+    pub fn try_split_at(&self, mid: usize) -> Option<(Self, Self)> {
+        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
 }
 
@@ -1340,7 +1363,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// # Safety
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
-    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
+    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'a, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaView {
                 ptr: self.ptr,
@@ -1356,12 +1379,12 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
-    pub fn slice_mut<'b: 'a>(&'b mut self, bounds: impl RangeBounds<usize>) -> Self {
+    pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Self {
         self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::slice_mut]
-    pub fn try_slice_mut<'b: 'a>(&'b mut self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+    pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<Self> {
         to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
@@ -1379,14 +1402,14 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// // split the view into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = view.split_at_mut(25);
     /// do_something(view1, view2);
-    pub fn split_at_mut<'b: 'a>(&'b mut self, mid: usize) -> (Self, Self) {
+    pub fn split_at_mut(&mut self, mid: usize) -> (Self, Self) {
         self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`
-    pub fn try_split_at_mut<'b: 'a>(&'b mut self, mid: usize) -> Option<(Self, Self)> {
+    pub fn try_split_at_mut(&mut self, mid: usize) -> Option<(Self, Self)> {
         (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
 
@@ -1397,7 +1420,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// # Safety
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
-    pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
+    pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'a, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaViewMut {
                 ptr: self.ptr,
