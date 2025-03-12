@@ -156,25 +156,26 @@ impl<T: CudnnDataType> ReduceTensor<'_, T, FlatIndices> {
         C: DevicePtrMut<T>,
     {
         let stream = &self.a.handle.stream;
+        let workspace_size_in_bytes = workspace.num_bytes();
+        let indices_size_in_bytes = indices.num_bytes();
+        let (indices, _record_i) = indices.device_ptr_mut(stream);
+        let (workspace, _record_w) = workspace.device_ptr_mut(stream);
+        let (a, _record_a) = a.device_ptr(stream);
+        let (c, _record_c) = c.device_ptr_mut(stream);
         result::reduce_tensor(
             self.reduce.handle.handle,
             self.reduce.desc,
-            indices.device_ptr_mut(stream) as *mut std::ffi::c_void,
-            indices.num_bytes(),
-            workspace.device_ptr_mut(stream) as *mut std::ffi::c_void,
-            workspace.num_bytes(),
+            indices as *mut std::ffi::c_void,
+            indices_size_in_bytes,
+            workspace as *mut std::ffi::c_void,
+            workspace_size_in_bytes,
             (&alpha) as *const T as *const std::ffi::c_void,
             self.a.desc,
-            a.device_ptr(stream) as *const _,
+            a as *const _,
             (&beta) as *const T as *const std::ffi::c_void,
             self.c.desc,
-            c.device_ptr_mut(stream) as *mut _,
-        )?;
-        indices.record_write(stream);
-        workspace.record_write(stream);
-        a.record_read(stream);
-        c.record_write(stream);
-        Ok(())
+            c as *mut _,
+        )
     }
 }
 
@@ -197,23 +198,23 @@ impl<T: CudnnDataType> ReduceTensor<'_, T, NoIndices> {
         C: DevicePtrMut<T>,
     {
         let stream = &self.a.handle.stream;
+        let workspace_size_in_bytes = workspace.num_bytes();
+        let (workspace, _record_w) = workspace.device_ptr_mut(stream);
+        let (a, _record_a) = a.device_ptr(stream);
+        let (c, _record_c) = c.device_ptr_mut(stream);
         result::reduce_tensor(
             self.reduce.handle.handle,
             self.reduce.desc,
             std::ptr::null_mut(),
             0,
-            workspace.device_ptr_mut(stream) as *mut std::ffi::c_void,
-            workspace.num_bytes(),
+            workspace as *mut std::ffi::c_void,
+            workspace_size_in_bytes,
             (&alpha) as *const T as *const std::ffi::c_void,
             self.a.desc,
-            a.device_ptr(stream) as *const _,
+            a as *const _,
             (&beta) as *const T as *const std::ffi::c_void,
             self.c.desc,
-            c.device_ptr_mut(stream) as *mut _,
-        )?;
-        workspace.record_write(stream);
-        a.record_read(stream);
-        c.record_write(stream);
-        Ok(())
+            c as *mut _,
+        )
     }
 }

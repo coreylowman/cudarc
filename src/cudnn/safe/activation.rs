@@ -66,18 +66,17 @@ where
         let stream = &self.act.handle.stream;
         let alpha = alpha.into_scaling_parameter();
         let beta = beta.into_scaling_parameter();
+        let (x, _record_x) = x.device_ptr(stream);
+        let (y, _record_y) = y.device_ptr_mut(stream);
         result::activation_forward(
             self.act.handle.handle,
             self.act.desc,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            x.device_ptr(stream) as *const X as *const std::ffi::c_void,
+            x as *const X as *const std::ffi::c_void,
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.y.desc,
-            y.device_ptr_mut(stream) as *mut Y as *mut std::ffi::c_void,
-        )?;
-        x.record_read(stream);
-        y.record_write(stream);
-        Ok(())
+            y as *mut Y as *mut std::ffi::c_void,
+        )
     }
 }

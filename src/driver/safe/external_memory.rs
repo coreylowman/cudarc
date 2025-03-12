@@ -3,7 +3,7 @@ use std::mem::ManuallyDrop;
 use std::ops::Range;
 use std::sync::Arc;
 
-use super::{CudaContext, CudaEvent, CudaStream, DevicePtr, DeviceSlice};
+use super::{CudaContext, CudaEvent, CudaStream, DevicePtr, DeviceSlice, SyncOnDrop};
 use crate::driver::{result, sys, DriverError};
 
 /// An abstraction for imported external memory.
@@ -143,13 +143,14 @@ impl DeviceSlice<u8> for MappedBuffer {
 }
 
 impl DevicePtr<u8> for MappedBuffer {
-    fn device_ptr(&self, _stream: &CudaStream) -> sys::CUdeviceptr {
+    fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         // Since we only implement [DevicePtr] for this, and not [DevicePtrMut],
         // this memory can never be written to, only read from. So we don't need
         // to synchronize here at all.
-        self.device_ptr
-    }
-    fn read_event(&self) -> &CudaEvent {
-        &self.event
+        // However, we still do need to record this read.
+        (
+            self.device_ptr,
+            SyncOnDrop::record_event(&self.event, stream),
+        )
     }
 }

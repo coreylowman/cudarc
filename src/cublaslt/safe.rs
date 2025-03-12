@@ -366,11 +366,8 @@ pub trait Matmul<T>: MatmulShared {
         matmul_desc.set_transpose(cfg.transb, Matrix::B)?;
 
         // Epilogue system can be leveraged to fuse add and activation operations
-        matmul_desc.set_epilogue(
-            act,
-            bias.map(|b| b.device_ptr(stream)).as_ref(),
-            cfg.stride_bias,
-        )?;
+        let (bias, _record_bias) = bias.map(|b| b.device_ptr(stream)).unzip();
+        matmul_desc.set_epilogue(act, bias.as_ref(), cfg.stride_bias)?;
 
         // Create matmul heuristic search preferences
         let matmul_pref = MatmulPref::new()?;
@@ -390,35 +387,28 @@ pub trait Matmul<T>: MatmulShared {
         )?;
 
         // Launch matmul kernel
-        let c_ptr = c.device_ptr_mut(stream);
+        let (a, _record_a) = a.device_ptr(stream);
+        let (b, _record_b) = b.device_ptr(stream);
+        let (c, _record_c) = c.device_ptr_mut(stream);
+        let (w, _record_w) = workspace.buffer.device_ptr(stream);
         result::matmul(
             *self.handle(),
             matmul_desc.handle,
             (&cfg.alpha) as *const _ as *const _,
             (&cfg.beta) as *const _ as *const _,
-            a.device_ptr(stream) as *const _,
+            a as *const _,
             a_layout.handle,
-            b.device_ptr(stream) as *const _,
+            b as *const _,
             b_layout.handle,
-            c_ptr as *const _,
+            c as *const _,
             c_layout.handle,
-            c_ptr as *mut _,
+            c as *mut _,
             c_layout.handle,
             (&heuristic.algo) as *const _,
-            workspace.buffer.device_ptr(stream) as *mut _,
+            w as *mut _,
             workspace.size,
             stream.cu_stream() as *mut _,
-        )?;
-
-        workspace.buffer.record_read(stream);
-        a.record_read(stream);
-        b.record_read(stream);
-        c.record_write(stream);
-        if let Some(b) = bias {
-            b.record_read(stream);
-        }
-
-        Ok(())
+        )
     }
 }
 
@@ -658,12 +648,12 @@ mod tests {
         );
 
         #[rustfmt::skip]
-            let a_dev = stream.memcpy_stod::<half::f16>(&[
+            let a_dev = stream.memcpy_stod(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::f16::from_f32)).unwrap();
         #[rustfmt::skip]
-            let b_dev = stream.memcpy_stod::<half::f16>(&[
+            let b_dev = stream.memcpy_stod(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
@@ -712,12 +702,12 @@ mod tests {
         }
 
         #[rustfmt::skip]
-            let a_dev = dev.memcpy_stod::<half::bf16>(&[
+            let a_dev = stream.memcpy_stod(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::bf16::from_f32)).unwrap();
         #[rustfmt::skip]
-            let b_dev = dev.memcpy_stod::<half::bf16>(&[
+            let b_dev = stream.memcpy_stod(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
