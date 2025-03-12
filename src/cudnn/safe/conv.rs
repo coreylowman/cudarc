@@ -277,14 +277,8 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'_, X, C,
         Dst: DevicePtrMut<Y>,
     {
         let stream = &self.x.handle.stream;
-        src.block_for_read(stream).unwrap();
-        filter.block_for_read(stream).unwrap();
-        y.block_for_write(stream).unwrap();
         let (num_bytes, workspace_ptr) = match workspace.as_mut() {
-            Some(w) => {
-                w.block_for_write(stream).unwrap();
-                (w.num_bytes(), *(*w).device_ptr_mut() as *mut u8 as _)
-            }
+            Some(w) => (w.num_bytes(), w.device_ptr_mut(stream) as *mut u8 as _),
             None => (0, std::ptr::null_mut()),
         };
         let alpha = alpha.into_scaling_parameter();
@@ -293,22 +287,22 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'_, X, C,
             self.conv.handle.handle,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            *src.device_ptr() as *const X as *const std::ffi::c_void,
+            src.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.w.desc,
-            *filter.device_ptr() as *const X as *const std::ffi::c_void,
+            filter.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.conv.desc,
             algo,
             workspace_ptr,
             num_bytes,
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.y.desc,
-            *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
+            y.device_ptr_mut(stream) as *mut Y as *mut std::ffi::c_void,
         )?;
-        src.record_read(stream).unwrap();
-        filter.record_read(stream).unwrap();
-        y.record_write(stream).unwrap();
+        src.record_read(stream);
+        filter.record_read(stream);
+        y.record_write(stream);
         if let Some(w) = workspace {
-            w.record_write(stream).unwrap();
+            w.record_write(stream);
         }
         Ok(())
     }
@@ -402,14 +396,8 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'_, 
         Dst: DevicePtr<Y>,
     {
         let stream = &self.dx.handle.stream;
-        dx.block_for_write(stream).unwrap();
-        filter.block_for_read(stream).unwrap();
-        dy.block_for_read(stream).unwrap();
         let (num_bytes, workspace_ptr) = match workspace.as_mut() {
-            Some(w) => {
-                w.block_for_write(stream).unwrap();
-                (w.num_bytes(), *(*w).device_ptr_mut() as *mut u8 as _)
-            }
+            Some(w) => (w.num_bytes(), w.device_ptr_mut(stream) as *mut u8 as _),
             None => (0, std::ptr::null_mut()),
         };
         let alpha = alpha.into_scaling_parameter();
@@ -418,22 +406,22 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardData<'_, 
             self.conv.handle.handle,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.w.desc,
-            *filter.device_ptr() as *const X as *const std::ffi::c_void,
+            filter.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.dy.desc,
-            *dy.device_ptr() as *const Y as *const std::ffi::c_void,
+            dy.device_ptr(stream) as *const Y as *const std::ffi::c_void,
             self.conv.desc,
             algo,
             workspace_ptr,
             num_bytes,
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.dx.desc,
-            *dx.device_ptr_mut() as *mut X as *mut std::ffi::c_void,
+            dx.device_ptr_mut(stream) as *mut X as *mut std::ffi::c_void,
         )?;
-        dx.record_write(stream).unwrap();
-        filter.record_read(stream).unwrap();
-        dy.record_read(stream).unwrap();
+        dx.record_write(stream);
+        filter.record_read(stream);
+        dy.record_read(stream);
         if let Some(w) = workspace {
-            w.record_write(stream).unwrap();
+            w.record_write(stream);
         }
         Ok(())
     }
@@ -527,14 +515,8 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'_
         Dst: DevicePtr<Y>,
     {
         let stream = &self.x.handle.stream;
-        x.block_for_read(stream).unwrap();
-        dfilter.block_for_write(stream).unwrap();
-        dy.block_for_read(stream).unwrap();
         let (num_bytes, workspace_ptr) = match workspace.as_mut() {
-            Some(w) => {
-                w.block_for_write(stream).unwrap();
-                (w.num_bytes(), *(*w).device_ptr_mut() as *mut u8 as _)
-            }
+            Some(w) => (w.num_bytes(), w.device_ptr_mut(stream) as *mut u8 as _),
             None => (0, std::ptr::null_mut()),
         };
         let alpha = alpha.into_scaling_parameter();
@@ -543,22 +525,22 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvBackwardFilter<'_
             self.conv.handle.handle,
             (&alpha) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            *x.device_ptr() as *const _,
+            x.device_ptr(stream) as *const _,
             self.dy.desc,
-            *dy.device_ptr() as *const _,
+            dy.device_ptr(stream) as *const _,
             self.conv.desc,
             algo,
             workspace_ptr,
             num_bytes,
             (&beta) as *const Y::Scalar as *const std::ffi::c_void,
             self.dw.desc,
-            *dfilter.device_ptr_mut() as *mut _,
+            dfilter.device_ptr_mut(stream) as *mut _,
         )?;
-        x.record_read(stream).unwrap();
-        dfilter.record_write(stream).unwrap();
-        dy.record_read(stream).unwrap();
+        x.record_read(stream);
+        dfilter.record_write(stream);
+        dy.record_read(stream);
         if let Some(w) = workspace {
-            w.record_write(stream).unwrap();
+            w.record_write(stream);
         }
         Ok(())
     }
@@ -654,16 +636,8 @@ where
         Dst: DevicePtrMut<Y>,
     {
         let stream = &self.x.handle.stream;
-        src.block_for_read(stream).unwrap();
-        filter.block_for_read(stream).unwrap();
-        z.block_for_read(stream).unwrap();
-        bias.block_for_read(stream).unwrap();
-        y.block_for_write(stream).unwrap();
         let (num_bytes, workspace_ptr) = match workspace.as_mut() {
-            Some(w) => {
-                w.block_for_write(stream).unwrap();
-                (w.num_bytes(), *(*w).device_ptr_mut() as *mut u8 as _)
-            }
+            Some(w) => (w.num_bytes(), w.device_ptr_mut(stream) as *mut u8 as _),
             None => (0, std::ptr::null_mut()),
         };
         let alpha1 = alpha1.into_scaling_parameter();
@@ -672,29 +646,29 @@ where
             self.conv.handle.handle,
             (&alpha1) as *const Y::Scalar as *const std::ffi::c_void,
             self.x.desc,
-            *src.device_ptr() as *const X as *const std::ffi::c_void,
+            src.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.w.desc,
-            *filter.device_ptr() as *const X as *const std::ffi::c_void,
+            filter.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.conv.desc,
             algo,
             workspace_ptr,
             num_bytes,
             (&alpha2) as *const Y::Scalar as *const std::ffi::c_void,
             self.z.desc,
-            *z.device_ptr() as *const X as *const std::ffi::c_void,
+            z.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.bias.desc,
-            *bias.device_ptr() as *const X as *const std::ffi::c_void,
+            bias.device_ptr(stream) as *const X as *const std::ffi::c_void,
             self.act.desc,
             self.y.desc,
-            *y.device_ptr_mut() as *mut Y as *mut std::ffi::c_void,
+            y.device_ptr_mut(stream) as *mut Y as *mut std::ffi::c_void,
         )?;
-        src.record_read(stream).unwrap();
-        filter.record_read(stream).unwrap();
-        z.record_read(stream).unwrap();
-        bias.record_read(stream).unwrap();
-        y.record_write(stream).unwrap();
+        src.record_read(stream);
+        filter.record_read(stream);
+        z.record_read(stream);
+        bias.record_read(stream);
+        y.record_write(stream);
         if let Some(w) = workspace {
-            w.record_write(stream).unwrap();
+            w.record_write(stream);
         }
         Ok(())
     }

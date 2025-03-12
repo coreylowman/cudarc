@@ -221,6 +221,8 @@ impl CudaEvent {
     ///
     /// If `stream` belongs to a different [CudaContext], this will fail with
     /// [sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT].
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g95424d3be52c4eb95d83861b70fb89d1)
     pub fn record(&self, stream: &CudaStream) -> Result<(), DriverError> {
         if self.ctx != stream.ctx {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
@@ -325,6 +327,8 @@ impl CudaStream {
 
     /// Will only block CPU if you call [CudaContext::set_flags()] with
     /// [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC].
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g15e49dd91ec15991eb7c0a741beb7dad)
     pub fn synchronize(&self) -> Result<(), DriverError> {
         self.ctx.bind_to_thread()?;
         unsafe { result::stream::synchronize(self.cu_stream) }
@@ -344,6 +348,8 @@ impl CudaStream {
     ///
     /// You can record new work in `event` after calling this method without
     /// affecting this call.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g6a898b652dfc6aa1d5c8d97062618b2f)
     pub fn wait(&self, event: &CudaEvent) -> Result<(), DriverError> {
         if self.ctx != event.ctx {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
@@ -663,83 +669,87 @@ impl<T> DeviceSlice<T> for CudaViewMut<'_, T> {
 
 /// Abstraction over [CudaSlice]/[CudaView]
 pub trait DevicePtr<T>: DeviceSlice<T> {
-    fn device_ptr(&self) -> &sys::CUdeviceptr;
+    /// Retrieve the device pointer with the intent to read the device memory
+    /// associated with it.
+    ///
+    /// Implementations of this method should ensure `stream` waits for any previous
+    /// writes of this memory before continuing (do not need to wait for any previous reads).
+    ///
+    /// Callees of this method should ensure that the corresponding [DevicePtr::record_read()]
+    /// is called after this method is called.
+    fn device_ptr(&self, stream: &CudaStream) -> sys::CUdeviceptr;
     fn read_event(&self) -> &CudaEvent;
-    fn block_for_read(&self, stream: &CudaStream) -> Result<(), DriverError>;
-    fn record_read(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        self.read_event().record(stream)
+    fn record_read(&self, stream: &CudaStream) {
+        self.read_event().record(stream).unwrap();
     }
 }
 
 impl<T> DevicePtr<T> for CudaSlice<T> {
-    fn device_ptr(&self) -> &sys::CUdeviceptr {
-        &self.cu_device_ptr
+    fn device_ptr(&self, stream: &CudaStream) -> sys::CUdeviceptr {
+        stream.wait(&self.write).unwrap();
+        self.cu_device_ptr
     }
     fn read_event(&self) -> &CudaEvent {
         &self.read
     }
-    fn block_for_read(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.wait(&self.write)
-    }
 }
 
 impl<T> DevicePtr<T> for CudaView<'_, T> {
-    fn device_ptr(&self) -> &sys::CUdeviceptr {
-        &self.ptr
+    fn device_ptr(&self, stream: &CudaStream) -> sys::CUdeviceptr {
+        stream.wait(&self.write).unwrap();
+        self.ptr
     }
     fn read_event(&self) -> &CudaEvent {
         self.read
-    }
-    fn block_for_read(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.wait(self.write)
     }
 }
 
 impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
-    fn device_ptr(&self) -> &sys::CUdeviceptr {
-        &self.ptr
+    fn device_ptr(&self, stream: &CudaStream) -> sys::CUdeviceptr {
+        stream.wait(&self.write).unwrap();
+        self.ptr
     }
     fn read_event(&self) -> &CudaEvent {
         self.read
     }
-    fn block_for_read(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.wait(self.write)
-    }
 }
 
 /// Abstraction over [CudaSlice]/[CudaViewMut]
-pub trait DevicePtrMut<T>: DevicePtr<T> {
-    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr;
+pub trait DevicePtrMut<T>: DeviceSlice<T> {
+    /// Retrieve the device pointer with the intent to modify the device memory
+    /// associated with it.
+    ///
+    /// Implementations of this method should ensure `stream` waits for any previous
+    /// reads/writes of this memory before continuing.
+    ///
+    /// Callees of this method should ensure that the corresponding [DevicePtrMut::record_write()]
+    /// is called after this method is called.
+    fn device_ptr_mut(&mut self, stream: &CudaStream) -> sys::CUdeviceptr;
     fn write_event(&self) -> &CudaEvent;
-    fn block_for_write(&self, stream: &CudaStream) -> Result<(), DriverError>;
-    fn record_write(&mut self, stream: &CudaStream) -> Result<(), DriverError> {
-        self.write_event().record(stream)
+    fn record_write(&mut self, stream: &CudaStream) {
+        self.write_event().record(stream).unwrap();
     }
 }
 
 impl<T> DevicePtrMut<T> for CudaSlice<T> {
-    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
-        &mut self.cu_device_ptr
+    fn device_ptr_mut(&mut self, stream: &CudaStream) -> sys::CUdeviceptr {
+        stream.wait(&self.read);
+        stream.wait(&self.write);
+        self.cu_device_ptr
     }
     fn write_event(&self) -> &CudaEvent {
         &self.write
     }
-    fn block_for_write(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.wait(&self.read)?;
-        stream.wait(&self.write)
-    }
 }
 
 impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
-    fn device_ptr_mut(&mut self) -> &mut sys::CUdeviceptr {
-        &mut self.ptr
+    fn device_ptr_mut(&mut self, stream: &CudaStream) -> sys::CUdeviceptr {
+        stream.wait(self.read);
+        stream.wait(self.write);
+        self.ptr
     }
     fn write_event(&self) -> &CudaEvent {
         self.write
-    }
-    fn block_for_write(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.wait(self.read)?;
-        stream.wait(self.write)
     }
 }
 
@@ -763,7 +773,7 @@ pub trait HostSlice<T> {
         stream: &CudaStream,
     ) -> Result<&mut [T], DriverError>;
 
-    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError>;
+    fn record_use(&self, stream: &CudaStream);
 }
 
 impl<T, const N: usize> HostSlice<T> for [T; N] {
@@ -779,8 +789,8 @@ impl<T, const N: usize> HostSlice<T> for [T; N] {
     ) -> Result<&mut [T], DriverError> {
         Ok(self)
     }
-    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.synchronize()
+    fn record_use(&self, stream: &CudaStream) {
+        stream.synchronize().unwrap();
     }
 }
 
@@ -797,8 +807,8 @@ impl<T> HostSlice<T> for [T] {
     ) -> Result<&mut [T], DriverError> {
         Ok(self)
     }
-    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.synchronize()
+    fn record_use(&self, stream: &CudaStream) {
+        stream.synchronize().unwrap();
     }
 }
 
@@ -815,8 +825,8 @@ impl<T> HostSlice<T> for Vec<T> {
     ) -> Result<&mut [T], DriverError> {
         Ok(self)
     }
-    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.synchronize()
+    fn record_use(&self, stream: &CudaStream) {
+        stream.synchronize().unwrap();
     }
 }
 
@@ -934,8 +944,8 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         Ok(std::slice::from_raw_parts_mut(self.ptr, self.len))
     }
 
-    fn record_use(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        self.event.record(stream)
+    fn record_use(&self, stream: &CudaStream) {
+        self.event.record(stream).unwrap();
     }
 }
 
@@ -1000,11 +1010,10 @@ impl CudaStream {
         self: &Arc<Self>,
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
-        dst.block_for_write(self)?;
         unsafe {
-            result::memset_d8_async(*dst.device_ptr_mut(), 0, dst.num_bytes(), self.cu_stream)
+            result::memset_d8_async(dst.device_ptr_mut(self), 0, dst.num_bytes(), self.cu_stream)
         }?;
-        dst.record_write(self)?;
+        dst.record_write(self);
         Ok(())
     }
 
@@ -1026,10 +1035,9 @@ impl CudaStream {
     ) -> Result<(), DriverError> {
         assert!(dst.len() >= src.len());
         let src = unsafe { src.stream_synced_slice(self) }?;
-        dst.block_for_write(self)?;
-        unsafe { result::memcpy_htod_async(*dst.device_ptr_mut(), src, self.cu_stream) }?;
-        src.record_use(self)?;
-        dst.record_write(self)?;
+        unsafe { result::memcpy_htod_async(dst.device_ptr_mut(self), src, self.cu_stream) }?;
+        src.record_use(self);
+        dst.record_write(self);
         Ok(())
     }
 
@@ -1055,10 +1063,9 @@ impl CudaStream {
     ) -> Result<(), DriverError> {
         assert!(dst.len() >= src.len());
         let dst = unsafe { dst.stream_synced_mut_slice(self) }?;
-        src.block_for_read(self)?;
-        unsafe { result::memcpy_dtoh_async(dst, *src.device_ptr(), self.cu_stream) }?;
-        src.record_read(self)?;
-        dst.record_use(self)?;
+        unsafe { result::memcpy_dtoh_async(dst, src.device_ptr(self), self.cu_stream) }?;
+        src.record_read(self);
+        dst.record_use(self);
         Ok(())
     }
 
@@ -1069,18 +1076,16 @@ impl CudaStream {
         dst: &mut Dst,
     ) -> Result<(), DriverError> {
         assert!(dst.len() >= src.len());
-        src.block_for_read(self)?;
-        dst.block_for_write(self)?;
         unsafe {
             result::memcpy_dtod_async(
-                *dst.device_ptr_mut(),
-                *src.device_ptr(),
+                dst.device_ptr_mut(self),
+                src.device_ptr(self),
                 src.num_bytes(),
                 self.cu_stream,
             )
         }?;
-        src.record_read(self)?;
-        dst.record_write(self)?;
+        src.record_read(self);
+        dst.record_write(self);
         Ok(())
     }
 

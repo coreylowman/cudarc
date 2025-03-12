@@ -70,9 +70,14 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::UniformFill<T>,
     {
-        dst.block_for_write(&self.stream).unwrap();
-        unsafe { result::UniformFill::fill(self.gen, *dst.device_ptr_mut() as *mut T, dst.len()) }?;
-        dst.record_write(&self.stream).unwrap();
+        unsafe {
+            result::UniformFill::fill(
+                self.gen,
+                dst.device_ptr_mut(&self.stream) as *mut T,
+                dst.len(),
+            )
+        }?;
+        dst.record_write(&self.stream);
         Ok(())
     }
 
@@ -86,17 +91,16 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::NormalFill<T>,
     {
-        dst.block_for_write(&self.stream).unwrap();
         unsafe {
             result::NormalFill::fill(
                 self.gen,
-                *dst.device_ptr_mut() as *mut T,
+                dst.device_ptr_mut(&self.stream) as *mut T,
                 dst.len(),
                 mean,
                 std,
             )
         }?;
-        dst.record_write(&self.stream).unwrap();
+        dst.record_write(&self.stream);
         Ok(())
     }
 
@@ -110,17 +114,16 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::LogNormalFill<T>,
     {
-        dst.block_for_write(&self.stream).unwrap();
         unsafe {
             result::LogNormalFill::fill(
                 self.gen,
-                *dst.device_ptr_mut() as *mut T,
+                dst.device_ptr_mut(&self.stream) as *mut T,
                 dst.len(),
                 mean,
                 std,
             )
         }?;
-        dst.record_write(&self.stream).unwrap();
+        dst.record_write(&self.stream);
         Ok(())
     }
 }

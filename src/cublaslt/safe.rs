@@ -327,9 +327,8 @@ pub trait Matmul<T>: MatmulShared {
         bias: Option<&I>,
         act: Option<&Activation>,
     ) -> Result<(), CublasError> {
-        a.block_for_read(self.stream()).unwrap();
-        b.block_for_read(self.stream()).unwrap();
-        c.block_for_write(self.stream()).unwrap();
+        let stream = self.stream();
+        let workspace = self.workspace();
 
         let (a_rows, a_cols) = if cfg.transa {
             (cfg.k, cfg.m)
@@ -367,7 +366,11 @@ pub trait Matmul<T>: MatmulShared {
         matmul_desc.set_transpose(cfg.transb, Matrix::B)?;
 
         // Epilogue system can be leveraged to fuse add and activation operations
-        matmul_desc.set_epilogue(act, bias.map(|b| b.device_ptr()), cfg.stride_bias)?;
+        matmul_desc.set_epilogue(
+            act,
+            bias.map(|b| b.device_ptr(stream)).as_ref(),
+            cfg.stride_bias,
+        )?;
 
         // Create matmul heuristic search preferences
         let matmul_pref = MatmulPref::new()?;
@@ -387,28 +390,33 @@ pub trait Matmul<T>: MatmulShared {
         )?;
 
         // Launch matmul kernel
+        let c_ptr = c.device_ptr_mut(stream);
         result::matmul(
             *self.handle(),
             matmul_desc.handle,
             (&cfg.alpha) as *const _ as *const _,
             (&cfg.beta) as *const _ as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(stream) as *const _,
             a_layout.handle,
-            *b.device_ptr() as *const _,
+            b.device_ptr(stream) as *const _,
             b_layout.handle,
-            *c.device_ptr_mut() as *const _,
+            c_ptr as *const _,
             c_layout.handle,
-            *c.device_ptr_mut() as *mut _,
+            c_ptr as *mut _,
             c_layout.handle,
             (&heuristic.algo) as *const _,
-            *self.workspace().buffer.device_ptr() as *const CUdeviceptr as *mut _,
-            self.workspace().size,
-            self.stream().cu_stream() as *mut _,
+            workspace.buffer.device_ptr(stream) as *mut _,
+            workspace.size,
+            stream.cu_stream() as *mut _,
         )?;
 
-        a.record_read(self.stream()).unwrap();
-        b.record_read(self.stream()).unwrap();
-        c.record_write(self.stream()).unwrap();
+        workspace.buffer.record_read(stream);
+        a.record_read(stream);
+        b.record_read(stream);
+        c.record_write(stream);
+        if let Some(b) = bias {
+            b.record_read(stream);
+        }
 
         Ok(())
     }
