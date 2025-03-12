@@ -737,15 +737,15 @@ impl<T> DevicePtr<T> for CudaSlice<T> {
 
 impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(&self.write).unwrap();
-        (self.ptr, SyncOnDrop::record_event(&self.read, stream))
+        stream.wait(self.write).unwrap();
+        (self.ptr, SyncOnDrop::record_event(self.read, stream))
     }
 }
 
 impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(&self.write).unwrap();
-        (self.ptr, SyncOnDrop::record_event(&self.read, stream))
+        stream.wait(self.write).unwrap();
+        (self.ptr, SyncOnDrop::record_event(self.read, stream))
     }
 }
 
@@ -792,7 +792,7 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         stream.wait(self.read).unwrap();
         stream.wait(self.write).unwrap();
-        (self.ptr, SyncOnDrop::record_event(&self.write, stream))
+        (self.ptr, SyncOnDrop::record_event(self.write, stream))
     }
 }
 
