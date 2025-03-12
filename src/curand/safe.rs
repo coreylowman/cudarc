@@ -70,15 +70,9 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::UniformFill<T>,
     {
-        unsafe {
-            result::UniformFill::fill(
-                self.gen,
-                dst.device_ptr_mut(&self.stream) as *mut T,
-                dst.len(),
-            )
-        }?;
-        dst.record_write(&self.stream);
-        Ok(())
+        let num = dst.len();
+        let (dst, _record_dst) = dst.device_ptr_mut(&self.stream);
+        unsafe { result::UniformFill::fill(self.gen, dst as *mut T, num) }
     }
 
     /// Fill the [crate::driver::CudaSlice]/[crate::driver::CudaViewMut] with data from a `Normal(mean, std)` distribution.
@@ -91,17 +85,9 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::NormalFill<T>,
     {
-        unsafe {
-            result::NormalFill::fill(
-                self.gen,
-                dst.device_ptr_mut(&self.stream) as *mut T,
-                dst.len(),
-                mean,
-                std,
-            )
-        }?;
-        dst.record_write(&self.stream);
-        Ok(())
+        let num = dst.len();
+        let (dst, _record_dst) = dst.device_ptr_mut(&self.stream);
+        unsafe { result::NormalFill::fill(self.gen, dst as *mut T, num, mean, std) }
     }
 
     /// Fill the [crate::driver::CudaSlice]/[crate::driver::CudaViewMut] with data from a `LogNormal(mean, std)` distribution.
@@ -114,17 +100,9 @@ impl CudaRng {
     where
         sys::curandGenerator_t: result::LogNormalFill<T>,
     {
-        unsafe {
-            result::LogNormalFill::fill(
-                self.gen,
-                dst.device_ptr_mut(&self.stream) as *mut T,
-                dst.len(),
-                mean,
-                std,
-            )
-        }?;
-        dst.record_write(&self.stream);
-        Ok(())
+        let num = dst.len();
+        let (dst, _record_dst) = dst.device_ptr_mut(&self.stream);
+        unsafe { result::LogNormalFill::fill(self.gen, dst as *mut T, num, mean, std) }
     }
 }
 

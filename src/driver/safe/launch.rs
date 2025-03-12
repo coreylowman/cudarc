@@ -578,8 +578,8 @@ extern \"C\" __global__ void halfs(__half h) {
         .unwrap();
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
-        let module = ctx.load_ptx(ptx).unwrap();
-        let f = module.load_func("halfs").unwrap();
+        let module = ctx.load_module(ptx).unwrap();
+        let f = module.load_function("halfs").unwrap();
         unsafe {
             stream
                 .launch_builder(&f)

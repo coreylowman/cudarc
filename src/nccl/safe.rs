@@ -1,8 +1,6 @@
 use super::{result, sys};
 use crate::driver::{CudaContext, CudaStream, DevicePtr, DevicePtrMut};
-use std::mem::MaybeUninit;
-use std::ptr;
-use std::{sync::Arc, vec, vec::Vec};
+use std::{mem::MaybeUninit, sync::Arc, vec, vec::Vec};
 
 pub use result::{group_end, group_start};
 
@@ -217,9 +215,10 @@ impl Comm {
         data: &S,
         peer: i32,
     ) -> Result<(), result::NcclError> {
+        let (src, _record_src) = data.device_ptr(&self.stream);
         unsafe {
             result::send(
-                data.device_ptr(&self.stream) as _,
+                src as _,
                 data.len(),
                 T::as_nccl_type(),
                 peer,
@@ -227,7 +226,6 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         }?;
-        data.record_read(&self.stream);
         Ok(())
     }
 
@@ -236,18 +234,18 @@ impl Comm {
         buff: &mut R,
         peer: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let count = buff.len();
+        let (dst, _record_dst) = buff.device_ptr_mut(&self.stream);
+        unsafe {
             result::recv(
-                buff.device_ptr_mut(&self.stream) as _,
-                buff.len(),
+                dst as _,
+                count,
                 T::as_nccl_type(),
                 peer,
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        buff.record_write(&self.stream);
-        result
+        }
     }
 
     /// Broadcasts a value from `root` rank to every other ranks `recvbuff`.
@@ -264,28 +262,20 @@ impl Comm {
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         debug_assert!(sendbuff.is_some() || self.rank != root as usize);
-
-        let send_ptr = match sendbuff {
-            Some(buffer) => buffer.device_ptr(&self.stream) as _,
-            None => ptr::null(),
-        };
-
-        let result = unsafe {
+        let count = recvbuff.len();
+        let (src, _record_src) = sendbuff.map(|b| b.device_ptr(&self.stream)).unzip();
+        let (dst, _record_dst) = recvbuff.device_ptr_mut(&self.stream);
+        unsafe {
             result::broadcast(
-                send_ptr,
-                recvbuff.device_ptr_mut(&self.stream) as _,
-                recvbuff.len(),
+                src.map(|ptr| ptr as _).unwrap_or(std::ptr::null()),
+                dst as _,
+                count,
                 T::as_nccl_type(),
                 root,
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        if let Some(buff) = sendbuff {
-            buff.record_read(&self.stream);
         }
-        recvbuff.record_write(&self.stream);
-        result
     }
 
     /// In place version of [Comm::broadcast()].
@@ -295,19 +285,19 @@ impl Comm {
         recvbuff: &mut R,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let count = recvbuff.len();
+        let (dst, _record_dst) = recvbuff.device_ptr_mut(&self.stream);
+        unsafe {
             result::broadcast(
-                recvbuff.device_ptr_mut(&self.stream) as _,
-                recvbuff.device_ptr_mut(&self.stream) as _,
-                recvbuff.len(),
+                dst as _,
+                dst as _,
+                count,
                 T::as_nccl_type(),
                 root,
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        recvbuff.record_write(&self.stream);
-        result
+        }
     }
 
     /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allgather)
@@ -316,19 +306,18 @@ impl Comm {
         sendbuff: &S,
         recvbuff: &mut R,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let (src, _record_src) = sendbuff.device_ptr(&self.stream);
+        let (dst, _record_dst) = recvbuff.device_ptr_mut(&self.stream);
+        unsafe {
             result::all_gather(
-                sendbuff.device_ptr(&self.stream) as _,
-                recvbuff.device_ptr_mut(&self.stream) as _,
+                src as _,
+                dst as _,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        sendbuff.record_read(&self.stream);
-        recvbuff.record_write(&self.stream);
-        result
+        }
     }
 
     /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#allreduce)
@@ -338,20 +327,19 @@ impl Comm {
         recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let (src, _record_src) = sendbuff.device_ptr(&self.stream);
+        let (dst, _record_dst) = recvbuff.device_ptr_mut(&self.stream);
+        unsafe {
             result::all_reduce(
-                sendbuff.device_ptr(&self.stream) as _,
-                recvbuff.device_ptr_mut(&self.stream) as _,
+                src as _,
+                dst as _,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        sendbuff.record_read(&self.stream);
-        recvbuff.record_write(&self.stream);
-        result
+        }
     }
 
     /// In place version of [Comm::all_reduce()].
@@ -361,19 +349,19 @@ impl Comm {
         buff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let count = buff.len();
+        let (dst, _record_dst) = buff.device_ptr_mut(&self.stream);
+        unsafe {
             result::all_reduce(
-                buff.device_ptr_mut(&self.stream) as _,
-                buff.device_ptr_mut(&self.stream) as _,
-                buff.len(),
+                dst as _,
+                dst as _,
+                count,
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        buff.record_write(&self.stream);
-        result
+        }
     }
 
     /// Reduces the sendbuff from all ranks into the recvbuff on the
@@ -385,21 +373,18 @@ impl Comm {
     pub fn reduce<S: DevicePtr<T>, R: DevicePtrMut<T>, T: NcclType>(
         &self,
         sendbuff: &S,
-        mut recvbuff: Option<&mut R>,
+        recvbuff: Option<&mut R>,
         reduce_op: &ReduceOp,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
         debug_assert!(recvbuff.is_some() || self.rank != root as usize);
 
-        let recv_ptr = recvbuff
-            .as_mut()
-            .map(|buff| buff.device_ptr_mut(&self.stream) as _)
-            .unwrap_or(ptr::null_mut());
-
-        let result = unsafe {
+        let (src, _record_src) = sendbuff.device_ptr(&self.stream);
+        let (dst, _record_dst) = recvbuff.map(|b| b.device_ptr_mut(&self.stream)).unzip();
+        unsafe {
             result::reduce(
-                sendbuff.device_ptr(&self.stream) as _,
-                recv_ptr,
+                src as _,
+                dst.map(|ptr| ptr as _).unwrap_or(std::ptr::null_mut()),
                 sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
@@ -407,14 +392,7 @@ impl Comm {
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-
-        sendbuff.record_read(&self.stream);
-        if let Some(buff) = recvbuff {
-            buff.record_write(&self.stream);
         }
-
-        result
     }
 
     /// In place version of [Comm::reduce()].
@@ -425,20 +403,20 @@ impl Comm {
         reduce_op: &ReduceOp,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let count = recvbuff.len();
+        let (dst, _record_dst) = recvbuff.device_ptr_mut(&self.stream);
+        unsafe {
             result::reduce(
-                recvbuff.device_ptr_mut(&self.stream) as _,
-                recvbuff.device_ptr_mut(&self.stream) as _,
-                recvbuff.len(),
+                dst as _,
+                dst as _,
+                count,
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        recvbuff.record_write(&self.stream);
-        result
+        }
     }
 
     /// See [nccl docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html#reducescatter)
@@ -448,20 +426,20 @@ impl Comm {
         recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        let result = unsafe {
+        let count = recvbuff.len();
+        let (src, _record_src) = sendbuff.device_ptr(&self.stream);
+        let (dst, _record_dst) = recvbuff.device_ptr_mut(&self.stream);
+        unsafe {
             result::reduce_scatter(
-                sendbuff.device_ptr(&self.stream) as _,
-                recvbuff.device_ptr_mut(&self.stream) as _,
-                recvbuff.len(),
+                src as _,
+                dst as _,
+                count,
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
                 self.stream.cu_stream as _,
             )
-        };
-        sendbuff.record_read(&self.stream);
-        recvbuff.record_write(&self.stream);
-        result
+        }
     }
 }
 
