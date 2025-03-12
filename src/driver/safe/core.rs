@@ -667,17 +667,23 @@ impl<T> DeviceSlice<T> for CudaViewMut<'_, T> {
     }
 }
 
+/// A synchronization primitive to enable stream & event synchronization.
+/// Primarily used with [DevicePtr] and [DevicePtrMut]
 #[derive(Debug)]
 #[must_use]
 pub enum SyncOnDrop<'a> {
+    /// Will record the stream's workload to the event on drop.
     Record(Option<(&'a CudaEvent, &'a CudaStream)>),
+    /// Will call stream synchronize on drop.
     Sync(Option<&'a CudaStream>),
 }
 
 impl<'a> SyncOnDrop<'a> {
+    /// Construct a [SyncOnDrop::Record] variant
     pub fn record_event(event: &'a CudaEvent, stream: &'a CudaStream) -> Self {
         SyncOnDrop::Record(Some((event, stream)))
     }
+    /// Construct a [SyncOnDrop::Sync] variant
     pub fn sync_stream(stream: &'a CudaStream) -> Self {
         SyncOnDrop::Sync(Some(stream))
     }
@@ -708,8 +714,14 @@ pub trait DevicePtr<T>: DeviceSlice<T> {
     /// Implementations of this method should ensure `stream` waits for any previous
     /// writes of this memory before continuing (do not need to wait for any previous reads).
     ///
-    /// Callees of this method should ensure that the corresponding [DevicePtr::record_read()]
-    /// is called after this method is called.
+    /// The [SyncOnDrop] item of the return tuple should be dropped **after** the read of
+    /// the [sys::CUdeviceptr] is scheduled.
+    ///
+    /// In most cases you can use like:
+    /// ```no_run
+    /// let (src, _record_src) = src.device_ptr(&stream);
+    /// ```
+    /// Which will drop the [SyncOnDrop] at the end of the scope.
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>);
 }
 
@@ -745,8 +757,14 @@ pub trait DevicePtrMut<T>: DeviceSlice<T> {
     /// Implementations of this method should ensure `stream` waits for any previous
     /// reads/writes of this memory before continuing.
     ///
-    /// Callees of this method should ensure that the corresponding [DevicePtrMut::record_write()]
-    /// is called after this method is called.
+    /// The [SyncOnDrop] item of the return tuple should be dropped **after** the write of
+    /// the [sys::CUdeviceptr] is scheduled.
+    ///
+    /// In most cases you can use like:
+    /// ```no_run
+    /// let (src, _record_src) = src.device_ptr_mut(&stream);
+    /// ```
+    /// Which will drop the [SyncOnDrop] at the end of the scope.
     fn device_ptr_mut<'a>(
         &'a mut self,
         stream: &'a CudaStream,
@@ -896,7 +914,7 @@ impl CudaContext {
         assert!(!ptr.is_null());
         assert!(len * std::mem::size_of::<T>() < isize::MAX as usize);
         assert!(ptr.is_aligned());
-        let event = self.new_event(None)?;
+        let event = self.new_event(Some(sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC))?;
         Ok(PinnedHostSlice { ptr, len, event })
     }
 }
