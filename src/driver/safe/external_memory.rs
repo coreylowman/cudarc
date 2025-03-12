@@ -143,16 +143,13 @@ impl DeviceSlice<u8> for MappedBuffer {
 }
 
 impl DevicePtr<u8> for MappedBuffer {
-    fn device_ptr(&self) -> &sys::CUdeviceptr {
-        &self.device_ptr
-    }
-    fn read_event(&self) -> &CudaEvent {
-        &self.event
-    }
-    fn block_for_read(&self, _stream: &CudaStream) -> Result<(), DriverError> {
+    fn device_ptr(&self, _stream: &CudaStream) -> sys::CUdeviceptr {
         // Since we only implement [DevicePtr] for this, and not [DevicePtrMut],
         // this memory can never be written to, only read from. So we don't need
         // to synchronize here at all.
-        Ok(())
+        self.device_ptr
+    }
+    fn read_event(&self) -> &CudaEvent {
+        &self.event
     }
 }

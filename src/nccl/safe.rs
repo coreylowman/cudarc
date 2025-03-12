@@ -217,10 +217,9 @@ impl Comm {
         data: &S,
         peer: i32,
     ) -> Result<(), result::NcclError> {
-        data.block_for_read(&self.stream).unwrap();
         unsafe {
             result::send(
-                *data.device_ptr() as _,
+                data.device_ptr(&self.stream) as _,
                 data.len(),
                 T::as_nccl_type(),
                 peer,
@@ -228,7 +227,7 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         }?;
-        data.record_read(&self.stream).unwrap();
+        data.record_read(&self.stream);
         Ok(())
     }
 
@@ -237,10 +236,9 @@ impl Comm {
         buff: &mut R,
         peer: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        buff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::recv(
-                *buff.device_ptr_mut() as _,
+                buff.device_ptr_mut(&self.stream) as _,
                 buff.len(),
                 T::as_nccl_type(),
                 peer,
@@ -248,7 +246,7 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         };
-        buff.record_write(&self.stream).unwrap();
+        buff.record_write(&self.stream);
         result
     }
 
@@ -267,20 +265,15 @@ impl Comm {
     ) -> Result<result::NcclStatus, result::NcclError> {
         debug_assert!(sendbuff.is_some() || self.rank != root as usize);
 
-        if let Some(buff) = sendbuff {
-            buff.block_for_read(&self.stream).unwrap();
-        }
-        recvbuff.block_for_write(&self.stream).unwrap();
-
         let send_ptr = match sendbuff {
-            Some(buffer) => *buffer.device_ptr() as _,
+            Some(buffer) => buffer.device_ptr(&self.stream) as _,
             None => ptr::null(),
         };
 
         let result = unsafe {
             result::broadcast(
                 send_ptr,
-                *recvbuff.device_ptr_mut() as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 root,
@@ -289,9 +282,9 @@ impl Comm {
             )
         };
         if let Some(buff) = sendbuff {
-            buff.record_read(&self.stream).unwrap();
+            buff.record_read(&self.stream);
         }
-        recvbuff.record_write(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream);
         result
     }
 
@@ -302,12 +295,10 @@ impl Comm {
         recvbuff: &mut R,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        recvbuff.block_for_read(&self.stream).unwrap();
-        recvbuff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::broadcast(
-                *recvbuff.device_ptr_mut() as _,
-                *recvbuff.device_ptr_mut() as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 root,
@@ -315,8 +306,7 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         };
-        recvbuff.record_read(&self.stream).unwrap();
-        recvbuff.record_write(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream);
         result
     }
 
@@ -326,20 +316,18 @@ impl Comm {
         sendbuff: &S,
         recvbuff: &mut R,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        sendbuff.block_for_read(&self.stream).unwrap();
-        recvbuff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::all_gather(
-                *sendbuff.device_ptr() as _,
-                *recvbuff.device_ptr_mut() as _,
+                sendbuff.device_ptr(&self.stream) as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
                 self.stream.cu_stream as _,
             )
         };
-        sendbuff.record_read(&self.stream).unwrap();
-        recvbuff.record_write(&self.stream).unwrap();
+        sendbuff.record_read(&self.stream);
+        recvbuff.record_write(&self.stream);
         result
     }
 
@@ -350,12 +338,10 @@ impl Comm {
         recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        sendbuff.block_for_read(&self.stream).unwrap();
-        recvbuff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::all_reduce(
-                *sendbuff.device_ptr() as _,
-                *recvbuff.device_ptr_mut() as _,
+                sendbuff.device_ptr(&self.stream) as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
                 sendbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
@@ -363,8 +349,8 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         };
-        sendbuff.record_read(&self.stream).unwrap();
-        recvbuff.record_write(&self.stream).unwrap();
+        sendbuff.record_read(&self.stream);
+        recvbuff.record_write(&self.stream);
         result
     }
 
@@ -375,12 +361,10 @@ impl Comm {
         buff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        buff.block_for_read(&self.stream).unwrap();
-        buff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::all_reduce(
-                *buff.device_ptr_mut() as _,
-                *buff.device_ptr_mut() as _,
+                buff.device_ptr_mut(&self.stream) as _,
+                buff.device_ptr_mut(&self.stream) as _,
                 buff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
@@ -388,8 +372,7 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         };
-        buff.record_read(&self.stream).unwrap();
-        buff.record_write(&self.stream).unwrap();
+        buff.record_write(&self.stream);
         result
     }
 
@@ -408,19 +391,14 @@ impl Comm {
     ) -> Result<result::NcclStatus, result::NcclError> {
         debug_assert!(recvbuff.is_some() || self.rank != root as usize);
 
-        sendbuff.block_for_read(&self.stream).unwrap();
-        if let Some(buff) = recvbuff.as_ref() {
-            buff.block_for_write(&self.stream).unwrap();
-        }
-
         let recv_ptr = recvbuff
             .as_mut()
-            .map(|buff| *(*buff).device_ptr_mut() as _)
+            .map(|buff| buff.device_ptr_mut(&self.stream) as _)
             .unwrap_or(ptr::null_mut());
 
         let result = unsafe {
             result::reduce(
-                *sendbuff.device_ptr() as _,
+                sendbuff.device_ptr(&self.stream) as _,
                 recv_ptr,
                 sendbuff.len(),
                 T::as_nccl_type(),
@@ -431,9 +409,9 @@ impl Comm {
             )
         };
 
-        sendbuff.record_read(&self.stream).unwrap();
+        sendbuff.record_read(&self.stream);
         if let Some(buff) = recvbuff {
-            buff.record_write(&self.stream).unwrap();
+            buff.record_write(&self.stream);
         }
 
         result
@@ -447,12 +425,10 @@ impl Comm {
         reduce_op: &ReduceOp,
         root: i32,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        recvbuff.block_for_read(&self.stream).unwrap();
-        recvbuff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::reduce(
-                *recvbuff.device_ptr_mut() as _,
-                *recvbuff.device_ptr_mut() as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
@@ -461,8 +437,7 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         };
-        recvbuff.record_read(&self.stream).unwrap();
-        recvbuff.record_write(&self.stream).unwrap();
+        recvbuff.record_write(&self.stream);
         result
     }
 
@@ -473,12 +448,10 @@ impl Comm {
         recvbuff: &mut R,
         reduce_op: &ReduceOp,
     ) -> Result<result::NcclStatus, result::NcclError> {
-        sendbuff.block_for_read(&self.stream).unwrap();
-        recvbuff.block_for_write(&self.stream).unwrap();
         let result = unsafe {
             result::reduce_scatter(
-                *sendbuff.device_ptr() as _,
-                *recvbuff.device_ptr_mut() as _,
+                sendbuff.device_ptr(&self.stream) as _,
+                recvbuff.device_ptr_mut(&self.stream) as _,
                 recvbuff.len(),
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
@@ -486,8 +459,8 @@ impl Comm {
                 self.stream.cu_stream as _,
             )
         };
-        sendbuff.record_read(&self.stream).unwrap();
-        recvbuff.record_write(&self.stream).unwrap();
+        sendbuff.record_read(&self.stream);
+        recvbuff.record_write(&self.stream);
         result
     }
 }

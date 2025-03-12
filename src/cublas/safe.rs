@@ -127,26 +127,23 @@ impl Gemv<f32> for CudaBlas {
         x: &X,
         y: &mut Y,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        x.block_for_read(&self.stream).unwrap();
-        y.block_for_write(&self.stream).unwrap();
         result::sgemv(
             self.handle,
             cfg.trans,
             cfg.m,
             cfg.n,
             (&cfg.alpha) as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             cfg.lda,
-            *x.device_ptr() as *const _,
+            x.device_ptr(&self.stream) as *const _,
             cfg.incx,
             (&cfg.beta) as *const _,
-            *y.device_ptr_mut() as *mut _,
+            y.device_ptr_mut(&self.stream) as *mut _,
             cfg.incy,
         )?;
-        a.record_read(&self.stream).unwrap();
-        x.record_read(&self.stream).unwrap();
-        y.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        x.record_read(&self.stream);
+        y.record_write(&self.stream);
         Ok(())
     }
 }
@@ -159,26 +156,23 @@ impl Gemv<f64> for CudaBlas {
         x: &X,
         y: &mut Y,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        x.block_for_read(&self.stream).unwrap();
-        y.block_for_write(&self.stream).unwrap();
         result::dgemv(
             self.handle,
             cfg.trans,
             cfg.m,
             cfg.n,
             (&cfg.alpha) as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             cfg.lda,
-            *x.device_ptr() as *const _,
+            x.device_ptr(&self.stream) as *const _,
             cfg.incx,
             (&cfg.beta) as *const _,
-            *y.device_ptr_mut() as *mut _,
+            y.device_ptr_mut(&self.stream) as *mut _,
             cfg.incy,
         )?;
-        a.record_read(&self.stream).unwrap();
-        x.record_read(&self.stream).unwrap();
-        y.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        x.record_read(&self.stream);
+        y.record_write(&self.stream);
         Ok(())
     }
 }
@@ -248,9 +242,6 @@ impl Gemm<half::f16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.alpha.to_f32();
         let beta: f32 = cfg.beta.to_f32();
         result::gemm_ex(
@@ -261,22 +252,22 @@ impl Gemm<half::f16> for CudaBlas {
             cfg.n,
             cfg.k,
             (&alpha) as *const f32 as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16F,
             cfg.lda,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16F,
             cfg.ldb,
             (&beta) as *const f32 as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             sys::cudaDataType_t::CUDA_R_16F,
             cfg.ldc,
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
     unsafe fn gemm_strided_batched<
@@ -290,9 +281,6 @@ impl Gemm<half::f16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.gemm.alpha.to_f32();
         let beta: f32 = cfg.gemm.beta.to_f32();
         result::gemm_strided_batched_ex(
@@ -303,16 +291,16 @@ impl Gemm<half::f16> for CudaBlas {
             cfg.gemm.n,
             cfg.gemm.k,
             (&alpha) as *const f32 as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16F,
             cfg.gemm.lda,
             cfg.stride_a,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16F,
             cfg.gemm.ldb,
             cfg.stride_b,
             (&beta) as *const f32 as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             sys::cudaDataType_t::CUDA_R_16F,
             cfg.gemm.ldc,
             cfg.stride_c,
@@ -320,9 +308,9 @@ impl Gemm<half::f16> for CudaBlas {
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
 }
@@ -340,9 +328,6 @@ impl Gemm<half::bf16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.alpha.to_f32();
         let beta: f32 = cfg.beta.to_f32();
         result::gemm_ex(
@@ -353,22 +338,22 @@ impl Gemm<half::bf16> for CudaBlas {
             cfg.n,
             cfg.k,
             (&alpha) as *const f32 as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16BF,
             cfg.lda,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16BF,
             cfg.ldb,
             (&beta) as *const f32 as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             sys::cudaDataType_t::CUDA_R_16BF,
             cfg.ldc,
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
     unsafe fn gemm_strided_batched<
@@ -382,9 +367,6 @@ impl Gemm<half::bf16> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         let alpha: f32 = cfg.gemm.alpha.to_f32();
         let beta: f32 = cfg.gemm.beta.to_f32();
         result::gemm_strided_batched_ex(
@@ -395,16 +377,16 @@ impl Gemm<half::bf16> for CudaBlas {
             cfg.gemm.n,
             cfg.gemm.k,
             (&alpha) as *const f32 as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16BF,
             cfg.gemm.lda,
             cfg.stride_a,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             sys::cudaDataType_t::CUDA_R_16BF,
             cfg.gemm.ldb,
             cfg.stride_b,
             (&beta) as *const f32 as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             sys::cudaDataType_t::CUDA_R_16BF,
             cfg.gemm.ldc,
             cfg.stride_c,
@@ -412,9 +394,9 @@ impl Gemm<half::bf16> for CudaBlas {
             sys::cublasComputeType_t::CUBLAS_COMPUTE_32F,
             sys::cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
 }
@@ -427,9 +409,6 @@ impl Gemm<f32> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         result::sgemm(
             self.handle,
             cfg.transa,
@@ -438,17 +417,17 @@ impl Gemm<f32> for CudaBlas {
             cfg.n,
             cfg.k,
             (&cfg.alpha) as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             cfg.lda,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             cfg.ldb,
             (&cfg.beta) as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             cfg.ldc,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
 
@@ -459,9 +438,6 @@ impl Gemm<f32> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         result::sgemm_strided_batched(
             self.handle,
             cfg.gemm.transa,
@@ -470,21 +446,21 @@ impl Gemm<f32> for CudaBlas {
             cfg.gemm.n,
             cfg.gemm.k,
             (&cfg.gemm.alpha) as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             cfg.gemm.lda,
             cfg.stride_a,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             cfg.gemm.ldb,
             cfg.stride_b,
             (&cfg.gemm.beta) as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             cfg.gemm.ldc,
             cfg.stride_c,
             cfg.batch_size,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
 }
@@ -497,9 +473,6 @@ impl Gemm<f64> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         result::dgemm(
             self.handle,
             cfg.transa,
@@ -508,17 +481,17 @@ impl Gemm<f64> for CudaBlas {
             cfg.n,
             cfg.k,
             (&cfg.alpha) as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             cfg.lda,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             cfg.ldb,
             (&cfg.beta) as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             cfg.ldc,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
 
@@ -529,9 +502,6 @@ impl Gemm<f64> for CudaBlas {
         b: &B,
         c: &mut C,
     ) -> Result<(), CublasError> {
-        a.block_for_read(&self.stream).unwrap();
-        b.block_for_read(&self.stream).unwrap();
-        c.block_for_write(&self.stream).unwrap();
         result::dgemm_strided_batched(
             self.handle,
             cfg.gemm.transa,
@@ -540,21 +510,21 @@ impl Gemm<f64> for CudaBlas {
             cfg.gemm.n,
             cfg.gemm.k,
             (&cfg.gemm.alpha) as *const _,
-            *a.device_ptr() as *const _,
+            a.device_ptr(&self.stream) as *const _,
             cfg.gemm.lda,
             cfg.stride_a,
-            *b.device_ptr() as *const _,
+            b.device_ptr(&self.stream) as *const _,
             cfg.gemm.ldb,
             cfg.stride_b,
             (&cfg.gemm.beta) as *const _,
-            *c.device_ptr_mut() as *mut _,
+            c.device_ptr_mut(&self.stream) as *mut _,
             cfg.gemm.ldc,
             cfg.stride_c,
             cfg.batch_size,
         )?;
-        a.record_read(&self.stream).unwrap();
-        b.record_read(&self.stream).unwrap();
-        c.record_write(&self.stream).unwrap();
+        a.record_read(&self.stream);
+        b.record_read(&self.stream);
+        c.record_write(&self.stream);
         Ok(())
     }
 }
