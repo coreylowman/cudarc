@@ -4,20 +4,22 @@ use super::{result, sys};
 use crate::driver::{CudaStream, DevicePtrMut};
 use std::sync::Arc;
 
-/// Host side RNG that can fill [CudaSlice] with random values.
+/// Host side RNG that can fill [crate::driver::CudaSlice]/[crate::driver::CudaViewMut] with random values.
 ///
 /// 1. Create:
 /// ```rust
 /// # use cudarc::{driver::*, curand::*};
-/// let device = CudaDevice::new(0).unwrap();
-/// let rng = CudaRng::new(0, device).unwrap();
+/// let ctx = CudaContext::new(0).unwrap();
+/// let stream = ctx.default_stream();
+/// let rng = CudaRng::new(0, stream.clone()).unwrap();
 /// ```
 /// 2. Fill device memory:
 /// ```rust
 /// # use cudarc::{driver::*, curand::*};
-/// # let device = CudaDevice::new(0).unwrap();
-/// # let rng = CudaRng::new(0, device.clone()).unwrap();
-/// let mut a_dev = device.alloc_zeros::<f32>(10).unwrap();
+/// # let ctx = CudaContext::new(0).unwrap();
+/// # let stream = ctx.default_stream();
+/// # let rng = CudaRng::new(0, stream.clone()).unwrap();
+/// let mut a_dev = stream.alloc_zeros::<f32>(10).unwrap();
 /// rng.fill_with_uniform(&mut a_dev).unwrap();
 /// ```
 ///
@@ -31,7 +33,7 @@ pub struct CudaRng {
 }
 
 impl CudaRng {
-    /// Constructs the RNG with the given `seed`. Requires the stream from [CudaDevice] to submit kernels.
+    /// Constructs the RNG with the given `seed`. All calls run on `stream`.
     pub fn new(seed: u64, stream: Arc<CudaStream>) -> Result<Self, result::CurandError> {
         stream.context().bind_to_thread().unwrap();
         let gen = result::create_generator()?;
@@ -60,7 +62,7 @@ impl CudaRng {
         unsafe { result::set_offset(self.gen, offset) }
     }
 
-    /// Fill the [CudaSlice] with data from a `Uniform` distribution
+    /// Fill the [crate::driver::CudaSlice]/[crate::driver::CudaViewMut] with data from a `Uniform` distribution
     pub fn fill_with_uniform<T, Dst: DevicePtrMut<T>>(
         &self,
         dst: &mut Dst,
@@ -74,7 +76,7 @@ impl CudaRng {
         Ok(())
     }
 
-    /// Fill the [CudaSlice] with data from a `Normal(mean, std)` distribution.
+    /// Fill the [crate::driver::CudaSlice]/[crate::driver::CudaViewMut] with data from a `Normal(mean, std)` distribution.
     pub fn fill_with_normal<T, Dst: DevicePtrMut<T>>(
         &self,
         dst: &mut Dst,
@@ -98,7 +100,7 @@ impl CudaRng {
         Ok(())
     }
 
-    /// Fill the `CudaRc` with data from a `LogNormal(mean, std)` distribution.
+    /// Fill the [crate::driver::CudaSlice]/[crate::driver::CudaViewMut] with data from a `LogNormal(mean, std)` distribution.
     pub fn fill_with_log_normal<T, Dst: DevicePtrMut<T>>(
         &self,
         dst: &mut Dst,

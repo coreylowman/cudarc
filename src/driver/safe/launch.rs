@@ -39,6 +39,12 @@ impl LaunchConfig {
     }
 }
 
+/// The kernel launch builder. Instantiate with [CudaStream::launch_builder()], and then
+/// launch the kernel with [LaunchArgs::launch()]
+///
+/// Anything added as a kernel argument with [LaunchArgs::arg()] must either:
+/// 1. Implement [DeviceRepr]
+/// 2. Add a custom implementation of `impl<'a> PushKernelArg<T> for LaunchArgs<'a>`, where `T` is your type.
 #[derive(Debug)]
 pub struct LaunchArgs<'a> {
     stream: &'a CudaStream,
@@ -50,6 +56,10 @@ pub struct LaunchArgs<'a> {
 }
 
 impl CudaStream {
+    /// Creates a new kernel launch builder that will launch `func` on stream `self`.
+    ///
+    /// Add arguments to the builder using [LaunchArgs::arg()], and submit it to the stream
+    /// using [LaunchArgs::launch()].
     pub fn launch_builder<'a>(&'a self, func: &'a CudaFunction) -> LaunchArgs<'a> {
         LaunchArgs {
             stream: self,
@@ -65,11 +75,16 @@ impl CudaStream {
 /// Something that can be copied to device memory and
 /// turned into a parameter for [result::launch_kernel].
 ///
+/// See the [cuda docs](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#global-function-argument-processing)
+/// on argument processing.
+///
 /// # Safety
 ///
-/// This is unsafe because a struct should likely
-/// be `#[repr(C)]` to be represented in cuda memory,
-/// and not all types are valid.
+/// This is unsafe you need to ensure that T can be represented
+/// in CUDA and also references to it can be properly passed to CUDA.
+///
+/// Most implementations will be required to use `#[inline(always)]`
+/// to ensure that references are handled properly.
 pub unsafe trait PushKernelArg<T> {
     fn arg(&mut self, arg: T) -> &mut Self;
 }
@@ -127,86 +142,44 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for
 }
 
 impl LaunchArgs<'_> {
+    /// Calling this will make [LaunchArgs::launch()] and [LaunchArgs::launch_cooperative()]
+    /// return 2 [CudaEvent]s that recorded before and after the kernel is submitted.
     pub fn record_kernel_launch(&mut self, flags: sys::CUevent_flags) -> &mut Self {
         self.flags = Some(flags);
         self
     }
 
-    /// Consumes a [CudaFunction] to execute asychronously on the device with
-    /// params determined by generic parameter `Params`.
-    ///
-    /// This is impl'd multiple times for different number and types of params. In
-    /// general, `Params` should impl [DeviceRepr].
-    ///
-    /// ```ignore
-    /// # use cudarc::driver::*;
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let my_kernel: CudaFunction = dev.load_func("my_module", "my_kernel").unwrap();
-    /// let cfg: LaunchConfig = LaunchConfig {
-    ///     grid_dim: (1, 1, 1),
-    ///     block_dim: (1, 1, 1),
-    ///     shared_mem_bytes: 0,
-    /// };
-    /// let params = (1i32, 2u64, 3usize);
-    /// unsafe { my_kernel.launch(cfg, params) }.unwrap();
-    /// ```
+    /// Submits the configuration [CudaFunction] to execute asychronously on
+    /// the configured device stream.
     ///
     /// # Safety
     ///
-    /// This is not safe really ever, because there's no garuntee that `Params`
-    /// will work for any [CudaFunction] passed in. Great care should be taken
-    /// to ensure that [CudaFunction] works with `Params` and that the correct
-    /// parameters have `&mut` in front of them.
+    /// This is generally unsafe for two main reasons:
     ///
-    /// Additionally, kernels can mutate data that is marked as immutable,
-    /// such as `&CudaSlice<T>`.
+    /// 1. We can't guarantee that the arguments are valid for the configured [CudaFunction].
+    ///    We don't know if the types are correct, if the arguments are in the correct order,
+    ///    if the types are representable in CUDA, etc.
+    /// 2. We can't guarantee that the cuda kernel follows the mutability of the arguments
+    ///    configured with [LaunchArgs::arg()]. For instance, you can pass a reference to a [CudaSlice],
+    ///    which on rust side can't be mutated, but on cuda side the kernel can mutate it.
+    /// 3. [CudaFunction] can access memory outside of limits.
     ///
-    /// See [LaunchAsync::launch] for more details
+    /// ## Handling asynchronous mutation
     ///
-    /// # TODO Pt 2
+    /// All [CudaSlice]/[CudaView]/[CudaViewMut] contain 2 events that record
+    /// when the data associated with them are read from/written to.
     ///
-    /// Launches the [CudaFunction] with the corresponding `Params`.
+    /// The [PushKernelArg] implementation of these adds these events to [LaunchArgs],
+    /// so when [LaunchArgs::launch()] is called, we properly do multi stream synchronization.
     ///
-    /// # Safety
+    /// So in practice it is not possible to have multiple kernels concurrently modify device
+    /// data while using the safe api.
     ///
-    /// This method is **very** unsafe.
+    /// ## Handling use after free
     ///
-    /// See cuda documentation notes on this as well:
-    /// <https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#functions>
-    ///
-    /// 1. `params` can be changed regardless of `&` or `&mut` usage.
-    /// 2. `params` will be changed at some later point after the
-    ///    function returns because the kernel is executed async.
-    /// 3. There are no guaruntees that the `params`
-    ///    are the correct number/types/order for `func`.
-    /// 4. Specifying the wrong values for [LaunchConfig] can result
-    ///    in accessing/modifying values past memory limits.
-    ///
-    /// ## Asynchronous mutation
-    ///
-    /// Since this library queues kernels to be launched on a single
-    /// stream, and really the only way to modify [crate::driver::CudaSlice] is through
-    /// kernels, mutating the same [crate::driver::CudaSlice] with multiple kernels
-    /// is safe. This is because each kernel is executed sequentially
-    /// on the stream.
-    ///
-    /// **Modifying a value on the host that is in used by a
-    /// kernel is undefined behavior.** But is hard to do
-    /// accidentally.
-    ///
-    /// Also for this reason, do not pass in any values to kernels
-    /// that can be modified on the host. This is the reason
-    /// [DeviceRepr] is not implemented for rust primitive
-    /// references.
-    ///
-    /// ## Use after free
-    ///
-    /// Since the drop implementation for [crate::driver::CudaSlice] also occurs
-    /// on the device's single stream, any kernels launched before
-    /// the drop will complete before the value is actually freed.
-    ///
-    /// **If you launch a kernel or drop a value on a different stream
-    /// this may not hold**
+    /// Since [LaunchArgs::launch()] properly records reads/writes for [CudaSlice]/[CudaView]/[CudaViewMut],
+    /// and the drop implementation of [CudaSlice] waits on those events to finish,
+    /// we will never encounter a use after free situation.
     pub unsafe fn launch(
         &mut self,
         cfg: LaunchConfig,
@@ -237,10 +210,9 @@ impl LaunchArgs<'_> {
         Ok(start_event.zip(end_event))
     }
 
-    /// Launch a Cooperative kernel. See [LaunchArgs::launch()]
+    /// Launch a cooperative kernel.
     ///
     /// # Safety
-    ///
     /// See [LaunchArgs::launch()]
     pub unsafe fn launch_cooperative(
         &mut self,

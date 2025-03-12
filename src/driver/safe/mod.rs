@@ -1,4 +1,4 @@
-//! Safe abstractions over [crate::driver::result] provided by [CudaSlice], [CudaDevice], [CudaStream], and more.
+//! Safe abstractions over [crate::driver::result] provided by [CudaSlice], [CudaContext], [CudaStream], and more.
 
 pub(crate) mod core;
 pub(crate) mod external_memory;

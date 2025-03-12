@@ -12,6 +12,16 @@ use std::{
     vec::Vec,
 };
 
+/// Represents a primary cuda context on a certain device. When created with [CudaContext::new()] it will
+/// push a new primary context onto the stack.
+///
+/// This is the entrypoint to using any cuda calls, all objects maintain a pointer to `Arc<CudaContext>`
+/// to ensure proper lifetimes.
+///
+/// # On thread safety
+///
+/// This object is thread safe and can be shared/used on multiple threads. All safe apis call
+/// [CudaContext::bind_to_thread()] before doing work in a certain context.
 #[derive(Debug, PartialEq, Eq)]
 pub struct CudaContext {
     pub(crate) cu_device: sys::CUdevice,
@@ -34,6 +44,7 @@ impl Drop for CudaContext {
 }
 
 impl CudaContext {
+    /// Creates a new context on the specified device ordinal.
     pub fn new(ordinal: usize) -> Result<Arc<Self>, DriverError> {
         result::init()?;
         let cu_device = result::device::get(ordinal as i32)?;
@@ -55,6 +66,7 @@ impl CudaContext {
         Ok(ctx)
     }
 
+    /// The number of devices available.
     pub fn device_count() -> Result<i32, DriverError> {
         result::init()?;
         result::device::get_count()
@@ -99,11 +111,12 @@ impl CudaContext {
         self.cu_ctx
     }
 
+    /// Binds this context to the calling thread. Calling this is key for thread safety.
     pub fn bind_to_thread(&self) -> Result<(), DriverError> {
         unsafe { result::ctx::set_current(self.cu_ctx) }
     }
 
-    /// Get the value of the specified attribute of this [CudaDevice].
+    /// Get the value of the specified attribute of the device in [CudaContext].
     pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
         unsafe { result::device::get_attribute(self.cu_device, attrib) }
     }
@@ -115,6 +128,9 @@ impl CudaContext {
         result::ctx::synchronize()
     }
 
+    /// Ensures calls to [CudaContext::synchronize()] block the calling thread.
+    ///
+    /// Sets [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC]
     #[cfg(not(any(
         feature = "cuda-11040",
         feature = "cuda-11050",
@@ -127,6 +143,7 @@ impl CudaContext {
         self.set_flags(sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC)
     }
 
+    /// Set flags for this context
     #[cfg(not(any(
         feature = "cuda-11040",
         feature = "cuda-11050",
@@ -141,6 +158,16 @@ impl CudaContext {
     }
 }
 
+/// A lightweight synchronization primitive used to synchronize between [CudaStream]s.
+///
+/// - Create using [CudaContext::new_event()].
+/// - Record a point of time in a stream using [CudaEvent::record()].
+/// - Either call [CudaEvent::synchronize()] or [CudaStream::wait()] to use.
+///
+/// Note that calls to [CudaEvent::record()] will not change any **previous calls** to [CudaStream::wait()].
+///
+/// # Thread safety
+/// This object is thread safe
 #[derive(Debug)]
 pub struct CudaEvent {
     pub(crate) cu_event: sys::CUevent,
@@ -158,6 +185,8 @@ impl Drop for CudaEvent {
 }
 
 impl CudaContext {
+    /// Creates a new [CudaEvent] with no work recorded. If `flags` is None, the event is created with
+    /// [sys::CUevent_flags::CU_EVENT_DISABLE_TIMING].
     pub fn new_event(
         self: &Arc<Self>,
         flags: Option<sys::CUevent_flags>,
@@ -173,14 +202,25 @@ impl CudaContext {
 }
 
 impl CudaEvent {
+    /// The underlying cu_event object.
+    ///
+    /// # Safety
+    /// Do not destroy this value
     pub fn cu_event(&self) -> sys::CUevent {
         self.cu_event
     }
 
+    /// The context this was created in.
     pub fn context(&self) -> &Arc<CudaContext> {
         &self.ctx
     }
 
+    /// Records the current amount of work in [CudaStream] into this event.
+    ///
+    /// **This does not affect any previous calls to [CudaStream::wait()]**
+    ///
+    /// If `stream` belongs to a different [CudaContext], this will fail with
+    /// [sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT].
     pub fn record(&self, stream: &CudaStream) -> Result<(), DriverError> {
         if self.ctx != stream.ctx {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
@@ -195,14 +235,16 @@ impl CudaEvent {
         unsafe { result::event::synchronize(self.cu_event) }
     }
 
-    pub fn elapsed_ms(&self, other: &Self) -> Result<f32, DriverError> {
-        if self.ctx != other.ctx {
+    /// The time between two events. `self` is the start event, and `end` is the end event.
+    /// This is effectively `end - self`.
+    pub fn elapsed_ms(&self, end: &Self) -> Result<f32, DriverError> {
+        if self.ctx != end.ctx {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
         }
         self.ctx.bind_to_thread()?;
         self.synchronize()?;
-        other.synchronize()?;
-        unsafe { result::event::elapsed(self.cu_event, other.cu_event) }
+        end.synchronize()?;
+        unsafe { result::event::elapsed(self.cu_event, end.cu_event) }
     }
 
     /// Returns `true` if all recorded work has been completed, `false` otherwise.
@@ -211,75 +253,11 @@ impl CudaEvent {
     }
 }
 
-/// A wrapper around [sys::CUstream] that safely ensures null stream is synchronized
-/// upon the completion of this stream's work.
+/// A wrapper around [sys::CUstream] that you can schedule work on.
 ///
-/// Create with [CudaDevice::fork_default_stream].
+/// - Create with [CudaContext::new_stream()], [CudaContext::default_stream()], or [CudaStream::fork()].
 ///
-/// The synchronization happens in **code order**. E.g.
-/// ```ignore
-/// let stream = dev.fork_default_stream()?; // 0
-/// dev.launch(...)?; // 1
-/// function_1.launch_on_stream(&stream, ...)?; // 2
-/// function_2.launch(...)?; // 3
-/// drop(stream); // 4
-/// dev.launch(...) // 5
-/// ```
-///
-/// - 0 will place a streamWaitEvent(default work stream) on the new stream
-/// - 1 will launch on the default work stream
-/// - 2 will launch concurrently to 1 on `&stream`,
-/// - 3 will launch after 1 on the default work stream, but potentially concurrently to 2.
-/// - 4 will place a streamWaitEvent(`&stream`) on the default work stream
-/// - 5 will happen on the default stream **after the default stream waits for 2**
-///
-/// **This is asynchronous with respect to the host.**
-///
-/// # Example with wait_for_default and wait_for
-///
-/// There is also a way to synchronize work on non-default streams without dropping them.
-/// It can be interesting to reuse the [CudaStream] streams during the whole
-/// duration of the computation.
-/// To that end, one can use [CudaStream::wait_for_default] and [CudaDevice::wait_for].
-///
-/// Let's suppose that there are 4 streams: stream_1, stream_2, stream_3, stream_4.
-/// There is no work queued on the default stream. All the work is queued on non-default streams.
-/// And let's suppose that the stream dependencies are as follows:
-/// - stream_1 dependencies: []
-/// - stream_2 dependencies: []
-/// - stream_3 dependencies: [stream_1, stream_2]
-/// - stream_4 dependencies: [stream_3]
-///
-/// Pseudo-code:
-/// ```ignore
-/// let stream_1 = dev.fork_default_stream()?; // 0
-/// let stream_2 = dev.fork_default_stream()?; // 1
-/// let stream_3 = dev.fork_default_stream()?; // 2
-/// let stream_4 = dev.fork_default_stream()?; // 3
-///
-/// function_1.launch_on_stream(&stream_1, ...)?; // 4
-/// function_2.launch_on_stream(&stream_2, ...)?; // 5
-/// dev.wait_for(&stream_1); // 6
-/// dev.wait_for(&stream_2); // 7
-///
-/// stream_3.wait_for_default(); // 8
-/// function_3.launch_on_stream(&stream_3, ...)?; // 10
-/// dev.wait_for(&stream_3); // 11
-///
-/// stream_4.wait_for_default(); // 12
-/// function_4.launch_on_stream(&stream_4, ...)?; // 13
-/// dev.wait_for(&stream_4); // 14
-/// ```
-///
-/// - function_1 and function_2 will be executed concurrently.
-/// - function_3 will be executed once function_1 and function_2 have completed their execution.
-/// - function_4 will be executed once function_3 has completed its execution.
-///
-/// This is handy because it can be use to do out-of-order execution of kernels using dependency
-/// analysis. For example, with multi-head attention with 12 heads, each head can be executed
-/// in its own stream.
-///
-/// **This is asynchronous with respect to the host.**
+/// **Work done on this is asynchronous with respect to the host.**
 ///
 /// See [CUDA C/C++ Streams and Concurrency](https://developer.download.nvidia.com/CUDA/training/StreamsAndConcurrencyWebinar.pdf)
 /// See [3. Stream synchronization behavior](https://docs.nvidia.com/cuda/cuda-runtime-api/stream-sync-behavior.html)
@@ -305,6 +283,8 @@ impl Drop for CudaStream {
 }
 
 impl CudaContext {
+    /// Get's the default stream for this context (the null ptr stream). Note that context's
+    /// on the same device can all submit to the same default stream from separate context objects.
     pub fn default_stream(self: &Arc<Self>) -> Arc<CudaStream> {
         Arc::new(CudaStream {
             cu_stream: std::ptr::null_mut(),
@@ -312,6 +292,7 @@ impl CudaContext {
         })
     }
 
+    /// Create a new [sys::CUstream_flags::CU_STREAM_NON_BLOCKING] stream.
     pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
@@ -323,16 +304,21 @@ impl CudaContext {
 }
 
 impl CudaStream {
+    /// Create's a new stream and then makes the new stream wait on `self`
     pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
         let stream = self.ctx.new_stream()?;
-        stream.wait(&self.record_event(None)?)?;
+        stream.join(self)?;
         Ok(stream)
     }
 
+    /// The underlying cuda stream object
+    /// # Safety
+    /// Do not destroy this value.
     pub fn cu_stream(&self) -> sys::CUstream {
         self.cu_stream
     }
 
+    /// The context the stream belongs to.
     pub fn context(&self) -> &Arc<CudaContext> {
         &self.ctx
     }
@@ -344,6 +330,7 @@ impl CudaStream {
         unsafe { result::stream::synchronize(self.cu_stream) }
     }
 
+    /// Creates a new [CudaEvent] and records the current work in the stream to the event.
     pub fn record_event(
         &self,
         flags: Option<sys::CUevent_flags>,
@@ -353,6 +340,10 @@ impl CudaStream {
         Ok(event)
     }
 
+    /// Waits for the work recorded in [CudaEvent] to be completed.
+    ///
+    /// You can record new work in `event` after calling this method without
+    /// affecting this call.
     pub fn wait(&self, event: &CudaEvent) -> Result<(), DriverError> {
         if self.ctx != event.ctx {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
@@ -367,37 +358,16 @@ impl CudaStream {
         }
     }
 
+    /// Ensures this stream waits for the current workload in `other` to complete.
+    /// This is shorthand for `self.wait(other.record_event())`
     pub fn join(&self, other: &CudaStream) -> Result<(), DriverError> {
         self.wait(&other.record_event(None)?)
     }
 }
 
-/// Contains a reference counted pointer to both
-/// device and host memory allocated for type `T`.
+/// `Vec<T>` on a cuda device. You can allocate and modify this with [CudaStream].
 ///
-/// # Host data
-///
-/// *This owns the host data it is associated with*. However
-/// it is possible to create device memory without having
-/// a corresponding host memory, so the host memory is
-/// actually [Option].
-///
-/// # Reclaiming host data
-///
-/// To reclaim the host data for this device data,
-/// use [CudaDevice::sync_reclaim()]. This will
-/// perform necessary synchronization to ensure
-/// that the device data finishes copying over.
-///
-/// # Mutating device data
-///
-/// This can only be done by launching kernels via
-/// [crate::driver::LaunchAsync] which is implemented
-/// by [CudaDevice]. Pass `&mut CudaSlice<T>`
-/// if you want to mutate the rc, and `&CudaSlice<T>` otherwise.
-///
-/// Unfortunately, `&CudaSlice<T>` can **still be mutated
-/// by the [CudaFunction]**.
+/// This object is thread safe.
 #[derive(Debug)]
 pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
@@ -420,20 +390,34 @@ impl<T> Drop for CudaSlice<T> {
 }
 
 impl<T> CudaSlice<T> {
+    /// The number of elements of `T` in this object.
     pub fn len(&self) -> usize {
         self.len
     }
 
+    /// The number of bytes in this object.
+    pub fn num_bytes(&self) -> usize {
+        self.len * std::mem::size_of::<T>()
+    }
+
+    /// True if there are no elements in the object.
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
 
+    /// The device ordinal this belongs to
     pub fn ordinal(&self) -> usize {
         self.stream.ctx.ordinal
     }
 
+    /// The context this belongs to
     pub fn context(&self) -> &Arc<CudaContext> {
         &self.stream.ctx
+    }
+
+    /// The stream this object was allocated on and later will be dropped on.
+    pub fn stream(&self) -> &Arc<CudaStream> {
+        &self.stream
     }
 }
 
@@ -457,9 +441,7 @@ impl<T: Clone + Default + DeviceRepr> TryFrom<CudaSlice<T>> for Vec<T> {
     }
 }
 
-/// A immutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice()] or [CudaSlice::slice()].
-///
-/// This type is to [CudaSlice] as `&[T]` is to `Vec<T>`.
+/// `&[T]` on a cuda device. An immutable sub-view into a [CudaSlice] created by [CudaSlice::as_view()]/[CudaSlice::slice()].
 #[derive(Debug)]
 pub struct CudaView<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
@@ -484,13 +466,17 @@ impl<T> CudaSlice<T> {
 }
 
 impl<T> CudaView<'_, T> {
+    /// The number of elements `T` in this view.
     pub fn len(&self) -> usize {
         self.len
     }
+
     pub fn is_empty(&self) -> bool {
         self.len == 0
     }
+
     fn resize(&self, start: usize, end: usize) -> Self {
+        assert!(start <= end && end <= self.len);
         Self {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
@@ -502,9 +488,7 @@ impl<T> CudaView<'_, T> {
     }
 }
 
-/// A mutable sub-view into a [CudaSlice] created by [CudaSlice::try_slice_mut()] or [CudaSlice::slice_mut()].
-///
-/// This type is to [CudaSlice] as `&mut [T]` is to `Vec<T>`.
+/// `&mut [T]` on a cuda device. A mutable sub-view into a [CudaSlice] created by [CudaSlice::as_view_mut()]/[CudaSlice::slice_mut()].
 #[derive(Debug)]
 pub struct CudaViewMut<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
@@ -529,6 +513,7 @@ impl<T> CudaSlice<T> {
 }
 
 impl<T> CudaViewMut<'_, T> {
+    /// Number of elements `T` that are in this view.
     pub fn len(&self) -> usize {
         self.len
     }
@@ -536,6 +521,7 @@ impl<T> CudaViewMut<'_, T> {
         self.len == 0
     }
 
+    /// Downgrade this to a `&[T]`
     pub fn as_view(&self) -> CudaView<'_, T> {
         CudaView {
             ptr: self.ptr,
@@ -634,6 +620,9 @@ unsafe impl DeviceRepr for half::f16 {}
 #[cfg(feature = "f16")]
 unsafe impl DeviceRepr for half::bf16 {}
 
+/// Base trait for abstracting over [CudaSlice]/[CudaView]/[CudaViewMut].
+///
+/// Don't use this directly - use [DevicePtr]/[DevicePtrMut].
 pub trait DeviceSlice<T> {
     fn len(&self) -> usize;
     fn num_bytes(&self) -> usize {
@@ -754,6 +743,7 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
     }
 }
 
+/// Abstraction over `&[T]`, `&Vec<T>` and [`PinnedHostSlice<T>`].
 pub trait HostSlice<T> {
     fn len(&self) -> usize;
     fn is_empty(&self) -> bool {
@@ -830,6 +820,12 @@ impl<T> HostSlice<T> for Vec<T> {
     }
 }
 
+/// Rust side data that the `cuda` driver knows is pinned. This is different
+/// than `Pin<Vec<T>>` mainly because cuda driver manages this memory and ensures
+/// it is page locked.
+///
+/// Allocate this with [CudaContext::alloc_pinned()], and do device copies with
+/// [CudaStream::memcpy_stod()]/[CudaStream::memcpy_htod()]/[CudaStream::memcpy_dtoh()]
 #[derive(Debug)]
 pub struct PinnedHostSlice<T> {
     pub(crate) ptr: *mut T,
@@ -870,13 +866,19 @@ impl CudaContext {
 }
 
 impl<T> PinnedHostSlice<T> {
+    /// The context this was created in.
     pub fn context(&self) -> &Arc<CudaContext> {
         &self.event.ctx
     }
 
-    /// The size of the slice
+    /// The number of elements `T` in this slice.
     pub fn len(&self) -> usize {
         self.len
+    }
+
+    /// The number of bytes in this slice.
+    pub fn num_bytes(&self) -> usize {
+        self.len * std::mem::size_of::<T>()
     }
 
     pub fn is_empty(&self) -> bool {
@@ -958,6 +960,7 @@ impl CudaStream {
         })
     }
 
+    /// Allocates a [CudaSlice] with `len` elements of type `T`.
     /// # Safety
     /// This is unsafe because the memory is unset.
     pub unsafe fn alloc<T: DeviceRepr>(
@@ -982,6 +985,7 @@ impl CudaStream {
         })
     }
 
+    /// Allocates a [CudaSlice] with `len` elements of type `T`. All values are zero'd out.
     pub fn alloc_zeros<T: DeviceRepr + ValidAsZeroBits>(
         self: &Arc<Self>,
         len: usize,
@@ -991,6 +995,7 @@ impl CudaStream {
         Ok(dst)
     }
 
+    /// Set's all the memory in `dst` to 0. `dst` can be a [CudaSlice] or [CudaViewMut]
     pub fn memset_zeros<T: DeviceRepr + ValidAsZeroBits, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         dst: &mut Dst,
@@ -1003,7 +1008,7 @@ impl CudaStream {
         Ok(())
     }
 
-    /// Transfer a rust **s**lice to **d**evice
+    /// Copy a `[T]`/`Vec<T>`/[`PinnedHostSlice<T>`] to a new [`CudaSlice`].
     pub fn memcpy_stod<T: DeviceRepr, Src: HostSlice<T> + ?Sized>(
         self: &Arc<Self>,
         src: &Src,
@@ -1013,6 +1018,7 @@ impl CudaStream {
         Ok(dst)
     }
 
+    /// Copy a `[T]`/`Vec<T>`/[`PinnedHostSlice<T>`] into an existing [`CudaSlice`]/[`CudaViewMut`].
     pub fn memcpy_htod<T: DeviceRepr, Src: HostSlice<T> + ?Sized, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -1027,7 +1033,7 @@ impl CudaStream {
         Ok(())
     }
 
-    /// Transfer a **d**evice to rust **v**ec
+    /// Copy a [`CudaSlice`]/[`CudaView`] to a new [`Vec<T>`].
     pub fn memcpy_dtov<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -1041,6 +1047,7 @@ impl CudaStream {
         Ok(dst)
     }
 
+    /// Copy a [`CudaSlice`]/[`CudaView`] to a existing `[T]`/[`Vec<T>`]/[`PinnedHostSlice<T>`].
     pub fn memcpy_dtoh<T: DeviceRepr, Src: DevicePtr<T>, Dst: HostSlice<T> + ?Sized>(
         self: &Arc<Self>,
         src: &Src,
@@ -1055,6 +1062,7 @@ impl CudaStream {
         Ok(())
     }
 
+    /// Copy a [`CudaSlice`]/[`CudaView`] to a existing [`CudaSlice`]/[`CudaViewMut`].
     pub fn memcpy_dtod<T, Src: DevicePtr<T>, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -1076,6 +1084,7 @@ impl CudaStream {
         Ok(())
     }
 
+    /// Copy a [`CudaSlice`]/[`CudaView`] to a new [`CudaSlice`].
     pub fn clone_dtod<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -1094,24 +1103,25 @@ impl<T> CudaSlice<T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaView};
     /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice(0..50);
     /// do_something(&view);
     /// ```
     ///
     /// Like a normal slice, borrow checking prevents the underlying [CudaSlice] from being dropped.
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaView};
     /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
     /// let view = {
-    ///     let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
-    ///     let mut view = slice.slice(0..50);
+    ///     let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     ///     // cannot return view, since it borrows from slice
-    ///     view
+    ///     slice.slice(0..50)
     /// };
     /// do_something(&view);
     /// ```
@@ -1131,34 +1141,36 @@ impl<T> CudaSlice<T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: &mut CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// do_something(&mut view);
     /// ```
     ///
     /// Like a normal mutable slice, borrow checking prevents the underlying [CudaSlice] from being dropped.
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: &mut CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
     /// let mut view = {
-    ///     let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
-    ///     let view = slice.slice_mut(0..50);
+    ///     let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     ///     // cannot return view, since it borrows from slice
-    ///     view
+    ///     slice.slice_mut(0..50)
     /// };
     /// do_something(&mut view);
     /// ```
     ///
     /// Like with normal mutable slices, one cannot mutably slice twice into the same [CudaSlice]:
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view1 = slice.slice_mut(0..50);
     /// // cannot borrow twice from slice
     /// let mut view2 = slice.slice_mut(50..100);
@@ -1218,9 +1230,7 @@ impl<T> CudaSlice<T> {
         self.try_split_at(mid).unwrap()
     }
 
-    /// Fallible version of [CudaSlice::split_at].
-    ///
-    /// Returns `None` if `mid > self.len`.
+    /// Fallible version of [CudaSlice::split_at]. Returns `None` if `mid > self.len`.
     pub fn try_split_at(&self, mid: usize) -> Option<(CudaView<'_, T>, CudaView<'_, T>)> {
         (mid <= self.len()).then(|| {
             let view = self.as_view();
@@ -1234,10 +1244,11 @@ impl<T> CudaSlice<T> {
     ///
     /// This method can be used to create non-overlapping mutable views into a [CudaSlice].
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// // split the slice into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = slice.split_at_mut(50);
     /// do_something(view1, view2);
@@ -1268,10 +1279,11 @@ impl<'a, T> CudaView<'a, T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaView};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaView};
     /// # fn do_something(view: &CudaView<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice(0..50);
     /// let mut view2 = view.slice(0..25);
     /// do_something(&view);
@@ -1325,10 +1337,11 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// # Example
     ///
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: &mut CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// let mut view2 = view.slice_mut(0..25);
     /// do_something(&mut view2);
@@ -1336,10 +1349,11 @@ impl<'a, T> CudaViewMut<'a, T> {
     ///
     /// One cannot slice twice into the same [CudaViewMut]:
     /// ```rust,compile_fail
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// // cannot borrow twice from same view
     /// let mut view1 = slice.slice_mut(0..25);
@@ -1394,10 +1408,11 @@ impl<'a, T> CudaViewMut<'a, T> {
     ///
     /// This method can be used to create non-overlapping mutable views into a [CudaViewMut].
     /// ```rust
-    /// # use cudarc::driver::safe::{CudaDevice, CudaSlice, CudaViewMut};
+    /// # use cudarc::driver::safe::{CudaContext, CudaSlice, CudaViewMut};
     /// # fn do_something(view: CudaViewMut<u8>, view2: CudaViewMut<u8>) {}
-    /// # let dev = CudaDevice::new(0).unwrap();
-    /// let mut slice = dev.alloc_zeros::<u8>(100).unwrap();
+    /// # let ctx = CudaContext::new(0).unwrap();
+    /// # let stream = ctx.default_stream();
+    /// let mut slice = stream.alloc_zeros::<u8>(100).unwrap();
     /// let mut view = slice.slice_mut(0..50);
     /// // split the view into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = view.split_at_mut(25);
@@ -1448,10 +1463,9 @@ fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)
     (end <= len).then_some((start, end))
 }
 
-/// Wrapper around [sys::CUmodule] that also contains
-/// the loaded [CudaFunction] associated with this module.
+/// Wrapper around [sys::CUmodule]. Create with [CudaContext::load_module()].
 ///
-/// See [CudaModule::get_fn()] for retrieving function handles.
+/// Call [CudaModule::load_function] to load a [CudaFunction].
 #[derive(Debug)]
 pub struct CudaModule {
     pub(crate) cu_module: sys::CUmodule,
@@ -1469,10 +1483,9 @@ impl Drop for CudaModule {
 }
 
 impl CudaContext {
-    /// Dynamically load a set of [crate::driver::CudaFunction] from a jit compiled ptx.
+    /// Dynamically load a compiled ptx into this context.
     ///
     /// - `ptx` contains the compiled ptx
-    /// - `func_names` is a slice of function names to load into the module during build.
     pub fn load_module(
         self: &Arc<Self>,
         ptx: crate::nvrtc::Ptx,
@@ -1499,7 +1512,7 @@ impl CudaContext {
     }
 }
 
-/// Wrapper around [sys::CUfunction]. Used by [crate::driver::LaunchAsync].
+/// Wrapper around [sys::CUfunction]. Used by [CudaStream::launch_builder] to execute kernels.
 #[derive(Debug, Clone)]
 pub struct CudaFunction {
     pub(crate) cu_function: sys::CUfunction,
@@ -1511,6 +1524,7 @@ unsafe impl Send for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
 impl CudaModule {
+    /// Loads a function from the loaded module with the given name.
     pub fn load_function(self: &Arc<Self>, fn_name: &str) -> Result<CudaFunction, DriverError> {
         let fn_name_c = CString::new(fn_name).unwrap();
         let cu_function = unsafe { result::module::get_function(self.cu_module, fn_name_c) }?;
@@ -1784,7 +1798,7 @@ mod tests {
         let stream = ctx.default_stream();
         assert_eq!(Arc::strong_count(&ctx), 2);
         let t = stream.alloc_zeros::<f32>(1).unwrap();
-        assert_eq!(Arc::strong_count(&ctx), 2);
+        assert_eq!(Arc::strong_count(&ctx), 4);
         assert_eq!(Arc::strong_count(&stream), 2);
         drop(t);
         assert_eq!(Arc::strong_count(&ctx), 2);
