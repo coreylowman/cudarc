@@ -46,11 +46,15 @@ where:
 It's easy to create a new device and transfer data to the gpu:
 
 ```rust
-let dev = cudarc::driver::CudaDevice::new(0)?;
+// Get a stream for GPU 0
+let ctx = cudarc::driver::CudaContext::new(0)?;
+let stream = ctx.default_stream();
 
-// allocate buffers
-let inp = dev.htod_copy(vec![1.0f32; 100])?;
-let mut out = dev.alloc_zeros::<f32>(100)?;
+// copy a rust slice to the device
+let inp = stream.memcpy_stod(&[1.0f32; 100])?;
+
+// or allocate directly
+let mut out = stream.alloc_zeros::<f32>(100)?;
 ```
 
 You can also use the nvrtc api to compile kernels at runtime:
@@ -64,23 +68,25 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, const size
     }
 }")?;
 
-// and dynamically load it into the device
-dev.load_ptx(ptx, "my_module", &["sin_kernel"])?;
+// Dynamically load it into the device
+let module = ctx.load_module(ptx)?;
+let sin_kernel = module.load_function("sin_kernel")?;
 ```
 
-`cudarc` provides a very simple interface to launch kernels, tuples
-are the arguments!
+`cudarc` provides a very simple interface to launch kernels using a builder pattern to specify kernel arguments:
 
 ```rust
-let sin_kernel = dev.get_func("my_module", "sin_kernel").unwrap();
-let cfg = LaunchConfig::for_num_elems(100);
-unsafe { sin_kernel.launch(cfg, (&mut out, &inp, 100usize)) }?;
+let mut builder = stream.launch_builder(&sin_kernel);
+builder.arg(&mut out);
+builder.arg(&inp);
+builder.arg(100usize);
+unsafe { builder.launch(LaunchConfig::for_num_elems(100)) }?;
 ```
 
 And of course it's easy to copy things back to host after you're done:
 
 ```rust
-let out_host: Vec<f32> = dev.dtoh_sync_copy(&out)?;
+let out_host: Vec<f32> = stream.memcpy_dtov(&out)?;
 assert_eq!(out_host, [1.0; 100].map(f32::sin));
 ```
 
