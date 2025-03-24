@@ -79,7 +79,7 @@ let sin_kernel = module.load_function("sin_kernel")?;
 let mut builder = stream.launch_builder(&sin_kernel);
 builder.arg(&mut out);
 builder.arg(&inp);
-builder.arg(100usize);
+builder.arg(&100usize);
 unsafe { builder.launch(LaunchConfig::for_num_elems(100)) }?;
 ```
 
