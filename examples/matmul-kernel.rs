@@ -47,7 +47,7 @@ fn main() -> Result<(), DriverError> {
     builder.arg(&a_dev);
     builder.arg(&b_dev);
     builder.arg(&mut c_dev);
-    builder.arg(2i32);
+    builder.arg(&2i32);
     let cfg = LaunchConfig {
         block_dim: (2, 2, 1),
         grid_dim: (1, 1, 1),

@@ -25,7 +25,7 @@ fn main() -> Result<(), DriverError> {
                     unsafe {
                         stream
                             .launch_builder(&f)
-                            .arg(i)
+                            .arg(&i)
                             .launch(LaunchConfig::for_num_elems(1))
                     }
                 });
@@ -49,7 +49,7 @@ fn main() -> Result<(), DriverError> {
                     unsafe {
                         stream
                             .launch_builder(&f)
-                            .arg(i)
+                            .arg(&i)
                             .launch(LaunchConfig::for_num_elems(1))
                     }
                 });

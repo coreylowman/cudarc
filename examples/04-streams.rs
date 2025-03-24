@@ -10,10 +10,10 @@ fn main() -> Result<(), DriverError> {
     let module = ctx.load_module(Ptx::from_file("./examples/sin.ptx"))?;
     let f = module.load_function("sin_kernel")?;
 
-    let n = 3;
+    let n = 3i32;
     let a_host = [1.0, 2.0, 3.0];
     let a_dev = stream.memcpy_stod(&a_host)?;
-    let mut b_dev = stream.alloc_zeros::<f32>(n)?;
+    let mut b_dev = stream.alloc_zeros::<f32>(n as usize)?;
 
     // we can safely create a second stream using [CudaStream::fork()].
     // This synchronizes with the source stream, so
@@ -25,7 +25,7 @@ fn main() -> Result<(), DriverError> {
     let mut builder = stream2.launch_builder(&f);
     builder.arg(&mut b_dev); // NOTE: tells cudarc that we are mutating this.
     builder.arg(&a_dev); // NOTE: tells cudarc that we are reading from this slice
-    builder.arg(n as i32);
+    builder.arg(&n);
     unsafe { builder.launch(LaunchConfig::for_num_elems(n as u32)) }?;
 
     // cudarc automatically manages multi stream synchronization,

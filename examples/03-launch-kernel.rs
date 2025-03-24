@@ -19,12 +19,12 @@ fn main() -> Result<(), DriverError> {
     let mut b_dev = a_dev.clone();
 
     // we use a buidler pattern to launch kernels.
-    let n = 3;
-    let cfg = LaunchConfig::for_num_elems(n);
+    let n = 3i32;
+    let cfg = LaunchConfig::for_num_elems(n as u32);
     let mut launch_args = stream.launch_builder(&f);
     launch_args.arg(&mut b_dev);
     launch_args.arg(&a_dev);
-    launch_args.arg(n as i32);
+    launch_args.arg(&n);
     unsafe { launch_args.launch(cfg) }?;
 
     let a_host_2 = stream.memcpy_dtov(&a_dev)?;

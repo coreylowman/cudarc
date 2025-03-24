@@ -47,7 +47,7 @@ fn main() -> Result<(), DriverError> {
 
     let mut builder = stream.launch_builder(&f);
     // since MyCoolRustStruct implements DeviceRepr, we can pass it to launch.
-    builder.arg(thing);
+    builder.arg(&thing);
     unsafe { builder.launch(LaunchConfig::for_num_elems(1)) }?;
 
     Ok(())
