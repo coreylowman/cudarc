@@ -89,10 +89,10 @@ pub unsafe trait PushKernelArg<T> {
     fn arg(&mut self, arg: T) -> &mut Self;
 }
 
-unsafe impl<T: DeviceRepr> PushKernelArg<T> for LaunchArgs<'_> {
+unsafe impl<'a, 'b: 'a, T: DeviceRepr> PushKernelArg<&'b T> for LaunchArgs<'a> {
     #[inline(always)]
-    fn arg(&mut self, arg: T) -> &mut Self {
-        self.args.push((&arg) as *const _ as *mut _);
+    fn arg(&mut self, arg: &'b T) -> &mut Self {
+        self.args.push(arg as *const T as *mut _);
         self
     }
 }
@@ -180,6 +180,7 @@ impl LaunchArgs<'_> {
     /// Since [LaunchArgs::launch()] properly records reads/writes for [CudaSlice]/[CudaView]/[CudaViewMut],
     /// and the drop implementation of [CudaSlice] waits on those events to finish,
     /// we will never encounter a use after free situation.
+    #[inline(always)]
     pub unsafe fn launch(
         &mut self,
         cfg: LaunchConfig,
@@ -214,6 +215,7 @@ impl LaunchArgs<'_> {
     ///
     /// # Safety
     /// See [LaunchArgs::launch()]
+    #[inline(always)]
     pub unsafe fn launch_cooperative(
         &mut self,
         cfg: LaunchConfig,
@@ -298,7 +300,7 @@ extern \"C\" __global__ void kernel(const TensorMeta meta) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(meta)
+                .arg(&meta)
                 .launch(LaunchConfig::for_num_elems(1))
         }?;
 
@@ -334,7 +336,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
                 .launch_builder(&sin_kernel)
                 .arg(&mut b_dev)
                 .arg(&a_dev)
-                .arg(10usize)
+                .arg(&10usize)
                 .launch(LaunchConfig::for_num_elems(10))
         }
         .unwrap();
@@ -369,7 +371,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
                     .launch_builder(&sin_kernel)
                     .arg(&mut b)
                     .arg(&a)
-                    .arg(numel)
+                    .arg(&numel)
                     .launch(LaunchConfig::for_num_elems(numel as u32))
             }
             .unwrap();
@@ -404,7 +406,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
                     .launch_builder(&f)
                     .arg(&mut b_sub)
                     .arg(&a_sub)
-                    .arg(2usize)
+                    .arg(&2usize)
                     .launch(LaunchConfig::for_num_elems(2))
             }
             .unwrap();
@@ -465,10 +467,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(i8::MIN)
-                .arg(i8::MAX)
-                .arg(u8::MIN)
-                .arg(u8::MAX)
+                .arg(&i8::MIN)
+                .arg(&i8::MAX)
+                .arg(&u8::MIN)
+                .arg(&u8::MAX)
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
@@ -485,10 +487,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(i16::MIN)
-                .arg(i16::MAX)
-                .arg(u16::MIN)
-                .arg(u16::MAX)
+                .arg(&i16::MIN)
+                .arg(&i16::MAX)
+                .arg(&u16::MIN)
+                .arg(&u16::MAX)
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
@@ -505,10 +507,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(i32::MIN)
-                .arg(i32::MAX)
-                .arg(u32::MIN)
-                .arg(u32::MAX)
+                .arg(&i32::MIN)
+                .arg(&i32::MAX)
+                .arg(&u32::MIN)
+                .arg(&u32::MAX)
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
@@ -525,10 +527,10 @@ extern \"C\" __global__ void floating(float f, double d) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(i64::MIN)
-                .arg(i64::MAX)
-                .arg(u64::MIN)
-                .arg(u64::MAX)
+                .arg(&i64::MIN)
+                .arg(&i64::MAX)
+                .arg(&u64::MIN)
+                .arg(&u64::MAX)
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
@@ -545,8 +547,8 @@ extern \"C\" __global__ void floating(float f, double d) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(1.2345678f32)
-                .arg(-10.123456789876543f64)
+                .arg(&1.2345678f32)
+                .arg(&-10.123456789876543f64)
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
@@ -583,7 +585,7 @@ extern \"C\" __global__ void halfs(__half h) {
         unsafe {
             stream
                 .launch_builder(&f)
-                .arg(half::f16::from_f32(1.234))
+                .arg(&half::f16::from_f32(1.234))
                 .launch(LaunchConfig::for_num_elems(1))
         }
         .unwrap();
@@ -622,7 +624,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                 stream
                     .launch_builder(&f)
                     .arg(&slice)
-                    .arg(slice.len())
+                    .arg(&slice.len())
                     .arg(&mut a)
                     .launch(cfg)?
             };
@@ -630,7 +632,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                 stream
                     .launch_builder(&f)
                     .arg(&slice)
-                    .arg(slice.len())
+                    .arg(&slice.len())
                     .arg(&mut b)
                     .launch(cfg)?
             };
@@ -647,7 +649,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                 stream
                     .launch_builder(&f)
                     .arg(&slice)
-                    .arg(slice.len())
+                    .arg(&slice.len())
                     .arg(&mut a)
                     .launch(cfg)?
             };
@@ -655,7 +657,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
                 stream2
                     .launch_builder(&f)
                     .arg(&slice)
-                    .arg(slice.len())
+                    .arg(&slice.len())
                     .arg(&mut b)
                     .launch(cfg)?
             };
@@ -684,6 +686,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let stream1 = ctx.new_stream()?;
 
         let src = stream1.alloc_zeros::<f32>(1000)?;
+        let numel = src.len();
         let mut dst1 = stream1.alloc_zeros::<f32>(1)?;
         let mut dst2 = stream1.alloc_zeros::<f32>(1)?;
 
@@ -694,7 +697,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let mut builder = stream1.launch_builder(&f);
         builder
             .arg(&src)
-            .arg(src.len())
+            .arg(&numel)
             .arg(&mut dst1)
             .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
         let (_, stream1_finish) = unsafe { builder.launch(cfg) }?.unwrap();
@@ -702,7 +705,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let mut builder = stream2.launch_builder(&f);
         builder
             .arg(&src)
-            .arg(src.len())
+            .arg(&numel)
             .arg(&mut dst2)
             .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
         let (stream2_start, _) = unsafe { builder.launch(cfg) }?.unwrap();
@@ -724,6 +727,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let stream1 = ctx.new_stream()?;
 
         let src = stream1.alloc_zeros::<f32>(1000)?;
+        let numel = src.len();
         let mut dst = stream1.alloc_zeros::<f32>(1)?;
         let cfg = LaunchConfig::for_num_elems(1);
 
@@ -732,7 +736,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let mut builder = stream1.launch_builder(&f);
         builder
             .arg(&src)
-            .arg(src.len())
+            .arg(&numel)
             .arg(&mut dst)
             .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
         let (_, stream1_finish) = unsafe { builder.launch(cfg) }?.unwrap();
@@ -740,7 +744,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         let mut builder = stream2.launch_builder(&f);
         builder
             .arg(&src)
-            .arg(src.len())
+            .arg(&numel)
             .arg(&mut dst)
             .record_kernel_launch(sys::CUevent_flags::CU_EVENT_DEFAULT);
         let (stream2_start, _) = unsafe { builder.launch(cfg) }?.unwrap();

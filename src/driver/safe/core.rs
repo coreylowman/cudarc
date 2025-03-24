@@ -718,7 +718,7 @@ pub trait DevicePtr<T>: DeviceSlice<T> {
     /// the [sys::CUdeviceptr] is scheduled.
     ///
     /// In most cases you can use like:
-    /// ```no_run
+    /// ```ignore
     /// let (src, _record_src) = src.device_ptr(&stream);
     /// ```
     /// Which will drop the [SyncOnDrop] at the end of the scope.
@@ -761,7 +761,7 @@ pub trait DevicePtrMut<T>: DeviceSlice<T> {
     /// the [sys::CUdeviceptr] is scheduled.
     ///
     /// In most cases you can use like:
-    /// ```no_run
+    /// ```ignore
     /// let (src, _record_src) = src.device_ptr_mut(&stream);
     /// ```
     /// Which will drop the [SyncOnDrop] at the end of the scope.
