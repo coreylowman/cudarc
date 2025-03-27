@@ -36,6 +36,7 @@ cuda-12060 = []
 cuda-12080 = []
 
 dynamic-linking = []
+static-linking = []
 
 nvrtc = []
 driver = ["nvrtc"]

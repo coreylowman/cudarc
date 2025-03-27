@@ -49,6 +49,9 @@ fn main() {
 
     #[cfg(feature = "dynamic-linking")]
     dynamic_linking(major, minor);
+
+    #[cfg(feature = "static-linking")]
+    static_linking(major, minor);
 }
 
 #[allow(unused)]
@@ -143,6 +146,62 @@ fn dynamic_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=dylib=cudnn");
     #[cfg(feature = "runtime")]
     println!("cargo:rustc-link-lib=dylib=cudart");
+}
+
+#[allow(unused)]
+fn static_linking(major: usize, minor: usize) {
+    let candidates: Vec<PathBuf> = root_candidates().collect();
+
+    let toolkit_root = candidates
+        .iter()
+        .find(|path| path.join("include").join("cuda.h").is_file())
+        .unwrap_or_else(|| {
+            panic!(
+                "Unable to find `include/cuda.h` under any of: {:?}. Set the `CUDA_ROOT` environment variable to `$CUDA_ROOT/include/cuda.h` to override path.",
+                candidates
+            )
+        });
+
+    for path in lib_candidates(toolkit_root, major, minor) {
+        println!("cargo:rustc-link-search=native={}", path.display());
+    }
+
+    #[cfg(feature = "cudnn")]
+    {
+        let cudnn_root = candidates
+            .iter()
+            .find(|path| {
+                path.join("include").join("cudnn.h").is_file()
+                || path.join("include").join(std::format!("{major}.{minor}")).join("cudnn.h").is_file()
+            })
+            .unwrap_or_else(|| {
+                panic!(
+                    "Unable to find `include/cudnn.h` or `include/{major}.{minor}/cudnn.h` under any of: {:?}. Set the `CUDNN_LIB` environment variable to override path, or turn off static linking (to enable dynamic loading).",
+                    candidates
+                )
+            });
+
+        for path in lib_candidates(cudnn_root, major, minor) {
+            println!("cargo:rustc-link-search=native={}", path.display());
+        }
+    }
+
+    #[cfg(feature = "driver")]
+    println!("cargo:rustc-link-lib=static=cuda");
+    #[cfg(feature = "nccl")]
+    println!("cargo:rustc-link-lib=static=nccl");
+    #[cfg(feature = "nvrtc")]
+    println!("cargo:rustc-link-lib=static=nvrtc");
+    #[cfg(feature = "curand")]
+    println!("cargo:rustc-link-lib=static=curand");
+    #[cfg(feature = "cublas")]
+    println!("cargo:rustc-link-lib=static=cublas_static");
+    #[cfg(any(feature = "cublas", feature = "cublaslt"))]
+    println!("cargo:rustc-link-lib=static=cublasLt_static");
+    #[cfg(feature = "cudnn")]
+    println!("cargo:rustc-link-lib=static=cudnn");
+    #[cfg(feature = "runtime")]
+    println!("cargo:rustc-link-lib=static=cudart");
 }
 
 #[allow(unused)]
