@@ -186,22 +186,36 @@ fn static_linking(major: usize, minor: usize) {
         }
     }
 
+    println!("cargo:rustc-link-lib=dylib=stdc++");
     #[cfg(feature = "driver")]
-    println!("cargo:rustc-link-lib=static=cuda");
+    println!("cargo:rustc-link-lib=dylib=cuda");
     #[cfg(feature = "nccl")]
-    println!("cargo:rustc-link-lib=static=nccl");
+    println!("cargo:rustc-link-lib=dylib=nccl");
+    #[cfg(feature = "runtime")]
+    println!("cargo:rustc-link-lib=static=cudart_static");
     #[cfg(feature = "nvrtc")]
-    println!("cargo:rustc-link-lib=static=nvrtc");
+    {
+        println!("cargo:rustc-link-lib=static=nvrtc_static");
+        println!("cargo:rustc-link-lib=static=nvptxcompiler_static");
+        println!("cargo:rustc-link-lib=static=nvrtc-builtins_static");
+    }
     #[cfg(feature = "curand")]
-    println!("cargo:rustc-link-lib=static=curand");
+    {
+        println!("cargo:rustc-link-lib=static=culibos");
+        println!("cargo:rustc-link-lib=static=curand_static");
+    }
     #[cfg(feature = "cublas")]
-    println!("cargo:rustc-link-lib=static=cublas_static");
+    {
+        println!("cargo:rustc-link-lib=static=culibos");
+        println!("cargo:rustc-link-lib=static=cublas_static");
+    }
     #[cfg(any(feature = "cublas", feature = "cublaslt"))]
-    println!("cargo:rustc-link-lib=static=cublasLt_static");
+    {
+        println!("cargo:rustc-link-lib=static=culibos");
+        println!("cargo:rustc-link-lib=static=cublasLt_static");
+    }
     #[cfg(feature = "cudnn")]
     println!("cargo:rustc-link-lib=static=cudnn");
-    #[cfg(feature = "runtime")]
-    println!("cargo:rustc-link-lib=static=cudart");
 }
 
 #[allow(unused)]
