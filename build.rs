@@ -1,6 +1,8 @@
 use std::path::{Path, PathBuf};
 
 fn main() {
+    #[cfg(all(feature = "dynamic-linking", feature = "static-linking"))]
+    panic!("Both `dynamic-linking` and `static-linking` features are active, this is a bug");
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=CUDA_ROOT");
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
