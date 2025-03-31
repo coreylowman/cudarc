@@ -109,6 +109,25 @@ pub unsafe fn dgemv(
     sys::cublasDgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
+unsafe extern "C" {
+    pub fn cublasHgemm(
+        handle: sys::cublasHandle_t,
+        transa: sys::cublasOperation_t,
+        transb: sys::cublasOperation_t,
+        m: c_int,
+        n: c_int,
+        k: c_int,
+        alpha: *const half::f16,
+        a: *const half::f16,
+        lda: c_int,
+        b: *const half::f16,
+        ldb: c_int,
+        beta: *const half::f16,
+        c: *mut half::f16,
+        ldc: c_int,
+    ) -> sys::cublasStatus_t;
+}
+
 #[cfg(feature = "f16")]
 /// Half precision matmul. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemm)
@@ -137,29 +156,41 @@ pub unsafe fn hgemm(
 ) -> Result<(), CublasError> {
     // NOTE: for some reason cublasHgemm is only included in header files if using c++. Therefore it
     // is not included in the bindgen exports. So we manually link to the library & load the symbol here.
-    static LIB: std::sync::OnceLock<libloading::Library> = std::sync::OnceLock::new();
-    let lib = LIB
-        .get_or_init(|| libloading::Library::new(libloading::library_filename("cublas")).unwrap());
-    let f: unsafe extern "C" fn(
-        handle: sys::cublasHandle_t,
-        transa: sys::cublasOperation_t,
-        transb: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        k: c_int,
-        alpha: *const half::f16,
-        A: *const half::f16,
-        lda: c_int,
-        B: *const half::f16,
-        ldb: c_int,
-        beta: *const half::f16,
-        C: *mut half::f16,
-        ldc: c_int,
-    ) -> sys::cublasStatus_t = lib.get(b"cublasHgemm\0").map(|sym| *sym).unwrap();
-    f(
-        handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
-    )
-    .result()
+    #[cfg(feature = "dynamic-loading")]
+    {
+        static LIB: std::sync::OnceLock<libloading::Library> = std::sync::OnceLock::new();
+        let lib = LIB.get_or_init(|| {
+            libloading::Library::new(libloading::library_filename("cublas")).unwrap()
+        });
+        let f: unsafe extern "C" fn(
+            handle: sys::cublasHandle_t,
+            transa: sys::cublasOperation_t,
+            transb: sys::cublasOperation_t,
+            m: c_int,
+            n: c_int,
+            k: c_int,
+            alpha: *const half::f16,
+            A: *const half::f16,
+            lda: c_int,
+            B: *const half::f16,
+            ldb: c_int,
+            beta: *const half::f16,
+            C: *mut half::f16,
+            ldc: c_int,
+        ) -> sys::cublasStatus_t = lib.get(b"cublasHgemm\0").map(|sym| *sym).unwrap();
+        return f(
+            handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+        )
+        .result();
+    }
+
+    #[cfg(not(feature = "dynamic-loading"))]
+    {
+        return cublasHgemm(
+            handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+        )
+        .result();
+    }
 }
 
 /// Single precision matmul. See
@@ -224,6 +255,29 @@ pub unsafe fn dgemm(
     .result()
 }
 
+unsafe extern "C" {
+    pub fn cublasHgemmStridedBatched(
+        handle: sys::cublasHandle_t,
+        transa: sys::cublasOperation_t,
+        transb: sys::cublasOperation_t,
+        m: c_int,
+        n: c_int,
+        k: c_int,
+        alpha: *const half::f16,
+        A: *const half::f16,
+        lda: c_int,
+        strideA: c_longlong,
+        B: *const half::f16,
+        ldb: c_int,
+        strideB: c_longlong,
+        beta: *const half::f16,
+        C: *mut half::f16,
+        ldc: c_int,
+        strideC: c_longlong,
+        batchCount: c_int,
+    ) -> sys::cublasStatus_t;
+}
+
 #[cfg(feature = "f16")]
 /// Half precision batched matmul. See
 /// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-gemmstridedbatched)
@@ -256,37 +310,50 @@ pub unsafe fn hgemm_strided_batched(
 ) -> Result<(), CublasError> {
     // NOTE: for some reason cublasHgemm is only included in header files if using c++. Therefore it
     // is not included in the bindgen exports. So we manually link to the library & load the symbol here.
-    static LIB: std::sync::OnceLock<libloading::Library> = std::sync::OnceLock::new();
-    let lib = LIB
-        .get_or_init(|| libloading::Library::new(libloading::library_filename("cublas")).unwrap());
-    let f: unsafe extern "C" fn(
-        handle: sys::cublasHandle_t,
-        transa: sys::cublasOperation_t,
-        transb: sys::cublasOperation_t,
-        m: c_int,
-        n: c_int,
-        k: c_int,
-        alpha: *const half::f16,
-        A: *const half::f16,
-        lda: c_int,
-        strideA: c_longlong,
-        B: *const half::f16,
-        ldb: c_int,
-        strideB: c_longlong,
-        beta: *const half::f16,
-        C: *mut half::f16,
-        ldc: c_int,
-        strideC: c_longlong,
-        batchCount: c_int,
-    ) -> sys::cublasStatus_t = lib
-        .get(b"cublasHgemmStridedBatched\0")
-        .map(|sym| *sym)
-        .unwrap();
-    f(
-        handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
-        stride_c, batch_size,
-    )
-    .result()
+    #[cfg(feature = "dynamic-loading")]
+    {
+        static LIB: std::sync::OnceLock<libloading::Library> = std::sync::OnceLock::new();
+        let lib = LIB.get_or_init(|| {
+            libloading::Library::new(libloading::library_filename("cublas")).unwrap()
+        });
+        let f: unsafe extern "C" fn(
+            handle: sys::cublasHandle_t,
+            transa: sys::cublasOperation_t,
+            transb: sys::cublasOperation_t,
+            m: c_int,
+            n: c_int,
+            k: c_int,
+            alpha: *const half::f16,
+            A: *const half::f16,
+            lda: c_int,
+            strideA: c_longlong,
+            B: *const half::f16,
+            ldb: c_int,
+            strideB: c_longlong,
+            beta: *const half::f16,
+            C: *mut half::f16,
+            ldc: c_int,
+            strideC: c_longlong,
+            batchCount: c_int,
+        ) -> sys::cublasStatus_t = lib
+            .get(b"cublasHgemmStridedBatched\0")
+            .map(|sym| *sym)
+            .unwrap();
+        return f(
+            handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c,
+            ldc, stride_c, batch_size,
+        )
+        .result();
+    }
+
+    #[cfg(not(feature = "dynamic-loading"))]
+    {
+        return cublasHgemmStridedBatched(
+            handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c,
+            ldc, stride_c, batch_size,
+        )
+        .result();
+    }
 }
 
 /// Single precision batched matmul. See
