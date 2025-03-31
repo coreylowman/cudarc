@@ -63,9 +63,7 @@ impl CudaBlas {
         pointer_mode: sys::cublasPointerMode_t,
     ) -> Result<(), CublasError> {
         unsafe {
-            sys::lib()
-                .cublasSetPointerMode_v2(self.handle, pointer_mode)
-                .result()?;
+            sys::cublasSetPointerMode_v2(self.handle, pointer_mode).result()?;
         }
         Ok(())
     }
@@ -75,9 +73,7 @@ impl CudaBlas {
     pub fn get_pointer_mode(&self) -> Result<sys::cublasPointerMode_t, CublasError> {
         unsafe {
             let mut mode = ::core::mem::MaybeUninit::uninit();
-            sys::lib()
-                .cublasGetPointerMode_v2(self.handle, mode.as_mut_ptr())
-                .result()?;
+            sys::cublasGetPointerMode_v2(self.handle, mode.as_mut_ptr()).result()?;
             Ok(mode.assume_init())
         }
     }

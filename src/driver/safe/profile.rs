@@ -1,4 +1,4 @@
-use crate::driver::{result, sys::lib};
+use crate::driver::{result, sys};
 
 /// Calls [profiler_start()] in [Profiler::new()], and [profiler_stop()] in [Drop].
 #[derive(Default)]
@@ -56,10 +56,10 @@ impl Drop for Profiler {
 /// ```
 ///
 pub fn profiler_start() -> Result<(), result::DriverError> {
-    unsafe { lib().cuProfilerStart() }.result()
+    unsafe { sys::cuProfilerStart() }.result()
 }
 
 /// Disables profile collection by the active profiling tool for the current context. If profiling is already disabled, then profiler_stop() has no effect.
 pub fn profiler_stop() -> Result<(), result::DriverError> {
-    unsafe { lib().cuProfilerStop() }.result()
+    unsafe { sys::cuProfilerStop() }.result()
 }

@@ -1,6 +1,6 @@
 use crate::driver::{
     result,
-    sys::{self, lib, CUfunction_attribute_enum},
+    sys::{self, CUfunction_attribute_enum},
 };
 
 use super::{alloc::DeviceRepr, device_ptr::DeviceSlice};
@@ -320,8 +320,7 @@ impl CudaFunction {
         let mut dynamic_smem_size: usize = 0;
 
         unsafe {
-            lib()
-                .cuOccupancyAvailableDynamicSMemPerBlock(
+            sys::cuOccupancyAvailableDynamicSMemPerBlock(
                     &mut dynamic_smem_size,
                     self.cu_function,
                     num_blocks as std::ffi::c_int,
@@ -343,8 +342,7 @@ impl CudaFunction {
         let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
 
         unsafe {
-            lib()
-                .cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
+            sys::cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(
                     &mut num_blocks,
                     self.cu_function,
                     block_size as std::ffi::c_int,
@@ -384,8 +382,7 @@ impl CudaFunction {
         };
 
         unsafe {
-            lib()
-                .cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg)
+            sys::cuOccupancyMaxActiveClusters(&mut num_clusters, self.cu_function, &cfg)
                 .result()?
         };
 
@@ -404,8 +401,7 @@ impl CudaFunction {
         let flags = flags.unwrap_or(sys::CUoccupancy_flags_enum::CU_OCCUPANCY_DEFAULT);
 
         unsafe {
-            lib()
-                .cuOccupancyMaxPotentialBlockSizeWithFlags(
+            sys::cuOccupancyMaxPotentialBlockSizeWithFlags(
                     &mut min_grid_size,
                     &mut block_size,
                     self.cu_function,
@@ -447,8 +443,7 @@ impl CudaFunction {
         };
 
         unsafe {
-            lib()
-                .cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg)
+            sys::cuOccupancyMaxPotentialClusterSize(&mut cluster_size, self.cu_function, &cfg)
                 .result()?
         };
 

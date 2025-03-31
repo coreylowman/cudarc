@@ -455,7 +455,7 @@ impl Matmul<half::bf16> for CudaBlasLT {
 mod tests {
     #![allow(clippy::needless_range_loop)]
 
-    use super::sys::lib;
+    use super::sys;
     use super::*;
     use std::ffi::CString;
 
@@ -485,10 +485,9 @@ mod tests {
     #[test]
     fn test_matmul_f32() {
         let logpath = CString::new("log_matmul_f32").unwrap();
-        unsafe { lib().cublasLtLoggerSetLevel(4).result().unwrap() };
+        unsafe { sys::cublasLtLoggerSetLevel(4).result().unwrap() };
         unsafe {
-            lib()
-                .cublasLtLoggerOpenFile(logpath.as_ptr())
+            sys::cublasLtLoggerOpenFile(logpath.as_ptr())
                 .result()
                 .unwrap()
         };
@@ -574,10 +573,9 @@ mod tests {
     #[test]
     fn test_matmul_half() {
         let logpath = CString::new("log_matmul_half").unwrap();
-        unsafe { lib().cublasLtLoggerSetLevel(4).result().unwrap() };
+        unsafe { sys::cublasLtLoggerSetLevel(4).result().unwrap() };
         unsafe {
-            lib()
-                .cublasLtLoggerOpenFile(logpath.as_ptr())
+            sys::cublasLtLoggerOpenFile(logpath.as_ptr())
                 .result()
                 .unwrap()
         };

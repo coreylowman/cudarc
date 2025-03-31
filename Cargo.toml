@@ -35,7 +35,7 @@ cuda-12050 = []
 cuda-12060 = []
 cuda-12080 = []
 
-dynamic-loading = []
+dynamic-loading = ["libloading"]
 dynamic-linking = []
 static-linking = []
 
@@ -61,4 +61,4 @@ half = { version = "2.4.1", optional = true, default-features = false, features 
     "num-traits",
     "rand_distr",
 ] }
-libloading = "0.8.5"
+libloading = { version = "0.8.5", optional = true }
