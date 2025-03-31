@@ -172,6 +172,7 @@ def get_version(cuda_version: str) -> [int, int, int]:
 
 
 def download_url(url, filename):
+    print(f"Downloading {url} into {filename}")
     if os.path.exists(filename):
         return
     chunk_size = 1024 * 1024  # 1MB chunks
@@ -298,7 +299,6 @@ def create_system_folders(
         f"-I{os.path.join(os.getcwd(), cuda_directory)}",
         f"-I{main_directory}",
     ]
-    print(process)
     print(" ".join(process))
     subprocess.run(" ".join(process), check=True, shell=True)
 
