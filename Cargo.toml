@@ -18,7 +18,7 @@ keywords = ["cuda", "nvidia", "gpu", "nvrtc", "cublas"]
 features = ["cuda-12080", "f16", "cudnn"]
 
 [features]
-default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc", "dynamic-loading"]
+default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc"]
 
 cuda-version-from-build-system = []
 cuda-11040 = []

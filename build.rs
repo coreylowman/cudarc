@@ -1,6 +1,12 @@
 use std::path::{Path, PathBuf};
 
 fn main() {
+    #[cfg(all(
+        not(feature = "dynamic-linking"),
+        not(feature = "static-linking"),
+        not(feature = "dynamic-loading")
+    ))]
+    panic!("None between `dynamic-loading`, `dynamic-linking` and `static-linking` features are active, this is a bug");
     #[cfg(all(feature = "dynamic-linking", feature = "static-linking"))]
     panic!("Both `dynamic-linking` and `static-linking` features are active, this is a bug");
     #[cfg(all(feature = "dynamic-loading", feature = "static-linking"))]
