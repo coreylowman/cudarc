@@ -7,99 +7,99 @@ import urllib.request
 from contextlib import chdir
 
 cuda_versions = [
-    # "cuda-11040",
-    # "cuda-11050",
-    # "cuda-11060",
-    # "cuda-11070",
-    # "cuda-11080",
-    # "cuda-12000",
-    # "cuda-12010",
-    # "cuda-12020",
-    # "cuda-12030",
-    # "cuda-12040",
-    # "cuda-12050",
-    # "cuda-12060",
+    "cuda-11040",
+    "cuda-11050",
+    "cuda-11060",
+    "cuda-11070",
+    "cuda-11080",
+    "cuda-12000",
+    "cuda-12010",
+    "cuda-12020",
+    "cuda-12030",
+    "cuda-12040",
+    "cuda-12050",
+    "cuda-12060",
     "cuda-12080",
 ]
 
 modules = {
-    # "cublas": {
-    #     "cuda": "libcublas",
-    #     "filters": {
-    #         "types": ["^cublas.*"],
-    #         "functions": ["^cublas.*"],
-    #         "vars": ["^cublas.*"],
-    #     },
-    #     "libs": ["cublas"],
-    # },
-    # "cublaslt": {
-    #     "cuda": "libcublas",
-    #     "filters": {
-    #         "types": ["^cublasLt.*"],
-    #         "functions": ["^cublasLt.*"],
-    #         "vars": ["^cublasLt.*"],
-    #     },
-    #     "libs": ["cublasLt"],
-    # },
-    # "curand": {
-    #     "cuda": "libcurand",
-    #     "filters": {
-    #         "types": ["^curand.*"],
-    #         "functions": ["^curand.*"],
-    #         "vars": ["^curand.*"],
-    #     },
-    #     "libs": ["curand"],
-    # },
-    # "driver": {
-    #     "cuda": "cuda_cudart",
-    #     "filters": {
-    #         "types": [
-    #             "^CU.*",
-    #             "^cuuint(32|64)_t",
-    #             "^cudaError_enum",
-    #             "^cu.*Complex$",
-    #             "^cuda.*",
-    #             "^libraryPropertyType.*",
-    #         ],
-    #         "functions": ["^cu.*"],
-    #         "vars": ["^CU.*"],
-    #     },
-    #     "libs": ["cuda", "nvcuda"],
-    # },
-    # "runtime": {
-    #     "cuda": "cuda_cudart",
-    #     "filters": {
-    #         "types": [
-    #             "^[Cc][Uu][Dd][Aa].*",
-    #         ],
-    #         "functions": ["^[Cc][Uu][Dd][Aa].*"],
-    #         "vars": ["^[Cc][Uu][Dd][Aa].*"],
-    #     },
-    #     "libs": ["cudart"],
-    # },
-    # "nvrtc": {
-    #     "cuda": "cuda_nvrtc",
-    #     "filters": {
-    #         "types": ["^nvrtc.*"],
-    #         "functions": ["^nvrtc.*"],
-    #         "vars": ["^nvrtc.*"],
-    #     },
-    #     "libs": ["nvrtc"],
-    # },
-    # # Those are special
-    # "cudnn": {
-    #     "cuda": "cudnn",
-    #     "filters": {
-    #         "types": ["^cudnn.*"],
-    #         "functions": ["^cudnn.*"],
-    #         "vars": ["^cudnn.*"],
-    #     },
-    #     "libs": ["cudnn"],
-    #     "redist": {
-    #         "url": "https://developer.download.nvidia.com/compute/cudnn/redist/",
-    #         "version": "9.8.0",
-    #     },
-    # },
+    "cublas": {
+        "cuda": "libcublas",
+        "filters": {
+            "types": ["^cublas.*"],
+            "functions": ["^cublas.*"],
+            "vars": ["^cublas.*"],
+        },
+        "libs": ["cublas"],
+    },
+    "cublaslt": {
+        "cuda": "libcublas",
+        "filters": {
+            "types": ["^cublasLt.*"],
+            "functions": ["^cublasLt.*"],
+            "vars": ["^cublasLt.*"],
+        },
+        "libs": ["cublasLt"],
+    },
+    "curand": {
+        "cuda": "libcurand",
+        "filters": {
+            "types": ["^curand.*"],
+            "functions": ["^curand.*"],
+            "vars": ["^curand.*"],
+        },
+        "libs": ["curand"],
+    },
+    "driver": {
+        "cuda": "cuda_cudart",
+        "filters": {
+            "types": [
+                "^CU.*",
+                "^cuuint(32|64)_t",
+                "^cudaError_enum",
+                "^cu.*Complex$",
+                "^cuda.*",
+                "^libraryPropertyType.*",
+            ],
+            "functions": ["^cu.*"],
+            "vars": ["^CU.*"],
+        },
+        "libs": ["cuda", "nvcuda"],
+    },
+    "runtime": {
+        "cuda": "cuda_cudart",
+        "filters": {
+            "types": [
+                "^[Cc][Uu][Dd][Aa].*",
+            ],
+            "functions": ["^[Cc][Uu][Dd][Aa].*"],
+            "vars": ["^[Cc][Uu][Dd][Aa].*"],
+        },
+        "libs": ["cudart"],
+    },
+    "nvrtc": {
+        "cuda": "cuda_nvrtc",
+        "filters": {
+            "types": ["^nvrtc.*"],
+            "functions": ["^nvrtc.*"],
+            "vars": ["^nvrtc.*"],
+        },
+        "libs": ["nvrtc"],
+    },
+    # Those are special
+    "cudnn": {
+        "cuda": "cudnn",
+        "filters": {
+            "types": ["^cudnn.*"],
+            "functions": ["^cudnn.*"],
+            "vars": ["^cudnn.*"],
+        },
+        "libs": ["cudnn"],
+        "redist": {
+            "url": "https://developer.download.nvidia.com/compute/cudnn/redist/",
+            "version": "9.8.0",
+        },
+    },
     "nccl": {
         "cuda": "libnccl",
         "filters": {
