@@ -17,13 +17,6 @@ pub type ncclComm_t = *mut ncclComm;
 pub struct ncclUniqueId {
     pub internal: [::core::ffi::c_char; 128usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of ncclUniqueId"][::core::mem::size_of::<ncclUniqueId>() - 128usize];
-    ["Alignment of ncclUniqueId"][::core::mem::align_of::<ncclUniqueId>() - 1usize];
-    ["Offset of field: ncclUniqueId::internal"]
-        [::core::mem::offset_of!(ncclUniqueId, internal) - 0usize];
-};
 impl Default for ncclUniqueId {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -60,31 +53,6 @@ pub struct ncclConfig_v21700 {
     pub splitShare: ::core::ffi::c_int,
     pub trafficClass: ::core::ffi::c_int,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of ncclConfig_v21700"][::core::mem::size_of::<ncclConfig_v21700>() - 48usize];
-    ["Alignment of ncclConfig_v21700"][::core::mem::align_of::<ncclConfig_v21700>() - 8usize];
-    ["Offset of field: ncclConfig_v21700::size"]
-        [::core::mem::offset_of!(ncclConfig_v21700, size) - 0usize];
-    ["Offset of field: ncclConfig_v21700::magic"]
-        [::core::mem::offset_of!(ncclConfig_v21700, magic) - 8usize];
-    ["Offset of field: ncclConfig_v21700::version"]
-        [::core::mem::offset_of!(ncclConfig_v21700, version) - 12usize];
-    ["Offset of field: ncclConfig_v21700::blocking"]
-        [::core::mem::offset_of!(ncclConfig_v21700, blocking) - 16usize];
-    ["Offset of field: ncclConfig_v21700::cgaClusterSize"]
-        [::core::mem::offset_of!(ncclConfig_v21700, cgaClusterSize) - 20usize];
-    ["Offset of field: ncclConfig_v21700::minCTAs"]
-        [::core::mem::offset_of!(ncclConfig_v21700, minCTAs) - 24usize];
-    ["Offset of field: ncclConfig_v21700::maxCTAs"]
-        [::core::mem::offset_of!(ncclConfig_v21700, maxCTAs) - 28usize];
-    ["Offset of field: ncclConfig_v21700::netName"]
-        [::core::mem::offset_of!(ncclConfig_v21700, netName) - 32usize];
-    ["Offset of field: ncclConfig_v21700::splitShare"]
-        [::core::mem::offset_of!(ncclConfig_v21700, splitShare) - 40usize];
-    ["Offset of field: ncclConfig_v21700::trafficClass"]
-        [::core::mem::offset_of!(ncclConfig_v21700, trafficClass) - 44usize];
-};
 impl Default for ncclConfig_v21700 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -103,19 +71,6 @@ pub struct ncclSimInfo_v22200 {
     pub version: ::core::ffi::c_uint,
     pub estimatedTime: f32,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of ncclSimInfo_v22200"][::core::mem::size_of::<ncclSimInfo_v22200>() - 24usize];
-    ["Alignment of ncclSimInfo_v22200"][::core::mem::align_of::<ncclSimInfo_v22200>() - 8usize];
-    ["Offset of field: ncclSimInfo_v22200::size"]
-        [::core::mem::offset_of!(ncclSimInfo_v22200, size) - 0usize];
-    ["Offset of field: ncclSimInfo_v22200::magic"]
-        [::core::mem::offset_of!(ncclSimInfo_v22200, magic) - 8usize];
-    ["Offset of field: ncclSimInfo_v22200::version"]
-        [::core::mem::offset_of!(ncclSimInfo_v22200, version) - 12usize];
-    ["Offset of field: ncclSimInfo_v22200::estimatedTime"]
-        [::core::mem::offset_of!(ncclSimInfo_v22200, estimatedTime) - 16usize];
-};
 pub type ncclSimInfo_t = ncclSimInfo_v22200;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]

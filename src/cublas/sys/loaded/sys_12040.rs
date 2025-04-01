@@ -12,13 +12,6 @@ pub struct float2 {
     pub x: f32,
     pub y: f32,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of float2"][::core::mem::size_of::<float2>() - 8usize];
-    ["Alignment of float2"][::core::mem::align_of::<float2>() - 8usize];
-    ["Offset of field: float2::x"][::core::mem::offset_of!(float2, x) - 0usize];
-    ["Offset of field: float2::y"][::core::mem::offset_of!(float2, y) - 4usize];
-};
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
@@ -26,20 +19,10 @@ pub struct double2 {
     pub x: f64,
     pub y: f64,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of double2"][::core::mem::size_of::<double2>() - 16usize];
-    ["Alignment of double2"][::core::mem::align_of::<double2>() - 16usize];
-    ["Offset of field: double2::x"][::core::mem::offset_of!(double2, x) - 0usize];
-    ["Offset of field: double2::y"][::core::mem::offset_of!(double2, y) - 8usize];
-};
 pub type cudaStream_t = *mut CUstream_st;
 pub type cuFloatComplex = float2;
 pub type cuDoubleComplex = double2;
 pub type cuComplex = cuFloatComplex;
-impl cudaDataType_t {
-    pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDataType_t {
@@ -73,10 +56,6 @@ pub enum cudaDataType_t {
     CUDA_C_64U = 27,
     CUDA_R_8F_E4M3 = 28,
     CUDA_R_8F_E5M2 = 29,
-    CUDA_R_8F_UE8M0 = 30,
-    CUDA_R_6F_E2M3 = 31,
-    CUDA_R_6F_E3M2 = 32,
-    CUDA_R_4F_E2M1 = 33,
 }
 pub use self::cudaDataType_t as cudaDataType;
 #[repr(u32)]
@@ -6765,56 +6744,6 @@ pub struct Lib {
         ) -> cublasStatus_t,
         ::libloading::Error,
     >,
-    pub cublasGemmGroupedBatchedEx: Result<
-        unsafe extern "C" fn(
-            handle: cublasHandle_t,
-            transa_array: *const cublasOperation_t,
-            transb_array: *const cublasOperation_t,
-            m_array: *const ::core::ffi::c_int,
-            n_array: *const ::core::ffi::c_int,
-            k_array: *const ::core::ffi::c_int,
-            alpha_array: *const ::core::ffi::c_void,
-            Aarray: *const *const ::core::ffi::c_void,
-            Atype: cudaDataType_t,
-            lda_array: *const ::core::ffi::c_int,
-            Barray: *const *const ::core::ffi::c_void,
-            Btype: cudaDataType_t,
-            ldb_array: *const ::core::ffi::c_int,
-            beta_array: *const ::core::ffi::c_void,
-            Carray: *const *mut ::core::ffi::c_void,
-            Ctype: cudaDataType_t,
-            ldc_array: *const ::core::ffi::c_int,
-            group_count: ::core::ffi::c_int,
-            group_size: *const ::core::ffi::c_int,
-            computeType: cublasComputeType_t,
-        ) -> cublasStatus_t,
-        ::libloading::Error,
-    >,
-    pub cublasGemmGroupedBatchedEx_64: Result<
-        unsafe extern "C" fn(
-            handle: cublasHandle_t,
-            transa_array: *const cublasOperation_t,
-            transb_array: *const cublasOperation_t,
-            m_array: *const i64,
-            n_array: *const i64,
-            k_array: *const i64,
-            alpha_array: *const ::core::ffi::c_void,
-            Aarray: *const *const ::core::ffi::c_void,
-            Atype: cudaDataType_t,
-            lda_array: *const i64,
-            Barray: *const *const ::core::ffi::c_void,
-            Btype: cudaDataType_t,
-            ldb_array: *const i64,
-            beta_array: *const ::core::ffi::c_void,
-            Carray: *const *mut ::core::ffi::c_void,
-            Ctype: cudaDataType_t,
-            ldc_array: *const i64,
-            group_count: i64,
-            group_size: *const i64,
-            computeType: cublasComputeType_t,
-        ) -> cublasStatus_t,
-        ::libloading::Error,
-    >,
     pub cublasSgeam: Result<
         unsafe extern "C" fn(
             handle: cublasHandle_t,
@@ -8182,12 +8111,6 @@ impl Lib {
         let cublasDgemmGroupedBatched_64 = __library
             .get(b"cublasDgemmGroupedBatched_64\0")
             .map(|sym| *sym);
-        let cublasGemmGroupedBatchedEx = __library
-            .get(b"cublasGemmGroupedBatchedEx\0")
-            .map(|sym| *sym);
-        let cublasGemmGroupedBatchedEx_64 = __library
-            .get(b"cublasGemmGroupedBatchedEx_64\0")
-            .map(|sym| *sym);
         let cublasSgeam = __library.get(b"cublasSgeam\0").map(|sym| *sym);
         let cublasSgeam_64 = __library.get(b"cublasSgeam_64\0").map(|sym| *sym);
         let cublasDgeam = __library.get(b"cublasDgeam\0").map(|sym| *sym);
@@ -8693,8 +8616,6 @@ impl Lib {
             cublasSgemmGroupedBatched_64,
             cublasDgemmGroupedBatched,
             cublasDgemmGroupedBatched_64,
-            cublasGemmGroupedBatchedEx,
-            cublasGemmGroupedBatchedEx_64,
             cublasSgeam,
             cublasSgeam_64,
             cublasDgeam,
@@ -17637,104 +17558,6 @@ impl Lib {
             ldc_array,
             group_count,
             group_size,
-        )
-    }
-    pub unsafe fn cublasGemmGroupedBatchedEx(
-        &self,
-        handle: cublasHandle_t,
-        transa_array: *const cublasOperation_t,
-        transb_array: *const cublasOperation_t,
-        m_array: *const ::core::ffi::c_int,
-        n_array: *const ::core::ffi::c_int,
-        k_array: *const ::core::ffi::c_int,
-        alpha_array: *const ::core::ffi::c_void,
-        Aarray: *const *const ::core::ffi::c_void,
-        Atype: cudaDataType_t,
-        lda_array: *const ::core::ffi::c_int,
-        Barray: *const *const ::core::ffi::c_void,
-        Btype: cudaDataType_t,
-        ldb_array: *const ::core::ffi::c_int,
-        beta_array: *const ::core::ffi::c_void,
-        Carray: *const *mut ::core::ffi::c_void,
-        Ctype: cudaDataType_t,
-        ldc_array: *const ::core::ffi::c_int,
-        group_count: ::core::ffi::c_int,
-        group_size: *const ::core::ffi::c_int,
-        computeType: cublasComputeType_t,
-    ) -> cublasStatus_t {
-        (self
-            .cublasGemmGroupedBatchedEx
-            .as_ref()
-            .expect("Expected function, got error."))(
-            handle,
-            transa_array,
-            transb_array,
-            m_array,
-            n_array,
-            k_array,
-            alpha_array,
-            Aarray,
-            Atype,
-            lda_array,
-            Barray,
-            Btype,
-            ldb_array,
-            beta_array,
-            Carray,
-            Ctype,
-            ldc_array,
-            group_count,
-            group_size,
-            computeType,
-        )
-    }
-    pub unsafe fn cublasGemmGroupedBatchedEx_64(
-        &self,
-        handle: cublasHandle_t,
-        transa_array: *const cublasOperation_t,
-        transb_array: *const cublasOperation_t,
-        m_array: *const i64,
-        n_array: *const i64,
-        k_array: *const i64,
-        alpha_array: *const ::core::ffi::c_void,
-        Aarray: *const *const ::core::ffi::c_void,
-        Atype: cudaDataType_t,
-        lda_array: *const i64,
-        Barray: *const *const ::core::ffi::c_void,
-        Btype: cudaDataType_t,
-        ldb_array: *const i64,
-        beta_array: *const ::core::ffi::c_void,
-        Carray: *const *mut ::core::ffi::c_void,
-        Ctype: cudaDataType_t,
-        ldc_array: *const i64,
-        group_count: i64,
-        group_size: *const i64,
-        computeType: cublasComputeType_t,
-    ) -> cublasStatus_t {
-        (self
-            .cublasGemmGroupedBatchedEx_64
-            .as_ref()
-            .expect("Expected function, got error."))(
-            handle,
-            transa_array,
-            transb_array,
-            m_array,
-            n_array,
-            k_array,
-            alpha_array,
-            Aarray,
-            Atype,
-            lda_array,
-            Barray,
-            Btype,
-            ldb_array,
-            beta_array,
-            Carray,
-            Ctype,
-            ldc_array,
-            group_count,
-            group_size,
-            computeType,
         )
     }
     pub unsafe fn cublasSgeam(

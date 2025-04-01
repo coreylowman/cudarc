@@ -12,13 +12,6 @@ pub struct float2 {
     pub x: f32,
     pub y: f32,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of float2"][::core::mem::size_of::<float2>() - 8usize];
-    ["Alignment of float2"][::core::mem::align_of::<float2>() - 8usize];
-    ["Offset of field: float2::x"][::core::mem::offset_of!(float2, x) - 0usize];
-    ["Offset of field: float2::y"][::core::mem::offset_of!(float2, y) - 4usize];
-};
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
@@ -26,13 +19,6 @@ pub struct double2 {
     pub x: f64,
     pub y: f64,
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of double2"][::core::mem::size_of::<double2>() - 16usize];
-    ["Alignment of double2"][::core::mem::align_of::<double2>() - 16usize];
-    ["Offset of field: double2::x"][::core::mem::offset_of!(double2, x) - 0usize];
-    ["Offset of field: double2::y"][::core::mem::offset_of!(double2, y) - 8usize];
-};
 pub type cudaStream_t = *mut CUstream_st;
 pub type cuFloatComplex = float2;
 pub type cuDoubleComplex = double2;

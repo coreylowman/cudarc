@@ -315,5 +315,4 @@ pub unsafe fn cudaKernelSetAttributeForDevice (kernel : cudaKernel_t , attr : cu
 pub unsafe fn cudaGetExportTable (ppExportTable : * mut * const :: core :: ffi :: c_void , pExportTableId : * const cudaUUID_t ,) -> cudaError_t { unsafe { culib () . cudaGetExportTable (ppExportTable , pExportTableId) } }
 pub unsafe fn cudaGetFuncBySymbol (functionPtr : * mut cudaFunction_t , symbolPtr : * const :: core :: ffi :: c_void ,) -> cudaError_t { unsafe { culib () . cudaGetFuncBySymbol (functionPtr , symbolPtr) } }
 pub unsafe fn cudaGetKernel (kernelPtr : * mut cudaKernel_t , entryFuncAddr : * const :: core :: ffi :: c_void ,) -> cudaError_t { unsafe { culib () . cudaGetKernel (kernelPtr , entryFuncAddr) } }
-pub unsafe fn cudaProfilerStart () -> cudaError_t { unsafe { culib () . cudaProfilerStart () } }
 pub unsafe fn cudaProfilerStop () -> cudaError_t { unsafe { culib () . cudaProfilerStop () } }

@@ -62,3 +62,4 @@ half = { version = "2.4.1", optional = true, default-features = false, features 
     "rand_distr",
 ] }
 libloading = { version = "0.8.5", optional = true }
+lazy_static = "1.5.0"

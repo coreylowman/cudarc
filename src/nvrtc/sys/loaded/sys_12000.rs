@@ -15,11 +15,6 @@ pub enum nvrtcResult {
     NVRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION = 9,
     NVRTC_ERROR_NAME_EXPRESSION_NOT_VALID = 10,
     NVRTC_ERROR_INTERNAL_ERROR = 11,
-    NVRTC_ERROR_TIME_FILE_WRITE_FAILED = 12,
-    NVRTC_ERROR_NO_PCH_CREATE_ATTEMPTED = 13,
-    NVRTC_ERROR_PCH_CREATE_HEAP_EXHAUSTED = 14,
-    NVRTC_ERROR_PCH_CREATE = 15,
-    NVRTC_ERROR_CANCELLED = 16,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -132,29 +127,6 @@ pub struct Lib {
         ) -> nvrtcResult,
         ::libloading::Error,
     >,
-    pub nvrtcGetPCHHeapSize:
-        Result<unsafe extern "C" fn(ret: *mut usize) -> nvrtcResult, ::libloading::Error>,
-    pub nvrtcSetPCHHeapSize:
-        Result<unsafe extern "C" fn(size: usize) -> nvrtcResult, ::libloading::Error>,
-    pub nvrtcGetPCHCreateStatus:
-        Result<unsafe extern "C" fn(prog: nvrtcProgram) -> nvrtcResult, ::libloading::Error>,
-    pub nvrtcGetPCHHeapSizeRequired: Result<
-        unsafe extern "C" fn(prog: nvrtcProgram, size: *mut usize) -> nvrtcResult,
-        ::libloading::Error,
-    >,
-    pub nvrtcSetFlowCallback: Result<
-        unsafe extern "C" fn(
-            prog: nvrtcProgram,
-            callback: ::core::option::Option<
-                unsafe extern "C" fn(
-                    arg1: *mut ::core::ffi::c_void,
-                    arg2: *mut ::core::ffi::c_void,
-                ) -> ::core::ffi::c_int,
-            >,
-            payload: *mut ::core::ffi::c_void,
-        ) -> nvrtcResult,
-        ::libloading::Error,
-    >,
 }
 impl Lib {
     pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
@@ -192,13 +164,6 @@ impl Lib {
         let nvrtcGetProgramLog = __library.get(b"nvrtcGetProgramLog\0").map(|sym| *sym);
         let nvrtcAddNameExpression = __library.get(b"nvrtcAddNameExpression\0").map(|sym| *sym);
         let nvrtcGetLoweredName = __library.get(b"nvrtcGetLoweredName\0").map(|sym| *sym);
-        let nvrtcGetPCHHeapSize = __library.get(b"nvrtcGetPCHHeapSize\0").map(|sym| *sym);
-        let nvrtcSetPCHHeapSize = __library.get(b"nvrtcSetPCHHeapSize\0").map(|sym| *sym);
-        let nvrtcGetPCHCreateStatus = __library.get(b"nvrtcGetPCHCreateStatus\0").map(|sym| *sym);
-        let nvrtcGetPCHHeapSizeRequired = __library
-            .get(b"nvrtcGetPCHHeapSizeRequired\0")
-            .map(|sym| *sym);
-        let nvrtcSetFlowCallback = __library.get(b"nvrtcSetFlowCallback\0").map(|sym| *sym);
         Ok(Lib {
             __library,
             nvrtcGetErrorString,
@@ -222,11 +187,6 @@ impl Lib {
             nvrtcGetProgramLog,
             nvrtcAddNameExpression,
             nvrtcGetLoweredName,
-            nvrtcGetPCHHeapSize,
-            nvrtcSetPCHHeapSize,
-            nvrtcGetPCHCreateStatus,
-            nvrtcGetPCHHeapSizeRequired,
-            nvrtcSetFlowCallback,
         })
     }
     pub unsafe fn nvrtcGetErrorString(&self, result: nvrtcResult) -> *const ::core::ffi::c_char {
@@ -441,49 +401,5 @@ impl Lib {
             .nvrtcGetLoweredName
             .as_ref()
             .expect("Expected function, got error."))(prog, name_expression, lowered_name)
-    }
-    pub unsafe fn nvrtcGetPCHHeapSize(&self, ret: *mut usize) -> nvrtcResult {
-        (self
-            .nvrtcGetPCHHeapSize
-            .as_ref()
-            .expect("Expected function, got error."))(ret)
-    }
-    pub unsafe fn nvrtcSetPCHHeapSize(&self, size: usize) -> nvrtcResult {
-        (self
-            .nvrtcSetPCHHeapSize
-            .as_ref()
-            .expect("Expected function, got error."))(size)
-    }
-    pub unsafe fn nvrtcGetPCHCreateStatus(&self, prog: nvrtcProgram) -> nvrtcResult {
-        (self
-            .nvrtcGetPCHCreateStatus
-            .as_ref()
-            .expect("Expected function, got error."))(prog)
-    }
-    pub unsafe fn nvrtcGetPCHHeapSizeRequired(
-        &self,
-        prog: nvrtcProgram,
-        size: *mut usize,
-    ) -> nvrtcResult {
-        (self
-            .nvrtcGetPCHHeapSizeRequired
-            .as_ref()
-            .expect("Expected function, got error."))(prog, size)
-    }
-    pub unsafe fn nvrtcSetFlowCallback(
-        &self,
-        prog: nvrtcProgram,
-        callback: ::core::option::Option<
-            unsafe extern "C" fn(
-                arg1: *mut ::core::ffi::c_void,
-                arg2: *mut ::core::ffi::c_void,
-            ) -> ::core::ffi::c_int,
-        >,
-        payload: *mut ::core::ffi::c_void,
-    ) -> nvrtcResult {
-        (self
-            .nvrtcSetFlowCallback
-            .as_ref()
-            .expect("Expected function, got error."))(prog, callback, payload)
     }
 }

@@ -8,9 +8,6 @@ pub struct CUstream_st {
     _unused: [u8; 0],
 }
 pub type cudaStream_t = *mut CUstream_st;
-impl cudaDataType_t {
-    pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
-}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDataType_t {
@@ -44,10 +41,6 @@ pub enum cudaDataType_t {
     CUDA_C_64U = 27,
     CUDA_R_8F_E4M3 = 28,
     CUDA_R_8F_E5M2 = 29,
-    CUDA_R_8F_UE8M0 = 30,
-    CUDA_R_6F_E2M3 = 31,
-    CUDA_R_6F_E3M2 = 32,
-    CUDA_R_4F_E2M1 = 33,
 }
 pub use self::cudaDataType_t as cudaDataType;
 #[repr(u32)]
@@ -137,59 +130,6 @@ pub struct _IO_FILE {
     pub _mode: ::core::ffi::c_int,
     pub _unused2: [::core::ffi::c_char; 20usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _IO_FILE"][::core::mem::size_of::<_IO_FILE>() - 216usize];
-    ["Alignment of _IO_FILE"][::core::mem::align_of::<_IO_FILE>() - 8usize];
-    ["Offset of field: _IO_FILE::_flags"][::core::mem::offset_of!(_IO_FILE, _flags) - 0usize];
-    ["Offset of field: _IO_FILE::_IO_read_ptr"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_read_ptr) - 8usize];
-    ["Offset of field: _IO_FILE::_IO_read_end"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_read_end) - 16usize];
-    ["Offset of field: _IO_FILE::_IO_read_base"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_read_base) - 24usize];
-    ["Offset of field: _IO_FILE::_IO_write_base"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_write_base) - 32usize];
-    ["Offset of field: _IO_FILE::_IO_write_ptr"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_write_ptr) - 40usize];
-    ["Offset of field: _IO_FILE::_IO_write_end"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_write_end) - 48usize];
-    ["Offset of field: _IO_FILE::_IO_buf_base"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_buf_base) - 56usize];
-    ["Offset of field: _IO_FILE::_IO_buf_end"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_buf_end) - 64usize];
-    ["Offset of field: _IO_FILE::_IO_save_base"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_save_base) - 72usize];
-    ["Offset of field: _IO_FILE::_IO_backup_base"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_backup_base) - 80usize];
-    ["Offset of field: _IO_FILE::_IO_save_end"]
-        [::core::mem::offset_of!(_IO_FILE, _IO_save_end) - 88usize];
-    ["Offset of field: _IO_FILE::_markers"][::core::mem::offset_of!(_IO_FILE, _markers) - 96usize];
-    ["Offset of field: _IO_FILE::_chain"][::core::mem::offset_of!(_IO_FILE, _chain) - 104usize];
-    ["Offset of field: _IO_FILE::_fileno"][::core::mem::offset_of!(_IO_FILE, _fileno) - 112usize];
-    ["Offset of field: _IO_FILE::_flags2"][::core::mem::offset_of!(_IO_FILE, _flags2) - 116usize];
-    ["Offset of field: _IO_FILE::_old_offset"]
-        [::core::mem::offset_of!(_IO_FILE, _old_offset) - 120usize];
-    ["Offset of field: _IO_FILE::_cur_column"]
-        [::core::mem::offset_of!(_IO_FILE, _cur_column) - 128usize];
-    ["Offset of field: _IO_FILE::_vtable_offset"]
-        [::core::mem::offset_of!(_IO_FILE, _vtable_offset) - 130usize];
-    ["Offset of field: _IO_FILE::_shortbuf"]
-        [::core::mem::offset_of!(_IO_FILE, _shortbuf) - 131usize];
-    ["Offset of field: _IO_FILE::_lock"][::core::mem::offset_of!(_IO_FILE, _lock) - 136usize];
-    ["Offset of field: _IO_FILE::_offset"][::core::mem::offset_of!(_IO_FILE, _offset) - 144usize];
-    ["Offset of field: _IO_FILE::_codecvt"][::core::mem::offset_of!(_IO_FILE, _codecvt) - 152usize];
-    ["Offset of field: _IO_FILE::_wide_data"]
-        [::core::mem::offset_of!(_IO_FILE, _wide_data) - 160usize];
-    ["Offset of field: _IO_FILE::_freeres_list"]
-        [::core::mem::offset_of!(_IO_FILE, _freeres_list) - 168usize];
-    ["Offset of field: _IO_FILE::_freeres_buf"]
-        [::core::mem::offset_of!(_IO_FILE, _freeres_buf) - 176usize];
-    ["Offset of field: _IO_FILE::_prevchain"]
-        [::core::mem::offset_of!(_IO_FILE, _prevchain) - 184usize];
-    ["Offset of field: _IO_FILE::_mode"][::core::mem::offset_of!(_IO_FILE, _mode) - 192usize];
-    ["Offset of field: _IO_FILE::_unused2"][::core::mem::offset_of!(_IO_FILE, _unused2) - 196usize];
-};
 impl Default for _IO_FILE {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -210,72 +150,29 @@ pub type cublasLtHandle_t = *mut cublasLtContext;
 pub struct cublasLtMatrixLayoutOpaque_t {
     pub data: [u64; 8usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cublasLtMatrixLayoutOpaque_t"]
-        [::core::mem::size_of::<cublasLtMatrixLayoutOpaque_t>() - 64usize];
-    ["Alignment of cublasLtMatrixLayoutOpaque_t"]
-        [::core::mem::align_of::<cublasLtMatrixLayoutOpaque_t>() - 8usize];
-    ["Offset of field: cublasLtMatrixLayoutOpaque_t::data"]
-        [::core::mem::offset_of!(cublasLtMatrixLayoutOpaque_t, data) - 0usize];
-};
 pub type cublasLtMatrixLayout_t = *mut cublasLtMatrixLayoutOpaque_t;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulAlgo_t {
     pub data: [u64; 8usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cublasLtMatmulAlgo_t"][::core::mem::size_of::<cublasLtMatmulAlgo_t>() - 64usize];
-    ["Alignment of cublasLtMatmulAlgo_t"][::core::mem::align_of::<cublasLtMatmulAlgo_t>() - 8usize];
-    ["Offset of field: cublasLtMatmulAlgo_t::data"]
-        [::core::mem::offset_of!(cublasLtMatmulAlgo_t, data) - 0usize];
-};
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 32usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cublasLtMatmulDescOpaque_t"]
-        [::core::mem::size_of::<cublasLtMatmulDescOpaque_t>() - 256usize];
-    ["Alignment of cublasLtMatmulDescOpaque_t"]
-        [::core::mem::align_of::<cublasLtMatmulDescOpaque_t>() - 8usize];
-    ["Offset of field: cublasLtMatmulDescOpaque_t::data"]
-        [::core::mem::offset_of!(cublasLtMatmulDescOpaque_t, data) - 0usize];
-};
 pub type cublasLtMatmulDesc_t = *mut cublasLtMatmulDescOpaque_t;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatrixTransformDescOpaque_t {
     pub data: [u64; 8usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cublasLtMatrixTransformDescOpaque_t"]
-        [::core::mem::size_of::<cublasLtMatrixTransformDescOpaque_t>() - 64usize];
-    ["Alignment of cublasLtMatrixTransformDescOpaque_t"]
-        [::core::mem::align_of::<cublasLtMatrixTransformDescOpaque_t>() - 8usize];
-    ["Offset of field: cublasLtMatrixTransformDescOpaque_t::data"]
-        [::core::mem::offset_of!(cublasLtMatrixTransformDescOpaque_t, data) - 0usize];
-};
 pub type cublasLtMatrixTransformDesc_t = *mut cublasLtMatrixTransformDescOpaque_t;
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulPreferenceOpaque_t {
     pub data: [u64; 8usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cublasLtMatmulPreferenceOpaque_t"]
-        [::core::mem::size_of::<cublasLtMatmulPreferenceOpaque_t>() - 64usize];
-    ["Alignment of cublasLtMatmulPreferenceOpaque_t"]
-        [::core::mem::align_of::<cublasLtMatmulPreferenceOpaque_t>() - 8usize];
-    ["Offset of field: cublasLtMatmulPreferenceOpaque_t::data"]
-        [::core::mem::offset_of!(cublasLtMatmulPreferenceOpaque_t, data) - 0usize];
-};
 pub type cublasLtMatmulPreference_t = *mut cublasLtMatmulPreferenceOpaque_t;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -911,11 +808,7 @@ pub enum cublasLtMatmulTile_t {
     CUBLASLT_MATMUL_TILE_768x56 = 628,
     CUBLASLT_MATMUL_TILE_768x72 = 629,
     CUBLASLT_MATMUL_TILE_768x80 = 630,
-    CUBLASLT_MATMUL_TILE_256x512 = 631,
-    CUBLASLT_MATMUL_TILE_256x1024 = 632,
-    CUBLASLT_MATMUL_TILE_512x512 = 633,
-    CUBLASLT_MATMUL_TILE_512x1024 = 634,
-    CUBLASLT_MATMUL_TILE_END = 635,
+    CUBLASLT_MATMUL_TILE_END = 631,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -955,8 +848,7 @@ pub enum cublasLtMatmulStages_t {
     CUBLASLT_MATMUL_STAGES_32xAUTO = 34,
     CUBLASLT_MATMUL_STAGES_64xAUTO = 35,
     CUBLASLT_MATMUL_STAGES_128xAUTO = 36,
-    CUBLASLT_MATMUL_STAGES_256xAUTO = 37,
-    CUBLASLT_MATMUL_STAGES_END = 38,
+    CUBLASLT_MATMUL_STAGES_END = 37,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1023,14 +915,6 @@ pub enum cublasLtMatmulInnerShape_t {
     CUBLASLT_MATMUL_INNER_SHAPE_MMA1688 = 3,
     CUBLASLT_MATMUL_INNER_SHAPE_MMA16816 = 4,
     CUBLASLT_MATMUL_INNER_SHAPE_END = 5,
-}
-#[repr(u32)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub enum cublasLtMatmulMatrixScale_t {
-    CUBLASLT_MATMUL_MATRIX_SCALE_SCALAR_32F = 0,
-    CUBLASLT_MATMUL_MATRIX_SCALE_VEC16_UE4M3 = 1,
-    CUBLASLT_MATMUL_MATRIX_SCALE_VEC32_UE8M0 = 2,
-    CUBLASLT_MATMUL_MATRIX_SCALE_END = 3,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1104,13 +988,6 @@ pub enum cublasLtMatmulDescAttributes_t {
     CUBLASLT_MATMUL_DESC_ATOMIC_SYNC_NUM_CHUNKS_D_COLS = 28,
     CUBLASLT_MATMUL_DESC_ATOMIC_SYNC_IN_COUNTERS_POINTER = 29,
     CUBLASLT_MATMUL_DESC_ATOMIC_SYNC_OUT_COUNTERS_POINTER = 30,
-    CUBLASLT_MATMUL_DESC_A_SCALE_MODE = 31,
-    CUBLASLT_MATMUL_DESC_B_SCALE_MODE = 32,
-    CUBLASLT_MATMUL_DESC_C_SCALE_MODE = 33,
-    CUBLASLT_MATMUL_DESC_D_SCALE_MODE = 34,
-    CUBLASLT_MATMUL_DESC_EPILOGUE_AUX_SCALE_MODE = 35,
-    CUBLASLT_MATMUL_DESC_D_OUT_SCALE_POINTER = 36,
-    CUBLASLT_MATMUL_DESC_D_OUT_SCALE_MODE = 37,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1185,23 +1062,6 @@ pub struct cublasLtMatmulHeuristicResult_t {
     pub wavesCount: f32,
     pub reserved: [::core::ffi::c_int; 4usize],
 }
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of cublasLtMatmulHeuristicResult_t"]
-        [::core::mem::size_of::<cublasLtMatmulHeuristicResult_t>() - 96usize];
-    ["Alignment of cublasLtMatmulHeuristicResult_t"]
-        [::core::mem::align_of::<cublasLtMatmulHeuristicResult_t>() - 8usize];
-    ["Offset of field: cublasLtMatmulHeuristicResult_t::algo"]
-        [::core::mem::offset_of!(cublasLtMatmulHeuristicResult_t, algo) - 0usize];
-    ["Offset of field: cublasLtMatmulHeuristicResult_t::workspaceSize"]
-        [::core::mem::offset_of!(cublasLtMatmulHeuristicResult_t, workspaceSize) - 64usize];
-    ["Offset of field: cublasLtMatmulHeuristicResult_t::state"]
-        [::core::mem::offset_of!(cublasLtMatmulHeuristicResult_t, state) - 72usize];
-    ["Offset of field: cublasLtMatmulHeuristicResult_t::wavesCount"]
-        [::core::mem::offset_of!(cublasLtMatmulHeuristicResult_t, wavesCount) - 76usize];
-    ["Offset of field: cublasLtMatmulHeuristicResult_t::reserved"]
-        [::core::mem::offset_of!(cublasLtMatmulHeuristicResult_t, reserved) - 80usize];
-};
 impl Default for cublasLtMatmulHeuristicResult_t {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();

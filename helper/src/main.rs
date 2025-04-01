@@ -1,88 +1,870 @@
-use clap::{Arg, Command};
-use quote::quote;
-use std::fs;
-use syn::{parse_file, FnArg, ForeignItem, Pat};
+use std::{
+    collections::HashMap,
+    fs::{self, File},
+    io::{self, Read, Write},
+    path::{Path, PathBuf},
+    sync::Mutex,
+};
 
-fn main() {
-    let matches = Command::new("adapt_libloading")
-        .version("1.0")
-        .author("Your Name")
-        .about("Converts extern C bindings to Rust dynamic loading bindings")
-        .arg(
-            Arg::new("input")
-                .short('i')
-                .long("input")
-                .value_name("FILE")
-                .help("Sets the input file to read")
-                .required(true),
-        )
-        .arg(
-            Arg::new("output")
-                .short('o')
-                .long("output")
-                .value_name("FILE")
-                .help("Sets the output file to write")
-                .required(true),
-        )
-        .get_matches();
+use anyhow::{Context, Result};
+use bindgen::Builder;
+use lazy_static::lazy_static;
+use reqwest::blocking::{Response, get};
+use serde_json::Value;
+use sha2::{Digest, Sha256};
 
-    let input_path = matches.get_one::<String>("input").unwrap();
-    let output_path = matches.get_one::<String>("output").unwrap();
+mod adapter;
+mod extract;
+mod merge;
 
-    let file_content = fs::read_to_string(input_path).expect("Failed to read input file");
+lazy_static! {
+    static ref DOWNLOAD_CACHE: Mutex<HashMap<String, PathBuf>> = Mutex::new(HashMap::new());
+    static ref REVISION: Mutex<HashMap<(u32, u32, u32, String), PathBuf>> =
+        Mutex::new(HashMap::new());
+}
 
-    let parsed_file = parse_file(&file_content).expect("Failed to parse Rust code from input file");
+const CUDA_VERSIONS: &[&str] = &[
+    "cuda-11040",
+    "cuda-11050",
+    "cuda-11060",
+    "cuda-11070",
+    "cuda-11080",
+    "cuda-12000",
+    "cuda-12010",
+    "cuda-12020",
+    "cuda-12030",
+    "cuda-12040",
+    "cuda-12050",
+    "cuda-12060",
+    "cuda-12080",
+];
 
-    let functions = parsed_file
-        .items
-        .into_iter()
-        .filter_map(|item| {
-            if let syn::Item::ForeignMod(foreign_mod) = item {
-                Some(foreign_mod.items.into_iter().filter_map(|fitem| {
-                    if let ForeignItem::Fn(func) = fitem {
-                        let fn_name = &func.sig.ident;
-                        let inputs = &func.sig.inputs;
-                        let output = &func.sig.output;
-                        // Extract only argument names (without types)
-                        let arg_names = inputs.iter().filter_map(|arg| {
-                            if let FnArg::Typed(pat_type) = arg {
-                                if let Pat::Ident(pat_ident) = *pat_type.pat.clone() {
-                                    return Some(pat_ident.ident.clone());
-                                }
-                            }
-                            None
-                        });
+fn create_modules() -> Vec<(String, ModuleConfig)> {
+    vec![
+        (
+            "driver".to_string(),
+            ModuleConfig {
+                cuda: "cuda_cudart".to_string(),
+                filters: Filters {
+                    types: vec![
+                        "^CU.*".to_string(),
+                        "^cuuint(32|64)_t".to_string(),
+                        "^cudaError_enum".to_string(),
+                        "^cu.*Complex$".to_string(),
+                        "^cuda.*".to_string(),
+                        "^libraryPropertyType.*".to_string(),
+                    ],
+                    functions: vec!["^cu.*".to_string()],
+                    vars: vec!["^CU.*".to_string()],
+                },
+                libs: vec!["cuda".to_string(), "nvcuda".to_string()],
+                redist: None,
+            },
+        ),
+        (
+            "cublas".to_string(),
+            ModuleConfig {
+                cuda: "libcublas".to_string(),
+                filters: Filters {
+                    types: vec!["^cublas.*".to_string()],
+                    functions: vec!["^cublas.*".to_string()],
+                    vars: vec!["^cublas.*".to_string()],
+                },
+                libs: vec!["cublas".to_string()],
+                redist: None,
+            },
+        ),
+        (
+            "cublaslt".to_string(),
+            ModuleConfig {
+                cuda: "libcublas".to_string(),
+                filters: Filters {
+                    types: vec!["^cublasLt.*".to_string()],
+                    functions: vec!["^cublasLt.*".to_string()],
+                    vars: vec!["^cublasLt.*".to_string()],
+                },
+                libs: vec!["cublasLt".to_string()],
+                redist: None,
+            },
+        ),
+        (
+            "curand".to_string(),
+            ModuleConfig {
+                cuda: "libcurand".to_string(),
+                filters: Filters {
+                    types: vec!["^curand.*".to_string()],
+                    functions: vec!["^curand.*".to_string()],
+                    vars: vec!["^curand.*".to_string()],
+                },
+                libs: vec!["curand".to_string()],
+                redist: None,
+            },
+        ),
+        (
+            "runtime".to_string(),
+            ModuleConfig {
+                cuda: "cuda_cudart".to_string(),
+                filters: Filters {
+                    types: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
+                    functions: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
+                    vars: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
+                },
+                libs: vec!["cudart".to_string()],
+                redist: None,
+            },
+        ),
+        (
+            "nvrtc".to_string(),
+            ModuleConfig {
+                cuda: "cuda_nvrtc".to_string(),
+                filters: Filters {
+                    types: vec!["^nvrtc.*".to_string()],
+                    functions: vec!["^nvrtc.*".to_string()],
+                    vars: vec!["^nvrtc.*".to_string()],
+                },
+                libs: vec!["nvrtc".to_string()],
+                redist: None,
+            },
+        ),
+        (
+            "cudnn".to_string(),
+            ModuleConfig {
+                cuda: "cudnn".to_string(),
+                filters: Filters {
+                    types: vec!["^cudnn.*".to_string()],
+                    functions: vec!["^cudnn.*".to_string()],
+                    vars: vec!["^cudnn.*".to_string()],
+                },
+                libs: vec!["cudnn".to_string()],
+                redist: Some(Redist {
+                    url: "https://developer.download.nvidia.com/compute/cudnn/redist/".to_string(),
+                    version: "9.8.0".to_string(),
+                }),
+            },
+        ),
+        (
+            "nccl".to_string(),
+            ModuleConfig {
+                cuda: "libnccl".to_string(),
+                filters: Filters {
+                    types: vec!["^nccl.*".to_string()],
+                    functions: vec!["^nccl.*".to_string()],
+                    vars: vec!["^nccl.*".to_string()],
+                },
+                libs: vec!["nccl".to_string()],
+                redist: Some(Redist {
+                    url: "https://developer.download.nvidia.com/compute/redist/nccl/".to_string(),
+                    version: "2.26.2".to_string(),
+                }),
+            },
+        ),
+    ]
+}
 
-                        Some(quote! {
-                            pub unsafe fn #fn_name(#inputs) #output {
-                                unsafe {
-                                    culib().#fn_name(#(#arg_names),*)
-                                }
-                            }
-                        })
-                    } else {
-                        None
-                    }
-                }))
-            } else {
-                None
+const MOD_RS: &str = r#"
+#[cfg(feature = "dynamic-loading")]
+mod loaded;
+#[cfg(feature = "dynamic-loading")]
+pub use loaded::*;
+
+#[cfg(not(feature = "dynamic-loading"))]
+mod linked;
+#[cfg(not(feature = "dynamic-loading"))]
+pub use linked::*;
+"#;
+
+const IMPORT_RS: &str = r#"
+#[cfg(feature = "{0}")]
+mod {1};
+#[cfg(feature = "{0}")]
+pub use {1}::*;
+"#;
+
+const IMPORT_LINKED_RS: &str = r#"
+mod unified;
+pub use unified::*;
+"#;
+
+const LOADING_RS: &str = r#"
+pub unsafe fn culib() -> &'static Lib {
+    static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
+    LIB.get_or_init(|| {
+        let lib_names = {0};
+        let choices: Vec<_> = lib_names.iter().map(|l| crate::get_lib_name_candidates(l)).flatten().collect();
+        for choice in choices.iter() {
+            if let Ok(lib) = Lib::new(choice) {
+                return lib;
             }
-        })
-        .flatten();
-
-    let mut output_code = String::new();
-    output_code.push_str(
-        &quote! {
-            use super::*;
         }
-        .to_string(),
-    );
-    for function in functions {
-        output_code.push_str(&function.to_string());
-        output_code.push_str("\n");
+        crate::panic_no_lib_found(lib_names[0], &choices);
+    })
+}
+
+mod adapter;
+pub use adapter::*;
+"#;
+
+#[derive(Debug)]
+struct ModuleConfig {
+    cuda: String,
+    filters: Filters,
+    libs: Vec<String>,
+    redist: Option<Redist>,
+}
+
+#[derive(Debug)]
+struct Filters {
+    types: Vec<String>,
+    functions: Vec<String>,
+    vars: Vec<String>,
+}
+
+#[derive(Debug)]
+struct Redist {
+    url: String,
+    version: String,
+}
+
+fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
+    let downloads_dir = Path::new("downloads");
+    fs::create_dir_all(downloads_dir).context("Failed to create downloads directory")?;
+
+    for cuda_version in CUDA_VERSIONS {
+        println!("=========== Cuda {} ====================", cuda_version);
+
+        let mut primary_archives = vec![];
+
+        let names = if cuda_version.starts_with("cuda-12") {
+            vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl"]
+        } else {
+            vec!["cuda_cudart", "cuda_nvcc"]
+        };
+
+        for name in &names {
+            let archive = get_archive(cuda_version, name, "primary")?;
+            primary_archives.push(archive);
+        }
+
+        // Cudart contains cuda.h which is necessary for all other libs.
+        for (module_name, module) in modules {
+            println!("----  {}   ----", module_name);
+
+            match &module.redist {
+                Some(redist) => match module_name.as_str() {
+                    "cudnn" => {
+                        generate_cudnn(cuda_version, module_name, module, redist, &primary_archives)
+                            .context(format!("Failed to generate cudnn for {}", cuda_version))?
+                    }
+                    "nccl" => {
+                        generate_nccl(cuda_version, module_name, module, redist, &primary_archives)
+                            .context(format!("Failed to generate nccl for {}", cuda_version))?
+                    }
+                    _ => unreachable!("Unknown module with redist: {}", module_name),
+                },
+                None => {
+                    generate_sys(cuda_version, module_name, module, &primary_archives)
+                        .context(format!("Failed to generate sys for {}", cuda_version))?;
+                }
+            }
+        }
     }
 
-    fs::write(output_path, output_code).expect("Failed to write output file");
+    Ok(())
+}
 
-    println!("Successfully generated Rust bindings in {}", output_path);
+fn main() -> Result<()> {
+    let modules = create_modules();
+    // create_bindings(&modules)?;
+    merge::merge_bindings(&modules)?;
+    Ok(())
+}
+
+fn get_version(cuda_version: &str) -> Result<(u32, u32, u32)> {
+    let number = cuda_version
+        .split('-')
+        .last()
+        .context(format!("Invalid CUDA version format: {}", cuda_version))?;
+
+    let major = number[..2].parse().context(format!(
+        "Failed to parse major version from {}",
+        cuda_version
+    ))?;
+    let minor = number[2..4].parse().context(format!(
+        "Failed to parse minor version from {}",
+        cuda_version
+    ))?;
+    let patch = number[4..].parse().context(format!(
+        "Failed to parse patch version from {}",
+        cuda_version
+    ))?;
+
+    Ok((major, minor, patch))
+}
+
+fn download_response(url: &str) -> Result<Response> {
+    // Ok(get(url).expect(&format!("Failed to download {}", url)))
+    Ok(get(url).unwrap())
+}
+
+fn download_to_file(url: &str, dest: &Path) -> Result<()> {
+    println!("Downloading  to file {} to {}", url, dest.display());
+    if dest.exists() {
+        // Add to cache if file exists
+        println!("File exists, inserting into cache");
+        let mut cache = DOWNLOAD_CACHE.lock().expect("To get lock");
+        cache.insert(url.to_string(), dest.to_path_buf());
+        println!("File exists, inserted");
+        return Ok(());
+    }
+
+    println!("Downloading url {url}");
+    let mut response = download_response(url).expect("Downloading error");
+    println!("Got response");
+    let status = response.status();
+    if !status.is_success() {
+        return Err(anyhow::anyhow!(
+            "Failed to download {}: HTTP {}",
+            url,
+            status
+        ));
+    }
+
+    // Create parent directories if needed
+    println!("Checking parent directories {}", dest.display());
+    if let Some(parent) = dest.parent() {
+        fs::create_dir_all(parent).context(format!(
+            "Failed to create parent directory for {}",
+            dest.display()
+        ))?;
+    }
+
+    println!("Creating file");
+    let mut file =
+        File::create(dest).context(format!("Failed to create file {}", dest.display()))?;
+    println!("Copying content");
+    io::copy(&mut response, &mut file).context(format!("Failed to write to {}", dest.display()))?;
+    println!("Copied content");
+
+    // Add to cache after successful download
+    let mut cache = DOWNLOAD_CACHE
+        .lock()
+        .expect("Failed to acquire download cache lock");
+    cache.insert(url.to_string(), dest.to_path_buf());
+
+    Ok(())
+}
+
+fn calculate_sha256(file_path: &Path) -> Result<String> {
+    println!("Opening file {}", file_path.display());
+    let mut file =
+        File::open(file_path).context(format!("Failed to open {}", file_path.display()))?;
+    let mut hasher = Sha256::new();
+    let mut buffer = [0; 4096];
+
+    loop {
+        let bytes_read = file.read(&mut buffer).expect("Read from buffer");
+        if bytes_read == 0 {
+            break;
+        }
+        hasher.update(&buffer[..bytes_read]);
+    }
+
+    Ok(format!("{:x}", hasher.finalize()))
+}
+
+fn download_with_checksum(url: &str, dest: &Path, checksum: &str) -> Result<()> {
+    // Check cache first
+    {
+        let cache = DOWNLOAD_CACHE
+            .lock()
+            .expect("Failed to acquire download cache lock");
+        if cache.get(url) == Some(&dest.to_path_buf()) {
+            println!("Already downloaded (cached): {}", url);
+            return Ok(());
+        }
+    }
+
+    println!("Not in cache");
+    if dest.exists() {
+        println!("Destination exists, comparing checksum");
+        let actual_checksum = calculate_sha256(dest).context(format!(
+            "Failed to calculate checksum for {}",
+            dest.display()
+        ))?;
+        println!("Checksum there");
+        if actual_checksum == checksum {
+            // Add to cache if file exists and checksum matches
+            let mut cache = DOWNLOAD_CACHE
+                .lock()
+                .expect("Failed to acquire download cache lock");
+            cache.insert(url.to_string(), dest.to_path_buf());
+            return Ok(());
+        }
+        // Remove invalid file if checksum doesn't match
+        fs::remove_file(dest)
+            .context(format!("Failed to remove invalid file {}", dest.display()))?;
+    }
+
+    download_to_file(url, dest)?;
+    println!("Download ok");
+    let actual_checksum = calculate_sha256(dest).context(format!(
+        "Failed to calculate checksum for {}",
+        dest.display()
+    ))?;
+    if actual_checksum != checksum {
+        fs::remove_file(dest).context(format!(
+            "Failed to remove invalid download {}",
+            dest.display()
+        ))?;
+        return Err(anyhow::anyhow!(
+            "Checksum mismatch for {}: expected {}, got {}",
+            dest.display(),
+            checksum,
+            actual_checksum
+        ));
+    }
+    println!("Checksum ok");
+
+    Ok(())
+}
+
+fn get_redistrib_path(major: u32, minor: u32, patch: u32, base_url: &str) -> Result<PathBuf> {
+    {
+        let revision = REVISION.lock().unwrap();
+        if let Some(out_path) = revision.get(&(major, minor, patch, base_url.to_string())) {
+            println!("Already downloaded redistrib {}", out_path.display());
+            return Ok(out_path.to_path_buf());
+        }
+    }
+
+    let response = get(base_url).context("Getting redistrib version")?;
+    let response = response.error_for_status()?;
+    let content = response.text()?;
+    let mut redist = None;
+    for chunk in content.split("'") {
+        if chunk.starts_with(&format!("redistrib_{major}.{minor}")) && chunk.ends_with(".json") {
+            redist = Some(chunk);
+        }
+    }
+
+    let filename =
+        redist.expect("Expected a redistrib.json file for {major}.{minor}.{patch} at {base_url}");
+
+    // let filename = format!("redistrib_{}.{}.{}.json", major, minor, tmp_patch);
+    let url = format!("{}/{}", base_url, filename);
+    println!("Trying {}", url);
+
+    let out_path = Path::new("downloads").join(&filename);
+
+    if download_to_file(&url, &out_path).is_ok() {
+        let mut lock = REVISION.lock().unwrap();
+        lock.insert(
+            (major, minor, patch, base_url.to_string()),
+            out_path.clone(),
+        );
+        return Ok(out_path);
+    }
+    Err(anyhow::anyhow!("Couldn't find a suitable patch"))
+}
+fn get_redistrib(major: u32, minor: u32, patch: u32, base_url: &str) -> Result<Value> {
+    let out_path = get_redistrib_path(major, minor, patch, base_url)?;
+    let content = fs::read_to_string(&out_path)
+        .context(format!("Failed to read cached file {}", out_path.display()))?;
+    serde_json::from_str(&content)
+        .context(format!("Failed to parse JSON from {}", out_path.display()))
+}
+
+fn get_archive(cuda_version: &str, cuda_name: &str, module_name: &str) -> Result<PathBuf> {
+    let (major, minor, patch) = get_version(cuda_version)?;
+    let url = "https://developer.download.nvidia.com/compute/cuda/redist/";
+    let data = get_redistrib(major, minor, patch, url)?;
+
+    let lib = &data[cuda_name]["linux-x86_64"];
+    let path = lib["relative_path"].as_str().context(format!(
+        "Missing relative_path in redistrib data for {}",
+        cuda_name
+    ))?;
+    let checksum = lib["sha256"].as_str().context(format!(
+        "Missing sha256 in redistrib data for {}",
+        cuda_name
+    ))?;
+
+    let output_dir = Path::new("downloads").join(module_name);
+    let parts: Vec<_> = Path::new(path)
+        .file_name()
+        .context(format!("Failed to get file name from {}", path))?
+        .to_str()
+        .expect("A valid filename")
+        .split(".")
+        .collect();
+    let n = parts.len();
+    let name = parts.into_iter().take(n - 2).collect::<Vec<_>>().join(".");
+    let archive_dir = output_dir.join(name);
+    println!("Archive dir {archive_dir:?}");
+
+    if !archive_dir.exists() {
+        fs::create_dir_all(&archive_dir).context(format!(
+            "Failed to create directory {}",
+            archive_dir.display()
+        ))?;
+        let out_path = output_dir.join(
+            Path::new(path)
+                .file_name()
+                .context(format!("Failed to get file name from {}", path))?,
+        );
+        println!("Getting with checksum {url}/{path}");
+        download_with_checksum(&format!("{}/{}", url, path), &out_path, checksum)?;
+        println!("Got with checksum {url}/{path}");
+
+        println!("Extracting {}", out_path.display());
+        extract::extract_archive(&out_path, &output_dir)?;
+        println!("Extracted {}", out_path.display());
+    }
+    Ok(archive_dir)
+}
+
+fn generate_sys(
+    cuda_version: &str,
+    module_name: &str,
+    module: &ModuleConfig,
+    primary_archives: &[PathBuf],
+) -> Result<()> {
+    let cuda_name = &module.cuda;
+    let filters = &module.filters;
+    let lib_names = &module.libs;
+
+    let archive_dir = get_archive(cuda_version, cuda_name, module_name)?;
+
+    create_system_folders(
+        cuda_version,
+        module_name,
+        filters,
+        lib_names,
+        &archive_dir,
+        primary_archives,
+    )?;
+    Ok(())
+}
+
+fn create_system_folders(
+    cuda_version: &str,
+    module_name: &str,
+    filters: &Filters,
+    lib_names: &[String],
+    archive_directory: &Path,
+    primary_archives: &[PathBuf],
+) -> Result<()> {
+    let sysdir = std::env::current_dir()
+        .context("Current directory")?
+        .to_owned()
+        .parent()
+        .unwrap()
+        .join("src")
+        .join(module_name)
+        .join("sys");
+    fs::create_dir_all(&sysdir)
+        .context(format!("Failed to create directory {}", sysdir.display()))?;
+
+    let mut mod_file = File::create(sysdir.join("mod.rs")).context(format!(
+        "Failed to create {}",
+        sysdir.join("mod.rs").display()
+    ))?;
+    mod_file
+        .write_all(MOD_RS.trim().as_bytes())
+        .context(format!(
+            "Failed to write to {}",
+            sysdir.join("mod.rs").display()
+        ))?;
+
+    let linked_dir = sysdir.join("linked");
+    fs::create_dir_all(&linked_dir).context(format!(
+        "Failed to create directory {}",
+        linked_dir.display()
+    ))?;
+
+    let outfilename = linked_dir.join(format!("{}.rs", cuda_version.replace("cuda-", "sys_")));
+
+    // Generate linked bindings using bindgen library
+    let mut builder = Builder::default()
+        .default_enum_style(bindgen::EnumVariation::Rust {
+            non_exhaustive: false,
+        })
+        .derive_default(true)
+        .derive_eq(true)
+        .derive_hash(true)
+        .derive_ord(true)
+        .generate_comments(false)
+        .layout_tests(false)
+        .use_core();
+
+    for filter_name in &filters.types {
+        builder = builder.allowlist_type(filter_name);
+    }
+    for filter_name in &filters.vars {
+        builder = builder.allowlist_var(filter_name);
+    }
+    for filter_name in &filters.functions {
+        builder = builder.allowlist_function(filter_name);
+    }
+
+    let wrapper_h = sysdir.join("wrapper.h");
+    let cuda_directory = archive_directory.join("include");
+    let primary_includes: Vec<_> = primary_archives
+        .into_iter()
+        .map(|c| c.join("include"))
+        .collect();
+    println!("Include directories {}", cuda_directory.display());
+    println!(
+        "Include primary directories {:?}",
+        primary_includes
+            .iter()
+            .map(|p| p.display())
+            .collect::<Vec<_>>()
+    );
+    builder = builder
+        .header(wrapper_h.to_string_lossy())
+        .clang_arg(format!("-I{}", cuda_directory.display()))
+        // For cuda profiler which has a very simple consistent API
+        .clang_arg(format!(
+            "-I{}",
+            std::env::current_dir()
+                .expect("Current directory")
+                .join("include")
+                .display()
+        ));
+    for include in primary_includes {
+        builder = builder.clang_arg(format!("-I{}", include.display()));
+    }
+
+    let builder_loading = builder.clone();
+    let bindings = builder.generate().context(format!(
+        "Failed to generate bindings for {}",
+        wrapper_h.display()
+    ))?;
+
+    bindings.write_to_file(&outfilename).context(format!(
+        "Failed to write bindings to {}",
+        outfilename.display()
+    ))?;
+    println!("Wrote linked bindings to {}", outfilename.display());
+
+    let import_content = get_linked_import_content();
+    File::create(linked_dir.join("mod.rs"))
+        .context(format!(
+            "Failed to create {}",
+            linked_dir.join("mod.rs").display()
+        ))?
+        .write_all(import_content.as_bytes())
+        .context(format!(
+            "Failed to write to {}",
+            linked_dir.join("mod.rs").display()
+        ))?;
+
+    let loaded_dir = sysdir.join("loaded");
+    fs::create_dir_all(&loaded_dir).context(format!(
+        "Failed to create directory {}",
+        loaded_dir.display()
+    ))?;
+
+    let loading_outfilename =
+        loaded_dir.join(format!("{}.rs", cuda_version.replace("cuda-", "sys_")));
+    // Generate dynamic loading bindings
+    let builder = builder_loading.dynamic_library_name("Lib");
+    let bindings = builder.generate().context({
+        format!(
+            "Failed to generate dynamic bindings for {}",
+            wrapper_h.display()
+        )
+    })?;
+
+    bindings.write_to_file(&loading_outfilename).context({
+        format!(
+            "Failed to write dynamic bindings to {}",
+            loading_outfilename.display()
+        )
+    })?;
+    println!("Wrote loaded bindings to {}", loading_outfilename.display());
+
+    adapter::adapt(&outfilename, &loaded_dir.join("adapter.rs")).context(format!(
+        "Failed to run cudarc_helper for {}",
+        outfilename.display()
+    ))?;
+
+    let libnames = format!(
+        "[{}]",
+        lib_names
+            .iter()
+            .map(|l| format!("\"{}\"", l))
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+    let loading_rs = LOADING_RS.replace("{0}", &libnames);
+    let import_content = format!("{}\n{}", get_loaded_import_content(), loading_rs);
+
+    File::create(loaded_dir.join("mod.rs"))
+        .context(format!(
+            "Failed to create {}",
+            loaded_dir.join("mod.rs").display()
+        ))?
+        .write_all(import_content.as_bytes())
+        .context(format!(
+            "Failed to write to {}",
+            loaded_dir.join("mod.rs").display()
+        ))?;
+
+    Ok(())
+}
+
+fn get_linked_import_content() -> String {
+    IMPORT_LINKED_RS.to_string()
+}
+
+fn get_loaded_import_content() -> String {
+    CUDA_VERSIONS
+        .iter()
+        .map(|cuda_version| {
+            IMPORT_RS
+                .replace("{0}", cuda_version)
+                .replace("{1}", &cuda_version.replace("cuda-", "sys_"))
+                .trim()
+                .to_string()
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn generate_cudnn(
+    cuda_version: &str,
+    module_name: &str,
+    module: &ModuleConfig,
+    redist: &Redist,
+    primary_archives: &[PathBuf],
+) -> Result<()> {
+    let cuda_name = &module.cuda;
+    let filters = &module.filters;
+    let lib_names = &module.libs;
+    let (cuda_major, _, _) = get_version(cuda_version)?;
+    let url = &redist.url;
+    let version_parts: Vec<&str> = redist.version.split('.').collect();
+    let major = version_parts[0].parse().context(format!(
+        "Failed to parse major version from {}",
+        redist.version
+    ))?;
+    let minor = version_parts[1].parse().context(format!(
+        "Failed to parse minor version from {}",
+        redist.version
+    ))?;
+    let patch = version_parts[2].parse().context(format!(
+        "Failed to parse patch version from {}",
+        redist.version
+    ))?;
+
+    let data = get_redistrib(major, minor, patch, url)?;
+    let lib = &data[cuda_name]["linux-x86_64"];
+    let lib = match cuda_major {
+        11 => &lib["cuda11"],
+        12 => &lib["cuda12"],
+        _ => return Err(anyhow::anyhow!("Unknown cuda version {}", cuda_major)),
+    };
+
+    let path = lib["relative_path"].as_str().context(format!(
+        "Missing relative_path in redistrib data for {}",
+        cuda_name
+    ))?;
+    let checksum = lib["sha256"].as_str().context(format!(
+        "Missing sha256 in redistrib data for {}",
+        cuda_name
+    ))?;
+    let url = format!("{}/{}", url, path);
+
+    let output_dir = Path::new("downloads").join(module_name);
+    let parts: Vec<_> = Path::new(path)
+        .file_name()
+        .context(format!("Failed to get file name from {}", path))?
+        .to_str()
+        .expect("A valid filename")
+        .split(".")
+        .collect();
+    let n = parts.len();
+    let name = parts.into_iter().take(n - 2).collect::<Vec<_>>().join(".");
+    let archive_dir = output_dir.join(name);
+
+    if !archive_dir.exists() {
+        fs::create_dir_all(&archive_dir).context(format!(
+            "Failed to create directory {}",
+            archive_dir.display()
+        ))?;
+        let out_path = output_dir.join(
+            Path::new(path)
+                .file_name()
+                .context(format!("Failed to get file name from {}", path))?,
+        );
+        download_with_checksum(&url, &out_path, checksum)?;
+        extract::extract_archive(&out_path, &output_dir).context("Extracting archive")?;
+    }
+
+    create_system_folders(
+        cuda_version,
+        module_name,
+        filters,
+        lib_names,
+        &archive_dir,
+        primary_archives,
+    )
+}
+
+fn generate_nccl(
+    cuda_version: &str,
+    module_name: &str,
+    module: &ModuleConfig,
+    redist: &Redist,
+    primary_archives: &[PathBuf],
+) -> Result<()> {
+    let filters = &module.filters;
+    let lib_names = &module.libs;
+    let url = &redist.url;
+    let version = &redist.version;
+
+    let path = format!("v{}/nccl_{}-1+cuda12.8_x86_64.txz", version, version);
+    let full_url = format!("{}/{}", url, path);
+    println!("{}", full_url);
+
+    let output_dir = Path::new("downloads").join(module_name);
+    fs::create_dir_all(&output_dir).context(format!(
+        "Failed to create directory {}",
+        output_dir.display()
+    ))?;
+    let parts: Vec<_> = Path::new(&path)
+        .file_name()
+        .context(format!("Failed to get file name from {}", path))?
+        .to_str()
+        .expect("A valid filename")
+        .split(".")
+        .collect();
+    let n = parts.len();
+    // XXX: Extension is not .tar.gz but .txz
+    let name = parts.into_iter().take(n - 1).collect::<Vec<_>>().join(".");
+    let archive_dir = output_dir.join(name);
+
+    if !archive_dir.exists() {
+        let out_path = output_dir.join(
+            Path::new(&path)
+                .file_name()
+                .context(format!("Failed to get file name from {}", path))?,
+        );
+        download_to_file(&full_url, &out_path)
+            .context(format!("Failed to download {}", full_url))?;
+
+        extract::extract_archive(&out_path, &output_dir)?;
+    }
+    assert!(archive_dir.exists());
+
+    create_system_folders(
+        cuda_version,
+        module_name,
+        filters,
+        lib_names,
+        &archive_dir,
+        primary_archives,
+    )
 }
