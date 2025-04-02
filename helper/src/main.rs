@@ -1,7 +1,8 @@
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::{
     collections::HashMap,
     fs::{self, File},
-    io::{self, Read, Write},
+    io::{Read, Write},
     path::{Path, PathBuf},
     sync::Mutex,
 };
@@ -229,8 +230,15 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
     let downloads_dir = Path::new("downloads");
     fs::create_dir_all(downloads_dir).context("Failed to create downloads directory")?;
 
-    for cuda_version in CUDA_VERSIONS {
-        println!("=========== Cuda {} ====================", cuda_version);
+    let multi_progress = MultiProgress::new();
+    let overall_pb = multi_progress.add(ProgressBar::new(CUDA_VERSIONS.len() as u64));
+    overall_pb.set_style(
+        ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?, // .progress_chars("#>-"),
+    );
+
+    for (i, cuda_version) in CUDA_VERSIONS.iter().enumerate() {
+        overall_pb.set_position(i as u64);
+        overall_pb.set_message(format!("{}", cuda_version));
 
         let mut primary_archives = vec![];
 
@@ -240,41 +248,67 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
             vec!["cuda_cudart", "cuda_nvcc"]
         };
 
-        for name in &names {
-            let archive = get_archive(cuda_version, name, "primary")?;
+        let module_pb = multi_progress.add(ProgressBar::new((modules.len() + names.len()) as u64));
+
+        module_pb.set_style(
+            ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?,
+        );
+        for name in names {
+            module_pb.set_message(format!("{name}"));
+            let archive = get_archive(cuda_version, name, "primary", &multi_progress)?;
             primary_archives.push(archive);
+            module_pb.inc(1);
         }
 
-        // Cudart contains cuda.h which is necessary for all other libs.
         for (module_name, module) in modules {
-            println!("----  {}   ----", module_name);
+            module_pb.set_message(format!("{module_name}"));
 
             match &module.redist {
                 Some(redist) => match module_name.as_str() {
-                    "cudnn" => {
-                        generate_cudnn(cuda_version, module_name, module, redist, &primary_archives)
-                            .context(format!("Failed to generate cudnn for {}", cuda_version))?
-                    }
-                    "nccl" => {
-                        generate_nccl(cuda_version, module_name, module, redist, &primary_archives)
-                            .context(format!("Failed to generate nccl for {}", cuda_version))?
-                    }
+                    "cudnn" => generate_cudnn(
+                        cuda_version,
+                        module_name,
+                        module,
+                        redist,
+                        &primary_archives,
+                        &multi_progress,
+                    )
+                    .context(format!("Failed to generate cudnn for {}", cuda_version))?,
+                    "nccl" => generate_nccl(
+                        cuda_version,
+                        module_name,
+                        module,
+                        redist,
+                        &primary_archives,
+                        &multi_progress,
+                    )
+                    .context(format!("Failed to generate nccl for {}", cuda_version))?,
                     _ => unreachable!("Unknown module with redist: {}", module_name),
                 },
                 None => {
-                    generate_sys(cuda_version, module_name, module, &primary_archives)
-                        .context(format!("Failed to generate sys for {}", cuda_version))?;
+                    generate_sys(
+                        cuda_version,
+                        module_name,
+                        module,
+                        &primary_archives,
+                        &multi_progress,
+                    )
+                    .context(format!("Failed to generate sys for {}", cuda_version))?;
                 }
             }
+            module_pb.inc(1);
         }
+        overall_pb.set_message(format!("Cuda version {cuda_version}"));
+        overall_pb.inc(1);
     }
 
+    overall_pb.finish_with_message("Completed all CUDA versions");
     Ok(())
 }
 
 fn main() -> Result<()> {
     let modules = create_modules();
-    // create_bindings(&modules)?;
+    create_bindings(&modules)?;
     merge::merge_bindings(&modules)?;
     Ok(())
 }
@@ -306,20 +340,20 @@ fn download_response(url: &str) -> Result<Response> {
     Ok(get(url).unwrap())
 }
 
-fn download_to_file(url: &str, dest: &Path) -> Result<()> {
-    println!("Downloading  to file {} to {}", url, dest.display());
+fn download_to_file(url: &str, dest: &Path, multi_progress: &MultiProgress) -> Result<()> {
+    log::debug!("Downloading  to file {} to {}", url, dest.display());
     if dest.exists() {
         // Add to cache if file exists
-        println!("File exists, inserting into cache");
+        log::debug!("File exists, inserting into cache");
         let mut cache = DOWNLOAD_CACHE.lock().expect("To get lock");
         cache.insert(url.to_string(), dest.to_path_buf());
-        println!("File exists, inserted");
+        log::debug!("File exists, inserted");
         return Ok(());
     }
 
-    println!("Downloading url {url}");
+    log::debug!("Downloading url {url}");
     let mut response = download_response(url).expect("Downloading error");
-    println!("Got response");
+    log::debug!("Got response");
     let status = response.status();
     if !status.is_success() {
         return Err(anyhow::anyhow!(
@@ -330,7 +364,7 @@ fn download_to_file(url: &str, dest: &Path) -> Result<()> {
     }
 
     // Create parent directories if needed
-    println!("Checking parent directories {}", dest.display());
+    log::debug!("Checking parent directories {}", dest.display());
     if let Some(parent) = dest.parent() {
         fs::create_dir_all(parent).context(format!(
             "Failed to create parent directory for {}",
@@ -338,12 +372,32 @@ fn download_to_file(url: &str, dest: &Path) -> Result<()> {
         ))?;
     }
 
-    println!("Creating file");
+    log::debug!("Creating file");
+    let pb = multi_progress.add(ProgressBar::new(0));
+    pb.set_style(
+        ProgressStyle::default_bar()
+            .template("{msg} {wide_bar} {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")?,
+    );
+    pb.set_message(format!("Downloading {}", url));
+    if let Some(total) = response.content_length() {
+        pb.set_length(total);
+    }
+
     let mut file =
         File::create(dest).context(format!("Failed to create file {}", dest.display()))?;
-    println!("Copying content");
-    io::copy(&mut response, &mut file).context(format!("Failed to write to {}", dest.display()))?;
-    println!("Copied content");
+    log::debug!("Copying content");
+    // io::copy(&mut response, &mut file).context(format!("Failed to write to {}", dest.display()))?;
+
+    let mut buffer = [0; 4096];
+    loop {
+        let bytes_read = response.read(&mut buffer)?;
+        if bytes_read == 0 {
+            break;
+        }
+        file.write_all(&buffer[..bytes_read])?;
+        pb.inc(bytes_read as u64);
+    }
+    log::debug!("Copied content");
 
     // Add to cache after successful download
     let mut cache = DOWNLOAD_CACHE
@@ -355,7 +409,7 @@ fn download_to_file(url: &str, dest: &Path) -> Result<()> {
 }
 
 fn calculate_sha256(file_path: &Path) -> Result<String> {
-    println!("Opening file {}", file_path.display());
+    log::debug!("Opening file {}", file_path.display());
     let mut file =
         File::open(file_path).context(format!("Failed to open {}", file_path.display()))?;
     let mut hasher = Sha256::new();
@@ -372,26 +426,31 @@ fn calculate_sha256(file_path: &Path) -> Result<String> {
     Ok(format!("{:x}", hasher.finalize()))
 }
 
-fn download_with_checksum(url: &str, dest: &Path, checksum: &str) -> Result<()> {
+fn download_with_checksum(
+    url: &str,
+    dest: &Path,
+    checksum: &str,
+    multi_progress: &MultiProgress,
+) -> Result<()> {
     // Check cache first
     {
         let cache = DOWNLOAD_CACHE
             .lock()
             .expect("Failed to acquire download cache lock");
         if cache.get(url) == Some(&dest.to_path_buf()) {
-            println!("Already downloaded (cached): {}", url);
+            log::debug!("Already downloaded (cached): {}", url);
             return Ok(());
         }
     }
 
-    println!("Not in cache");
+    log::debug!("Not in cache");
     if dest.exists() {
-        println!("Destination exists, comparing checksum");
+        log::debug!("Destination exists, comparing checksum");
         let actual_checksum = calculate_sha256(dest).context(format!(
             "Failed to calculate checksum for {}",
             dest.display()
         ))?;
-        println!("Checksum there");
+        log::debug!("Checksum there");
         if actual_checksum == checksum {
             // Add to cache if file exists and checksum matches
             let mut cache = DOWNLOAD_CACHE
@@ -405,8 +464,8 @@ fn download_with_checksum(url: &str, dest: &Path, checksum: &str) -> Result<()> 
             .context(format!("Failed to remove invalid file {}", dest.display()))?;
     }
 
-    download_to_file(url, dest)?;
-    println!("Download ok");
+    download_to_file(url, dest, multi_progress)?;
+    log::debug!("Download ok");
     let actual_checksum = calculate_sha256(dest).context(format!(
         "Failed to calculate checksum for {}",
         dest.display()
@@ -423,16 +482,22 @@ fn download_with_checksum(url: &str, dest: &Path, checksum: &str) -> Result<()> 
             actual_checksum
         ));
     }
-    println!("Checksum ok");
+    log::debug!("Checksum ok");
 
     Ok(())
 }
 
-fn get_redistrib_path(major: u32, minor: u32, patch: u32, base_url: &str) -> Result<PathBuf> {
+fn get_redistrib_path(
+    major: u32,
+    minor: u32,
+    patch: u32,
+    base_url: &str,
+    multi_progress: &MultiProgress,
+) -> Result<PathBuf> {
     {
         let revision = REVISION.lock().unwrap();
         if let Some(out_path) = revision.get(&(major, minor, patch, base_url.to_string())) {
-            println!("Already downloaded redistrib {}", out_path.display());
+            log::debug!("Already downloaded redistrib {}", out_path.display());
             return Ok(out_path.to_path_buf());
         }
     }
@@ -452,11 +517,11 @@ fn get_redistrib_path(major: u32, minor: u32, patch: u32, base_url: &str) -> Res
 
     // let filename = format!("redistrib_{}.{}.{}.json", major, minor, tmp_patch);
     let url = format!("{}/{}", base_url, filename);
-    println!("Trying {}", url);
+    log::debug!("Trying {}", url);
 
     let out_path = Path::new("downloads").join(&filename);
 
-    if download_to_file(&url, &out_path).is_ok() {
+    if download_to_file(&url, &out_path, multi_progress).is_ok() {
         let mut lock = REVISION.lock().unwrap();
         lock.insert(
             (major, minor, patch, base_url.to_string()),
@@ -466,18 +531,29 @@ fn get_redistrib_path(major: u32, minor: u32, patch: u32, base_url: &str) -> Res
     }
     Err(anyhow::anyhow!("Couldn't find a suitable patch"))
 }
-fn get_redistrib(major: u32, minor: u32, patch: u32, base_url: &str) -> Result<Value> {
-    let out_path = get_redistrib_path(major, minor, patch, base_url)?;
+fn get_redistrib(
+    major: u32,
+    minor: u32,
+    patch: u32,
+    base_url: &str,
+    multi_progress: &MultiProgress,
+) -> Result<Value> {
+    let out_path = get_redistrib_path(major, minor, patch, base_url, multi_progress)?;
     let content = fs::read_to_string(&out_path)
         .context(format!("Failed to read cached file {}", out_path.display()))?;
     serde_json::from_str(&content)
         .context(format!("Failed to parse JSON from {}", out_path.display()))
 }
 
-fn get_archive(cuda_version: &str, cuda_name: &str, module_name: &str) -> Result<PathBuf> {
+fn get_archive(
+    cuda_version: &str,
+    cuda_name: &str,
+    module_name: &str,
+    multi_progress: &MultiProgress,
+) -> Result<PathBuf> {
     let (major, minor, patch) = get_version(cuda_version)?;
     let url = "https://developer.download.nvidia.com/compute/cuda/redist/";
-    let data = get_redistrib(major, minor, patch, url)?;
+    let data = get_redistrib(major, minor, patch, url, multi_progress)?;
 
     let lib = &data[cuda_name]["linux-x86_64"];
     let path = lib["relative_path"].as_str().context(format!(
@@ -500,7 +576,7 @@ fn get_archive(cuda_version: &str, cuda_name: &str, module_name: &str) -> Result
     let n = parts.len();
     let name = parts.into_iter().take(n - 2).collect::<Vec<_>>().join(".");
     let archive_dir = output_dir.join(name);
-    println!("Archive dir {archive_dir:?}");
+    log::debug!("Archive dir {archive_dir:?}");
 
     if !archive_dir.exists() {
         fs::create_dir_all(&archive_dir).context(format!(
@@ -512,13 +588,18 @@ fn get_archive(cuda_version: &str, cuda_name: &str, module_name: &str) -> Result
                 .file_name()
                 .context(format!("Failed to get file name from {}", path))?,
         );
-        println!("Getting with checksum {url}/{path}");
-        download_with_checksum(&format!("{}/{}", url, path), &out_path, checksum)?;
-        println!("Got with checksum {url}/{path}");
+        log::debug!("Getting with checksum {url}/{path}");
+        download_with_checksum(
+            &format!("{}/{}", url, path),
+            &out_path,
+            checksum,
+            multi_progress,
+        )?;
+        log::debug!("Got with checksum {url}/{path}");
 
-        println!("Extracting {}", out_path.display());
-        extract::extract_archive(&out_path, &output_dir)?;
-        println!("Extracted {}", out_path.display());
+        log::debug!("Extracting {}", out_path.display());
+        extract::extract_archive(&out_path, &output_dir, multi_progress)?;
+        log::debug!("Extracted {}", out_path.display());
     }
     Ok(archive_dir)
 }
@@ -528,12 +609,13 @@ fn generate_sys(
     module_name: &str,
     module: &ModuleConfig,
     primary_archives: &[PathBuf],
+    multi_progress: &MultiProgress,
 ) -> Result<()> {
     let cuda_name = &module.cuda;
     let filters = &module.filters;
     let lib_names = &module.libs;
 
-    let archive_dir = get_archive(cuda_version, cuda_name, module_name)?;
+    let archive_dir = get_archive(cuda_version, cuda_name, module_name, multi_progress)?;
 
     create_system_folders(
         cuda_version,
@@ -613,8 +695,8 @@ fn create_system_folders(
         .into_iter()
         .map(|c| c.join("include"))
         .collect();
-    println!("Include directories {}", cuda_directory.display());
-    println!(
+    log::debug!("Include directories {}", cuda_directory.display());
+    log::debug!(
         "Include primary directories {:?}",
         primary_includes
             .iter()
@@ -646,7 +728,7 @@ fn create_system_folders(
         "Failed to write bindings to {}",
         outfilename.display()
     ))?;
-    println!("Wrote linked bindings to {}", outfilename.display());
+    log::debug!("Wrote linked bindings to {}", outfilename.display());
 
     let import_content = get_linked_import_content();
     File::create(linked_dir.join("mod.rs"))
@@ -683,7 +765,7 @@ fn create_system_folders(
             loading_outfilename.display()
         )
     })?;
-    println!("Wrote loaded bindings to {}", loading_outfilename.display());
+    log::debug!("Wrote loaded bindings to {}", loading_outfilename.display());
 
     adapter::adapt(&outfilename, &loaded_dir.join("adapter.rs")).context(format!(
         "Failed to run cudarc_helper for {}",
@@ -739,6 +821,7 @@ fn generate_cudnn(
     module: &ModuleConfig,
     redist: &Redist,
     primary_archives: &[PathBuf],
+    multi_progress: &MultiProgress,
 ) -> Result<()> {
     let cuda_name = &module.cuda;
     let filters = &module.filters;
@@ -759,7 +842,7 @@ fn generate_cudnn(
         redist.version
     ))?;
 
-    let data = get_redistrib(major, minor, patch, url)?;
+    let data = get_redistrib(major, minor, patch, url, multi_progress)?;
     let lib = &data[cuda_name]["linux-x86_64"];
     let lib = match cuda_major {
         11 => &lib["cuda11"],
@@ -799,8 +882,9 @@ fn generate_cudnn(
                 .file_name()
                 .context(format!("Failed to get file name from {}", path))?,
         );
-        download_with_checksum(&url, &out_path, checksum)?;
-        extract::extract_archive(&out_path, &output_dir).context("Extracting archive")?;
+        download_with_checksum(&url, &out_path, checksum, multi_progress)?;
+        extract::extract_archive(&out_path, &output_dir, multi_progress)
+            .context("Extracting archive")?;
     }
 
     create_system_folders(
@@ -819,6 +903,7 @@ fn generate_nccl(
     module: &ModuleConfig,
     redist: &Redist,
     primary_archives: &[PathBuf],
+    multi_progress: &MultiProgress,
 ) -> Result<()> {
     let filters = &module.filters;
     let lib_names = &module.libs;
@@ -827,7 +912,7 @@ fn generate_nccl(
 
     let path = format!("v{}/nccl_{}-1+cuda12.8_x86_64.txz", version, version);
     let full_url = format!("{}/{}", url, path);
-    println!("{}", full_url);
+    log::debug!("{}", full_url);
 
     let output_dir = Path::new("downloads").join(module_name);
     fs::create_dir_all(&output_dir).context(format!(
@@ -852,10 +937,10 @@ fn generate_nccl(
                 .file_name()
                 .context(format!("Failed to get file name from {}", path))?,
         );
-        download_to_file(&full_url, &out_path)
+        download_to_file(&full_url, &out_path, multi_progress)
             .context(format!("Failed to download {}", full_url))?;
 
-        extract::extract_archive(&out_path, &output_dir)?;
+        extract::extract_archive(&out_path, &output_dir, multi_progress)?;
     }
     assert!(archive_dir.exists());
 

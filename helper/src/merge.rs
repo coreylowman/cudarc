@@ -19,7 +19,7 @@ impl std::fmt::Display for Version {
         // Write strictly the first element into the supplied output
         // stream: `f`. Returns `fmt::Result` which indicates whether the
         // operation succeeded or failed. Note that `write!` uses syntax which
-        // is very similar to `println!`.
+        // is very similar to `log::debug!`.
         write!(f, "{}.{}.{}", self.major, self.minor, self.patch)
     }
 }
@@ -160,7 +160,7 @@ impl BindingMerger {
                     entry.declarations.insert(version.clone(), declaration);
                 }
                 other_item => {
-                    println!("Ignored item {other_item:?}");
+                    eprintln!("Ignored item {other_item:?}");
                 }
             }
         }
@@ -209,7 +209,7 @@ fn write_to_output(info: &BTreeMap<String, FunctionInfo>, output: &mut String) -
                     continue;
                 } else {
                     if !versions.is_empty() {
-                        println!("Breaking change detected in {version} for {name}");
+                        log::debug!("Breaking change detected in {version} for {name}");
                     }
                     versions.push(version);
                     let features = versions

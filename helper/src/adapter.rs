@@ -60,7 +60,7 @@ pub(crate) fn adapt(input_path: &Path, output_path: &Path) -> Result<()> {
 
     fs::write(output_path, output_code).expect("Failed to write output file");
 
-    println!(
+    log::debug!(
         "Successfully generated Rust bindings in {}",
         output_path.display()
     );

@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use flate2::read::GzDecoder;
+use indicatif::{MultiProgress, ProgressBar};
 use std::fs::File;
 use std::path::Path;
 use tar::Archive;
@@ -41,7 +42,13 @@ fn extract_tar_xz(tarball_path: &Path, output_dir: &Path) -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn extract_archive(archive_path: &Path, output_dir: &Path) -> Result<()> {
+pub(crate) fn extract_archive(
+    archive_path: &Path,
+    output_dir: &Path,
+    multi_progress: &MultiProgress,
+) -> Result<()> {
+    let pb = multi_progress.add(ProgressBar::new_spinner());
+    pb.set_message(format!("Extracting {}", archive_path.display()));
     match archive_path.extension().and_then(|s| s.to_str()) {
         Some("gz") => extract_tar_gz(archive_path, output_dir),
         Some("xz") => extract_tar_xz(archive_path, output_dir),
