@@ -1,3 +1,4 @@
+use clap::Parser;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::{
     collections::HashMap,
@@ -303,13 +304,6 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
     }
 
     overall_pb.finish_with_message("Completed all CUDA versions");
-    Ok(())
-}
-
-fn main() -> Result<()> {
-    let modules = create_modules();
-    create_bindings(&modules)?;
-    merge::merge_bindings(&modules)?;
     Ok(())
 }
 
@@ -636,14 +630,7 @@ fn create_system_folders(
     archive_directory: &Path,
     primary_archives: &[PathBuf],
 ) -> Result<()> {
-    let sysdir = std::env::current_dir()
-        .context("Current directory")?
-        .to_owned()
-        .parent()
-        .unwrap()
-        .join("src")
-        .join(module_name)
-        .join("sys");
+    let sysdir = Path::new(".").join("out").join(module_name).join("sys");
     fs::create_dir_all(&sysdir)
         .context(format!("Failed to create directory {}", sysdir.display()))?;
 
@@ -689,7 +676,8 @@ fn create_system_folders(
         builder = builder.allowlist_function(filter_name);
     }
 
-    let wrapper_h = sysdir.join("wrapper.h");
+    let parent_sysdir = Path::new("..").join("src").join(module_name).join("sys");
+    let wrapper_h = parent_sysdir.join("wrapper.h");
     let cuda_directory = archive_directory.join("include");
     let primary_includes: Vec<_> = primary_archives
         .into_iter()
@@ -952,4 +940,22 @@ fn generate_nccl(
         &archive_dir,
         primary_archives,
     )
+}
+
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Name of the person to greet
+    #[arg(long, action)]
+    skip_bindings: bool,
+}
+
+fn main() -> Result<()> {
+    let args = Args::parse();
+    let modules = create_modules();
+    if !args.skip_bindings {
+        create_bindings(&modules)?;
+    }
+    merge::merge_bindings(&modules)?;
+    Ok(())
 }
