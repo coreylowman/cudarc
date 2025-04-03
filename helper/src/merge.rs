@@ -6,8 +6,8 @@ use std::fs;
 use std::path::Path;
 use syn::parse::Parser;
 use syn::{
-    Expr, Field, FnArg, ForeignItemFn, Ident, Item, ItemConst, ItemEnum, ItemFn, ItemImpl,
-    ItemStruct, ItemType, ItemUnion, ItemUse, Pat, Stmt,
+    Expr, Field, FnArg, ForeignItemFn, Item, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStruct,
+    ItemType, ItemUnion, ItemUse, Pat, Stmt,
 };
 
 use crate::ModuleConfig;
@@ -83,13 +83,6 @@ impl LibItem {
             }
         };
         let adapter_function: ItemFn = syn::parse2(c.clone()).unwrap();
-        if n_versions != versions.len() {
-            println!(
-                "{}\n{}",
-                c.to_string(),
-                adapter_function.to_token_stream().to_string()
-            );
-        }
         let symbol_cstr = cstr_expr(fn_name.to_string());
         let init_member = syn::parse2(quote! {
             #feature_tok

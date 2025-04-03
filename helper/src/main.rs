@@ -15,7 +15,6 @@ use reqwest::blocking::{Response, get};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
-mod adapter;
 mod extract;
 mod merge;
 
@@ -25,6 +24,8 @@ lazy_static! {
         Mutex::new(HashMap::new());
 }
 
+/// The cuda versions we're building against.
+/// Those are the feature names used in cudarc
 const CUDA_VERSIONS: &[&str] = &[
     "cuda-11040",
     "cuda-11050",
@@ -41,6 +42,9 @@ const CUDA_VERSIONS: &[&str] = &[
     "cuda-12080",
 ];
 
+/// Cuda is split in various modules in cudarc.
+/// Those configs decide how to download and
+/// export bindings with bindgen. See [`ModuleConfig`].
 fn create_modules() -> Vec<(String, ModuleConfig)> {
     vec![
         (
@@ -163,54 +167,64 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
     ]
 }
 
-const MOD_RS: &str = r#"
-#[cfg(feature = "dynamic-loading")]
-mod loaded;
-#[cfg(feature = "dynamic-loading")]
-pub use loaded::*;
+// const MOD_RS: &str = r#"
+// #[cfg(feature = "dynamic-loading")]
+// mod loaded;
+// #[cfg(feature = "dynamic-loading")]
+// pub use loaded::*;
+//
+// #[cfg(not(feature = "dynamic-loading"))]
+// mod linked;
+// #[cfg(not(feature = "dynamic-loading"))]
+// pub use linked::*;
+// "#;
 
-#[cfg(not(feature = "dynamic-loading"))]
-mod linked;
-#[cfg(not(feature = "dynamic-loading"))]
-pub use linked::*;
-"#;
+// const IMPORT_RS: &str = r#"
+// #[cfg(feature = "{0}")]
+// mod {1};
+// #[cfg(feature = "{0}")]
+// pub use {1}::*;
+// "#;
 
-const IMPORT_RS: &str = r#"
-#[cfg(feature = "{0}")]
-mod {1};
-#[cfg(feature = "{0}")]
-pub use {1}::*;
-"#;
-
-const IMPORT_LINKED_RS: &str = r#"
-mod unified;
-pub use unified::*;
-"#;
-
-const LOADING_RS: &str = r#"
-pub unsafe fn culib() -> &'static Lib {
-    static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
-    LIB.get_or_init(|| {
-        let lib_names = {0};
-        let choices: Vec<_> = lib_names.iter().map(|l| crate::get_lib_name_candidates(l)).flatten().collect();
-        for choice in choices.iter() {
-            if let Ok(lib) = Lib::new(choice) {
-                return lib;
-            }
-        }
-        crate::panic_no_lib_found(lib_names[0], &choices);
-    })
-}
-
-mod adapter;
-pub use adapter::*;
-"#;
+// const IMPORT_LINKED_RS: &str = r#"
+// mod unified;
+// pub use unified::*;
+// "#;
+//
+// const LOADING_RS: &str = r#"
+// pub unsafe fn culib() -> &'static Lib {
+//     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
+//     LIB.get_or_init(|| {
+//         let lib_names = {0};
+//         let choices: Vec<_> = lib_names.iter().map(|l| crate::get_lib_name_candidates(l)).flatten().collect();
+//         for choice in choices.iter() {
+//             if let Ok(lib) = Lib::new(choice) {
+//                 return lib;
+//             }
+//         }
+//         crate::panic_no_lib_found(lib_names[0], &choices);
+//     })
+// }
+//
+// mod adapter;
+// pub use adapter::*;
+// "#;
 
 #[derive(Debug)]
 struct ModuleConfig {
+    /// The name of the library within cuda/redist
     cuda: String,
+    /// The various filter used in bindgen to select
+    /// the symbols we re-expose
     filters: Filters,
+    /// The various names used to look for symbols
+    /// Those names are only used with the `dynamic-loading`
+    /// feature.
     libs: Vec<String>,
+    /// Some libraries (`cudnn` and `nccl` are external to
+    /// cuda/redist, and therefore require both custom
+    /// code and custom information to get the redistributable
+    /// archives
     redist: Option<Redist>,
 }
 
@@ -330,7 +344,6 @@ fn get_version(cuda_version: &str) -> Result<(u32, u32, u32)> {
 }
 
 fn download_response(url: &str) -> Result<Response> {
-    // Ok(get(url).expect(&format!("Failed to download {}", url)))
     Ok(get(url).unwrap())
 }
 
@@ -380,7 +393,6 @@ fn download_to_file(url: &str, dest: &Path, multi_progress: &MultiProgress) -> R
     let mut file =
         File::create(dest).context(format!("Failed to create file {}", dest.display()))?;
     log::debug!("Copying content");
-    // io::copy(&mut response, &mut file).context(format!("Failed to write to {}", dest.display()))?;
 
     let mut buffer = [0; 4096];
     loop {
@@ -509,7 +521,6 @@ fn get_redistrib_path(
     let filename =
         redist.expect("Expected a redistrib.json file for {major}.{minor}.{patch} at {base_url}");
 
-    // let filename = format!("redistrib_{}.{}.{}.json", major, minor, tmp_patch);
     let url = format!("{}/{}", base_url, filename);
     log::debug!("Trying {}", url);
 
@@ -607,7 +618,6 @@ fn generate_sys(
 ) -> Result<()> {
     let cuda_name = &module.cuda;
     let filters = &module.filters;
-    let lib_names = &module.libs;
 
     let archive_dir = get_archive(cuda_version, cuda_name, module_name, multi_progress)?;
 
@@ -615,7 +625,6 @@ fn generate_sys(
         cuda_version,
         module_name,
         filters,
-        lib_names,
         &archive_dir,
         primary_archives,
     )?;
@@ -626,24 +635,12 @@ fn create_system_folders(
     cuda_version: &str,
     module_name: &str,
     filters: &Filters,
-    lib_names: &[String],
     archive_directory: &Path,
     primary_archives: &[PathBuf],
 ) -> Result<()> {
     let sysdir = Path::new(".").join("out").join(module_name).join("sys");
     fs::create_dir_all(&sysdir)
         .context(format!("Failed to create directory {}", sysdir.display()))?;
-
-    let mut mod_file = File::create(sysdir.join("mod.rs")).context(format!(
-        "Failed to create {}",
-        sysdir.join("mod.rs").display()
-    ))?;
-    mod_file
-        .write_all(MOD_RS.trim().as_bytes())
-        .context(format!(
-            "Failed to write to {}",
-            sysdir.join("mod.rs").display()
-        ))?;
 
     let linked_dir = sysdir.join("linked");
     fs::create_dir_all(&linked_dir).context(format!(
@@ -706,7 +703,6 @@ fn create_system_folders(
         builder = builder.clang_arg(format!("-I{}", include.display()));
     }
 
-    let builder_loading = builder.clone();
     let bindings = builder.generate().context(format!(
         "Failed to generate bindings for {}",
         wrapper_h.display()
@@ -718,89 +714,7 @@ fn create_system_folders(
     ))?;
     log::debug!("Wrote linked bindings to {}", outfilename.display());
 
-    let import_content = get_linked_import_content();
-    File::create(linked_dir.join("mod.rs"))
-        .context(format!(
-            "Failed to create {}",
-            linked_dir.join("mod.rs").display()
-        ))?
-        .write_all(import_content.as_bytes())
-        .context(format!(
-            "Failed to write to {}",
-            linked_dir.join("mod.rs").display()
-        ))?;
-
-    let loaded_dir = sysdir.join("loaded");
-    fs::create_dir_all(&loaded_dir).context(format!(
-        "Failed to create directory {}",
-        loaded_dir.display()
-    ))?;
-
-    let loading_outfilename =
-        loaded_dir.join(format!("{}.rs", cuda_version.replace("cuda-", "sys_")));
-    // Generate dynamic loading bindings
-    let builder = builder_loading.dynamic_library_name("Lib");
-    let bindings = builder.generate().context({
-        format!(
-            "Failed to generate dynamic bindings for {}",
-            wrapper_h.display()
-        )
-    })?;
-
-    bindings.write_to_file(&loading_outfilename).context({
-        format!(
-            "Failed to write dynamic bindings to {}",
-            loading_outfilename.display()
-        )
-    })?;
-    log::debug!("Wrote loaded bindings to {}", loading_outfilename.display());
-
-    adapter::adapt(&outfilename, &loaded_dir.join("adapter.rs")).context(format!(
-        "Failed to run cudarc_helper for {}",
-        outfilename.display()
-    ))?;
-
-    let libnames = format!(
-        "[{}]",
-        lib_names
-            .iter()
-            .map(|l| format!("\"{}\"", l))
-            .collect::<Vec<_>>()
-            .join(", ")
-    );
-    let loading_rs = LOADING_RS.replace("{0}", &libnames);
-    let import_content = format!("{}\n{}", get_loaded_import_content(), loading_rs);
-
-    File::create(loaded_dir.join("mod.rs"))
-        .context(format!(
-            "Failed to create {}",
-            loaded_dir.join("mod.rs").display()
-        ))?
-        .write_all(import_content.as_bytes())
-        .context(format!(
-            "Failed to write to {}",
-            loaded_dir.join("mod.rs").display()
-        ))?;
-
     Ok(())
-}
-
-fn get_linked_import_content() -> String {
-    IMPORT_LINKED_RS.to_string()
-}
-
-fn get_loaded_import_content() -> String {
-    CUDA_VERSIONS
-        .iter()
-        .map(|cuda_version| {
-            IMPORT_RS
-                .replace("{0}", cuda_version)
-                .replace("{1}", &cuda_version.replace("cuda-", "sys_"))
-                .trim()
-                .to_string()
-        })
-        .collect::<Vec<_>>()
-        .join("\n")
 }
 
 fn generate_cudnn(
@@ -813,7 +727,6 @@ fn generate_cudnn(
 ) -> Result<()> {
     let cuda_name = &module.cuda;
     let filters = &module.filters;
-    let lib_names = &module.libs;
     let (cuda_major, _, _) = get_version(cuda_version)?;
     let url = &redist.url;
     let version_parts: Vec<&str> = redist.version.split('.').collect();
@@ -879,7 +792,6 @@ fn generate_cudnn(
         cuda_version,
         module_name,
         filters,
-        lib_names,
         &archive_dir,
         primary_archives,
     )
@@ -894,7 +806,6 @@ fn generate_nccl(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let filters = &module.filters;
-    let lib_names = &module.libs;
     let url = &redist.url;
     let version = &redist.version;
 
@@ -936,7 +847,6 @@ fn generate_nccl(
         cuda_version,
         module_name,
         filters,
-        lib_names,
         &archive_dir,
         primary_archives,
     )
@@ -945,7 +855,11 @@ fn generate_nccl(
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Args {
-    /// Name of the person to greet
+    /// Generating the bindings from scratch takes a long
+    /// time, but even if every archive is there too
+    /// because we have to check Nvidia's website for updates
+    /// Using this flag will skip that steps if you know you bindings
+    /// exist and are up to date.
     #[arg(long, action)]
     skip_bindings: bool,
 }
