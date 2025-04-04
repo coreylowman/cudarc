@@ -32,30 +32,32 @@ pub use self::cudaGraphDependencyType_enum as cudaGraphDependencyType;
     )
 )]
 pub use self::cudaOutputMode as cudaOutputMode_t;
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(any(feature = "cuda-11040"))]
 pub const CUDART_VERSION: u32 = 11040;
-#[cfg(any(feature = "cuda-11060"))]
+#[cfg(any(feature = "cuda-11050"))]
 pub const CUDART_VERSION: u32 = 11050;
-#[cfg(any(feature = "cuda-11070"))]
+#[cfg(any(feature = "cuda-11060"))]
 pub const CUDART_VERSION: u32 = 11060;
-#[cfg(any(feature = "cuda-11080"))]
+#[cfg(any(feature = "cuda-11070"))]
 pub const CUDART_VERSION: u32 = 11070;
-#[cfg(any(feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11080"))]
 pub const CUDART_VERSION: u32 = 11080;
-#[cfg(any(feature = "cuda-12010"))]
+#[cfg(any(feature = "cuda-12000"))]
 pub const CUDART_VERSION: u32 = 12000;
-#[cfg(any(feature = "cuda-12020"))]
+#[cfg(any(feature = "cuda-12010"))]
 pub const CUDART_VERSION: u32 = 12010;
-#[cfg(any(feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12020"))]
 pub const CUDART_VERSION: u32 = 12020;
-#[cfg(any(feature = "cuda-12040"))]
+#[cfg(any(feature = "cuda-12030"))]
 pub const CUDART_VERSION: u32 = 12030;
-#[cfg(any(feature = "cuda-12050"))]
+#[cfg(any(feature = "cuda-12040"))]
 pub const CUDART_VERSION: u32 = 12040;
-#[cfg(any(feature = "cuda-12060"))]
+#[cfg(any(feature = "cuda-12050"))]
 pub const CUDART_VERSION: u32 = 12050;
-#[cfg(any(feature = "cuda-12080"))]
+#[cfg(any(feature = "cuda-12060"))]
 pub const CUDART_VERSION: u32 = 12060;
+#[cfg(any(feature = "cuda-12080"))]
+pub const CUDART_VERSION: u32 = 12080;
 pub const CUDA_IPC_HANDLE_SIZE: u32 = 64;
 pub const cudaArrayColorAttachment: u32 = 32;
 pub const cudaArrayCubemap: u32 = 4;
@@ -93,13 +95,13 @@ pub const cudaDeviceMapHost: u32 = 8;
         feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010"
+        feature = "cuda-12000"
     )
 )]
 pub const cudaDeviceMask: u32 = 31;
 #[cfg(
     any(
+        feature = "cuda-12010",
         feature = "cuda-12020",
         feature = "cuda-12030",
         feature = "cuda-12040",
@@ -426,7 +428,7 @@ pub enum cudaCGScope {
     cudaCGScopeGrid = 1,
     cudaCGScopeMultiGrid = 2,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(any(feature = "cuda-11040"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaChannelFormatKind {
@@ -438,6 +440,7 @@ pub enum cudaChannelFormatKind {
 }
 #[cfg(
     any(
+        feature = "cuda-11050",
         feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",
@@ -447,8 +450,7 @@ pub enum cudaChannelFormatKind {
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(u32)]
@@ -486,6 +488,43 @@ pub enum cudaChannelFormatKind {
     cudaChannelFormatKindUnsignedBlockCompressed7 = 29,
     cudaChannelFormatKindUnsignedBlockCompressed7SRGB = 30,
 }
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaChannelFormatKind {
+    cudaChannelFormatKindSigned = 0,
+    cudaChannelFormatKindUnsigned = 1,
+    cudaChannelFormatKindFloat = 2,
+    cudaChannelFormatKindNone = 3,
+    cudaChannelFormatKindNV12 = 4,
+    cudaChannelFormatKindUnsignedNormalized8X1 = 5,
+    cudaChannelFormatKindUnsignedNormalized8X2 = 6,
+    cudaChannelFormatKindUnsignedNormalized8X4 = 7,
+    cudaChannelFormatKindUnsignedNormalized16X1 = 8,
+    cudaChannelFormatKindUnsignedNormalized16X2 = 9,
+    cudaChannelFormatKindUnsignedNormalized16X4 = 10,
+    cudaChannelFormatKindSignedNormalized8X1 = 11,
+    cudaChannelFormatKindSignedNormalized8X2 = 12,
+    cudaChannelFormatKindSignedNormalized8X4 = 13,
+    cudaChannelFormatKindSignedNormalized16X1 = 14,
+    cudaChannelFormatKindSignedNormalized16X2 = 15,
+    cudaChannelFormatKindSignedNormalized16X4 = 16,
+    cudaChannelFormatKindUnsignedBlockCompressed1 = 17,
+    cudaChannelFormatKindUnsignedBlockCompressed1SRGB = 18,
+    cudaChannelFormatKindUnsignedBlockCompressed2 = 19,
+    cudaChannelFormatKindUnsignedBlockCompressed2SRGB = 20,
+    cudaChannelFormatKindUnsignedBlockCompressed3 = 21,
+    cudaChannelFormatKindUnsignedBlockCompressed3SRGB = 22,
+    cudaChannelFormatKindUnsignedBlockCompressed4 = 23,
+    cudaChannelFormatKindSignedBlockCompressed4 = 24,
+    cudaChannelFormatKindUnsignedBlockCompressed5 = 25,
+    cudaChannelFormatKindSignedBlockCompressed5 = 26,
+    cudaChannelFormatKindUnsignedBlockCompressed6H = 27,
+    cudaChannelFormatKindSignedBlockCompressed6H = 28,
+    cudaChannelFormatKindUnsignedBlockCompressed7 = 29,
+    cudaChannelFormatKindUnsignedBlockCompressed7SRGB = 30,
+    cudaChannelFormatKindUnsignedNormalized1010102 = 31,
+}
 #[cfg(
     any(
         feature = "cuda-11080",
@@ -519,8 +558,7 @@ pub enum cudaComputeMode {
         feature = "cuda-11040",
         feature = "cuda-11050",
         feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080"
+        feature = "cuda-11070"
     )
 )]
 #[repr(u32)]
@@ -557,14 +595,14 @@ pub enum cudaDataType_t {
 }
 #[cfg(
     any(
+        feature = "cuda-11080",
         feature = "cuda-12000",
         feature = "cuda-12010",
         feature = "cuda-12020",
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(u32)]
@@ -601,7 +639,46 @@ pub enum cudaDataType_t {
     CUDA_R_8F_E4M3 = 28,
     CUDA_R_8F_E5M2 = 29,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaDataType_t {
+    CUDA_R_16F = 2,
+    CUDA_C_16F = 6,
+    CUDA_R_16BF = 14,
+    CUDA_C_16BF = 15,
+    CUDA_R_32F = 0,
+    CUDA_C_32F = 4,
+    CUDA_R_64F = 1,
+    CUDA_C_64F = 5,
+    CUDA_R_4I = 16,
+    CUDA_C_4I = 17,
+    CUDA_R_4U = 18,
+    CUDA_C_4U = 19,
+    CUDA_R_8I = 3,
+    CUDA_C_8I = 7,
+    CUDA_R_8U = 8,
+    CUDA_C_8U = 9,
+    CUDA_R_16I = 20,
+    CUDA_C_16I = 21,
+    CUDA_R_16U = 22,
+    CUDA_C_16U = 23,
+    CUDA_R_32I = 10,
+    CUDA_C_32I = 11,
+    CUDA_R_32U = 12,
+    CUDA_C_32U = 13,
+    CUDA_R_64I = 24,
+    CUDA_C_64I = 25,
+    CUDA_R_64U = 26,
+    CUDA_C_64U = 27,
+    CUDA_R_8F_E4M3 = 28,
+    CUDA_R_8F_E5M2 = 29,
+    CUDA_R_8F_UE8M0 = 30,
+    CUDA_R_6F_E2M3 = 31,
+    CUDA_R_6F_E3M2 = 32,
+    CUDA_R_4F_E2M1 = 33,
+}
+#[cfg(any(feature = "cuda-11040"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -719,7 +796,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrMemoryPoolSupportedHandleTypes = 119,
     cudaDevAttrMax = 120,
 }
-#[cfg(any(feature = "cuda-11060"))]
+#[cfg(any(feature = "cuda-11050"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -837,7 +914,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrMemoryPoolSupportedHandleTypes = 119,
     cudaDevAttrMax = 120,
 }
-#[cfg(any(feature = "cuda-11070", feature = "cuda-11080"))]
+#[cfg(any(feature = "cuda-11060", feature = "cuda-11070"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -956,7 +1033,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrDeferredMappingCudaArraySupported = 121,
     cudaDevAttrMax = 122,
 }
-#[cfg(any(feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11080"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -1076,7 +1153,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrDeferredMappingCudaArraySupported = 121,
     cudaDevAttrMax = 122,
 }
-#[cfg(any(feature = "cuda-12010"))]
+#[cfg(any(feature = "cuda-12000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -1201,7 +1278,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrMemSyncDomainCount = 126,
     cudaDevAttrMax = 127,
 }
-#[cfg(any(feature = "cuda-12020"))]
+#[cfg(any(feature = "cuda-12010"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -1330,7 +1407,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrReserved132 = 132,
     cudaDevAttrMax = 133,
 }
-#[cfg(any(feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12020"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -1462,7 +1539,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrHostNumaId = 134,
     cudaDevAttrMax = 135,
 }
-#[cfg(any(feature = "cuda-12040", feature = "cuda-12050"))]
+#[cfg(any(feature = "cuda-12030", feature = "cuda-12040"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -1595,7 +1672,7 @@ pub enum cudaDeviceAttr {
     cudaDevAttrHostNumaId = 134,
     cudaDevAttrMax = 135,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080"))]
+#[cfg(any(feature = "cuda-12050", feature = "cuda-12060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDeviceAttr {
@@ -1729,6 +1806,143 @@ pub enum cudaDeviceAttr {
     cudaDevAttrD3D12CigSupported = 135,
     cudaDevAttrMax = 136,
 }
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaDeviceAttr {
+    cudaDevAttrMaxThreadsPerBlock = 1,
+    cudaDevAttrMaxBlockDimX = 2,
+    cudaDevAttrMaxBlockDimY = 3,
+    cudaDevAttrMaxBlockDimZ = 4,
+    cudaDevAttrMaxGridDimX = 5,
+    cudaDevAttrMaxGridDimY = 6,
+    cudaDevAttrMaxGridDimZ = 7,
+    cudaDevAttrMaxSharedMemoryPerBlock = 8,
+    cudaDevAttrTotalConstantMemory = 9,
+    cudaDevAttrWarpSize = 10,
+    cudaDevAttrMaxPitch = 11,
+    cudaDevAttrMaxRegistersPerBlock = 12,
+    cudaDevAttrClockRate = 13,
+    cudaDevAttrTextureAlignment = 14,
+    cudaDevAttrGpuOverlap = 15,
+    cudaDevAttrMultiProcessorCount = 16,
+    cudaDevAttrKernelExecTimeout = 17,
+    cudaDevAttrIntegrated = 18,
+    cudaDevAttrCanMapHostMemory = 19,
+    cudaDevAttrComputeMode = 20,
+    cudaDevAttrMaxTexture1DWidth = 21,
+    cudaDevAttrMaxTexture2DWidth = 22,
+    cudaDevAttrMaxTexture2DHeight = 23,
+    cudaDevAttrMaxTexture3DWidth = 24,
+    cudaDevAttrMaxTexture3DHeight = 25,
+    cudaDevAttrMaxTexture3DDepth = 26,
+    cudaDevAttrMaxTexture2DLayeredWidth = 27,
+    cudaDevAttrMaxTexture2DLayeredHeight = 28,
+    cudaDevAttrMaxTexture2DLayeredLayers = 29,
+    cudaDevAttrSurfaceAlignment = 30,
+    cudaDevAttrConcurrentKernels = 31,
+    cudaDevAttrEccEnabled = 32,
+    cudaDevAttrPciBusId = 33,
+    cudaDevAttrPciDeviceId = 34,
+    cudaDevAttrTccDriver = 35,
+    cudaDevAttrMemoryClockRate = 36,
+    cudaDevAttrGlobalMemoryBusWidth = 37,
+    cudaDevAttrL2CacheSize = 38,
+    cudaDevAttrMaxThreadsPerMultiProcessor = 39,
+    cudaDevAttrAsyncEngineCount = 40,
+    cudaDevAttrUnifiedAddressing = 41,
+    cudaDevAttrMaxTexture1DLayeredWidth = 42,
+    cudaDevAttrMaxTexture1DLayeredLayers = 43,
+    cudaDevAttrMaxTexture2DGatherWidth = 45,
+    cudaDevAttrMaxTexture2DGatherHeight = 46,
+    cudaDevAttrMaxTexture3DWidthAlt = 47,
+    cudaDevAttrMaxTexture3DHeightAlt = 48,
+    cudaDevAttrMaxTexture3DDepthAlt = 49,
+    cudaDevAttrPciDomainId = 50,
+    cudaDevAttrTexturePitchAlignment = 51,
+    cudaDevAttrMaxTextureCubemapWidth = 52,
+    cudaDevAttrMaxTextureCubemapLayeredWidth = 53,
+    cudaDevAttrMaxTextureCubemapLayeredLayers = 54,
+    cudaDevAttrMaxSurface1DWidth = 55,
+    cudaDevAttrMaxSurface2DWidth = 56,
+    cudaDevAttrMaxSurface2DHeight = 57,
+    cudaDevAttrMaxSurface3DWidth = 58,
+    cudaDevAttrMaxSurface3DHeight = 59,
+    cudaDevAttrMaxSurface3DDepth = 60,
+    cudaDevAttrMaxSurface1DLayeredWidth = 61,
+    cudaDevAttrMaxSurface1DLayeredLayers = 62,
+    cudaDevAttrMaxSurface2DLayeredWidth = 63,
+    cudaDevAttrMaxSurface2DLayeredHeight = 64,
+    cudaDevAttrMaxSurface2DLayeredLayers = 65,
+    cudaDevAttrMaxSurfaceCubemapWidth = 66,
+    cudaDevAttrMaxSurfaceCubemapLayeredWidth = 67,
+    cudaDevAttrMaxSurfaceCubemapLayeredLayers = 68,
+    cudaDevAttrMaxTexture1DLinearWidth = 69,
+    cudaDevAttrMaxTexture2DLinearWidth = 70,
+    cudaDevAttrMaxTexture2DLinearHeight = 71,
+    cudaDevAttrMaxTexture2DLinearPitch = 72,
+    cudaDevAttrMaxTexture2DMipmappedWidth = 73,
+    cudaDevAttrMaxTexture2DMipmappedHeight = 74,
+    cudaDevAttrComputeCapabilityMajor = 75,
+    cudaDevAttrComputeCapabilityMinor = 76,
+    cudaDevAttrMaxTexture1DMipmappedWidth = 77,
+    cudaDevAttrStreamPrioritiesSupported = 78,
+    cudaDevAttrGlobalL1CacheSupported = 79,
+    cudaDevAttrLocalL1CacheSupported = 80,
+    cudaDevAttrMaxSharedMemoryPerMultiprocessor = 81,
+    cudaDevAttrMaxRegistersPerMultiprocessor = 82,
+    cudaDevAttrManagedMemory = 83,
+    cudaDevAttrIsMultiGpuBoard = 84,
+    cudaDevAttrMultiGpuBoardGroupID = 85,
+    cudaDevAttrHostNativeAtomicSupported = 86,
+    cudaDevAttrSingleToDoublePrecisionPerfRatio = 87,
+    cudaDevAttrPageableMemoryAccess = 88,
+    cudaDevAttrConcurrentManagedAccess = 89,
+    cudaDevAttrComputePreemptionSupported = 90,
+    cudaDevAttrCanUseHostPointerForRegisteredMem = 91,
+    cudaDevAttrReserved92 = 92,
+    cudaDevAttrReserved93 = 93,
+    cudaDevAttrReserved94 = 94,
+    cudaDevAttrCooperativeLaunch = 95,
+    cudaDevAttrCooperativeMultiDeviceLaunch = 96,
+    cudaDevAttrMaxSharedMemoryPerBlockOptin = 97,
+    cudaDevAttrCanFlushRemoteWrites = 98,
+    cudaDevAttrHostRegisterSupported = 99,
+    cudaDevAttrPageableMemoryAccessUsesHostPageTables = 100,
+    cudaDevAttrDirectManagedMemAccessFromHost = 101,
+    cudaDevAttrMaxBlocksPerMultiprocessor = 106,
+    cudaDevAttrMaxPersistingL2CacheSize = 108,
+    cudaDevAttrMaxAccessPolicyWindowSize = 109,
+    cudaDevAttrReservedSharedMemoryPerBlock = 111,
+    cudaDevAttrSparseCudaArraySupported = 112,
+    cudaDevAttrHostRegisterReadOnlySupported = 113,
+    cudaDevAttrTimelineSemaphoreInteropSupported = 114,
+    cudaDevAttrMemoryPoolsSupported = 115,
+    cudaDevAttrGPUDirectRDMASupported = 116,
+    cudaDevAttrGPUDirectRDMAFlushWritesOptions = 117,
+    cudaDevAttrGPUDirectRDMAWritesOrdering = 118,
+    cudaDevAttrMemoryPoolSupportedHandleTypes = 119,
+    cudaDevAttrClusterLaunch = 120,
+    cudaDevAttrDeferredMappingCudaArraySupported = 121,
+    cudaDevAttrReserved122 = 122,
+    cudaDevAttrReserved123 = 123,
+    cudaDevAttrReserved124 = 124,
+    cudaDevAttrIpcEventSupport = 125,
+    cudaDevAttrMemSyncDomainCount = 126,
+    cudaDevAttrReserved127 = 127,
+    cudaDevAttrReserved128 = 128,
+    cudaDevAttrReserved129 = 129,
+    cudaDevAttrNumaConfig = 130,
+    cudaDevAttrNumaId = 131,
+    cudaDevAttrReserved132 = 132,
+    cudaDevAttrMpsEnabled = 133,
+    cudaDevAttrHostNumaId = 134,
+    cudaDevAttrD3D12CigSupported = 135,
+    cudaDevAttrGpuPciDeviceId = 139,
+    cudaDevAttrGpuPciSubsystemId = 140,
+    cudaDevAttrHostNumaMultinodeIpcSupported = 143,
+    cudaDevAttrMax = 144,
+}
 #[cfg(
     any(
         feature = "cuda-12020",
@@ -1777,8 +1991,7 @@ pub enum cudaDriverEntryPointQueryResult {
         feature = "cuda-11040",
         feature = "cuda-11050",
         feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080"
+        feature = "cuda-11070"
     )
 )]
 #[repr(u32)]
@@ -1908,7 +2121,7 @@ pub enum cudaError {
     cudaErrorUnknown = 999,
     cudaErrorApiFailureBase = 10000,
 }
-#[cfg(any(feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11080"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaError {
@@ -2038,7 +2251,7 @@ pub enum cudaError {
     cudaErrorUnknown = 999,
     cudaErrorApiFailureBase = 10000,
 }
-#[cfg(any(feature = "cuda-12010"))]
+#[cfg(any(feature = "cuda-12000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaError {
@@ -2170,7 +2383,7 @@ pub enum cudaError {
     cudaErrorUnknown = 999,
     cudaErrorApiFailureBase = 10000,
 }
-#[cfg(any(feature = "cuda-12020", feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12010", feature = "cuda-12020"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaError {
@@ -2303,7 +2516,7 @@ pub enum cudaError {
     cudaErrorUnknown = 999,
     cudaErrorApiFailureBase = 10000,
 }
-#[cfg(any(feature = "cuda-12040", feature = "cuda-12050", feature = "cuda-12060"))]
+#[cfg(any(feature = "cuda-12030", feature = "cuda-12040", feature = "cuda-12050"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaError {
@@ -2437,7 +2650,7 @@ pub enum cudaError {
     cudaErrorUnknown = 999,
     cudaErrorApiFailureBase = 10000,
 }
-#[cfg(any(feature = "cuda-12080"))]
+#[cfg(any(feature = "cuda-12060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaError {
@@ -2574,6 +2787,145 @@ pub enum cudaError {
     cudaErrorUnknown = 999,
     cudaErrorApiFailureBase = 10000,
 }
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaError {
+    cudaSuccess = 0,
+    cudaErrorInvalidValue = 1,
+    cudaErrorMemoryAllocation = 2,
+    cudaErrorInitializationError = 3,
+    cudaErrorCudartUnloading = 4,
+    cudaErrorProfilerDisabled = 5,
+    cudaErrorProfilerNotInitialized = 6,
+    cudaErrorProfilerAlreadyStarted = 7,
+    cudaErrorProfilerAlreadyStopped = 8,
+    cudaErrorInvalidConfiguration = 9,
+    cudaErrorInvalidPitchValue = 12,
+    cudaErrorInvalidSymbol = 13,
+    cudaErrorInvalidHostPointer = 16,
+    cudaErrorInvalidDevicePointer = 17,
+    cudaErrorInvalidTexture = 18,
+    cudaErrorInvalidTextureBinding = 19,
+    cudaErrorInvalidChannelDescriptor = 20,
+    cudaErrorInvalidMemcpyDirection = 21,
+    cudaErrorAddressOfConstant = 22,
+    cudaErrorTextureFetchFailed = 23,
+    cudaErrorTextureNotBound = 24,
+    cudaErrorSynchronizationError = 25,
+    cudaErrorInvalidFilterSetting = 26,
+    cudaErrorInvalidNormSetting = 27,
+    cudaErrorMixedDeviceExecution = 28,
+    cudaErrorNotYetImplemented = 31,
+    cudaErrorMemoryValueTooLarge = 32,
+    cudaErrorStubLibrary = 34,
+    cudaErrorInsufficientDriver = 35,
+    cudaErrorCallRequiresNewerDriver = 36,
+    cudaErrorInvalidSurface = 37,
+    cudaErrorDuplicateVariableName = 43,
+    cudaErrorDuplicateTextureName = 44,
+    cudaErrorDuplicateSurfaceName = 45,
+    cudaErrorDevicesUnavailable = 46,
+    cudaErrorIncompatibleDriverContext = 49,
+    cudaErrorMissingConfiguration = 52,
+    cudaErrorPriorLaunchFailure = 53,
+    cudaErrorLaunchMaxDepthExceeded = 65,
+    cudaErrorLaunchFileScopedTex = 66,
+    cudaErrorLaunchFileScopedSurf = 67,
+    cudaErrorSyncDepthExceeded = 68,
+    cudaErrorLaunchPendingCountExceeded = 69,
+    cudaErrorInvalidDeviceFunction = 98,
+    cudaErrorNoDevice = 100,
+    cudaErrorInvalidDevice = 101,
+    cudaErrorDeviceNotLicensed = 102,
+    cudaErrorSoftwareValidityNotEstablished = 103,
+    cudaErrorStartupFailure = 127,
+    cudaErrorInvalidKernelImage = 200,
+    cudaErrorDeviceUninitialized = 201,
+    cudaErrorMapBufferObjectFailed = 205,
+    cudaErrorUnmapBufferObjectFailed = 206,
+    cudaErrorArrayIsMapped = 207,
+    cudaErrorAlreadyMapped = 208,
+    cudaErrorNoKernelImageForDevice = 209,
+    cudaErrorAlreadyAcquired = 210,
+    cudaErrorNotMapped = 211,
+    cudaErrorNotMappedAsArray = 212,
+    cudaErrorNotMappedAsPointer = 213,
+    cudaErrorECCUncorrectable = 214,
+    cudaErrorUnsupportedLimit = 215,
+    cudaErrorDeviceAlreadyInUse = 216,
+    cudaErrorPeerAccessUnsupported = 217,
+    cudaErrorInvalidPtx = 218,
+    cudaErrorInvalidGraphicsContext = 219,
+    cudaErrorNvlinkUncorrectable = 220,
+    cudaErrorJitCompilerNotFound = 221,
+    cudaErrorUnsupportedPtxVersion = 222,
+    cudaErrorJitCompilationDisabled = 223,
+    cudaErrorUnsupportedExecAffinity = 224,
+    cudaErrorUnsupportedDevSideSync = 225,
+    cudaErrorContained = 226,
+    cudaErrorInvalidSource = 300,
+    cudaErrorFileNotFound = 301,
+    cudaErrorSharedObjectSymbolNotFound = 302,
+    cudaErrorSharedObjectInitFailed = 303,
+    cudaErrorOperatingSystem = 304,
+    cudaErrorInvalidResourceHandle = 400,
+    cudaErrorIllegalState = 401,
+    cudaErrorLossyQuery = 402,
+    cudaErrorSymbolNotFound = 500,
+    cudaErrorNotReady = 600,
+    cudaErrorIllegalAddress = 700,
+    cudaErrorLaunchOutOfResources = 701,
+    cudaErrorLaunchTimeout = 702,
+    cudaErrorLaunchIncompatibleTexturing = 703,
+    cudaErrorPeerAccessAlreadyEnabled = 704,
+    cudaErrorPeerAccessNotEnabled = 705,
+    cudaErrorSetOnActiveProcess = 708,
+    cudaErrorContextIsDestroyed = 709,
+    cudaErrorAssert = 710,
+    cudaErrorTooManyPeers = 711,
+    cudaErrorHostMemoryAlreadyRegistered = 712,
+    cudaErrorHostMemoryNotRegistered = 713,
+    cudaErrorHardwareStackError = 714,
+    cudaErrorIllegalInstruction = 715,
+    cudaErrorMisalignedAddress = 716,
+    cudaErrorInvalidAddressSpace = 717,
+    cudaErrorInvalidPc = 718,
+    cudaErrorLaunchFailure = 719,
+    cudaErrorCooperativeLaunchTooLarge = 720,
+    cudaErrorTensorMemoryLeak = 721,
+    cudaErrorNotPermitted = 800,
+    cudaErrorNotSupported = 801,
+    cudaErrorSystemNotReady = 802,
+    cudaErrorSystemDriverMismatch = 803,
+    cudaErrorCompatNotSupportedOnDevice = 804,
+    cudaErrorMpsConnectionFailed = 805,
+    cudaErrorMpsRpcFailure = 806,
+    cudaErrorMpsServerNotReady = 807,
+    cudaErrorMpsMaxClientsReached = 808,
+    cudaErrorMpsMaxConnectionsReached = 809,
+    cudaErrorMpsClientTerminated = 810,
+    cudaErrorCdpNotSupported = 811,
+    cudaErrorCdpVersionMismatch = 812,
+    cudaErrorStreamCaptureUnsupported = 900,
+    cudaErrorStreamCaptureInvalidated = 901,
+    cudaErrorStreamCaptureMerge = 902,
+    cudaErrorStreamCaptureUnmatched = 903,
+    cudaErrorStreamCaptureUnjoined = 904,
+    cudaErrorStreamCaptureIsolation = 905,
+    cudaErrorStreamCaptureImplicit = 906,
+    cudaErrorCapturedEvent = 907,
+    cudaErrorStreamCaptureWrongThread = 908,
+    cudaErrorTimeout = 909,
+    cudaErrorGraphExecUpdateFailure = 910,
+    cudaErrorExternalDevice = 911,
+    cudaErrorInvalidClusterSize = 912,
+    cudaErrorFunctionNotLoaded = 913,
+    cudaErrorInvalidResourceType = 914,
+    cudaErrorInvalidResourceConfiguration = 915,
+    cudaErrorUnknown = 999,
+    cudaErrorApiFailureBase = 10000,
+}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaExternalMemoryHandleType {
@@ -2622,8 +2974,7 @@ pub enum cudaFlushGPUDirectRDMAWritesTarget {
         feature = "cuda-11040",
         feature = "cuda-11050",
         feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080"
+        feature = "cuda-11070"
     )
 )]
 #[repr(u32)]
@@ -2635,6 +2986,7 @@ pub enum cudaFuncAttribute {
 }
 #[cfg(
     any(
+        feature = "cuda-11080",
         feature = "cuda-12000",
         feature = "cuda-12010",
         feature = "cuda-12020",
@@ -2699,8 +3051,7 @@ pub enum cudaGraphConditionalHandleFlags {
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(u32)]
@@ -2708,6 +3059,14 @@ pub enum cudaGraphConditionalHandleFlags {
 pub enum cudaGraphConditionalNodeType {
     cudaGraphCondTypeIf = 0,
     cudaGraphCondTypeWhile = 1,
+}
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaGraphConditionalNodeType {
+    cudaGraphCondTypeIf = 0,
+    cudaGraphCondTypeWhile = 1,
+    cudaGraphCondTypeSwitch = 2,
 }
 #[cfg(
     any(
@@ -2718,8 +3077,7 @@ pub enum cudaGraphConditionalNodeType {
         feature = "cuda-11080",
         feature = "cuda-12000",
         feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030"
+        feature = "cuda-12020"
     )
 )]
 #[repr(u32)]
@@ -2738,6 +3096,7 @@ pub enum cudaGraphDebugDotFlags {
 }
 #[cfg(
     any(
+        feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
         feature = "cuda-12060",
@@ -2774,7 +3133,7 @@ pub enum cudaGraphDependencyType_enum {
     cudaGraphDependencyTypeDefault = 0,
     cudaGraphDependencyTypeProgrammatic = 1,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaGraphExecUpdateResult {
@@ -2789,6 +3148,7 @@ pub enum cudaGraphExecUpdateResult {
 }
 #[cfg(
     any(
+        feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",
         feature = "cuda-12000",
@@ -2814,20 +3174,13 @@ pub enum cudaGraphExecUpdateResult {
     cudaGraphExecUpdateErrorUnsupportedFunctionChange = 7,
     cudaGraphExecUpdateErrorAttributesChanged = 8,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070"
-    )
-)]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaGraphInstantiateFlags {
     cudaGraphInstantiateFlagAutoFreeOnLaunch = 1,
 }
-#[cfg(any(feature = "cuda-11080", feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11070", feature = "cuda-11080"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaGraphInstantiateFlags {
@@ -2836,6 +3189,7 @@ pub enum cudaGraphInstantiateFlags {
 }
 #[cfg(
     any(
+        feature = "cuda-12000",
         feature = "cuda-12010",
         feature = "cuda-12020",
         feature = "cuda-12030",
@@ -2861,8 +3215,7 @@ pub enum cudaGraphInstantiateFlags {
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(u32)]
@@ -2873,6 +3226,17 @@ pub enum cudaGraphInstantiateResult {
     cudaGraphInstantiateInvalidStructure = 2,
     cudaGraphInstantiateNodeOperationNotSupported = 3,
     cudaGraphInstantiateMultipleDevicesNotSupported = 4,
+}
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaGraphInstantiateResult {
+    cudaGraphInstantiateSuccess = 0,
+    cudaGraphInstantiateError = 1,
+    cudaGraphInstantiateInvalidStructure = 2,
+    cudaGraphInstantiateNodeOperationNotSupported = 3,
+    cudaGraphInstantiateMultipleDevicesNotSupported = 4,
+    cudaGraphInstantiateConditionalHandleUnused = 5,
 }
 #[cfg(
     any(
@@ -2890,7 +3254,7 @@ pub enum cudaGraphKernelNodeField {
     cudaGraphKernelNodeFieldParam = 2,
     cudaGraphKernelNodeFieldEnabled = 3,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaGraphMemAttributeType {
@@ -2901,6 +3265,7 @@ pub enum cudaGraphMemAttributeType {
 }
 #[cfg(
     any(
+        feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",
         feature = "cuda-12000",
@@ -2930,8 +3295,7 @@ pub enum cudaGraphMemAttributeType {
         feature = "cuda-11080",
         feature = "cuda-12000",
         feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030"
+        feature = "cuda-12020"
     )
 )]
 #[repr(u32)]
@@ -2953,6 +3317,7 @@ pub enum cudaGraphNodeType {
 }
 #[cfg(
     any(
+        feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
         feature = "cuda-12060",
@@ -3040,21 +3405,22 @@ pub enum cudaJit_Fallback {
     cudaPreferPtx = 0,
     cudaPreferBinary = 1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070"
-    )
-)]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaKernelNodeAttrID {
     cudaKernelNodeAttributeAccessPolicyWindow = 1,
     cudaKernelNodeAttributeCooperative = 2,
 }
-#[cfg(any(feature = "cuda-11080", feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11070"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaKernelNodeAttrID {
+    cudaKernelNodeAttributeAccessPolicyWindow = 1,
+    cudaKernelNodeAttributeCooperative = 2,
+    cudaKernelNodeAttributePriority = 8,
+}
+#[cfg(any(feature = "cuda-11080"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaLaunchAttributeID {
@@ -3068,7 +3434,7 @@ pub enum cudaLaunchAttributeID {
     cudaLaunchAttributeProgrammaticEvent = 7,
     cudaLaunchAttributePriority = 8,
 }
-#[cfg(any(feature = "cuda-12010", feature = "cuda-12020", feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12000", feature = "cuda-12010", feature = "cuda-12020"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaLaunchAttributeID {
@@ -3083,6 +3449,23 @@ pub enum cudaLaunchAttributeID {
     cudaLaunchAttributePriority = 8,
     cudaLaunchAttributeMemSyncDomainMap = 9,
     cudaLaunchAttributeMemSyncDomain = 10,
+}
+#[cfg(any(feature = "cuda-12030"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaLaunchAttributeID {
+    cudaLaunchAttributeIgnore = 0,
+    cudaLaunchAttributeAccessPolicyWindow = 1,
+    cudaLaunchAttributeCooperative = 2,
+    cudaLaunchAttributeSynchronizationPolicy = 3,
+    cudaLaunchAttributeClusterDimension = 4,
+    cudaLaunchAttributeClusterSchedulingPolicyPreference = 5,
+    cudaLaunchAttributeProgrammaticStreamSerialization = 6,
+    cudaLaunchAttributeProgrammaticEvent = 7,
+    cudaLaunchAttributePriority = 8,
+    cudaLaunchAttributeMemSyncDomainMap = 9,
+    cudaLaunchAttributeMemSyncDomain = 10,
+    cudaLaunchAttributeLaunchCompletionEvent = 12,
 }
 #[cfg(any(feature = "cuda-12040"))]
 #[repr(u32)]
@@ -3100,8 +3483,9 @@ pub enum cudaLaunchAttributeID {
     cudaLaunchAttributeMemSyncDomainMap = 9,
     cudaLaunchAttributeMemSyncDomain = 10,
     cudaLaunchAttributeLaunchCompletionEvent = 12,
+    cudaLaunchAttributeDeviceUpdatableKernelNode = 13,
 }
-#[cfg(any(feature = "cuda-12050"))]
+#[cfg(any(feature = "cuda-12050", feature = "cuda-12060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaLaunchAttributeID {
@@ -3118,8 +3502,9 @@ pub enum cudaLaunchAttributeID {
     cudaLaunchAttributeMemSyncDomain = 10,
     cudaLaunchAttributeLaunchCompletionEvent = 12,
     cudaLaunchAttributeDeviceUpdatableKernelNode = 13,
+    cudaLaunchAttributePreferredSharedMemoryCarveout = 14,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080"))]
+#[cfg(any(feature = "cuda-12080"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaLaunchAttributeID {
@@ -3134,6 +3519,7 @@ pub enum cudaLaunchAttributeID {
     cudaLaunchAttributePriority = 8,
     cudaLaunchAttributeMemSyncDomainMap = 9,
     cudaLaunchAttributeMemSyncDomain = 10,
+    cudaLaunchAttributePreferredClusterDimension = 11,
     cudaLaunchAttributeLaunchCompletionEvent = 12,
     cudaLaunchAttributeDeviceUpdatableKernelNode = 13,
     cudaLaunchAttributePreferredSharedMemoryCarveout = 14,
@@ -3191,8 +3577,7 @@ pub enum cudaMemAccessFlags {
         feature = "cuda-12000",
         feature = "cuda-12010",
         feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040"
+        feature = "cuda-12030"
     )
 )]
 #[repr(u32)]
@@ -3203,7 +3588,14 @@ pub enum cudaMemAllocationHandleType {
     cudaMemHandleTypeWin32 = 2,
     cudaMemHandleTypeWin32Kmt = 4,
 }
-#[cfg(any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080"))]
+#[cfg(
+    any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    )
+)]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaMemAllocationHandleType {
@@ -3228,8 +3620,7 @@ pub enum cudaMemAllocationType {
         feature = "cuda-11070",
         feature = "cuda-11080",
         feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
+        feature = "cuda-12010"
     )
 )]
 #[repr(u32)]
@@ -3240,6 +3631,7 @@ pub enum cudaMemLocationType {
 }
 #[cfg(
     any(
+        feature = "cuda-12020",
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
@@ -3276,8 +3668,7 @@ pub enum cudaMemPoolAttr {
         feature = "cuda-11070",
         feature = "cuda-11080",
         feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
+        feature = "cuda-12010"
     )
 )]
 #[repr(u32)]
@@ -3290,6 +3681,7 @@ pub enum cudaMemRangeAttribute {
 }
 #[cfg(
     any(
+        feature = "cuda-12020",
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
@@ -3759,8 +4151,7 @@ pub struct cudaConditionalNodeParams {
         feature = "cuda-11050",
         feature = "cuda-11060",
         feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
+        feature = "cuda-11080"
     )
 )]
 #[repr(C)]
@@ -3847,7 +4238,7 @@ pub struct cudaDeviceProp {
     pub accessPolicyMaxWindowSize: ::core::ffi::c_int,
     pub reservedSharedMemPerBlock: usize,
 }
-#[cfg(any(feature = "cuda-12010"))]
+#[cfg(any(feature = "cuda-12000"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaDeviceProp {
@@ -3946,7 +4337,7 @@ pub struct cudaDeviceProp {
     pub unifiedFunctionPointers: ::core::ffi::c_int,
     pub reserved: [::core::ffi::c_int; 63usize],
 }
-#[cfg(any(feature = "cuda-12020", feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12010", feature = "cuda-12020"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaDeviceProp {
@@ -4048,10 +4439,10 @@ pub struct cudaDeviceProp {
 }
 #[cfg(
     any(
+        feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(C)]
@@ -4153,6 +4544,105 @@ pub struct cudaDeviceProp {
     pub reserved2: [::core::ffi::c_int; 2usize],
     pub reserved1: [::core::ffi::c_int; 1usize],
     pub reserved: [::core::ffi::c_int; 60usize],
+}
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cudaDeviceProp {
+    pub name: [::core::ffi::c_char; 256usize],
+    pub uuid: cudaUUID_t,
+    pub luid: [::core::ffi::c_char; 8usize],
+    pub luidDeviceNodeMask: ::core::ffi::c_uint,
+    pub totalGlobalMem: usize,
+    pub sharedMemPerBlock: usize,
+    pub regsPerBlock: ::core::ffi::c_int,
+    pub warpSize: ::core::ffi::c_int,
+    pub memPitch: usize,
+    pub maxThreadsPerBlock: ::core::ffi::c_int,
+    pub maxThreadsDim: [::core::ffi::c_int; 3usize],
+    pub maxGridSize: [::core::ffi::c_int; 3usize],
+    pub clockRate: ::core::ffi::c_int,
+    pub totalConstMem: usize,
+    pub major: ::core::ffi::c_int,
+    pub minor: ::core::ffi::c_int,
+    pub textureAlignment: usize,
+    pub texturePitchAlignment: usize,
+    pub deviceOverlap: ::core::ffi::c_int,
+    pub multiProcessorCount: ::core::ffi::c_int,
+    pub kernelExecTimeoutEnabled: ::core::ffi::c_int,
+    pub integrated: ::core::ffi::c_int,
+    pub canMapHostMemory: ::core::ffi::c_int,
+    pub computeMode: ::core::ffi::c_int,
+    pub maxTexture1D: ::core::ffi::c_int,
+    pub maxTexture1DMipmap: ::core::ffi::c_int,
+    pub maxTexture1DLinear: ::core::ffi::c_int,
+    pub maxTexture2D: [::core::ffi::c_int; 2usize],
+    pub maxTexture2DMipmap: [::core::ffi::c_int; 2usize],
+    pub maxTexture2DLinear: [::core::ffi::c_int; 3usize],
+    pub maxTexture2DGather: [::core::ffi::c_int; 2usize],
+    pub maxTexture3D: [::core::ffi::c_int; 3usize],
+    pub maxTexture3DAlt: [::core::ffi::c_int; 3usize],
+    pub maxTextureCubemap: ::core::ffi::c_int,
+    pub maxTexture1DLayered: [::core::ffi::c_int; 2usize],
+    pub maxTexture2DLayered: [::core::ffi::c_int; 3usize],
+    pub maxTextureCubemapLayered: [::core::ffi::c_int; 2usize],
+    pub maxSurface1D: ::core::ffi::c_int,
+    pub maxSurface2D: [::core::ffi::c_int; 2usize],
+    pub maxSurface3D: [::core::ffi::c_int; 3usize],
+    pub maxSurface1DLayered: [::core::ffi::c_int; 2usize],
+    pub maxSurface2DLayered: [::core::ffi::c_int; 3usize],
+    pub maxSurfaceCubemap: ::core::ffi::c_int,
+    pub maxSurfaceCubemapLayered: [::core::ffi::c_int; 2usize],
+    pub surfaceAlignment: usize,
+    pub concurrentKernels: ::core::ffi::c_int,
+    pub ECCEnabled: ::core::ffi::c_int,
+    pub pciBusID: ::core::ffi::c_int,
+    pub pciDeviceID: ::core::ffi::c_int,
+    pub pciDomainID: ::core::ffi::c_int,
+    pub tccDriver: ::core::ffi::c_int,
+    pub asyncEngineCount: ::core::ffi::c_int,
+    pub unifiedAddressing: ::core::ffi::c_int,
+    pub memoryClockRate: ::core::ffi::c_int,
+    pub memoryBusWidth: ::core::ffi::c_int,
+    pub l2CacheSize: ::core::ffi::c_int,
+    pub persistingL2CacheMaxSize: ::core::ffi::c_int,
+    pub maxThreadsPerMultiProcessor: ::core::ffi::c_int,
+    pub streamPrioritiesSupported: ::core::ffi::c_int,
+    pub globalL1CacheSupported: ::core::ffi::c_int,
+    pub localL1CacheSupported: ::core::ffi::c_int,
+    pub sharedMemPerMultiprocessor: usize,
+    pub regsPerMultiprocessor: ::core::ffi::c_int,
+    pub managedMemory: ::core::ffi::c_int,
+    pub isMultiGpuBoard: ::core::ffi::c_int,
+    pub multiGpuBoardGroupID: ::core::ffi::c_int,
+    pub hostNativeAtomicSupported: ::core::ffi::c_int,
+    pub singleToDoublePrecisionPerfRatio: ::core::ffi::c_int,
+    pub pageableMemoryAccess: ::core::ffi::c_int,
+    pub concurrentManagedAccess: ::core::ffi::c_int,
+    pub computePreemptionSupported: ::core::ffi::c_int,
+    pub canUseHostPointerForRegisteredMem: ::core::ffi::c_int,
+    pub cooperativeLaunch: ::core::ffi::c_int,
+    pub cooperativeMultiDeviceLaunch: ::core::ffi::c_int,
+    pub sharedMemPerBlockOptin: usize,
+    pub pageableMemoryAccessUsesHostPageTables: ::core::ffi::c_int,
+    pub directManagedMemAccessFromHost: ::core::ffi::c_int,
+    pub maxBlocksPerMultiProcessor: ::core::ffi::c_int,
+    pub accessPolicyMaxWindowSize: ::core::ffi::c_int,
+    pub reservedSharedMemPerBlock: usize,
+    pub hostRegisterSupported: ::core::ffi::c_int,
+    pub sparseCudaArraySupported: ::core::ffi::c_int,
+    pub hostRegisterReadOnlySupported: ::core::ffi::c_int,
+    pub timelineSemaphoreInteropSupported: ::core::ffi::c_int,
+    pub memoryPoolsSupported: ::core::ffi::c_int,
+    pub gpuDirectRDMASupported: ::core::ffi::c_int,
+    pub gpuDirectRDMAFlushWritesOptions: ::core::ffi::c_uint,
+    pub gpuDirectRDMAWritesOrdering: ::core::ffi::c_int,
+    pub memoryPoolSupportedHandleTypes: ::core::ffi::c_uint,
+    pub deferredMappingCudaArraySupported: ::core::ffi::c_int,
+    pub ipcEventSupported: ::core::ffi::c_int,
+    pub clusterLaunch: ::core::ffi::c_int,
+    pub unifiedFunctionPointers: ::core::ffi::c_int,
+    pub reserved: [::core::ffi::c_int; 63usize],
 }
 #[cfg(
     any(
@@ -4514,8 +5004,7 @@ pub struct cudaExternalSemaphoreWaitParams_v1__bindgen_ty_1__bindgen_ty_3 {
         feature = "cuda-11050",
         feature = "cuda-11060",
         feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
+        feature = "cuda-11080"
     )
 )]
 #[repr(C)]
@@ -4534,6 +5023,7 @@ pub struct cudaFuncAttributes {
 }
 #[cfg(
     any(
+        feature = "cuda-12000",
         feature = "cuda-12010",
         feature = "cuda-12020",
         feature = "cuda-12030",
@@ -4780,8 +5270,7 @@ pub struct cudaLaunchAttributeValue__bindgen_ty_2 {
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(C)]
@@ -4790,19 +5279,27 @@ pub struct cudaLaunchAttributeValue__bindgen_ty_3 {
     pub event: cudaEvent_t,
     pub flags: ::core::ffi::c_int,
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cudaLaunchAttributeValue__bindgen_ty_3 {
+    pub x: ::core::ffi::c_uint,
+    pub y: ::core::ffi::c_uint,
+    pub z: ::core::ffi::c_uint,
+}
+#[cfg(any(feature = "cuda-12040", feature = "cuda-12050", feature = "cuda-12060"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaLaunchAttributeValue__bindgen_ty_4 {
     pub deviceUpdatable: ::core::ffi::c_int,
     pub devNode: cudaGraphDeviceNode_t,
+}
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cudaLaunchAttributeValue__bindgen_ty_4 {
+    pub event: cudaEvent_t,
+    pub flags: ::core::ffi::c_int,
 }
 #[cfg(any(feature = "cuda-12080"))]
 #[repr(C)]
@@ -4959,8 +5456,7 @@ pub struct cudaMemLocation {
         feature = "cuda-11070",
         feature = "cuda-11080",
         feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
+        feature = "cuda-12010"
     )
 )]
 #[repr(C)]
@@ -4974,10 +5470,10 @@ pub struct cudaMemPoolProps {
 }
 #[cfg(
     any(
+        feature = "cuda-12020",
         feature = "cuda-12030",
         feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
+        feature = "cuda-12050"
     )
 )]
 #[repr(C)]
@@ -4990,7 +5486,7 @@ pub struct cudaMemPoolProps {
     pub maxSize: usize,
     pub reserved: [::core::ffi::c_uchar; 56usize],
 }
-#[cfg(any(feature = "cuda-12080"))]
+#[cfg(any(feature = "cuda-12060", feature = "cuda-12080"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudaMemPoolProps {
@@ -5201,7 +5697,7 @@ pub struct cudaResourceViewDesc {
     pub firstLayer: ::core::ffi::c_uint,
     pub lastLayer: ::core::ffi::c_uint,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct cudaTextureDesc {
@@ -5218,7 +5714,7 @@ pub struct cudaTextureDesc {
     pub maxMipmapLevelClamp: f32,
     pub disableTrilinearOptimization: ::core::ffi::c_int,
 }
-#[cfg(any(feature = "cuda-11070", feature = "cuda-11080"))]
+#[cfg(any(feature = "cuda-11060", feature = "cuda-11070"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct cudaTextureDesc {
@@ -5236,7 +5732,7 @@ pub struct cudaTextureDesc {
     pub disableTrilinearOptimization: ::core::ffi::c_int,
     pub seamlessCubemap: ::core::ffi::c_int,
 }
-#[cfg(any(feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11080"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct cudaTextureDesc {
@@ -5255,6 +5751,7 @@ pub struct cudaTextureDesc {
 }
 #[cfg(
     any(
+        feature = "cuda-12000",
         feature = "cuda-12010",
         feature = "cuda-12020",
         feature = "cuda-12030",
@@ -6686,7 +7183,7 @@ pub union cudaGraphKernelNodeUpdate__bindgen_ty_1 {
     pub param: cudaGraphKernelNodeUpdate__bindgen_ty_1__bindgen_ty_1,
     pub isEnabled: ::core::ffi::c_uint,
 }
-#[cfg(any(feature = "cuda-12020", feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12020"))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaGraphNodeParams__bindgen_ty_1 {
@@ -6705,6 +7202,7 @@ pub union cudaGraphNodeParams__bindgen_ty_1 {
 }
 #[cfg(
     any(
+        feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
         feature = "cuda-12060",
@@ -6728,21 +7226,22 @@ pub union cudaGraphNodeParams__bindgen_ty_1 {
     pub free: cudaMemFreeNodeParams,
     pub conditional: cudaConditionalNodeParams,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070"
-    )
-)]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaKernelNodeAttrValue {
     pub accessPolicyWindow: cudaAccessPolicyWindow,
     pub cooperative: ::core::ffi::c_int,
 }
-#[cfg(any(feature = "cuda-11080", feature = "cuda-12000"))]
+#[cfg(any(feature = "cuda-11070"))]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union cudaKernelNodeAttrValue {
+    pub accessPolicyWindow: cudaAccessPolicyWindow,
+    pub cooperative: ::core::ffi::c_int,
+    pub priority: ::core::ffi::c_int,
+}
+#[cfg(any(feature = "cuda-11080"))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaLaunchAttributeValue {
@@ -6756,7 +7255,7 @@ pub union cudaLaunchAttributeValue {
     pub programmaticEvent: cudaLaunchAttributeValue__bindgen_ty_2,
     pub priority: ::core::ffi::c_int,
 }
-#[cfg(any(feature = "cuda-12010", feature = "cuda-12020", feature = "cuda-12030"))]
+#[cfg(any(feature = "cuda-12000", feature = "cuda-12010", feature = "cuda-12020"))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaLaunchAttributeValue {
@@ -6771,6 +7270,23 @@ pub union cudaLaunchAttributeValue {
     pub priority: ::core::ffi::c_int,
     pub memSyncDomainMap: cudaLaunchMemSyncDomainMap,
     pub memSyncDomain: cudaLaunchMemSyncDomain,
+}
+#[cfg(any(feature = "cuda-12030"))]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union cudaLaunchAttributeValue {
+    pub pad: [::core::ffi::c_char; 64usize],
+    pub accessPolicyWindow: cudaAccessPolicyWindow,
+    pub cooperative: ::core::ffi::c_int,
+    pub syncPolicy: cudaSynchronizationPolicy,
+    pub clusterDim: cudaLaunchAttributeValue__bindgen_ty_1,
+    pub clusterSchedulingPolicyPreference: cudaClusterSchedulingPolicy,
+    pub programmaticStreamSerializationAllowed: ::core::ffi::c_int,
+    pub programmaticEvent: cudaLaunchAttributeValue__bindgen_ty_2,
+    pub priority: ::core::ffi::c_int,
+    pub memSyncDomainMap: cudaLaunchMemSyncDomainMap,
+    pub memSyncDomain: cudaLaunchMemSyncDomain,
+    pub launchCompletionEvent: cudaLaunchAttributeValue__bindgen_ty_3,
 }
 #[cfg(any(feature = "cuda-12040"))]
 #[repr(C)]
@@ -6788,8 +7304,9 @@ pub union cudaLaunchAttributeValue {
     pub memSyncDomainMap: cudaLaunchMemSyncDomainMap,
     pub memSyncDomain: cudaLaunchMemSyncDomain,
     pub launchCompletionEvent: cudaLaunchAttributeValue__bindgen_ty_3,
+    pub deviceUpdatableKernelNode: cudaLaunchAttributeValue__bindgen_ty_4,
 }
-#[cfg(any(feature = "cuda-12050"))]
+#[cfg(any(feature = "cuda-12050", feature = "cuda-12060"))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaLaunchAttributeValue {
@@ -6806,8 +7323,9 @@ pub union cudaLaunchAttributeValue {
     pub memSyncDomain: cudaLaunchMemSyncDomain,
     pub launchCompletionEvent: cudaLaunchAttributeValue__bindgen_ty_3,
     pub deviceUpdatableKernelNode: cudaLaunchAttributeValue__bindgen_ty_4,
+    pub sharedMemCarveout: ::core::ffi::c_uint,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080"))]
+#[cfg(any(feature = "cuda-12080"))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union cudaLaunchAttributeValue {
@@ -6822,8 +7340,9 @@ pub union cudaLaunchAttributeValue {
     pub priority: ::core::ffi::c_int,
     pub memSyncDomainMap: cudaLaunchMemSyncDomainMap,
     pub memSyncDomain: cudaLaunchMemSyncDomain,
-    pub launchCompletionEvent: cudaLaunchAttributeValue__bindgen_ty_3,
-    pub deviceUpdatableKernelNode: cudaLaunchAttributeValue__bindgen_ty_4,
+    pub preferredClusterDim: cudaLaunchAttributeValue__bindgen_ty_3,
+    pub launchCompletionEvent: cudaLaunchAttributeValue__bindgen_ty_4,
+    pub deviceUpdatableKernelNode: cudaLaunchAttributeValue__bindgen_ty_5,
     pub sharedMemCarveout: ::core::ffi::c_uint,
 }
 #[cfg(any(feature = "cuda-12080"))]
@@ -7238,8 +7757,7 @@ extern "C" {
             feature = "cuda-11050",
             feature = "cuda-11060",
             feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000"
+            feature = "cuda-11080"
         )
     )]
     pub fn cudaGetDriverEntryPoint(
@@ -7249,6 +7767,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
             feature = "cuda-12030",
@@ -7701,8 +8220,7 @@ extern "C" {
             feature = "cuda-11050",
             feature = "cuda-11060",
             feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000"
+            feature = "cuda-11080"
         )
     )]
     pub fn cudaGraphExecUpdate(
@@ -7713,6 +8231,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
             feature = "cuda-12030",
@@ -7789,8 +8308,7 @@ extern "C" {
             feature = "cuda-11050",
             feature = "cuda-11060",
             feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000"
+            feature = "cuda-11080"
         )
     )]
     pub fn cudaGraphInstantiate(
@@ -7802,6 +8320,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
             feature = "cuda-12030",
@@ -7847,8 +8366,7 @@ extern "C" {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub fn cudaGraphKernelNodeGetAttribute(
@@ -7858,6 +8376,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -7882,8 +8401,7 @@ extern "C" {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub fn cudaGraphKernelNodeSetAttribute(
@@ -7893,6 +8411,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -8867,8 +9386,7 @@ extern "C" {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub fn cudaStreamGetAttribute(
@@ -8878,6 +9396,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -8972,8 +9491,7 @@ extern "C" {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub fn cudaStreamSetAttribute(
@@ -8983,6 +9501,7 @@ extern "C" {
     ) -> cudaError_t;
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -9633,8 +10152,7 @@ mod loaded {
             feature = "cuda-11050",
             feature = "cuda-11060",
             feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000"
+            feature = "cuda-11080"
         )
     )]
     pub unsafe fn cudaGetDriverEntryPoint(
@@ -9646,6 +10164,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
             feature = "cuda-12030",
@@ -10393,8 +10912,7 @@ mod loaded {
             feature = "cuda-11050",
             feature = "cuda-11060",
             feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000"
+            feature = "cuda-11080"
         )
     )]
     pub unsafe fn cudaGraphExecUpdate(
@@ -10408,6 +10926,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
             feature = "cuda-12030",
@@ -10506,8 +11025,7 @@ mod loaded {
             feature = "cuda-11050",
             feature = "cuda-11060",
             feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000"
+            feature = "cuda-11080"
         )
     )]
     pub unsafe fn cudaGraphInstantiate(
@@ -10522,6 +11040,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
             feature = "cuda-12030",
@@ -10575,8 +11094,7 @@ mod loaded {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub unsafe fn cudaGraphKernelNodeGetAttribute(
@@ -10588,6 +11106,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -10616,8 +11135,7 @@ mod loaded {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub unsafe fn cudaGraphKernelNodeSetAttribute(
@@ -10629,6 +11147,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -12105,8 +12624,7 @@ mod loaded {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub unsafe fn cudaStreamGetAttribute(
@@ -12118,6 +12636,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -12249,8 +12768,7 @@ mod loaded {
             feature = "cuda-11040",
             feature = "cuda-11050",
             feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080"
+            feature = "cuda-11070"
         )
     )]
     pub unsafe fn cudaStreamSetAttribute(
@@ -12262,6 +12780,7 @@ mod loaded {
     }
     #[cfg(
         any(
+            feature = "cuda-11080",
             feature = "cuda-12000",
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -12831,8 +13350,7 @@ mod loaded {
                 feature = "cuda-11050",
                 feature = "cuda-11060",
                 feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000"
+                feature = "cuda-11080"
             )
         )]
         pub cudaGetDriverEntryPoint: unsafe extern "C" fn(
@@ -12842,6 +13360,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
                 feature = "cuda-12030",
@@ -13304,8 +13823,7 @@ mod loaded {
                 feature = "cuda-11050",
                 feature = "cuda-11060",
                 feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000"
+                feature = "cuda-11080"
             )
         )]
         pub cudaGraphExecUpdate: unsafe extern "C" fn(
@@ -13316,6 +13834,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
                 feature = "cuda-12030",
@@ -13392,8 +13911,7 @@ mod loaded {
                 feature = "cuda-11050",
                 feature = "cuda-11060",
                 feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000"
+                feature = "cuda-11080"
             )
         )]
         pub cudaGraphInstantiate: unsafe extern "C" fn(
@@ -13405,6 +13923,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
                 feature = "cuda-12030",
@@ -13450,8 +13969,7 @@ mod loaded {
                 feature = "cuda-11040",
                 feature = "cuda-11050",
                 feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080"
+                feature = "cuda-11070"
             )
         )]
         pub cudaGraphKernelNodeGetAttribute: unsafe extern "C" fn(
@@ -13461,6 +13979,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-11080",
                 feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
@@ -13485,8 +14004,7 @@ mod loaded {
                 feature = "cuda-11040",
                 feature = "cuda-11050",
                 feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080"
+                feature = "cuda-11070"
             )
         )]
         pub cudaGraphKernelNodeSetAttribute: unsafe extern "C" fn(
@@ -13496,6 +14014,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-11080",
                 feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
@@ -14499,8 +15018,7 @@ mod loaded {
                 feature = "cuda-11040",
                 feature = "cuda-11050",
                 feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080"
+                feature = "cuda-11070"
             )
         )]
         pub cudaStreamGetAttribute: unsafe extern "C" fn(
@@ -14510,6 +15028,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-11080",
                 feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
@@ -14604,8 +15123,7 @@ mod loaded {
                 feature = "cuda-11040",
                 feature = "cuda-11050",
                 feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080"
+                feature = "cuda-11070"
             )
         )]
         pub cudaStreamSetAttribute: unsafe extern "C" fn(
@@ -14615,6 +15133,7 @@ mod loaded {
         ) -> cudaError_t,
         #[cfg(
             any(
+                feature = "cuda-11080",
                 feature = "cuda-12000",
                 feature = "cuda-12010",
                 feature = "cuda-12020",
@@ -15148,8 +15667,7 @@ mod loaded {
                     feature = "cuda-11050",
                     feature = "cuda-11060",
                     feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000"
+                    feature = "cuda-11080"
                 )
             )]
             let cudaGetDriverEntryPoint = __library
@@ -15158,6 +15676,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
                     feature = "cuda-12030",
@@ -15534,8 +16053,7 @@ mod loaded {
                     feature = "cuda-11050",
                     feature = "cuda-11060",
                     feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000"
+                    feature = "cuda-11080"
                 )
             )]
             let cudaGraphExecUpdate = __library
@@ -15544,6 +16062,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
                     feature = "cuda-12030",
@@ -15612,8 +16131,7 @@ mod loaded {
                     feature = "cuda-11050",
                     feature = "cuda-11060",
                     feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000"
+                    feature = "cuda-11080"
                 )
             )]
             let cudaGraphInstantiate = __library
@@ -15622,6 +16140,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
                     feature = "cuda-12030",
@@ -15664,8 +16183,7 @@ mod loaded {
                     feature = "cuda-11040",
                     feature = "cuda-11050",
                     feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080"
+                    feature = "cuda-11070"
                 )
             )]
             let cudaGraphKernelNodeGetAttribute = __library
@@ -15674,6 +16192,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-11080",
                     feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
@@ -15697,8 +16216,7 @@ mod loaded {
                     feature = "cuda-11040",
                     feature = "cuda-11050",
                     feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080"
+                    feature = "cuda-11070"
                 )
             )]
             let cudaGraphKernelNodeSetAttribute = __library
@@ -15707,6 +16225,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-11080",
                     feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
@@ -16488,8 +17007,7 @@ mod loaded {
                     feature = "cuda-11040",
                     feature = "cuda-11050",
                     feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080"
+                    feature = "cuda-11070"
                 )
             )]
             let cudaStreamGetAttribute = __library
@@ -16498,6 +17016,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-11080",
                     feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
@@ -16584,8 +17103,7 @@ mod loaded {
                     feature = "cuda-11040",
                     feature = "cuda-11050",
                     feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080"
+                    feature = "cuda-11070"
                 )
             )]
             let cudaStreamSetAttribute = __library
@@ -16594,6 +17112,7 @@ mod loaded {
                 .expect("Expected symbol in library");
             #[cfg(
                 any(
+                    feature = "cuda-11080",
                     feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020",
@@ -16889,13 +17408,13 @@ mod loaded {
                         feature = "cuda-11050",
                         feature = "cuda-11060",
                         feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000"
+                        feature = "cuda-11080"
                     )
                 )]
                 cudaGetDriverEntryPoint,
                 #[cfg(
                     any(
+                        feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",
                         feature = "cuda-12030",
@@ -17080,13 +17599,13 @@ mod loaded {
                         feature = "cuda-11050",
                         feature = "cuda-11060",
                         feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000"
+                        feature = "cuda-11080"
                     )
                 )]
                 cudaGraphExecUpdate,
                 #[cfg(
                     any(
+                        feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",
                         feature = "cuda-12030",
@@ -17122,13 +17641,13 @@ mod loaded {
                         feature = "cuda-11050",
                         feature = "cuda-11060",
                         feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000"
+                        feature = "cuda-11080"
                     )
                 )]
                 cudaGraphInstantiate,
                 #[cfg(
                     any(
+                        feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",
                         feature = "cuda-12030",
@@ -17159,13 +17678,13 @@ mod loaded {
                         feature = "cuda-11040",
                         feature = "cuda-11050",
                         feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080"
+                        feature = "cuda-11070"
                     )
                 )]
                 cudaGraphKernelNodeGetAttribute,
                 #[cfg(
                     any(
+                        feature = "cuda-11080",
                         feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",
@@ -17183,13 +17702,13 @@ mod loaded {
                         feature = "cuda-11040",
                         feature = "cuda-11050",
                         feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080"
+                        feature = "cuda-11070"
                     )
                 )]
                 cudaGraphKernelNodeSetAttribute,
                 #[cfg(
                     any(
+                        feature = "cuda-11080",
                         feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",
@@ -17527,13 +18046,13 @@ mod loaded {
                         feature = "cuda-11040",
                         feature = "cuda-11050",
                         feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080"
+                        feature = "cuda-11070"
                     )
                 )]
                 cudaStreamGetAttribute,
                 #[cfg(
                     any(
+                        feature = "cuda-11080",
                         feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",
@@ -17590,13 +18109,13 @@ mod loaded {
                         feature = "cuda-11040",
                         feature = "cuda-11050",
                         feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080"
+                        feature = "cuda-11070"
                     )
                 )]
                 cudaStreamSetAttribute,
                 #[cfg(
                     any(
+                        feature = "cuda-11080",
                         feature = "cuda-12000",
                         feature = "cuda-12010",
                         feature = "cuda-12020",

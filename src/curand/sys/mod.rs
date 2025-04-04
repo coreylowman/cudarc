@@ -47,7 +47,7 @@ pub enum curandMethod {
     CURAND_DEFINITION = 12,
     CURAND_POISSON = 13,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(any(feature = "cuda-11040"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum curandOrdering {
@@ -59,6 +59,7 @@ pub enum curandOrdering {
 }
 #[cfg(
     any(
+        feature = "cuda-11050",
         feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",

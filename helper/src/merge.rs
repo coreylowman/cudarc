@@ -339,11 +339,8 @@ impl BindingMerger {
             let mut prev_decl: Option<&T> = None;
             let mut versions = vec![];
             for (version, decl) in &info.declarations {
-                versions.push(version);
                 if let Some(prev_decl) = prev_decl {
-                    if prev_decl == decl {
-                        continue;
-                    } else {
+                    if prev_decl != decl {
                         if !versions.is_empty() {
                             log::debug!("Breaking change detected in {version} for {name}");
                         }
@@ -357,8 +354,8 @@ impl BindingMerger {
                         });
                         versions.clear();
                     }
-                } else {
                 }
+                versions.push(*version);
                 prev_decl = Some(decl.into());
             }
             if !versions.is_empty() {
@@ -395,17 +392,14 @@ impl BindingMerger {
             let mut prev_decl: Option<&ForeignItemFn> = None;
             let mut versions = vec![];
             for (version, decl) in &info.declarations {
-                versions.push(version);
                 if let Some(prev_decl) = prev_decl {
-                    if prev_decl == decl {
-                        continue;
-                    } else {
+                    if prev_decl != decl {
                         let element = LibItem::new(prev_decl, &versions, self.n_versions);
                         elements.push(element);
-
                         versions.clear();
                     }
                 }
+                versions.push(version);
                 prev_decl = Some(decl.into());
             }
             if !versions.is_empty() {

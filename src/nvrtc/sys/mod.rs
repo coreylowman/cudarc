@@ -9,8 +9,7 @@ pub type nvrtcProgram = *mut _nvrtcProgram;
         feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010"
+        feature = "cuda-12000"
     )
 )]
 #[repr(u32)]
@@ -31,12 +30,12 @@ pub enum nvrtcResult {
 }
 #[cfg(
     any(
+        feature = "cuda-12010",
         feature = "cuda-12020",
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
+        feature = "cuda-12060"
     )
 )]
 #[repr(u32)]
@@ -55,6 +54,28 @@ pub enum nvrtcResult {
     NVRTC_ERROR_NAME_EXPRESSION_NOT_VALID = 10,
     NVRTC_ERROR_INTERNAL_ERROR = 11,
     NVRTC_ERROR_TIME_FILE_WRITE_FAILED = 12,
+}
+#[cfg(any(feature = "cuda-12080"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum nvrtcResult {
+    NVRTC_SUCCESS = 0,
+    NVRTC_ERROR_OUT_OF_MEMORY = 1,
+    NVRTC_ERROR_PROGRAM_CREATION_FAILURE = 2,
+    NVRTC_ERROR_INVALID_INPUT = 3,
+    NVRTC_ERROR_INVALID_PROGRAM = 4,
+    NVRTC_ERROR_INVALID_OPTION = 5,
+    NVRTC_ERROR_COMPILATION = 6,
+    NVRTC_ERROR_BUILTIN_OPERATION_FAILURE = 7,
+    NVRTC_ERROR_NO_NAME_EXPRESSIONS_AFTER_COMPILATION = 8,
+    NVRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION = 9,
+    NVRTC_ERROR_NAME_EXPRESSION_NOT_VALID = 10,
+    NVRTC_ERROR_INTERNAL_ERROR = 11,
+    NVRTC_ERROR_TIME_FILE_WRITE_FAILED = 12,
+    NVRTC_ERROR_NO_PCH_CREATE_ATTEMPTED = 13,
+    NVRTC_ERROR_PCH_CREATE_HEAP_EXHAUSTED = 14,
+    NVRTC_ERROR_PCH_CREATE = 15,
+    NVRTC_ERROR_CANCELLED = 16,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
