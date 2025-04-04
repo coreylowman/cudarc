@@ -38547,8 +38547,8 @@ mod loaded {
     pub unsafe fn culib() -> &'static Lib {
         static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
         LIB.get_or_init(|| {
-            let lib_names = vec!["cublas"];
-            let choices: Vec<_> = lib_names
+            let lib_names = std::vec!["cublas"];
+            let choices: std::vec::Vec<_> = lib_names
                 .iter()
                 .map(|l| crate::get_lib_name_candidates(l))
                 .flatten()
