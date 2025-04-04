@@ -94,6 +94,21 @@ pub struct ncclSimInfo_v22200 {
 pub struct ncclUniqueId {
     pub internal: [::core::ffi::c_char; 128usize],
 }
+impl ncclDataType_t {
+    pub const ncclChar: ncclDataType_t = ncclDataType_t::ncclInt8;
+}
+impl ncclDataType_t {
+    pub const ncclDouble: ncclDataType_t = ncclDataType_t::ncclFloat64;
+}
+impl ncclDataType_t {
+    pub const ncclFloat: ncclDataType_t = ncclDataType_t::ncclFloat32;
+}
+impl ncclDataType_t {
+    pub const ncclHalf: ncclDataType_t = ncclDataType_t::ncclFloat16;
+}
+impl ncclDataType_t {
+    pub const ncclInt: ncclDataType_t = ncclDataType_t::ncclInt32;
+}
 impl Default for ncclConfig_v21700 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -102,9 +117,6 @@ impl Default for ncclConfig_v21700 {
             s.assume_init()
         }
     }
-}
-impl ncclDataType_t {
-    pub const ncclDouble: ncclDataType_t = ncclDataType_t::ncclFloat64;
 }
 impl Default for ncclUniqueId {
     fn default() -> Self {

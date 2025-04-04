@@ -2556,6 +2556,10 @@ pub struct cublasLtMatrixLayoutOpaque_t {
 pub struct cublasLtMatrixTransformDescOpaque_t {
     pub data: [u64; 8usize],
 }
+#[cfg(any(feature = "cuda-12080"))]
+impl cudaDataType_t {
+    pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
+}
 impl Default for _IO_FILE {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2573,10 +2577,6 @@ impl Default for cublasLtMatmulHeuristicResult_t {
             s.assume_init()
         }
     }
-}
-#[cfg(any(feature = "cuda-12080"))]
-impl cudaDataType_t {
-    pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
 }
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {

@@ -109,6 +109,7 @@ pub unsafe fn dgemv(
     sys::cublasDgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
+#[cfg(feature = "f16")]
 unsafe extern "C" {
     pub fn cublasHgemm(
         handle: sys::cublasHandle_t,
@@ -255,6 +256,7 @@ pub unsafe fn dgemm(
     .result()
 }
 
+#[cfg(feature = "f16")]
 unsafe extern "C" {
     pub fn cublasHgemmStridedBatched(
         handle: sys::cublasHandle_t,

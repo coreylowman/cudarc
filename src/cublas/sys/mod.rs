@@ -292,6 +292,9 @@ pub struct float2 {
     pub y: f32,
 }
 impl cublasGemmAlgo_t {
+    pub const CUBLAS_GEMM_DEFAULT: cublasGemmAlgo_t = cublasGemmAlgo_t::CUBLAS_GEMM_DFALT;
+}
+impl cublasGemmAlgo_t {
     pub const CUBLAS_GEMM_DFALT_TENSOR_OP: cublasGemmAlgo_t = cublasGemmAlgo_t::CUBLAS_GEMM_DEFAULT_TENSOR_OP;
 }
 impl cublasOperation_t {

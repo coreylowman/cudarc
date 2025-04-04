@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::{quote, ToTokens};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -205,7 +205,7 @@ impl BindingMerger {
                     entry.declarations.insert(version.clone(), typ);
                 }
                 Item::Impl(imp) => {
-                    let name = format!("{:?}", (*imp.self_ty));
+                    let name = format!("{:?}", imp);
 
                     let entry = self.impls.entry(name).or_insert_with(|| FunctionInfo {
                         declarations: BTreeMap::new(),
@@ -260,6 +260,7 @@ impl BindingMerger {
     pub fn generate_unified_bindings(&self) -> TokenStream {
         let enums = self.write_to_output(&self.enums).expect("Write to output");
         let impls = self.write_to_output(&self.impls).expect("Write to output");
+        println!("Impl {}", impls.to_string());
         let structs = self
             .write_to_output(&self.structs)
             .expect("Write to output");
@@ -375,8 +376,10 @@ impl BindingMerger {
                         });
                     }
                 } else {
-                    panic!("Versions shouldn't be empty");
+                    panic!("Previous version shouldn't be empty");
                 }
+            } else {
+                panic!("Versions shouldn't be empty");
             }
         }
         Ok(output)

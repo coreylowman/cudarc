@@ -5851,6 +5851,29 @@ pub struct textureReference {
     pub disableTrilinearOptimization: ::core::ffi::c_int,
     pub __cudaReserved: [::core::ffi::c_int; 14usize],
 }
+#[cfg(any(feature = "cuda-12080"))]
+impl cudaDataType_t {
+    pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
+}
+#[cfg(
+    any(
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    )
+)]
+impl cudaDeviceAttr {
+    pub const cudaDevAttrMaxTimelineSemaphoreInteropSupported: cudaDeviceAttr = cudaDeviceAttr::cudaDevAttrTimelineSemaphoreInteropSupported;
+}
 impl Default for cudaAccessPolicyWindow {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -5939,29 +5962,6 @@ impl Default for cudaConditionalNodeParams {
             s.assume_init()
         }
     }
-}
-#[cfg(any(feature = "cuda-12080"))]
-impl cudaDataType_t {
-    pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
-}
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
-impl cudaDeviceAttr {
-    pub const cudaDevAttrMaxTimelineSemaphoreInteropSupported: cudaDeviceAttr = cudaDeviceAttr::cudaDevAttrTimelineSemaphoreInteropSupported;
 }
 impl Default for cudaDeviceProp {
     fn default() -> Self {
