@@ -167,49 +167,6 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
     ]
 }
 
-// const MOD_RS: &str = r#"
-// #[cfg(feature = "dynamic-loading")]
-// mod loaded;
-// #[cfg(feature = "dynamic-loading")]
-// pub use loaded::*;
-//
-// #[cfg(not(feature = "dynamic-loading"))]
-// mod linked;
-// #[cfg(not(feature = "dynamic-loading"))]
-// pub use linked::*;
-// "#;
-
-// const IMPORT_RS: &str = r#"
-// #[cfg(feature = "{0}")]
-// mod {1};
-// #[cfg(feature = "{0}")]
-// pub use {1}::*;
-// "#;
-
-// const IMPORT_LINKED_RS: &str = r#"
-// mod unified;
-// pub use unified::*;
-// "#;
-//
-// const LOADING_RS: &str = r#"
-// pub unsafe fn culib() -> &'static Lib {
-//     static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
-//     LIB.get_or_init(|| {
-//         let lib_names = {0};
-//         let choices: Vec<_> = lib_names.iter().map(|l| crate::get_lib_name_candidates(l)).flatten().collect();
-//         for choice in choices.iter() {
-//             if let Ok(lib) = Lib::new(choice) {
-//                 return lib;
-//             }
-//         }
-//         crate::panic_no_lib_found(lib_names[0], &choices);
-//     })
-// }
-//
-// mod adapter;
-// pub use adapter::*;
-// "#;
-
 #[derive(Debug)]
 struct ModuleConfig {
     /// The name of the library within cuda/redist
@@ -229,6 +186,7 @@ struct ModuleConfig {
 }
 
 #[derive(Debug)]
+/// Bindgen filters
 struct Filters {
     types: Vec<String>,
     functions: Vec<String>,
@@ -241,6 +199,7 @@ struct Redist {
     version: String,
 }
 
+/// Downloads, unpacks and generate bindings for all modules.
 fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
     let downloads_dir = Path::new("downloads");
     fs::create_dir_all(downloads_dir).context("Failed to create downloads directory")?;
