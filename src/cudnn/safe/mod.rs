@@ -6,9 +6,9 @@
 //! 2. Allocate filter descriptors with [`Cudnn::create_4d_filter()`]
 //! 3. Allocate conv descriptors with [`Cudnn::create_conv2d()`]
 //! 4. Instantiate one of the following algorithms with the descriptors:
-//!     a. [`Conv2dForward`]
-//!     b. [`Conv2dBackwardData`] for computing gradient of image
-//!     c. [`Conv2dBackwardFilter`] for computing gradient of filters
+//!    a. [`Conv2dForward`]
+//!    b. [`Conv2dBackwardData`] for computing gradient of image
+//!    c. [`Conv2dBackwardFilter`] for computing gradient of filters
 //! 5. Call the `pick_algorithm` method of the struct. Specify the number of options to compare with a const generic.
 //! 6. Call the `get_workspace_size` method of the struct.
 //! 7. Re-allocate the workspace to the appropriate size.
