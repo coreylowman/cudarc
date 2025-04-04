@@ -1,6 +1,11 @@
+#![cfg_attr(feature = "no-std", no_std)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
+#[cfg(feature = "no-std")]
+extern crate alloc;
+#[cfg(feature = "no-std")]
+extern crate no_std_compat as std;
 pub type cudaStream_t = *mut CUstream_st;
 pub type ncclComm_t = *mut ncclComm;
 pub type ncclConfig_t = ncclConfig_v21700;

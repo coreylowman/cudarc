@@ -46,24 +46,25 @@ pub fn get_cudart_version() -> usize {
 
 /// Runs all *VersionCheck functions.
 pub fn version_check() -> Result<(), CudnnError> {
-    #[cfg(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
-    ))]
-    unsafe {
-        // sys::cudnnAdvInferVersionCheck().result()?;
-        // sys::cudnnAdvTrainVersionCheck().result()?;
-        // sys::cudnnCnnInferVersionCheck().result()?;
-        // sys::cudnnCnnTrainVersionCheck().result()?;
-        // sys::cudnnOpsInferVersionCheck().result()?;
-        // sys::cudnnOpsTrainVersionCheck().result()?;
-    }
+    // This should be a cudnn version issue, not a cuda version issue.
+    // #[cfg(any(
+    //     feature = "cuda-11040",
+    //     feature = "cuda-11050",
+    //     feature = "cuda-11060",
+    //     feature = "cuda-11070",
+    //     feature = "cuda-11080",
+    //     feature = "cuda-12000",
+    //     feature = "cuda-12010",
+    //     feature = "cuda-12020"
+    // ))]
+    // unsafe {
+    //     sys::cudnnAdvInferVersionCheck().result()?;
+    //     sys::cudnnAdvTrainVersionCheck().result()?;
+    //     sys::cudnnCnnInferVersionCheck().result()?;
+    //     sys::cudnnCnnTrainVersionCheck().result()?;
+    //     sys::cudnnOpsInferVersionCheck().result()?;
+    //     sys::cudnnOpsTrainVersionCheck().result()?;
+    // }
     #[cfg(any(
         feature = "cuda-12030",
         feature = "cuda-12040",

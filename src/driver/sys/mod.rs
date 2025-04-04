@@ -1,6 +1,11 @@
+#![cfg_attr(feature = "no-std", no_std)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
+#[cfg(feature = "no-std")]
+extern crate alloc;
+#[cfg(feature = "no-std")]
+extern crate no_std_compat as std;
 pub use self::CUDA_POINTER_ATTRIBUTE_ACCESS_FLAGS_enum as CUDA_POINTER_ATTRIBUTE_ACCESS_FLAGS;
 pub use self::CUGPUDirectRDMAWritesOrdering_enum as CUGPUDirectRDMAWritesOrdering;
 pub use self::CUaccessProperty_enum as CUaccessProperty;
