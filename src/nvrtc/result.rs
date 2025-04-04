@@ -1,6 +1,6 @@
 //! A thin wrapper around [sys] providing [Result]s with [NvrtcError].
 
-use super::sys::{self, lib};
+use super::sys::{self};
 use core::{
     ffi::{c_char, c_int, CStr},
     mem::MaybeUninit,
@@ -49,18 +49,17 @@ pub fn create_program<Src: AsRef<str>>(
     let name_c = name.map(|n| CString::new(n).unwrap());
     let mut prog = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .nvrtcCreateProgram(
-                prog.as_mut_ptr(),
-                src_c.as_c_str().as_ptr(),
-                name_c
-                    .map(|n| n.as_c_str().as_ptr())
-                    .unwrap_or(std::ptr::null()),
-                0,
-                std::ptr::null(),
-                std::ptr::null(),
-            )
-            .result()?;
+        sys::nvrtcCreateProgram(
+            prog.as_mut_ptr(),
+            src_c.as_c_str().as_ptr(),
+            name_c
+                .map(|n| n.as_c_str().as_ptr())
+                .unwrap_or(std::ptr::null()),
+            0,
+            std::ptr::null(),
+            std::ptr::null(),
+        )
+        .result()?;
         Ok(prog.assume_init())
     }
 }
@@ -92,9 +91,7 @@ pub unsafe fn compile_program<O: Clone + Into<Vec<u8>>>(
         .collect();
     let c_strs: Vec<&CStr> = c_strings.iter().map(CString::as_c_str).collect();
     let opts: Vec<*const c_char> = c_strs.iter().cloned().map(CStr::as_ptr).collect();
-    lib()
-        .nvrtcCompileProgram(prog, opts.len() as c_int, opts.as_ptr())
-        .result()
+    sys::nvrtcCompileProgram(prog, opts.len() as c_int, opts.as_ptr()).result()
 }
 
 /// Releases resources associated with `prog`.
@@ -105,9 +102,7 @@ pub unsafe fn compile_program<O: Clone + Into<Vec<u8>>>(
 ///
 /// `prog` must be created from [create_program()] and not have been freed by [destroy_program()].
 pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError> {
-    lib()
-        .nvrtcDestroyProgram(&prog as *const _ as *mut _)
-        .result()
+    sys::nvrtcDestroyProgram(&prog as *const _ as *mut _).result()
 }
 
 /// Extract the ptx associated with `prog`. Call [compile_program()] before this.
@@ -121,11 +116,11 @@ pub unsafe fn destroy_program(prog: sys::nvrtcProgram) -> Result<(), NvrtcError>
 #[allow(clippy::slow_vector_initialization)]
 pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
-    lib().nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
+    sys::nvrtcGetPTXSize(prog, &mut size as *mut _).result()?;
 
     let mut ptx_src: Vec<c_char> = Vec::with_capacity(size);
     ptx_src.resize(size, 0);
-    lib().nvrtcGetPTX(prog, ptx_src.as_mut_ptr()).result()?;
+    sys::nvrtcGetPTX(prog, ptx_src.as_mut_ptr()).result()?;
     Ok(ptx_src)
 }
 
@@ -140,15 +135,11 @@ pub unsafe fn get_ptx(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError
 #[allow(clippy::slow_vector_initialization)]
 pub unsafe fn get_program_log(prog: sys::nvrtcProgram) -> Result<Vec<c_char>, NvrtcError> {
     let mut size: usize = 0;
-    lib()
-        .nvrtcGetProgramLogSize(prog, &mut size as *mut _)
-        .result()?;
+    sys::nvrtcGetProgramLogSize(prog, &mut size as *mut _).result()?;
 
     let mut log_src: Vec<c_char> = Vec::with_capacity(size);
     log_src.resize(size, 0);
-    lib()
-        .nvrtcGetProgramLog(prog, log_src.as_mut_ptr())
-        .result()?;
+    sys::nvrtcGetProgramLog(prog, log_src.as_mut_ptr()).result()?;
     Ok(log_src)
 }
 

@@ -1,4 +1,4 @@
-use super::sys::{self, lib};
+use super::sys::{self};
 use crate::cublaslt::sys::cublasLtMatmulAlgo_t;
 use core::ffi::c_void;
 use core::mem::MaybeUninit;
@@ -30,7 +30,7 @@ impl std::error::Error for CublasError {}
 pub fn create_handle() -> Result<sys::cublasLtHandle_t, CublasError> {
     let mut handle = MaybeUninit::uninit();
     unsafe {
-        lib().cublasLtCreate(handle.as_mut_ptr()).result()?;
+        sys::cublasLtCreate(handle.as_mut_ptr()).result()?;
         Ok(handle.assume_init())
     }
 }
@@ -42,7 +42,7 @@ pub fn create_handle() -> Result<sys::cublasLtHandle_t, CublasError> {
 ///
 /// `handle` must not have been freed already.
 pub unsafe fn destroy_handle(handle: sys::cublasLtHandle_t) -> Result<(), CublasError> {
-    lib().cublasLtDestroy(handle).result()
+    sys::cublasLtDestroy(handle).result()
 }
 
 /// Creates a matrix layout descriptor. See
@@ -55,8 +55,7 @@ pub fn create_matrix_layout(
 ) -> Result<sys::cublasLtMatrixLayout_t, CublasError> {
     let mut matrix_layout = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cublasLtMatrixLayoutCreate(matrix_layout.as_mut_ptr(), matrix_type, rows, cols, ld)
+        sys::cublasLtMatrixLayoutCreate(matrix_layout.as_mut_ptr(), matrix_type, rows, cols, ld)
             .result()?;
         Ok(matrix_layout.assume_init())
     }
@@ -74,9 +73,7 @@ pub unsafe fn set_matrix_layout_attribute(
     buf: *const c_void,
     buf_size: usize,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasLtMatrixLayoutSetAttribute(matrix_layout, attr, buf, buf_size)
-        .result()
+    sys::cublasLtMatrixLayoutSetAttribute(matrix_layout, attr, buf, buf_size).result()
 }
 
 /// Destroys a matrix layout previously created with [create_matrix_layout(...)]. See
@@ -88,7 +85,7 @@ pub unsafe fn set_matrix_layout_attribute(
 pub unsafe fn destroy_matrix_layout(
     matrix_layout: sys::cublasLtMatrixLayout_t,
 ) -> Result<(), CublasError> {
-    lib().cublasLtMatrixLayoutDestroy(matrix_layout).result()
+    sys::cublasLtMatrixLayoutDestroy(matrix_layout).result()
 }
 
 /// Creates a matrix multiply descriptor. See
@@ -99,8 +96,7 @@ pub fn create_matmul_desc(
 ) -> Result<sys::cublasLtMatmulDesc_t, CublasError> {
     let mut matmul_desc = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cublasLtMatmulDescCreate(matmul_desc.as_mut_ptr(), compute_type, scale_type)
+        sys::cublasLtMatmulDescCreate(matmul_desc.as_mut_ptr(), compute_type, scale_type)
             .result()?;
         Ok(matmul_desc.assume_init())
     }
@@ -118,9 +114,7 @@ pub unsafe fn set_matmul_desc_attribute(
     buf: *const c_void,
     buf_size: usize,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasLtMatmulDescSetAttribute(matmul_desc, attr, buf, buf_size)
-        .result()
+    sys::cublasLtMatmulDescSetAttribute(matmul_desc, attr, buf, buf_size).result()
 }
 
 /// Destroys a matrix multiply descriptor previously created with [create_matmul_desc(...)]. See
@@ -132,7 +126,7 @@ pub unsafe fn set_matmul_desc_attribute(
 pub unsafe fn destroy_matmul_desc(
     matmul_desc: sys::cublasLtMatmulDesc_t,
 ) -> Result<(), CublasError> {
-    lib().cublasLtMatmulDescDestroy(matmul_desc).result()
+    sys::cublasLtMatmulDescDestroy(matmul_desc).result()
 }
 
 /// Creates a matrix multiply heuristic search preferences descriptor. See
@@ -140,9 +134,7 @@ pub unsafe fn destroy_matmul_desc(
 pub fn create_matmul_pref() -> Result<sys::cublasLtMatmulPreference_t, CublasError> {
     let mut matmul_pref = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cublasLtMatmulPreferenceCreate(matmul_pref.as_mut_ptr())
-            .result()?;
+        sys::cublasLtMatmulPreferenceCreate(matmul_pref.as_mut_ptr()).result()?;
         Ok(matmul_pref.assume_init())
     }
 }
@@ -159,9 +151,7 @@ pub unsafe fn set_matmul_pref_attribute(
     buf: *const c_void,
     buf_size: usize,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasLtMatmulPreferenceSetAttribute(matmul_pref, attr, buf, buf_size)
-        .result()
+    sys::cublasLtMatmulPreferenceSetAttribute(matmul_pref, attr, buf, buf_size).result()
 }
 
 /// Destroys a matrix multiply preferences descriptor previously created
@@ -174,7 +164,7 @@ pub unsafe fn set_matmul_pref_attribute(
 pub unsafe fn destroy_matmul_pref(
     matmul_pref: sys::cublasLtMatmulPreference_t,
 ) -> Result<(), CublasError> {
-    lib().cublasLtMatmulPreferenceDestroy(matmul_pref).result()
+    sys::cublasLtMatmulPreferenceDestroy(matmul_pref).result()
 }
 
 /// Retrieves the fastest possible algorithm for the matrix multiply operation function
@@ -195,20 +185,19 @@ pub unsafe fn get_matmul_algo_heuristic(
     let mut matmul_heuristic = MaybeUninit::uninit();
     let mut algo_count = 0;
 
-    lib()
-        .cublasLtMatmulAlgoGetHeuristic(
-            handle,
-            matmul_desc,
-            a_layout,
-            b_layout,
-            c_layout,
-            d_layout,
-            matmul_pref,
-            1, // only select the fastest algo
-            matmul_heuristic.as_mut_ptr(),
-            &mut algo_count,
-        )
-        .result()?;
+    sys::cublasLtMatmulAlgoGetHeuristic(
+        handle,
+        matmul_desc,
+        a_layout,
+        b_layout,
+        c_layout,
+        d_layout,
+        matmul_pref,
+        1, // only select the fastest algo
+        matmul_heuristic.as_mut_ptr(),
+        &mut algo_count,
+    )
+    .result()?;
 
     if algo_count == 0 {
         return Err(CublasError(
@@ -248,24 +237,23 @@ pub unsafe fn matmul(
     workspace_size: usize,
     stream: sys::cudaStream_t,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasLtMatmul(
-            handle,
-            matmul_desc,
-            alpha,
-            a,
-            a_layout,
-            b,
-            b_layout,
-            beta,
-            c,
-            c_layout,
-            d,
-            d_layout,
-            algo,
-            workspace,
-            workspace_size,
-            stream,
-        )
-        .result()
+    sys::cublasLtMatmul(
+        handle,
+        matmul_desc,
+        alpha,
+        a,
+        a_layout,
+        b,
+        b_layout,
+        beta,
+        c,
+        c_layout,
+        d,
+        d_layout,
+        algo,
+        workspace,
+        workspace_size,
+        stream,
+    )
+    .result()
 }

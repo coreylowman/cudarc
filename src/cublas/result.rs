@@ -1,4 +1,4 @@
-use super::sys::{self, lib};
+use super::sys::{self};
 use core::ffi::{c_int, c_longlong, c_void};
 use core::mem::MaybeUninit;
 
@@ -29,7 +29,7 @@ impl std::error::Error for CublasError {}
 pub fn create_handle() -> Result<sys::cublasHandle_t, CublasError> {
     let mut handle = MaybeUninit::uninit();
     unsafe {
-        lib().cublasCreate_v2(handle.as_mut_ptr()).result()?;
+        sys::cublasCreate_v2(handle.as_mut_ptr()).result()?;
         Ok(handle.assume_init())
     }
 }
@@ -41,7 +41,7 @@ pub fn create_handle() -> Result<sys::cublasHandle_t, CublasError> {
 ///
 /// `handle` must not have been freed already.
 pub unsafe fn destroy_handle(handle: sys::cublasHandle_t) -> Result<(), CublasError> {
-    lib().cublasDestroy_v2(handle).result()
+    sys::cublasDestroy_v2(handle).result()
 }
 
 /// Sets the stream cuBLAS will use. See
@@ -54,7 +54,7 @@ pub unsafe fn set_stream(
     handle: sys::cublasHandle_t,
     stream: sys::cudaStream_t,
 ) -> Result<(), CublasError> {
-    lib().cublasSetStream_v2(handle, stream).result()
+    sys::cublasSetStream_v2(handle, stream).result()
 }
 
 /// Single precision matrix vector multiplication. See
@@ -80,9 +80,7 @@ pub unsafe fn sgemv(
     y: *mut f32,
     incy: c_int,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasSgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy)
-        .result()
+    sys::cublasSgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
 /// Double precision matrix vector multiplication. See
@@ -108,9 +106,7 @@ pub unsafe fn dgemv(
     y: *mut f64,
     incy: c_int,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasDgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy)
-        .result()
+    sys::cublasDgemv_v2(handle, trans, m, n, alpha, a, lda, x, incx, beta, y, incy).result()
 }
 
 #[cfg(feature = "f16")]
@@ -191,11 +187,10 @@ pub unsafe fn sgemm(
     c: *mut f32,
     ldc: c_int,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasSgemm_v2(
-            handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
-        )
-        .result()
+    sys::cublasSgemm_v2(
+        handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+    )
+    .result()
 }
 
 /// Double precision matmul. See
@@ -223,11 +218,10 @@ pub unsafe fn dgemm(
     c: *mut f64,
     ldc: c_int,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasDgemm_v2(
-            handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
-        )
-        .result()
+    sys::cublasDgemm_v2(
+        handle, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc,
+    )
+    .result()
 }
 
 #[cfg(feature = "f16")]
@@ -324,12 +318,11 @@ pub unsafe fn sgemm_strided_batched(
     stride_c: c_longlong,
     batch_size: c_int,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasSgemmStridedBatched(
-            handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c,
-            ldc, stride_c, batch_size,
-        )
-        .result()
+    sys::cublasSgemmStridedBatched(
+        handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
+        stride_c, batch_size,
+    )
+    .result()
 }
 
 /// Double precision batched matmul. See
@@ -361,12 +354,11 @@ pub unsafe fn dgemm_strided_batched(
     stride_c: c_longlong,
     batch_size: c_int,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasDgemmStridedBatched(
-            handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c,
-            ldc, stride_c, batch_size,
-        )
-        .result()
+    sys::cublasDgemmStridedBatched(
+        handle, transa, transb, m, n, k, alpha, a, lda, stride_a, b, ldb, stride_b, beta, c, ldc,
+        stride_c, batch_size,
+    )
+    .result()
 }
 
 /// Matmul with data types specified as parameters. See
@@ -399,29 +391,28 @@ pub unsafe fn gemm_ex(
     compute_type: sys::cublasComputeType_t,
     algo: sys::cublasGemmAlgo_t,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasGemmEx(
-            handle,
-            transa,
-            transb,
-            m,
-            n,
-            k,
-            alpha,
-            a,
-            a_type,
-            lda,
-            b,
-            b_type,
-            ldb,
-            beta,
-            c,
-            c_type,
-            ldc,
-            compute_type,
-            algo,
-        )
-        .result()
+    sys::cublasGemmEx(
+        handle,
+        transa,
+        transb,
+        m,
+        n,
+        k,
+        alpha,
+        a,
+        a_type,
+        lda,
+        b,
+        b_type,
+        ldb,
+        beta,
+        c,
+        c_type,
+        ldc,
+        compute_type,
+        algo,
+    )
+    .result()
 }
 
 /// Strided batched matmul with data types specified as parameters. See
@@ -458,31 +449,30 @@ pub unsafe fn gemm_strided_batched_ex(
     compute_type: sys::cublasComputeType_t,
     algo: sys::cublasGemmAlgo_t,
 ) -> Result<(), CublasError> {
-    lib()
-        .cublasGemmStridedBatchedEx(
-            handle,
-            transa,
-            transb,
-            m,
-            n,
-            k,
-            alpha,
-            a,
-            a_type,
-            lda,
-            stride_a,
-            b,
-            b_type,
-            ldb,
-            stride_b,
-            beta,
-            c,
-            c_type,
-            ldc,
-            stride_c,
-            batch_count,
-            compute_type,
-            algo,
-        )
-        .result()
+    sys::cublasGemmStridedBatchedEx(
+        handle,
+        transa,
+        transb,
+        m,
+        n,
+        k,
+        alpha,
+        a,
+        a_type,
+        lda,
+        stride_a,
+        b,
+        b_type,
+        ldb,
+        stride_b,
+        beta,
+        c,
+        c_type,
+        ldc,
+        stride_c,
+        batch_count,
+        compute_type,
+        algo,
+    )
+    .result()
 }
