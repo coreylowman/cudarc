@@ -2,7 +2,7 @@
 
 use std::mem::MaybeUninit;
 
-use super::sys::{self, lib};
+use super::sys::{self};
 
 pub type CudnnResult<T> = Result<T, CudnnError>;
 
@@ -33,7 +33,7 @@ impl std::error::Error for CudnnError {}
 ///
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetVersion)
 pub fn get_version() -> usize {
-    unsafe { lib().cudnnGetVersion() }
+    unsafe { sys::cudnnGetVersion() }
 }
 
 /// The same version of a given cuDNN library can be compiled against different CUDA toolkit versions.
@@ -41,29 +41,30 @@ pub fn get_version() -> usize {
 ///
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetCudartVersion)
 pub fn get_cudart_version() -> usize {
-    unsafe { lib().cudnnGetCudartVersion() }
+    unsafe { sys::cudnnGetCudartVersion() }
 }
 
 /// Runs all *VersionCheck functions.
 pub fn version_check() -> Result<(), CudnnError> {
-    #[cfg(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
-    ))]
-    unsafe {
-        lib().cudnnAdvInferVersionCheck().result()?;
-        lib().cudnnAdvTrainVersionCheck().result()?;
-        lib().cudnnCnnInferVersionCheck().result()?;
-        lib().cudnnCnnTrainVersionCheck().result()?;
-        lib().cudnnOpsInferVersionCheck().result()?;
-        lib().cudnnOpsTrainVersionCheck().result()?;
-    }
+    // This should be a cudnn version issue, not a cuda version issue.
+    // #[cfg(any(
+    //     feature = "cuda-11040",
+    //     feature = "cuda-11050",
+    //     feature = "cuda-11060",
+    //     feature = "cuda-11070",
+    //     feature = "cuda-11080",
+    //     feature = "cuda-12000",
+    //     feature = "cuda-12010",
+    //     feature = "cuda-12020"
+    // ))]
+    // unsafe {
+    //     sys::cudnnAdvInferVersionCheck().result()?;
+    //     sys::cudnnAdvTrainVersionCheck().result()?;
+    //     sys::cudnnCnnInferVersionCheck().result()?;
+    //     sys::cudnnCnnTrainVersionCheck().result()?;
+    //     sys::cudnnOpsInferVersionCheck().result()?;
+    //     sys::cudnnOpsTrainVersionCheck().result()?;
+    // }
     #[cfg(any(
         feature = "cuda-12030",
         feature = "cuda-12040",
@@ -72,9 +73,9 @@ pub fn version_check() -> Result<(), CudnnError> {
         feature = "cuda-12080"
     ))]
     unsafe {
-        lib().cudnnAdvVersionCheck().result()?;
-        lib().cudnnCnnVersionCheck().result()?;
-        lib().cudnnOpsVersionCheck().result()?;
+        sys::cudnnAdvVersionCheck().result()?;
+        sys::cudnnCnnVersionCheck().result()?;
+        sys::cudnnOpsVersionCheck().result()?;
     }
     Ok(())
 }
@@ -84,7 +85,7 @@ pub fn version_check() -> Result<(), CudnnError> {
 pub fn create_handle() -> Result<sys::cudnnHandle_t, CudnnError> {
     let mut handle = MaybeUninit::uninit();
     unsafe {
-        lib().cudnnCreate(handle.as_mut_ptr()).result()?;
+        sys::cudnnCreate(handle.as_mut_ptr()).result()?;
         Ok(handle.assume_init())
     }
 }
@@ -96,7 +97,7 @@ pub fn create_handle() -> Result<sys::cudnnHandle_t, CudnnError> {
 ///
 /// `handle` must not have been freed already.
 pub unsafe fn destroy_handle(handle: sys::cudnnHandle_t) -> Result<(), CudnnError> {
-    lib().cudnnDestroy(handle).result()
+    sys::cudnnDestroy(handle).result()
 }
 
 /// Sets the stream cuDNN will use. See
@@ -109,7 +110,7 @@ pub unsafe fn set_stream(
     handle: sys::cudnnHandle_t,
     stream: sys::cudaStream_t,
 ) -> Result<(), CudnnError> {
-    lib().cudnnSetStream(handle, stream).result()
+    sys::cudnnSetStream(handle, stream).result()
 }
 
 /// Allocates a new tensor descriptor.
@@ -117,9 +118,7 @@ pub unsafe fn set_stream(
 pub fn create_tensor_descriptor() -> Result<sys::cudnnTensorDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cudnnCreateTensorDescriptor(desc.as_mut_ptr())
-            .result()?;
+        sys::cudnnCreateTensorDescriptor(desc.as_mut_ptr()).result()?;
         Ok(desc.assume_init())
     }
 }
@@ -135,9 +134,7 @@ pub unsafe fn set_tensor4d_descriptor(
     data_type: sys::cudnnDataType_t,
     [n, c, h, w]: [std::ffi::c_int; 4],
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetTensor4dDescriptor(tensor_desc, format, data_type, n, c, h, w)
-        .result()
+    sys::cudnnSetTensor4dDescriptor(tensor_desc, format, data_type, n, c, h, w).result()
 }
 
 /// Sets data on a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensor4dDescriptorEx)
@@ -151,20 +148,19 @@ pub unsafe fn set_tensor4d_descriptor_ex(
     [n, c, h, w]: [std::ffi::c_int; 4],
     [n_stride, c_stride, h_stride, w_stride]: [std::ffi::c_int; 4],
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetTensor4dDescriptorEx(
-            tensor_desc,
-            data_type,
-            n,
-            c,
-            h,
-            w,
-            n_stride,
-            c_stride,
-            h_stride,
-            w_stride,
-        )
-        .result()
+    sys::cudnnSetTensor4dDescriptorEx(
+        tensor_desc,
+        data_type,
+        n,
+        c,
+        h,
+        w,
+        n_stride,
+        c_stride,
+        h_stride,
+        w_stride,
+    )
+    .result()
 }
 
 /// Sets data on a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetTensorNdDescriptor)
@@ -179,9 +175,7 @@ pub unsafe fn set_tensornd_descriptor(
     dims: *const ::std::os::raw::c_int,
     strides: *const ::std::os::raw::c_int,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetTensorNdDescriptor(tensor_desc, data_type, num_dims, dims, strides)
-        .result()
+    sys::cudnnSetTensorNdDescriptor(tensor_desc, data_type, num_dims, dims, strides).result()
 }
 
 /// Destroys a tensor descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyTensorDescriptor)
@@ -191,16 +185,14 @@ pub unsafe fn set_tensornd_descriptor(
 pub unsafe fn destroy_tensor_descriptor(
     desc: sys::cudnnTensorDescriptor_t,
 ) -> Result<(), CudnnError> {
-    lib().cudnnDestroyTensorDescriptor(desc).result()
+    sys::cudnnDestroyTensorDescriptor(desc).result()
 }
 
 /// Creates a filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateFilterDescriptor)
 pub fn create_filter_descriptor() -> Result<sys::cudnnFilterDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cudnnCreateFilterDescriptor(desc.as_mut_ptr())
-            .result()?;
+        sys::cudnnCreateFilterDescriptor(desc.as_mut_ptr()).result()?;
         Ok(desc.assume_init())
     }
 }
@@ -216,9 +208,7 @@ pub unsafe fn set_filter4d_descriptor(
     format: sys::cudnnTensorFormat_t,
     [k, c, h, w]: [::std::os::raw::c_int; 4],
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetFilter4dDescriptor(filter_desc, data_type, format, k, c, h, w)
-        .result()
+    sys::cudnnSetFilter4dDescriptor(filter_desc, data_type, format, k, c, h, w).result()
 }
 
 /// Sets data on a pre allocated filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetFilterNdDescriptor)
@@ -233,9 +223,7 @@ pub unsafe fn set_filternd_descriptor(
     nb_dims: std::ffi::c_int,
     filter_dims: *const std::ffi::c_int,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetFilterNdDescriptor(filter_desc, data_type, format, nb_dims, filter_dims)
-        .result()
+    sys::cudnnSetFilterNdDescriptor(filter_desc, data_type, format, nb_dims, filter_dims).result()
 }
 
 /// Destroys a filter descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyFilterDescriptor)
@@ -245,16 +233,14 @@ pub unsafe fn set_filternd_descriptor(
 pub unsafe fn destroy_filter_descriptor(
     desc: sys::cudnnFilterDescriptor_t,
 ) -> Result<(), CudnnError> {
-    lib().cudnnDestroyFilterDescriptor(desc).result()
+    sys::cudnnDestroyFilterDescriptor(desc).result()
 }
 
 /// Allocates a convolution descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateConvolutionDescriptor).
 pub fn create_convolution_descriptor() -> Result<sys::cudnnConvolutionDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cudnnCreateConvolutionDescriptor(desc.as_mut_ptr())
-            .result()?;
+        sys::cudnnCreateConvolutionDescriptor(desc.as_mut_ptr()).result()?;
         Ok(desc.assume_init())
     }
 }
@@ -276,19 +262,18 @@ pub unsafe fn set_convolution2d_descriptor(
     mode: sys::cudnnConvolutionMode_t,
     compute_type: sys::cudnnDataType_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetConvolution2dDescriptor(
-            conv_desc,
-            pad_h,
-            pad_w,
-            u,
-            v,
-            dilation_h,
-            dilation_w,
-            mode,
-            compute_type,
-        )
-        .result()
+    sys::cudnnSetConvolution2dDescriptor(
+        conv_desc,
+        pad_h,
+        pad_w,
+        u,
+        v,
+        dilation_h,
+        dilation_w,
+        mode,
+        compute_type,
+    )
+    .result()
 }
 
 /// Sets data on a conv descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionNdDescriptor)
@@ -306,17 +291,16 @@ pub unsafe fn set_convolutionnd_descriptor(
     mode: sys::cudnnConvolutionMode_t,
     compute_type: sys::cudnnDataType_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetConvolutionNdDescriptor(
-            conv_desc,
-            array_length,
-            pads,
-            filter_strides,
-            dilations,
-            mode,
-            compute_type,
-        )
-        .result()
+    sys::cudnnSetConvolutionNdDescriptor(
+        conv_desc,
+        array_length,
+        pads,
+        filter_strides,
+        dilations,
+        mode,
+        compute_type,
+    )
+    .result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionMathType).
@@ -326,7 +310,7 @@ pub unsafe fn set_convolution_math_type(
     desc: sys::cudnnConvolutionDescriptor_t,
     math_type: sys::cudnnMathType_t,
 ) -> Result<(), CudnnError> {
-    lib().cudnnSetConvolutionMathType(desc, math_type).result()
+    sys::cudnnSetConvolutionMathType(desc, math_type).result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnSetConvolutionGroupCount)
@@ -336,9 +320,7 @@ pub unsafe fn set_convolution_group_count(
     desc: sys::cudnnConvolutionDescriptor_t,
     group_count: i32,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetConvolutionGroupCount(desc, group_count)
-        .result()
+    sys::cudnnSetConvolutionGroupCount(desc, group_count).result()
 }
 
 /// Destroys a descriptor. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyConvolutionDescriptor).
@@ -347,7 +329,7 @@ pub unsafe fn set_convolution_group_count(
 pub unsafe fn destroy_convolution_descriptor(
     desc: sys::cudnnConvolutionDescriptor_t,
 ) -> Result<(), CudnnError> {
-    lib().cudnnDestroyConvolutionDescriptor(desc).result()
+    sys::cudnnDestroyConvolutionDescriptor(desc).result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionForwardAlgorithm_v7)
@@ -366,18 +348,17 @@ pub unsafe fn get_convolution_forward_algorithm(
     returned_algo_count: *mut std::ffi::c_int,
     perf_results: *mut sys::cudnnConvolutionFwdAlgoPerf_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnGetConvolutionForwardAlgorithm_v7(
-            handle,
-            src,
-            filter,
-            conv,
-            dest,
-            requested_algo_count,
-            returned_algo_count,
-            perf_results,
-        )
-        .result()
+    sys::cudnnGetConvolutionForwardAlgorithm_v7(
+        handle,
+        src,
+        filter,
+        conv,
+        dest,
+        requested_algo_count,
+        returned_algo_count,
+        perf_results,
+    )
+    .result()
 }
 
 /// Returns size in **bytes**. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionForwardWorkspaceSize)
@@ -393,17 +374,16 @@ pub unsafe fn get_convolution_forward_workspace_size(
     algo: sys::cudnnConvolutionFwdAlgo_t,
 ) -> Result<usize, CudnnError> {
     let mut size_in_bytes = [0];
-    lib()
-        .cudnnGetConvolutionForwardWorkspaceSize(
-            handle,
-            x,
-            w,
-            conv,
-            y,
-            algo,
-            size_in_bytes.as_mut_ptr(),
-        )
-        .result()?;
+    sys::cudnnGetConvolutionForwardWorkspaceSize(
+        handle,
+        x,
+        w,
+        conv,
+        y,
+        algo,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
     Ok(size_in_bytes[0])
 }
 
@@ -431,23 +411,22 @@ pub unsafe fn convolution_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnConvolutionForward(
-            handle,
-            alpha,
-            x_desc,
-            x,
-            w_desc,
-            w,
-            conv_desc,
-            algo,
-            work_space,
-            work_space_size_in_bytes,
-            beta,
-            y_desc,
-            y,
-        )
-        .result()
+    sys::cudnnConvolutionForward(
+        handle,
+        alpha,
+        x_desc,
+        x,
+        w_desc,
+        w,
+        conv_desc,
+        algo,
+        work_space,
+        work_space_size_in_bytes,
+        beta,
+        y_desc,
+        y,
+    )
+    .result()
 }
 
 /// # Safety
@@ -474,28 +453,27 @@ pub unsafe fn convolution_bias_activation_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnConvolutionBiasActivationForward(
-            handle,
-            alpha1,
-            x_desc,
-            x,
-            w_desc,
-            w,
-            conv_desc,
-            algo,
-            work_space,
-            work_space_size_in_bytes,
-            alpha2,
-            z_desc,
-            z,
-            bias_desc,
-            bias,
-            activation_desc,
-            y_desc,
-            y,
-        )
-        .result()
+    sys::cudnnConvolutionBiasActivationForward(
+        handle,
+        alpha1,
+        x_desc,
+        x,
+        w_desc,
+        w,
+        conv_desc,
+        algo,
+        work_space,
+        work_space_size_in_bytes,
+        alpha2,
+        z_desc,
+        z,
+        bias_desc,
+        bias,
+        activation_desc,
+        y_desc,
+        y,
+    )
+    .result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardDataAlgorithm_v7)
@@ -514,18 +492,17 @@ pub unsafe fn get_convolution_backward_data_algorithm(
     returned_algo_count: *mut ::std::os::raw::c_int,
     perf_results: *mut sys::cudnnConvolutionBwdDataAlgoPerf_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnGetConvolutionBackwardDataAlgorithm_v7(
-            handle,
-            w_desc,
-            dy_desc,
-            conv_desc,
-            dx_desc,
-            requested_algo_count,
-            returned_algo_count,
-            perf_results,
-        )
-        .result()
+    sys::cudnnGetConvolutionBackwardDataAlgorithm_v7(
+        handle,
+        w_desc,
+        dy_desc,
+        conv_desc,
+        dx_desc,
+        requested_algo_count,
+        returned_algo_count,
+        perf_results,
+    )
+    .result()
 }
 
 /// Returns size in **bytes**. See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardDataWorkspaceSize)
@@ -541,17 +518,16 @@ pub unsafe fn get_convolution_backward_data_workspace_size(
     algo: sys::cudnnConvolutionBwdDataAlgo_t,
 ) -> Result<usize, CudnnError> {
     let mut size_in_bytes = [0];
-    lib()
-        .cudnnGetConvolutionBackwardDataWorkspaceSize(
-            handle,
-            w_desc,
-            dy_desc,
-            conv_desc,
-            dx_desc,
-            algo,
-            size_in_bytes.as_mut_ptr(),
-        )
-        .result()?;
+    sys::cudnnGetConvolutionBackwardDataWorkspaceSize(
+        handle,
+        w_desc,
+        dy_desc,
+        conv_desc,
+        dx_desc,
+        algo,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
     Ok(size_in_bytes[0])
 }
 
@@ -579,23 +555,22 @@ pub unsafe fn convolution_backward_data(
     dx_desc: sys::cudnnTensorDescriptor_t,
     dx: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnConvolutionBackwardData(
-            handle,
-            alpha,
-            w_desc,
-            w,
-            dy_desc,
-            dy,
-            conv_desc,
-            algo,
-            work_space,
-            work_space_size_in_bytes,
-            beta,
-            dx_desc,
-            dx,
-        )
-        .result()
+    sys::cudnnConvolutionBackwardData(
+        handle,
+        alpha,
+        w_desc,
+        w,
+        dy_desc,
+        dy,
+        conv_desc,
+        algo,
+        work_space,
+        work_space_size_in_bytes,
+        beta,
+        dx_desc,
+        dx,
+    )
+    .result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetConvolutionBackwardFilterAlgorithm_v7)
@@ -614,18 +589,17 @@ pub unsafe fn get_convolution_backward_filter_algorithm(
     returned_algo_count: *mut ::std::os::raw::c_int,
     perf_results: *mut sys::cudnnConvolutionBwdFilterAlgoPerf_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnGetConvolutionBackwardFilterAlgorithm_v7(
-            handle,
-            src_desc,
-            diff_desc,
-            conv_desc,
-            grad_desc,
-            requested_algo_count,
-            returned_algo_count,
-            perf_results,
-        )
-        .result()
+    sys::cudnnGetConvolutionBackwardFilterAlgorithm_v7(
+        handle,
+        src_desc,
+        diff_desc,
+        conv_desc,
+        grad_desc,
+        requested_algo_count,
+        returned_algo_count,
+        perf_results,
+    )
+    .result()
 }
 
 /// Returns size in **bytes**.
@@ -642,17 +616,16 @@ pub unsafe fn get_convolution_backward_filter_workspace_size(
     algo: sys::cudnnConvolutionBwdFilterAlgo_t,
 ) -> Result<usize, CudnnError> {
     let mut size_in_bytes = [0];
-    lib()
-        .cudnnGetConvolutionBackwardFilterWorkspaceSize(
-            handle,
-            x_desc,
-            dy_desc,
-            conv_desc,
-            grad_desc,
-            algo,
-            size_in_bytes.as_mut_ptr(),
-        )
-        .result()?;
+    sys::cudnnGetConvolutionBackwardFilterWorkspaceSize(
+        handle,
+        x_desc,
+        dy_desc,
+        conv_desc,
+        grad_desc,
+        algo,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
     Ok(size_in_bytes[0])
 }
 
@@ -680,32 +653,29 @@ pub unsafe fn convolution_backward_filter(
     dw_desc: sys::cudnnFilterDescriptor_t,
     dw: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnConvolutionBackwardFilter(
-            handle,
-            alpha,
-            x_desc,
-            x,
-            dy_desc,
-            dy,
-            conv_desc,
-            algo,
-            work_space,
-            work_space_size_in_bytes,
-            beta,
-            dw_desc,
-            dw,
-        )
-        .result()
+    sys::cudnnConvolutionBackwardFilter(
+        handle,
+        alpha,
+        x_desc,
+        x,
+        dy_desc,
+        dy,
+        conv_desc,
+        algo,
+        work_space,
+        work_space_size_in_bytes,
+        beta,
+        dw_desc,
+        dw,
+    )
+    .result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnCreateReduceTensorDescriptor).
 pub fn create_reduce_tensor_descriptor() -> Result<sys::cudnnReduceTensorDescriptor_t, CudnnError> {
     let mut handle = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cudnnCreateReduceTensorDescriptor(handle.as_mut_ptr())
-            .result()?;
+        sys::cudnnCreateReduceTensorDescriptor(handle.as_mut_ptr()).result()?;
         Ok(handle.assume_init())
     }
 }
@@ -722,16 +692,15 @@ pub unsafe fn set_reduce_tensor_descriptor(
     tensor_indices: sys::cudnnReduceTensorIndices_t,
     tensor_indices_type: sys::cudnnIndicesType_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetReduceTensorDescriptor(
-            tensor_desc,
-            tensor_op,
-            tensor_comp_type,
-            tensor_nan_opt,
-            tensor_indices,
-            tensor_indices_type,
-        )
-        .result()
+    sys::cudnnSetReduceTensorDescriptor(
+        tensor_desc,
+        tensor_op,
+        tensor_comp_type,
+        tensor_nan_opt,
+        tensor_indices,
+        tensor_indices_type,
+    )
+    .result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnDestroyReduceTensorDescriptor).
@@ -741,9 +710,7 @@ pub unsafe fn set_reduce_tensor_descriptor(
 pub unsafe fn destroy_reduce_tensor_descriptor(
     tensor_desc: sys::cudnnReduceTensorDescriptor_t,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnDestroyReduceTensorDescriptor(tensor_desc)
-        .result()
+    sys::cudnnDestroyReduceTensorDescriptor(tensor_desc).result()
 }
 
 /// See [nvidia docs](https://docs.nvidia.com/deeplearning/cudnn/api/index.html#cudnnGetReductionIndicesSize)
@@ -757,15 +724,14 @@ pub unsafe fn get_reduction_indices_size(
     c_desc: sys::cudnnTensorDescriptor_t,
 ) -> Result<usize, CudnnError> {
     let mut size_in_bytes = [0];
-    lib()
-        .cudnnGetReductionIndicesSize(
-            handle,
-            reduce_tensor_desc,
-            a_desc,
-            c_desc,
-            size_in_bytes.as_mut_ptr(),
-        )
-        .result()?;
+    sys::cudnnGetReductionIndicesSize(
+        handle,
+        reduce_tensor_desc,
+        a_desc,
+        c_desc,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
     Ok(size_in_bytes[0])
 }
 
@@ -780,15 +746,14 @@ pub unsafe fn get_reduction_workspace_size(
     c_desc: sys::cudnnTensorDescriptor_t,
 ) -> Result<usize, CudnnError> {
     let mut size_in_bytes = [0];
-    lib()
-        .cudnnGetReductionWorkspaceSize(
-            handle,
-            reduce_tensor_desc,
-            a_desc,
-            c_desc,
-            size_in_bytes.as_mut_ptr(),
-        )
-        .result()?;
+    sys::cudnnGetReductionWorkspaceSize(
+        handle,
+        reduce_tensor_desc,
+        a_desc,
+        c_desc,
+        size_in_bytes.as_mut_ptr(),
+    )
+    .result()?;
     Ok(size_in_bytes[0])
 }
 
@@ -813,30 +778,27 @@ pub unsafe fn reduce_tensor(
     c_desc: sys::cudnnTensorDescriptor_t,
     c: *mut std::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnReduceTensor(
-            handle,
-            reduce_tensor_desc,
-            indices,
-            indices_size_in_bytes,
-            workspace,
-            workspace_size_in_bytes,
-            alpha,
-            a_desc,
-            a,
-            beta,
-            c_desc,
-            c,
-        )
-        .result()
+    sys::cudnnReduceTensor(
+        handle,
+        reduce_tensor_desc,
+        indices,
+        indices_size_in_bytes,
+        workspace,
+        workspace_size_in_bytes,
+        alpha,
+        a_desc,
+        a,
+        beta,
+        c_desc,
+        c,
+    )
+    .result()
 }
 
 pub fn create_pooling_descriptor() -> Result<sys::cudnnPoolingDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cudnnCreatePoolingDescriptor(desc.as_mut_ptr())
-            .result()?;
+        sys::cudnnCreatePoolingDescriptor(desc.as_mut_ptr()).result()?;
         Ok(desc.assume_init())
     }
 }
@@ -853,17 +815,16 @@ pub unsafe fn set_pooling_descriptor(
     pads: &[std::ffi::c_int],
     strides: &[std::ffi::c_int],
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetPoolingNdDescriptor(
-            desc,
-            mode,
-            nan_propagation,
-            nb_dims,
-            window_dims.as_ptr(),
-            pads.as_ptr(),
-            strides.as_ptr(),
-        )
-        .result()
+    sys::cudnnSetPoolingNdDescriptor(
+        desc,
+        mode,
+        nan_propagation,
+        nb_dims,
+        window_dims.as_ptr(),
+        pads.as_ptr(),
+        strides.as_ptr(),
+    )
+    .result()
 }
 
 /// # Safety
@@ -880,17 +841,13 @@ pub unsafe fn pooling_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnPoolingForward(handle, pooling_desc, alpha, x_desc, x, beta, y_desc, y)
-        .result()
+    sys::cudnnPoolingForward(handle, pooling_desc, alpha, x_desc, x, beta, y_desc, y).result()
 }
 
 pub fn create_activation_descriptor() -> Result<sys::cudnnActivationDescriptor_t, CudnnError> {
     let mut desc = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .cudnnCreateActivationDescriptor(desc.as_mut_ptr())
-            .result()?;
+        sys::cudnnCreateActivationDescriptor(desc.as_mut_ptr()).result()?;
         Ok(desc.assume_init())
     }
 }
@@ -904,9 +861,7 @@ pub unsafe fn set_activation_descriptor(
     nan_propagation: sys::cudnnNanPropagation_t,
     coef: f64,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnSetActivationDescriptor(desc, mode, nan_propagation, coef)
-        .result()
+    sys::cudnnSetActivationDescriptor(desc, mode, nan_propagation, coef).result()
 }
 
 /// # Safety
@@ -923,7 +878,5 @@ pub unsafe fn activation_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    lib()
-        .cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y)
-        .result()
+    sys::cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y).result()
 }

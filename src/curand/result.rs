@@ -4,7 +4,7 @@
 //! 1. Not generic: See [generate] for non-generic generation functions.
 //! 2. Generic: See [UniformFill], [NormalFill], and [LogNormalFill] for generic generation functions.
 
-use super::sys::{self, lib};
+use super::sys::{self};
 use std::mem::MaybeUninit;
 
 /// Wrapper around [sys::curandStatus_t].
@@ -47,9 +47,7 @@ pub fn create_generator_kind(
 ) -> Result<sys::curandGenerator_t, CurandError> {
     let mut generator = MaybeUninit::uninit();
     unsafe {
-        lib()
-            .curandCreateGenerator(generator.as_mut_ptr(), kind)
-            .result()?;
+        sys::curandCreateGenerator(generator.as_mut_ptr(), kind).result()?;
         Ok(generator.assume_init())
     }
 }
@@ -61,9 +59,7 @@ pub fn create_generator_kind(
 /// # Safety
 /// The generator must be allocated and not already freed.
 pub unsafe fn set_seed(generator: sys::curandGenerator_t, seed: u64) -> Result<(), CurandError> {
-    lib()
-        .curandSetPseudoRandomGeneratorSeed(generator, seed)
-        .result()
+    sys::curandSetPseudoRandomGeneratorSeed(generator, seed).result()
 }
 
 /// Set the offset value of the pseudo-random number generator.
@@ -76,7 +72,7 @@ pub unsafe fn set_offset(
     generator: sys::curandGenerator_t,
     offset: u64,
 ) -> Result<(), CurandError> {
-    lib().curandSetGeneratorOffset(generator, offset).result()
+    sys::curandSetGeneratorOffset(generator, offset).result()
 }
 
 /// Set the current stream for CURAND kernel launches.
@@ -90,7 +86,7 @@ pub unsafe fn set_stream(
     generator: sys::curandGenerator_t,
     stream: sys::cudaStream_t,
 ) -> Result<(), CurandError> {
-    lib().curandSetStream(generator, stream).result()
+    sys::curandSetStream(generator, stream).result()
 }
 
 /// Destroy an existing generator.
@@ -100,14 +96,14 @@ pub unsafe fn set_stream(
 /// # Safety
 /// The generator must not have already been freed.
 pub unsafe fn destroy_generator(generator: sys::curandGenerator_t) -> Result<(), CurandError> {
-    lib().curandDestroyGenerator(generator).result()
+    sys::curandDestroyGenerator(generator).result()
 }
 
 pub mod generate {
     //! Functions to generate different distributions.
 
     use super::{
-        sys::{self, lib},
+        sys::{self},
         CurandError,
     };
 
@@ -123,7 +119,7 @@ pub mod generate {
         out: *mut f32,
         num: usize,
     ) -> Result<(), CurandError> {
-        lib().curandGenerateUniform(gen, out, num).result()
+        sys::curandGenerateUniform(gen, out, num).result()
     }
 
     /// Fills `out` with `num` f64 values in the range (0.0, 1.0].
@@ -138,7 +134,7 @@ pub mod generate {
         out: *mut f64,
         num: usize,
     ) -> Result<(), CurandError> {
-        lib().curandGenerateUniformDouble(gen, out, num).result()
+        sys::curandGenerateUniformDouble(gen, out, num).result()
     }
 
     /// Fills `out` with `num` u32 values with all bits random.
@@ -153,7 +149,7 @@ pub mod generate {
         out: *mut u32,
         num: usize,
     ) -> Result<(), CurandError> {
-        lib().curandGenerate(gen, out, num).result()
+        sys::curandGenerate(gen, out, num).result()
     }
 
     /// Fills `out` with `num` u64 values with all bits random.
@@ -168,7 +164,7 @@ pub mod generate {
         out: *mut u64,
         num: usize,
     ) -> Result<(), CurandError> {
-        lib().curandGenerateLongLong(gen, out, num).result()
+        sys::curandGenerateLongLong(gen, out, num).result()
     }
 
     /// Fills `out` with `num` f32 values from a normal distribution
@@ -186,9 +182,7 @@ pub mod generate {
         mean: f32,
         std: f32,
     ) -> Result<(), CurandError> {
-        lib()
-            .curandGenerateNormal(gen, out, num, mean, std)
-            .result()
+        sys::curandGenerateNormal(gen, out, num, mean, std).result()
     }
 
     /// Fills `out` with `num` f64 values from a normal distribution
@@ -206,9 +200,7 @@ pub mod generate {
         mean: f64,
         std: f64,
     ) -> Result<(), CurandError> {
-        lib()
-            .curandGenerateNormalDouble(gen, out, num, mean, std)
-            .result()
+        sys::curandGenerateNormalDouble(gen, out, num, mean, std).result()
     }
 
     /// Fills `out` with `num` f32 values from a log normal distribution
@@ -226,9 +218,7 @@ pub mod generate {
         mean: f32,
         std: f32,
     ) -> Result<(), CurandError> {
-        lib()
-            .curandGenerateLogNormal(gen, out, num, mean, std)
-            .result()
+        sys::curandGenerateLogNormal(gen, out, num, mean, std).result()
     }
 
     /// Fills `out` with `num` f64 values from a normal distribution
@@ -246,9 +236,7 @@ pub mod generate {
         mean: f64,
         std: f64,
     ) -> Result<(), CurandError> {
-        lib()
-            .curandGenerateLogNormalDouble(gen, out, num, mean, std)
-            .result()
+        sys::curandGenerateLogNormalDouble(gen, out, num, mean, std).result()
     }
 
     /// Fills `out` with `num` u32 values from a poisson distribution
@@ -265,7 +253,7 @@ pub mod generate {
         num: usize,
         lambda: f64,
     ) -> Result<(), CurandError> {
-        lib().curandGeneratePoisson(gen, out, num, lambda).result()
+        sys::curandGeneratePoisson(gen, out, num, lambda).result()
     }
 }
 

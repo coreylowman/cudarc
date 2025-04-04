@@ -1,0 +1,22 @@
+[package]
+name = "cudarc_helper"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.97"
+bindgen = { version = "0.71.1", features = ["prettyplease"] }
+clap = { version = "4.5.34", features = ["derive"] }
+flate2 = { version = "1.1.0", features = ["zlib-rs"] }
+indicatif = "0.17.11"
+lazy_static = "1.5.0"
+log = "0.4.27"
+prettyplease = "0.2.31"
+proc-macro2 = "1.0.94"
+quote = "1.0.40"
+reqwest = { version = "0.12.15", features = ["blocking"] }
+serde_json = "1.0.140"
+sha2 = "0.10.8"
+syn = { version = "2.0.100", features = ["full"] }
+tar = "0.4.44"
+xz2 = "0.1.7"

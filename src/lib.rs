@@ -97,10 +97,12 @@ pub mod runtime;
 
 pub mod types;
 
+#[cfg(feature = "dynamic-loading")]
 pub(crate) fn panic_no_lib_found<S: std::fmt::Debug>(lib_name: &str, choices: &[S]) -> ! {
     panic!("Unable to dynamically load the \"{lib_name}\" shared library - searched for library names: {choices:?}. Ensure that `LD_LIBRARY_PATH` has the correct path to the installed library. If the shared library is present on the system under a different name than one of those listed above, please open a GitHub issue.");
 }
 
+#[cfg(feature = "dynamic-loading")]
 pub(crate) fn get_lib_name_candidates(lib_name: &str) -> std::vec::Vec<std::string::String> {
     use std::env::consts::{DLL_PREFIX, DLL_SUFFIX};
 
