@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -260,7 +260,6 @@ impl BindingMerger {
     pub fn generate_unified_bindings(&self) -> TokenStream {
         let enums = self.write_to_output(&self.enums).expect("Write to output");
         let impls = self.write_to_output(&self.impls).expect("Write to output");
-        println!("Impl {}", impls.to_string());
         let structs = self
             .write_to_output(&self.structs)
             .expect("Write to output");
