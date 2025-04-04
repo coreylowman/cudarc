@@ -57,12 +57,12 @@ pub fn version_check() -> Result<(), CudnnError> {
         feature = "cuda-12020"
     ))]
     unsafe {
-        sys::cudnnAdvInferVersionCheck().result()?;
-        sys::cudnnAdvTrainVersionCheck().result()?;
-        sys::cudnnCnnInferVersionCheck().result()?;
-        sys::cudnnCnnTrainVersionCheck().result()?;
-        sys::cudnnOpsInferVersionCheck().result()?;
-        sys::cudnnOpsTrainVersionCheck().result()?;
+        // sys::cudnnAdvInferVersionCheck().result()?;
+        // sys::cudnnAdvTrainVersionCheck().result()?;
+        // sys::cudnnCnnInferVersionCheck().result()?;
+        // sys::cudnnCnnTrainVersionCheck().result()?;
+        // sys::cudnnOpsInferVersionCheck().result()?;
+        // sys::cudnnOpsTrainVersionCheck().result()?;
     }
     #[cfg(any(
         feature = "cuda-12030",
