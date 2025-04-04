@@ -1228,22 +1228,28 @@ pub struct cudnnTensorTransformStruct {
     _unused: [u8; 0],
 }
 impl cudnnResampleMode_t {
-    pub const CUDNN_RESAMPLE_AVGPOOL_INCLUDE_PADDING: cudnnResampleMode_t = cudnnResampleMode_t::CUDNN_RESAMPLE_AVGPOOL;
+    pub const CUDNN_RESAMPLE_AVGPOOL_INCLUDE_PADDING: cudnnResampleMode_t =
+        cudnnResampleMode_t::CUDNN_RESAMPLE_AVGPOOL;
 }
 impl cudnnStatus_t {
-    pub const CUDNN_STATUS_ALLOC_FAILED: cudnnStatus_t = cudnnStatus_t::CUDNN_STATUS_INTERNAL_ERROR_HOST_ALLOCATION_FAILED;
+    pub const CUDNN_STATUS_ALLOC_FAILED: cudnnStatus_t =
+        cudnnStatus_t::CUDNN_STATUS_INTERNAL_ERROR_HOST_ALLOCATION_FAILED;
 }
 impl cudnnStatus_t {
-    pub const CUDNN_STATUS_ARCH_MISMATCH: cudnnStatus_t = cudnnStatus_t::CUDNN_STATUS_NOT_SUPPORTED_ARCH_MISMATCH;
+    pub const CUDNN_STATUS_ARCH_MISMATCH: cudnnStatus_t =
+        cudnnStatus_t::CUDNN_STATUS_NOT_SUPPORTED_ARCH_MISMATCH;
 }
 impl cudnnStatus_t {
-    pub const CUDNN_STATUS_MAPPING_ERROR: cudnnStatus_t = cudnnStatus_t::CUDNN_STATUS_INTERNAL_ERROR_TEXTURE_CREATION_FAILED;
+    pub const CUDNN_STATUS_MAPPING_ERROR: cudnnStatus_t =
+        cudnnStatus_t::CUDNN_STATUS_INTERNAL_ERROR_TEXTURE_CREATION_FAILED;
 }
 impl cudnnStatus_t {
-    pub const CUDNN_STATUS_RUNTIME_PREREQUISITE_MISSING: cudnnStatus_t = cudnnStatus_t::CUDNN_STATUS_NOT_SUPPORTED_RUNTIME_PREREQUISITE_MISSING;
+    pub const CUDNN_STATUS_RUNTIME_PREREQUISITE_MISSING: cudnnStatus_t =
+        cudnnStatus_t::CUDNN_STATUS_NOT_SUPPORTED_RUNTIME_PREREQUISITE_MISSING;
 }
 impl cudnnStatus_t {
-    pub const CUDNN_STATUS_VERSION_MISMATCH: cudnnStatus_t = cudnnStatus_t::CUDNN_STATUS_SUBLIBRARY_VERSION_MISMATCH;
+    pub const CUDNN_STATUS_VERSION_MISMATCH: cudnnStatus_t =
+        cudnnStatus_t::CUDNN_STATUS_SUBLIBRARY_VERSION_MISMATCH;
 }
 impl Default for cudnnConvolutionBwdDataAlgoPerfStruct {
     fn default() -> Self {
@@ -1321,9 +1327,7 @@ extern "C" {
         descriptorType: cudnnBackendDescriptorType_t,
         descriptor: *mut cudnnBackendDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnBackendDestroyDescriptor(
-        descriptor: cudnnBackendDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnBackendDestroyDescriptor(descriptor: cudnnBackendDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnBackendExecute(
         handle: cudnnHandle_t,
         executionPlan: cudnnBackendDescriptor_t,
@@ -1587,9 +1591,7 @@ extern "C" {
     pub fn cudnnCreateActivationDescriptor(
         activationDesc: *mut cudnnActivationDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnCreateAttnDescriptor(
-        attnDesc: *mut cudnnAttnDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnCreateAttnDescriptor(attnDesc: *mut cudnnAttnDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnCreateCTCLossDescriptor(
         ctcLossDesc: *mut cudnnCTCLossDescriptor_t,
     ) -> cudnnStatus_t;
@@ -1599,9 +1601,7 @@ extern "C" {
     pub fn cudnnCreateDropoutDescriptor(
         dropoutDesc: *mut cudnnDropoutDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnCreateFilterDescriptor(
-        filterDesc: *mut cudnnFilterDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnCreateFilterDescriptor(filterDesc: *mut cudnnFilterDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnCreateFusedOpsConstParamPack(
         constPack: *mut cudnnFusedOpsConstParamPack_t,
         ops: cudnnFusedOps_t,
@@ -1614,9 +1614,7 @@ extern "C" {
         varPack: *mut cudnnFusedOpsVariantParamPack_t,
         ops: cudnnFusedOps_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnCreateLRNDescriptor(
-        normDesc: *mut cudnnLRNDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnCreateLRNDescriptor(normDesc: *mut cudnnLRNDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnCreateOpTensorDescriptor(
         opTensorDesc: *mut cudnnOpTensorDescriptor_t,
     ) -> cudnnStatus_t;
@@ -1636,9 +1634,7 @@ extern "C" {
     pub fn cudnnCreateSpatialTransformerDescriptor(
         stDesc: *mut cudnnSpatialTransformerDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnCreateTensorDescriptor(
-        tensorDesc: *mut cudnnTensorDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnCreateTensorDescriptor(tensorDesc: *mut cudnnTensorDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnCreateTensorTransformDescriptor(
         transformDesc: *mut cudnnTensorTransformDescriptor_t,
     ) -> cudnnStatus_t;
@@ -1659,18 +1655,12 @@ extern "C" {
         activationDesc: cudnnActivationDescriptor_t,
     ) -> cudnnStatus_t;
     pub fn cudnnDestroyAttnDescriptor(attnDesc: cudnnAttnDescriptor_t) -> cudnnStatus_t;
-    pub fn cudnnDestroyCTCLossDescriptor(
-        ctcLossDesc: cudnnCTCLossDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnDestroyCTCLossDescriptor(ctcLossDesc: cudnnCTCLossDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnDestroyConvolutionDescriptor(
         convDesc: cudnnConvolutionDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnDestroyDropoutDescriptor(
-        dropoutDesc: cudnnDropoutDescriptor_t,
-    ) -> cudnnStatus_t;
-    pub fn cudnnDestroyFilterDescriptor(
-        filterDesc: cudnnFilterDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnDestroyDropoutDescriptor(dropoutDesc: cudnnDropoutDescriptor_t) -> cudnnStatus_t;
+    pub fn cudnnDestroyFilterDescriptor(filterDesc: cudnnFilterDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnDestroyFusedOpsConstParamPack(
         constPack: cudnnFusedOpsConstParamPack_t,
     ) -> cudnnStatus_t;
@@ -1679,28 +1669,19 @@ extern "C" {
         varPack: cudnnFusedOpsVariantParamPack_t,
     ) -> cudnnStatus_t;
     pub fn cudnnDestroyLRNDescriptor(lrnDesc: cudnnLRNDescriptor_t) -> cudnnStatus_t;
-    pub fn cudnnDestroyOpTensorDescriptor(
-        opTensorDesc: cudnnOpTensorDescriptor_t,
-    ) -> cudnnStatus_t;
-    pub fn cudnnDestroyPoolingDescriptor(
-        poolingDesc: cudnnPoolingDescriptor_t,
-    ) -> cudnnStatus_t;
-    pub fn cudnnDestroyRNNDataDescriptor(
-        rnnDataDesc: cudnnRNNDataDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnDestroyOpTensorDescriptor(opTensorDesc: cudnnOpTensorDescriptor_t)
+        -> cudnnStatus_t;
+    pub fn cudnnDestroyPoolingDescriptor(poolingDesc: cudnnPoolingDescriptor_t) -> cudnnStatus_t;
+    pub fn cudnnDestroyRNNDataDescriptor(rnnDataDesc: cudnnRNNDataDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnDestroyRNNDescriptor(rnnDesc: cudnnRNNDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnDestroyReduceTensorDescriptor(
         reduceTensorDesc: cudnnReduceTensorDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnDestroySeqDataDescriptor(
-        seqDataDesc: cudnnSeqDataDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnDestroySeqDataDescriptor(seqDataDesc: cudnnSeqDataDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnDestroySpatialTransformerDescriptor(
         stDesc: cudnnSpatialTransformerDescriptor_t,
     ) -> cudnnStatus_t;
-    pub fn cudnnDestroyTensorDescriptor(
-        tensorDesc: cudnnTensorDescriptor_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnDestroyTensorDescriptor(tensorDesc: cudnnTensorDescriptor_t) -> cudnnStatus_t;
     pub fn cudnnDestroyTensorTransformDescriptor(
         transformDesc: cudnnTensorTransformDescriptor_t,
     ) -> cudnnStatus_t;
@@ -2326,10 +2307,7 @@ extern "C" {
         seqLengthArray: *mut ::core::ffi::c_int,
         paddingFill: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t;
-    pub fn cudnnGetStream(
-        handle: cudnnHandle_t,
-        streamId: *mut cudaStream_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnGetStream(handle: cudnnHandle_t, streamId: *mut cudaStream_t) -> cudnnStatus_t;
     pub fn cudnnGetTensor4dDescriptor(
         tensorDesc: cudnnTensorDescriptor_t,
         dataType: *mut cudnnDataType_t,
@@ -2952,10 +2930,7 @@ extern "C" {
         nbDims: ::core::ffi::c_int,
         dimA: *const ::core::ffi::c_int,
     ) -> cudnnStatus_t;
-    pub fn cudnnSetStream(
-        handle: cudnnHandle_t,
-        streamId: cudaStream_t,
-    ) -> cudnnStatus_t;
+    pub fn cudnnSetStream(handle: cudnnHandle_t, streamId: cudaStream_t) -> cudnnStatus_t;
     pub fn cudnnSetTensor(
         handle: cudnnHandle_t,
         yDesc: cudnnTensorDescriptor_t,
@@ -3116,8 +3091,7 @@ mod loaded {
         dxDesc: cudnnTensorDescriptor_t,
         dx: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnActivationBackward)(
+        (culib().cudnnActivationBackward)(
             handle,
             activationDesc,
             alpha,
@@ -3142,17 +3116,7 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnActivationForward)(
-            handle,
-            activationDesc,
-            alpha,
-            xDesc,
-            x,
-            beta,
-            yDesc,
-            y,
-        )
+        (culib().cudnnActivationForward)(handle, activationDesc, alpha, xDesc, x, beta, yDesc, y)
     }
     pub unsafe fn cudnnAddTensor(
         handle: cudnnHandle_t,
@@ -3186,9 +3150,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnBackendExecute)(handle, executionPlan, variantPack)
     }
-    pub unsafe fn cudnnBackendFinalize(
-        descriptor: cudnnBackendDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnBackendFinalize(descriptor: cudnnBackendDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnBackendFinalize)(descriptor)
     }
     pub unsafe fn cudnnBackendGetAttribute(
@@ -3199,8 +3161,7 @@ mod loaded {
         elementCount: *mut i64,
         arrayOfElements: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBackendGetAttribute)(
+        (culib().cudnnBackendGetAttribute)(
             descriptor,
             attributeName,
             attributeType,
@@ -3209,9 +3170,7 @@ mod loaded {
             arrayOfElements,
         )
     }
-    pub unsafe fn cudnnBackendInitialize(
-        descriptor: cudnnBackendDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnBackendInitialize(descriptor: cudnnBackendDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnBackendInitialize)(descriptor)
     }
     pub unsafe fn cudnnBackendPopulateCudaGraph(
@@ -3220,8 +3179,7 @@ mod loaded {
         variantPack: cudnnBackendDescriptor_t,
         graph: cudaGraph_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBackendPopulateCudaGraph)(handle, executionPlan, variantPack, graph)
+        (culib().cudnnBackendPopulateCudaGraph)(handle, executionPlan, variantPack, graph)
     }
     pub unsafe fn cudnnBackendSetAttribute(
         descriptor: cudnnBackendDescriptor_t,
@@ -3230,8 +3188,7 @@ mod loaded {
         elementCount: i64,
         arrayOfElements: *const ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBackendSetAttribute)(
+        (culib().cudnnBackendSetAttribute)(
             descriptor,
             attributeName,
             attributeType,
@@ -3268,8 +3225,7 @@ mod loaded {
         savedMean: *const ::core::ffi::c_void,
         savedInvVariance: *const ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBatchNormalizationBackward)(
+        (culib().cudnnBatchNormalizationBackward)(
             handle,
             mode,
             alphaDataDiff,
@@ -3323,8 +3279,7 @@ mod loaded {
         reserveSpace: *mut ::core::ffi::c_void,
         reserveSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBatchNormalizationBackwardEx)(
+        (culib().cudnnBatchNormalizationBackwardEx)(
             handle,
             mode,
             bnOps,
@@ -3373,8 +3328,7 @@ mod loaded {
         estimatedVariance: *const ::core::ffi::c_void,
         epsilon: f64,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBatchNormalizationForwardInference)(
+        (culib().cudnnBatchNormalizationForwardInference)(
             handle,
             mode,
             alpha,
@@ -3410,8 +3364,7 @@ mod loaded {
         resultSaveMean: *mut ::core::ffi::c_void,
         resultSaveInvVariance: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBatchNormalizationForwardTraining)(
+        (culib().cudnnBatchNormalizationForwardTraining)(
             handle,
             mode,
             alpha,
@@ -3458,8 +3411,7 @@ mod loaded {
         reserveSpace: *mut ::core::ffi::c_void,
         reserveSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnBatchNormalizationForwardTrainingEx)(
+        (culib().cudnnBatchNormalizationForwardTrainingEx)(
             handle,
             mode,
             bnOps,
@@ -3509,8 +3461,7 @@ mod loaded {
         workspace: *mut ::core::ffi::c_void,
         workSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnCTCLoss)(
+        (culib().cudnnCTCLoss)(
             handle,
             probsDesc,
             probs,
@@ -3541,8 +3492,7 @@ mod loaded {
         workSpaceSizeInBytes: usize,
         workspace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnCTCLoss_v8)(
+        (culib().cudnnCTCLoss_v8)(
             handle,
             algo,
             ctcLossDesc,
@@ -3570,8 +3520,7 @@ mod loaded {
         dbDesc: cudnnTensorDescriptor_t,
         db: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnConvolutionBackwardBias)(handle, alpha, dyDesc, dy, beta, dbDesc, db)
+        (culib().cudnnConvolutionBackwardBias)(handle, alpha, dyDesc, dy, beta, dbDesc, db)
     }
     pub unsafe fn cudnnConvolutionBackwardData(
         handle: cudnnHandle_t,
@@ -3588,8 +3537,7 @@ mod loaded {
         dxDesc: cudnnTensorDescriptor_t,
         dx: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnConvolutionBackwardData)(
+        (culib().cudnnConvolutionBackwardData)(
             handle,
             alpha,
             wDesc,
@@ -3620,8 +3568,7 @@ mod loaded {
         dwDesc: cudnnFilterDescriptor_t,
         dw: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnConvolutionBackwardFilter)(
+        (culib().cudnnConvolutionBackwardFilter)(
             handle,
             alpha,
             xDesc,
@@ -3657,8 +3604,7 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnConvolutionBiasActivationForward)(
+        (culib().cudnnConvolutionBiasActivationForward)(
             handle,
             alpha1,
             xDesc,
@@ -3694,8 +3640,7 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnConvolutionForward)(
+        (culib().cudnnConvolutionForward)(
             handle,
             alpha,
             xDesc,
@@ -3719,9 +3664,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnCreateActivationDescriptor)(activationDesc)
     }
-    pub unsafe fn cudnnCreateAttnDescriptor(
-        attnDesc: *mut cudnnAttnDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnCreateAttnDescriptor(attnDesc: *mut cudnnAttnDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnCreateAttnDescriptor)(attnDesc)
     }
     pub unsafe fn cudnnCreateCTCLossDescriptor(
@@ -3762,9 +3705,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnCreateFusedOpsVariantParamPack)(varPack, ops)
     }
-    pub unsafe fn cudnnCreateLRNDescriptor(
-        normDesc: *mut cudnnLRNDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnCreateLRNDescriptor(normDesc: *mut cudnnLRNDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnCreateLRNDescriptor)(normDesc)
     }
     pub unsafe fn cudnnCreateOpTensorDescriptor(
@@ -3782,9 +3723,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnCreateRNNDataDescriptor)(rnnDataDesc)
     }
-    pub unsafe fn cudnnCreateRNNDescriptor(
-        rnnDesc: *mut cudnnRNNDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnCreateRNNDescriptor(rnnDesc: *mut cudnnRNNDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnCreateRNNDescriptor)(rnnDesc)
     }
     pub unsafe fn cudnnCreateReduceTensorDescriptor(
@@ -3826,8 +3765,7 @@ mod loaded {
         mode: cudnnNormMode_t,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnDeriveNormTensorDescriptor)(
+        (culib().cudnnDeriveNormTensorDescriptor)(
             derivedNormScaleBiasDesc,
             derivedNormMeanVarDesc,
             xDesc,
@@ -3843,9 +3781,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnDestroyActivationDescriptor)(activationDesc)
     }
-    pub unsafe fn cudnnDestroyAttnDescriptor(
-        attnDesc: cudnnAttnDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnDestroyAttnDescriptor(attnDesc: cudnnAttnDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnDestroyAttnDescriptor)(attnDesc)
     }
     pub unsafe fn cudnnDestroyCTCLossDescriptor(
@@ -3881,9 +3817,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnDestroyFusedOpsVariantParamPack)(varPack)
     }
-    pub unsafe fn cudnnDestroyLRNDescriptor(
-        lrnDesc: cudnnLRNDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnDestroyLRNDescriptor(lrnDesc: cudnnLRNDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnDestroyLRNDescriptor)(lrnDesc)
     }
     pub unsafe fn cudnnDestroyOpTensorDescriptor(
@@ -3901,9 +3835,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnDestroyRNNDataDescriptor)(rnnDataDesc)
     }
-    pub unsafe fn cudnnDestroyRNNDescriptor(
-        rnnDesc: cudnnRNNDescriptor_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnDestroyRNNDescriptor(rnnDesc: cudnnRNNDescriptor_t) -> cudnnStatus_t {
         (culib().cudnnDestroyRNNDescriptor)(rnnDesc)
     }
     pub unsafe fn cudnnDestroyReduceTensorDescriptor(
@@ -3947,8 +3879,7 @@ mod loaded {
         dx: *mut ::core::ffi::c_void,
         dMeans: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnDivisiveNormalizationBackward)(
+        (culib().cudnnDivisiveNormalizationBackward)(
             handle,
             normDesc,
             mode,
@@ -3979,20 +3910,8 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnDivisiveNormalizationForward)(
-            handle,
-            normDesc,
-            mode,
-            alpha,
-            xDesc,
-            x,
-            means,
-            temp,
-            temp2,
-            beta,
-            yDesc,
-            y,
+        (culib().cudnnDivisiveNormalizationForward)(
+            handle, normDesc, mode, alpha, xDesc, x, means, temp, temp2, beta, yDesc, y,
         )
     }
     pub unsafe fn cudnnDropoutBackward(
@@ -4005,8 +3924,7 @@ mod loaded {
         reserveSpace: *mut ::core::ffi::c_void,
         reserveSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnDropoutBackward)(
+        (culib().cudnnDropoutBackward)(
             handle,
             dropoutDesc,
             dydesc,
@@ -4027,8 +3945,7 @@ mod loaded {
         reserveSpace: *mut ::core::ffi::c_void,
         reserveSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnDropoutForward)(
+        (culib().cudnnDropoutForward)(
             handle,
             dropoutDesc,
             xdesc,
@@ -4061,8 +3978,7 @@ mod loaded {
         returnedAlgoCount: *mut ::core::ffi::c_int,
         perfResults: *mut cudnnConvolutionBwdDataAlgoPerf_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnFindConvolutionBackwardDataAlgorithm)(
+        (culib().cudnnFindConvolutionBackwardDataAlgorithm)(
             handle,
             wDesc,
             dyDesc,
@@ -4088,8 +4004,7 @@ mod loaded {
         workSpace: *mut ::core::ffi::c_void,
         workSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnFindConvolutionBackwardDataAlgorithmEx)(
+        (culib().cudnnFindConvolutionBackwardDataAlgorithmEx)(
             handle,
             wDesc,
             w,
@@ -4115,8 +4030,7 @@ mod loaded {
         returnedAlgoCount: *mut ::core::ffi::c_int,
         perfResults: *mut cudnnConvolutionBwdFilterAlgoPerf_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnFindConvolutionBackwardFilterAlgorithm)(
+        (culib().cudnnFindConvolutionBackwardFilterAlgorithm)(
             handle,
             xDesc,
             dyDesc,
@@ -4142,8 +4056,7 @@ mod loaded {
         workSpace: *mut ::core::ffi::c_void,
         workSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnFindConvolutionBackwardFilterAlgorithmEx)(
+        (culib().cudnnFindConvolutionBackwardFilterAlgorithmEx)(
             handle,
             xDesc,
             x,
@@ -4169,8 +4082,7 @@ mod loaded {
         returnedAlgoCount: *mut ::core::ffi::c_int,
         perfResults: *mut cudnnConvolutionFwdAlgoPerf_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnFindConvolutionForwardAlgorithm)(
+        (culib().cudnnFindConvolutionForwardAlgorithm)(
             handle,
             xDesc,
             wDesc,
@@ -4196,8 +4108,7 @@ mod loaded {
         workSpace: *mut ::core::ffi::c_void,
         workSpaceSizeInBytes: usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnFindConvolutionForwardAlgorithmEx)(
+        (culib().cudnnFindConvolutionForwardAlgorithmEx)(
             handle,
             xDesc,
             x,
@@ -4256,8 +4167,7 @@ mod loaded {
         maxBatchSize: *mut ::core::ffi::c_int,
         maxBeamSize: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetAttnDescriptor)(
+        (culib().cudnnGetAttnDescriptor)(
             attnDesc,
             attnMode,
             nHeads,
@@ -4293,8 +4203,7 @@ mod loaded {
         activationDesc: cudnnActivationDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetBatchNormalizationBackwardExWorkspaceSize)(
+        (culib().cudnnGetBatchNormalizationBackwardExWorkspaceSize)(
             handle,
             mode,
             bnOps,
@@ -4319,8 +4228,7 @@ mod loaded {
         activationDesc: cudnnActivationDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetBatchNormalizationForwardTrainingExWorkspaceSize)(
+        (culib().cudnnGetBatchNormalizationForwardTrainingExWorkspaceSize)(
             handle,
             mode,
             bnOps,
@@ -4340,8 +4248,7 @@ mod loaded {
         xDesc: cudnnTensorDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetBatchNormalizationTrainingExReserveSpaceSize)(
+        (culib().cudnnGetBatchNormalizationTrainingExReserveSpaceSize)(
             handle,
             mode,
             bnOps,
@@ -4371,8 +4278,7 @@ mod loaded {
         gradMode: *mut cudnnNanPropagation_t,
         maxLabelLength: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetCTCLossDescriptor_v8)(
+        (culib().cudnnGetCTCLossDescriptor_v8)(
             ctcLossDesc,
             compType,
             normMode,
@@ -4387,8 +4293,7 @@ mod loaded {
         ctcGradMode: *mut cudnnCTCGradMode_t,
         maxLabelLength: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetCTCLossDescriptor_v9)(
+        (culib().cudnnGetCTCLossDescriptor_v9)(
             ctcLossDesc,
             compType,
             normMode,
@@ -4407,8 +4312,7 @@ mod loaded {
         ctcLossDesc: cudnnCTCLossDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetCTCLossWorkspaceSize)(
+        (culib().cudnnGetCTCLossWorkspaceSize)(
             handle,
             probsDesc,
             gradientsDesc,
@@ -4428,8 +4332,7 @@ mod loaded {
         gradientsDesc: cudnnTensorDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetCTCLossWorkspaceSize_v8)(
+        (culib().cudnnGetCTCLossWorkspaceSize_v8)(
             handle,
             algo,
             ctcLossDesc,
@@ -4456,8 +4359,7 @@ mod loaded {
         mode: *mut cudnnConvolutionMode_t,
         computeType: *mut cudnnDataType_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolution2dDescriptor)(
+        (culib().cudnnGetConvolution2dDescriptor)(
             convDesc,
             pad_h,
             pad_w,
@@ -4478,8 +4380,7 @@ mod loaded {
         h: *mut ::core::ffi::c_int,
         w: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolution2dForwardOutputDim)(
+        (culib().cudnnGetConvolution2dForwardOutputDim)(
             convDesc,
             inputTensorDesc,
             filterDesc,
@@ -4505,8 +4406,7 @@ mod loaded {
         returnedAlgoCount: *mut ::core::ffi::c_int,
         perfResults: *mut cudnnConvolutionBwdDataAlgoPerf_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionBackwardDataAlgorithm_v7)(
+        (culib().cudnnGetConvolutionBackwardDataAlgorithm_v7)(
             handle,
             filterDesc,
             diffDesc,
@@ -4526,8 +4426,7 @@ mod loaded {
         algo: cudnnConvolutionBwdDataAlgo_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionBackwardDataWorkspaceSize)(
+        (culib().cudnnGetConvolutionBackwardDataWorkspaceSize)(
             handle,
             wDesc,
             dyDesc,
@@ -4553,8 +4452,7 @@ mod loaded {
         returnedAlgoCount: *mut ::core::ffi::c_int,
         perfResults: *mut cudnnConvolutionBwdFilterAlgoPerf_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionBackwardFilterAlgorithm_v7)(
+        (culib().cudnnGetConvolutionBackwardFilterAlgorithm_v7)(
             handle,
             srcDesc,
             diffDesc,
@@ -4574,8 +4472,7 @@ mod loaded {
         algo: cudnnConvolutionBwdFilterAlgo_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionBackwardFilterWorkspaceSize)(
+        (culib().cudnnGetConvolutionBackwardFilterWorkspaceSize)(
             handle,
             xDesc,
             dyDesc,
@@ -4601,8 +4498,7 @@ mod loaded {
         returnedAlgoCount: *mut ::core::ffi::c_int,
         perfResults: *mut cudnnConvolutionFwdAlgoPerf_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionForwardAlgorithm_v7)(
+        (culib().cudnnGetConvolutionForwardAlgorithm_v7)(
             handle,
             srcDesc,
             filterDesc,
@@ -4622,8 +4518,7 @@ mod loaded {
         algo: cudnnConvolutionFwdAlgo_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionForwardWorkspaceSize)(
+        (culib().cudnnGetConvolutionForwardWorkspaceSize)(
             handle,
             xDesc,
             wDesc,
@@ -4655,8 +4550,7 @@ mod loaded {
         mode: *mut cudnnConvolutionMode_t,
         computeType: *mut cudnnDataType_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionNdDescriptor)(
+        (culib().cudnnGetConvolutionNdDescriptor)(
             convDesc,
             arrayLengthRequested,
             arrayLength,
@@ -4674,8 +4568,7 @@ mod loaded {
         nbDims: ::core::ffi::c_int,
         tensorOuputDimA: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetConvolutionNdForwardOutputDim)(
+        (culib().cudnnGetConvolutionNdForwardOutputDim)(
             convDesc,
             inputTensorDesc,
             filterDesc,
@@ -4701,9 +4594,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnGetDropoutDescriptor)(dropoutDesc, handle, dropout, states, seed)
     }
-    pub unsafe fn cudnnGetErrorString(
-        status: cudnnStatus_t,
-    ) -> *const ::core::ffi::c_char {
+    pub unsafe fn cudnnGetErrorString(status: cudnnStatus_t) -> *const ::core::ffi::c_char {
         (culib().cudnnGetErrorString)(status)
     }
     pub unsafe fn cudnnGetFilter4dDescriptor(
@@ -4725,8 +4616,7 @@ mod loaded {
         nbDims: *mut ::core::ffi::c_int,
         filterDimA: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetFilterNdDescriptor)(
+        (culib().cudnnGetFilterNdDescriptor)(
             filterDesc,
             nbDimsRequested,
             dataType,
@@ -4757,8 +4647,7 @@ mod loaded {
         gradFoldTransDesc: cudnnTensorTransformDescriptor_t,
         gradUnfoldTransDesc: cudnnTensorTransformDescriptor_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetFoldedConvBackwardDataDescriptors)(
+        (culib().cudnnGetFoldedConvBackwardDataDescriptors)(
             handle,
             filterDesc,
             diffDesc,
@@ -4781,13 +4670,7 @@ mod loaded {
         param: *mut ::core::ffi::c_void,
         isNULL: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetFusedOpsConstParamPackAttribute)(
-            constPack,
-            paramLabel,
-            param,
-            isNULL,
-        )
+        (culib().cudnnGetFusedOpsConstParamPackAttribute)(constPack, paramLabel, param, isNULL)
     }
     pub unsafe fn cudnnGetFusedOpsVariantParamPackAttribute(
         varPack: cudnnFusedOpsVariantParamPack_t,
@@ -4805,10 +4688,7 @@ mod loaded {
     ) -> cudnnStatus_t {
         (culib().cudnnGetLRNDescriptor)(normDesc, lrnN, lrnAlpha, lrnBeta, lrnK)
     }
-    pub unsafe fn cudnnGetLastErrorString(
-        message: *mut ::core::ffi::c_char,
-        max_size: usize,
-    ) {
+    pub unsafe fn cudnnGetLastErrorString(message: *mut ::core::ffi::c_char, max_size: usize) {
         (culib().cudnnGetLastErrorString)(message, max_size)
     }
     pub unsafe fn cudnnGetMaxDeviceVersion() -> usize {
@@ -4821,8 +4701,7 @@ mod loaded {
         workSpaceSizeInBytes: *mut usize,
         reserveSpaceSizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetMultiHeadAttnBuffers)(
+        (culib().cudnnGetMultiHeadAttnBuffers)(
             handle,
             attnDesc,
             weightSizeInBytes,
@@ -4839,8 +4718,7 @@ mod loaded {
         wDesc: cudnnTensorDescriptor_t,
         wAddr: *mut *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetMultiHeadAttnWeights)(
+        (culib().cudnnGetMultiHeadAttnWeights)(
             handle,
             attnDesc,
             wKind,
@@ -4866,8 +4744,7 @@ mod loaded {
         sizeInBytes: *mut usize,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetNormalizationBackwardWorkspaceSize)(
+        (culib().cudnnGetNormalizationBackwardWorkspaceSize)(
             handle,
             mode,
             normOps,
@@ -4898,8 +4775,7 @@ mod loaded {
         sizeInBytes: *mut usize,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetNormalizationForwardTrainingWorkspaceSize)(
+        (culib().cudnnGetNormalizationForwardTrainingWorkspaceSize)(
             handle,
             mode,
             normOps,
@@ -4924,8 +4800,7 @@ mod loaded {
         sizeInBytes: *mut usize,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetNormalizationTrainingReserveSpaceSize)(
+        (culib().cudnnGetNormalizationTrainingReserveSpaceSize)(
             handle,
             mode,
             normOps,
@@ -4942,8 +4817,7 @@ mod loaded {
         opTensorCompType: *mut cudnnDataType_t,
         opTensorNanOpt: *mut cudnnNanPropagation_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetOpTensorDescriptor)(
+        (culib().cudnnGetOpTensorDescriptor)(
             opTensorDesc,
             opTensorOp,
             opTensorCompType,
@@ -4961,8 +4835,7 @@ mod loaded {
         verticalStride: *mut ::core::ffi::c_int,
         horizontalStride: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetPooling2dDescriptor)(
+        (culib().cudnnGetPooling2dDescriptor)(
             poolingDesc,
             mode,
             maxpoolingNanOpt,
@@ -4982,8 +4855,7 @@ mod loaded {
         h: *mut ::core::ffi::c_int,
         w: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetPooling2dForwardOutputDim)(poolingDesc, inputTensorDesc, n, c, h, w)
+        (culib().cudnnGetPooling2dForwardOutputDim)(poolingDesc, inputTensorDesc, n, c, h, w)
     }
     pub unsafe fn cudnnGetPoolingNdDescriptor(
         poolingDesc: cudnnPoolingDescriptor_t,
@@ -4995,8 +4867,7 @@ mod loaded {
         paddingA: *mut ::core::ffi::c_int,
         strideA: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetPoolingNdDescriptor)(
+        (culib().cudnnGetPoolingNdDescriptor)(
             poolingDesc,
             nbDimsRequested,
             mode,
@@ -5013,8 +4884,7 @@ mod loaded {
         nbDims: ::core::ffi::c_int,
         outputTensorDimA: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetPoolingNdForwardOutputDim)(
+        (culib().cudnnGetPoolingNdForwardOutputDim)(
             poolingDesc,
             inputTensorDesc,
             nbDims,
@@ -5038,8 +4908,7 @@ mod loaded {
         seqLengthArray: *mut ::core::ffi::c_int,
         paddingFill: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetRNNDataDescriptor)(
+        (culib().cudnnGetRNNDataDescriptor)(
             rnnDataDesc,
             dataType,
             layout,
@@ -5068,8 +4937,7 @@ mod loaded {
         dropoutDesc: *mut cudnnDropoutDescriptor_t,
         auxFlags: *mut u32,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetRNNDescriptor_v8)(
+        (culib().cudnnGetRNNDescriptor_v8)(
             rnnDesc,
             algo,
             cellMode,
@@ -5095,8 +4963,7 @@ mod loaded {
         workSpaceSize: *mut usize,
         reserveSpaceSize: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetRNNTempSpaceSizes)(
+        (culib().cudnnGetRNNTempSpaceSizes)(
             handle,
             rnnDesc,
             fwdMode,
@@ -5117,8 +4984,7 @@ mod loaded {
         bDesc: cudnnTensorDescriptor_t,
         bAddr: *mut *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetRNNWeightParams)(
+        (culib().cudnnGetRNNWeightParams)(
             handle,
             rnnDesc,
             pseudoLayer,
@@ -5146,8 +5012,7 @@ mod loaded {
         reduceTensorIndices: *mut cudnnReduceTensorIndices_t,
         reduceTensorIndicesType: *mut cudnnIndicesType_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetReduceTensorDescriptor)(
+        (culib().cudnnGetReduceTensorDescriptor)(
             reduceTensorDesc,
             reduceTensorOp,
             reduceTensorCompType,
@@ -5163,14 +5028,7 @@ mod loaded {
         cDesc: cudnnTensorDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetReductionIndicesSize)(
-            handle,
-            reduceTensorDesc,
-            aDesc,
-            cDesc,
-            sizeInBytes,
-        )
+        (culib().cudnnGetReductionIndicesSize)(handle, reduceTensorDesc, aDesc, cDesc, sizeInBytes)
     }
     pub unsafe fn cudnnGetReductionWorkspaceSize(
         handle: cudnnHandle_t,
@@ -5179,8 +5037,7 @@ mod loaded {
         cDesc: cudnnTensorDescriptor_t,
         sizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetReductionWorkspaceSize)(
+        (culib().cudnnGetReductionWorkspaceSize)(
             handle,
             reduceTensorDesc,
             aDesc,
@@ -5200,8 +5057,7 @@ mod loaded {
         seqLengthArray: *mut ::core::ffi::c_int,
         paddingFill: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetSeqDataDescriptor)(
+        (culib().cudnnGetSeqDataDescriptor)(
             seqDataDesc,
             dataType,
             nbDims,
@@ -5232,18 +5088,8 @@ mod loaded {
         hStride: *mut ::core::ffi::c_int,
         wStride: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetTensor4dDescriptor)(
-            tensorDesc,
-            dataType,
-            n,
-            c,
-            h,
-            w,
-            nStride,
-            cStride,
-            hStride,
-            wStride,
+        (culib().cudnnGetTensor4dDescriptor)(
+            tensorDesc, dataType, n, c, h, w, nStride, cStride, hStride, wStride,
         )
     }
     pub unsafe fn cudnnGetTensorNdDescriptor(
@@ -5254,8 +5100,7 @@ mod loaded {
         dimA: *mut ::core::ffi::c_int,
         strideA: *mut ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetTensorNdDescriptor)(
+        (culib().cudnnGetTensorNdDescriptor)(
             tensorDesc,
             nbDimsRequested,
             dataType,
@@ -5279,8 +5124,7 @@ mod loaded {
         foldA: *mut u32,
         direction: *mut cudnnFoldingDirection_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnGetTensorTransformDescriptor)(
+        (culib().cudnnGetTensorTransformDescriptor)(
             transformDesc,
             nbDimsRequested,
             destFormat,
@@ -5312,8 +5156,7 @@ mod loaded {
         destDesc: cudnnTensorDescriptor_t,
         destSizeInBytes: *mut usize,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnInitTransformDest)(transformDesc, srcDesc, destDesc, destSizeInBytes)
+        (culib().cudnnInitTransformDest)(transformDesc, srcDesc, destDesc, destSizeInBytes)
     }
     pub unsafe fn cudnnLRNCrossChannelBackward(
         handle: cudnnHandle_t,
@@ -5330,21 +5173,8 @@ mod loaded {
         dxDesc: cudnnTensorDescriptor_t,
         dx: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnLRNCrossChannelBackward)(
-            handle,
-            normDesc,
-            lrnMode,
-            alpha,
-            yDesc,
-            y,
-            dyDesc,
-            dy,
-            xDesc,
-            x,
-            beta,
-            dxDesc,
-            dx,
+        (culib().cudnnLRNCrossChannelBackward)(
+            handle, normDesc, lrnMode, alpha, yDesc, y, dyDesc, dy, xDesc, x, beta, dxDesc, dx,
         )
     }
     pub unsafe fn cudnnLRNCrossChannelForward(
@@ -5358,17 +5188,8 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnLRNCrossChannelForward)(
-            handle,
-            normDesc,
-            lrnMode,
-            alpha,
-            xDesc,
-            x,
-            beta,
-            yDesc,
-            y,
+        (culib().cudnnLRNCrossChannelForward)(
+            handle, normDesc, lrnMode, alpha, xDesc, x, beta, yDesc, y,
         )
     }
     pub unsafe fn cudnnMakeFusedOpsPlan(
@@ -5404,8 +5225,7 @@ mod loaded {
         reserveSpaceSizeInBytes: usize,
         reserveSpace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnMultiHeadAttnBackwardData)(
+        (culib().cudnnMultiHeadAttnBackwardData)(
             handle,
             attnDesc,
             loWinIdx,
@@ -5451,8 +5271,7 @@ mod loaded {
         reserveSpaceSizeInBytes: usize,
         reserveSpace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnMultiHeadAttnBackwardWeights)(
+        (culib().cudnnMultiHeadAttnBackwardWeights)(
             handle,
             attnDesc,
             addGrad,
@@ -5497,8 +5316,7 @@ mod loaded {
         reserveSpaceSizeInBytes: usize,
         reserveSpace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnMultiHeadAttnForward)(
+        (culib().cudnnMultiHeadAttnForward)(
             handle,
             attnDesc,
             currIdx,
@@ -5558,8 +5376,7 @@ mod loaded {
         reserveSpaceSizeInBytes: usize,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnNormalizationBackward)(
+        (culib().cudnnNormalizationBackward)(
             handle,
             mode,
             normOps,
@@ -5618,8 +5435,7 @@ mod loaded {
         epsilon: f64,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnNormalizationForwardInference)(
+        (culib().cudnnNormalizationForwardInference)(
             handle,
             mode,
             normOps,
@@ -5673,8 +5489,7 @@ mod loaded {
         reserveSpaceSizeInBytes: usize,
         groupCnt: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnNormalizationForwardTraining)(
+        (culib().cudnnNormalizationForwardTraining)(
             handle,
             mode,
             normOps,
@@ -5718,8 +5533,7 @@ mod loaded {
         cDesc: cudnnTensorDescriptor_t,
         C: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnOpTensor)(
+        (culib().cudnnOpTensor)(
             handle,
             opTensorDesc,
             alpha1,
@@ -5750,8 +5564,7 @@ mod loaded {
         dxDesc: cudnnTensorDescriptor_t,
         dx: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnPoolingBackward)(
+        (culib().cudnnPoolingBackward)(
             handle,
             poolingDesc,
             alpha,
@@ -5776,8 +5589,7 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnPoolingForward)(handle, poolingDesc, alpha, xDesc, x, beta, yDesc, y)
+        (culib().cudnnPoolingForward)(handle, poolingDesc, alpha, xDesc, x, beta, yDesc, y)
     }
     pub unsafe fn cudnnQueryRuntimeError(
         handle: cudnnHandle_t,
@@ -5811,8 +5623,7 @@ mod loaded {
         reserveSpaceSize: usize,
         reserveSpace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnRNNBackwardData_v8)(
+        (culib().cudnnRNNBackwardData_v8)(
             handle,
             rnnDesc,
             devSeqLengths,
@@ -5855,8 +5666,7 @@ mod loaded {
         reserveSpaceSize: usize,
         reserveSpace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnRNNBackwardWeights_v8)(
+        (culib().cudnnRNNBackwardWeights_v8)(
             handle,
             rnnDesc,
             addGrad,
@@ -5897,8 +5707,7 @@ mod loaded {
         reserveSpaceSize: usize,
         reserveSpace: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnRNNForward)(
+        (culib().cudnnRNNForward)(
             handle,
             rnnDesc,
             fwdMode,
@@ -5969,8 +5778,7 @@ mod loaded {
         cDesc: cudnnTensorDescriptor_t,
         C: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnReduceTensor)(
+        (culib().cudnnReduceTensor)(
             handle,
             reduceTensorDesc,
             indices,
@@ -5995,8 +5803,7 @@ mod loaded {
         biasData: *const ::core::ffi::c_void,
         reorderedBiasData: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnReorderFilterAndBias)(
+        (culib().cudnnReorderFilterAndBias)(
             handle,
             filterDesc,
             reorderType,
@@ -6015,8 +5822,7 @@ mod loaded {
         stateSizeInBytes: usize,
         seed: ::core::ffi::c_ulonglong,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnRestoreDropoutDescriptor)(
+        (culib().cudnnRestoreDropoutDescriptor)(
             dropoutDesc,
             handle,
             dropout,
@@ -6069,8 +5875,7 @@ mod loaded {
         maxBatchSize: ::core::ffi::c_int,
         maxBeamSize: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetAttnDescriptor)(
+        (culib().cudnnSetAttnDescriptor)(
             attnDesc,
             attnMode,
             nHeads,
@@ -6114,8 +5919,7 @@ mod loaded {
         gradMode: cudnnNanPropagation_t,
         maxLabelLength: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetCTCLossDescriptor_v8)(
+        (culib().cudnnSetCTCLossDescriptor_v8)(
             ctcLossDesc,
             compType,
             normMode,
@@ -6130,8 +5934,7 @@ mod loaded {
         ctcGradMode: cudnnCTCGradMode_t,
         maxLabelLength: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetCTCLossDescriptor_v9)(
+        (culib().cudnnSetCTCLossDescriptor_v9)(
             ctcLossDesc,
             compType,
             normMode,
@@ -6157,8 +5960,7 @@ mod loaded {
         mode: cudnnConvolutionMode_t,
         computeType: cudnnDataType_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetConvolution2dDescriptor)(
+        (culib().cudnnSetConvolution2dDescriptor)(
             convDesc,
             pad_h,
             pad_w,
@@ -6191,8 +5993,7 @@ mod loaded {
         mode: cudnnConvolutionMode_t,
         computeType: cudnnDataType_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetConvolutionNdDescriptor)(
+        (culib().cudnnSetConvolutionNdDescriptor)(
             convDesc,
             arrayLength,
             padA,
@@ -6216,8 +6017,7 @@ mod loaded {
         stateSizeInBytes: usize,
         seed: ::core::ffi::c_ulonglong,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetDropoutDescriptor)(
+        (culib().cudnnSetDropoutDescriptor)(
             dropoutDesc,
             handle,
             dropout,
@@ -6244,14 +6044,7 @@ mod loaded {
         nbDims: ::core::ffi::c_int,
         filterDimA: *const ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetFilterNdDescriptor)(
-            filterDesc,
-            dataType,
-            format,
-            nbDims,
-            filterDimA,
-        )
+        (culib().cudnnSetFilterNdDescriptor)(filterDesc, dataType, format, nbDims, filterDimA)
     }
     pub unsafe fn cudnnSetFusedOpsConstParamPackAttribute(
         constPack: cudnnFusedOpsConstParamPack_t,
@@ -6282,8 +6075,7 @@ mod loaded {
         opTensorCompType: cudnnDataType_t,
         opTensorNanOpt: cudnnNanPropagation_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetOpTensorDescriptor)(
+        (culib().cudnnSetOpTensorDescriptor)(
             opTensorDesc,
             opTensorOp,
             opTensorCompType,
@@ -6301,8 +6093,7 @@ mod loaded {
         verticalStride: ::core::ffi::c_int,
         horizontalStride: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetPooling2dDescriptor)(
+        (culib().cudnnSetPooling2dDescriptor)(
             poolingDesc,
             mode,
             maxpoolingNanOpt,
@@ -6323,8 +6114,7 @@ mod loaded {
         paddingA: *const ::core::ffi::c_int,
         strideA: *const ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetPoolingNdDescriptor)(
+        (culib().cudnnSetPoolingNdDescriptor)(
             poolingDesc,
             mode,
             maxpoolingNanOpt,
@@ -6344,8 +6134,7 @@ mod loaded {
         seqLengthArray: *const ::core::ffi::c_int,
         paddingFill: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetRNNDataDescriptor)(
+        (culib().cudnnSetRNNDataDescriptor)(
             rnnDataDesc,
             dataType,
             layout,
@@ -6373,8 +6162,7 @@ mod loaded {
         dropoutDesc: cudnnDropoutDescriptor_t,
         auxFlags: u32,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetRNNDescriptor_v8)(
+        (culib().cudnnSetRNNDescriptor_v8)(
             rnnDesc,
             algo,
             cellMode,
@@ -6400,8 +6188,7 @@ mod loaded {
         reduceTensorIndices: cudnnReduceTensorIndices_t,
         reduceTensorIndicesType: cudnnIndicesType_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetReduceTensorDescriptor)(
+        (culib().cudnnSetReduceTensorDescriptor)(
             reduceTensorDesc,
             reduceTensorOp,
             reduceTensorCompType,
@@ -6420,8 +6207,7 @@ mod loaded {
         seqLengthArray: *const ::core::ffi::c_int,
         paddingFill: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetSeqDataDescriptor)(
+        (culib().cudnnSetSeqDataDescriptor)(
             seqDataDesc,
             dataType,
             nbDims,
@@ -6439,8 +6225,7 @@ mod loaded {
         nbDims: ::core::ffi::c_int,
         dimA: *const ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetSpatialTransformerNdDescriptor)(
+        (culib().cudnnSetSpatialTransformerNdDescriptor)(
             stDesc,
             samplerType,
             dataType,
@@ -6448,10 +6233,7 @@ mod loaded {
             dimA,
         )
     }
-    pub unsafe fn cudnnSetStream(
-        handle: cudnnHandle_t,
-        streamId: cudaStream_t,
-    ) -> cudnnStatus_t {
+    pub unsafe fn cudnnSetStream(handle: cudnnHandle_t, streamId: cudaStream_t) -> cudnnStatus_t {
         (culib().cudnnSetStream)(handle, streamId)
     }
     pub unsafe fn cudnnSetTensor(
@@ -6485,18 +6267,8 @@ mod loaded {
         hStride: ::core::ffi::c_int,
         wStride: ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetTensor4dDescriptorEx)(
-            tensorDesc,
-            dataType,
-            n,
-            c,
-            h,
-            w,
-            nStride,
-            cStride,
-            hStride,
-            wStride,
+        (culib().cudnnSetTensor4dDescriptorEx)(
+            tensorDesc, dataType, n, c, h, w, nStride, cStride, hStride, wStride,
         )
     }
     pub unsafe fn cudnnSetTensorNdDescriptor(
@@ -6515,8 +6287,7 @@ mod loaded {
         nbDims: ::core::ffi::c_int,
         dimA: *const ::core::ffi::c_int,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetTensorNdDescriptorEx)(tensorDesc, format, dataType, nbDims, dimA)
+        (culib().cudnnSetTensorNdDescriptorEx)(tensorDesc, format, dataType, nbDims, dimA)
     }
     pub unsafe fn cudnnSetTensorTransformDescriptor(
         transformDesc: cudnnTensorTransformDescriptor_t,
@@ -6527,8 +6298,7 @@ mod loaded {
         foldA: *const u32,
         direction: cudnnFoldingDirection_t,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSetTensorTransformDescriptor)(
+        (culib().cudnnSetTensorTransformDescriptor)(
             transformDesc,
             nbDims,
             destFormat,
@@ -6551,19 +6321,8 @@ mod loaded {
         dxDesc: cudnnTensorDescriptor_t,
         dx: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSoftmaxBackward)(
-            handle,
-            algo,
-            mode,
-            alpha,
-            yDesc,
-            y,
-            dyDesc,
-            dy,
-            beta,
-            dxDesc,
-            dx,
+        (culib().cudnnSoftmaxBackward)(
+            handle, algo, mode, alpha, yDesc, y, dyDesc, dy, beta, dxDesc, dx,
         )
     }
     pub unsafe fn cudnnSoftmaxForward(
@@ -6577,8 +6336,7 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSoftmaxForward)(handle, algo, mode, alpha, xDesc, x, beta, yDesc, y)
+        (culib().cudnnSoftmaxForward)(handle, algo, mode, alpha, xDesc, x, beta, yDesc, y)
     }
     pub unsafe fn cudnnSpatialTfGridGeneratorBackward(
         handle: cudnnHandle_t,
@@ -6612,22 +6370,9 @@ mod loaded {
         betaDgrid: *const ::core::ffi::c_void,
         dgrid: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSpatialTfSamplerBackward)(
-            handle,
-            stDesc,
-            alpha,
-            xDesc,
-            x,
-            beta,
-            dxDesc,
-            dx,
-            alphaDgrid,
-            dyDesc,
-            dy,
-            grid,
-            betaDgrid,
-            dgrid,
+        (culib().cudnnSpatialTfSamplerBackward)(
+            handle, stDesc, alpha, xDesc, x, beta, dxDesc, dx, alphaDgrid, dyDesc, dy, grid,
+            betaDgrid, dgrid,
         )
     }
     pub unsafe fn cudnnSpatialTfSamplerForward(
@@ -6641,17 +6386,8 @@ mod loaded {
         yDesc: cudnnTensorDescriptor_t,
         y: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnSpatialTfSamplerForward)(
-            handle,
-            stDesc,
-            alpha,
-            xDesc,
-            x,
-            grid,
-            beta,
-            yDesc,
-            y,
+        (culib().cudnnSpatialTfSamplerForward)(
+            handle, stDesc, alpha, xDesc, x, grid, beta, yDesc, y,
         )
     }
     pub unsafe fn cudnnTransformFilter(
@@ -6664,16 +6400,8 @@ mod loaded {
         destDesc: cudnnFilterDescriptor_t,
         destData: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnTransformFilter)(
-            handle,
-            transDesc,
-            alpha,
-            srcDesc,
-            srcData,
-            beta,
-            destDesc,
-            destData,
+        (culib().cudnnTransformFilter)(
+            handle, transDesc, alpha, srcDesc, srcData, beta, destDesc, destData,
         )
     }
     pub unsafe fn cudnnTransformTensor(
@@ -6697,16 +6425,8 @@ mod loaded {
         destDesc: cudnnTensorDescriptor_t,
         destData: *mut ::core::ffi::c_void,
     ) -> cudnnStatus_t {
-        (culib()
-            .cudnnTransformTensorEx)(
-            handle,
-            transDesc,
-            alpha,
-            srcDesc,
-            srcData,
-            beta,
-            destDesc,
-            destData,
+        (culib().cudnnTransformTensorEx)(
+            handle, transDesc, alpha, srcDesc, srcData, beta, destDesc, destData,
         )
     }
     pub struct Lib {
@@ -6749,17 +6469,15 @@ mod loaded {
             descriptorType: cudnnBackendDescriptorType_t,
             descriptor: *mut cudnnBackendDescriptor_t,
         ) -> cudnnStatus_t,
-        pub cudnnBackendDestroyDescriptor: unsafe extern "C" fn(
-            descriptor: cudnnBackendDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnBackendDestroyDescriptor:
+            unsafe extern "C" fn(descriptor: cudnnBackendDescriptor_t) -> cudnnStatus_t,
         pub cudnnBackendExecute: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             executionPlan: cudnnBackendDescriptor_t,
             variantPack: cudnnBackendDescriptor_t,
         ) -> cudnnStatus_t,
-        pub cudnnBackendFinalize: unsafe extern "C" fn(
-            descriptor: cudnnBackendDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnBackendFinalize:
+            unsafe extern "C" fn(descriptor: cudnnBackendDescriptor_t) -> cudnnStatus_t,
         pub cudnnBackendGetAttribute: unsafe extern "C" fn(
             descriptor: cudnnBackendDescriptor_t,
             attributeName: cudnnBackendAttributeName_t,
@@ -6768,9 +6486,8 @@ mod loaded {
             elementCount: *mut i64,
             arrayOfElements: *mut ::core::ffi::c_void,
         ) -> cudnnStatus_t,
-        pub cudnnBackendInitialize: unsafe extern "C" fn(
-            descriptor: cudnnBackendDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnBackendInitialize:
+            unsafe extern "C" fn(descriptor: cudnnBackendDescriptor_t) -> cudnnStatus_t,
         pub cudnnBackendPopulateCudaGraph: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             executionPlan: cudnnBackendDescriptor_t,
@@ -6904,7 +6621,8 @@ mod loaded {
             workSpaceSizeInBytes: usize,
             reserveSpace: *mut ::core::ffi::c_void,
             reserveSpaceSizeInBytes: usize,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnBuildRNNDynamic: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             rnnDesc: cudnnRNNDescriptor_t,
@@ -7015,27 +6733,19 @@ mod loaded {
             yDesc: cudnnTensorDescriptor_t,
             y: *mut ::core::ffi::c_void,
         ) -> cudnnStatus_t,
-        pub cudnnCreate: unsafe extern "C" fn(
-            handle: *mut cudnnHandle_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateActivationDescriptor: unsafe extern "C" fn(
-            activationDesc: *mut cudnnActivationDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateAttnDescriptor: unsafe extern "C" fn(
-            attnDesc: *mut cudnnAttnDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateCTCLossDescriptor: unsafe extern "C" fn(
-            ctcLossDesc: *mut cudnnCTCLossDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateConvolutionDescriptor: unsafe extern "C" fn(
-            convDesc: *mut cudnnConvolutionDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateDropoutDescriptor: unsafe extern "C" fn(
-            dropoutDesc: *mut cudnnDropoutDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateFilterDescriptor: unsafe extern "C" fn(
-            filterDesc: *mut cudnnFilterDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnCreate: unsafe extern "C" fn(handle: *mut cudnnHandle_t) -> cudnnStatus_t,
+        pub cudnnCreateActivationDescriptor:
+            unsafe extern "C" fn(activationDesc: *mut cudnnActivationDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateAttnDescriptor:
+            unsafe extern "C" fn(attnDesc: *mut cudnnAttnDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateCTCLossDescriptor:
+            unsafe extern "C" fn(ctcLossDesc: *mut cudnnCTCLossDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateConvolutionDescriptor:
+            unsafe extern "C" fn(convDesc: *mut cudnnConvolutionDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateDropoutDescriptor:
+            unsafe extern "C" fn(dropoutDesc: *mut cudnnDropoutDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateFilterDescriptor:
+            unsafe extern "C" fn(filterDesc: *mut cudnnFilterDescriptor_t) -> cudnnStatus_t,
         pub cudnnCreateFusedOpsConstParamPack: unsafe extern "C" fn(
             constPack: *mut cudnnFusedOpsConstParamPack_t,
             ops: cudnnFusedOps_t,
@@ -7048,33 +6758,25 @@ mod loaded {
             varPack: *mut cudnnFusedOpsVariantParamPack_t,
             ops: cudnnFusedOps_t,
         ) -> cudnnStatus_t,
-        pub cudnnCreateLRNDescriptor: unsafe extern "C" fn(
-            normDesc: *mut cudnnLRNDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateOpTensorDescriptor: unsafe extern "C" fn(
-            opTensorDesc: *mut cudnnOpTensorDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreatePoolingDescriptor: unsafe extern "C" fn(
-            poolingDesc: *mut cudnnPoolingDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateRNNDataDescriptor: unsafe extern "C" fn(
-            rnnDataDesc: *mut cudnnRNNDataDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateRNNDescriptor: unsafe extern "C" fn(
-            rnnDesc: *mut cudnnRNNDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnCreateLRNDescriptor:
+            unsafe extern "C" fn(normDesc: *mut cudnnLRNDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateOpTensorDescriptor:
+            unsafe extern "C" fn(opTensorDesc: *mut cudnnOpTensorDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreatePoolingDescriptor:
+            unsafe extern "C" fn(poolingDesc: *mut cudnnPoolingDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateRNNDataDescriptor:
+            unsafe extern "C" fn(rnnDataDesc: *mut cudnnRNNDataDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateRNNDescriptor:
+            unsafe extern "C" fn(rnnDesc: *mut cudnnRNNDescriptor_t) -> cudnnStatus_t,
         pub cudnnCreateReduceTensorDescriptor: unsafe extern "C" fn(
             reduceTensorDesc: *mut cudnnReduceTensorDescriptor_t,
         ) -> cudnnStatus_t,
-        pub cudnnCreateSeqDataDescriptor: unsafe extern "C" fn(
-            seqDataDesc: *mut cudnnSeqDataDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateSpatialTransformerDescriptor: unsafe extern "C" fn(
-            stDesc: *mut cudnnSpatialTransformerDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnCreateTensorDescriptor: unsafe extern "C" fn(
-            tensorDesc: *mut cudnnTensorDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnCreateSeqDataDescriptor:
+            unsafe extern "C" fn(seqDataDesc: *mut cudnnSeqDataDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateSpatialTransformerDescriptor:
+            unsafe extern "C" fn(stDesc: *mut cudnnSpatialTransformerDescriptor_t) -> cudnnStatus_t,
+        pub cudnnCreateTensorDescriptor:
+            unsafe extern "C" fn(tensorDesc: *mut cudnnTensorDescriptor_t) -> cudnnStatus_t,
         pub cudnnCreateTensorTransformDescriptor: unsafe extern "C" fn(
             transformDesc: *mut cudnnTensorTransformDescriptor_t,
         ) -> cudnnStatus_t,
@@ -7091,63 +6793,44 @@ mod loaded {
             groupCnt: ::core::ffi::c_int,
         ) -> cudnnStatus_t,
         pub cudnnDestroy: unsafe extern "C" fn(handle: cudnnHandle_t) -> cudnnStatus_t,
-        pub cudnnDestroyActivationDescriptor: unsafe extern "C" fn(
-            activationDesc: cudnnActivationDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyAttnDescriptor: unsafe extern "C" fn(
-            attnDesc: cudnnAttnDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyCTCLossDescriptor: unsafe extern "C" fn(
-            ctcLossDesc: cudnnCTCLossDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyConvolutionDescriptor: unsafe extern "C" fn(
-            convDesc: cudnnConvolutionDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyDropoutDescriptor: unsafe extern "C" fn(
-            dropoutDesc: cudnnDropoutDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyFilterDescriptor: unsafe extern "C" fn(
-            filterDesc: cudnnFilterDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyFusedOpsConstParamPack: unsafe extern "C" fn(
-            constPack: cudnnFusedOpsConstParamPack_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyFusedOpsPlan: unsafe extern "C" fn(
-            plan: cudnnFusedOpsPlan_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyFusedOpsVariantParamPack: unsafe extern "C" fn(
-            varPack: cudnnFusedOpsVariantParamPack_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyLRNDescriptor: unsafe extern "C" fn(
-            lrnDesc: cudnnLRNDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyOpTensorDescriptor: unsafe extern "C" fn(
-            opTensorDesc: cudnnOpTensorDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyPoolingDescriptor: unsafe extern "C" fn(
-            poolingDesc: cudnnPoolingDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyRNNDataDescriptor: unsafe extern "C" fn(
-            rnnDataDesc: cudnnRNNDataDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyRNNDescriptor: unsafe extern "C" fn(
-            rnnDesc: cudnnRNNDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyReduceTensorDescriptor: unsafe extern "C" fn(
-            reduceTensorDesc: cudnnReduceTensorDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroySeqDataDescriptor: unsafe extern "C" fn(
-            seqDataDesc: cudnnSeqDataDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroySpatialTransformerDescriptor: unsafe extern "C" fn(
-            stDesc: cudnnSpatialTransformerDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyTensorDescriptor: unsafe extern "C" fn(
-            tensorDesc: cudnnTensorDescriptor_t,
-        ) -> cudnnStatus_t,
-        pub cudnnDestroyTensorTransformDescriptor: unsafe extern "C" fn(
-            transformDesc: cudnnTensorTransformDescriptor_t,
-        ) -> cudnnStatus_t,
+        pub cudnnDestroyActivationDescriptor:
+            unsafe extern "C" fn(activationDesc: cudnnActivationDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyAttnDescriptor:
+            unsafe extern "C" fn(attnDesc: cudnnAttnDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyCTCLossDescriptor:
+            unsafe extern "C" fn(ctcLossDesc: cudnnCTCLossDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyConvolutionDescriptor:
+            unsafe extern "C" fn(convDesc: cudnnConvolutionDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyDropoutDescriptor:
+            unsafe extern "C" fn(dropoutDesc: cudnnDropoutDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyFilterDescriptor:
+            unsafe extern "C" fn(filterDesc: cudnnFilterDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyFusedOpsConstParamPack:
+            unsafe extern "C" fn(constPack: cudnnFusedOpsConstParamPack_t) -> cudnnStatus_t,
+        pub cudnnDestroyFusedOpsPlan:
+            unsafe extern "C" fn(plan: cudnnFusedOpsPlan_t) -> cudnnStatus_t,
+        pub cudnnDestroyFusedOpsVariantParamPack:
+            unsafe extern "C" fn(varPack: cudnnFusedOpsVariantParamPack_t) -> cudnnStatus_t,
+        pub cudnnDestroyLRNDescriptor:
+            unsafe extern "C" fn(lrnDesc: cudnnLRNDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyOpTensorDescriptor:
+            unsafe extern "C" fn(opTensorDesc: cudnnOpTensorDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyPoolingDescriptor:
+            unsafe extern "C" fn(poolingDesc: cudnnPoolingDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyRNNDataDescriptor:
+            unsafe extern "C" fn(rnnDataDesc: cudnnRNNDataDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyRNNDescriptor:
+            unsafe extern "C" fn(rnnDesc: cudnnRNNDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyReduceTensorDescriptor:
+            unsafe extern "C" fn(reduceTensorDesc: cudnnReduceTensorDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroySeqDataDescriptor:
+            unsafe extern "C" fn(seqDataDesc: cudnnSeqDataDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroySpatialTransformerDescriptor:
+            unsafe extern "C" fn(stDesc: cudnnSpatialTransformerDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyTensorDescriptor:
+            unsafe extern "C" fn(tensorDesc: cudnnTensorDescriptor_t) -> cudnnStatus_t,
+        pub cudnnDestroyTensorTransformDescriptor:
+            unsafe extern "C" fn(transformDesc: cudnnTensorTransformDescriptor_t) -> cudnnStatus_t,
         pub cudnnDivisiveNormalizationBackward: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             normDesc: cudnnLRNDescriptor_t,
@@ -7202,10 +6885,8 @@ mod loaded {
             xdesc: cudnnTensorDescriptor_t,
             sizeInBytes: *mut usize,
         ) -> cudnnStatus_t,
-        pub cudnnDropoutGetStatesSize: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            sizeInBytes: *mut usize,
-        ) -> cudnnStatus_t,
+        pub cudnnDropoutGetStatesSize:
+            unsafe extern "C" fn(handle: cudnnHandle_t, sizeInBytes: *mut usize) -> cudnnStatus_t,
         pub cudnnFindConvolutionBackwardDataAlgorithm: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             wDesc: cudnnFilterDescriptor_t,
@@ -7215,7 +6896,8 @@ mod loaded {
             requestedAlgoCount: ::core::ffi::c_int,
             returnedAlgoCount: *mut ::core::ffi::c_int,
             perfResults: *mut cudnnConvolutionBwdDataAlgoPerf_t,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnFindConvolutionBackwardDataAlgorithmEx: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             wDesc: cudnnFilterDescriptor_t,
@@ -7230,7 +6912,8 @@ mod loaded {
             perfResults: *mut cudnnConvolutionBwdDataAlgoPerf_t,
             workSpace: *mut ::core::ffi::c_void,
             workSpaceSizeInBytes: usize,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnFindConvolutionBackwardFilterAlgorithm: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             xDesc: cudnnTensorDescriptor_t,
@@ -7240,7 +6923,8 @@ mod loaded {
             requestedAlgoCount: ::core::ffi::c_int,
             returnedAlgoCount: *mut ::core::ffi::c_int,
             perfResults: *mut cudnnConvolutionBwdFilterAlgoPerf_t,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnFindConvolutionBackwardFilterAlgorithmEx: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             xDesc: cudnnTensorDescriptor_t,
@@ -7255,7 +6939,8 @@ mod loaded {
             perfResults: *mut cudnnConvolutionBwdFilterAlgoPerf_t,
             workSpace: *mut ::core::ffi::c_void,
             workSpaceSizeInBytes: usize,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnFindConvolutionForwardAlgorithm: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             xDesc: cudnnTensorDescriptor_t,
@@ -7318,38 +7003,41 @@ mod loaded {
             maxBatchSize: *mut ::core::ffi::c_int,
             maxBeamSize: *mut ::core::ffi::c_int,
         ) -> cudnnStatus_t,
-        pub cudnnGetBatchNormalizationBackwardExWorkspaceSize: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            mode: cudnnBatchNormMode_t,
-            bnOps: cudnnBatchNormOps_t,
-            xDesc: cudnnTensorDescriptor_t,
-            yDesc: cudnnTensorDescriptor_t,
-            dyDesc: cudnnTensorDescriptor_t,
-            dzDesc: cudnnTensorDescriptor_t,
-            dxDesc: cudnnTensorDescriptor_t,
-            dBnScaleBiasDesc: cudnnTensorDescriptor_t,
-            activationDesc: cudnnActivationDescriptor_t,
-            sizeInBytes: *mut usize,
-        ) -> cudnnStatus_t,
-        pub cudnnGetBatchNormalizationForwardTrainingExWorkspaceSize: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            mode: cudnnBatchNormMode_t,
-            bnOps: cudnnBatchNormOps_t,
-            xDesc: cudnnTensorDescriptor_t,
-            zDesc: cudnnTensorDescriptor_t,
-            yDesc: cudnnTensorDescriptor_t,
-            bnScaleBiasMeanVarDesc: cudnnTensorDescriptor_t,
-            activationDesc: cudnnActivationDescriptor_t,
-            sizeInBytes: *mut usize,
-        ) -> cudnnStatus_t,
-        pub cudnnGetBatchNormalizationTrainingExReserveSpaceSize: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            mode: cudnnBatchNormMode_t,
-            bnOps: cudnnBatchNormOps_t,
-            activationDesc: cudnnActivationDescriptor_t,
-            xDesc: cudnnTensorDescriptor_t,
-            sizeInBytes: *mut usize,
-        ) -> cudnnStatus_t,
+        pub cudnnGetBatchNormalizationBackwardExWorkspaceSize:
+            unsafe extern "C" fn(
+                handle: cudnnHandle_t,
+                mode: cudnnBatchNormMode_t,
+                bnOps: cudnnBatchNormOps_t,
+                xDesc: cudnnTensorDescriptor_t,
+                yDesc: cudnnTensorDescriptor_t,
+                dyDesc: cudnnTensorDescriptor_t,
+                dzDesc: cudnnTensorDescriptor_t,
+                dxDesc: cudnnTensorDescriptor_t,
+                dBnScaleBiasDesc: cudnnTensorDescriptor_t,
+                activationDesc: cudnnActivationDescriptor_t,
+                sizeInBytes: *mut usize,
+            ) -> cudnnStatus_t,
+        pub cudnnGetBatchNormalizationForwardTrainingExWorkspaceSize:
+            unsafe extern "C" fn(
+                handle: cudnnHandle_t,
+                mode: cudnnBatchNormMode_t,
+                bnOps: cudnnBatchNormOps_t,
+                xDesc: cudnnTensorDescriptor_t,
+                zDesc: cudnnTensorDescriptor_t,
+                yDesc: cudnnTensorDescriptor_t,
+                bnScaleBiasMeanVarDesc: cudnnTensorDescriptor_t,
+                activationDesc: cudnnActivationDescriptor_t,
+                sizeInBytes: *mut usize,
+            ) -> cudnnStatus_t,
+        pub cudnnGetBatchNormalizationTrainingExReserveSpaceSize:
+            unsafe extern "C" fn(
+                handle: cudnnHandle_t,
+                mode: cudnnBatchNormMode_t,
+                bnOps: cudnnBatchNormOps_t,
+                activationDesc: cudnnActivationDescriptor_t,
+                xDesc: cudnnTensorDescriptor_t,
+                sizeInBytes: *mut usize,
+            ) -> cudnnStatus_t,
         pub cudnnGetCTCLossDescriptor: unsafe extern "C" fn(
             ctcLossDesc: cudnnCTCLossDescriptor_t,
             compType: *mut cudnnDataType_t,
@@ -7421,7 +7109,8 @@ mod loaded {
         pub cudnnGetConvolutionBackwardDataAlgorithmMaxCount: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             count: *mut ::core::ffi::c_int,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetConvolutionBackwardDataAlgorithm_v7: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             filterDesc: cudnnFilterDescriptor_t,
@@ -7431,7 +7120,8 @@ mod loaded {
             requestedAlgoCount: ::core::ffi::c_int,
             returnedAlgoCount: *mut ::core::ffi::c_int,
             perfResults: *mut cudnnConvolutionBwdDataAlgoPerf_t,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetConvolutionBackwardDataWorkspaceSize: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             wDesc: cudnnFilterDescriptor_t,
@@ -7440,11 +7130,13 @@ mod loaded {
             dxDesc: cudnnTensorDescriptor_t,
             algo: cudnnConvolutionBwdDataAlgo_t,
             sizeInBytes: *mut usize,
-        ) -> cudnnStatus_t,
-        pub cudnnGetConvolutionBackwardFilterAlgorithmMaxCount: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            count: *mut ::core::ffi::c_int,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
+        pub cudnnGetConvolutionBackwardFilterAlgorithmMaxCount:
+            unsafe extern "C" fn(
+                handle: cudnnHandle_t,
+                count: *mut ::core::ffi::c_int,
+            ) -> cudnnStatus_t,
         pub cudnnGetConvolutionBackwardFilterAlgorithm_v7: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             srcDesc: cudnnTensorDescriptor_t,
@@ -7454,7 +7146,8 @@ mod loaded {
             requestedAlgoCount: ::core::ffi::c_int,
             returnedAlgoCount: *mut ::core::ffi::c_int,
             perfResults: *mut cudnnConvolutionBwdFilterAlgoPerf_t,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetConvolutionBackwardFilterWorkspaceSize: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             xDesc: cudnnTensorDescriptor_t,
@@ -7463,11 +7156,13 @@ mod loaded {
             gradDesc: cudnnFilterDescriptor_t,
             algo: cudnnConvolutionBwdFilterAlgo_t,
             sizeInBytes: *mut usize,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetConvolutionForwardAlgorithmMaxCount: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             count: *mut ::core::ffi::c_int,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetConvolutionForwardAlgorithm_v7: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             srcDesc: cudnnTensorDescriptor_t,
@@ -7524,9 +7219,8 @@ mod loaded {
             states: *mut *mut ::core::ffi::c_void,
             seed: *mut ::core::ffi::c_ulonglong,
         ) -> cudnnStatus_t,
-        pub cudnnGetErrorString: unsafe extern "C" fn(
-            status: cudnnStatus_t,
-        ) -> *const ::core::ffi::c_char,
+        pub cudnnGetErrorString:
+            unsafe extern "C" fn(status: cudnnStatus_t) -> *const ::core::ffi::c_char,
         pub cudnnGetFilter4dDescriptor: unsafe extern "C" fn(
             filterDesc: cudnnFilterDescriptor_t,
             dataType: *mut cudnnDataType_t,
@@ -7563,7 +7257,8 @@ mod loaded {
             diffPadTransDesc: cudnnTensorTransformDescriptor_t,
             gradFoldTransDesc: cudnnTensorTransformDescriptor_t,
             gradUnfoldTransDesc: cudnnTensorTransformDescriptor_t,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetFusedOpsConstParamPackAttribute: unsafe extern "C" fn(
             constPack: cudnnFusedOpsConstParamPack_t,
             paramLabel: cudnnFusedOpsConstParamLabel_t,
@@ -7574,7 +7269,8 @@ mod loaded {
             varPack: cudnnFusedOpsVariantParamPack_t,
             paramLabel: cudnnFusedOpsVariantParamLabel_t,
             ptr: *mut ::core::ffi::c_void,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetLRNDescriptor: unsafe extern "C" fn(
             normDesc: cudnnLRNDescriptor_t,
             lrnN: *mut ::core::ffi::c_uint,
@@ -7582,10 +7278,8 @@ mod loaded {
             lrnBeta: *mut f64,
             lrnK: *mut f64,
         ) -> cudnnStatus_t,
-        pub cudnnGetLastErrorString: unsafe extern "C" fn(
-            message: *mut ::core::ffi::c_char,
-            max_size: usize,
-        ),
+        pub cudnnGetLastErrorString:
+            unsafe extern "C" fn(message: *mut ::core::ffi::c_char, max_size: usize),
         pub cudnnGetMaxDeviceVersion: unsafe extern "C" fn() -> usize,
         pub cudnnGetMultiHeadAttnBuffers: unsafe extern "C" fn(
             handle: cudnnHandle_t,
@@ -7618,21 +7312,23 @@ mod loaded {
             normMeanVarDesc: cudnnTensorDescriptor_t,
             sizeInBytes: *mut usize,
             groupCnt: ::core::ffi::c_int,
-        ) -> cudnnStatus_t,
-        pub cudnnGetNormalizationForwardTrainingWorkspaceSize: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            mode: cudnnNormMode_t,
-            normOps: cudnnNormOps_t,
-            algo: cudnnNormAlgo_t,
-            xDesc: cudnnTensorDescriptor_t,
-            zDesc: cudnnTensorDescriptor_t,
-            yDesc: cudnnTensorDescriptor_t,
-            normScaleBiasDesc: cudnnTensorDescriptor_t,
-            activationDesc: cudnnActivationDescriptor_t,
-            normMeanVarDesc: cudnnTensorDescriptor_t,
-            sizeInBytes: *mut usize,
-            groupCnt: ::core::ffi::c_int,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
+        pub cudnnGetNormalizationForwardTrainingWorkspaceSize:
+            unsafe extern "C" fn(
+                handle: cudnnHandle_t,
+                mode: cudnnNormMode_t,
+                normOps: cudnnNormOps_t,
+                algo: cudnnNormAlgo_t,
+                xDesc: cudnnTensorDescriptor_t,
+                zDesc: cudnnTensorDescriptor_t,
+                yDesc: cudnnTensorDescriptor_t,
+                normScaleBiasDesc: cudnnTensorDescriptor_t,
+                activationDesc: cudnnActivationDescriptor_t,
+                normMeanVarDesc: cudnnTensorDescriptor_t,
+                sizeInBytes: *mut usize,
+                groupCnt: ::core::ffi::c_int,
+            ) -> cudnnStatus_t,
         pub cudnnGetNormalizationTrainingReserveSpaceSize: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             mode: cudnnNormMode_t,
@@ -7642,7 +7338,8 @@ mod loaded {
             xDesc: cudnnTensorDescriptor_t,
             sizeInBytes: *mut usize,
             groupCnt: ::core::ffi::c_int,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnGetOpTensorDescriptor: unsafe extern "C" fn(
             opTensorDesc: cudnnOpTensorDescriptor_t,
             opTensorOp: *mut cudnnOpTensorOp_t,
@@ -8315,7 +8012,8 @@ mod loaded {
             varPack: cudnnFusedOpsVariantParamPack_t,
             paramLabel: cudnnFusedOpsVariantParamLabel_t,
             ptr: *mut ::core::ffi::c_void,
-        ) -> cudnnStatus_t,
+        )
+            -> cudnnStatus_t,
         pub cudnnSetLRNDescriptor: unsafe extern "C" fn(
             normDesc: cudnnLRNDescriptor_t,
             lrnN: ::core::ffi::c_uint,
@@ -8401,10 +8099,8 @@ mod loaded {
             nbDims: ::core::ffi::c_int,
             dimA: *const ::core::ffi::c_int,
         ) -> cudnnStatus_t,
-        pub cudnnSetStream: unsafe extern "C" fn(
-            handle: cudnnHandle_t,
-            streamId: cudaStream_t,
-        ) -> cudnnStatus_t,
+        pub cudnnSetStream:
+            unsafe extern "C" fn(handle: cudnnHandle_t, streamId: cudaStream_t) -> cudnnStatus_t,
         pub cudnnSetTensor: unsafe extern "C" fn(
             handle: cudnnHandle_t,
             yDesc: cudnnTensorDescriptor_t,
