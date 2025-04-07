@@ -1738,6 +1738,21 @@ impl<T> CudaSlice<T> {
     ///
     /// Drops the underlying host_buf if there is one.
     pub fn leak(self) -> sys::CUdeviceptr {
+        // destructor of CudaSlice without de-allocating the memory
+        self.stream.wait(&self.read).unwrap();
+        self.stream.wait(&self.write).unwrap();
+
+        // drop self.read
+        unsafe { result::event::destroy(self.read.cu_event) }.unwrap();
+        unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.read.ctx)) };
+
+        // drop self.write
+        unsafe { result::event::destroy(self.write.cu_event) }.unwrap();
+        unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.write.ctx)) };
+
+        // drop self.stream
+        unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.stream)) };
+
         let ptr = self.cu_device_ptr;
         std::mem::forget(self);
         ptr
