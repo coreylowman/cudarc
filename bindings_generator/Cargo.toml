@@ -1,5 +1,5 @@
 [package]
-name = "cudarc_helper"
+name = "bindings_generator"
 version = "0.1.0"
 edition = "2024"
 
