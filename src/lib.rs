@@ -86,6 +86,10 @@ pub mod cublaslt;
 pub mod cudnn;
 #[cfg(feature = "curand")]
 pub mod curand;
+#[cfg(feature = "cusolver")]
+pub mod cusolver;
+#[cfg(feature = "cusparse")]
+pub mod cusparse;
 #[cfg(feature = "driver")]
 pub mod driver;
 #[cfg(feature = "nccl")]

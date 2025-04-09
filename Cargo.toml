@@ -47,6 +47,8 @@ runtime = ["driver"]
 cudnn = ["driver"]
 curand = ["driver"]
 nccl = ["driver"]
+cusparse = ["driver"]
+cusolver = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]
