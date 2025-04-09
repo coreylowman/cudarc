@@ -11,7 +11,7 @@ use std::{
 use anyhow::{Context, Result};
 use bindgen::Builder;
 use lazy_static::lazy_static;
-use reqwest::blocking::{Response, get};
+use reqwest::blocking::{get, Response};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -869,17 +869,17 @@ fn generate_cusolver(
         archive_dir_cublas.join("include").join("cublas_v2.h"),
         archive_dir.join("include").join("cublas_v2.h"),
     )
-    .context(format!("Failed to copy cublas_v2.h"))?;
+    .context("Failed to copy cublas_v2.h".to_string())?;
     fs::copy(
         archive_dir_cublas.join("include").join("cublas_api.h"),
         archive_dir.join("include").join("cublas_api.h"),
     )
-    .context(format!("Failed to copy cublas_api.h"))?;
+    .context("Failed to copy cublas_api.h".to_string())?;
     fs::copy(
         archive_dir_cusparse.join("include").join("cusparse.h"),
         archive_dir.join("include").join("cusparse.h"),
     )
-    .context(format!("Failed to copy cusparse.h"))?;
+    .context("Failed to copy cusparse.h".to_string())?;
 
     create_system_folders(
         cuda_version,
