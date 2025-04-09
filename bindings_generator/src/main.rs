@@ -51,7 +51,7 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "driver".to_string(),
             ModuleConfig {
                 cuda: "cuda_cudart".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec![
                         "^CU.*".to_string(),
                         "^cuuint(32|64)_t".to_string(),
@@ -63,6 +63,7 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                     functions: vec!["^cu.*".to_string()],
                     vars: vec!["^CU.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["cuda".to_string(), "nvcuda".to_string()],
                 redist: None,
             },
@@ -71,11 +72,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "cublas".to_string(),
             ModuleConfig {
                 cuda: "libcublas".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^cublas.*".to_string()],
                     functions: vec!["^cublas.*".to_string()],
                     vars: vec!["^cublas.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["cublas".to_string()],
                 redist: None,
             },
@@ -84,10 +86,15 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "cublaslt".to_string(),
             ModuleConfig {
                 cuda: "libcublas".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^cublasLt.*".to_string()],
                     functions: vec!["^cublasLt.*".to_string()],
                     vars: vec!["^cublasLt.*".to_string()],
+                },
+                blocklist: Filters {
+                    types: vec![],
+                    functions: vec!["cublasLtDisableCpuInstructionsSetMask".to_string()],
+                    vars: vec![],
                 },
                 libs: vec!["cublasLt".to_string()],
                 redist: None,
@@ -97,10 +104,18 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "curand".to_string(),
             ModuleConfig {
                 cuda: "libcurand".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^curand.*".to_string()],
                     functions: vec!["^curand.*".to_string()],
                     vars: vec!["^curand.*".to_string()],
+                },
+                blocklist: Filters {
+                    types: vec![],
+                    functions: vec![
+                        "curandGenerateBinomial".to_string(),
+                        "curandGenerateBinomialMethod".to_string(),
+                    ],
+                    vars: vec![],
                 },
                 libs: vec!["curand".to_string()],
                 redist: None,
@@ -110,11 +125,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "runtime".to_string(),
             ModuleConfig {
                 cuda: "cuda_cudart".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
                     functions: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
                     vars: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["cudart".to_string()],
                 redist: None,
             },
@@ -123,11 +139,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "nvrtc".to_string(),
             ModuleConfig {
                 cuda: "cuda_nvrtc".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^nvrtc.*".to_string()],
                     functions: vec!["^nvrtc.*".to_string()],
                     vars: vec!["^nvrtc.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["nvrtc".to_string()],
                 redist: None,
             },
@@ -136,11 +153,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "cudnn".to_string(),
             ModuleConfig {
                 cuda: "cudnn".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^cudnn.*".to_string()],
                     functions: vec!["^cudnn.*".to_string()],
                     vars: vec!["^cudnn.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["cudnn".to_string()],
                 redist: Some(Redist {
                     url: "https://developer.download.nvidia.com/compute/cudnn/redist/".to_string(),
@@ -152,11 +170,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "nccl".to_string(),
             ModuleConfig {
                 cuda: "libnccl".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^nccl.*".to_string()],
                     functions: vec!["^nccl.*".to_string()],
                     vars: vec!["^nccl.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["nccl".to_string()],
                 redist: Some(Redist {
                     url: "https://developer.download.nvidia.com/compute/redist/nccl/".to_string(),
@@ -173,7 +192,8 @@ struct ModuleConfig {
     cuda: String,
     /// The various filter used in bindgen to select
     /// the symbols we re-expose
-    filters: Filters,
+    allowlist: Filters,
+    blocklist: Filters,
     /// The various names used to look for symbols
     /// Those names are only used with the `dynamic-loading`
     /// feature.
@@ -191,6 +211,16 @@ struct Filters {
     types: Vec<String>,
     functions: Vec<String>,
     vars: Vec<String>,
+}
+
+impl Filters {
+    fn none() -> Self {
+        Self {
+            types: vec![],
+            functions: vec![],
+            vars: vec![],
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -576,14 +606,14 @@ fn generate_sys(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let cuda_name = &module.cuda;
-    let filters = &module.filters;
 
     let archive_dir = get_archive(cuda_version, cuda_name, module_name, multi_progress)?;
 
     create_system_folders(
         cuda_version,
         module_name,
-        filters,
+        &module.allowlist,
+        &module.blocklist,
         &archive_dir,
         primary_archives,
     )?;
@@ -593,7 +623,8 @@ fn generate_sys(
 fn create_system_folders(
     cuda_version: &str,
     module_name: &str,
-    filters: &Filters,
+    allowlist: &Filters,
+    blocklist: &Filters,
     archive_directory: &Path,
     primary_archives: &[PathBuf],
 ) -> Result<()> {
@@ -622,14 +653,23 @@ fn create_system_folders(
         .layout_tests(false)
         .use_core();
 
-    for filter_name in &filters.types {
+    for filter_name in allowlist.types.iter() {
         builder = builder.allowlist_type(filter_name);
     }
-    for filter_name in &filters.vars {
+    for filter_name in allowlist.vars.iter() {
         builder = builder.allowlist_var(filter_name);
     }
-    for filter_name in &filters.functions {
+    for filter_name in allowlist.functions.iter() {
         builder = builder.allowlist_function(filter_name);
+    }
+    for filter_name in blocklist.types.iter() {
+        builder = builder.blocklist_type(filter_name);
+    }
+    for filter_name in blocklist.vars.iter() {
+        builder = builder.blocklist_var(filter_name);
+    }
+    for filter_name in blocklist.functions.iter() {
+        builder = builder.blocklist_function(filter_name);
     }
 
     let parent_sysdir = Path::new("..").join("src").join(module_name).join("sys");
@@ -685,7 +725,6 @@ fn generate_cudnn(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let cuda_name = &module.cuda;
-    let filters = &module.filters;
     let (cuda_major, _, _) = get_version(cuda_version)?;
     let url = &redist.url;
     let version_parts: Vec<&str> = redist.version.split('.').collect();
@@ -750,7 +789,8 @@ fn generate_cudnn(
     create_system_folders(
         cuda_version,
         module_name,
-        filters,
+        &module.allowlist,
+        &module.blocklist,
         &archive_dir,
         primary_archives,
     )
@@ -764,7 +804,6 @@ fn generate_nccl(
     primary_archives: &[PathBuf],
     multi_progress: &MultiProgress,
 ) -> Result<()> {
-    let filters = &module.filters;
     let url = &redist.url;
     let version = &redist.version;
 
@@ -805,7 +844,8 @@ fn generate_nccl(
     create_system_folders(
         cuda_version,
         module_name,
-        filters,
+        &module.allowlist,
+        &module.blocklist,
         &archive_dir,
         primary_archives,
     )

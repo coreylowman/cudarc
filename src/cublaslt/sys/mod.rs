@@ -2541,16 +2541,6 @@ impl Default for cublasLtMatmulHeuristicResult_t {
 extern "C" {
     pub fn cublasLtCreate(lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t;
     pub fn cublasLtDestroy(lightHandle: cublasLtHandle_t) -> cublasStatus_t;
-    #[cfg(any(
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    ))]
-    pub fn cublasLtDisableCpuInstructionsSetMask(mask: ::core::ffi::c_uint) -> ::core::ffi::c_uint;
     pub fn cublasLtGetCudartVersion() -> usize;
     pub fn cublasLtGetProperty(
         type_: libraryPropertyType,
@@ -2792,20 +2782,6 @@ mod loaded {
     }
     pub unsafe fn cublasLtDestroy(lightHandle: cublasLtHandle_t) -> cublasStatus_t {
         (culib().cublasLtDestroy)(lightHandle)
-    }
-    #[cfg(any(
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    ))]
-    pub unsafe fn cublasLtDisableCpuInstructionsSetMask(
-        mask: ::core::ffi::c_uint,
-    ) -> ::core::ffi::c_uint {
-        (culib().cublasLtDisableCpuInstructionsSetMask)(mask)
     }
     pub unsafe fn cublasLtGetCudartVersion() -> usize {
         (culib().cublasLtGetCudartVersion)()
@@ -3208,17 +3184,6 @@ mod loaded {
         pub cublasLtCreate:
             unsafe extern "C" fn(lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t,
         pub cublasLtDestroy: unsafe extern "C" fn(lightHandle: cublasLtHandle_t) -> cublasStatus_t,
-        #[cfg(any(
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        ))]
-        pub cublasLtDisableCpuInstructionsSetMask:
-            unsafe extern "C" fn(mask: ::core::ffi::c_uint) -> ::core::ffi::c_uint,
         pub cublasLtGetCudartVersion: unsafe extern "C" fn() -> usize,
         pub cublasLtGetProperty: unsafe extern "C" fn(
             type_: libraryPropertyType,
@@ -3484,19 +3449,6 @@ mod loaded {
                 .get(b"cublasLtDestroy\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            ))]
-            let cublasLtDisableCpuInstructionsSetMask = __library
-                .get(b"cublasLtDisableCpuInstructionsSetMask\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cublasLtGetCudartVersion = __library
                 .get(b"cublasLtGetCudartVersion\0")
                 .map(|sym| *sym)
@@ -3691,16 +3643,6 @@ mod loaded {
                 __library,
                 cublasLtCreate,
                 cublasLtDestroy,
-                #[cfg(any(
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                ))]
-                cublasLtDisableCpuInstructionsSetMask,
                 cublasLtGetCudartVersion,
                 cublasLtGetProperty,
                 cublasLtGetStatusName,
