@@ -111,7 +111,10 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 },
                 blocklist: Filters {
                     types: vec![],
-                    functions: vec!["curandGenerateBinomial".to_string()],
+                    functions: vec![
+                        "curandGenerateBinomial".to_string(),
+                        "curandGenerateBinomialMethod".to_string(),
+                    ],
                     vars: vec![],
                 },
                 libs: vec!["curand".to_string()],
