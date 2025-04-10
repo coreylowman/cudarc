@@ -11,7 +11,7 @@ use std::{
 use anyhow::{Context, Result};
 use bindgen::Builder;
 use lazy_static::lazy_static;
-use reqwest::blocking::{get, Response};
+use reqwest::blocking::{Response, get};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
