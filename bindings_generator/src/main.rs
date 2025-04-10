@@ -187,11 +187,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "cusparse".to_string(),
             ModuleConfig {
                 cuda: "libcusparse".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^cusparse.*".to_string()],
                     functions: vec!["^cusparse.*".to_string()],
                     vars: vec!["^cusparse.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["cusparse".to_string()],
                 redist: None,
             },
@@ -200,11 +201,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
             "cusolver".to_string(),
             ModuleConfig {
                 cuda: "libcusolver".to_string(),
-                filters: Filters {
+                allowlist: Filters {
                     types: vec!["^cusolver.*".to_string()],
                     functions: vec!["^cusolver.*".to_string()],
                     vars: vec!["^cusolver.*".to_string()],
                 },
+                blocklist: Filters::none(),
                 libs: vec!["cusolver".to_string()],
                 // redist in cusolver is dummy
                 redist: Some(Redist {
@@ -897,7 +899,6 @@ fn generate_cusolver(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let cuda_name = &module.cuda;
-    let filters = &module.filters;
 
     let archive_dir = get_archive(cuda_version, cuda_name, module_name, multi_progress)?;
 
@@ -924,7 +925,8 @@ fn generate_cusolver(
     create_system_folders(
         cuda_version,
         module_name,
-        filters,
+        &module.allowlist,
+        &module.blocklist,
         &archive_dir,
         primary_archives,
     )?;

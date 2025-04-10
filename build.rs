@@ -232,7 +232,7 @@ fn static_linking(major: usize, minor: usize) {
     #[cfg(any(feature = "cublas", feature = "cublaslt"))]
     println!("cargo:rustc-link-lib=static:+whole-archive=cublasLt_static");
     #[cfg(any(feature = "cusparse", feature = "cusolver"))]
-    println!("cargo:rustc-link-lib=statstatic:+whole-archiveic=cusparse_static");
+    println!("cargo:rustc-link-lib=static:+whole-archive=cusparse_static");
     #[cfg(feature = "cusolver")]
     println!("cargo:rustc-link-lib=static:+whole-archive=cusolver_static");
     #[cfg(feature = "cudnn")]
