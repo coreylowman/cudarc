@@ -826,15 +826,15 @@ impl<T, const N: usize> HostSlice<T> for [T; N] {
     }
     unsafe fn stream_synced_slice<'a>(
         &'a self,
-        stream: &'a CudaStream,
+        _stream: &'a CudaStream,
     ) -> (&'a [T], SyncOnDrop<'a>) {
-        (self, SyncOnDrop::sync_stream(stream))
+        (self, SyncOnDrop::Sync(None))
     }
     unsafe fn stream_synced_mut_slice<'a>(
         &'a mut self,
-        stream: &'a CudaStream,
+        _stream: &'a CudaStream,
     ) -> (&'a mut [T], SyncOnDrop<'a>) {
-        (self, SyncOnDrop::sync_stream(stream))
+        (self, SyncOnDrop::Sync(None))
     }
 }
 
@@ -844,15 +844,15 @@ impl<T> HostSlice<T> for [T] {
     }
     unsafe fn stream_synced_slice<'a>(
         &'a self,
-        stream: &'a CudaStream,
+        _stream: &'a CudaStream,
     ) -> (&'a [T], SyncOnDrop<'a>) {
-        (self, SyncOnDrop::sync_stream(stream))
+        (self, SyncOnDrop::Sync(None))
     }
     unsafe fn stream_synced_mut_slice<'a>(
         &'a mut self,
-        stream: &'a CudaStream,
+        _stream: &'a CudaStream,
     ) -> (&'a mut [T], SyncOnDrop<'a>) {
-        (self, SyncOnDrop::sync_stream(stream))
+        (self, SyncOnDrop::Sync(None))
     }
 }
 
@@ -862,15 +862,15 @@ impl<T> HostSlice<T> for Vec<T> {
     }
     unsafe fn stream_synced_slice<'a>(
         &'a self,
-        stream: &'a CudaStream,
+        _stream: &'a CudaStream,
     ) -> (&'a [T], SyncOnDrop<'a>) {
-        (self, SyncOnDrop::sync_stream(stream))
+        (self, SyncOnDrop::Sync(None))
     }
     unsafe fn stream_synced_mut_slice<'a>(
         &'a mut self,
-        stream: &'a CudaStream,
+        _stream: &'a CudaStream,
     ) -> (&'a mut [T], SyncOnDrop<'a>) {
-        (self, SyncOnDrop::sync_stream(stream))
+        (self, SyncOnDrop::Sync(None))
     }
 }
 
