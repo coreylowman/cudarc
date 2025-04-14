@@ -125,7 +125,13 @@ impl CudaContext {
 
     /// Binds this context to the calling thread. Calling this is key for thread safety.
     pub fn bind_to_thread(&self) -> Result<(), DriverError> {
-        unsafe { result::ctx::set_current(self.cu_ctx) }
+        if match result::ctx::get_current()? {
+            Some(curr_ctx) => curr_ctx != self.cu_ctx,
+            None => true,
+        } {
+            unsafe { result::ctx::set_current(self.cu_ctx) }?;
+        }
+        Ok(())
     }
 
     /// Get the value of the specified attribute of the device in [CudaContext].
