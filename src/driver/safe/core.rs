@@ -168,6 +168,10 @@ impl CudaContext {
         result::ctx::set_flags(flags)
     }
 
+    /// Whether multiple streams have been created in this context. If so,
+    /// the [CudaSlice::read] and [CudaSlice::write] events will be activated.
+    ///
+    /// This only get's set to true by [CudaContext::new_stream()].
     pub fn is_in_multi_stream_mode(&self) -> bool {
         *self.multi_stream.read().unwrap()
     }
@@ -310,6 +314,9 @@ impl CudaContext {
     }
 
     /// Create a new [sys::CUstream_flags::CU_STREAM_NON_BLOCKING] stream.
+    ///
+    /// This will swap the calling context to multi stream mode [CudaContext::is_in_multi_stream_mode()].
+    /// If the context is not already in multiple stream mode, then this function will also call [CudaContext::synchronize()].
     pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
         {
