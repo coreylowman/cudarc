@@ -113,9 +113,10 @@ impl CudaContext {
 
     /// Binds this context to the calling thread. Calling this is key for thread safety.
     pub fn bind_to_thread(&self) -> Result<(), DriverError> {
-        // NOTE: it isn't possible for the current ctx to be None if we have `self`.
-        let curr_ctx = result::ctx::get_current()?.unwrap();
-        if curr_ctx != self.cu_ctx {
+        if match result::ctx::get_current()? {
+            Some(curr_ctx) => curr_ctx != self.cu_ctx,
+            None => true,
+        } {
             unsafe { result::ctx::set_current(self.cu_ctx) }?;
         }
         Ok(())
