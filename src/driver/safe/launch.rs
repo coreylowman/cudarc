@@ -186,8 +186,10 @@ impl LaunchArgs<'_> {
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
         self.stream.ctx.bind_to_thread()?;
-        for &event in self.waits.iter() {
-            self.stream.wait(event)?;
+        if self.stream.context().is_in_multi_stream_mode() {
+            for &event in self.waits.iter() {
+                self.stream.wait(event)?;
+            }
         }
         let start_event = self
             .flags
@@ -205,8 +207,10 @@ impl LaunchArgs<'_> {
             .flags
             .map(|flags| self.stream.record_event(Some(flags)))
             .transpose()?;
-        for &event in self.records.iter() {
-            event.record(self.stream)?;
+        if self.stream.context().is_in_multi_stream_mode() {
+            for &event in self.records.iter() {
+                event.record(self.stream)?;
+            }
         }
         Ok(start_event.zip(end_event))
     }
@@ -221,8 +225,10 @@ impl LaunchArgs<'_> {
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
         self.stream.ctx.bind_to_thread()?;
-        for &event in self.waits.iter() {
-            self.stream.wait(event)?;
+        if self.stream.context().is_in_multi_stream_mode() {
+            for &event in self.waits.iter() {
+                self.stream.wait(event)?;
+            }
         }
         let start_event = self
             .flags
@@ -240,8 +246,10 @@ impl LaunchArgs<'_> {
             .flags
             .map(|flags| self.stream.record_event(Some(flags)))
             .transpose()?;
-        for &event in self.records.iter() {
-            event.record(self.stream)?;
+        if self.stream.context().is_in_multi_stream_mode() {
+            for &event in self.records.iter() {
+                event.record(self.stream)?;
+            }
         }
         Ok(start_event.zip(end_event))
     }

@@ -148,9 +148,13 @@ impl DevicePtr<u8> for MappedBuffer {
         // this memory can never be written to, only read from. So we don't need
         // to synchronize here at all.
         // However, we still do need to record this read.
-        (
-            self.device_ptr,
-            SyncOnDrop::record_event(&self.event, stream),
-        )
+        if self.stream.context().is_in_multi_stream_mode() {
+            (
+                self.device_ptr,
+                SyncOnDrop::record_event(&self.event, stream),
+            )
+        } else {
+            (self.device_ptr, SyncOnDrop::Record(None))
+        }
     }
 }

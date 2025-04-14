@@ -8,6 +8,7 @@ use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
     string::String,
+    sync::atomic::{AtomicBool, Ordering},
     sync::Arc,
     vec::Vec,
 };
@@ -22,12 +23,13 @@ use std::{
 ///
 /// This object is thread safe and can be shared/used on multiple threads. All safe apis call
 /// [CudaContext::bind_to_thread()] before doing work in a certain context.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct CudaContext {
     pub(crate) cu_device: sys::CUdevice,
     pub(crate) cu_ctx: sys::CUcontext,
     pub(crate) ordinal: usize,
     pub(crate) has_async_alloc: bool,
+    pub(crate) multi_stream: AtomicBool,
 }
 
 unsafe impl Send for CudaContext {}
@@ -42,6 +44,15 @@ impl Drop for CudaContext {
         }
     }
 }
+
+impl PartialEq for CudaContext {
+    fn eq(&self, other: &Self) -> bool {
+        self.cu_device == other.cu_device
+            && self.cu_ctx == other.cu_ctx
+            && self.ordinal == other.ordinal
+    }
+}
+impl Eq for CudaContext {}
 
 impl CudaContext {
     /// Creates a new context on the specified device ordinal.
@@ -61,6 +72,7 @@ impl CudaContext {
             cu_ctx,
             ordinal,
             has_async_alloc,
+            multi_stream: AtomicBool::new(false),
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
@@ -155,6 +167,14 @@ impl CudaContext {
     pub fn set_flags(&self, flags: sys::CUctx_flags) -> Result<(), DriverError> {
         self.bind_to_thread()?;
         result::ctx::set_flags(flags)
+    }
+
+    /// Whether multiple streams have been created in this context. If so,
+    /// the [CudaSlice::read] and [CudaSlice::write] events will be activated.
+    ///
+    /// This only get's set to true by [CudaContext::new_stream()].
+    pub fn is_in_multi_stream_mode(&self) -> bool {
+        self.multi_stream.load(Ordering::Relaxed)
     }
 }
 
@@ -295,8 +315,14 @@ impl CudaContext {
     }
 
     /// Create a new [sys::CUstream_flags::CU_STREAM_NON_BLOCKING] stream.
+    ///
+    /// This will swap the calling context to multi stream mode [CudaContext::is_in_multi_stream_mode()].
+    /// If the context is not already in multiple stream mode, then this function will also call [CudaContext::synchronize()].
     pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
+        if !self.multi_stream.swap(true, Ordering::Relaxed) {
+            self.synchronize()?;
+        }
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         Ok(Arc::new(CudaStream {
             cu_stream,
@@ -389,8 +415,10 @@ unsafe impl<T> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        self.stream.wait(&self.read).unwrap();
-        self.stream.wait(&self.write).unwrap();
+        if self.context().is_in_multi_stream_mode() {
+            self.stream.wait(&self.read).unwrap();
+            self.stream.wait(&self.write).unwrap();
+        }
         unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
     }
 }
@@ -727,25 +755,37 @@ pub trait DevicePtr<T>: DeviceSlice<T> {
 
 impl<T> DevicePtr<T> for CudaSlice<T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(&self.write).unwrap();
-        (
-            self.cu_device_ptr,
-            SyncOnDrop::record_event(&self.read, stream),
-        )
+        if self.context().is_in_multi_stream_mode() {
+            stream.wait(&self.write).unwrap();
+            (
+                self.cu_device_ptr,
+                SyncOnDrop::record_event(&self.read, stream),
+            )
+        } else {
+            (self.cu_device_ptr, SyncOnDrop::Record(None))
+        }
     }
 }
 
 impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(self.write).unwrap();
-        (self.ptr, SyncOnDrop::record_event(self.read, stream))
+        if self.stream.context().is_in_multi_stream_mode() {
+            stream.wait(self.write).unwrap();
+            (self.ptr, SyncOnDrop::record_event(self.read, stream))
+        } else {
+            (self.ptr, SyncOnDrop::Record(None))
+        }
     }
 }
 
 impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(self.write).unwrap();
-        (self.ptr, SyncOnDrop::record_event(self.read, stream))
+        if self.stream.context().is_in_multi_stream_mode() {
+            stream.wait(self.write).unwrap();
+            (self.ptr, SyncOnDrop::record_event(self.read, stream))
+        } else {
+            (self.ptr, SyncOnDrop::Record(None))
+        }
     }
 }
 
@@ -776,12 +816,16 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(&self.read).unwrap();
-        stream.wait(&self.write).unwrap();
-        (
-            self.cu_device_ptr,
-            SyncOnDrop::record_event(&self.write, stream),
-        )
+        if self.context().is_in_multi_stream_mode() {
+            stream.wait(&self.read).unwrap();
+            stream.wait(&self.write).unwrap();
+            (
+                self.cu_device_ptr,
+                SyncOnDrop::record_event(&self.write, stream),
+            )
+        } else {
+            (self.cu_device_ptr, SyncOnDrop::Record(None))
+        }
     }
 }
 
@@ -790,9 +834,13 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        stream.wait(self.read).unwrap();
-        stream.wait(self.write).unwrap();
-        (self.ptr, SyncOnDrop::record_event(self.write, stream))
+        if self.stream.context().is_in_multi_stream_mode() {
+            stream.wait(self.read).unwrap();
+            stream.wait(self.write).unwrap();
+            (self.ptr, SyncOnDrop::record_event(self.write, stream))
+        } else {
+            (self.ptr, SyncOnDrop::Record(None))
+        }
     }
 }
 
