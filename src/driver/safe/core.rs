@@ -8,7 +8,8 @@ use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
     string::String,
-    sync::{Arc, RwLock},
+    sync::atomic::{AtomicBool, Ordering},
+    sync::Arc,
     vec::Vec,
 };
 
@@ -28,7 +29,7 @@ pub struct CudaContext {
     pub(crate) cu_ctx: sys::CUcontext,
     pub(crate) ordinal: usize,
     pub(crate) has_async_alloc: bool,
-    pub(crate) multi_stream: RwLock<bool>,
+    pub(crate) multi_stream: AtomicBool,
 }
 
 unsafe impl Send for CudaContext {}
@@ -71,7 +72,7 @@ impl CudaContext {
             cu_ctx,
             ordinal,
             has_async_alloc,
-            multi_stream: RwLock::new(false),
+            multi_stream: AtomicBool::new(false),
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
@@ -173,7 +174,7 @@ impl CudaContext {
     ///
     /// This only get's set to true by [CudaContext::new_stream()].
     pub fn is_in_multi_stream_mode(&self) -> bool {
-        *self.multi_stream.read().unwrap()
+        self.multi_stream.load(Ordering::Relaxed)
     }
 }
 
@@ -319,13 +320,9 @@ impl CudaContext {
     /// If the context is not already in multiple stream mode, then this function will also call [CudaContext::synchronize()].
     pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
-        {
-            let mut multi_stream = self.multi_stream.write().unwrap();
-            if !*multi_stream {
-                *multi_stream = true;
-                self.synchronize()?;
-            }
-        };
+        if !self.multi_stream.swap(true, Ordering::Relaxed) {
+            self.synchronize()?;
+        }
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         Ok(Arc::new(CudaStream {
             cu_stream,
