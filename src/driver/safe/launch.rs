@@ -668,7 +668,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         };
 
         assert!(
-            (double_launch_ms - 2.0 * par_launch_ms).abs() < 20.0 / 100.0,
+            (double_launch_ms - 2.0 * par_launch_ms).abs() < 0.2 * double_launch_ms,
             "par={:?} dbl={:?}",
             par_launch_ms,
             double_launch_ms
