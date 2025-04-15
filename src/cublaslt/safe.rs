@@ -289,6 +289,7 @@ pub trait MatmulShared {
 pub struct MatmulConfig {
     pub transa: bool,
     pub transb: bool,
+    pub transc: bool,
     pub m: u64,
     pub n: u64,
     pub k: u64,
@@ -364,6 +365,8 @@ pub trait Matmul<T>: MatmulShared {
         matmul_desc.set_transpose(cfg.transa, Matrix::A)?;
         // Set transb
         matmul_desc.set_transpose(cfg.transb, Matrix::B)?;
+        // Set transc
+        matmul_desc.set_transpose(cfg.transc, Matrix::C)?;
 
         // Epilogue system can be leveraged to fuse add and activation operations
         let (bias, _record_bias) = bias.map(|b| b.device_ptr(stream)).unzip();
@@ -543,6 +546,7 @@ mod tests {
                 MatmulConfig {
                     transa: false,
                     transb: false,
+                    transc: false,
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
