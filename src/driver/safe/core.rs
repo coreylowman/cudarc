@@ -30,7 +30,7 @@ pub struct CudaContext {
     pub(crate) ordinal: usize,
     pub(crate) has_async_alloc: bool,
     pub(crate) num_streams: AtomicUsize,
-    pub(crate) auto_stream_sync: AtomicBool,
+    pub(crate) event_tracking: AtomicBool,
 }
 
 unsafe impl Send for CudaContext {}
@@ -74,7 +74,7 @@ impl CudaContext {
             ordinal,
             has_async_alloc,
             num_streams: AtomicUsize::new(0),
-            auto_stream_sync: AtomicBool::new(true),
+            event_tracking: AtomicBool::new(true),
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
@@ -185,12 +185,12 @@ impl CudaContext {
         self.num_streams.load(Ordering::Relaxed) > 0
     }
 
-    /// Whether stream synchronization is being managed by this context
-    /// (via [CudaContext::enable_auto_stream_sync()], which is the default behavior),
+    /// Whether event tracking is being managed by this context
+    /// (via [CudaContext::enable_event_tracking()], which is the default behavior),
     /// or `false` if the user is manually managing stream synchronization
-    /// (via [CudaContext::enable_manual_stream_sync()]).
-    pub fn is_managing_stream_sync(&self) -> bool {
-        self.auto_stream_sync.load(Ordering::Relaxed)
+    /// (via [CudaContext::disable_event_tracking()]).
+    pub fn is_event_tracking(&self) -> bool {
+        self.event_tracking.load(Ordering::Relaxed)
     }
 
     /// When turned on, all [CudaSlice] **created after calling this function** will
@@ -198,12 +198,12 @@ impl CudaContext {
     ///
     /// # Safety
     ///
-    /// If [CudaContext::enable_manual_stream_sync()] was called previously, then any
+    /// If [CudaContext::disable_event_tracking()] was called previously, then any
     /// [CudaSlice] created after that and before this current call won't have [CudaEvent]
     /// tracking their uses. Those [CudaSlice] will not manage their synchronization, even
     /// after this call.
-    pub unsafe fn enable_auto_stream_sync(&self) {
-        self.auto_stream_sync.store(true, Ordering::Relaxed);
+    pub unsafe fn enable_event_tracking(&self) {
+        self.event_tracking.store(true, Ordering::Relaxed);
     }
 
     /// When turned on, all [CudaSlice] **created after calling this function** will
@@ -216,8 +216,8 @@ impl CudaContext {
     /// - Ensure that a [CudaSlice] is not used on another stream before allocation on the
     ///   allocating stream finishes.
     /// - Ensure that a [CudaSlice] is not written two concurrently by multiple streams.
-    pub unsafe fn enable_manual_stream_sync(&self) {
-        self.auto_stream_sync.store(false, Ordering::Relaxed);
+    pub unsafe fn disable_event_tracking(&self) {
+        self.event_tracking.store(false, Ordering::Relaxed);
     }
 }
 
@@ -365,7 +365,7 @@ impl CudaContext {
     pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
         let prev_num_streams = self.num_streams.fetch_add(1, Ordering::Relaxed);
-        if prev_num_streams == 0 && self.is_managing_stream_sync() {
+        if prev_num_streams == 0 && self.is_event_tracking() {
             self.synchronize()?;
         }
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
@@ -1134,7 +1134,7 @@ impl CudaStream {
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
-        let (read, write) = if self.ctx.is_managing_stream_sync() {
+        let (read, write) = if self.ctx.is_event_tracking() {
             (
                 Some(self.ctx.new_event(None)?),
                 Some(self.ctx.new_event(None)?),
@@ -1884,7 +1884,7 @@ impl CudaStream {
         cu_device_ptr: sys::CUdeviceptr,
         len: usize,
     ) -> CudaSlice<T> {
-        let (read, write) = if self.ctx.is_managing_stream_sync() {
+        let (read, write) = if self.ctx.is_event_tracking() {
             (
                 Some(self.ctx.new_event(None).unwrap()),
                 Some(self.ctx.new_event(None).unwrap()),
