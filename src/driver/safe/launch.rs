@@ -100,8 +100,14 @@ unsafe impl<'a, 'b: 'a, T: DeviceRepr> PushKernelArg<&'b T> for LaunchArgs<'a> {
 unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaSlice<T>) -> &mut Self {
-        self.waits.push(&arg.write);
-        self.records.push(&arg.read);
+        if self.stream.context().is_in_multi_stream_mode() {
+            if let Some(write) = arg.write.as_ref() {
+                self.waits.push(write);
+            }
+            if let Some(read) = arg.read.as_ref() {
+                self.records.push(read);
+            }
+        }
         self.args
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
@@ -111,9 +117,15 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
 unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b mut CudaSlice<T>) -> &mut Self {
-        self.waits.push(&arg.read);
-        self.waits.push(&arg.write);
-        self.records.push(&arg.write);
+        if self.stream.context().is_in_multi_stream_mode() {
+            if let Some(read) = arg.read.as_ref() {
+                self.waits.push(read);
+            }
+            if let Some(write) = arg.write.as_ref() {
+                self.waits.push(write);
+                self.records.push(write);
+            }
+        }
         self.args
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
@@ -123,8 +135,14 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a
 unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b CudaView<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaView<'c, T>) -> &mut Self {
-        self.waits.push(arg.write);
-        self.records.push(arg.read);
+        if self.stream.context().is_in_multi_stream_mode() {
+            if let Some(write) = arg.write.as_ref() {
+                self.waits.push(write);
+            }
+            if let Some(read) = arg.read.as_ref() {
+                self.records.push(read);
+            }
+        }
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
@@ -133,9 +151,15 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b CudaView<'c, T>> for Launch
 unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b mut CudaViewMut<'c, T>) -> &mut Self {
-        self.waits.push(arg.read);
-        self.waits.push(arg.write);
-        self.records.push(arg.write);
+        if self.stream.context().is_in_multi_stream_mode() {
+            if let Some(read) = arg.read.as_ref() {
+                self.waits.push(read);
+            }
+            if let Some(write) = arg.write.as_ref() {
+                self.waits.push(write);
+                self.records.push(write);
+            }
+        }
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
@@ -186,10 +210,8 @@ impl LaunchArgs<'_> {
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
         self.stream.ctx.bind_to_thread()?;
-        if self.stream.context().is_in_multi_stream_mode() {
-            for &event in self.waits.iter() {
-                self.stream.wait(event)?;
-            }
+        for &event in self.waits.iter() {
+            self.stream.wait(event)?;
         }
         let start_event = self
             .flags
@@ -207,10 +229,8 @@ impl LaunchArgs<'_> {
             .flags
             .map(|flags| self.stream.record_event(Some(flags)))
             .transpose()?;
-        if self.stream.context().is_in_multi_stream_mode() {
-            for &event in self.records.iter() {
-                event.record(self.stream)?;
-            }
+        for &event in self.records.iter() {
+            event.record(self.stream)?;
         }
         Ok(start_event.zip(end_event))
     }
@@ -225,10 +245,8 @@ impl LaunchArgs<'_> {
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
         self.stream.ctx.bind_to_thread()?;
-        if self.stream.context().is_in_multi_stream_mode() {
-            for &event in self.waits.iter() {
-                self.stream.wait(event)?;
-            }
+        for &event in self.waits.iter() {
+            self.stream.wait(event)?;
         }
         let start_event = self
             .flags
@@ -246,10 +264,8 @@ impl LaunchArgs<'_> {
             .flags
             .map(|flags| self.stream.record_event(Some(flags)))
             .transpose()?;
-        if self.stream.context().is_in_multi_stream_mode() {
-            for &event in self.records.iter() {
-                event.record(self.stream)?;
-            }
+        for &event in self.records.iter() {
+            event.record(self.stream)?;
         }
         Ok(start_event.zip(end_event))
     }

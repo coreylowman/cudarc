@@ -8,7 +8,7 @@ use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
     string::String,
-    sync::atomic::{AtomicBool, Ordering},
+    sync::atomic::{AtomicBool, AtomicUsize, Ordering},
     sync::Arc,
     vec::Vec,
 };
@@ -29,7 +29,8 @@ pub struct CudaContext {
     pub(crate) cu_ctx: sys::CUcontext,
     pub(crate) ordinal: usize,
     pub(crate) has_async_alloc: bool,
-    pub(crate) multi_stream: AtomicBool,
+    pub(crate) num_streams: AtomicUsize,
+    pub(crate) auto_stream_sync: AtomicBool,
 }
 
 unsafe impl Send for CudaContext {}
@@ -72,7 +73,8 @@ impl CudaContext {
             cu_ctx,
             ordinal,
             has_async_alloc,
-            multi_stream: AtomicBool::new(false),
+            num_streams: AtomicUsize::new(0),
+            auto_stream_sync: AtomicBool::new(true),
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
@@ -180,7 +182,42 @@ impl CudaContext {
     ///
     /// This only get's set to true by [CudaContext::new_stream()].
     pub fn is_in_multi_stream_mode(&self) -> bool {
-        self.multi_stream.load(Ordering::Relaxed)
+        self.num_streams.load(Ordering::Relaxed) > 0
+    }
+
+    /// Whether stream synchronization is being managed by this context
+    /// (via [CudaContext::enable_auto_stream_sync()], which is the default behavior),
+    /// or `false` if the user is manually managing stream synchronization
+    /// (via [CudaContext::enable_manual_stream_sync()]).
+    pub fn is_managing_stream_sync(&self) -> bool {
+        self.auto_stream_sync.load(Ordering::Relaxed)
+    }
+
+    /// When turned on, all [CudaSlice] **created after calling this function** will
+    /// record usages using [CudaEvent] to ensure proper synchronization between streams.
+    ///
+    /// # Safety
+    ///
+    /// If [CudaContext::enable_manual_stream_sync()] was called previously, then any
+    /// [CudaSlice] created after that and before this current call won't have [CudaEvent]
+    /// tracking their uses. Those [CudaSlice] will not manage their synchronization, even
+    /// after this call.
+    pub unsafe fn enable_auto_stream_sync(&self) {
+        self.auto_stream_sync.store(true, Ordering::Relaxed);
+    }
+
+    /// When turned on, all [CudaSlice] **created after calling this function** will
+    /// not track uses via [CudaEvent]s.
+    ///
+    /// # Safety
+    ///
+    /// It is up to the user to ensure proper synchronization between multiple streams:
+    /// - Ensure that no [CudaSlice] is freed before a use on another stream is finished.
+    /// - Ensure that a [CudaSlice] is not used on another stream before allocation on the
+    ///   allocating stream finishes.
+    /// - Ensure that a [CudaSlice] is not written two concurrently by multiple streams.
+    pub unsafe fn enable_manual_stream_sync(&self) {
+        self.auto_stream_sync.store(false, Ordering::Relaxed);
     }
 }
 
@@ -305,6 +342,7 @@ impl Drop for CudaStream {
     fn drop(&mut self) {
         self.ctx.bind_to_thread().unwrap();
         if !self.cu_stream.is_null() {
+            self.ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
             unsafe { result::stream::destroy(self.cu_stream).unwrap() };
         }
     }
@@ -326,7 +364,8 @@ impl CudaContext {
     /// If the context is not already in multiple stream mode, then this function will also call [CudaContext::synchronize()].
     pub fn new_stream(self: &Arc<Self>) -> Result<Arc<CudaStream>, DriverError> {
         self.bind_to_thread()?;
-        if !self.multi_stream.swap(true, Ordering::Relaxed) {
+        let prev_num_streams = self.num_streams.fetch_add(1, Ordering::Relaxed);
+        if prev_num_streams == 0 && self.is_managing_stream_sync() {
             self.synchronize()?;
         }
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
@@ -340,7 +379,13 @@ impl CudaContext {
 impl CudaStream {
     /// Create's a new stream and then makes the new stream wait on `self`
     pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
-        let stream = self.ctx.new_stream()?;
+        self.ctx.bind_to_thread()?;
+        self.ctx.num_streams.fetch_add(1, Ordering::Relaxed);
+        let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
+        let stream = Arc::new(CudaStream {
+            cu_stream,
+            ctx: self.ctx.clone(),
+        });
         stream.join(self)?;
         Ok(stream)
     }
@@ -410,8 +455,8 @@ impl CudaStream {
 pub struct CudaSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) read: CudaEvent,
-    pub(crate) write: CudaEvent,
+    pub(crate) read: Option<CudaEvent>,
+    pub(crate) write: Option<CudaEvent>,
     pub(crate) stream: Arc<CudaStream>,
     pub(crate) marker: PhantomData<*const T>,
 }
@@ -421,9 +466,11 @@ unsafe impl<T> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        if self.context().is_in_multi_stream_mode() {
-            self.stream.wait(&self.read).unwrap();
-            self.stream.wait(&self.write).unwrap();
+        if let Some(read) = self.read.as_ref() {
+            self.stream.wait(read).unwrap();
+        }
+        if let Some(write) = self.write.as_ref() {
+            self.stream.wait(write).unwrap();
         }
         unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
     }
@@ -486,8 +533,8 @@ impl<T: Clone + Default + DeviceRepr> TryFrom<CudaSlice<T>> for Vec<T> {
 pub struct CudaView<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) read: &'a CudaEvent,
-    pub(crate) write: &'a CudaEvent,
+    pub(crate) read: &'a Option<CudaEvent>,
+    pub(crate) write: &'a Option<CudaEvent>,
     pub(crate) stream: &'a Arc<CudaStream>,
     marker: PhantomData<&'a [T]>,
 }
@@ -533,8 +580,8 @@ impl<T> CudaView<'_, T> {
 pub struct CudaViewMut<'a, T> {
     pub(crate) ptr: sys::CUdeviceptr,
     pub(crate) len: usize,
-    pub(crate) read: &'a CudaEvent,
-    pub(crate) write: &'a CudaEvent,
+    pub(crate) read: &'a Option<CudaEvent>,
+    pub(crate) write: &'a Option<CudaEvent>,
     pub(crate) stream: &'a Arc<CudaStream>,
     marker: PhantomData<&'a mut [T]>,
 }
@@ -714,8 +761,8 @@ pub enum SyncOnDrop<'a> {
 
 impl<'a> SyncOnDrop<'a> {
     /// Construct a [SyncOnDrop::Record] variant
-    pub fn record_event(event: &'a CudaEvent, stream: &'a CudaStream) -> Self {
-        SyncOnDrop::Record(Some((event, stream)))
+    pub fn record_event(event: &'a Option<CudaEvent>, stream: &'a CudaStream) -> Self {
+        SyncOnDrop::Record(event.as_ref().map(|e| (e, stream)))
     }
     /// Construct a [SyncOnDrop::Sync] variant
     pub fn sync_stream(stream: &'a CudaStream) -> Self {
@@ -761,37 +808,37 @@ pub trait DevicePtr<T>: DeviceSlice<T> {
 
 impl<T> DevicePtr<T> for CudaSlice<T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.context().is_in_multi_stream_mode() {
-            stream.wait(&self.write).unwrap();
-            (
-                self.cu_device_ptr,
-                SyncOnDrop::record_event(&self.read, stream),
-            )
-        } else {
-            (self.cu_device_ptr, SyncOnDrop::Record(None))
+        if self.stream.context().is_in_multi_stream_mode() {
+            if let Some(write) = self.write.as_ref() {
+                stream.wait(write).unwrap();
+            }
         }
+        (
+            self.cu_device_ptr,
+            SyncOnDrop::record_event(&self.read, stream),
+        )
     }
 }
 
 impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
-            stream.wait(self.write).unwrap();
-            (self.ptr, SyncOnDrop::record_event(self.read, stream))
-        } else {
-            (self.ptr, SyncOnDrop::Record(None))
+            if let Some(write) = self.write.as_ref() {
+                stream.wait(write).unwrap();
+            }
         }
+        (self.ptr, SyncOnDrop::record_event(self.read, stream))
     }
 }
 
 impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
-            stream.wait(self.write).unwrap();
-            (self.ptr, SyncOnDrop::record_event(self.read, stream))
-        } else {
-            (self.ptr, SyncOnDrop::Record(None))
+            if let Some(write) = self.write.as_ref() {
+                stream.wait(write).unwrap();
+            }
         }
+        (self.ptr, SyncOnDrop::record_event(self.read, stream))
     }
 }
 
@@ -822,16 +869,18 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.context().is_in_multi_stream_mode() {
-            stream.wait(&self.read).unwrap();
-            stream.wait(&self.write).unwrap();
-            (
-                self.cu_device_ptr,
-                SyncOnDrop::record_event(&self.write, stream),
-            )
-        } else {
-            (self.cu_device_ptr, SyncOnDrop::Record(None))
+        if self.stream.context().is_in_multi_stream_mode() {
+            if let Some(read) = self.read.as_ref() {
+                stream.wait(read).unwrap();
+            }
+            if let Some(write) = self.write.as_ref() {
+                stream.wait(write).unwrap();
+            }
         }
+        (
+            self.cu_device_ptr,
+            SyncOnDrop::record_event(&self.write, stream),
+        )
     }
 }
 
@@ -841,12 +890,14 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
-            stream.wait(self.read).unwrap();
-            stream.wait(self.write).unwrap();
-            (self.ptr, SyncOnDrop::record_event(self.write, stream))
-        } else {
-            (self.ptr, SyncOnDrop::Record(None))
+            if let Some(read) = self.read.as_ref() {
+                stream.wait(read).unwrap();
+            }
+            if let Some(write) = self.write.as_ref() {
+                stream.wait(write).unwrap();
+            }
         }
+        (self.ptr, SyncOnDrop::record_event(self.write, stream))
     }
 }
 
@@ -1036,7 +1087,7 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         stream.wait(&self.event).unwrap();
         (
             std::slice::from_raw_parts(self.ptr, self.len),
-            SyncOnDrop::record_event(&self.event, stream),
+            SyncOnDrop::Record(Some((&self.event, stream))),
         )
     }
     unsafe fn stream_synced_mut_slice<'a>(
@@ -1046,7 +1097,7 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         stream.wait(&self.event).unwrap();
         (
             std::slice::from_raw_parts_mut(self.ptr, self.len),
-            SyncOnDrop::record_event(&self.event, stream),
+            SyncOnDrop::Record(Some((&self.event, stream))),
         )
     }
 }
@@ -1060,13 +1111,11 @@ impl CudaStream {
         } else {
             unsafe { result::malloc_sync(0) }?
         };
-        let read = self.ctx.new_event(None)?;
-        let write = self.ctx.new_event(None)?;
         Ok(CudaSlice {
             cu_device_ptr,
             len: 0,
-            read,
-            write,
+            read: None,
+            write: None,
             stream: self.clone(),
             marker: PhantomData,
         })
@@ -1085,8 +1134,14 @@ impl CudaStream {
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
-        let read = self.ctx.new_event(None)?;
-        let write = self.ctx.new_event(None)?;
+        let (read, write) = if self.ctx.is_managing_stream_sync() {
+            (
+                Some(self.ctx.new_event(None)?),
+                Some(self.ctx.new_event(None)?),
+            )
+        } else {
+            (None, None)
+        };
         Ok(CudaSlice {
             cu_device_ptr,
             len,
@@ -1314,7 +1369,7 @@ impl<T> CudaSlice<T> {
                 ptr: self.cu_device_ptr,
                 len,
                 read: &self.read,
-                write: &mut self.write,
+                write: &self.write,
                 stream: &self.stream,
                 marker: PhantomData,
             },
@@ -1792,17 +1847,19 @@ impl<T> CudaSlice<T> {
     ///
     /// Drops the underlying host_buf if there is one.
     pub fn leak(self) -> sys::CUdeviceptr {
-        // destructor of CudaSlice without de-allocating the memory
-        self.stream.wait(&self.read).unwrap();
-        self.stream.wait(&self.write).unwrap();
-
         // drop self.read
-        unsafe { result::event::destroy(self.read.cu_event) }.unwrap();
-        unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.read.ctx)) };
+        if let Some(read) = self.read.as_ref() {
+            self.stream.wait(read).unwrap();
+            unsafe { result::event::destroy(read.cu_event) }.unwrap();
+            unsafe { Arc::decrement_strong_count(Arc::as_ptr(&read.ctx)) };
+        }
 
         // drop self.write
-        unsafe { result::event::destroy(self.write.cu_event) }.unwrap();
-        unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.write.ctx)) };
+        if let Some(write) = self.write.as_ref() {
+            self.stream.wait(write).unwrap();
+            unsafe { result::event::destroy(write.cu_event) }.unwrap();
+            unsafe { Arc::decrement_strong_count(Arc::as_ptr(&write.ctx)) };
+        }
 
         // drop self.stream
         unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.stream)) };
@@ -1827,8 +1884,14 @@ impl CudaStream {
         cu_device_ptr: sys::CUdeviceptr,
         len: usize,
     ) -> CudaSlice<T> {
-        let read = self.ctx.new_event(None).unwrap();
-        let write = self.ctx.new_event(None).unwrap();
+        let (read, write) = if self.ctx.is_managing_stream_sync() {
+            (
+                Some(self.ctx.new_event(None).unwrap()),
+                Some(self.ctx.new_event(None).unwrap()),
+            )
+        } else {
+            (None, None)
+        };
         CudaSlice {
             cu_device_ptr,
             len,
