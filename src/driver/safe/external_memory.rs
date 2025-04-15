@@ -129,6 +129,7 @@ pub struct MappedBuffer {
 impl Drop for MappedBuffer {
     fn drop(&mut self) {
         self.external_memory.ctx.bind_to_thread().unwrap();
+        self.stream.wait(&self.event).unwrap();
         unsafe { result::memory_free(self.device_ptr) }.unwrap()
     }
 }
@@ -148,13 +149,9 @@ impl DevicePtr<u8> for MappedBuffer {
         // this memory can never be written to, only read from. So we don't need
         // to synchronize here at all.
         // However, we still do need to record this read.
-        if self.stream.context().is_in_multi_stream_mode() {
-            (
-                self.device_ptr,
-                SyncOnDrop::record_event(&self.event, stream),
-            )
-        } else {
-            (self.device_ptr, SyncOnDrop::Record(None))
-        }
+        (
+            self.device_ptr,
+            SyncOnDrop::Record(Some((&self.event, stream))),
+        )
     }
 }
