@@ -992,6 +992,9 @@ pub struct PinnedHostSlice<T> {
     pub(crate) event: CudaEvent,
 }
 
+unsafe impl<T> Send for PinnedHostSlice<T> {}
+unsafe impl<T> Sync for PinnedHostSlice<T> {}
+
 impl<T> Drop for PinnedHostSlice<T> {
     fn drop(&mut self) {
         self.event.synchronize().unwrap();
