@@ -781,16 +781,17 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     }
 
     #[test]
+    #[ignore = "must be executed by itself"]
     fn test_device_side_assert() -> Result<(), DriverError> {
         let ctx = CudaContext::new(0)?;
-        let stream = ctx.default_stream();
+        let stream = ctx.new_stream()?;
         let inp = stream.memcpy_stod(&[1.0f32; 100])?;
         let mut out = stream.alloc_zeros::<f32>(100)?;
         let ptx = crate::nvrtc::compile_ptx(
             "
-extern \"C\" __global__ void foo(float *out, const float *inp, const size_t numel) {
-    assert(0);
-}",
+    extern \"C\" __global__ void foo(float *out, const float *inp, const size_t numel) {
+        assert(0);
+    }",
         )
         .unwrap();
         let module = ctx.load_module(ptx)?;
