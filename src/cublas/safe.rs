@@ -26,7 +26,8 @@ unsafe impl Sync for CudaBlas {}
 impl CudaBlas {
     /// Creates a new cublas handle and sets the stream to the `device`'s stream.
     pub fn new(stream: Arc<CudaStream>) -> Result<Self, CublasError> {
-        stream.context().bind_to_thread().unwrap();
+        let ctx = stream.context();
+        ctx.record_err(ctx.bind_to_thread());
         let handle = result::create_handle()?;
         unsafe { result::set_stream(handle, stream.cu_stream() as _) }?;
         let blas = Self { handle, stream };
