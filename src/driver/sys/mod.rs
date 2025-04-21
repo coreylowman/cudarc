@@ -8484,36 +8484,6 @@ extern "C" {
         sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
         array: CUarray,
     ) -> CUresult;
-    #[cfg(any(feature = "cuda-12080"))]
-    pub fn cuCheckpointProcessCheckpoint(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointCheckpointArgs,
-    ) -> CUresult;
-    #[cfg(any(feature = "cuda-12080"))]
-    pub fn cuCheckpointProcessGetRestoreThreadId(
-        pid: ::core::ffi::c_int,
-        tid: *mut ::core::ffi::c_int,
-    ) -> CUresult;
-    #[cfg(any(feature = "cuda-12080"))]
-    pub fn cuCheckpointProcessGetState(
-        pid: ::core::ffi::c_int,
-        state: *mut CUprocessState,
-    ) -> CUresult;
-    #[cfg(any(feature = "cuda-12080"))]
-    pub fn cuCheckpointProcessLock(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointLockArgs,
-    ) -> CUresult;
-    #[cfg(any(feature = "cuda-12080"))]
-    pub fn cuCheckpointProcessRestore(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointRestoreArgs,
-    ) -> CUresult;
-    #[cfg(any(feature = "cuda-12080"))]
-    pub fn cuCheckpointProcessUnlock(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointUnlockArgs,
-    ) -> CUresult;
     #[cfg(any(
         feature = "cuda-12010",
         feature = "cuda-12020",
@@ -8740,11 +8710,6 @@ extern "C" {
         name: *mut ::core::ffi::c_char,
         len: ::core::ffi::c_int,
         dev: CUdevice,
-    ) -> CUresult;
-    pub fn cuDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::core::ffi::c_void,
-        dev: CUdevice,
-        flags: ::core::ffi::c_int,
     ) -> CUresult;
     pub fn cuDeviceGetP2PAttribute(
         value: *mut ::core::ffi::c_int,
@@ -11313,48 +11278,6 @@ mod loaded {
     ) -> CUresult {
         (culib().cuArrayGetSparseProperties)(sparseProperties, array)
     }
-    #[cfg(any(feature = "cuda-12080"))]
-    pub unsafe fn cuCheckpointProcessCheckpoint(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointCheckpointArgs,
-    ) -> CUresult {
-        (culib().cuCheckpointProcessCheckpoint)(pid, args)
-    }
-    #[cfg(any(feature = "cuda-12080"))]
-    pub unsafe fn cuCheckpointProcessGetRestoreThreadId(
-        pid: ::core::ffi::c_int,
-        tid: *mut ::core::ffi::c_int,
-    ) -> CUresult {
-        (culib().cuCheckpointProcessGetRestoreThreadId)(pid, tid)
-    }
-    #[cfg(any(feature = "cuda-12080"))]
-    pub unsafe fn cuCheckpointProcessGetState(
-        pid: ::core::ffi::c_int,
-        state: *mut CUprocessState,
-    ) -> CUresult {
-        (culib().cuCheckpointProcessGetState)(pid, state)
-    }
-    #[cfg(any(feature = "cuda-12080"))]
-    pub unsafe fn cuCheckpointProcessLock(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointLockArgs,
-    ) -> CUresult {
-        (culib().cuCheckpointProcessLock)(pid, args)
-    }
-    #[cfg(any(feature = "cuda-12080"))]
-    pub unsafe fn cuCheckpointProcessRestore(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointRestoreArgs,
-    ) -> CUresult {
-        (culib().cuCheckpointProcessRestore)(pid, args)
-    }
-    #[cfg(any(feature = "cuda-12080"))]
-    pub unsafe fn cuCheckpointProcessUnlock(
-        pid: ::core::ffi::c_int,
-        args: *mut CUcheckpointUnlockArgs,
-    ) -> CUresult {
-        (culib().cuCheckpointProcessUnlock)(pid, args)
-    }
     #[cfg(any(
         feature = "cuda-12010",
         feature = "cuda-12020",
@@ -11696,13 +11619,6 @@ mod loaded {
         dev: CUdevice,
     ) -> CUresult {
         (culib().cuDeviceGetName)(name, len, dev)
-    }
-    pub unsafe fn cuDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::core::ffi::c_void,
-        dev: CUdevice,
-        flags: ::core::ffi::c_int,
-    ) -> CUresult {
-        (culib().cuDeviceGetNvSciSyncAttributes)(nvSciSyncAttrList, dev, flags)
     }
     pub unsafe fn cuDeviceGetP2PAttribute(
         value: *mut ::core::ffi::c_int,
@@ -15400,32 +15316,6 @@ mod loaded {
             sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
             array: CUarray,
         ) -> CUresult,
-        #[cfg(any(feature = "cuda-12080"))]
-        pub cuCheckpointProcessCheckpoint: unsafe extern "C" fn(
-            pid: ::core::ffi::c_int,
-            args: *mut CUcheckpointCheckpointArgs,
-        ) -> CUresult,
-        #[cfg(any(feature = "cuda-12080"))]
-        pub cuCheckpointProcessGetRestoreThreadId:
-            unsafe extern "C" fn(pid: ::core::ffi::c_int, tid: *mut ::core::ffi::c_int) -> CUresult,
-        #[cfg(any(feature = "cuda-12080"))]
-        pub cuCheckpointProcessGetState:
-            unsafe extern "C" fn(pid: ::core::ffi::c_int, state: *mut CUprocessState) -> CUresult,
-        #[cfg(any(feature = "cuda-12080"))]
-        pub cuCheckpointProcessLock: unsafe extern "C" fn(
-            pid: ::core::ffi::c_int,
-            args: *mut CUcheckpointLockArgs,
-        ) -> CUresult,
-        #[cfg(any(feature = "cuda-12080"))]
-        pub cuCheckpointProcessRestore: unsafe extern "C" fn(
-            pid: ::core::ffi::c_int,
-            args: *mut CUcheckpointRestoreArgs,
-        ) -> CUresult,
-        #[cfg(any(feature = "cuda-12080"))]
-        pub cuCheckpointProcessUnlock: unsafe extern "C" fn(
-            pid: ::core::ffi::c_int,
-            args: *mut CUcheckpointUnlockArgs,
-        ) -> CUresult,
         #[cfg(any(
             feature = "cuda-12010",
             feature = "cuda-12020",
@@ -15661,11 +15551,6 @@ mod loaded {
             name: *mut ::core::ffi::c_char,
             len: ::core::ffi::c_int,
             dev: CUdevice,
-        ) -> CUresult,
-        pub cuDeviceGetNvSciSyncAttributes: unsafe extern "C" fn(
-            nvSciSyncAttrList: *mut ::core::ffi::c_void,
-            dev: CUdevice,
-            flags: ::core::ffi::c_int,
         ) -> CUresult,
         pub cuDeviceGetP2PAttribute: unsafe extern "C" fn(
             value: *mut ::core::ffi::c_int,
@@ -18343,36 +18228,6 @@ mod loaded {
                 .get(b"cuArrayGetSparseProperties\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080"))]
-            let cuCheckpointProcessCheckpoint = __library
-                .get(b"cuCheckpointProcessCheckpoint\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080"))]
-            let cuCheckpointProcessGetRestoreThreadId = __library
-                .get(b"cuCheckpointProcessGetRestoreThreadId\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080"))]
-            let cuCheckpointProcessGetState = __library
-                .get(b"cuCheckpointProcessGetState\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080"))]
-            let cuCheckpointProcessLock = __library
-                .get(b"cuCheckpointProcessLock\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080"))]
-            let cuCheckpointProcessRestore = __library
-                .get(b"cuCheckpointProcessRestore\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080"))]
-            let cuCheckpointProcessUnlock = __library
-                .get(b"cuCheckpointProcessUnlock\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             #[cfg(any(
                 feature = "cuda-12010",
                 feature = "cuda-12020",
@@ -18667,10 +18522,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cuDeviceGetName = __library
                 .get(b"cuDeviceGetName\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cuDeviceGetNvSciSyncAttributes = __library
-                .get(b"cuDeviceGetNvSciSyncAttributes\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cuDeviceGetP2PAttribute = __library
@@ -21098,18 +20949,6 @@ mod loaded {
                 cuArrayGetMemoryRequirements,
                 cuArrayGetPlane,
                 cuArrayGetSparseProperties,
-                #[cfg(any(feature = "cuda-12080"))]
-                cuCheckpointProcessCheckpoint,
-                #[cfg(any(feature = "cuda-12080"))]
-                cuCheckpointProcessGetRestoreThreadId,
-                #[cfg(any(feature = "cuda-12080"))]
-                cuCheckpointProcessGetState,
-                #[cfg(any(feature = "cuda-12080"))]
-                cuCheckpointProcessLock,
-                #[cfg(any(feature = "cuda-12080"))]
-                cuCheckpointProcessRestore,
-                #[cfg(any(feature = "cuda-12080"))]
-                cuCheckpointProcessUnlock,
                 #[cfg(any(
                     feature = "cuda-12010",
                     feature = "cuda-12020",
@@ -21262,7 +21101,6 @@ mod loaded {
                 cuDeviceGetLuid,
                 cuDeviceGetMemPool,
                 cuDeviceGetName,
-                cuDeviceGetNvSciSyncAttributes,
                 cuDeviceGetP2PAttribute,
                 cuDeviceGetPCIBusId,
                 cuDeviceGetProperties,
