@@ -779,4 +779,31 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         assert!(stream1_finish.elapsed_ms(&stream2_start)? >= 0.0);
         Ok(())
     }
+
+    #[test]
+    fn test_device_side_assert() -> Result<(), DriverError> {
+        let ctx = CudaContext::new(0)?;
+        let stream = ctx.default_stream();
+        let inp = stream.memcpy_stod(&[1.0f32; 100])?;
+        let mut out = stream.alloc_zeros::<f32>(100)?;
+        let ptx = crate::nvrtc::compile_ptx(
+            "
+extern \"C\" __global__ void foo(float *out, const float *inp, const size_t numel) {
+    assert(0);
+}",
+        )
+        .unwrap();
+        let module = ctx.load_module(ptx)?;
+        let foo = module.load_function("foo")?;
+        let mut builder = stream.launch_builder(&foo);
+        builder.arg(&mut out);
+        builder.arg(&inp);
+        builder.arg(&100usize);
+        unsafe { builder.launch(LaunchConfig::for_num_elems(100)) }?;
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        stream
+            .synchronize()
+            .expect_err("Should've had device side assert");
+        Ok(())
+    }
 }

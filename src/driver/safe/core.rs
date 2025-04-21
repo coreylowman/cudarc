@@ -39,10 +39,10 @@ unsafe impl Sync for CudaContext {}
 
 impl Drop for CudaContext {
     fn drop(&mut self) {
-        self.bind_to_thread().unwrap();
+        self.record_err(self.bind_to_thread());
         let ctx = std::mem::replace(&mut self.cu_ctx, std::ptr::null_mut());
         if !ctx.is_null() {
-            unsafe { result::primary_ctx::release(self.cu_device) }.unwrap();
+            self.record_err(unsafe { result::primary_ctx::release(self.cu_device) });
         }
     }
 }
