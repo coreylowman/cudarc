@@ -8,7 +8,7 @@ use std::{
     marker::PhantomData,
     ops::{Bound, RangeBounds},
     string::String,
-    sync::atomic::{AtomicBool, AtomicUsize, Ordering},
+    sync::atomic::{AtomicBool, AtomicU32, AtomicUsize, Ordering},
     sync::Arc,
     vec::Vec,
 };
@@ -31,6 +31,7 @@ pub struct CudaContext {
     pub(crate) has_async_alloc: bool,
     pub(crate) num_streams: AtomicUsize,
     pub(crate) event_tracking: AtomicBool,
+    pub(crate) error_state: AtomicU32,
 }
 
 unsafe impl Send for CudaContext {}
@@ -38,10 +39,10 @@ unsafe impl Sync for CudaContext {}
 
 impl Drop for CudaContext {
     fn drop(&mut self) {
-        self.bind_to_thread().unwrap();
+        self.record_err(self.bind_to_thread());
         let ctx = std::mem::replace(&mut self.cu_ctx, std::ptr::null_mut());
         if !ctx.is_null() {
-            unsafe { result::primary_ctx::release(self.cu_device) }.unwrap();
+            self.record_err(unsafe { result::primary_ctx::release(self.cu_device) });
         }
     }
 }
@@ -75,6 +76,7 @@ impl CudaContext {
             has_async_alloc,
             num_streams: AtomicUsize::new(0),
             event_tracking: AtomicBool::new(true),
+            error_state: AtomicU32::new(0),
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
@@ -93,11 +95,13 @@ impl CudaContext {
 
     /// Get the name of this device.
     pub fn name(&self) -> Result<String, result::DriverError> {
+        self.check_err()?;
         result::device::get_name(self.cu_device)
     }
 
     /// Get the UUID of this device.
     pub fn uuid(&self) -> Result<sys::CUuuid, result::DriverError> {
+        self.check_err()?;
         result::device::get_uuid(self.cu_device)
     }
 
@@ -127,6 +131,7 @@ impl CudaContext {
 
     /// Binds this context to the calling thread. Calling this is key for thread safety.
     pub fn bind_to_thread(&self) -> Result<(), DriverError> {
+        self.check_err()?;
         if match result::ctx::get_current()? {
             Some(curr_ctx) => curr_ctx != self.cu_ctx,
             None => true,
@@ -138,6 +143,7 @@ impl CudaContext {
 
     /// Get the value of the specified attribute of the device in [CudaContext].
     pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
+        self.check_err()?;
         unsafe { result::device::get_attribute(self.cu_device, attrib) }
     }
 
@@ -219,6 +225,29 @@ impl CudaContext {
     pub unsafe fn disable_event_tracking(&self) {
         self.event_tracking.store(false, Ordering::Relaxed);
     }
+
+    /// Checks to see if there have been any calls that stored an Err in a function
+    /// that couldn't return a result (e.g. Drop calls).
+    ///
+    /// If there are any errors stored, this method will return the Err value, and
+    /// then clear the stored error state.
+    pub fn check_err(&self) -> Result<(), DriverError> {
+        let error_state = self.error_state.swap(0, Ordering::Relaxed);
+        if error_state == 0 {
+            Ok(())
+        } else {
+            Err(result::DriverError(unsafe {
+                std::mem::transmute::<u32, sys::cudaError_enum>(error_state)
+            }))
+        }
+    }
+
+    /// Records a result for later inspection when a Result can be returned.
+    pub fn record_err<T>(&self, result: Result<T, DriverError>) {
+        if let Err(err) = result {
+            self.error_state.store(err.0 as u32, Ordering::Relaxed)
+        }
+    }
 }
 
 /// A lightweight synchronization primitive used to synchronize between [CudaStream]s.
@@ -242,8 +271,9 @@ unsafe impl Sync for CudaEvent {}
 
 impl Drop for CudaEvent {
     fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
-        unsafe { result::event::destroy(self.cu_event) }.unwrap()
+        self.ctx.record_err(self.ctx.bind_to_thread());
+        self.ctx
+            .record_err(unsafe { result::event::destroy(self.cu_event) });
     }
 }
 
@@ -340,10 +370,11 @@ unsafe impl Sync for CudaStream {}
 
 impl Drop for CudaStream {
     fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
+        self.ctx.record_err(self.ctx.bind_to_thread());
         if !self.cu_stream.is_null() {
             self.ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
-            unsafe { result::stream::destroy(self.cu_stream).unwrap() };
+            self.ctx
+                .record_err(unsafe { result::stream::destroy(self.cu_stream) });
         }
     }
 }
@@ -466,13 +497,14 @@ unsafe impl<T> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
+        let ctx = &self.stream.ctx;
         if let Some(read) = self.read.as_ref() {
-            self.stream.wait(read).unwrap();
+            ctx.record_err(self.stream.wait(read));
         }
         if let Some(write) = self.write.as_ref() {
-            self.stream.wait(write).unwrap();
+            ctx.record_err(self.stream.wait(write));
         }
-        unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) }.unwrap();
+        ctx.record_err(unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) });
     }
 }
 
@@ -775,12 +807,12 @@ impl Drop for SyncOnDrop<'_> {
         match self {
             SyncOnDrop::Record(target) => {
                 if let Some((event, stream)) = std::mem::take(target) {
-                    event.record(stream).unwrap();
+                    stream.ctx.record_err(event.record(stream));
                 }
             }
             SyncOnDrop::Sync(target) => {
                 if let Some(stream) = std::mem::take(target) {
-                    stream.synchronize().unwrap();
+                    stream.ctx.record_err(stream.synchronize());
                 }
             }
         }
@@ -810,7 +842,7 @@ impl<T> DevicePtr<T> for CudaSlice<T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(write) = self.write.as_ref() {
-                stream.wait(write).unwrap();
+                stream.ctx.record_err(stream.wait(write));
             }
         }
         (
@@ -824,7 +856,7 @@ impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(write) = self.write.as_ref() {
-                stream.wait(write).unwrap();
+                stream.ctx.record_err(stream.wait(write));
             }
         }
         (self.ptr, SyncOnDrop::record_event(self.read, stream))
@@ -835,7 +867,7 @@ impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(write) = self.write.as_ref() {
-                stream.wait(write).unwrap();
+                stream.ctx.record_err(stream.wait(write));
             }
         }
         (self.ptr, SyncOnDrop::record_event(self.read, stream))
@@ -871,10 +903,10 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(read) = self.read.as_ref() {
-                stream.wait(read).unwrap();
+                stream.ctx.record_err(stream.wait(read));
             }
             if let Some(write) = self.write.as_ref() {
-                stream.wait(write).unwrap();
+                stream.ctx.record_err(stream.wait(write));
             }
         }
         (
@@ -891,10 +923,10 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(read) = self.read.as_ref() {
-                stream.wait(read).unwrap();
+                stream.ctx.record_err(stream.wait(read));
             }
             if let Some(write) = self.write.as_ref() {
-                stream.wait(write).unwrap();
+                stream.ctx.record_err(stream.wait(write));
             }
         }
         (self.ptr, SyncOnDrop::record_event(self.write, stream))
@@ -997,8 +1029,9 @@ unsafe impl<T> Sync for PinnedHostSlice<T> {}
 
 impl<T> Drop for PinnedHostSlice<T> {
     fn drop(&mut self) {
-        self.event.synchronize().unwrap();
-        unsafe { result::free_host(self.ptr as _) }.unwrap();
+        let ctx = &self.event.ctx;
+        ctx.record_err(self.event.synchronize());
+        ctx.record_err(unsafe { result::free_host(self.ptr as _) });
     }
 }
 
@@ -1087,7 +1120,7 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (&'a [T], SyncOnDrop<'a>) {
-        stream.wait(&self.event).unwrap();
+        stream.ctx.record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts(self.ptr, self.len),
             SyncOnDrop::Record(Some((&self.event, stream))),
@@ -1097,7 +1130,7 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (&'a mut [T], SyncOnDrop<'a>) {
-        stream.wait(&self.event).unwrap();
+        stream.ctx.record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts_mut(self.ptr, self.len),
             SyncOnDrop::Record(Some((&self.event, stream))),
@@ -1630,8 +1663,9 @@ unsafe impl Sync for CudaModule {}
 
 impl Drop for CudaModule {
     fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
-        unsafe { result::module::unload(self.cu_module) }.unwrap();
+        self.ctx.record_err(self.ctx.bind_to_thread());
+        self.ctx
+            .record_err(unsafe { result::module::unload(self.cu_module) });
     }
 }
 
@@ -1850,17 +1884,18 @@ impl<T> CudaSlice<T> {
     ///
     /// Drops the underlying host_buf if there is one.
     pub fn leak(self) -> sys::CUdeviceptr {
+        let ctx = &self.stream.ctx;
         // drop self.read
         if let Some(read) = self.read.as_ref() {
-            self.stream.wait(read).unwrap();
-            unsafe { result::event::destroy(read.cu_event) }.unwrap();
+            ctx.record_err(self.stream.wait(read));
+            ctx.record_err(unsafe { result::event::destroy(read.cu_event) });
             unsafe { Arc::decrement_strong_count(Arc::as_ptr(&read.ctx)) };
         }
 
         // drop self.write
         if let Some(write) = self.write.as_ref() {
-            self.stream.wait(write).unwrap();
-            unsafe { result::event::destroy(write.cu_event) }.unwrap();
+            ctx.record_err(self.stream.wait(write));
+            ctx.record_err(unsafe { result::event::destroy(write.cu_event) });
             unsafe { Arc::decrement_strong_count(Arc::as_ptr(&write.ctx)) };
         }
 

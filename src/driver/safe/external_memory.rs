@@ -20,9 +20,12 @@ pub struct ExternalMemory {
 
 impl Drop for ExternalMemory {
     fn drop(&mut self) {
-        self.ctx.bind_to_thread().unwrap();
+        let ctx = &self.ctx;
+        ctx.record_err(ctx.bind_to_thread());
 
-        unsafe { result::external_memory::destroy_external_memory(self.external_memory) }.unwrap();
+        ctx.record_err(unsafe {
+            result::external_memory::destroy_external_memory(self.external_memory)
+        });
 
         // From [CUDA docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXTRES__INTEROP.html#group__CUDA__EXTRES__INTEROP_1g52aba3a7f780157d8ba12972b2481735),
         // when successfully importing UNIX file descriptor:
@@ -128,9 +131,10 @@ pub struct MappedBuffer {
 
 impl Drop for MappedBuffer {
     fn drop(&mut self) {
-        self.external_memory.ctx.bind_to_thread().unwrap();
-        self.stream.wait(&self.event).unwrap();
-        unsafe { result::memory_free(self.device_ptr) }.unwrap()
+        let ctx = &self.external_memory.ctx;
+        ctx.record_err(ctx.bind_to_thread());
+        ctx.record_err(self.stream.wait(&self.event));
+        ctx.record_err(unsafe { result::memory_free(self.device_ptr) })
     }
 }
 
