@@ -511,10 +511,10 @@ pub struct _IO_FILE {
     pub _shortbuf: [::core::ffi::c_char; 1usize],
     pub _lock: *mut _IO_lock_t,
     pub _offset: __off64_t,
-    pub __pad1: *mut ::core::ffi::c_void,
-    pub __pad2: *mut ::core::ffi::c_void,
-    pub __pad3: *mut ::core::ffi::c_void,
-    pub __pad4: *mut ::core::ffi::c_void,
+    pub _codecvt: *mut _IO_codecvt,
+    pub _wide_data: *mut _IO_wide_data,
+    pub _freeres_list: *mut _IO_FILE,
+    pub _freeres_buf: *mut ::core::ffi::c_void,
     pub __pad5: usize,
     pub _mode: ::core::ffi::c_int,
     pub _unused2: [::core::ffi::c_char; 20usize],
@@ -532,11 +532,43 @@ pub struct _IO_FILE {
     feature = "cuda-12080"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
+pub struct _IO_codecvt {
+    _unused: [u8; 0],
+}
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _IO_marker {
-    pub _next: *mut _IO_marker,
-    pub _sbuf: *mut _IO_FILE,
-    pub _pos: ::core::ffi::c_int,
+    _unused: [u8; 0],
+}
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _IO_wide_data {
+    _unused: [u8; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -627,27 +659,6 @@ impl cudaDataType_t {
     feature = "cuda-12080"
 ))]
 impl Default for _IO_FILE {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-#[cfg(any(
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080"
-))]
-impl Default for _IO_marker {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {

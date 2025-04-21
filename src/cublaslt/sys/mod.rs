@@ -2409,7 +2409,7 @@ pub struct _IO_FILE {
     pub _wide_data: *mut _IO_wide_data,
     pub _freeres_list: *mut _IO_FILE,
     pub _freeres_buf: *mut ::core::ffi::c_void,
-    pub _prevchain: *mut *mut _IO_FILE,
+    pub __pad5: usize,
     pub _mode: ::core::ffi::c_int,
     pub _unused2: [::core::ffi::c_char; 20usize],
 }

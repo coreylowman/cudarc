@@ -11,7 +11,7 @@ use std::{
 use anyhow::{Context, Result};
 use bindgen::Builder;
 use lazy_static::lazy_static;
-use reqwest::blocking::{Response, get};
+use reqwest::blocking::{get, Response};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -63,7 +63,15 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                     functions: vec!["^cu.*".to_string()],
                     vars: vec!["^CU.*".to_string()],
                 },
-                blocklist: Filters::none(),
+                blocklist: Filters {
+                    // NOTE: See https://github.com/coreylowman/cudarc/issues/385
+                    types: vec!["^cuCheckpoint.*".to_string()],
+                    functions: vec![
+                        "^cuCheckpoint.*".to_string(),
+                        "cuDeviceGetNvSciSyncAttributes".to_string(),
+                    ],
+                    vars: vec![],
+                },
                 libs: vec!["cuda".to_string(), "nvcuda".to_string()],
                 redist: None,
             },
