@@ -237,16 +237,15 @@ impl CudaContext {
             Ok(())
         } else {
             Err(result::DriverError(unsafe {
-                std::mem::transmute(error_state)
+                std::mem::transmute::<u32, sys::cudaError_enum>(error_state)
             }))
         }
     }
 
     /// Records a result for later inspection when a Result can be returned.
     pub fn record_err<T>(&self, result: Result<T, DriverError>) {
-        match result {
-            Err(err) => self.error_state.store(err.0 as u32, Ordering::Relaxed),
-            _ => (),
+        if let Err(err) = result {
+            self.error_state.store(err.0 as u32, Ordering::Relaxed)
         }
     }
 }
