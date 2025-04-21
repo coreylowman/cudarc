@@ -95,13 +95,13 @@ impl CudaContext {
 
     /// Get the name of this device.
     pub fn name(&self) -> Result<String, result::DriverError> {
-        self.check_error()?;
+        self.check_err()?;
         result::device::get_name(self.cu_device)
     }
 
     /// Get the UUID of this device.
     pub fn uuid(&self) -> Result<sys::CUuuid, result::DriverError> {
-        self.check_error()?;
+        self.check_err()?;
         result::device::get_uuid(self.cu_device)
     }
 
@@ -131,7 +131,7 @@ impl CudaContext {
 
     /// Binds this context to the calling thread. Calling this is key for thread safety.
     pub fn bind_to_thread(&self) -> Result<(), DriverError> {
-        self.check_error()?;
+        self.check_err()?;
         if match result::ctx::get_current()? {
             Some(curr_ctx) => curr_ctx != self.cu_ctx,
             None => true,
@@ -143,7 +143,7 @@ impl CudaContext {
 
     /// Get the value of the specified attribute of the device in [CudaContext].
     pub fn attribute(&self, attrib: sys::CUdevice_attribute) -> Result<i32, result::DriverError> {
-        self.check_error()?;
+        self.check_err()?;
         unsafe { result::device::get_attribute(self.cu_device, attrib) }
     }
 
@@ -226,7 +226,12 @@ impl CudaContext {
         self.event_tracking.store(false, Ordering::Relaxed);
     }
 
-    pub fn check_error(&self) -> Result<(), DriverError> {
+    /// Checks to see if there have been any calls that stored an Err in a function
+    /// that couldn't return a result (e.g. Drop calls).
+    ///
+    /// If there are any errors stored, this method will return the Err value, and
+    /// then clear the stored error state.
+    pub fn check_err(&self) -> Result<(), DriverError> {
         let error_state = self.error_state.swap(0, Ordering::Relaxed);
         if error_state == 0 {
             Ok(())
@@ -237,6 +242,7 @@ impl CudaContext {
         }
     }
 
+    /// Records a result for later inspection when a Result can be returned.
     pub fn record_err<T>(&self, result: Result<T, DriverError>) {
         match result {
             Err(err) => self.error_state.store(err.0 as u32, Ordering::Relaxed),
