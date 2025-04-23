@@ -679,12 +679,15 @@ pub unsafe fn free_host(host_ptr: *mut c_void) -> Result<(), DriverError> {
 /// # Safety
 /// 1. Memory must have been allocated by [malloc_managed()]
 /// 2. num_bytes must be the amount of bytes passed to [malloc_managed()]
-#[cfg(any(
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050"
-))]
+#[cfg(not(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010"
+)))]
 pub unsafe fn mem_advise(
     dptr: sys::CUdeviceptr,
     num_bytes: usize,
@@ -699,12 +702,15 @@ pub unsafe fn mem_advise(
 ///
 /// # Safety
 /// 1. The dptr/num_bytes must be allocated by [malloc_managed()] and must be the exact same memory range.
-#[cfg(any(
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050"
-))]
+#[cfg(not(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010"
+)))]
 pub unsafe fn mem_prefetch_async(
     dptr: sys::CUdeviceptr,
     num_bytes: usize,
