@@ -387,6 +387,28 @@ extern \"C\" __global__ void kernel(float *buf) {
             }
         }
 
+        // check usage as device ptr
+        let vs = stream1.memcpy_dtov(&a)?;
+        for i in 0..100 {
+            assert_eq!(vs[i], i as f32);
+        }
+
+        // check usage as host ptr
+        let b = stream1.memcpy_stod(&a)?;
+        let vs = stream1.memcpy_dtov(&b)?;
+        for i in 0..100 {
+            assert_eq!(vs[i], i as f32);
+        }
+
+        // check writing on device
+        stream1.memset_zeros(&mut a)?;
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], 0.0);
+            }
+        }
+
         Ok(())
     }
 
@@ -445,6 +467,28 @@ extern \"C\" __global__ void kernel(float *buf) {
             }
         }
 
+        // check usage as device ptr
+        let vs = stream1.memcpy_dtov(&a)?;
+        for i in 0..100 {
+            assert_eq!(vs[i], i as f32);
+        }
+
+        // check usage as host ptr
+        let b = stream1.memcpy_stod(&a)?;
+        let vs = stream1.memcpy_dtov(&b)?;
+        for i in 0..100 {
+            assert_eq!(vs[i], i as f32);
+        }
+
+        // check writing on device
+        stream1.memset_zeros(&mut a)?;
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], 0.0);
+            }
+        }
+
         Ok(())
     }
 
@@ -496,12 +540,33 @@ extern \"C\" __global__ void kernel(float *buf) {
                 .launch(LaunchConfig::for_num_elems(100))
         }
         .expect_err("Other stream access should've failed");
-        stream1.synchronize()?;
 
         {
             let buf = a.as_slice()?;
             for i in 0..100 {
                 assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        // check usage as device ptr
+        let vs = stream2.memcpy_dtov(&a)?;
+        for i in 0..100 {
+            assert_eq!(vs[i], i as f32);
+        }
+
+        // check usage as host ptr
+        let b = stream2.memcpy_stod(&a)?;
+        let vs = stream2.memcpy_dtov(&b)?;
+        for i in 0..100 {
+            assert_eq!(vs[i], i as f32);
+        }
+
+        // check writing on device
+        stream2.memset_zeros(&mut a)?;
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], 0.0);
             }
         }
 
