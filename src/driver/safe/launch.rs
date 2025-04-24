@@ -47,12 +47,12 @@ impl LaunchConfig {
 /// 2. Add a custom implementation of `impl<'a> PushKernelArg<T> for LaunchArgs<'a>`, where `T` is your type.
 #[derive(Debug)]
 pub struct LaunchArgs<'a> {
-    stream: &'a CudaStream,
-    func: &'a CudaFunction,
-    waits: Vec<&'a CudaEvent>,
-    records: Vec<&'a CudaEvent>,
-    args: Vec<*mut std::ffi::c_void>,
-    flags: Option<sys::CUevent_flags>,
+    pub(super) stream: &'a CudaStream,
+    pub(super) func: &'a CudaFunction,
+    pub(super) waits: Vec<&'a CudaEvent>,
+    pub(super) records: Vec<&'a CudaEvent>,
+    pub(super) args: Vec<*mut std::ffi::c_void>,
+    pub(super) flags: Option<sys::CUevent_flags>,
 }
 
 impl CudaStream {

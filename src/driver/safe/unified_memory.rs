@@ -5,7 +5,7 @@ use crate::driver::{result, sys};
 
 use super::{
     CudaContext, CudaEvent, CudaStream, DevicePtr, DevicePtrMut, DeviceRepr, DeviceSlice,
-    DriverError, HostSlice, ValidAsZeroBits,
+    DriverError, HostSlice, LaunchArgs, PushKernelArg, ValidAsZeroBits,
 };
 
 /// Unified memory allocated with [CudaContext::alloc_unified()] (via [cuMemAllocManaged](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gb347ded34dc326af404aa02af5388a32)).
@@ -50,6 +50,7 @@ impl CudaContext {
         len: usize,
         attach_global: bool,
     ) -> Result<UnifiedSlice<T>, DriverError> {
+        // NOTE: The pointer is valid on the CPU and on all GPUs in the system that support managed memory.
         if self.attribute(sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY)? == 0 {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
         }
@@ -98,6 +99,8 @@ impl<T> UnifiedSlice<T> {
     }
 
     /// See [cuStreamAttachMemAsync cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g6e468d680e263e7eba02a56643c50533)
+    ///
+    /// NOTE: if stream is the null stream, then cuda will return an error.
     pub fn attach(
         &mut self,
         stream: &Arc<CudaStream>,
@@ -157,15 +160,16 @@ impl<T> UnifiedSlice<T> {
         }
     }
 
-    pub fn wait_for_host_access(&self) -> Result<(), DriverError> {
-        self.event.synchronize()?;
+    pub fn check_host_access(&self) -> Result<(), DriverError> {
         match self.attach_mode {
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
-                // TODO is this correct? can't find this in the docs anywhere
-                self.stream.context().synchronize()?;
+                // NOTE: can't find info about this case in the docs anywhere. It is easy to assume
+                // that since SINGLE needs the stream synchronized to access, than GLOBAL might need the whole context
+                // synchronized. But unable to confirm this assumption
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
-                todo!("do we need anything for this?")
+                // NOTE: Most of the docs talk about device access when HOST is specified, but unable to find
+                // anything on constraints for CPU access.
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
                 // When memory is associated with a single stream, the Unified Memory system will allow CPU access to this memory region so long as all operations in hStream have completed, regardless of whether other streams are active. In effect, this constrains exclusive ownership of the managed memory region by an active GPU to per-stream activity instead of whole-GPU activity.
@@ -175,20 +179,34 @@ impl<T> UnifiedSlice<T> {
         Ok(())
     }
 
-    pub fn wait_for_device_access(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        stream.wait(&self.event)?;
+    pub fn check_device_access(&self, stream: &CudaStream) -> Result<(), DriverError> {
         // Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
         match self.attach_mode {
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
-                todo!("do we need any checks for this?")
+                // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
+                //  If CU_MEM_ATTACH_HOST is specified, then the allocation should not be accessed from devices that have a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS;
                 // If the CU_MEM_ATTACH_HOST flag is specified, the program makes a guarantee that it won't access the memory on the device from any stream on a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS
-                todo!("check for concurrent_managed_access")
+                let concurrent_managed_access = if self.stream.context() != stream.context() {
+                    // if we are going to access in a different context, we need to check for concurrent managed access
+                    stream.context().attribute(
+                        sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
+                    )? != 0
+                } else {
+                    // otherwise we can use the cached value for the attribute
+                    self.concurrent_managed_access
+                };
+                if !concurrent_managed_access {
+                    return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+                }
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
                 // If the CU_MEM_ATTACH_SINGLE flag is specified and hStream is associated with a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS, the program makes a guarantee that it will only access the memory on the device from hStream
-                todo!()
+                // Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
+                if self.stream.as_ref() != stream {
+                    return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+                }
             }
         };
         Ok(())
@@ -209,7 +227,8 @@ impl<T> DevicePtr<T> for UnifiedSlice<T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.wait_for_device_access(stream));
+        stream.ctx.record_err(self.check_device_access(stream));
+        stream.ctx.record_err(stream.wait(&self.event));
         (
             self.cu_device_ptr,
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -222,7 +241,8 @@ impl<T> DevicePtrMut<T> for UnifiedSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.wait_for_device_access(stream));
+        stream.ctx.record_err(self.check_device_access(stream));
+        stream.ctx.record_err(stream.wait(&self.event));
         (
             self.cu_device_ptr,
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -234,14 +254,16 @@ impl<T: ValidAsZeroBits> UnifiedSlice<T> {
     /// Waits for any scheduled work to complete and then returns a refernce
     /// to the host side data.
     pub fn as_slice(&self) -> Result<&[T], DriverError> {
-        self.wait_for_host_access()?;
+        self.check_host_access()?;
+        self.event.synchronize()?;
         Ok(unsafe { std::slice::from_raw_parts(self.cu_device_ptr as *const T, self.len) })
     }
 
     /// Waits for any scheduled work to complete and then returns a refernce
     /// to the host side data.
     pub fn as_mut_slice(&mut self) -> Result<&mut [T], DriverError> {
-        self.wait_for_host_access()?;
+        self.check_host_access()?;
+        self.event.synchronize()?;
         Ok(unsafe { std::slice::from_raw_parts_mut(self.cu_device_ptr as *mut T, self.len) })
     }
 }
@@ -255,7 +277,8 @@ impl<T> HostSlice<T> for UnifiedSlice<T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (&'a [T], super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.wait_for_device_access(stream));
+        stream.ctx.record_err(self.check_device_access(stream));
+        stream.ctx.record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts(self.cu_device_ptr as *const T, self.len),
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -266,7 +289,8 @@ impl<T> HostSlice<T> for UnifiedSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (&'a mut [T], super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.wait_for_device_access(stream));
+        stream.ctx.record_err(self.check_device_access(stream));
+        stream.ctx.record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts_mut(self.cu_device_ptr as *mut T, self.len),
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -274,22 +298,213 @@ impl<T> HostSlice<T> for UnifiedSlice<T> {
     }
 }
 
+unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedSlice<T>> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b UnifiedSlice<T>) -> &mut Self {
+        self.stream
+            .ctx
+            .record_err(arg.check_device_access(self.stream));
+        self.waits.push(&arg.event);
+        self.records.push(&arg.event);
+        self.args
+            .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
+        self
+    }
+}
+
+unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut UnifiedSlice<T>> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b mut UnifiedSlice<T>) -> &mut Self {
+        self.stream
+            .ctx
+            .record_err(arg.check_device_access(self.stream));
+        self.waits.push(&arg.event);
+        self.records.push(&arg.event);
+        self.args
+            .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
+        self
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::driver::{LaunchConfig, PushKernelArg};
+
     use super::*;
 
     #[test]
     fn test_unified_memory_global() -> Result<(), DriverError> {
-        todo!()
+        let ctx = CudaContext::new(0)?;
+
+        let mut a = unsafe { ctx.alloc_unified::<f32>(100, true) }?;
+        {
+            let buf = a.as_mut_slice()?;
+            for i in 0..100 {
+                buf[i] = i as f32;
+            }
+        }
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        let ptx = crate::nvrtc::compile_ptx(
+            "
+extern \"C\" __global__ void kernel(float *buf) {
+    if (threadIdx.x < 100) {
+        assert(buf[threadIdx.x] == static_cast<float>(threadIdx.x));
+    }
+}",
+        )
+        .unwrap();
+        let module = ctx.load_module(ptx)?;
+        let f = module.load_function("kernel")?;
+
+        let stream1 = ctx.default_stream();
+        unsafe {
+            stream1
+                .launch_builder(&f)
+                .arg(&mut a)
+                .launch(LaunchConfig::for_num_elems(100))
+        }?;
+        stream1.synchronize()?;
+
+        let stream2 = ctx.new_stream()?;
+        unsafe {
+            stream2
+                .launch_builder(&f)
+                .arg(&mut a)
+                .launch(LaunchConfig::for_num_elems(100))
+        }?;
+        stream2.synchronize()?;
+
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        Ok(())
     }
 
     #[test]
     fn test_unified_memory_host() -> Result<(), DriverError> {
-        todo!()
+        let ctx = CudaContext::new(0)?;
+
+        let mut a = unsafe { ctx.alloc_unified::<f32>(100, false) }?;
+        {
+            let buf = a.as_mut_slice()?;
+            for i in 0..100 {
+                buf[i] = i as f32;
+            }
+        }
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        let ptx = crate::nvrtc::compile_ptx(
+            "
+extern \"C\" __global__ void kernel(float *buf) {
+    if (threadIdx.x < 100) {
+        assert(buf[threadIdx.x] == static_cast<float>(threadIdx.x));
+    }
+}",
+        )
+        .unwrap();
+        let module = ctx.load_module(ptx)?;
+        let f = module.load_function("kernel")?;
+
+        let stream1 = ctx.default_stream();
+        unsafe {
+            stream1
+                .launch_builder(&f)
+                .arg(&mut a)
+                .launch(LaunchConfig::for_num_elems(100))
+        }?;
+        stream1.synchronize()?;
+
+        let stream2 = ctx.new_stream()?;
+        unsafe {
+            stream2
+                .launch_builder(&f)
+                .arg(&mut a)
+                .launch(LaunchConfig::for_num_elems(100))
+        }?;
+        stream2.synchronize()?;
+
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        Ok(())
     }
 
     #[test]
     fn test_unified_memory_single_stream() -> Result<(), DriverError> {
-        todo!()
+        let ctx = CudaContext::new(0)?;
+
+        let mut a = unsafe { ctx.alloc_unified::<f32>(100, true) }?;
+        {
+            let buf = a.as_mut_slice()?;
+            for i in 0..100 {
+                buf[i] = i as f32;
+            }
+        }
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        let ptx = crate::nvrtc::compile_ptx(
+            "
+extern \"C\" __global__ void kernel(float *buf) {
+    if (threadIdx.x < 100) {
+        assert(buf[threadIdx.x] == static_cast<float>(threadIdx.x));
+    }
+}",
+        )
+        .unwrap();
+        let module = ctx.load_module(ptx)?;
+        let f = module.load_function("kernel")?;
+
+        let stream2 = ctx.new_stream()?;
+        a.attach(&stream2, sys::CUmemAttach_flags::CU_MEM_ATTACH_SINGLE)?;
+        unsafe {
+            stream2
+                .launch_builder(&f)
+                .arg(&mut a)
+                .launch(LaunchConfig::for_num_elems(100))
+        }?;
+        stream2.synchronize()?;
+
+        let stream1 = ctx.default_stream();
+        unsafe {
+            stream1
+                .launch_builder(&f)
+                .arg(&mut a)
+                .launch(LaunchConfig::for_num_elems(100))
+        }
+        .expect_err("Other stream access should've failed");
+        stream1.synchronize()?;
+
+        {
+            let buf = a.as_slice()?;
+            for i in 0..100 {
+                assert_eq!(buf[i], i as f32);
+            }
+        }
+
+        Ok(())
     }
 }
