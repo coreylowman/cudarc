@@ -10,7 +10,24 @@ use super::{
 
 /// Unified memory allocated with [CudaContext::alloc_unified()] (via [cuMemAllocManaged](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gb347ded34dc326af404aa02af5388a32)).
 ///
+/// This is memory that can be accessed by host side (rust code) AND device side kernels. For host side access you can read/write using
+/// [UnifiedSlice::as_slice()]/[UnifiedSlice::as_mut_slice()]. You can read/write host side no matter what attach mode you set
+/// (via [UnifiedSlice::attach()], or the value you use to create the slice in [CudaContext::alloc_unified()]).
+///
+/// This struct also implements [HostSlice] and [DeviceSlice], meaning you can use it with various [CudaStream] related calls for doing memcpy/memset operations.
+///
+/// Finally, it implements [PushKernelArg], so you can pass it as a device pointer to a kernel.
+///
+/// For any device access, the restrictions are a bit more complicated depending on the attach mode:
+/// 1. [sys::CUmemAttach_flags::CU_MEM_ATTACH_HOST] - a device can ONLY access if [sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY] is non-zero.
+/// 2. [sys::CUmemAttach_flags::CU_MEM_ATTACH_GLOBAL] - any device/stream can access it.
+/// 3. [sys::CUmemAttach_flags::CU_MEM_ATTACH_SINGLE] - only the stream you attach it to can access it. Additionally, accessing on the CPU synchronizes the associated stream.
+///
 /// See [cuda docs for Unified Addressing/Unified Memory](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__UNIFIED.html#group__CUDA__UNIFIED)
+///
+/// # Thread safety
+///
+/// This is thread safe
 #[derive(Debug)]
 pub struct UnifiedSlice<T> {
     pub(crate) cu_device_ptr: sys::CUdeviceptr,
@@ -45,6 +62,10 @@ impl CudaContext {
     ///
     /// If the device does not support managed memory ([sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY] is 0),
     /// then this method will return Err with [sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED].
+    ///
+    /// # Safety
+    ///
+    /// This is unsafe because this method has no restrictions that `T` is valid for any bit pattern.
     pub unsafe fn alloc_unified<T: DeviceRepr>(
         self: &Arc<Self>,
         len: usize,
@@ -133,16 +154,16 @@ impl<T> UnifiedSlice<T> {
         let location = match self.attach_mode {
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL
             | sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
-                // From the docs
                 // > Specifying CU_MEM_LOCATION_TYPE_DEVICE for CUmemLocation::type will prefetch memory to GPU specified by device ordinal CUmemLocation::id which must have non-zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS. Additionally, hStream must be associated with a device that has a non-zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS.
-                assert!(self.concurrent_managed_access);
+                if !self.concurrent_managed_access {
+                    return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+                }
                 sys::CUmemLocation {
                     type_: sys::CUmemLocationType::CU_MEM_LOCATION_TYPE_DEVICE,
                     id: self.stream.ctx.ordinal as i32,
                 }
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
-                // From the docs:
                 // > Specifying CU_MEM_LOCATION_TYPE_HOST as CUmemLocation::type will prefetch data to host memory. Applications can request prefetching memory to a specific host NUMA node by specifying CU_MEM_LOCATION_TYPE_HOST_NUMA for CUmemLocation::type and a valid host NUMA node id in CUmemLocation::id Users can also request prefetching memory to the host NUMA node closest to the current thread's CPU by specifying CU_MEM_LOCATION_TYPE_HOST_NUMA_CURRENT for CUmemLocation::type.
                 sys::CUmemLocation {
                     type_: sys::CUmemLocationType::CU_MEM_LOCATION_TYPE_HOST_NUMA_CURRENT,
@@ -172,7 +193,7 @@ impl<T> UnifiedSlice<T> {
                 // anything on constraints for CPU access.
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
-                // When memory is associated with a single stream, the Unified Memory system will allow CPU access to this memory region so long as all operations in hStream have completed, regardless of whether other streams are active. In effect, this constrains exclusive ownership of the managed memory region by an active GPU to per-stream activity instead of whole-GPU activity.
+                // > When memory is associated with a single stream, the Unified Memory system will allow CPU access to this memory region so long as all operations in hStream have completed, regardless of whether other streams are active. In effect, this constrains exclusive ownership of the managed memory region by an active GPU to per-stream activity instead of whole-GPU activity.
                 self.stream.synchronize()?;
             }
         };
@@ -180,14 +201,14 @@ impl<T> UnifiedSlice<T> {
     }
 
     pub fn check_device_access(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        // Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
+        // > Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
         match self.attach_mode {
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
                 // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
-                //  If CU_MEM_ATTACH_HOST is specified, then the allocation should not be accessed from devices that have a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS;
-                // If the CU_MEM_ATTACH_HOST flag is specified, the program makes a guarantee that it won't access the memory on the device from any stream on a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS
+                // > If CU_MEM_ATTACH_HOST is specified, then the allocation should not be accessed from devices that have a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS;
+                // > If the CU_MEM_ATTACH_HOST flag is specified, the program makes a guarantee that it won't access the memory on the device from any stream on a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS
                 let concurrent_managed_access = if self.stream.context() != stream.context() {
                     // if we are going to access in a different context, we need to check for concurrent managed access
                     stream.context().attribute(
@@ -202,8 +223,8 @@ impl<T> UnifiedSlice<T> {
                 }
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
-                // If the CU_MEM_ATTACH_SINGLE flag is specified and hStream is associated with a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS, the program makes a guarantee that it will only access the memory on the device from hStream
-                // Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
+                // > If the CU_MEM_ATTACH_SINGLE flag is specified and hStream is associated with a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS, the program makes a guarantee that it will only access the memory on the device from hStream
+                // > Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
                 if self.stream.as_ref() != stream {
                     return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
                 }
@@ -268,7 +289,6 @@ impl<T: ValidAsZeroBits> UnifiedSlice<T> {
     }
 }
 
-// TODO do we need this?
 impl<T> HostSlice<T> for UnifiedSlice<T> {
     fn len(&self) -> usize {
         self.len
