@@ -94,12 +94,26 @@ pub fn compile_ptx_with_opts<S: AsRef<str>>(
 
 pub(crate) struct Program {
     prog: sys::nvrtcProgram,
+
+    // Held in this struct to ensure they are not
+    // dropped until after the nvrtcProgram.
+    _src: CString,
+    _name: Option<CString>,
 }
 
 impl Program {
     pub(crate) fn create<S: AsRef<str>>(src: S, name: Option<&str>) -> Result<Self, CompileError> {
-        let prog = result::create_program(src, name).map_err(CompileError::CreationError)?;
-        Ok(Self { prog })
+        let src = CString::new(src.as_ref().as_bytes())
+            .expect("program code cannot contain null terminators");
+        let name =
+            name.map(|s| CString::new(s).expect("program name cannot contain null terminators"));
+        let prog =
+            result::create_program(&src, name.as_deref()).map_err(CompileError::CreationError)?;
+        Ok(Self {
+            prog,
+            _src: src,
+            _name: name,
+        })
     }
 
     pub(crate) fn compile(self, opts: CompileOptions) -> Result<Ptx, CompileError> {

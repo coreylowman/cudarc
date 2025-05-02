@@ -39,22 +39,19 @@ impl std::error::Error for NvrtcError {}
 /// Example:
 /// ```rust
 /// # use cudarc::nvrtc::result::*;
-/// let prog = create_program("extern \"C\" __global__ void kernel() { }", None).unwrap();
+/// let prog = create_program(c"extern \"C\" __global__ void kernel() { }", None).unwrap();
 /// ```
-pub fn create_program<Src: AsRef<str>>(
-    src: Src,
-    name: Option<&str>,
-) -> Result<sys::nvrtcProgram, NvrtcError> {
-    let src_c = CString::new(src.as_ref()).unwrap();
-    let name_c = name.map(|n| CString::new(n).unwrap());
+///
+/// Note that the returned `nvrtcProgram` may contain
+/// references to `src` and `name`. The memory containing the compiled
+/// code and name must not be dropped until the `nvrtcProgram` is destroyed.
+pub fn create_program(src: &CStr, name: Option<&CStr>) -> Result<sys::nvrtcProgram, NvrtcError> {
     let mut prog = MaybeUninit::uninit();
     unsafe {
         sys::nvrtcCreateProgram(
             prog.as_mut_ptr(),
-            src_c.as_c_str().as_ptr(),
-            name_c
-                .map(|n| n.as_c_str().as_ptr())
-                .unwrap_or(std::ptr::null()),
+            src.as_ptr(),
+            name.map(|n| n.as_ptr()).unwrap_or(std::ptr::null()),
             0,
             std::ptr::null(),
             std::ptr::null(),
@@ -73,7 +70,7 @@ pub fn create_program<Src: AsRef<str>>(
 ///
 /// ```rust
 /// # use cudarc::nvrtc::result::*;
-/// let prog = create_program("extern \"C\" __global__ void kernel() { }", None).unwrap();
+/// let prog = create_program(c"extern \"C\" __global__ void kernel() { }", None).unwrap();
 /// unsafe { compile_program(prog, &["--ftz=true", "--fmad=true"]) }.unwrap();
 /// ```
 ///
@@ -149,28 +146,28 @@ mod tests {
 
     #[test]
     fn test_compile_program_no_opts() {
-        let prog = create_program("extern \"C\" __global__ void kernel() { }", None).unwrap();
+        let prog = create_program(c"extern \"C\" __global__ void kernel() { }", None).unwrap();
         unsafe { compile_program::<&str>(prog, &[]) }.unwrap();
         unsafe { destroy_program(prog) }.unwrap();
     }
 
     #[test]
     fn test_compile_program_1_opt() {
-        let prog = create_program("extern \"C\" __global__ void kernel() { }", None).unwrap();
+        let prog = create_program(c"extern \"C\" __global__ void kernel() { }", None).unwrap();
         unsafe { compile_program(prog, &["--ftz=true"]) }.unwrap();
         unsafe { destroy_program(prog) }.unwrap();
     }
 
     #[test]
     fn test_compile_program_2_opt() {
-        let prog = create_program("extern \"C\" __global__ void kernel() { }", None).unwrap();
+        let prog = create_program(c"extern \"C\" __global__ void kernel() { }", None).unwrap();
         unsafe { compile_program(prog, &["--ftz=true", "--fmad=true"]) }.unwrap();
         unsafe { destroy_program(prog) }.unwrap();
     }
 
     #[test]
     fn test_compile_bad_program() {
-        let prog = create_program("extern \"C\" __global__ void kernel(", None).unwrap();
+        let prog = create_program(c"extern \"C\" __global__ void kernel(", None).unwrap();
         assert_eq!(
             unsafe { compile_program::<&str>(prog, &[]) }.unwrap_err(),
             NvrtcError(sys::nvrtcResult::NVRTC_ERROR_COMPILATION)
@@ -179,8 +176,8 @@ mod tests {
 
     #[test]
     fn test_get_ptx() {
-        const SRC: &str =
-            "extern \"C\" __global__ void sin_kernel(float *out, const float *inp, int numel) {
+        const SRC: &CStr =
+            c"extern \"C\" __global__ void sin_kernel(float *out, const float *inp, int numel) {
             int i = blockIdx.x * blockDim.x + threadIdx.x;
             if (i < numel) {
                 out[i] = sin(inp[i]);
