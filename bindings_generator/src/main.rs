@@ -223,6 +223,20 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 }),
             },
         ),
+        (
+            "cufile".to_string(),
+            ModuleConfig {
+                cuda: "libcufile".to_string(),
+                allowlist: Filters {
+                    types: vec!["^[Cc][Uu][Ff][Ii][Ll][Ee].*".to_string()],
+                    functions: vec!["^cuFile.*".to_string()],
+                    vars: vec![],
+                },
+                blocklist: Filters::none(),
+                libs: vec!["cufile".to_string()],
+                redist: None,
+            },
+        ),
     ]
 }
 
