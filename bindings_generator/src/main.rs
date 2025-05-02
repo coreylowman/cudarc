@@ -40,6 +40,7 @@ const CUDA_VERSIONS: &[&str] = &[
     "cuda-12050",
     "cuda-12060",
     "cuda-12080",
+    "cuda-12090",
 ];
 
 /// Cuda is split in various modules in cudarc.
