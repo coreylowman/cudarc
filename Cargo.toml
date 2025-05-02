@@ -49,6 +49,7 @@ curand = ["driver"]
 nccl = ["driver"]
 cusparse = ["driver"]
 cusolver = ["driver"]
+cufile = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]
