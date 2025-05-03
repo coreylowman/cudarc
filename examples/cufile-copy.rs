@@ -1,12 +1,15 @@
 use std::{ffi::c_void, fs, os::fd::AsRawFd};
 
 use cudarc::{
-    cufile::sys::{
-        cuFileDriverClose_v2, cuFileDriverGetProperties, cuFileDriverOpen, cuFileHandleRegister,
-        cuFileRead, CUfileDescr_t, CUfileDescr_t__bindgen_ty_1, CUfileDrvProps,
-        CUfileFileHandleType, CUfileHandle_t, CUfileOpError,
+    cufile::{
+        result::{
+            cufile_driver_get_properties, cufile_driver_open, cufile_handle_register, cufile_read,
+        },
+        sys::{
+            cuFileDriverClose_v2, CUfileDescr_t, CUfileDescr_t__bindgen_ty_1, CUfileFileHandleType,
+        },
     },
-    driver::{CudaContext, CudaSlice},
+    driver::CudaContext,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -17,40 +20,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(src_file, &data)?;
 
     unsafe {
-        let driver = cuFileDriverOpen();
-        println!("driver result: {:?}", driver);
+        cufile_driver_open()?;
 
-        if driver.err != CUfileOpError::CU_FILE_SUCCESS {
-            panic!("failed to open cufile driver: {:?}", driver.cu_err);
-        }
+        let props = cufile_driver_get_properties()?;
 
-        let mut props = CUfileDrvProps::default();
-        cuFileDriverGetProperties(&mut props);
         println!("props: {:#?}", props);
 
         let file = fs::File::open(src_file)?;
         let fd = file.as_raw_fd();
 
-        let mut cudaFile = CUfileDescr_t::default();
-        cudaFile.type_ = CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_FD;
-        cudaFile.handle = CUfileDescr_t__bindgen_ty_1::default();
-        cudaFile.handle.fd = fd;
+        let mut cuda_file = CUfileDescr_t::default();
+        cuda_file.type_ = CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_FD;
+        cuda_file.handle = CUfileDescr_t__bindgen_ty_1::default();
+        cuda_file.handle.fd = fd;
 
-        let mut fh: CUfileHandle_t = std::ptr::null_mut();
-        let result = cuFileHandleRegister(&mut fh, &mut cudaFile);
-        println!("cuFileHandleRegister result: {:?}, fh = {:?}", result, fh);
-
-        if result.err != CUfileOpError::CU_FILE_SUCCESS {
-            panic!("failed to register cufile handle: {:?}", result.cu_err);
-        }
+        let fh = cufile_handle_register(fd)?;
 
         let ctx = CudaContext::new(0)?;
         let stream = ctx.default_stream();
         let cuda_buf: u64 = cudarc::driver::result::malloc_sync(data_sz)?;
 
-        stream.synchronize()?;
+        // stream.synchronize()?;
 
-        let result = cuFileRead(fh, cuda_buf as *mut c_void, data_sz, 0, 0);
+        let result = cufile_read(fh, cuda_buf as *mut c_void, data_sz, 0, 0)?;
         println!("cuFileRead result: {:?}", result);
 
         let mut verify_dst = vec![0; data_sz];
