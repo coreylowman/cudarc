@@ -169,12 +169,24 @@ extern "C" {
         stream: cudaStream_t,
     ) -> ncclResult_t;
     pub fn ncclCommAbort(comm: ncclComm_t) -> ncclResult_t;
-    pub fn ncclCommCount(comm: ncclComm_t, count: *mut ::core::ffi::c_int) -> ncclResult_t;
-    pub fn ncclCommCuDevice(comm: ncclComm_t, device: *mut ::core::ffi::c_int) -> ncclResult_t;
-    pub fn ncclCommDeregister(comm: ncclComm_t, handle: *mut ::core::ffi::c_void) -> ncclResult_t;
+    pub fn ncclCommCount(
+        comm: ncclComm_t,
+        count: *mut ::core::ffi::c_int,
+    ) -> ncclResult_t;
+    pub fn ncclCommCuDevice(
+        comm: ncclComm_t,
+        device: *mut ::core::ffi::c_int,
+    ) -> ncclResult_t;
+    pub fn ncclCommDeregister(
+        comm: ncclComm_t,
+        handle: *mut ::core::ffi::c_void,
+    ) -> ncclResult_t;
     pub fn ncclCommDestroy(comm: ncclComm_t) -> ncclResult_t;
     pub fn ncclCommFinalize(comm: ncclComm_t) -> ncclResult_t;
-    pub fn ncclCommGetAsyncError(comm: ncclComm_t, asyncError: *mut ncclResult_t) -> ncclResult_t;
+    pub fn ncclCommGetAsyncError(
+        comm: ncclComm_t,
+        asyncError: *mut ncclResult_t,
+    ) -> ncclResult_t;
     pub fn ncclCommInitAll(
         comm: *mut ncclComm_t,
         ndev: ::core::ffi::c_int,
@@ -214,7 +226,10 @@ extern "C" {
         newcomm: *mut ncclComm_t,
         config: *mut ncclConfig_t,
     ) -> ncclResult_t;
-    pub fn ncclCommUserRank(comm: ncclComm_t, rank: *mut ::core::ffi::c_int) -> ncclResult_t;
+    pub fn ncclCommUserRank(
+        comm: ncclComm_t,
+        rank: *mut ::core::ffi::c_int,
+    ) -> ncclResult_t;
     pub fn ncclGetErrorString(result: ncclResult_t) -> *const ::core::ffi::c_char;
     pub fn ncclGetLastError(comm: ncclComm_t) -> *const ::core::ffi::c_char;
     pub fn ncclGetUniqueId(uniqueId: *mut ncclUniqueId) -> ncclResult_t;
@@ -317,7 +332,10 @@ mod loaded {
     pub unsafe fn ncclCommAbort(comm: ncclComm_t) -> ncclResult_t {
         (culib().ncclCommAbort)(comm)
     }
-    pub unsafe fn ncclCommCount(comm: ncclComm_t, count: *mut ::core::ffi::c_int) -> ncclResult_t {
+    pub unsafe fn ncclCommCount(
+        comm: ncclComm_t,
+        count: *mut ::core::ffi::c_int,
+    ) -> ncclResult_t {
         (culib().ncclCommCount)(comm, count)
     }
     pub unsafe fn ncclCommCuDevice(
@@ -401,7 +419,9 @@ mod loaded {
     ) -> ncclResult_t {
         (culib().ncclCommUserRank)(comm, rank)
     }
-    pub unsafe fn ncclGetErrorString(result: ncclResult_t) -> *const ::core::ffi::c_char {
+    pub unsafe fn ncclGetErrorString(
+        result: ncclResult_t,
+    ) -> *const ::core::ffi::c_char {
         (culib().ncclGetErrorString)(result)
     }
     pub unsafe fn ncclGetLastError(comm: ncclComm_t) -> *const ::core::ffi::c_char {
@@ -422,7 +442,10 @@ mod loaded {
     pub unsafe fn ncclGroupStart() -> ncclResult_t {
         (culib().ncclGroupStart)()
     }
-    pub unsafe fn ncclMemAlloc(ptr: *mut *mut ::core::ffi::c_void, size: usize) -> ncclResult_t {
+    pub unsafe fn ncclMemAlloc(
+        ptr: *mut *mut ::core::ffi::c_void,
+        size: usize,
+    ) -> ncclResult_t {
         (culib().ncclMemAlloc)(ptr, size)
     }
     pub unsafe fn ncclMemFree(ptr: *mut ::core::ffi::c_void) -> ncclResult_t {
@@ -471,7 +494,16 @@ mod loaded {
         comm: ncclComm_t,
         stream: cudaStream_t,
     ) -> ncclResult_t {
-        (culib().ncclReduceScatter)(sendbuff, recvbuff, recvcount, datatype, op, comm, stream)
+        (culib()
+            .ncclReduceScatter)(
+            sendbuff,
+            recvbuff,
+            recvcount,
+            datatype,
+            op,
+            comm,
+            stream,
+        )
     }
     pub unsafe fn ncclResetDebugInit() {
         (culib().ncclResetDebugInit)()
@@ -523,18 +555,24 @@ mod loaded {
             stream: cudaStream_t,
         ) -> ncclResult_t,
         pub ncclCommAbort: unsafe extern "C" fn(comm: ncclComm_t) -> ncclResult_t,
-        pub ncclCommCount:
-            unsafe extern "C" fn(comm: ncclComm_t, count: *mut ::core::ffi::c_int) -> ncclResult_t,
-        pub ncclCommCuDevice:
-            unsafe extern "C" fn(comm: ncclComm_t, device: *mut ::core::ffi::c_int) -> ncclResult_t,
+        pub ncclCommCount: unsafe extern "C" fn(
+            comm: ncclComm_t,
+            count: *mut ::core::ffi::c_int,
+        ) -> ncclResult_t,
+        pub ncclCommCuDevice: unsafe extern "C" fn(
+            comm: ncclComm_t,
+            device: *mut ::core::ffi::c_int,
+        ) -> ncclResult_t,
         pub ncclCommDeregister: unsafe extern "C" fn(
             comm: ncclComm_t,
             handle: *mut ::core::ffi::c_void,
         ) -> ncclResult_t,
         pub ncclCommDestroy: unsafe extern "C" fn(comm: ncclComm_t) -> ncclResult_t,
         pub ncclCommFinalize: unsafe extern "C" fn(comm: ncclComm_t) -> ncclResult_t,
-        pub ncclCommGetAsyncError:
-            unsafe extern "C" fn(comm: ncclComm_t, asyncError: *mut ncclResult_t) -> ncclResult_t,
+        pub ncclCommGetAsyncError: unsafe extern "C" fn(
+            comm: ncclComm_t,
+            asyncError: *mut ncclResult_t,
+        ) -> ncclResult_t,
         pub ncclCommInitAll: unsafe extern "C" fn(
             comm: *mut ncclComm_t,
             ndev: ::core::ffi::c_int,
@@ -574,19 +612,34 @@ mod loaded {
             newcomm: *mut ncclComm_t,
             config: *mut ncclConfig_t,
         ) -> ncclResult_t,
-        pub ncclCommUserRank:
-            unsafe extern "C" fn(comm: ncclComm_t, rank: *mut ::core::ffi::c_int) -> ncclResult_t,
-        pub ncclGetErrorString:
-            unsafe extern "C" fn(result: ncclResult_t) -> *const ::core::ffi::c_char,
-        pub ncclGetLastError: unsafe extern "C" fn(comm: ncclComm_t) -> *const ::core::ffi::c_char,
-        pub ncclGetUniqueId: unsafe extern "C" fn(uniqueId: *mut ncclUniqueId) -> ncclResult_t,
-        pub ncclGetVersion: unsafe extern "C" fn(version: *mut ::core::ffi::c_int) -> ncclResult_t,
+        pub ncclCommUserRank: unsafe extern "C" fn(
+            comm: ncclComm_t,
+            rank: *mut ::core::ffi::c_int,
+        ) -> ncclResult_t,
+        pub ncclGetErrorString: unsafe extern "C" fn(
+            result: ncclResult_t,
+        ) -> *const ::core::ffi::c_char,
+        pub ncclGetLastError: unsafe extern "C" fn(
+            comm: ncclComm_t,
+        ) -> *const ::core::ffi::c_char,
+        pub ncclGetUniqueId: unsafe extern "C" fn(
+            uniqueId: *mut ncclUniqueId,
+        ) -> ncclResult_t,
+        pub ncclGetVersion: unsafe extern "C" fn(
+            version: *mut ::core::ffi::c_int,
+        ) -> ncclResult_t,
         pub ncclGroupEnd: unsafe extern "C" fn() -> ncclResult_t,
-        pub ncclGroupSimulateEnd: unsafe extern "C" fn(simInfo: *mut ncclSimInfo_t) -> ncclResult_t,
+        pub ncclGroupSimulateEnd: unsafe extern "C" fn(
+            simInfo: *mut ncclSimInfo_t,
+        ) -> ncclResult_t,
         pub ncclGroupStart: unsafe extern "C" fn() -> ncclResult_t,
-        pub ncclMemAlloc:
-            unsafe extern "C" fn(ptr: *mut *mut ::core::ffi::c_void, size: usize) -> ncclResult_t,
-        pub ncclMemFree: unsafe extern "C" fn(ptr: *mut ::core::ffi::c_void) -> ncclResult_t,
+        pub ncclMemAlloc: unsafe extern "C" fn(
+            ptr: *mut *mut ::core::ffi::c_void,
+            size: usize,
+        ) -> ncclResult_t,
+        pub ncclMemFree: unsafe extern "C" fn(
+            ptr: *mut ::core::ffi::c_void,
+        ) -> ncclResult_t,
         pub ncclRecv: unsafe extern "C" fn(
             recvbuff: *mut ::core::ffi::c_void,
             count: usize,
@@ -602,8 +655,10 @@ mod loaded {
             residence: ncclScalarResidence_t,
             comm: ncclComm_t,
         ) -> ncclResult_t,
-        pub ncclRedOpDestroy:
-            unsafe extern "C" fn(op: ncclRedOp_t, comm: ncclComm_t) -> ncclResult_t,
+        pub ncclRedOpDestroy: unsafe extern "C" fn(
+            op: ncclRedOp_t,
+            comm: ncclComm_t,
+        ) -> ncclResult_t,
         pub ncclReduce: unsafe extern "C" fn(
             sendbuff: *const ::core::ffi::c_void,
             recvbuff: *mut ::core::ffi::c_void,

@@ -62,20 +62,22 @@ pub enum curandOrdering {
     CURAND_ORDERING_PSEUDO_LEGACY = 103,
     CURAND_ORDERING_QUASI_DEFAULT = 201,
 }
-#[cfg(any(
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080"
-))]
+#[cfg(
+    any(
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    )
+)]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum curandOrdering {
@@ -248,8 +250,9 @@ extern "C" {
         type_: libraryPropertyType,
         value: *mut ::core::ffi::c_int,
     ) -> curandStatus_t;
-    pub fn curandGetScrambleConstants32(constants: *mut *mut ::core::ffi::c_uint)
-        -> curandStatus_t;
+    pub fn curandGetScrambleConstants32(
+        constants: *mut *mut ::core::ffi::c_uint,
+    ) -> curandStatus_t;
     pub fn curandGetScrambleConstants64(
         constants: *mut *mut ::core::ffi::c_ulonglong,
     ) -> curandStatus_t;
@@ -270,7 +273,10 @@ extern "C" {
         generator: curandGenerator_t,
         num_dimensions: ::core::ffi::c_uint,
     ) -> curandStatus_t;
-    pub fn curandSetStream(generator: curandGenerator_t, stream: cudaStream_t) -> curandStatus_t;
+    pub fn curandSetStream(
+        generator: curandGenerator_t,
+        stream: cudaStream_t,
+    ) -> curandStatus_t;
 }
 #[cfg(feature = "dynamic-loading")]
 mod loaded {
@@ -298,7 +304,9 @@ mod loaded {
     ) -> curandStatus_t {
         (culib().curandDestroyDistribution)(discrete_distribution)
     }
-    pub unsafe fn curandDestroyGenerator(generator: curandGenerator_t) -> curandStatus_t {
+    pub unsafe fn curandDestroyGenerator(
+        generator: curandGenerator_t,
+    ) -> curandStatus_t {
         (culib().curandDestroyGenerator)(generator)
     }
     pub unsafe fn curandGenerate(
@@ -463,8 +471,9 @@ mod loaded {
         pub curandDestroyDistribution: unsafe extern "C" fn(
             discrete_distribution: curandDiscreteDistribution_t,
         ) -> curandStatus_t,
-        pub curandDestroyGenerator:
-            unsafe extern "C" fn(generator: curandGenerator_t) -> curandStatus_t,
+        pub curandDestroyGenerator: unsafe extern "C" fn(
+            generator: curandGenerator_t,
+        ) -> curandStatus_t,
         pub curandGenerate: unsafe extern "C" fn(
             generator: curandGenerator_t,
             outputPtr: *mut ::core::ffi::c_uint,
@@ -516,8 +525,9 @@ mod loaded {
             lambda: f64,
             method: curandMethod_t,
         ) -> curandStatus_t,
-        pub curandGenerateSeeds:
-            unsafe extern "C" fn(generator: curandGenerator_t) -> curandStatus_t,
+        pub curandGenerateSeeds: unsafe extern "C" fn(
+            generator: curandGenerator_t,
+        ) -> curandStatus_t,
         pub curandGenerateUniform: unsafe extern "C" fn(
             generator: curandGenerator_t,
             outputPtr: *mut f32,
@@ -540,12 +550,15 @@ mod loaded {
             type_: libraryPropertyType,
             value: *mut ::core::ffi::c_int,
         ) -> curandStatus_t,
-        pub curandGetScrambleConstants32:
-            unsafe extern "C" fn(constants: *mut *mut ::core::ffi::c_uint) -> curandStatus_t,
-        pub curandGetScrambleConstants64:
-            unsafe extern "C" fn(constants: *mut *mut ::core::ffi::c_ulonglong) -> curandStatus_t,
-        pub curandGetVersion:
-            unsafe extern "C" fn(version: *mut ::core::ffi::c_int) -> curandStatus_t,
+        pub curandGetScrambleConstants32: unsafe extern "C" fn(
+            constants: *mut *mut ::core::ffi::c_uint,
+        ) -> curandStatus_t,
+        pub curandGetScrambleConstants64: unsafe extern "C" fn(
+            constants: *mut *mut ::core::ffi::c_ulonglong,
+        ) -> curandStatus_t,
+        pub curandGetVersion: unsafe extern "C" fn(
+            version: *mut ::core::ffi::c_int,
+        ) -> curandStatus_t,
         pub curandSetGeneratorOffset: unsafe extern "C" fn(
             generator: curandGenerator_t,
             offset: ::core::ffi::c_ulonglong,
@@ -561,8 +574,7 @@ mod loaded {
         pub curandSetQuasiRandomGeneratorDimensions: unsafe extern "C" fn(
             generator: curandGenerator_t,
             num_dimensions: ::core::ffi::c_uint,
-        )
-            -> curandStatus_t,
+        ) -> curandStatus_t,
         pub curandSetStream: unsafe extern "C" fn(
             generator: curandGenerator_t,
             stream: cudaStream_t,
