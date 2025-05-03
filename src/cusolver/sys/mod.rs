@@ -8,65 +8,57 @@ extern crate alloc;
 extern crate no_std_compat as std;
 pub use self::cudaDataType_t as cudaDataType;
 pub use self::libraryPropertyType_t as libraryPropertyType;
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 pub type FILE = _IO_FILE;
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 pub type _IO_lock_t = ::core::ffi::c_void;
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 pub type __off64_t = ::core::ffi::c_long;
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 pub type __off_t = ::core::ffi::c_long;
 pub type csrqrInfo_t = *mut csrqrInfo;
 pub type cuComplex = cuFloatComplex;
@@ -78,20 +70,18 @@ pub type cudaStream_t = *mut CUstream_st;
 pub type cusolverDnHandle_t = *mut cusolverDnContext;
 pub type cusolverDnIRSInfos_t = *mut cusolverDnIRSInfos;
 pub type cusolverDnIRSParams_t = *mut cusolverDnIRSParams;
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 pub type cusolverDnLoggerCallback_t = ::core::option::Option<
     unsafe extern "C" fn(
         logLevel: ::core::ffi::c_int,
@@ -167,18 +157,16 @@ pub enum cudaDataType_t {
     CUDA_R_64U = 26,
     CUDA_C_64U = 27,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDataType_t {
@@ -259,16 +247,14 @@ pub enum cusolverAlgMode_t {
     CUSOLVER_ALG_1 = 1,
     CUSOLVER_ALG_2 = 2,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cusolverDeterministicMode_t {
@@ -442,20 +428,18 @@ pub enum libraryPropertyType_t {
 pub struct CUstream_st {
     _unused: [u8; 0],
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct _IO_FILE {
@@ -489,58 +473,52 @@ pub struct _IO_FILE {
     pub _mode: ::core::ffi::c_int,
     pub _unused2: [::core::ffi::c_char; 20usize],
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_codecvt {
     _unused: [u8; 0],
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_marker {
     _unused: [u8; 0],
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_wide_data {
@@ -622,20 +600,18 @@ impl cublasOperation_t {
 impl cudaDataType_t {
     pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 impl Default for _IO_FILE {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -2651,16 +2627,14 @@ extern "C" {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub fn cusolverDnGetDeterministicMode(
         handle: cusolverDnHandle_t,
         mode: *mut cusolverDeterministicMode_t,
@@ -2709,9 +2683,7 @@ extern "C" {
         ldb: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t;
-    pub fn cusolverDnIRSInfosCreate(
-        infos_ptr: *mut cusolverDnIRSInfos_t,
-    ) -> cusolverStatus_t;
+    pub fn cusolverDnIRSInfosCreate(infos_ptr: *mut cusolverDnIRSInfos_t) -> cusolverStatus_t;
     pub fn cusolverDnIRSInfosDestroy(infos: cusolverDnIRSInfos_t) -> cusolverStatus_t;
     pub fn cusolverDnIRSInfosGetMaxIters(
         infos: cusolverDnIRSInfos_t,
@@ -2729,19 +2701,11 @@ extern "C" {
         infos: cusolverDnIRSInfos_t,
         residual_history: *mut *mut ::core::ffi::c_void,
     ) -> cusolverStatus_t;
-    pub fn cusolverDnIRSInfosRequestResidual(
-        infos: cusolverDnIRSInfos_t,
-    ) -> cusolverStatus_t;
-    pub fn cusolverDnIRSParamsCreate(
-        params_ptr: *mut cusolverDnIRSParams_t,
-    ) -> cusolverStatus_t;
+    pub fn cusolverDnIRSInfosRequestResidual(infos: cusolverDnIRSInfos_t) -> cusolverStatus_t;
+    pub fn cusolverDnIRSParamsCreate(params_ptr: *mut cusolverDnIRSParams_t) -> cusolverStatus_t;
     pub fn cusolverDnIRSParamsDestroy(params: cusolverDnIRSParams_t) -> cusolverStatus_t;
-    pub fn cusolverDnIRSParamsDisableFallback(
-        params: cusolverDnIRSParams_t,
-    ) -> cusolverStatus_t;
-    pub fn cusolverDnIRSParamsEnableFallback(
-        params: cusolverDnIRSParams_t,
-    ) -> cusolverStatus_t;
+    pub fn cusolverDnIRSParamsDisableFallback(params: cusolverDnIRSParams_t) -> cusolverStatus_t;
+    pub fn cusolverDnIRSParamsEnableFallback(params: cusolverDnIRSParams_t) -> cusolverStatus_t;
     pub fn cusolverDnIRSParamsGetMaxIters(
         params: cusolverDnIRSParams_t,
         maxiters: *mut cusolver_int_t,
@@ -2771,10 +2735,7 @@ extern "C" {
         solver_main_precision: cusolverPrecType_t,
         solver_lowest_precision: cusolverPrecType_t,
     ) -> cusolverStatus_t;
-    pub fn cusolverDnIRSParamsSetTol(
-        params: cusolverDnIRSParams_t,
-        val: f64,
-    ) -> cusolverStatus_t;
+    pub fn cusolverDnIRSParamsSetTol(params: cusolverDnIRSParams_t, val: f64) -> cusolverStatus_t;
     pub fn cusolverDnIRSParamsSetTolInner(
         params: cusolverDnIRSParams_t,
         val: f64,
@@ -2829,99 +2790,83 @@ extern "C" {
         nrhs: cusolver_int_t,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub fn cusolverDnLoggerForceDisable() -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
-    pub fn cusolverDnLoggerOpenFile(
-        logFile: *const ::core::ffi::c_char,
-    ) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
-    pub fn cusolverDnLoggerSetCallback(
-        callback: cusolverDnLoggerCallback_t,
-    ) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
+    pub fn cusolverDnLoggerOpenFile(logFile: *const ::core::ffi::c_char) -> cusolverStatus_t;
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
+    pub fn cusolverDnLoggerSetCallback(callback: cusolverDnLoggerCallback_t) -> cusolverStatus_t;
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub fn cusolverDnLoggerSetFile(file: *mut FILE) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub fn cusolverDnLoggerSetLevel(level: ::core::ffi::c_int) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub fn cusolverDnLoggerSetMask(mask: ::core::ffi::c_int) -> cusolverStatus_t;
     pub fn cusolverDnPotrf(
         handle: cusolverDnHandle_t,
@@ -3206,16 +3151,14 @@ extern "C" {
         function: cusolverDnFunction_t,
         algo: cusolverAlgMode_t,
     ) -> cusolverStatus_t;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub fn cusolverDnSetDeterministicMode(
         handle: cusolverDnHandle_t,
         mode: cusolverDeterministicMode_t,
@@ -4131,10 +4074,7 @@ extern "C" {
         info: gesvdjInfo_t,
         sort_svd: ::core::ffi::c_int,
     ) -> cusolverStatus_t;
-    pub fn cusolverDnXgesvdjSetTolerance(
-        info: gesvdjInfo_t,
-        tolerance: f64,
-    ) -> cusolverStatus_t;
+    pub fn cusolverDnXgesvdjSetTolerance(info: gesvdjInfo_t, tolerance: f64) -> cusolverStatus_t;
     pub fn cusolverDnXgesvdp(
         handle: cusolverDnHandle_t,
         params: cusolverDnParams_t,
@@ -4537,10 +4477,7 @@ extern "C" {
         info: syevjInfo_t,
         sort_eig: ::core::ffi::c_int,
     ) -> cusolverStatus_t;
-    pub fn cusolverDnXsyevjSetTolerance(
-        info: syevjInfo_t,
-        tolerance: f64,
-    ) -> cusolverStatus_t;
+    pub fn cusolverDnXsyevjSetTolerance(info: syevjInfo_t, tolerance: f64) -> cusolverStatus_t;
     pub fn cusolverDnXsytrs(
         handle: cusolverDnHandle_t,
         uplo: cublasFillMode_t,
@@ -6754,8 +6691,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCCgels)(
+        (culib().cusolverDnCCgels)(
             handle,
             m,
             n,
@@ -6786,8 +6722,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCCgels_bufferSize)(
+        (culib().cusolverDnCCgels_bufferSize)(
             handle,
             m,
             n,
@@ -6818,8 +6753,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCCgesv)(
+        (culib().cusolverDnCCgesv)(
             handle,
             n,
             nrhs,
@@ -6850,8 +6784,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCCgesv_bufferSize)(
+        (culib().cusolverDnCCgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -6882,8 +6815,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCEgels)(
+        (culib().cusolverDnCEgels)(
             handle,
             m,
             n,
@@ -6914,8 +6846,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCEgels_bufferSize)(
+        (culib().cusolverDnCEgels_bufferSize)(
             handle,
             m,
             n,
@@ -6946,8 +6877,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCEgesv)(
+        (culib().cusolverDnCEgesv)(
             handle,
             n,
             nrhs,
@@ -6978,8 +6908,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCEgesv_bufferSize)(
+        (culib().cusolverDnCEgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -7010,8 +6939,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCKgels)(
+        (culib().cusolverDnCKgels)(
             handle,
             m,
             n,
@@ -7042,8 +6970,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCKgels_bufferSize)(
+        (culib().cusolverDnCKgels_bufferSize)(
             handle,
             m,
             n,
@@ -7074,8 +7001,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCKgesv)(
+        (culib().cusolverDnCKgesv)(
             handle,
             n,
             nrhs,
@@ -7106,8 +7032,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCKgesv_bufferSize)(
+        (culib().cusolverDnCKgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -7138,8 +7063,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCYgels)(
+        (culib().cusolverDnCYgels)(
             handle,
             m,
             n,
@@ -7170,8 +7094,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCYgels_bufferSize)(
+        (culib().cusolverDnCYgels_bufferSize)(
             handle,
             m,
             n,
@@ -7202,8 +7125,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCYgesv)(
+        (culib().cusolverDnCYgesv)(
             handle,
             n,
             nrhs,
@@ -7234,8 +7156,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCYgesv_bufferSize)(
+        (culib().cusolverDnCYgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -7264,21 +7185,7 @@ mod loaded {
         Lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgebrd)(
-            handle,
-            m,
-            n,
-            A,
-            lda,
-            D,
-            E,
-            TAUQ,
-            TAUP,
-            Work,
-            Lwork,
-            devInfo,
-        )
+        (culib().cusolverDnCgebrd)(handle, m, n, A, lda, D, E, TAUQ, TAUP, Work, Lwork, devInfo)
     }
     pub unsafe fn cusolverDnCgebrd_bufferSize(
         handle: cusolverDnHandle_t,
@@ -7329,24 +7236,8 @@ mod loaded {
         rwork: *mut f32,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvd)(
-            handle,
-            jobu,
-            jobvt,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            VT,
-            ldvt,
-            work,
-            lwork,
-            rwork,
-            info,
+        (culib().cusolverDnCgesvd)(
+            handle, jobu, jobvt, m, n, A, lda, S, U, ldu, VT, ldvt, work, lwork, rwork, info,
         )
     }
     pub unsafe fn cusolverDnCgesvd_bufferSize(
@@ -7380,29 +7271,9 @@ mod loaded {
         h_R_nrmF: *mut f64,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvdaStridedBatched)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            d_work,
-            lwork,
-            d_info,
-            h_R_nrmF,
-            batchSize,
+        (culib().cusolverDnCgesvdaStridedBatched)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, d_work, lwork, d_info, h_R_nrmF, batchSize,
         )
     }
     pub unsafe fn cusolverDnCgesvdaStridedBatched_bufferSize(
@@ -7425,26 +7296,9 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvdaStridedBatched_bufferSize)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            lwork,
-            batchSize,
+        (culib().cusolverDnCgesvdaStridedBatched_bufferSize)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, lwork, batchSize,
         )
     }
     pub unsafe fn cusolverDnCgesvdj(
@@ -7465,24 +7319,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvdj)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnCgesvdj)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnCgesvdjBatched(
@@ -7503,24 +7341,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvdjBatched)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnCgesvdjBatched)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnCgesvdjBatched_bufferSize(
@@ -7539,22 +7361,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvdjBatched_bufferSize)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnCgesvdjBatched_bufferSize)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnCgesvdj_bufferSize(
@@ -7573,22 +7381,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgesvdj_bufferSize)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
+        (culib().cusolverDnCgesvdj_bufferSize)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, lwork, params,
         )
     }
     pub unsafe fn cusolverDnCgetrf(
@@ -7625,8 +7419,7 @@ mod loaded {
         ldb: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
+        (culib().cusolverDnCgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
     }
     pub unsafe fn cusolverDnCheevd(
         handle: cusolverDnHandle_t,
@@ -7672,24 +7465,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCheevdx)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnCheevdx)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnCheevdx_bufferSize(
@@ -7708,22 +7485,8 @@ mod loaded {
         W: *const f32,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCheevdx_bufferSize)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnCheevdx_bufferSize)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnCheevj(
@@ -7739,20 +7502,7 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCheevj)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-        )
+        (culib().cusolverDnCheevj)(handle, jobz, uplo, n, A, lda, W, work, lwork, info, params)
     }
     pub unsafe fn cusolverDnCheevjBatched(
         handle: cusolverDnHandle_t,
@@ -7768,20 +7518,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCheevjBatched)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnCheevjBatched)(
+            handle, jobz, uplo, n, A, lda, W, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnCheevjBatched_bufferSize(
@@ -7796,18 +7534,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCheevjBatched_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnCheevjBatched_bufferSize)(
+            handle, jobz, uplo, n, A, lda, W, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnCheevj_bufferSize(
@@ -7821,18 +7549,7 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCheevj_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-        )
+        (culib().cusolverDnCheevj_bufferSize)(handle, jobz, uplo, n, A, lda, W, lwork, params)
     }
     pub unsafe fn cusolverDnChegvd(
         handle: cusolverDnHandle_t,
@@ -7849,21 +7566,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnChegvd)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnChegvd)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnChegvd_bufferSize(
@@ -7879,19 +7583,8 @@ mod loaded {
         W: *const f32,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnChegvd_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
+        (culib().cusolverDnChegvd_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork,
         )
     }
     pub unsafe fn cusolverDnChegvdx(
@@ -7915,27 +7608,9 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnChegvdx)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnChegvdx)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, work,
+            lwork, info,
         )
     }
     pub unsafe fn cusolverDnChegvdx_bufferSize(
@@ -7957,25 +7632,8 @@ mod loaded {
         W: *const f32,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnChegvdx_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnChegvdx_bufferSize)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnChegvj(
@@ -7994,22 +7652,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnChegvj)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnChegvj)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnChegvj_bufferSize(
@@ -8026,20 +7670,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnChegvj_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
-            params,
+        (culib().cusolverDnChegvj_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork, params,
         )
     }
     pub unsafe fn cusolverDnChetrd(
@@ -8125,8 +7757,7 @@ mod loaded {
         infoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
+        (culib().cusolverDnCpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
     }
     pub unsafe fn cusolverDnCpotrf_bufferSize(
         handle: cusolverDnHandle_t,
@@ -8185,31 +7816,15 @@ mod loaded {
         d_info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCpotrsBatched)(
-            handle,
-            uplo,
-            n,
-            nrhs,
-            A,
-            lda,
-            B,
-            ldb,
-            d_info,
-            batchSize,
-        )
+        (culib().cusolverDnCpotrsBatched)(handle, uplo, n, nrhs, A, lda, B, ldb, d_info, batchSize)
     }
     pub unsafe fn cusolverDnCreate(handle: *mut cusolverDnHandle_t) -> cusolverStatus_t {
         (culib().cusolverDnCreate)(handle)
     }
-    pub unsafe fn cusolverDnCreateGesvdjInfo(
-        info: *mut gesvdjInfo_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverDnCreateGesvdjInfo(info: *mut gesvdjInfo_t) -> cusolverStatus_t {
         (culib().cusolverDnCreateGesvdjInfo)(info)
     }
-    pub unsafe fn cusolverDnCreateParams(
-        params: *mut cusolverDnParams_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverDnCreateParams(params: *mut cusolverDnParams_t) -> cusolverStatus_t {
         (culib().cusolverDnCreateParams)(params)
     }
     pub unsafe fn cusolverDnCreateSyevjInfo(info: *mut syevjInfo_t) -> cusolverStatus_t {
@@ -8355,22 +7970,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCunmqr)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            devInfo,
+        (culib().cusolverDnCunmqr)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, work, lwork, devInfo,
         )
     }
     pub unsafe fn cusolverDnCunmqr_bufferSize(
@@ -8387,20 +7988,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCunmqr_bufferSize)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnCunmqr_bufferSize)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnCunmtr(
@@ -8419,22 +8008,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCunmtr)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnCunmtr)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnCunmtr_bufferSize(
@@ -8451,20 +8026,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnCunmtr_bufferSize)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnCunmtr_bufferSize)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnDBgels(
@@ -8483,8 +8046,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDBgels)(
+        (culib().cusolverDnDBgels)(
             handle,
             m,
             n,
@@ -8515,8 +8077,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDBgels_bufferSize)(
+        (culib().cusolverDnDBgels_bufferSize)(
             handle,
             m,
             n,
@@ -8547,8 +8108,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDBgesv)(
+        (culib().cusolverDnDBgesv)(
             handle,
             n,
             nrhs,
@@ -8579,8 +8139,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDBgesv_bufferSize)(
+        (culib().cusolverDnDBgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -8611,8 +8170,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDDgels)(
+        (culib().cusolverDnDDgels)(
             handle,
             m,
             n,
@@ -8643,8 +8201,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDDgels_bufferSize)(
+        (culib().cusolverDnDDgels_bufferSize)(
             handle,
             m,
             n,
@@ -8675,8 +8232,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDDgesv)(
+        (culib().cusolverDnDDgesv)(
             handle,
             n,
             nrhs,
@@ -8707,8 +8263,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDDgesv_bufferSize)(
+        (culib().cusolverDnDDgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -8739,8 +8294,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDHgels)(
+        (culib().cusolverDnDHgels)(
             handle,
             m,
             n,
@@ -8771,8 +8325,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDHgels_bufferSize)(
+        (culib().cusolverDnDHgels_bufferSize)(
             handle,
             m,
             n,
@@ -8803,8 +8356,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDHgesv)(
+        (culib().cusolverDnDHgesv)(
             handle,
             n,
             nrhs,
@@ -8835,8 +8387,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDHgesv_bufferSize)(
+        (culib().cusolverDnDHgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -8867,8 +8418,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDSgels)(
+        (culib().cusolverDnDSgels)(
             handle,
             m,
             n,
@@ -8899,8 +8449,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDSgels_bufferSize)(
+        (culib().cusolverDnDSgels_bufferSize)(
             handle,
             m,
             n,
@@ -8931,8 +8480,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDSgesv)(
+        (culib().cusolverDnDSgesv)(
             handle,
             n,
             nrhs,
@@ -8963,8 +8511,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDSgesv_bufferSize)(
+        (culib().cusolverDnDSgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -8995,8 +8542,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDXgels)(
+        (culib().cusolverDnDXgels)(
             handle,
             m,
             n,
@@ -9027,8 +8573,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDXgels_bufferSize)(
+        (culib().cusolverDnDXgels_bufferSize)(
             handle,
             m,
             n,
@@ -9059,8 +8604,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDXgesv)(
+        (culib().cusolverDnDXgesv)(
             handle,
             n,
             nrhs,
@@ -9091,8 +8635,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDXgesv_bufferSize)(
+        (culib().cusolverDnDXgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -9113,9 +8656,7 @@ mod loaded {
     pub unsafe fn cusolverDnDestroyGesvdjInfo(info: gesvdjInfo_t) -> cusolverStatus_t {
         (culib().cusolverDnDestroyGesvdjInfo)(info)
     }
-    pub unsafe fn cusolverDnDestroyParams(
-        params: cusolverDnParams_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverDnDestroyParams(params: cusolverDnParams_t) -> cusolverStatus_t {
         (culib().cusolverDnDestroyParams)(params)
     }
     pub unsafe fn cusolverDnDestroySyevjInfo(info: syevjInfo_t) -> cusolverStatus_t {
@@ -9135,21 +8676,7 @@ mod loaded {
         Lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgebrd)(
-            handle,
-            m,
-            n,
-            A,
-            lda,
-            D,
-            E,
-            TAUQ,
-            TAUP,
-            Work,
-            Lwork,
-            devInfo,
-        )
+        (culib().cusolverDnDgebrd)(handle, m, n, A, lda, D, E, TAUQ, TAUP, Work, Lwork, devInfo)
     }
     pub unsafe fn cusolverDnDgebrd_bufferSize(
         handle: cusolverDnHandle_t,
@@ -9200,24 +8727,8 @@ mod loaded {
         rwork: *mut f64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvd)(
-            handle,
-            jobu,
-            jobvt,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            VT,
-            ldvt,
-            work,
-            lwork,
-            rwork,
-            info,
+        (culib().cusolverDnDgesvd)(
+            handle, jobu, jobvt, m, n, A, lda, S, U, ldu, VT, ldvt, work, lwork, rwork, info,
         )
     }
     pub unsafe fn cusolverDnDgesvd_bufferSize(
@@ -9251,29 +8762,9 @@ mod loaded {
         h_R_nrmF: *mut f64,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvdaStridedBatched)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            d_work,
-            lwork,
-            d_info,
-            h_R_nrmF,
-            batchSize,
+        (culib().cusolverDnDgesvdaStridedBatched)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, d_work, lwork, d_info, h_R_nrmF, batchSize,
         )
     }
     pub unsafe fn cusolverDnDgesvdaStridedBatched_bufferSize(
@@ -9296,26 +8787,9 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvdaStridedBatched_bufferSize)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            lwork,
-            batchSize,
+        (culib().cusolverDnDgesvdaStridedBatched_bufferSize)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, lwork, batchSize,
         )
     }
     pub unsafe fn cusolverDnDgesvdj(
@@ -9336,24 +8810,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvdj)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnDgesvdj)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnDgesvdjBatched(
@@ -9374,24 +8832,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvdjBatched)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnDgesvdjBatched)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnDgesvdjBatched_bufferSize(
@@ -9410,22 +8852,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvdjBatched_bufferSize)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnDgesvdjBatched_bufferSize)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnDgesvdj_bufferSize(
@@ -9444,22 +8872,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgesvdj_bufferSize)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
+        (culib().cusolverDnDgesvdj_bufferSize)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, lwork, params,
         )
     }
     pub unsafe fn cusolverDnDgetrf(
@@ -9496,8 +8910,7 @@ mod loaded {
         ldb: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
+        (culib().cusolverDnDgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
     }
     pub unsafe fn cusolverDnDlaswp(
         handle: cusolverDnHandle_t,
@@ -9627,22 +9040,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDormqr)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            devInfo,
+        (culib().cusolverDnDormqr)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, work, lwork, devInfo,
         )
     }
     pub unsafe fn cusolverDnDormqr_bufferSize(
@@ -9659,20 +9058,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDormqr_bufferSize)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnDormqr_bufferSize)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnDormtr(
@@ -9691,22 +9078,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDormtr)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnDormtr)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnDormtr_bufferSize(
@@ -9723,20 +9096,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDormtr_bufferSize)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnDormtr_bufferSize)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnDpotrf(
@@ -9760,8 +9121,7 @@ mod loaded {
         infoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
+        (culib().cusolverDnDpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
     }
     pub unsafe fn cusolverDnDpotrf_bufferSize(
         handle: cusolverDnHandle_t,
@@ -9820,19 +9180,7 @@ mod loaded {
         d_info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDpotrsBatched)(
-            handle,
-            uplo,
-            n,
-            nrhs,
-            A,
-            lda,
-            B,
-            ldb,
-            d_info,
-            batchSize,
-        )
+        (culib().cusolverDnDpotrsBatched)(handle, uplo, n, nrhs, A, lda, B, ldb, d_info, batchSize)
     }
     pub unsafe fn cusolverDnDsyevd(
         handle: cusolverDnHandle_t,
@@ -9878,24 +9226,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsyevdx)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnDsyevdx)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnDsyevdx_bufferSize(
@@ -9914,22 +9246,8 @@ mod loaded {
         W: *const f64,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsyevdx_bufferSize)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnDsyevdx_bufferSize)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnDsyevj(
@@ -9945,20 +9263,7 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsyevj)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-        )
+        (culib().cusolverDnDsyevj)(handle, jobz, uplo, n, A, lda, W, work, lwork, info, params)
     }
     pub unsafe fn cusolverDnDsyevjBatched(
         handle: cusolverDnHandle_t,
@@ -9974,20 +9279,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsyevjBatched)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnDsyevjBatched)(
+            handle, jobz, uplo, n, A, lda, W, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnDsyevjBatched_bufferSize(
@@ -10002,18 +9295,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsyevjBatched_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnDsyevjBatched_bufferSize)(
+            handle, jobz, uplo, n, A, lda, W, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnDsyevj_bufferSize(
@@ -10027,18 +9310,7 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsyevj_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-        )
+        (culib().cusolverDnDsyevj_bufferSize)(handle, jobz, uplo, n, A, lda, W, lwork, params)
     }
     pub unsafe fn cusolverDnDsygvd(
         handle: cusolverDnHandle_t,
@@ -10055,21 +9327,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsygvd)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnDsygvd)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnDsygvd_bufferSize(
@@ -10085,19 +9344,8 @@ mod loaded {
         W: *const f64,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsygvd_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
+        (culib().cusolverDnDsygvd_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork,
         )
     }
     pub unsafe fn cusolverDnDsygvdx(
@@ -10121,27 +9369,9 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsygvdx)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnDsygvdx)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, work,
+            lwork, info,
         )
     }
     pub unsafe fn cusolverDnDsygvdx_bufferSize(
@@ -10163,25 +9393,8 @@ mod loaded {
         W: *const f64,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsygvdx_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnDsygvdx_bufferSize)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnDsygvj(
@@ -10200,22 +9413,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsygvj)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnDsygvj)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnDsygvj_bufferSize(
@@ -10232,20 +9431,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnDsygvj_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
-            params,
+        (culib().cusolverDnDsygvj_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork, params,
         )
     }
     pub unsafe fn cusolverDnDsytrd(
@@ -10337,8 +9524,7 @@ mod loaded {
         workspaceInBytes: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGeqrf)(
+        (culib().cusolverDnGeqrf)(
             handle,
             params,
             m,
@@ -10367,8 +9553,7 @@ mod loaded {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGeqrf_bufferSize)(
+        (culib().cusolverDnGeqrf_bufferSize)(
             handle,
             params,
             m,
@@ -10405,8 +9590,7 @@ mod loaded {
         workspaceInBytes: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGesvd)(
+        (culib().cusolverDnGesvd)(
             handle,
             params,
             jobu,
@@ -10451,8 +9635,7 @@ mod loaded {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGesvd_bufferSize)(
+        (culib().cusolverDnGesvd_bufferSize)(
             handle,
             params,
             jobu,
@@ -10474,16 +9657,14 @@ mod loaded {
             workspaceInBytes,
         )
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnGetDeterministicMode(
         handle: cusolverDnHandle_t,
         mode: *mut cusolverDeterministicMode_t,
@@ -10510,8 +9691,7 @@ mod loaded {
         workspaceInBytes: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGetrf)(
+        (culib().cusolverDnGetrf)(
             handle,
             params,
             m,
@@ -10537,8 +9717,7 @@ mod loaded {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGetrf_bufferSize)(
+        (culib().cusolverDnGetrf_bufferSize)(
             handle,
             params,
             m,
@@ -10565,21 +9744,8 @@ mod loaded {
         ldb: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnGetrs)(
-            handle,
-            params,
-            trans,
-            n,
-            nrhs,
-            dataTypeA,
-            A,
-            lda,
-            ipiv,
-            dataTypeB,
-            B,
-            ldb,
-            info,
+        (culib().cusolverDnGetrs)(
+            handle, params, trans, n, nrhs, dataTypeA, A, lda, ipiv, dataTypeB, B, ldb, info,
         )
     }
     pub unsafe fn cusolverDnIRSInfosCreate(
@@ -10587,9 +9753,7 @@ mod loaded {
     ) -> cusolverStatus_t {
         (culib().cusolverDnIRSInfosCreate)(infos_ptr)
     }
-    pub unsafe fn cusolverDnIRSInfosDestroy(
-        infos: cusolverDnIRSInfos_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverDnIRSInfosDestroy(infos: cusolverDnIRSInfos_t) -> cusolverStatus_t {
         (culib().cusolverDnIRSInfosDestroy)(infos)
     }
     pub unsafe fn cusolverDnIRSInfosGetMaxIters(
@@ -10626,9 +9790,7 @@ mod loaded {
     ) -> cusolverStatus_t {
         (culib().cusolverDnIRSParamsCreate)(params_ptr)
     }
-    pub unsafe fn cusolverDnIRSParamsDestroy(
-        params: cusolverDnIRSParams_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverDnIRSParamsDestroy(params: cusolverDnIRSParams_t) -> cusolverStatus_t {
         (culib().cusolverDnIRSParamsDestroy)(params)
     }
     pub unsafe fn cusolverDnIRSParamsDisableFallback(
@@ -10669,26 +9831,20 @@ mod loaded {
         params: cusolverDnIRSParams_t,
         solver_lowest_precision: cusolverPrecType_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnIRSParamsSetSolverLowestPrecision)(
-            params,
-            solver_lowest_precision,
-        )
+        (culib().cusolverDnIRSParamsSetSolverLowestPrecision)(params, solver_lowest_precision)
     }
     pub unsafe fn cusolverDnIRSParamsSetSolverMainPrecision(
         params: cusolverDnIRSParams_t,
         solver_main_precision: cusolverPrecType_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnIRSParamsSetSolverMainPrecision)(params, solver_main_precision)
+        (culib().cusolverDnIRSParamsSetSolverMainPrecision)(params, solver_main_precision)
     }
     pub unsafe fn cusolverDnIRSParamsSetSolverPrecisions(
         params: cusolverDnIRSParams_t,
         solver_main_precision: cusolverPrecType_t,
         solver_lowest_precision: cusolverPrecType_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnIRSParamsSetSolverPrecisions)(
+        (culib().cusolverDnIRSParamsSetSolverPrecisions)(
             params,
             solver_main_precision,
             solver_lowest_precision,
@@ -10724,8 +9880,7 @@ mod loaded {
         niters: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnIRSXgels)(
+        (culib().cusolverDnIRSXgels)(
             handle,
             gels_irs_params,
             gels_irs_infos,
@@ -10771,8 +9926,7 @@ mod loaded {
         niters: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnIRSXgesv)(
+        (culib().cusolverDnIRSXgesv)(
             handle,
             gesv_irs_params,
             gesv_irs_infos,
@@ -10799,111 +9953,97 @@ mod loaded {
     ) -> cusolverStatus_t {
         (culib().cusolverDnIRSXgesv_bufferSize)(handle, params, n, nrhs, lwork_bytes)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnLoggerForceDisable() -> cusolverStatus_t {
         (culib().cusolverDnLoggerForceDisable)()
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnLoggerOpenFile(
         logFile: *const ::core::ffi::c_char,
     ) -> cusolverStatus_t {
         (culib().cusolverDnLoggerOpenFile)(logFile)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnLoggerSetCallback(
         callback: cusolverDnLoggerCallback_t,
     ) -> cusolverStatus_t {
         (culib().cusolverDnLoggerSetCallback)(callback)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnLoggerSetFile(file: *mut FILE) -> cusolverStatus_t {
         (culib().cusolverDnLoggerSetFile)(file)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
-    pub unsafe fn cusolverDnLoggerSetLevel(
-        level: ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
+    pub unsafe fn cusolverDnLoggerSetLevel(level: ::core::ffi::c_int) -> cusolverStatus_t {
         (culib().cusolverDnLoggerSetLevel)(level)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnLoggerSetMask(mask: ::core::ffi::c_int) -> cusolverStatus_t {
         (culib().cusolverDnLoggerSetMask)(mask)
     }
@@ -10920,8 +10060,7 @@ mod loaded {
         workspaceInBytes: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnPotrf)(
+        (culib().cusolverDnPotrf)(
             handle,
             params,
             uplo,
@@ -10946,8 +10085,7 @@ mod loaded {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnPotrf_bufferSize)(
+        (culib().cusolverDnPotrf_bufferSize)(
             handle,
             params,
             uplo,
@@ -10973,20 +10111,8 @@ mod loaded {
         ldb: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnPotrs)(
-            handle,
-            params,
-            uplo,
-            n,
-            nrhs,
-            dataTypeA,
-            A,
-            lda,
-            dataTypeB,
-            B,
-            ldb,
-            info,
+        (culib().cusolverDnPotrs)(
+            handle, params, uplo, n, nrhs, dataTypeA, A, lda, dataTypeB, B, ldb, info,
         )
     }
     pub unsafe fn cusolverDnSBgels(
@@ -11005,8 +10131,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSBgels)(
+        (culib().cusolverDnSBgels)(
             handle,
             m,
             n,
@@ -11037,8 +10162,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSBgels_bufferSize)(
+        (culib().cusolverDnSBgels_bufferSize)(
             handle,
             m,
             n,
@@ -11069,8 +10193,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSBgesv)(
+        (culib().cusolverDnSBgesv)(
             handle,
             n,
             nrhs,
@@ -11101,8 +10224,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSBgesv_bufferSize)(
+        (culib().cusolverDnSBgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -11133,8 +10255,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSHgels)(
+        (culib().cusolverDnSHgels)(
             handle,
             m,
             n,
@@ -11165,8 +10286,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSHgels_bufferSize)(
+        (culib().cusolverDnSHgels_bufferSize)(
             handle,
             m,
             n,
@@ -11197,8 +10317,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSHgesv)(
+        (culib().cusolverDnSHgesv)(
             handle,
             n,
             nrhs,
@@ -11229,8 +10348,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSHgesv_bufferSize)(
+        (culib().cusolverDnSHgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -11261,8 +10379,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSSgels)(
+        (culib().cusolverDnSSgels)(
             handle,
             m,
             n,
@@ -11293,8 +10410,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSSgels_bufferSize)(
+        (culib().cusolverDnSSgels_bufferSize)(
             handle,
             m,
             n,
@@ -11325,8 +10441,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSSgesv)(
+        (culib().cusolverDnSSgesv)(
             handle,
             n,
             nrhs,
@@ -11357,8 +10472,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSSgesv_bufferSize)(
+        (culib().cusolverDnSSgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -11389,8 +10503,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSXgels)(
+        (culib().cusolverDnSXgels)(
             handle,
             m,
             n,
@@ -11421,8 +10534,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSXgels_bufferSize)(
+        (culib().cusolverDnSXgels_bufferSize)(
             handle,
             m,
             n,
@@ -11453,8 +10565,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSXgesv)(
+        (culib().cusolverDnSXgesv)(
             handle,
             n,
             nrhs,
@@ -11485,8 +10596,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSXgesv_bufferSize)(
+        (culib().cusolverDnSXgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -11508,16 +10618,14 @@ mod loaded {
     ) -> cusolverStatus_t {
         (culib().cusolverDnSetAdvOptions)(params, function, algo)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080"
+    ))]
     pub unsafe fn cusolverDnSetDeterministicMode(
         handle: cusolverDnHandle_t,
         mode: cusolverDeterministicMode_t,
@@ -11544,21 +10652,7 @@ mod loaded {
         Lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgebrd)(
-            handle,
-            m,
-            n,
-            A,
-            lda,
-            D,
-            E,
-            TAUQ,
-            TAUP,
-            Work,
-            Lwork,
-            devInfo,
-        )
+        (culib().cusolverDnSgebrd)(handle, m, n, A, lda, D, E, TAUQ, TAUP, Work, Lwork, devInfo)
     }
     pub unsafe fn cusolverDnSgebrd_bufferSize(
         handle: cusolverDnHandle_t,
@@ -11609,24 +10703,8 @@ mod loaded {
         rwork: *mut f32,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvd)(
-            handle,
-            jobu,
-            jobvt,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            VT,
-            ldvt,
-            work,
-            lwork,
-            rwork,
-            info,
+        (culib().cusolverDnSgesvd)(
+            handle, jobu, jobvt, m, n, A, lda, S, U, ldu, VT, ldvt, work, lwork, rwork, info,
         )
     }
     pub unsafe fn cusolverDnSgesvd_bufferSize(
@@ -11660,29 +10738,9 @@ mod loaded {
         h_R_nrmF: *mut f64,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvdaStridedBatched)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            d_work,
-            lwork,
-            d_info,
-            h_R_nrmF,
-            batchSize,
+        (culib().cusolverDnSgesvdaStridedBatched)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, d_work, lwork, d_info, h_R_nrmF, batchSize,
         )
     }
     pub unsafe fn cusolverDnSgesvdaStridedBatched_bufferSize(
@@ -11705,26 +10763,9 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvdaStridedBatched_bufferSize)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            lwork,
-            batchSize,
+        (culib().cusolverDnSgesvdaStridedBatched_bufferSize)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, lwork, batchSize,
         )
     }
     pub unsafe fn cusolverDnSgesvdj(
@@ -11745,24 +10786,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvdj)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnSgesvdj)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnSgesvdjBatched(
@@ -11783,24 +10808,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvdjBatched)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnSgesvdjBatched)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnSgesvdjBatched_bufferSize(
@@ -11819,22 +10828,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvdjBatched_bufferSize)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnSgesvdjBatched_bufferSize)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnSgesvdj_bufferSize(
@@ -11853,22 +10848,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgesvdj_bufferSize)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
+        (culib().cusolverDnSgesvdj_bufferSize)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, lwork, params,
         )
     }
     pub unsafe fn cusolverDnSgetrf(
@@ -11905,8 +10886,7 @@ mod loaded {
         ldb: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
+        (culib().cusolverDnSgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
     }
     pub unsafe fn cusolverDnSlaswp(
         handle: cusolverDnHandle_t,
@@ -12036,22 +11016,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSormqr)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            devInfo,
+        (culib().cusolverDnSormqr)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, work, lwork, devInfo,
         )
     }
     pub unsafe fn cusolverDnSormqr_bufferSize(
@@ -12068,20 +11034,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSormqr_bufferSize)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnSormqr_bufferSize)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnSormtr(
@@ -12100,22 +11054,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSormtr)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnSormtr)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnSormtr_bufferSize(
@@ -12132,20 +11072,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSormtr_bufferSize)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnSormtr_bufferSize)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnSpotrf(
@@ -12169,8 +11097,7 @@ mod loaded {
         infoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
+        (culib().cusolverDnSpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
     }
     pub unsafe fn cusolverDnSpotrf_bufferSize(
         handle: cusolverDnHandle_t,
@@ -12229,19 +11156,7 @@ mod loaded {
         d_info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSpotrsBatched)(
-            handle,
-            uplo,
-            n,
-            nrhs,
-            A,
-            lda,
-            B,
-            ldb,
-            d_info,
-            batchSize,
-        )
+        (culib().cusolverDnSpotrsBatched)(handle, uplo, n, nrhs, A, lda, B, ldb, d_info, batchSize)
     }
     pub unsafe fn cusolverDnSsyevd(
         handle: cusolverDnHandle_t,
@@ -12287,24 +11202,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsyevdx)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnSsyevdx)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnSsyevdx_bufferSize(
@@ -12323,22 +11222,8 @@ mod loaded {
         W: *const f32,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsyevdx_bufferSize)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnSsyevdx_bufferSize)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnSsyevj(
@@ -12354,20 +11239,7 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsyevj)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-        )
+        (culib().cusolverDnSsyevj)(handle, jobz, uplo, n, A, lda, W, work, lwork, info, params)
     }
     pub unsafe fn cusolverDnSsyevjBatched(
         handle: cusolverDnHandle_t,
@@ -12383,20 +11255,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsyevjBatched)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnSsyevjBatched)(
+            handle, jobz, uplo, n, A, lda, W, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnSsyevjBatched_bufferSize(
@@ -12411,18 +11271,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsyevjBatched_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnSsyevjBatched_bufferSize)(
+            handle, jobz, uplo, n, A, lda, W, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnSsyevj_bufferSize(
@@ -12436,18 +11286,7 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsyevj_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-        )
+        (culib().cusolverDnSsyevj_bufferSize)(handle, jobz, uplo, n, A, lda, W, lwork, params)
     }
     pub unsafe fn cusolverDnSsygvd(
         handle: cusolverDnHandle_t,
@@ -12464,21 +11303,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsygvd)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnSsygvd)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnSsygvd_bufferSize(
@@ -12494,19 +11320,8 @@ mod loaded {
         W: *const f32,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsygvd_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
+        (culib().cusolverDnSsygvd_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork,
         )
     }
     pub unsafe fn cusolverDnSsygvdx(
@@ -12530,27 +11345,9 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsygvdx)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnSsygvdx)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, work,
+            lwork, info,
         )
     }
     pub unsafe fn cusolverDnSsygvdx_bufferSize(
@@ -12572,25 +11369,8 @@ mod loaded {
         W: *const f32,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsygvdx_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnSsygvdx_bufferSize)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnSsygvj(
@@ -12609,22 +11389,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsygvj)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnSsygvj)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnSsygvj_bufferSize(
@@ -12641,20 +11407,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSsygvj_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
-            params,
+        (culib().cusolverDnSsygvj_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork, params,
         )
     }
     pub unsafe fn cusolverDnSsytrd(
@@ -12747,8 +11501,7 @@ mod loaded {
         workspaceInBytes: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSyevd)(
+        (culib().cusolverDnSyevd)(
             handle,
             params,
             jobz,
@@ -12779,8 +11532,7 @@ mod loaded {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSyevd_bufferSize)(
+        (culib().cusolverDnSyevd_bufferSize)(
             handle,
             params,
             jobz,
@@ -12817,8 +11569,7 @@ mod loaded {
         workspaceInBytes: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSyevdx)(
+        (culib().cusolverDnSyevdx)(
             handle,
             params,
             jobz,
@@ -12861,8 +11612,7 @@ mod loaded {
         computeType: cudaDataType,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnSyevdx_bufferSize)(
+        (culib().cusolverDnSyevdx_bufferSize)(
             handle,
             params,
             jobz,
@@ -12908,8 +11658,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgeev)(
+        (culib().cusolverDnXgeev)(
             handle,
             params,
             jobvl,
@@ -12956,8 +11705,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgeev_bufferSize)(
+        (culib().cusolverDnXgeev_bufferSize)(
             handle,
             params,
             jobvl,
@@ -12996,8 +11744,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgeqrf)(
+        (culib().cusolverDnXgeqrf)(
             handle,
             params,
             m,
@@ -13029,8 +11776,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgeqrf_bufferSize)(
+        (culib().cusolverDnXgeqrf_bufferSize)(
             handle,
             params,
             m,
@@ -13070,8 +11816,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgesvd)(
+        (culib().cusolverDnXgesvd)(
             handle,
             params,
             jobu,
@@ -13119,8 +11864,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgesvd_bufferSize)(
+        (culib().cusolverDnXgesvd_bufferSize)(
             handle,
             params,
             jobu,
@@ -13201,8 +11945,7 @@ mod loaded {
         d_info: *mut ::core::ffi::c_int,
         h_err_sigma: *mut f64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgesvdp)(
+        (culib().cusolverDnXgesvdp)(
             handle,
             params,
             jobz,
@@ -13251,8 +11994,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgesvdp_bufferSize)(
+        (culib().cusolverDnXgesvdp_bufferSize)(
             handle,
             params,
             jobz,
@@ -13303,8 +12045,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         d_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgesvdr)(
+        (culib().cusolverDnXgesvdr)(
             handle,
             params,
             jobu,
@@ -13358,8 +12099,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgesvdr_bufferSize)(
+        (culib().cusolverDnXgesvdr_bufferSize)(
             handle,
             params,
             jobu,
@@ -13401,8 +12141,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgetrf)(
+        (culib().cusolverDnXgetrf)(
             handle,
             params,
             m,
@@ -13431,8 +12170,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgetrf_bufferSize)(
+        (culib().cusolverDnXgetrf_bufferSize)(
             handle,
             params,
             m,
@@ -13460,21 +12198,8 @@ mod loaded {
         ldb: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXgetrs)(
-            handle,
-            params,
-            trans,
-            n,
-            nrhs,
-            dataTypeA,
-            A,
-            lda,
-            ipiv,
-            dataTypeB,
-            B,
-            ldb,
-            info,
+        (culib().cusolverDnXgetrs)(
+            handle, params, trans, n, nrhs, dataTypeA, A, lda, ipiv, dataTypeB, B, ldb, info,
         )
     }
     #[cfg(any(feature = "cuda-12040"))]
@@ -13499,8 +12224,7 @@ mod loaded {
         bufferOnHost: *mut ::core::ffi::c_void,
         workspaceInBytesOnHost: usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXlarft)(
+        (culib().cusolverDnXlarft)(
             handle,
             params,
             direct,
@@ -13544,8 +12268,7 @@ mod loaded {
         bufferOnHost: *mut ::core::ffi::c_void,
         workspaceInBytesOnHost: usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXlarft)(
+        (culib().cusolverDnXlarft)(
             handle,
             params,
             direct,
@@ -13587,8 +12310,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXlarft_bufferSize)(
+        (culib().cusolverDnXlarft_bufferSize)(
             handle,
             params,
             direct,
@@ -13628,8 +12350,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXlarft_bufferSize)(
+        (culib().cusolverDnXlarft_bufferSize)(
             handle,
             params,
             direct,
@@ -13664,8 +12385,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXpotrf)(
+        (culib().cusolverDnXpotrf)(
             handle,
             params,
             uplo,
@@ -13693,8 +12413,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXpotrf_bufferSize)(
+        (culib().cusolverDnXpotrf_bufferSize)(
             handle,
             params,
             uplo,
@@ -13721,20 +12440,8 @@ mod loaded {
         ldb: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXpotrs)(
-            handle,
-            params,
-            uplo,
-            n,
-            nrhs,
-            dataTypeA,
-            A,
-            lda,
-            dataTypeB,
-            B,
-            ldb,
-            info,
+        (culib().cusolverDnXpotrs)(
+            handle, params, uplo, n, nrhs, dataTypeA, A, lda, dataTypeB, B, ldb, info,
         )
     }
     #[cfg(any(feature = "cuda-12060", feature = "cuda-12080"))]
@@ -13757,8 +12464,7 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         batchSize: i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsyevBatched)(
+        (culib().cusolverDnXsyevBatched)(
             handle,
             params,
             jobz,
@@ -13795,8 +12501,7 @@ mod loaded {
         workspaceInBytesOnHost: *mut usize,
         batchSize: i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsyevBatched_bufferSize)(
+        (culib().cusolverDnXsyevBatched_bufferSize)(
             handle,
             params,
             jobz,
@@ -13831,8 +12536,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsyevd)(
+        (culib().cusolverDnXsyevd)(
             handle,
             params,
             jobz,
@@ -13866,8 +12570,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsyevd_bufferSize)(
+        (culib().cusolverDnXsyevd_bufferSize)(
             handle,
             params,
             jobz,
@@ -13907,8 +12610,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsyevdx)(
+        (culib().cusolverDnXsyevdx)(
             handle,
             params,
             jobz,
@@ -13954,8 +12656,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsyevdx_bufferSize)(
+        (culib().cusolverDnXsyevdx_bufferSize)(
             handle,
             params,
             jobz,
@@ -14027,8 +12728,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsytrs)(
+        (culib().cusolverDnXsytrs)(
             handle,
             uplo,
             n,
@@ -14062,8 +12762,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXsytrs_bufferSize)(
+        (culib().cusolverDnXsytrs_bufferSize)(
             handle,
             uplo,
             n,
@@ -14093,8 +12792,7 @@ mod loaded {
         workspaceInBytesOnHost: usize,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXtrtri)(
+        (culib().cusolverDnXtrtri)(
             handle,
             uplo,
             diag,
@@ -14120,8 +12818,7 @@ mod loaded {
         workspaceInBytesOnDevice: *mut usize,
         workspaceInBytesOnHost: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnXtrtri_bufferSize)(
+        (culib().cusolverDnXtrtri_bufferSize)(
             handle,
             uplo,
             diag,
@@ -14149,8 +12846,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZCgels)(
+        (culib().cusolverDnZCgels)(
             handle,
             m,
             n,
@@ -14181,8 +12877,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZCgels_bufferSize)(
+        (culib().cusolverDnZCgels_bufferSize)(
             handle,
             m,
             n,
@@ -14213,8 +12908,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZCgesv)(
+        (culib().cusolverDnZCgesv)(
             handle,
             n,
             nrhs,
@@ -14245,8 +12939,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZCgesv_bufferSize)(
+        (culib().cusolverDnZCgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -14277,8 +12970,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZEgels)(
+        (culib().cusolverDnZEgels)(
             handle,
             m,
             n,
@@ -14309,8 +13001,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZEgels_bufferSize)(
+        (culib().cusolverDnZEgels_bufferSize)(
             handle,
             m,
             n,
@@ -14341,8 +13032,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZEgesv)(
+        (culib().cusolverDnZEgesv)(
             handle,
             n,
             nrhs,
@@ -14373,8 +13063,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZEgesv_bufferSize)(
+        (culib().cusolverDnZEgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -14405,8 +13094,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZKgels)(
+        (culib().cusolverDnZKgels)(
             handle,
             m,
             n,
@@ -14437,8 +13125,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZKgels_bufferSize)(
+        (culib().cusolverDnZKgels_bufferSize)(
             handle,
             m,
             n,
@@ -14469,8 +13156,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZKgesv)(
+        (culib().cusolverDnZKgesv)(
             handle,
             n,
             nrhs,
@@ -14501,8 +13187,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZKgesv_bufferSize)(
+        (culib().cusolverDnZKgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -14533,8 +13218,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZYgels)(
+        (culib().cusolverDnZYgels)(
             handle,
             m,
             n,
@@ -14565,8 +13249,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZYgels_bufferSize)(
+        (culib().cusolverDnZYgels_bufferSize)(
             handle,
             m,
             n,
@@ -14597,8 +13280,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZYgesv)(
+        (culib().cusolverDnZYgesv)(
             handle,
             n,
             nrhs,
@@ -14629,8 +13311,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZYgesv_bufferSize)(
+        (culib().cusolverDnZYgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -14661,8 +13342,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZZgels)(
+        (culib().cusolverDnZZgels)(
             handle,
             m,
             n,
@@ -14693,8 +13373,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZZgels_bufferSize)(
+        (culib().cusolverDnZZgels_bufferSize)(
             handle,
             m,
             n,
@@ -14725,8 +13404,7 @@ mod loaded {
         iter: *mut cusolver_int_t,
         d_info: *mut cusolver_int_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZZgesv)(
+        (culib().cusolverDnZZgesv)(
             handle,
             n,
             nrhs,
@@ -14757,8 +13435,7 @@ mod loaded {
         dWorkspace: *mut ::core::ffi::c_void,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZZgesv_bufferSize)(
+        (culib().cusolverDnZZgesv_bufferSize)(
             handle,
             n,
             nrhs,
@@ -14787,21 +13464,7 @@ mod loaded {
         Lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgebrd)(
-            handle,
-            m,
-            n,
-            A,
-            lda,
-            D,
-            E,
-            TAUQ,
-            TAUP,
-            Work,
-            Lwork,
-            devInfo,
-        )
+        (culib().cusolverDnZgebrd)(handle, m, n, A, lda, D, E, TAUQ, TAUP, Work, Lwork, devInfo)
     }
     pub unsafe fn cusolverDnZgebrd_bufferSize(
         handle: cusolverDnHandle_t,
@@ -14852,24 +13515,8 @@ mod loaded {
         rwork: *mut f64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvd)(
-            handle,
-            jobu,
-            jobvt,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            VT,
-            ldvt,
-            work,
-            lwork,
-            rwork,
-            info,
+        (culib().cusolverDnZgesvd)(
+            handle, jobu, jobvt, m, n, A, lda, S, U, ldu, VT, ldvt, work, lwork, rwork, info,
         )
     }
     pub unsafe fn cusolverDnZgesvd_bufferSize(
@@ -14903,29 +13550,9 @@ mod loaded {
         h_R_nrmF: *mut f64,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvdaStridedBatched)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            d_work,
-            lwork,
-            d_info,
-            h_R_nrmF,
-            batchSize,
+        (culib().cusolverDnZgesvdaStridedBatched)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, d_work, lwork, d_info, h_R_nrmF, batchSize,
         )
     }
     pub unsafe fn cusolverDnZgesvdaStridedBatched_bufferSize(
@@ -14948,26 +13575,9 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvdaStridedBatched_bufferSize)(
-            handle,
-            jobz,
-            rank,
-            m,
-            n,
-            d_A,
-            lda,
-            strideA,
-            d_S,
-            strideS,
-            d_U,
-            ldu,
-            strideU,
-            d_V,
-            ldv,
-            strideV,
-            lwork,
-            batchSize,
+        (culib().cusolverDnZgesvdaStridedBatched_bufferSize)(
+            handle, jobz, rank, m, n, d_A, lda, strideA, d_S, strideS, d_U, ldu, strideU, d_V, ldv,
+            strideV, lwork, batchSize,
         )
     }
     pub unsafe fn cusolverDnZgesvdj(
@@ -14988,24 +13598,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvdj)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnZgesvdj)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnZgesvdjBatched(
@@ -15026,24 +13620,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvdjBatched)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnZgesvdjBatched)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnZgesvdjBatched_bufferSize(
@@ -15062,22 +13640,8 @@ mod loaded {
         params: gesvdjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvdjBatched_bufferSize)(
-            handle,
-            jobz,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnZgesvdjBatched_bufferSize)(
+            handle, jobz, m, n, A, lda, S, U, ldu, V, ldv, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnZgesvdj_bufferSize(
@@ -15096,22 +13660,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: gesvdjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgesvdj_bufferSize)(
-            handle,
-            jobz,
-            econ,
-            m,
-            n,
-            A,
-            lda,
-            S,
-            U,
-            ldu,
-            V,
-            ldv,
-            lwork,
-            params,
+        (culib().cusolverDnZgesvdj_bufferSize)(
+            handle, jobz, econ, m, n, A, lda, S, U, ldu, V, ldv, lwork, params,
         )
     }
     pub unsafe fn cusolverDnZgetrf(
@@ -15148,8 +13698,7 @@ mod loaded {
         ldb: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
+        (culib().cusolverDnZgetrs)(handle, trans, n, nrhs, A, lda, devIpiv, B, ldb, devInfo)
     }
     pub unsafe fn cusolverDnZheevd(
         handle: cusolverDnHandle_t,
@@ -15195,24 +13744,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZheevdx)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnZheevdx)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnZheevdx_bufferSize(
@@ -15231,22 +13764,8 @@ mod loaded {
         W: *const f64,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZheevdx_bufferSize)(
-            handle,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnZheevdx_bufferSize)(
+            handle, jobz, range, uplo, n, A, lda, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnZheevj(
@@ -15262,20 +13781,7 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZheevj)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-        )
+        (culib().cusolverDnZheevj)(handle, jobz, uplo, n, A, lda, W, work, lwork, info, params)
     }
     pub unsafe fn cusolverDnZheevjBatched(
         handle: cusolverDnHandle_t,
@@ -15291,20 +13797,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZheevjBatched)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            work,
-            lwork,
-            info,
-            params,
-            batchSize,
+        (culib().cusolverDnZheevjBatched)(
+            handle, jobz, uplo, n, A, lda, W, work, lwork, info, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnZheevjBatched_bufferSize(
@@ -15319,18 +13813,8 @@ mod loaded {
         params: syevjInfo_t,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZheevjBatched_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-            batchSize,
+        (culib().cusolverDnZheevjBatched_bufferSize)(
+            handle, jobz, uplo, n, A, lda, W, lwork, params, batchSize,
         )
     }
     pub unsafe fn cusolverDnZheevj_bufferSize(
@@ -15344,18 +13828,7 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZheevj_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            W,
-            lwork,
-            params,
-        )
+        (culib().cusolverDnZheevj_bufferSize)(handle, jobz, uplo, n, A, lda, W, lwork, params)
     }
     pub unsafe fn cusolverDnZhegvd(
         handle: cusolverDnHandle_t,
@@ -15372,21 +13845,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZhegvd)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnZhegvd)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnZhegvd_bufferSize(
@@ -15402,19 +13862,8 @@ mod loaded {
         W: *const f64,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZhegvd_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
+        (culib().cusolverDnZhegvd_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork,
         )
     }
     pub unsafe fn cusolverDnZhegvdx(
@@ -15438,27 +13887,9 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZhegvdx)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnZhegvdx)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, work,
+            lwork, info,
         )
     }
     pub unsafe fn cusolverDnZhegvdx_bufferSize(
@@ -15480,25 +13911,8 @@ mod loaded {
         W: *const f64,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZhegvdx_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            range,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            vl,
-            vu,
-            il,
-            iu,
-            meig,
-            W,
-            lwork,
+        (culib().cusolverDnZhegvdx_bufferSize)(
+            handle, itype, jobz, range, uplo, n, A, lda, B, ldb, vl, vu, il, iu, meig, W, lwork,
         )
     }
     pub unsafe fn cusolverDnZhegvj(
@@ -15517,22 +13931,8 @@ mod loaded {
         info: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZhegvj)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            work,
-            lwork,
-            info,
-            params,
+        (culib().cusolverDnZhegvj)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, work, lwork, info, params,
         )
     }
     pub unsafe fn cusolverDnZhegvj_bufferSize(
@@ -15549,20 +13949,8 @@ mod loaded {
         lwork: *mut ::core::ffi::c_int,
         params: syevjInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZhegvj_bufferSize)(
-            handle,
-            itype,
-            jobz,
-            uplo,
-            n,
-            A,
-            lda,
-            B,
-            ldb,
-            W,
-            lwork,
-            params,
+        (culib().cusolverDnZhegvj_bufferSize)(
+            handle, itype, jobz, uplo, n, A, lda, B, ldb, W, lwork, params,
         )
     }
     pub unsafe fn cusolverDnZhetrd(
@@ -15648,8 +14036,7 @@ mod loaded {
         infoArray: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
+        (culib().cusolverDnZpotrfBatched)(handle, uplo, n, Aarray, lda, infoArray, batchSize)
     }
     pub unsafe fn cusolverDnZpotrf_bufferSize(
         handle: cusolverDnHandle_t,
@@ -15708,19 +14095,7 @@ mod loaded {
         d_info: *mut ::core::ffi::c_int,
         batchSize: ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZpotrsBatched)(
-            handle,
-            uplo,
-            n,
-            nrhs,
-            A,
-            lda,
-            B,
-            ldb,
-            d_info,
-            batchSize,
-        )
+        (culib().cusolverDnZpotrsBatched)(handle, uplo, n, nrhs, A, lda, B, ldb, d_info, batchSize)
     }
     pub unsafe fn cusolverDnZsytrf(
         handle: cusolverDnHandle_t,
@@ -15862,22 +14237,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         devInfo: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZunmqr)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            devInfo,
+        (culib().cusolverDnZunmqr)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, work, lwork, devInfo,
         )
     }
     pub unsafe fn cusolverDnZunmqr_bufferSize(
@@ -15894,20 +14255,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZunmqr_bufferSize)(
-            handle,
-            side,
-            trans,
-            m,
-            n,
-            k,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnZunmqr_bufferSize)(
+            handle, side, trans, m, n, k, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverDnZunmtr(
@@ -15926,22 +14275,8 @@ mod loaded {
         lwork: ::core::ffi::c_int,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZunmtr)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            work,
-            lwork,
-            info,
+        (culib().cusolverDnZunmtr)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, work, lwork, info,
         )
     }
     pub unsafe fn cusolverDnZunmtr_bufferSize(
@@ -15958,20 +14293,8 @@ mod loaded {
         ldc: ::core::ffi::c_int,
         lwork: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverDnZunmtr_bufferSize)(
-            handle,
-            side,
-            uplo,
-            trans,
-            m,
-            n,
-            A,
-            lda,
-            tau,
-            C,
-            ldc,
-            lwork,
+        (culib().cusolverDnZunmtr_bufferSize)(
+            handle, side, uplo, trans, m, n, A, lda, tau, C, ldc, lwork,
         )
     }
     pub unsafe fn cusolverGetProperty(
@@ -15980,9 +14303,7 @@ mod loaded {
     ) -> cusolverStatus_t {
         (culib().cusolverGetProperty)(type_, value)
     }
-    pub unsafe fn cusolverGetVersion(
-        version: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverGetVersion(version: *mut ::core::ffi::c_int) -> cusolverStatus_t {
         (culib().cusolverGetVersion)(version)
     }
     pub unsafe fn cusolverMgCreate(handle: *mut cusolverMgHandle_t) -> cusolverStatus_t {
@@ -15995,14 +14316,7 @@ mod loaded {
         deviceId: *const i32,
         mapping: cusolverMgGridMapping_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgCreateDeviceGrid)(
-            grid,
-            numRowDevices,
-            numColDevices,
-            deviceId,
-            mapping,
-        )
+        (culib().cusolverMgCreateDeviceGrid)(grid, numRowDevices, numColDevices, deviceId, mapping)
     }
     pub unsafe fn cusolverMgCreateMatrixDesc(
         desc: *mut cudaLibMgMatrixDesc_t,
@@ -16013,8 +14327,7 @@ mod loaded {
         dataType: cudaDataType,
         grid: cudaLibMgGrid_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgCreateMatrixDesc)(
+        (culib().cusolverMgCreateMatrixDesc)(
             desc,
             numRows,
             numCols,
@@ -16030,9 +14343,7 @@ mod loaded {
     pub unsafe fn cusolverMgDestroyGrid(grid: cudaLibMgGrid_t) -> cusolverStatus_t {
         (culib().cusolverMgDestroyGrid)(grid)
     }
-    pub unsafe fn cusolverMgDestroyMatrixDesc(
-        desc: cudaLibMgMatrixDesc_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverMgDestroyMatrixDesc(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t {
         (culib().cusolverMgDestroyMatrixDesc)(desc)
     }
     pub unsafe fn cusolverMgDeviceSelect(
@@ -16056,8 +14367,7 @@ mod loaded {
         lwork: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrf)(
+        (culib().cusolverMgGetrf)(
             handle,
             M,
             N,
@@ -16084,8 +14394,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrf_bufferSize)(
+        (culib().cusolverMgGetrf_bufferSize)(
             handle,
             M,
             N,
@@ -16117,8 +14426,7 @@ mod loaded {
         lwork: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrs)(
+        (culib().cusolverMgGetrs)(
             handle,
             TRANS,
             N,
@@ -16155,8 +14463,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrs_bufferSize)(
+        (culib().cusolverMgGetrs_bufferSize)(
             handle,
             TRANS,
             N,
@@ -16187,8 +14494,7 @@ mod loaded {
         lwork: i64,
         h_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrf)(
+        (culib().cusolverMgPotrf)(
             handle,
             uplo,
             N,
@@ -16213,8 +14519,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrf_bufferSize)(
+        (culib().cusolverMgPotrf_bufferSize)(
             handle,
             uplo,
             N,
@@ -16239,8 +14544,7 @@ mod loaded {
         lwork: i64,
         h_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotri)(
+        (culib().cusolverMgPotri)(
             handle,
             uplo,
             N,
@@ -16265,8 +14569,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotri_bufferSize)(
+        (culib().cusolverMgPotri_bufferSize)(
             handle,
             uplo,
             N,
@@ -16296,8 +14599,7 @@ mod loaded {
         lwork: i64,
         h_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrs)(
+        (culib().cusolverMgPotrs)(
             handle,
             uplo,
             n,
@@ -16332,8 +14634,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrs_bufferSize)(
+        (culib().cusolverMgPotrs_bufferSize)(
             handle,
             uplo,
             n,
@@ -16366,8 +14667,7 @@ mod loaded {
         lwork: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgSyevd)(
+        (culib().cusolverMgSyevd)(
             handle,
             jobz,
             uplo,
@@ -16398,8 +14698,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgSyevd_bufferSize)(
+        (culib().cusolverMgSyevd_bufferSize)(
             handle,
             jobz,
             uplo,
@@ -16426,14 +14725,10 @@ mod loaded {
     pub unsafe fn cusolverRfAnalyze(handle: cusolverRfHandle_t) -> cusolverStatus_t {
         (culib().cusolverRfAnalyze)(handle)
     }
-    pub unsafe fn cusolverRfBatchAnalyze(
-        handle: cusolverRfHandle_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverRfBatchAnalyze(handle: cusolverRfHandle_t) -> cusolverStatus_t {
         (culib().cusolverRfBatchAnalyze)(handle)
     }
-    pub unsafe fn cusolverRfBatchRefactor(
-        handle: cusolverRfHandle_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverRfBatchRefactor(handle: cusolverRfHandle_t) -> cusolverStatus_t {
         (culib().cusolverRfBatchRefactor)(handle)
     }
     pub unsafe fn cusolverRfBatchResetValues(
@@ -16447,8 +14742,7 @@ mod loaded {
         Q: *mut ::core::ffi::c_int,
         handle: cusolverRfHandle_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverRfBatchResetValues)(
+        (culib().cusolverRfBatchResetValues)(
             batchSize,
             n,
             nnzA,
@@ -16479,8 +14773,7 @@ mod loaded {
         h_Q: *mut ::core::ffi::c_int,
         handle: cusolverRfHandle_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverRfBatchSetupHost)(
+        (culib().cusolverRfBatchSetupHost)(
             batchSize,
             n,
             nnzA,
@@ -16544,8 +14837,7 @@ mod loaded {
         h_csrColIndU: *mut *mut ::core::ffi::c_int,
         h_csrValU: *mut *mut f64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverRfExtractSplitFactorsHost)(
+        (culib().cusolverRfExtractSplitFactorsHost)(
             handle,
             h_nnzL,
             h_csrRowPtrL,
@@ -16603,17 +14895,7 @@ mod loaded {
         Q: *mut ::core::ffi::c_int,
         handle: cusolverRfHandle_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverRfResetValues)(
-            n,
-            nnzA,
-            csrRowPtrA,
-            csrColIndA,
-            csrValA,
-            P,
-            Q,
-            handle,
-        )
+        (culib().cusolverRfResetValues)(n, nnzA, csrRowPtrA, csrColIndA, csrValA, P, Q, handle)
     }
     pub unsafe fn cusolverRfSetAlgs(
         handle: cusolverRfHandle_t,
@@ -16660,24 +14942,9 @@ mod loaded {
         Q: *mut ::core::ffi::c_int,
         handle: cusolverRfHandle_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverRfSetupDevice)(
-            n,
-            nnzA,
-            csrRowPtrA,
-            csrColIndA,
-            csrValA,
-            nnzL,
-            csrRowPtrL,
-            csrColIndL,
-            csrValL,
-            nnzU,
-            csrRowPtrU,
-            csrColIndU,
-            csrValU,
-            P,
-            Q,
-            handle,
+        (culib().cusolverRfSetupDevice)(
+            n, nnzA, csrRowPtrA, csrColIndA, csrValA, nnzL, csrRowPtrL, csrColIndL, csrValL, nnzU,
+            csrRowPtrU, csrColIndU, csrValU, P, Q, handle,
         )
     }
     pub unsafe fn cusolverRfSetupHost(
@@ -16698,8 +14965,7 @@ mod loaded {
         h_Q: *mut ::core::ffi::c_int,
         handle: cusolverRfHandle_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverRfSetupHost)(
+        (culib().cusolverRfSetupHost)(
             n,
             nnzA,
             h_csrRowPtrA,
@@ -16742,8 +15008,7 @@ mod loaded {
         right_upper_corner: cuComplex,
         num_eigs: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsreigsHost)(
+        (culib().cusolverSpCcsreigsHost)(
             handle,
             m,
             nnz,
@@ -16771,21 +15036,8 @@ mod loaded {
         mu: *mut cuComplex,
         x: *mut cuComplex,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsreigvsi)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            eps,
-            mu,
-            x,
+        (culib().cusolverSpCcsreigvsi)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, eps, mu, x,
         )
     }
     pub unsafe fn cusolverSpCcsreigvsiHost(
@@ -16803,21 +15055,8 @@ mod loaded {
         mu: *mut cuComplex,
         x: *mut cuComplex,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsreigvsiHost)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            tol,
-            mu,
-            x,
+        (culib().cusolverSpCcsreigvsiHost)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, tol, mu, x,
         )
     }
     pub unsafe fn cusolverSpCcsrlsqvqrHost(
@@ -16836,21 +15075,8 @@ mod loaded {
         p: *mut ::core::ffi::c_int,
         min_norm: *mut f32,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrlsqvqrHost)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            tol,
-            rankA,
-            x,
-            p,
+        (culib().cusolverSpCcsrlsqvqrHost)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, tol, rankA, x, p,
             min_norm,
         )
     }
@@ -16868,8 +15094,7 @@ mod loaded {
         x: *mut cuComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrlsvchol)(
+        (culib().cusolverSpCcsrlsvchol)(
             handle,
             m,
             nnz,
@@ -16898,8 +15123,7 @@ mod loaded {
         x: *mut cuComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrlsvcholHost)(
+        (culib().cusolverSpCcsrlsvcholHost)(
             handle,
             m,
             nnz,
@@ -16928,8 +15152,7 @@ mod loaded {
         x: *mut cuComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrlsvluHost)(
+        (culib().cusolverSpCcsrlsvluHost)(
             handle,
             n,
             nnzA,
@@ -16958,8 +15181,7 @@ mod loaded {
         x: *mut cuComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrlsvqr)(
+        (culib().cusolverSpCcsrlsvqr)(
             handle,
             m,
             nnz,
@@ -16988,8 +15210,7 @@ mod loaded {
         x: *mut cuComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrlsvqrHost)(
+        (culib().cusolverSpCcsrlsvqrHost)(
             handle,
             m,
             nnz,
@@ -17018,8 +15239,7 @@ mod loaded {
         internalDataInBytes: *mut usize,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrqrBufferInfoBatched)(
+        (culib().cusolverSpCcsrqrBufferInfoBatched)(
             handle,
             m,
             n,
@@ -17049,20 +15269,8 @@ mod loaded {
         info: csrqrInfo_t,
         pBuffer: *mut ::core::ffi::c_void,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrqrsvBatched)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            x,
-            batchSize,
-            info,
+        (culib().cusolverSpCcsrqrsvBatched)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, x, batchSize, info,
             pBuffer,
         )
     }
@@ -17077,17 +15285,8 @@ mod loaded {
         P: *mut ::core::ffi::c_int,
         numnz: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpCcsrzfdHost)(
-            handle,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            P,
-            numnz,
+        (culib().cusolverSpCcsrzfdHost)(
+            handle, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, P, numnz,
         )
     }
     pub unsafe fn cusolverSpCreate(handle: *mut cusolverSpHandle_t) -> cusolverStatus_t {
@@ -17108,8 +15307,7 @@ mod loaded {
         right_upper_corner: cuDoubleComplex,
         num_eigs: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsreigsHost)(
+        (culib().cusolverSpDcsreigsHost)(
             handle,
             m,
             nnz,
@@ -17137,21 +15335,8 @@ mod loaded {
         mu: *mut f64,
         x: *mut f64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsreigvsi)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            eps,
-            mu,
-            x,
+        (culib().cusolverSpDcsreigvsi)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, eps, mu, x,
         )
     }
     pub unsafe fn cusolverSpDcsreigvsiHost(
@@ -17169,21 +15354,8 @@ mod loaded {
         mu: *mut f64,
         x: *mut f64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsreigvsiHost)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            tol,
-            mu,
-            x,
+        (culib().cusolverSpDcsreigvsiHost)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, tol, mu, x,
         )
     }
     pub unsafe fn cusolverSpDcsrlsqvqrHost(
@@ -17202,21 +15374,8 @@ mod loaded {
         p: *mut ::core::ffi::c_int,
         min_norm: *mut f64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrlsqvqrHost)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            tol,
-            rankA,
-            x,
-            p,
+        (culib().cusolverSpDcsrlsqvqrHost)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, tol, rankA, x, p,
             min_norm,
         )
     }
@@ -17234,8 +15393,7 @@ mod loaded {
         x: *mut f64,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrlsvchol)(
+        (culib().cusolverSpDcsrlsvchol)(
             handle,
             m,
             nnz,
@@ -17264,8 +15422,7 @@ mod loaded {
         x: *mut f64,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrlsvcholHost)(
+        (culib().cusolverSpDcsrlsvcholHost)(
             handle,
             m,
             nnz,
@@ -17294,8 +15451,7 @@ mod loaded {
         x: *mut f64,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrlsvluHost)(
+        (culib().cusolverSpDcsrlsvluHost)(
             handle,
             n,
             nnzA,
@@ -17324,8 +15480,7 @@ mod loaded {
         x: *mut f64,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrlsvqr)(
+        (culib().cusolverSpDcsrlsvqr)(
             handle,
             m,
             nnz,
@@ -17354,8 +15509,7 @@ mod loaded {
         x: *mut f64,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrlsvqrHost)(
+        (culib().cusolverSpDcsrlsvqrHost)(
             handle,
             m,
             nnz,
@@ -17384,8 +15538,7 @@ mod loaded {
         internalDataInBytes: *mut usize,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrqrBufferInfoBatched)(
+        (culib().cusolverSpDcsrqrBufferInfoBatched)(
             handle,
             m,
             n,
@@ -17415,20 +15568,8 @@ mod loaded {
         info: csrqrInfo_t,
         pBuffer: *mut ::core::ffi::c_void,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrqrsvBatched)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            x,
-            batchSize,
-            info,
+        (culib().cusolverSpDcsrqrsvBatched)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, x, batchSize, info,
             pBuffer,
         )
     }
@@ -17443,17 +15584,8 @@ mod loaded {
         P: *mut ::core::ffi::c_int,
         numnz: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpDcsrzfdHost)(
-            handle,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            P,
-            numnz,
+        (culib().cusolverSpDcsrzfdHost)(
+            handle, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, P, numnz,
         )
     }
     pub unsafe fn cusolverSpDestroy(handle: cusolverSpHandle_t) -> cusolverStatus_t {
@@ -17480,8 +15612,7 @@ mod loaded {
         right_upper_corner: cuComplex,
         num_eigs: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsreigsHost)(
+        (culib().cusolverSpScsreigsHost)(
             handle,
             m,
             nnz,
@@ -17509,21 +15640,8 @@ mod loaded {
         mu: *mut f32,
         x: *mut f32,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsreigvsi)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            eps,
-            mu,
-            x,
+        (culib().cusolverSpScsreigvsi)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, eps, mu, x,
         )
     }
     pub unsafe fn cusolverSpScsreigvsiHost(
@@ -17541,21 +15659,8 @@ mod loaded {
         mu: *mut f32,
         x: *mut f32,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsreigvsiHost)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            tol,
-            mu,
-            x,
+        (culib().cusolverSpScsreigvsiHost)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, tol, mu, x,
         )
     }
     pub unsafe fn cusolverSpScsrlsqvqrHost(
@@ -17574,21 +15679,8 @@ mod loaded {
         p: *mut ::core::ffi::c_int,
         min_norm: *mut f32,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrlsqvqrHost)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            tol,
-            rankA,
-            x,
-            p,
+        (culib().cusolverSpScsrlsqvqrHost)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, tol, rankA, x, p,
             min_norm,
         )
     }
@@ -17606,8 +15698,7 @@ mod loaded {
         x: *mut f32,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrlsvchol)(
+        (culib().cusolverSpScsrlsvchol)(
             handle,
             m,
             nnz,
@@ -17636,8 +15727,7 @@ mod loaded {
         x: *mut f32,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrlsvcholHost)(
+        (culib().cusolverSpScsrlsvcholHost)(
             handle,
             m,
             nnz,
@@ -17666,8 +15756,7 @@ mod loaded {
         x: *mut f32,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrlsvluHost)(
+        (culib().cusolverSpScsrlsvluHost)(
             handle,
             n,
             nnzA,
@@ -17696,8 +15785,7 @@ mod loaded {
         x: *mut f32,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrlsvqr)(
+        (culib().cusolverSpScsrlsvqr)(
             handle,
             m,
             nnz,
@@ -17726,8 +15814,7 @@ mod loaded {
         x: *mut f32,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrlsvqrHost)(
+        (culib().cusolverSpScsrlsvqrHost)(
             handle,
             m,
             nnz,
@@ -17756,8 +15843,7 @@ mod loaded {
         internalDataInBytes: *mut usize,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrqrBufferInfoBatched)(
+        (culib().cusolverSpScsrqrBufferInfoBatched)(
             handle,
             m,
             n,
@@ -17787,20 +15873,8 @@ mod loaded {
         info: csrqrInfo_t,
         pBuffer: *mut ::core::ffi::c_void,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrqrsvBatched)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            x,
-            batchSize,
-            info,
+        (culib().cusolverSpScsrqrsvBatched)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, x, batchSize, info,
             pBuffer,
         )
     }
@@ -17815,17 +15889,8 @@ mod loaded {
         P: *mut ::core::ffi::c_int,
         numnz: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpScsrzfdHost)(
-            handle,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            P,
-            numnz,
+        (culib().cusolverSpScsrzfdHost)(
+            handle, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, P, numnz,
         )
     }
     pub unsafe fn cusolverSpSetStream(
@@ -17844,16 +15909,8 @@ mod loaded {
         csrColIndA: *const ::core::ffi::c_int,
         issym: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrissymHost)(
-            handle,
-            m,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrEndPtrA,
-            csrColIndA,
-            issym,
+        (culib().cusolverSpXcsrissymHost)(
+            handle, m, nnzA, descrA, csrRowPtrA, csrEndPtrA, csrColIndA, issym,
         )
     }
     pub unsafe fn cusolverSpXcsrmetisndHost(
@@ -17866,16 +15923,8 @@ mod loaded {
         options: *const i64,
         p: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrmetisndHost)(
-            handle,
-            n,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrColIndA,
-            options,
-            p,
+        (culib().cusolverSpXcsrmetisndHost)(
+            handle, n, nnzA, descrA, csrRowPtrA, csrColIndA, options, p,
         )
     }
     pub unsafe fn cusolverSpXcsrpermHost(
@@ -17891,19 +15940,8 @@ mod loaded {
         map: *mut ::core::ffi::c_int,
         pBuffer: *mut ::core::ffi::c_void,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrpermHost)(
-            handle,
-            m,
-            n,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrColIndA,
-            p,
-            q,
-            map,
-            pBuffer,
+        (culib().cusolverSpXcsrpermHost)(
+            handle, m, n, nnzA, descrA, csrRowPtrA, csrColIndA, p, q, map, pBuffer,
         )
     }
     pub unsafe fn cusolverSpXcsrperm_bufferSizeHost(
@@ -17918,8 +15956,7 @@ mod loaded {
         q: *const ::core::ffi::c_int,
         bufferSizeInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrperm_bufferSizeHost)(
+        (culib().cusolverSpXcsrperm_bufferSizeHost)(
             handle,
             m,
             n,
@@ -17942,16 +15979,8 @@ mod loaded {
         csrColIndA: *const ::core::ffi::c_int,
         info: csrqrInfo_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrqrAnalysisBatched)(
-            handle,
-            m,
-            n,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrColIndA,
-            info,
+        (culib().cusolverSpXcsrqrAnalysisBatched)(
+            handle, m, n, nnzA, descrA, csrRowPtrA, csrColIndA, info,
         )
     }
     pub unsafe fn cusolverSpXcsrsymamdHost(
@@ -17963,16 +15992,7 @@ mod loaded {
         csrColIndA: *const ::core::ffi::c_int,
         p: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrsymamdHost)(
-            handle,
-            n,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrColIndA,
-            p,
-        )
+        (culib().cusolverSpXcsrsymamdHost)(handle, n, nnzA, descrA, csrRowPtrA, csrColIndA, p)
     }
     pub unsafe fn cusolverSpXcsrsymmdqHost(
         handle: cusolverSpHandle_t,
@@ -17983,16 +16003,7 @@ mod loaded {
         csrColIndA: *const ::core::ffi::c_int,
         p: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrsymmdqHost)(
-            handle,
-            n,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrColIndA,
-            p,
-        )
+        (culib().cusolverSpXcsrsymmdqHost)(handle, n, nnzA, descrA, csrRowPtrA, csrColIndA, p)
     }
     pub unsafe fn cusolverSpXcsrsymrcmHost(
         handle: cusolverSpHandle_t,
@@ -18003,16 +16014,7 @@ mod loaded {
         csrColIndA: *const ::core::ffi::c_int,
         p: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpXcsrsymrcmHost)(
-            handle,
-            n,
-            nnzA,
-            descrA,
-            csrRowPtrA,
-            csrColIndA,
-            p,
-        )
+        (culib().cusolverSpXcsrsymrcmHost)(handle, n, nnzA, descrA, csrRowPtrA, csrColIndA, p)
     }
     pub unsafe fn cusolverSpZcsreigsHost(
         handle: cusolverSpHandle_t,
@@ -18026,8 +16028,7 @@ mod loaded {
         right_upper_corner: cuDoubleComplex,
         num_eigs: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsreigsHost)(
+        (culib().cusolverSpZcsreigsHost)(
             handle,
             m,
             nnz,
@@ -18055,21 +16056,8 @@ mod loaded {
         mu: *mut cuDoubleComplex,
         x: *mut cuDoubleComplex,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsreigvsi)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            eps,
-            mu,
-            x,
+        (culib().cusolverSpZcsreigvsi)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, eps, mu, x,
         )
     }
     pub unsafe fn cusolverSpZcsreigvsiHost(
@@ -18087,21 +16075,8 @@ mod loaded {
         mu: *mut cuDoubleComplex,
         x: *mut cuDoubleComplex,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsreigvsiHost)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            mu0,
-            x0,
-            maxite,
-            tol,
-            mu,
-            x,
+        (culib().cusolverSpZcsreigvsiHost)(
+            handle, m, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, mu0, x0, maxite, tol, mu, x,
         )
     }
     pub unsafe fn cusolverSpZcsrlsqvqrHost(
@@ -18120,21 +16095,8 @@ mod loaded {
         p: *mut ::core::ffi::c_int,
         min_norm: *mut f64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrlsqvqrHost)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            tol,
-            rankA,
-            x,
-            p,
+        (culib().cusolverSpZcsrlsqvqrHost)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, tol, rankA, x, p,
             min_norm,
         )
     }
@@ -18152,8 +16114,7 @@ mod loaded {
         x: *mut cuDoubleComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrlsvchol)(
+        (culib().cusolverSpZcsrlsvchol)(
             handle,
             m,
             nnz,
@@ -18182,8 +16143,7 @@ mod loaded {
         x: *mut cuDoubleComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrlsvcholHost)(
+        (culib().cusolverSpZcsrlsvcholHost)(
             handle,
             m,
             nnz,
@@ -18212,8 +16172,7 @@ mod loaded {
         x: *mut cuDoubleComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrlsvluHost)(
+        (culib().cusolverSpZcsrlsvluHost)(
             handle,
             n,
             nnzA,
@@ -18242,8 +16201,7 @@ mod loaded {
         x: *mut cuDoubleComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrlsvqr)(
+        (culib().cusolverSpZcsrlsvqr)(
             handle,
             m,
             nnz,
@@ -18272,8 +16230,7 @@ mod loaded {
         x: *mut cuDoubleComplex,
         singularity: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrlsvqrHost)(
+        (culib().cusolverSpZcsrlsvqrHost)(
             handle,
             m,
             nnz,
@@ -18302,8 +16259,7 @@ mod loaded {
         internalDataInBytes: *mut usize,
         workspaceInBytes: *mut usize,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrqrBufferInfoBatched)(
+        (culib().cusolverSpZcsrqrBufferInfoBatched)(
             handle,
             m,
             n,
@@ -18333,20 +16289,8 @@ mod loaded {
         info: csrqrInfo_t,
         pBuffer: *mut ::core::ffi::c_void,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrqrsvBatched)(
-            handle,
-            m,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            b,
-            x,
-            batchSize,
-            info,
+        (culib().cusolverSpZcsrqrsvBatched)(
+            handle, m, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, b, x, batchSize, info,
             pBuffer,
         )
     }
@@ -18361,17 +16305,8 @@ mod loaded {
         P: *mut ::core::ffi::c_int,
         numnz: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverSpZcsrzfdHost)(
-            handle,
-            n,
-            nnz,
-            descrA,
-            csrValA,
-            csrRowPtrA,
-            csrColIndA,
-            P,
-            numnz,
+        (culib().cusolverSpZcsrzfdHost)(
+            handle, n, nnz, descrA, csrValA, csrRowPtrA, csrColIndA, P, numnz,
         )
     }
     pub struct Lib {
@@ -18721,7 +16656,8 @@ mod loaded {
             strideV: ::core::ffi::c_longlong,
             lwork: *mut ::core::ffi::c_int,
             batchSize: ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnCgesvdj: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             jobz: cusolverEigMode_t,
@@ -19144,18 +17080,14 @@ mod loaded {
             d_info: *mut ::core::ffi::c_int,
             batchSize: ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverDnCreate: unsafe extern "C" fn(
-            handle: *mut cusolverDnHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnCreateGesvdjInfo: unsafe extern "C" fn(
-            info: *mut gesvdjInfo_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnCreateParams: unsafe extern "C" fn(
-            params: *mut cusolverDnParams_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnCreateSyevjInfo: unsafe extern "C" fn(
-            info: *mut syevjInfo_t,
-        ) -> cusolverStatus_t,
+        pub cusolverDnCreate:
+            unsafe extern "C" fn(handle: *mut cusolverDnHandle_t) -> cusolverStatus_t,
+        pub cusolverDnCreateGesvdjInfo:
+            unsafe extern "C" fn(info: *mut gesvdjInfo_t) -> cusolverStatus_t,
+        pub cusolverDnCreateParams:
+            unsafe extern "C" fn(params: *mut cusolverDnParams_t) -> cusolverStatus_t,
+        pub cusolverDnCreateSyevjInfo:
+            unsafe extern "C" fn(info: *mut syevjInfo_t) -> cusolverStatus_t,
         pub cusolverDnCsytrf: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             uplo: cublasFillMode_t,
@@ -19620,18 +17552,12 @@ mod loaded {
             dWorkspace: *mut ::core::ffi::c_void,
             lwork_bytes: *mut usize,
         ) -> cusolverStatus_t,
-        pub cusolverDnDestroy: unsafe extern "C" fn(
-            handle: cusolverDnHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnDestroyGesvdjInfo: unsafe extern "C" fn(
-            info: gesvdjInfo_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnDestroyParams: unsafe extern "C" fn(
-            params: cusolverDnParams_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnDestroySyevjInfo: unsafe extern "C" fn(
-            info: syevjInfo_t,
-        ) -> cusolverStatus_t,
+        pub cusolverDnDestroy: unsafe extern "C" fn(handle: cusolverDnHandle_t) -> cusolverStatus_t,
+        pub cusolverDnDestroyGesvdjInfo:
+            unsafe extern "C" fn(info: gesvdjInfo_t) -> cusolverStatus_t,
+        pub cusolverDnDestroyParams:
+            unsafe extern "C" fn(params: cusolverDnParams_t) -> cusolverStatus_t,
+        pub cusolverDnDestroySyevjInfo: unsafe extern "C" fn(info: syevjInfo_t) -> cusolverStatus_t,
         pub cusolverDnDgebrd: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             m: ::core::ffi::c_int,
@@ -19737,7 +17663,8 @@ mod loaded {
             strideV: ::core::ffi::c_longlong,
             lwork: *mut ::core::ffi::c_int,
             batchSize: ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnDgesvdj: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             jobz: cusolverEigMode_t,
@@ -20396,16 +18323,14 @@ mod loaded {
             computeType: cudaDataType,
             workspaceInBytes: *mut usize,
         ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
         pub cusolverDnGetDeterministicMode: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             mode: *mut cusolverDeterministicMode_t,
@@ -20454,12 +18379,10 @@ mod loaded {
             ldb: i64,
             info: *mut ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverDnIRSInfosCreate: unsafe extern "C" fn(
-            infos_ptr: *mut cusolverDnIRSInfos_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSInfosDestroy: unsafe extern "C" fn(
-            infos: cusolverDnIRSInfos_t,
-        ) -> cusolverStatus_t,
+        pub cusolverDnIRSInfosCreate:
+            unsafe extern "C" fn(infos_ptr: *mut cusolverDnIRSInfos_t) -> cusolverStatus_t,
+        pub cusolverDnIRSInfosDestroy:
+            unsafe extern "C" fn(infos: cusolverDnIRSInfos_t) -> cusolverStatus_t,
         pub cusolverDnIRSInfosGetMaxIters: unsafe extern "C" fn(
             infos: cusolverDnIRSInfos_t,
             maxiters: *mut cusolver_int_t,
@@ -20476,21 +18399,16 @@ mod loaded {
             infos: cusolverDnIRSInfos_t,
             residual_history: *mut *mut ::core::ffi::c_void,
         ) -> cusolverStatus_t,
-        pub cusolverDnIRSInfosRequestResidual: unsafe extern "C" fn(
-            infos: cusolverDnIRSInfos_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSParamsCreate: unsafe extern "C" fn(
-            params_ptr: *mut cusolverDnIRSParams_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSParamsDestroy: unsafe extern "C" fn(
-            params: cusolverDnIRSParams_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSParamsDisableFallback: unsafe extern "C" fn(
-            params: cusolverDnIRSParams_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSParamsEnableFallback: unsafe extern "C" fn(
-            params: cusolverDnIRSParams_t,
-        ) -> cusolverStatus_t,
+        pub cusolverDnIRSInfosRequestResidual:
+            unsafe extern "C" fn(infos: cusolverDnIRSInfos_t) -> cusolverStatus_t,
+        pub cusolverDnIRSParamsCreate:
+            unsafe extern "C" fn(params_ptr: *mut cusolverDnIRSParams_t) -> cusolverStatus_t,
+        pub cusolverDnIRSParamsDestroy:
+            unsafe extern "C" fn(params: cusolverDnIRSParams_t) -> cusolverStatus_t,
+        pub cusolverDnIRSParamsDisableFallback:
+            unsafe extern "C" fn(params: cusolverDnIRSParams_t) -> cusolverStatus_t,
+        pub cusolverDnIRSParamsEnableFallback:
+            unsafe extern "C" fn(params: cusolverDnIRSParams_t) -> cusolverStatus_t,
         pub cusolverDnIRSParamsGetMaxIters: unsafe extern "C" fn(
             params: cusolverDnIRSParams_t,
             maxiters: *mut cusolver_int_t,
@@ -20506,28 +18424,28 @@ mod loaded {
         pub cusolverDnIRSParamsSetRefinementSolver: unsafe extern "C" fn(
             params: cusolverDnIRSParams_t,
             refinement_solver: cusolverIRSRefinement_t,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnIRSParamsSetSolverLowestPrecision: unsafe extern "C" fn(
             params: cusolverDnIRSParams_t,
             solver_lowest_precision: cusolverPrecType_t,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnIRSParamsSetSolverMainPrecision: unsafe extern "C" fn(
             params: cusolverDnIRSParams_t,
             solver_main_precision: cusolverPrecType_t,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnIRSParamsSetSolverPrecisions: unsafe extern "C" fn(
             params: cusolverDnIRSParams_t,
             solver_main_precision: cusolverPrecType_t,
             solver_lowest_precision: cusolverPrecType_t,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSParamsSetTol: unsafe extern "C" fn(
-            params: cusolverDnIRSParams_t,
-            val: f64,
-        ) -> cusolverStatus_t,
-        pub cusolverDnIRSParamsSetTolInner: unsafe extern "C" fn(
-            params: cusolverDnIRSParams_t,
-            val: f64,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
+        pub cusolverDnIRSParamsSetTol:
+            unsafe extern "C" fn(params: cusolverDnIRSParams_t, val: f64) -> cusolverStatus_t,
+        pub cusolverDnIRSParamsSetTolInner:
+            unsafe extern "C" fn(params: cusolverDnIRSParams_t, val: f64) -> cusolverStatus_t,
         pub cusolverDnIRSXgels: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             gels_irs_params: cusolverDnIRSParams_t,
@@ -20578,106 +18496,88 @@ mod loaded {
             nrhs: cusolver_int_t,
             lwork_bytes: *mut usize,
         ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
         pub cusolverDnLoggerForceDisable: unsafe extern "C" fn() -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
-        pub cusolverDnLoggerOpenFile: unsafe extern "C" fn(
-            logFile: *const ::core::ffi::c_char,
-        ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
-        pub cusolverDnLoggerSetCallback: unsafe extern "C" fn(
-            callback: cusolverDnLoggerCallback_t,
-        ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
-        pub cusolverDnLoggerSetFile: unsafe extern "C" fn(
-            file: *mut FILE,
-        ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
-        pub cusolverDnLoggerSetLevel: unsafe extern "C" fn(
-            level: ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
-        pub cusolverDnLoggerSetMask: unsafe extern "C" fn(
-            mask: ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
+        pub cusolverDnLoggerOpenFile:
+            unsafe extern "C" fn(logFile: *const ::core::ffi::c_char) -> cusolverStatus_t,
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
+        pub cusolverDnLoggerSetCallback:
+            unsafe extern "C" fn(callback: cusolverDnLoggerCallback_t) -> cusolverStatus_t,
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
+        pub cusolverDnLoggerSetFile: unsafe extern "C" fn(file: *mut FILE) -> cusolverStatus_t,
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
+        pub cusolverDnLoggerSetLevel:
+            unsafe extern "C" fn(level: ::core::ffi::c_int) -> cusolverStatus_t,
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
+        pub cusolverDnLoggerSetMask:
+            unsafe extern "C" fn(mask: ::core::ffi::c_int) -> cusolverStatus_t,
         pub cusolverDnPotrf: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             params: cusolverDnParams_t,
@@ -20961,16 +18861,14 @@ mod loaded {
             function: cusolverDnFunction_t,
             algo: cusolverAlgMode_t,
         ) -> cusolverStatus_t,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080"
+        ))]
         pub cusolverDnSetDeterministicMode: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             mode: cusolverDeterministicMode_t,
@@ -21084,7 +18982,8 @@ mod loaded {
             strideV: ::core::ffi::c_longlong,
             lwork: *mut ::core::ffi::c_int,
             batchSize: ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnSgesvdj: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             jobz: cusolverEigMode_t,
@@ -21886,10 +19785,8 @@ mod loaded {
             info: gesvdjInfo_t,
             sort_svd: ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverDnXgesvdjSetTolerance: unsafe extern "C" fn(
-            info: gesvdjInfo_t,
-            tolerance: f64,
-        ) -> cusolverStatus_t,
+        pub cusolverDnXgesvdjSetTolerance:
+            unsafe extern "C" fn(info: gesvdjInfo_t, tolerance: f64) -> cusolverStatus_t,
         pub cusolverDnXgesvdp: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             params: cusolverDnParams_t,
@@ -22056,9 +19953,7 @@ mod loaded {
             bufferOnHost: *mut ::core::ffi::c_void,
             workspaceInBytesOnHost: usize,
         ) -> cusolverStatus_t,
-        #[cfg(
-            any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080")
-        )]
+        #[cfg(any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080"))]
         pub cusolverDnXlarft: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             params: cusolverDnParams_t,
@@ -22100,9 +19995,7 @@ mod loaded {
             workspaceInBytesOnDevice: *mut usize,
             workspaceInBytesOnHost: *mut usize,
         ) -> cusolverStatus_t,
-        #[cfg(
-            any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080")
-        )]
+        #[cfg(any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080"))]
         pub cusolverDnXlarft_bufferSize: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             params: cusolverDnParams_t,
@@ -22296,10 +20189,8 @@ mod loaded {
             info: syevjInfo_t,
             sort_eig: ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverDnXsyevjSetTolerance: unsafe extern "C" fn(
-            info: syevjInfo_t,
-            tolerance: f64,
-        ) -> cusolverStatus_t,
+        pub cusolverDnXsyevjSetTolerance:
+            unsafe extern "C" fn(info: syevjInfo_t, tolerance: f64) -> cusolverStatus_t,
         pub cusolverDnXsytrs: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             uplo: cublasFillMode_t,
@@ -22763,7 +20654,8 @@ mod loaded {
             strideV: ::core::ffi::c_longlong,
             lwork: *mut ::core::ffi::c_int,
             batchSize: ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
+        )
+            -> cusolverStatus_t,
         pub cusolverDnZgesvdj: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             jobz: cusolverEigMode_t,
@@ -23354,12 +21246,10 @@ mod loaded {
             type_: libraryPropertyType,
             value: *mut ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverGetVersion: unsafe extern "C" fn(
-            version: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgCreate: unsafe extern "C" fn(
-            handle: *mut cusolverMgHandle_t,
-        ) -> cusolverStatus_t,
+        pub cusolverGetVersion:
+            unsafe extern "C" fn(version: *mut ::core::ffi::c_int) -> cusolverStatus_t,
+        pub cusolverMgCreate:
+            unsafe extern "C" fn(handle: *mut cusolverMgHandle_t) -> cusolverStatus_t,
         pub cusolverMgCreateDeviceGrid: unsafe extern "C" fn(
             grid: *mut cudaLibMgGrid_t,
             numRowDevices: i32,
@@ -23376,15 +21266,10 @@ mod loaded {
             dataType: cudaDataType,
             grid: cudaLibMgGrid_t,
         ) -> cusolverStatus_t,
-        pub cusolverMgDestroy: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverMgDestroyGrid: unsafe extern "C" fn(
-            grid: cudaLibMgGrid_t,
-        ) -> cusolverStatus_t,
-        pub cusolverMgDestroyMatrixDesc: unsafe extern "C" fn(
-            desc: cudaLibMgMatrixDesc_t,
-        ) -> cusolverStatus_t,
+        pub cusolverMgDestroy: unsafe extern "C" fn(handle: cusolverMgHandle_t) -> cusolverStatus_t,
+        pub cusolverMgDestroyGrid: unsafe extern "C" fn(grid: cudaLibMgGrid_t) -> cusolverStatus_t,
+        pub cusolverMgDestroyMatrixDesc:
+            unsafe extern "C" fn(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t,
         pub cusolverMgDeviceSelect: unsafe extern "C" fn(
             handle: cusolverMgHandle_t,
             nbDevices: ::core::ffi::c_int,
@@ -23571,15 +21456,11 @@ mod loaded {
             Mi: *mut *mut ::core::ffi::c_int,
             Mx: *mut *mut f64,
         ) -> cusolverStatus_t,
-        pub cusolverRfAnalyze: unsafe extern "C" fn(
-            handle: cusolverRfHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverRfBatchAnalyze: unsafe extern "C" fn(
-            handle: cusolverRfHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverRfBatchRefactor: unsafe extern "C" fn(
-            handle: cusolverRfHandle_t,
-        ) -> cusolverStatus_t,
+        pub cusolverRfAnalyze: unsafe extern "C" fn(handle: cusolverRfHandle_t) -> cusolverStatus_t,
+        pub cusolverRfBatchAnalyze:
+            unsafe extern "C" fn(handle: cusolverRfHandle_t) -> cusolverStatus_t,
+        pub cusolverRfBatchRefactor:
+            unsafe extern "C" fn(handle: cusolverRfHandle_t) -> cusolverStatus_t,
         pub cusolverRfBatchResetValues: unsafe extern "C" fn(
             batchSize: ::core::ffi::c_int,
             n: ::core::ffi::c_int,
@@ -23624,12 +21505,9 @@ mod loaded {
             handle: cusolverRfHandle_t,
             position: *mut ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverRfCreate: unsafe extern "C" fn(
-            handle: *mut cusolverRfHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverRfDestroy: unsafe extern "C" fn(
-            handle: cusolverRfHandle_t,
-        ) -> cusolverStatus_t,
+        pub cusolverRfCreate:
+            unsafe extern "C" fn(handle: *mut cusolverRfHandle_t) -> cusolverStatus_t,
+        pub cusolverRfDestroy: unsafe extern "C" fn(handle: cusolverRfHandle_t) -> cusolverStatus_t,
         pub cusolverRfExtractBundledFactorsHost: unsafe extern "C" fn(
             handle: cusolverRfHandle_t,
             h_nnzM: *mut ::core::ffi::c_int,
@@ -23671,9 +21549,8 @@ mod loaded {
             handle: cusolverRfHandle_t,
             fastMode: *mut cusolverRfResetValuesFastMode_t,
         ) -> cusolverStatus_t,
-        pub cusolverRfRefactor: unsafe extern "C" fn(
-            handle: cusolverRfHandle_t,
-        ) -> cusolverStatus_t,
+        pub cusolverRfRefactor:
+            unsafe extern "C" fn(handle: cusolverRfHandle_t) -> cusolverStatus_t,
         pub cusolverRfResetValues: unsafe extern "C" fn(
             n: ::core::ffi::c_int,
             nnzA: ::core::ffi::c_int,
@@ -23917,12 +21794,10 @@ mod loaded {
             P: *mut ::core::ffi::c_int,
             numnz: *mut ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverSpCreate: unsafe extern "C" fn(
-            handle: *mut cusolverSpHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverSpCreateCsrqrInfo: unsafe extern "C" fn(
-            info: *mut csrqrInfo_t,
-        ) -> cusolverStatus_t,
+        pub cusolverSpCreate:
+            unsafe extern "C" fn(handle: *mut cusolverSpHandle_t) -> cusolverStatus_t,
+        pub cusolverSpCreateCsrqrInfo:
+            unsafe extern "C" fn(info: *mut csrqrInfo_t) -> cusolverStatus_t,
         pub cusolverSpDcsreigsHost: unsafe extern "C" fn(
             handle: cusolverSpHandle_t,
             m: ::core::ffi::c_int,
@@ -24091,12 +21966,8 @@ mod loaded {
             P: *mut ::core::ffi::c_int,
             numnz: *mut ::core::ffi::c_int,
         ) -> cusolverStatus_t,
-        pub cusolverSpDestroy: unsafe extern "C" fn(
-            handle: cusolverSpHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverSpDestroyCsrqrInfo: unsafe extern "C" fn(
-            info: csrqrInfo_t,
-        ) -> cusolverStatus_t,
+        pub cusolverSpDestroy: unsafe extern "C" fn(handle: cusolverSpHandle_t) -> cusolverStatus_t,
+        pub cusolverSpDestroyCsrqrInfo: unsafe extern "C" fn(info: csrqrInfo_t) -> cusolverStatus_t,
         pub cusolverSpGetStream: unsafe extern "C" fn(
             handle: cusolverSpHandle_t,
             streamId: *mut cudaStream_t,
@@ -25169,16 +23040,14 @@ mod loaded {
                 .get(b"cusolverDnGesvd_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnGetDeterministicMode = __library
                 .get(b"cusolverDnGetDeterministicMode\0")
                 .map(|sym| *sym)
@@ -25295,110 +23164,98 @@ mod loaded {
                 .get(b"cusolverDnIRSXgesv_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnLoggerForceDisable = __library
                 .get(b"cusolverDnLoggerForceDisable\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnLoggerOpenFile = __library
                 .get(b"cusolverDnLoggerOpenFile\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnLoggerSetCallback = __library
                 .get(b"cusolverDnLoggerSetCallback\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnLoggerSetFile = __library
                 .get(b"cusolverDnLoggerSetFile\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnLoggerSetLevel = __library
                 .get(b"cusolverDnLoggerSetLevel\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnLoggerSetMask = __library
                 .get(b"cusolverDnLoggerSetMask\0")
                 .map(|sym| *sym)
@@ -25483,16 +23340,14 @@ mod loaded {
                 .get(b"cusolverDnSetAdvOptions\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080"
+            ))]
             let cusolverDnSetDeterministicMode = __library
                 .get(b"cusolverDnSetDeterministicMode\0")
                 .map(|sym| *sym)
@@ -25816,13 +23671,7 @@ mod loaded {
                 .get(b"cusolverDnXlarft\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080"))]
             let cusolverDnXlarft = __library
                 .get(b"cusolverDnXlarft\0")
                 .map(|sym| *sym)
@@ -25832,13 +23681,7 @@ mod loaded {
                 .get(b"cusolverDnXlarft_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080"
-                )
-            )]
+            #[cfg(any(feature = "cuda-12050", feature = "cuda-12060", feature = "cuda-12080"))]
             let cusolverDnXlarft_bufferSize = __library
                 .get(b"cusolverDnXlarft_bufferSize\0")
                 .map(|sym| *sym)
@@ -26813,16 +24656,14 @@ mod loaded {
                 cusolverDnGeqrf_bufferSize,
                 cusolverDnGesvd,
                 cusolverDnGesvd_bufferSize,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnGetDeterministicMode,
                 cusolverDnGetStream,
                 cusolverDnGetrf,
@@ -26852,95 +24693,83 @@ mod loaded {
                 cusolverDnIRSXgels_bufferSize,
                 cusolverDnIRSXgesv,
                 cusolverDnIRSXgesv_bufferSize,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnLoggerForceDisable,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnLoggerOpenFile,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnLoggerSetCallback,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnLoggerSetFile,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnLoggerSetLevel,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnLoggerSetMask,
                 cusolverDnPotrf,
                 cusolverDnPotrf_bufferSize,
@@ -26962,16 +24791,14 @@ mod loaded {
                 cusolverDnSXgesv,
                 cusolverDnSXgesv_bufferSize,
                 cusolverDnSetAdvOptions,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnSetDeterministicMode,
                 cusolverDnSetStream,
                 cusolverDnSgebrd,
@@ -27055,23 +24882,19 @@ mod loaded {
                 cusolverDnXgetrs,
                 #[cfg(any(feature = "cuda-12040"))]
                 cusolverDnXlarft,
-                #[cfg(
-                    any(
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnXlarft,
                 #[cfg(any(feature = "cuda-12040"))]
                 cusolverDnXlarft_bufferSize,
-                #[cfg(
-                    any(
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080"
+                ))]
                 cusolverDnXlarft_bufferSize,
                 cusolverDnXpotrf,
                 cusolverDnXpotrf_bufferSize,
