@@ -1,6 +1,6 @@
 [package]
 name = "cudarc"
-version = "0.16.3"
+version = "0.16.4"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
