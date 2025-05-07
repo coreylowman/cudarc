@@ -139,7 +139,12 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                     functions: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
                     vars: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
                 },
-                blocklist: Filters::none(),
+                blocklist: Filters {
+                    // NOTE: See https://github.com/coreylowman/cudarc/issues/397
+                    types: vec![],
+                    functions: vec!["cudaDeviceGetNvSciSyncAttributes".to_string()],
+                    vars: vec![],
+                },
                 libs: vec!["cudart".to_string()],
                 redist: None,
             },
