@@ -7529,11 +7529,6 @@ extern "C" {
         memPool: *mut cudaMemPool_t,
         device: ::core::ffi::c_int,
     ) -> cudaError_t;
-    pub fn cudaDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::core::ffi::c_void,
-        device: ::core::ffi::c_int,
-        flags: ::core::ffi::c_int,
-    ) -> cudaError_t;
     pub fn cudaDeviceGetP2PAttribute(
         value: *mut ::core::ffi::c_int,
         attr: cudaDeviceP2PAttr,
@@ -9682,13 +9677,6 @@ mod loaded {
         device: ::core::ffi::c_int,
     ) -> cudaError_t {
         (culib().cudaDeviceGetMemPool)(memPool, device)
-    }
-    pub unsafe fn cudaDeviceGetNvSciSyncAttributes(
-        nvSciSyncAttrList: *mut ::core::ffi::c_void,
-        device: ::core::ffi::c_int,
-        flags: ::core::ffi::c_int,
-    ) -> cudaError_t {
-        (culib().cudaDeviceGetNvSciSyncAttributes)(nvSciSyncAttrList, device, flags)
     }
     pub unsafe fn cudaDeviceGetP2PAttribute(
         value: *mut ::core::ffi::c_int,
@@ -12627,11 +12615,6 @@ mod loaded {
             memPool: *mut cudaMemPool_t,
             device: ::core::ffi::c_int,
         ) -> cudaError_t,
-        pub cudaDeviceGetNvSciSyncAttributes: unsafe extern "C" fn(
-            nvSciSyncAttrList: *mut ::core::ffi::c_void,
-            device: ::core::ffi::c_int,
-            flags: ::core::ffi::c_int,
-        ) -> cudaError_t,
         pub cudaDeviceGetP2PAttribute: unsafe extern "C" fn(
             value: *mut ::core::ffi::c_int,
             attr: cudaDeviceP2PAttr,
@@ -14768,10 +14751,6 @@ mod loaded {
                 .get(b"cudaDeviceGetMemPool\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cudaDeviceGetNvSciSyncAttributes = __library
-                .get(b"cudaDeviceGetNvSciSyncAttributes\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cudaDeviceGetP2PAttribute = __library
                 .get(b"cudaDeviceGetP2PAttribute\0")
                 .map(|sym| *sym)
@@ -16568,7 +16547,6 @@ mod loaded {
                 cudaDeviceGetGraphMemAttribute,
                 cudaDeviceGetLimit,
                 cudaDeviceGetMemPool,
-                cudaDeviceGetNvSciSyncAttributes,
                 cudaDeviceGetP2PAttribute,
                 cudaDeviceGetPCIBusId,
                 cudaDeviceGetSharedMemConfig,
