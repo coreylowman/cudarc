@@ -53,6 +53,7 @@ pub struct LaunchArgs<'a> {
     pub(super) records: Vec<&'a CudaEvent>,
     pub(super) args: Vec<*mut std::ffi::c_void>,
     pub(super) flags: Option<sys::CUevent_flags>,
+    pub(super) enable_automatic_fuel_check: bool,
 }
 
 impl CudaStream {
@@ -68,6 +69,7 @@ impl CudaStream {
             records: Vec::new(),
             args: Vec::new(),
             flags: None,
+            enable_automatic_fuel_check: false,
         }
     }
 }
@@ -232,7 +234,16 @@ impl LaunchArgs<'_> {
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        Ok(start_event.zip(end_event))
+        let result = Ok(start_event.zip(end_event));
+        if self.enable_automatic_fuel_check {
+            match self.perform_fuel_check() {
+                Ok(()) => {}
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        }
+        result
     }
 
     /// Launch a cooperative kernel.
@@ -267,7 +278,25 @@ impl LaunchArgs<'_> {
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        Ok(start_event.zip(end_event))
+        let result = Ok(start_event.zip(end_event));
+        if self.enable_automatic_fuel_check {
+            match self.perform_fuel_check() {
+                Ok(()) => {}
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        }
+        result
+    }
+
+    pub fn enable_automatic_fuel_check(&mut self) -> &mut Self {
+        self.enable_automatic_fuel_check = true;
+        self
+    }
+
+    fn perform_fuel_check(&self) -> Result<(), DriverError> {
+        return Ok(());
     }
 }
 
