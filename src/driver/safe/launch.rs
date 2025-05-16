@@ -53,6 +53,7 @@ pub struct LaunchArgs<'a> {
     pub(super) records: Vec<&'a CudaEvent>,
     pub(super) args: Vec<*mut std::ffi::c_void>,
     pub(super) flags: Option<sys::CUevent_flags>,
+    pub(super) enable_automatic_fuel_check: bool,
 }
 
 impl CudaStream {
@@ -68,6 +69,7 @@ impl CudaStream {
             records: Vec::new(),
             args: Vec::new(),
             flags: None,
+            enable_automatic_fuel_check: false,
         }
     }
 }
@@ -232,7 +234,16 @@ impl LaunchArgs<'_> {
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        Ok(start_event.zip(end_event))
+        let result = Ok(start_event.zip(end_event));
+        if self.enable_automatic_fuel_check {
+            match self.perform_fuel_check() {
+                Ok(()) => {}
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        }
+        result
     }
 
     /// Launch a cooperative kernel.
@@ -267,7 +278,58 @@ impl LaunchArgs<'_> {
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        Ok(start_event.zip(end_event))
+        let result = Ok(start_event.zip(end_event));
+        if self.enable_automatic_fuel_check {
+            match self.perform_fuel_check() {
+                Ok(()) => {}
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        }
+        result
+    }
+
+    pub fn enable_automatic_fuel_check(&mut self) -> &mut Self {
+        self.enable_automatic_fuel_check = true;
+        self
+    }
+
+    fn perform_fuel_check(&self) -> Result<(), DriverError> {
+        // Try to load and launch a finalization kernel if it exists
+        let finalize_kernel_result = self.func.module.load_function("finalize_kernel");
+        if let Ok(finalize_kernel) = finalize_kernel_result {
+            // Create device memory for the three output parameters
+            let mut d_fuelusage = self.stream.alloc_zeros::<u64>(1)?;
+            let mut d_signature = self.stream.alloc_zeros::<u64>(1)?;
+            let mut d_errorstat = self.stream.alloc_zeros::<u64>(1)?;
+            
+            // Create a minimal config for a 1-thread kernel
+            let cfg = LaunchConfig {
+                grid_dim: (1, 1, 1),
+                block_dim: (1, 1, 1),
+                shared_mem_bytes: 0,
+            };
+            
+            // Launch the finalize kernel with the three parameters
+            unsafe {
+                self.stream
+                    .launch_builder(&finalize_kernel)
+                    .arg(&mut d_fuelusage)
+                    .arg(&mut d_signature)
+                    .arg(&mut d_errorstat)
+                    .launch(cfg)?;
+            }
+            
+            // Optionally: Check the error status to see if anything went wrong
+            // For example, if FUELUSAGE_EXCEEDED, we could return an error
+            let errorstat = self.stream.memcpy_dtov(&d_errorstat)?[0];
+            if errorstat != 0 {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_UNKNOWN));
+            }
+        }
+        
+        Ok(())
     }
 }
 
