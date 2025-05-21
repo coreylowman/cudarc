@@ -206,7 +206,7 @@ impl LaunchArgs<'_> {
     /// and the drop implementation of [CudaSlice] waits on those events to finish,
     /// we will never encounter a use after free situation.
     #[inline(always)]
-    pub unsafe fn launch(
+    unsafe fn inner_launch(
         &mut self,
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
@@ -233,7 +233,15 @@ impl LaunchArgs<'_> {
         for &event in self.records.iter() {
             event.record(self.stream)?;
         }
-        let result = Ok(start_event.zip(end_event));
+        Ok(start_event.zip(end_event))
+    }
+
+    #[inline(always)]
+    pub unsafe fn launch(
+        &mut self,
+        cfg: LaunchConfig,
+    ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
+        let result = self.inner_launch(cfg);
         if self.stream.fuel_check {
             match self.perform_fuel_check() {
                 Ok(()) => {}
@@ -250,7 +258,7 @@ impl LaunchArgs<'_> {
     /// # Safety
     /// See [LaunchArgs::launch()]
     #[inline(always)]
-    pub unsafe fn launch_cooperative(
+    unsafe fn inner_launch_cooperative(
         &mut self,
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
@@ -289,6 +297,24 @@ impl LaunchArgs<'_> {
         result
     }
 
+    #[inline(always)]
+    pub unsafe fn launch_cooperative(
+        &mut self,
+        cfg: LaunchConfig,
+    ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
+        let result = self.inner_launch_cooperative(cfg);
+        if self.stream.fuel_check {
+            match self.perform_fuel_check() {
+                Ok(()) => {}
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        }
+        result
+    }
+
+    #[inline(always)]
     fn perform_fuel_check(&self) -> Result<(), DriverError> {
         // Try to load and launch a finalization kernel if it exists
         let finalize_kernel_result = self.func.module.load_function("finalize_kernel");
@@ -312,9 +338,8 @@ impl LaunchArgs<'_> {
                     .arg(&mut d_fuelusage)
                     .arg(&mut d_signature)
                     .arg(&mut d_errorstat)
-                    .launch(cfg)?;
+                    .inner_launch(cfg)?;
             }
-
             // Optionally: Check the error status to see if anything went wrong
             // For example, if FUELUSAGE_EXCEEDED, we could return an error
             let errorstat = self.stream.memcpy_dtov(&d_errorstat)?[0];
