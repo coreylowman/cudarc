@@ -32,6 +32,7 @@ pub struct CudaContext {
     pub(crate) num_streams: AtomicUsize,
     pub(crate) event_tracking: AtomicBool,
     pub(crate) error_state: AtomicU32,
+    pub(crate) enable_automatic_fuel_check: bool,
 }
 
 unsafe impl Send for CudaContext {}
@@ -77,9 +78,15 @@ impl CudaContext {
             num_streams: AtomicUsize::new(0),
             event_tracking: AtomicBool::new(true),
             error_state: AtomicU32::new(0),
+            enable_automatic_fuel_check: false,
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
+    }
+
+    pub fn enable_automatic_fuel_check(&mut self) -> &mut Self {
+        self.enable_automatic_fuel_check = true;
+        self
     }
 
     /// The number of devices available.

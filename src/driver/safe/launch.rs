@@ -53,7 +53,6 @@ pub struct LaunchArgs<'a> {
     pub(super) records: Vec<&'a CudaEvent>,
     pub(super) args: Vec<*mut std::ffi::c_void>,
     pub(super) flags: Option<sys::CUevent_flags>,
-    pub(super) enable_automatic_fuel_check: bool,
 }
 
 impl CudaStream {
@@ -69,7 +68,6 @@ impl CudaStream {
             records: Vec::new(),
             args: Vec::new(),
             flags: None,
-            enable_automatic_fuel_check: false,
         }
     }
 }
@@ -235,7 +233,7 @@ impl LaunchArgs<'_> {
             event.record(self.stream)?;
         }
         let result = Ok(start_event.zip(end_event));
-        if self.enable_automatic_fuel_check {
+        if self.stream.ctx.enable_automatic_fuel_check {
             match self.perform_fuel_check() {
                 Ok(()) => {}
                 Err(e) => {
@@ -279,7 +277,7 @@ impl LaunchArgs<'_> {
             event.record(self.stream)?;
         }
         let result = Ok(start_event.zip(end_event));
-        if self.enable_automatic_fuel_check {
+        if self.stream.ctx.enable_automatic_fuel_check {
             match self.perform_fuel_check() {
                 Ok(()) => {}
                 Err(e) => {
@@ -290,11 +288,6 @@ impl LaunchArgs<'_> {
         result
     }
 
-    pub fn enable_automatic_fuel_check(&mut self) -> &mut Self {
-        self.enable_automatic_fuel_check = true;
-        self
-    }
-
     fn perform_fuel_check(&self) -> Result<(), DriverError> {
         // Try to load and launch a finalization kernel if it exists
         let finalize_kernel_result = self.func.module.load_function("finalize_kernel");
@@ -303,14 +296,14 @@ impl LaunchArgs<'_> {
             let mut d_fuelusage = self.stream.alloc_zeros::<u64>(1)?;
             let mut d_signature = self.stream.alloc_zeros::<u64>(1)?;
             let mut d_errorstat = self.stream.alloc_zeros::<u64>(1)?;
-            
+
             // Create a minimal config for a 1-thread kernel
             let cfg = LaunchConfig {
                 grid_dim: (1, 1, 1),
                 block_dim: (1, 1, 1),
                 shared_mem_bytes: 0,
             };
-            
+
             // Launch the finalize kernel with the three parameters
             unsafe {
                 self.stream
@@ -320,7 +313,7 @@ impl LaunchArgs<'_> {
                     .arg(&mut d_errorstat)
                     .launch(cfg)?;
             }
-            
+
             // Optionally: Check the error status to see if anything went wrong
             // For example, if FUELUSAGE_EXCEEDED, we could return an error
             let errorstat = self.stream.memcpy_dtov(&d_errorstat)?[0];
@@ -328,7 +321,7 @@ impl LaunchArgs<'_> {
                 return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_UNKNOWN));
             }
         }
-        
+
         Ok(())
     }
 }
