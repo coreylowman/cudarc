@@ -32,7 +32,6 @@ pub struct CudaContext {
     pub(crate) num_streams: AtomicUsize,
     pub(crate) event_tracking: AtomicBool,
     pub(crate) error_state: AtomicU32,
-    pub(crate) enable_automatic_fuel_check: bool,
 }
 
 unsafe impl Send for CudaContext {}
@@ -78,15 +77,9 @@ impl CudaContext {
             num_streams: AtomicUsize::new(0),
             event_tracking: AtomicBool::new(true),
             error_state: AtomicU32::new(0),
-            enable_automatic_fuel_check: false,
         });
         ctx.bind_to_thread()?;
         Ok(ctx)
-    }
-
-    pub fn enable_automatic_fuel_check(&mut self) -> &mut Self {
-        self.enable_automatic_fuel_check = true;
-        self
     }
 
     /// The number of devices available.
@@ -370,6 +363,7 @@ impl CudaEvent {
 pub struct CudaStream {
     pub(crate) cu_stream: sys::CUstream,
     pub(crate) ctx: Arc<CudaContext>,
+    pub(crate) fuel_check: bool,
 }
 
 unsafe impl Send for CudaStream {}
@@ -387,12 +381,21 @@ impl Drop for CudaStream {
 }
 
 impl CudaContext {
+    pub fn fuel_check_stream(self: &Arc<Self>) -> Arc<CudaStream> {
+        Arc::new(CudaStream {
+            cu_stream: std::ptr::null_mut(),
+            ctx: self.clone(),
+            fuel_check: true,
+        })
+    }
+
     /// Get's the default stream for this context (the null ptr stream). Note that context's
     /// on the same device can all submit to the same default stream from separate context objects.
     pub fn default_stream(self: &Arc<Self>) -> Arc<CudaStream> {
         Arc::new(CudaStream {
             cu_stream: std::ptr::null_mut(),
             ctx: self.clone(),
+            fuel_check: false,
         })
     }
 
@@ -410,6 +413,7 @@ impl CudaContext {
         Ok(Arc::new(CudaStream {
             cu_stream,
             ctx: self.clone(),
+            fuel_check: false,
         }))
     }
 }
@@ -423,6 +427,7 @@ impl CudaStream {
         let stream = Arc::new(CudaStream {
             cu_stream,
             ctx: self.ctx.clone(),
+            fuel_check: false,
         });
         stream.join(self)?;
         Ok(stream)

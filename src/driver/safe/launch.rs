@@ -234,7 +234,7 @@ impl LaunchArgs<'_> {
             event.record(self.stream)?;
         }
         let result = Ok(start_event.zip(end_event));
-        if self.stream.ctx.enable_automatic_fuel_check {
+        if self.stream.fuel_check {
             match self.perform_fuel_check() {
                 Ok(()) => {}
                 Err(e) => {
@@ -278,7 +278,7 @@ impl LaunchArgs<'_> {
             event.record(self.stream)?;
         }
         let result = Ok(start_event.zip(end_event));
-        if self.stream.ctx.enable_automatic_fuel_check {
+        if self.stream.fuel_check {
             match self.perform_fuel_check() {
                 Ok(()) => {}
                 Err(e) => {
