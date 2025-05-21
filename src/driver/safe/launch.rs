@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::vec::Vec;
 
 use crate::driver::{
@@ -47,7 +48,7 @@ impl LaunchConfig {
 /// 2. Add a custom implementation of `impl<'a> PushKernelArg<T> for LaunchArgs<'a>`, where `T` is your type.
 #[derive(Debug)]
 pub struct LaunchArgs<'a> {
-    pub(super) stream: &'a CudaStream,
+    pub(super) stream: &'a Arc<CudaStream>,
     pub(super) func: &'a CudaFunction,
     pub(super) waits: Vec<&'a CudaEvent>,
     pub(super) records: Vec<&'a CudaEvent>,
@@ -60,7 +61,7 @@ impl CudaStream {
     ///
     /// Add arguments to the builder using [LaunchArgs::arg()], and submit it to the stream
     /// using [LaunchArgs::launch()].
-    pub fn launch_builder<'a>(&'a self, func: &'a CudaFunction) -> LaunchArgs<'a> {
+    pub fn launch_builder<'a>(self: &'a Arc<Self>, func: &'a CudaFunction) -> LaunchArgs<'a> {
         LaunchArgs {
             stream: self,
             func,
