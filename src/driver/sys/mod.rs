@@ -5168,6 +5168,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_GRAPH_EXEC_UPDATE_FAILURE = 910,
     CUDA_ERROR_EXTERNAL_DEVICE = 911,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-11070"))]
 #[repr(u32)]
@@ -5261,6 +5262,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_GRAPH_EXEC_UPDATE_FAILURE = 910,
     CUDA_ERROR_EXTERNAL_DEVICE = 911,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-11080"))]
 #[repr(u32)]
@@ -5356,6 +5358,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_EXTERNAL_DEVICE = 911,
     CUDA_ERROR_INVALID_CLUSTER_SIZE = 912,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-12000"))]
 #[repr(u32)]
@@ -5453,6 +5456,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_EXTERNAL_DEVICE = 911,
     CUDA_ERROR_INVALID_CLUSTER_SIZE = 912,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-12010", feature = "cuda-12020"))]
 #[repr(u32)]
@@ -5551,6 +5555,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_EXTERNAL_DEVICE = 911,
     CUDA_ERROR_INVALID_CLUSTER_SIZE = 912,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-12030"))]
 #[repr(u32)]
@@ -5650,6 +5655,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_EXTERNAL_DEVICE = 911,
     CUDA_ERROR_INVALID_CLUSTER_SIZE = 912,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-12040", feature = "cuda-12050", feature = "cuda-12060"))]
 #[repr(u32)]
@@ -5752,6 +5758,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_INVALID_RESOURCE_TYPE = 914,
     CUDA_ERROR_INVALID_RESOURCE_CONFIGURATION = 915,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
 #[repr(u32)]
@@ -5857,6 +5864,7 @@ pub enum cudaError_enum {
     CUDA_ERROR_INVALID_RESOURCE_CONFIGURATION = 915,
     CUDA_ERROR_KEY_ROTATION = 916,
     CUDA_ERROR_UNKNOWN = 999,
+    TIG_ERROR_OUT_OF_FUEL = 1000,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]

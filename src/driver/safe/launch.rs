@@ -344,7 +344,7 @@ impl LaunchArgs<'_> {
             // For example, if FUELUSAGE_EXCEEDED, we could return an error
             let errorstat = self.stream.memcpy_dtov(&d_errorstat)?[0];
             if errorstat != 0 {
-                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_UNKNOWN));
+                return Err(DriverError(sys::cudaError_enum::TIG_ERROR_OUT_OF_FUEL));
             }
         }
 

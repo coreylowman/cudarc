@@ -35,6 +35,9 @@ impl DriverError {
     ///
     /// See [cuGetErrorName() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__ERROR.html#group__CUDA__ERROR_1g2c4ac087113652bb3d1f95bf2513c468)
     pub fn error_name(&self) -> Result<&CStr, DriverError> {
+        if self.0 == sys::CUresult::TIG_ERROR_OUT_OF_FUEL {
+            return Ok(c"TIG_ERROR_OUT_OF_FUEL");
+        }
         let mut err_str = MaybeUninit::uninit();
         unsafe {
             sys::cuGetErrorName(self.0, err_str.as_mut_ptr()).result()?;
@@ -46,6 +49,9 @@ impl DriverError {
     ///
     /// See [cuGetErrorString() docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__ERROR.html#group__CUDA__ERROR_1g72758fcaf05b5c7fac5c25ead9445ada)
     pub fn error_string(&self) -> Result<&CStr, DriverError> {
+        if self.0 == sys::CUresult::TIG_ERROR_OUT_OF_FUEL {
+            return Ok(c"ran out of fuel");
+        }
         let mut err_str = MaybeUninit::uninit();
         unsafe {
             sys::cuGetErrorString(self.0, err_str.as_mut_ptr()).result()?;
