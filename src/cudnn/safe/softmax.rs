@@ -6,7 +6,9 @@ use std::sync::Arc;
 /// A handle for the Softmax operation. Create with [`Cudnn::create_softmax()`]
 #[derive(Debug)]
 pub struct Softmax<T> {
+    #[allow(unused)]
     pub(crate) handle: Arc<Cudnn>,
+    #[allow(unused)]
     pub(crate) mode: sys::cudnnSoftmaxMode_t,
     pub(crate) marker: PhantomData<T>,
 }

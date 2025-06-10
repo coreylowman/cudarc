@@ -43,6 +43,7 @@ pub use self::pooling::{PoolingDescriptor, PoolingForward};
 pub use self::reduce::{FlatIndices, NoIndices, ReduceTensor, ReductionDescriptor};
 pub use super::result::CudnnError;
 pub use activation::{ActivationDescriptor, ActivationForward};
+pub use softmax::{Softmax, SoftmaxForward};
 
 #[cfg(test)]
 mod tests {

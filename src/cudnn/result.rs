@@ -881,6 +881,9 @@ pub unsafe fn activation_forward(
     sys::cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y).result()
 }
 
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn softmax_forward(
     handle: sys::cudnnHandle_t,
