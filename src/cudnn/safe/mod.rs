@@ -21,6 +21,7 @@ mod conv;
 mod core;
 mod pooling;
 mod reduce;
+mod softmax;
 
 #[allow(deprecated)]
 pub use self::conv::{
