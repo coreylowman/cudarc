@@ -883,9 +883,9 @@ pub unsafe fn activation_forward(
 
 #[allow(clippy::too_many_arguments)]
 pub unsafe fn softmax_forward(
-    handle: cudnnHandle_t,
-    algo: cudnnSoftmaxAlgorithm_t,
-    mode: cudnnSoftmaxMode_t,
+    handle: sys::cudnnHandle_t,
+    algo: sys::cudnnSoftmaxAlgorithm_t,
+    mode: sys::cudnnSoftmaxMode_t,
     alpha: *const ::core::ffi::c_void,
     x_desc: sys::cudnnTensorDescriptor_t,
     x: *const ::core::ffi::c_void,
@@ -893,5 +893,5 @@ pub unsafe fn softmax_forward(
     y_desc: sys::cudnnTensorDescriptor_t,
     y: *mut ::core::ffi::c_void,
 ) -> Result<(), CudnnError> {
-    sys::cudnnSoftmaxForward(handle, algo, mode, alpha, x_desc, x, beta, y_desc, y)
+    sys::cudnnSoftmaxForward(handle, algo, mode, alpha, x_desc, x, beta, y_desc, y).result()
 }

@@ -1,7 +1,7 @@
 use crate::cudnn::{result, sys, Cudnn, CudnnDataType, CudnnError, TensorDescriptor};
 use crate::driver::{DevicePtr, DevicePtrMut};
-use alloc::sync::Arc;
 use core::marker::PhantomData;
+use std::sync::Arc;
 
 /// A handle for the Softmax operation. Create with [`Cudnn::create_softmax()`]
 #[derive(Debug)]

@@ -47,6 +47,7 @@ pub use activation::{ActivationDescriptor, ActivationForward};
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cudnn::safe::softmax::SoftmaxForward;
     use crate::{cudnn, driver::CudaContext};
     #[cfg(feature = "no-std")]
     use no_std_compat::vec;
@@ -474,6 +475,48 @@ mod tests {
             assert_eq!(y_host[1], 2.0);
             assert_eq!(y_host[2], 0.0);
             assert_eq!(y_host[3], 100.0);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_softmax() -> Result<(), CudnnError> {
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let cudnn = Cudnn::new(stream.clone())?;
+
+        let softmax = cudnn
+            .create_softmax::<f32>(cudnn::sys::cudnnSoftmaxMode_t::CUDNN_SOFTMAX_MODE_INSTANCE)?;
+
+        // Create input, filter and output tensors.
+        let x = stream.memcpy_stod(&[1.0, 2.0, 3.0, 4.0]).unwrap();
+        let x_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
+        let mut y = stream.alloc_zeros::<f32>(4).unwrap();
+        let y_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
+
+        {
+            let op = SoftmaxForward {
+                softmax: &softmax,
+                x: &x_desc,
+                y: &y_desc,
+            };
+
+            unsafe {
+                op.launch(
+                    (1.0, 0.0),
+                    cudnn::sys::cudnnSoftmaxAlgorithm_t::CUDNN_SOFTMAX_FAST,
+                    &x,
+                    &mut y,
+                )?;
+            }
+
+            let y_host = stream.memcpy_dtov(&y).unwrap();
+            assert_eq!(y_host.len(), 2 * 2);
+            assert_eq!(y_host[0], 0.0320586);
+            assert_eq!(y_host[1], 0.08714432);
+            assert_eq!(y_host[2], 0.23688282);
+            assert_eq!(y_host[3], 0.6439142);
         }
 
         Ok(())
