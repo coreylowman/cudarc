@@ -18,8 +18,27 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CUDA_ROOT");
     println!("cargo:rerun-if-env-changed=CUDA_PATH");
     println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
+    println!("cargo:rerun-if-env-changed=CUDARC_CUDA_VERSION");
 
-    let (major, minor): (usize, usize) = if cfg!(feature = "cuda-12090") {
+    let (major, minor): (usize, usize) = if let Ok(version) = std::env::var("CUDARC_CUDA_VERSION") {
+        match version.as_str() {
+            "12090" => (12, 9),
+            "12080" => (12, 8),
+            "12060" => (12, 6),
+            "12050" => (12, 5),
+            "12040" => (12, 4),
+            "12030" => (12, 3),
+            "12020" => (12, 2),
+            "12010" => (12, 1),
+            "12000" => (12, 0),
+            "11080" => (11, 8),
+            "11070" => (11, 7),
+            "11060" => (11, 6),
+            "11050" => (11, 5),
+            "11040" => (11, 4),
+            v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
+        }
+    } else if cfg!(feature = "cuda-12090") {
         (12, 9)
     } else if cfg!(feature = "cuda-12080") {
         (12, 8)
