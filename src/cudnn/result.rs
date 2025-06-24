@@ -880,3 +880,21 @@ pub unsafe fn activation_forward(
 ) -> Result<(), CudnnError> {
     sys::cudnnActivationForward(handle, activation_desc, alpha, x_desc, x, beta, y_desc, y).result()
 }
+
+/// # Safety
+/// Make sure the handle is valid, all data are associated with the handle, and no pointers are null
+/// unless explicitly accepted by the underlying apis.
+#[allow(clippy::too_many_arguments)]
+pub unsafe fn softmax_forward(
+    handle: sys::cudnnHandle_t,
+    algo: sys::cudnnSoftmaxAlgorithm_t,
+    mode: sys::cudnnSoftmaxMode_t,
+    alpha: *const ::core::ffi::c_void,
+    x_desc: sys::cudnnTensorDescriptor_t,
+    x: *const ::core::ffi::c_void,
+    beta: *const ::core::ffi::c_void,
+    y_desc: sys::cudnnTensorDescriptor_t,
+    y: *mut ::core::ffi::c_void,
+) -> Result<(), CudnnError> {
+    sys::cudnnSoftmaxForward(handle, algo, mode, alpha, x_desc, x, beta, y_desc, y).result()
+}
