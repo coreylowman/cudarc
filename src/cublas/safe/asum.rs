@@ -67,6 +67,7 @@ mod tests {
     #![allow(clippy::needless_range_loop)]
 
     use crate::driver::CudaContext;
+    use std::vec;
 
     use super::*;
 
