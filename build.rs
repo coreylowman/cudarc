@@ -21,7 +21,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CUDARC_CUDA_VERSION");
 
     let (major, minor): (usize, usize) = if let Ok(version) = std::env::var("CUDARC_CUDA_VERSION") {
-        match version.as_str() {
+        let (major, minor) = match version.as_str() {
             "12090" => (12, 9),
             "12080" => (12, 8),
             "12060" => (12, 6),
@@ -37,7 +37,9 @@ fn main() {
             "11050" => (11, 5),
             "11040" => (11, 4),
             v => panic!("Unsupported cuda toolkit version: `{v}`. Please raise a github issue."),
-        }
+        };
+        println!("cargo:rustc-cfg=feature=\"cuda-{major}0{minor}0\"");
+        (major, minor)
     } else if cfg!(feature = "cuda-12090") {
         (12, 9)
     } else if cfg!(feature = "cuda-12080") {
