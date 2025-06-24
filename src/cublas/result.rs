@@ -476,3 +476,39 @@ pub unsafe fn gemm_strided_batched_ex(
     )
     .result()
 }
+
+/// Single precision sum of abosolute values. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-asum)
+///
+/// # Safety
+///
+/// - `x` must be valid device pointers that have not been freed.
+/// - `result` can be a pointer to host memory, but must be not null.
+/// - `n * incx` must be less than the size of `x`.
+pub unsafe fn sasum(
+    handle: sys::cublasHandle_t,
+    n: c_int,
+    x: *const f32,
+    incx: c_int,
+    result: *mut f32,
+) -> Result<(), CublasError> {
+    sys::cublasSasum_v2(handle, n, x, incx, result).result()
+}
+
+/// Double precision sum of abosolute values. See
+/// [nvidia docs](https://docs.nvidia.com/cuda/cublas/index.html#cublas-t-asum)
+///
+/// # Safety
+///
+/// - `x` must be valid device pointers that have not been freed.
+/// - `result` can be a pointer to host memory, but must be not null.
+/// - `n * incx` must be less than the size of `x`.
+pub unsafe fn dasum(
+    handle: sys::cublasHandle_t,
+    n: c_int,
+    x: *const f64,
+    incx: c_int,
+    result: *mut f64,
+) -> Result<(), CublasError> {
+    sys::cublasDasum_v2(handle, n, x, incx, result).result()
+}
