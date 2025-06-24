@@ -220,7 +220,16 @@ fn link_searches(major: usize, minor: usize) -> Vec<PathBuf> {
         "C:/Program Files/NVIDIA GPU Computing Toolkit",
         "C:/Program Files/NVIDIA",
         "C:/CUDA",
-        // See issue #260
+        // See issue #260 & #409
+        // TODO figure out how to handle all of these automatically
+        "C:/Program Files/NVIDIA/CUDNN/v9.10",
+        "C:/Program Files/NVIDIA/CUDNN/v9.9",
+        "C:/Program Files/NVIDIA/CUDNN/v9.8",
+        "C:/Program Files/NVIDIA/CUDNN/v9.7",
+        "C:/Program Files/NVIDIA/CUDNN/v9.6",
+        "C:/Program Files/NVIDIA/CUDNN/v9.5",
+        "C:/Program Files/NVIDIA/CUDNN/v9.4",
+        "C:/Program Files/NVIDIA/CUDNN/v9.3",
         "C:/Program Files/NVIDIA/CUDNN/v9.2",
         "C:/Program Files/NVIDIA/CUDNN/v9.1",
         "C:/Program Files/NVIDIA/CUDNN/v9.0",
