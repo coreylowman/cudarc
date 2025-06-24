@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 fn main() {
     #[cfg(all(
@@ -131,40 +131,8 @@ fn cuda_version_from_build_system() -> (usize, usize) {
 
 #[allow(unused)]
 fn dynamic_linking(major: usize, minor: usize) {
-    let candidates: Vec<PathBuf> = root_candidates().collect();
-
-    let toolkit_root = candidates
-        .iter()
-        .find(|path| path.join("include").join("cuda.h").is_file())
-        .unwrap_or_else(|| {
-            panic!(
-                "Unable to find `include/cuda.h` under any of: {:?}. Set the `CUDA_ROOT` environment variable to `$CUDA_ROOT/include/cuda.h` to override path.",
-                candidates
-            )
-        });
-
-    for path in lib_candidates(toolkit_root, major, minor) {
+    for path in link_searches(major, minor) {
         println!("cargo:rustc-link-search=native={}", path.display());
-    }
-
-    #[cfg(feature = "cudnn")]
-    {
-        let cudnn_root = candidates
-            .iter()
-            .find(|path| {
-                path.join("include").join("cudnn.h").is_file()
-                || path.join("include").join(std::format!("{major}.{minor}")).join("cudnn.h").is_file()
-            })
-            .unwrap_or_else(|| {
-                panic!(
-                    "Unable to find `include/cudnn.h` or `include/{major}.{minor}/cudnn.h` under any of: {:?}. Set the `CUDNN_LIB` environment variable to override path, or turn off dynamic linking (to enable dynamic loading).",
-                    candidates
-                )
-            });
-
-        for path in lib_candidates(cudnn_root, major, minor) {
-            println!("cargo:rustc-link-search=native={}", path.display());
-        }
     }
 
     #[cfg(feature = "driver")]
@@ -191,40 +159,8 @@ fn dynamic_linking(major: usize, minor: usize) {
 
 #[allow(unused)]
 fn static_linking(major: usize, minor: usize) {
-    let candidates: Vec<PathBuf> = root_candidates().collect();
-
-    let toolkit_root = candidates
-        .iter()
-        .find(|path| path.join("include").join("cuda.h").is_file())
-        .unwrap_or_else(|| {
-            panic!(
-                "Unable to find `include/cuda.h` under any of: {:?}. Set the `CUDA_ROOT` environment variable to `$CUDA_ROOT/include/cuda.h` to override path.",
-                candidates
-            )
-        });
-
-    for path in lib_candidates(toolkit_root, major, minor) {
+    for path in link_searches(major, minor) {
         println!("cargo:rustc-link-search=native={}", path.display());
-    }
-
-    #[cfg(feature = "cudnn")]
-    {
-        let cudnn_root = candidates
-            .iter()
-            .find(|path| {
-                path.join("include").join("cudnn.h").is_file()
-                || path.join("include").join(std::format!("{major}.{minor}")).join("cudnn.h").is_file()
-            })
-            .unwrap_or_else(|| {
-                panic!(
-                    "Unable to find `include/cudnn.h` or `include/{major}.{minor}/cudnn.h` under any of: {:?}. Set the `CUDNN_LIB` environment variable to override path, or turn off static linking (to enable dynamic loading).",
-                    candidates
-                )
-            });
-
-        for path in lib_candidates(cudnn_root, major, minor) {
-            println!("cargo:rustc-link-search=native={}", path.display());
-        }
     }
 
     println!("cargo:rustc-link-lib=static:+whole-archive=stdc++");
@@ -264,7 +200,7 @@ fn static_linking(major: usize, minor: usize) {
 }
 
 #[allow(unused)]
-fn root_candidates() -> impl Iterator<Item = PathBuf> {
+fn link_searches(major: usize, minor: usize) -> Vec<PathBuf> {
     let env_vars = [
         "CUDA_PATH",
         "CUDA_ROOT",
@@ -276,7 +212,7 @@ fn root_candidates() -> impl Iterator<Item = PathBuf> {
         .map(std::env::var)
         .filter_map(Result::ok);
 
-    let roots = [
+    let standard_locations = [
         "/usr",
         "/usr/local/cuda",
         "/opt/cuda",
@@ -289,31 +225,36 @@ fn root_candidates() -> impl Iterator<Item = PathBuf> {
         "C:/Program Files/NVIDIA/CUDNN/v9.1",
         "C:/Program Files/NVIDIA/CUDNN/v9.0",
     ];
-    let roots = roots.into_iter().map(Into::into);
-    env_vars.chain(roots).map(Into::<PathBuf>::into)
-}
+    let standard_locations = standard_locations.into_iter().map(Into::into);
 
-#[allow(unused)]
-fn lib_candidates(root: &Path, major: usize, minor: usize) -> Vec<PathBuf> {
-    [
-        "lib".into(),
-        "lib/stubs".into(),
-        "lib/x64".into(),
-        "lib/Win32".into(),
-        "lib/x86_64".into(),
-        "lib/x86_64-linux-gnu".into(),
-        "lib64".into(),
-        "lib64/stubs".into(),
-        "targets/x86_64-linux".into(),
-        "targets/x86_64-linux/lib".into(),
-        "targets/x86_64-linux/lib/stubs".into(),
-        // see issue #260
-        std::format!("lib/{major}.{minor}/x64"),
-        // see issue #260
-        std::format!("lib/{major}.{minor}/x86_64"),
-    ]
-    .iter()
-    .map(|p| root.join(p))
-    .filter(|p| p.is_dir())
-    .collect()
+    let mut candidates = Vec::new();
+    for root in env_vars
+        .chain(standard_locations)
+        .map(Into::<PathBuf>::into)
+    {
+        candidates.extend(
+            [
+                "lib".into(),
+                "lib/stubs".into(),
+                "lib/x64".into(),
+                "lib/Win32".into(),
+                "lib/x86_64".into(),
+                "lib/x86_64-linux-gnu".into(),
+                "lib64".into(),
+                "lib64/stubs".into(),
+                "targets/x86_64-linux".into(),
+                "targets/x86_64-linux/lib".into(),
+                "targets/x86_64-linux/lib/stubs".into(),
+                // see issue #260
+                std::format!("lib/{major}.{minor}/x64"),
+                // see issue #260
+                std::format!("lib/{major}.{minor}/x86_64"),
+            ]
+            .iter()
+            .map(|p| root.join(p))
+            .filter(|p| p.is_dir()),
+        )
+    }
+
+    candidates
 }
