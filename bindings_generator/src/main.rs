@@ -220,8 +220,30 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                     functions: vec!["^cusolver.*".to_string()],
                     vars: vec!["^cusolver.*".to_string()],
                 },
-                blocklist: Filters::none(),
+                blocklist: Filters {
+                    types: vec!["^cusolverMg.*".to_string()],
+                    functions: vec!["^cusolverMg.*".to_string(), "^cusolverDnLogger.*".to_string()],
+                    vars: vec!["^cusolverMg.*".to_string()],
+                },
                 libs: vec!["cusolver".to_string()],
+                // redist in cusolver is dummy
+                redist: Some(Redist {
+                    url: "".to_string(),
+                    version: "".to_string(),
+                }),
+            },
+        ),
+        (
+            "cusolvermg".to_string(),
+            ModuleConfig {
+                cuda: "libcusolver".to_string(),
+                allowlist: Filters {
+                    types: vec!["^cusolverMg.*".to_string()],
+                    functions: vec!["^cusolverMg.*".to_string()],
+                    vars: vec!["^cusolverMg.*".to_string()],
+                },
+                blocklist: Filters::none(),
+                libs: vec!["cusolverMg".to_string()],
                 // redist in cusolver is dummy
                 redist: Some(Redist {
                     url: "".to_string(),
@@ -333,7 +355,15 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
                         &multi_progress,
                     )
                     .context(format!("Failed to generate nccl for {}", cuda_version))?,
-                    "cusolver" => generate_cusolver(
+                    "cusolver"=> generate_cusolver(
+                        cuda_version,
+                        module_name,
+                        module,
+                        &primary_archives,
+                        &multi_progress,
+                    )
+                    .context(format!("Failed to generate cusolver for {}", cuda_version))?,
+                    "cusolvermg"=> generate_cusolvermg(
                         cuda_version,
                         module_name,
                         module,
@@ -906,6 +936,48 @@ fn generate_nccl(
 }
 
 fn generate_cusolver(
+    cuda_version: &str,
+    module_name: &str,
+    module: &ModuleConfig,
+    primary_archives: &[PathBuf],
+    multi_progress: &MultiProgress,
+) -> Result<()> {
+    let cuda_name = &module.cuda;
+
+    let archive_dir = get_archive(cuda_version, cuda_name, module_name, multi_progress)?;
+
+    // copy essential cublas and cusolver to the archive directory
+    let archive_dir_cublas = get_archive(cuda_version, "libcublas", "cublas", multi_progress)?;
+    let archive_dir_cusparse =
+        get_archive(cuda_version, "libcusparse", "cusparse", multi_progress)?;
+    fs::copy(
+        archive_dir_cublas.join("include").join("cublas_v2.h"),
+        archive_dir.join("include").join("cublas_v2.h"),
+    )
+    .context("Failed to copy cublas_v2.h".to_string())?;
+    fs::copy(
+        archive_dir_cublas.join("include").join("cublas_api.h"),
+        archive_dir.join("include").join("cublas_api.h"),
+    )
+    .context("Failed to copy cublas_api.h".to_string())?;
+    fs::copy(
+        archive_dir_cusparse.join("include").join("cusparse.h"),
+        archive_dir.join("include").join("cusparse.h"),
+    )
+    .context("Failed to copy cusparse.h".to_string())?;
+
+    create_system_folders(
+        cuda_version,
+        module_name,
+        &module.allowlist,
+        &module.blocklist,
+        &archive_dir,
+        primary_archives,
+    )?;
+    Ok(())
+}
+
+fn generate_cusolvermg(
     cuda_version: &str,
     module_name: &str,
     module: &ModuleConfig,

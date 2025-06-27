@@ -38,4 +38,4 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all-targets --no-default-features -F ${{ matrix.version }},no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl,dynamic-loading
+          args: --all-targets --no-default-features -F ${{ matrix.version }},no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl,cusolver,cusolvermg,cusparse,dynamic-loading

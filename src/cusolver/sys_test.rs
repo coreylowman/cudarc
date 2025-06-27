@@ -7,6 +7,7 @@ mod tests {
     };
     use core::ffi::c_int;
     use core::mem::MaybeUninit;
+    use std::{vec, vec::Vec};
 
     #[test]
     #[allow(clippy::excessive_precision)]

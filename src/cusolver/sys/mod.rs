@@ -21,7 +21,7 @@ pub use self::libraryPropertyType_t as libraryPropertyType;
     feature = "cuda-12080",
     feature = "cuda-12090"
 ))]
-pub type FILE = __sFILE;
+pub type FILE = _IO_FILE;
 #[cfg(any(
     feature = "cuda-11070",
     feature = "cuda-11080",
@@ -35,7 +35,7 @@ pub type FILE = __sFILE;
     feature = "cuda-12080",
     feature = "cuda-12090"
 ))]
-pub type __darwin_off_t = __int64_t;
+pub type _IO_lock_t = ::core::ffi::c_void;
 #[cfg(any(
     feature = "cuda-11070",
     feature = "cuda-11080",
@@ -49,7 +49,21 @@ pub type __darwin_off_t = __int64_t;
     feature = "cuda-12080",
     feature = "cuda-12090"
 ))]
-pub type __int64_t = ::core::ffi::c_longlong;
+pub type __off64_t = ::core::ffi::c_long;
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+pub type __off_t = ::core::ffi::c_long;
 pub type csrqrInfo_t = *mut csrqrInfo;
 pub type cuComplex = cuFloatComplex;
 pub type cuDoubleComplex = double2;
@@ -81,25 +95,10 @@ pub type cusolverDnLoggerCallback_t = ::core::option::Option<
     ),
 >;
 pub type cusolverDnParams_t = *mut cusolverDnParams;
-pub type cusolverMgHandle_t = *mut cusolverMgContext;
 pub type cusolverRfHandle_t = *mut cusolverRfCommon;
 pub type cusolverSpHandle_t = *mut cusolverSpContext;
 pub type cusolver_int_t = ::core::ffi::c_int;
 pub type cusparseMatDescr_t = *mut cusparseMatDescr;
-#[cfg(any(
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-pub type fpos_t = __darwin_off_t;
 pub type gesvdjInfo_t = *mut gesvdjInfo;
 pub type syevjInfo_t = *mut syevjInfo;
 #[repr(u32)]
@@ -363,12 +362,6 @@ pub enum cusolverIRSRefinement_t {
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub enum cusolverMgGridMapping_t {
-    CUDALIBMG_GRID_MAPPING_ROW_MAJOR = 1,
-    CUDALIBMG_GRID_MAPPING_COL_MAJOR = 0,
-}
-#[repr(u32)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cusolverNorm_t {
     CUSOLVER_INF_NORM = 104,
     CUSOLVER_MAX_NORM = 105,
@@ -497,47 +490,36 @@ pub struct CUstream_st {
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct __sFILE {
-    pub _p: *mut ::core::ffi::c_uchar,
-    pub _r: ::core::ffi::c_int,
-    pub _w: ::core::ffi::c_int,
-    pub _flags: ::core::ffi::c_short,
-    pub _file: ::core::ffi::c_short,
-    pub _bf: __sbuf,
-    pub _lbfsize: ::core::ffi::c_int,
-    pub _cookie: *mut ::core::ffi::c_void,
-    pub _close: ::core::option::Option<
-        unsafe extern "C" fn(arg1: *mut ::core::ffi::c_void) -> ::core::ffi::c_int,
-    >,
-    pub _read: ::core::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut ::core::ffi::c_void,
-            arg2: *mut ::core::ffi::c_char,
-            arg3: ::core::ffi::c_int,
-        ) -> ::core::ffi::c_int,
-    >,
-    pub _seek: ::core::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut ::core::ffi::c_void,
-            arg2: fpos_t,
-            arg3: ::core::ffi::c_int,
-        ) -> fpos_t,
-    >,
-    pub _write: ::core::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut ::core::ffi::c_void,
-            arg2: *const ::core::ffi::c_char,
-            arg3: ::core::ffi::c_int,
-        ) -> ::core::ffi::c_int,
-    >,
-    pub _ub: __sbuf,
-    pub _extra: *mut __sFILEX,
-    pub _ur: ::core::ffi::c_int,
-    pub _ubuf: [::core::ffi::c_uchar; 3usize],
-    pub _nbuf: [::core::ffi::c_uchar; 1usize],
-    pub _lb: __sbuf,
-    pub _blksize: ::core::ffi::c_int,
-    pub _offset: fpos_t,
+pub struct _IO_FILE {
+    pub _flags: ::core::ffi::c_int,
+    pub _IO_read_ptr: *mut ::core::ffi::c_char,
+    pub _IO_read_end: *mut ::core::ffi::c_char,
+    pub _IO_read_base: *mut ::core::ffi::c_char,
+    pub _IO_write_base: *mut ::core::ffi::c_char,
+    pub _IO_write_ptr: *mut ::core::ffi::c_char,
+    pub _IO_write_end: *mut ::core::ffi::c_char,
+    pub _IO_buf_base: *mut ::core::ffi::c_char,
+    pub _IO_buf_end: *mut ::core::ffi::c_char,
+    pub _IO_save_base: *mut ::core::ffi::c_char,
+    pub _IO_backup_base: *mut ::core::ffi::c_char,
+    pub _IO_save_end: *mut ::core::ffi::c_char,
+    pub _markers: *mut _IO_marker,
+    pub _chain: *mut _IO_FILE,
+    pub _fileno: ::core::ffi::c_int,
+    pub _flags2: ::core::ffi::c_int,
+    pub _old_offset: __off_t,
+    pub _cur_column: ::core::ffi::c_ushort,
+    pub _vtable_offset: ::core::ffi::c_schar,
+    pub _shortbuf: [::core::ffi::c_char; 1usize],
+    pub _lock: *mut _IO_lock_t,
+    pub _offset: __off64_t,
+    pub _codecvt: *mut _IO_codecvt,
+    pub _wide_data: *mut _IO_wide_data,
+    pub _freeres_list: *mut _IO_FILE,
+    pub _freeres_buf: *mut ::core::ffi::c_void,
+    pub __pad5: usize,
+    pub _mode: ::core::ffi::c_int,
+    pub _unused2: [::core::ffi::c_char; 20usize],
 }
 #[cfg(any(
     feature = "cuda-11070",
@@ -554,7 +536,7 @@ pub struct __sFILE {
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct __sFILEX {
+pub struct _IO_codecvt {
     _unused: [u8; 0],
 }
 #[cfg(any(
@@ -571,10 +553,27 @@ pub struct __sFILEX {
     feature = "cuda-12090"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct __sbuf {
-    pub _base: *mut ::core::ffi::c_uchar,
-    pub _size: ::core::ffi::c_int,
+#[derive(Debug, Copy, Clone)]
+pub struct _IO_marker {
+    _unused: [u8; 0],
+}
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _IO_wide_data {
+    _unused: [u8; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -599,11 +598,6 @@ pub struct cusolverDnIRSParams {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct cusolverDnParams {
-    _unused: [u8; 0],
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct cusolverMgContext {
     _unused: [u8; 0],
 }
 #[repr(C)]
@@ -665,29 +659,7 @@ impl cudaDataType_t {
     feature = "cuda-12080",
     feature = "cuda-12090"
 ))]
-impl Default for __sFILE {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-#[cfg(any(
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-impl Default for __sbuf {
+impl Default for _IO_FILE {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -2866,90 +2838,6 @@ extern "C" {
         nrhs: cusolver_int_t,
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t;
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub fn cusolverDnLoggerForceDisable() -> cusolverStatus_t;
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub fn cusolverDnLoggerOpenFile(logFile: *const ::core::ffi::c_char) -> cusolverStatus_t;
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub fn cusolverDnLoggerSetCallback(callback: cusolverDnLoggerCallback_t) -> cusolverStatus_t;
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub fn cusolverDnLoggerSetFile(file: *mut FILE) -> cusolverStatus_t;
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub fn cusolverDnLoggerSetLevel(level: ::core::ffi::c_int) -> cusolverStatus_t;
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub fn cusolverDnLoggerSetMask(mask: ::core::ffi::c_int) -> cusolverStatus_t;
     pub fn cusolverDnPotrf(
         handle: cusolverDnHandle_t,
         params: cusolverDnParams_t,
@@ -5626,205 +5514,6 @@ extern "C" {
         value: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t;
     pub fn cusolverGetVersion(version: *mut ::core::ffi::c_int) -> cusolverStatus_t;
-    pub fn cusolverMgCreate(handle: *mut cusolverMgHandle_t) -> cusolverStatus_t;
-    pub fn cusolverMgCreateDeviceGrid(
-        grid: *mut cudaLibMgGrid_t,
-        numRowDevices: i32,
-        numColDevices: i32,
-        deviceId: *const i32,
-        mapping: cusolverMgGridMapping_t,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgCreateMatrixDesc(
-        desc: *mut cudaLibMgMatrixDesc_t,
-        numRows: i64,
-        numCols: i64,
-        rowBlockSize: i64,
-        colBlockSize: i64,
-        dataType: cudaDataType,
-        grid: cudaLibMgGrid_t,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgDestroy(handle: cusolverMgHandle_t) -> cusolverStatus_t;
-    pub fn cusolverMgDestroyGrid(grid: cudaLibMgGrid_t) -> cusolverStatus_t;
-    pub fn cusolverMgDestroyMatrixDesc(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t;
-    pub fn cusolverMgDeviceSelect(
-        handle: cusolverMgHandle_t,
-        nbDevices: ::core::ffi::c_int,
-        deviceId: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgGetrf(
-        handle: cusolverMgHandle_t,
-        M: ::core::ffi::c_int,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgGetrf_bufferSize(
-        handle: cusolverMgHandle_t,
-        M: ::core::ffi::c_int,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgGetrs(
-        handle: cusolverMgHandle_t,
-        TRANS: cublasOperation_t,
-        N: ::core::ffi::c_int,
-        NRHS: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgGetrs_bufferSize(
-        handle: cusolverMgHandle_t,
-        TRANS: cublasOperation_t,
-        N: ::core::ffi::c_int,
-        NRHS: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgPotrf(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        h_info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgPotrf_bufferSize(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgPotri(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        h_info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgPotri_bufferSize(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgPotrs(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        n: ::core::ffi::c_int,
-        nrhs: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        h_info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgPotrs_bufferSize(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        n: ::core::ffi::c_int,
-        nrhs: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgSyevd(
-        handle: cusolverMgHandle_t,
-        jobz: cusolverEigMode_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        W: *mut ::core::ffi::c_void,
-        dataTypeW: cudaDataType,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t;
-    pub fn cusolverMgSyevd_bufferSize(
-        handle: cusolverMgHandle_t,
-        jobz: cusolverEigMode_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        W: *mut ::core::ffi::c_void,
-        dataTypeW: cudaDataType,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t;
     pub fn cusolverRfAccessBundledFactorsDevice(
         handle: cusolverRfHandle_t,
         nnzM: *mut ::core::ffi::c_int,
@@ -10046,106 +9735,6 @@ mod loaded {
         lwork_bytes: *mut usize,
     ) -> cusolverStatus_t {
         (culib().cusolverDnIRSXgesv_bufferSize)(handle, params, n, nrhs, lwork_bytes)
-    }
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub unsafe fn cusolverDnLoggerForceDisable() -> cusolverStatus_t {
-        (culib().cusolverDnLoggerForceDisable)()
-    }
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub unsafe fn cusolverDnLoggerOpenFile(
-        logFile: *const ::core::ffi::c_char,
-    ) -> cusolverStatus_t {
-        (culib().cusolverDnLoggerOpenFile)(logFile)
-    }
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub unsafe fn cusolverDnLoggerSetCallback(
-        callback: cusolverDnLoggerCallback_t,
-    ) -> cusolverStatus_t {
-        (culib().cusolverDnLoggerSetCallback)(callback)
-    }
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub unsafe fn cusolverDnLoggerSetFile(file: *mut FILE) -> cusolverStatus_t {
-        (culib().cusolverDnLoggerSetFile)(file)
-    }
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub unsafe fn cusolverDnLoggerSetLevel(level: ::core::ffi::c_int) -> cusolverStatus_t {
-        (culib().cusolverDnLoggerSetLevel)(level)
-    }
-    #[cfg(any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    ))]
-    pub unsafe fn cusolverDnLoggerSetMask(mask: ::core::ffi::c_int) -> cusolverStatus_t {
-        (culib().cusolverDnLoggerSetMask)(mask)
     }
     pub unsafe fn cusolverDnPotrf(
         handle: cusolverDnHandle_t,
@@ -14417,413 +14006,6 @@ mod loaded {
     pub unsafe fn cusolverGetVersion(version: *mut ::core::ffi::c_int) -> cusolverStatus_t {
         (culib().cusolverGetVersion)(version)
     }
-    pub unsafe fn cusolverMgCreate(handle: *mut cusolverMgHandle_t) -> cusolverStatus_t {
-        (culib().cusolverMgCreate)(handle)
-    }
-    pub unsafe fn cusolverMgCreateDeviceGrid(
-        grid: *mut cudaLibMgGrid_t,
-        numRowDevices: i32,
-        numColDevices: i32,
-        deviceId: *const i32,
-        mapping: cusolverMgGridMapping_t,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgCreateDeviceGrid)(grid, numRowDevices, numColDevices, deviceId, mapping)
-    }
-    pub unsafe fn cusolverMgCreateMatrixDesc(
-        desc: *mut cudaLibMgMatrixDesc_t,
-        numRows: i64,
-        numCols: i64,
-        rowBlockSize: i64,
-        colBlockSize: i64,
-        dataType: cudaDataType,
-        grid: cudaLibMgGrid_t,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgCreateMatrixDesc)(
-            desc,
-            numRows,
-            numCols,
-            rowBlockSize,
-            colBlockSize,
-            dataType,
-            grid,
-        )
-    }
-    pub unsafe fn cusolverMgDestroy(handle: cusolverMgHandle_t) -> cusolverStatus_t {
-        (culib().cusolverMgDestroy)(handle)
-    }
-    pub unsafe fn cusolverMgDestroyGrid(grid: cudaLibMgGrid_t) -> cusolverStatus_t {
-        (culib().cusolverMgDestroyGrid)(grid)
-    }
-    pub unsafe fn cusolverMgDestroyMatrixDesc(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t {
-        (culib().cusolverMgDestroyMatrixDesc)(desc)
-    }
-    pub unsafe fn cusolverMgDeviceSelect(
-        handle: cusolverMgHandle_t,
-        nbDevices: ::core::ffi::c_int,
-        deviceId: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgDeviceSelect)(handle, nbDevices, deviceId)
-    }
-    pub unsafe fn cusolverMgGetrf(
-        handle: cusolverMgHandle_t,
-        M: ::core::ffi::c_int,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgGetrf)(
-            handle,
-            M,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            array_d_IPIV,
-            computeType,
-            array_d_work,
-            lwork,
-            info,
-        )
-    }
-    pub unsafe fn cusolverMgGetrf_bufferSize(
-        handle: cusolverMgHandle_t,
-        M: ::core::ffi::c_int,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgGetrf_bufferSize)(
-            handle,
-            M,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            array_d_IPIV,
-            computeType,
-            lwork,
-        )
-    }
-    pub unsafe fn cusolverMgGetrs(
-        handle: cusolverMgHandle_t,
-        TRANS: cublasOperation_t,
-        N: ::core::ffi::c_int,
-        NRHS: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgGetrs)(
-            handle,
-            TRANS,
-            N,
-            NRHS,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            array_d_IPIV,
-            array_d_B,
-            IB,
-            JB,
-            descrB,
-            computeType,
-            array_d_work,
-            lwork,
-            info,
-        )
-    }
-    pub unsafe fn cusolverMgGetrs_bufferSize(
-        handle: cusolverMgHandle_t,
-        TRANS: cublasOperation_t,
-        N: ::core::ffi::c_int,
-        NRHS: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_IPIV: *mut *mut ::core::ffi::c_int,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgGetrs_bufferSize)(
-            handle,
-            TRANS,
-            N,
-            NRHS,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            array_d_IPIV,
-            array_d_B,
-            IB,
-            JB,
-            descrB,
-            computeType,
-            lwork,
-        )
-    }
-    pub unsafe fn cusolverMgPotrf(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        h_info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgPotrf)(
-            handle,
-            uplo,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            computeType,
-            array_d_work,
-            lwork,
-            h_info,
-        )
-    }
-    pub unsafe fn cusolverMgPotrf_bufferSize(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgPotrf_bufferSize)(
-            handle,
-            uplo,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            computeType,
-            lwork,
-        )
-    }
-    pub unsafe fn cusolverMgPotri(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        h_info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgPotri)(
-            handle,
-            uplo,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            computeType,
-            array_d_work,
-            lwork,
-            h_info,
-        )
-    }
-    pub unsafe fn cusolverMgPotri_bufferSize(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgPotri_bufferSize)(
-            handle,
-            uplo,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            computeType,
-            lwork,
-        )
-    }
-    pub unsafe fn cusolverMgPotrs(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        n: ::core::ffi::c_int,
-        nrhs: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        h_info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgPotrs)(
-            handle,
-            uplo,
-            n,
-            nrhs,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            array_d_B,
-            IB,
-            JB,
-            descrB,
-            computeType,
-            array_d_work,
-            lwork,
-            h_info,
-        )
-    }
-    pub unsafe fn cusolverMgPotrs_bufferSize(
-        handle: cusolverMgHandle_t,
-        uplo: cublasFillMode_t,
-        n: ::core::ffi::c_int,
-        nrhs: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        array_d_B: *mut *mut ::core::ffi::c_void,
-        IB: ::core::ffi::c_int,
-        JB: ::core::ffi::c_int,
-        descrB: cudaLibMgMatrixDesc_t,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgPotrs_bufferSize)(
-            handle,
-            uplo,
-            n,
-            nrhs,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            array_d_B,
-            IB,
-            JB,
-            descrB,
-            computeType,
-            lwork,
-        )
-    }
-    pub unsafe fn cusolverMgSyevd(
-        handle: cusolverMgHandle_t,
-        jobz: cusolverEigMode_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        W: *mut ::core::ffi::c_void,
-        dataTypeW: cudaDataType,
-        computeType: cudaDataType,
-        array_d_work: *mut *mut ::core::ffi::c_void,
-        lwork: i64,
-        info: *mut ::core::ffi::c_int,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgSyevd)(
-            handle,
-            jobz,
-            uplo,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            W,
-            dataTypeW,
-            computeType,
-            array_d_work,
-            lwork,
-            info,
-        )
-    }
-    pub unsafe fn cusolverMgSyevd_bufferSize(
-        handle: cusolverMgHandle_t,
-        jobz: cusolverEigMode_t,
-        uplo: cublasFillMode_t,
-        N: ::core::ffi::c_int,
-        array_d_A: *mut *mut ::core::ffi::c_void,
-        IA: ::core::ffi::c_int,
-        JA: ::core::ffi::c_int,
-        descrA: cudaLibMgMatrixDesc_t,
-        W: *mut ::core::ffi::c_void,
-        dataTypeW: cudaDataType,
-        computeType: cudaDataType,
-        lwork: *mut i64,
-    ) -> cusolverStatus_t {
-        (culib().cusolverMgSyevd_bufferSize)(
-            handle,
-            jobz,
-            uplo,
-            N,
-            array_d_A,
-            IA,
-            JA,
-            descrA,
-            W,
-            dataTypeW,
-            computeType,
-            lwork,
-        )
-    }
     pub unsafe fn cusolverRfAccessBundledFactorsDevice(
         handle: cusolverRfHandle_t,
         nnzM: *mut ::core::ffi::c_int,
@@ -18608,94 +17790,6 @@ mod loaded {
             nrhs: cusolver_int_t,
             lwork_bytes: *mut usize,
         ) -> cusolverStatus_t,
-        #[cfg(any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        ))]
-        pub cusolverDnLoggerForceDisable: unsafe extern "C" fn() -> cusolverStatus_t,
-        #[cfg(any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        ))]
-        pub cusolverDnLoggerOpenFile:
-            unsafe extern "C" fn(logFile: *const ::core::ffi::c_char) -> cusolverStatus_t,
-        #[cfg(any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        ))]
-        pub cusolverDnLoggerSetCallback:
-            unsafe extern "C" fn(callback: cusolverDnLoggerCallback_t) -> cusolverStatus_t,
-        #[cfg(any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        ))]
-        pub cusolverDnLoggerSetFile: unsafe extern "C" fn(file: *mut FILE) -> cusolverStatus_t,
-        #[cfg(any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        ))]
-        pub cusolverDnLoggerSetLevel:
-            unsafe extern "C" fn(level: ::core::ffi::c_int) -> cusolverStatus_t,
-        #[cfg(any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        ))]
-        pub cusolverDnLoggerSetMask:
-            unsafe extern "C" fn(mask: ::core::ffi::c_int) -> cusolverStatus_t,
         pub cusolverDnPotrf: unsafe extern "C" fn(
             handle: cusolverDnHandle_t,
             params: cusolverDnParams_t,
@@ -21377,207 +20471,6 @@ mod loaded {
         ) -> cusolverStatus_t,
         pub cusolverGetVersion:
             unsafe extern "C" fn(version: *mut ::core::ffi::c_int) -> cusolverStatus_t,
-        pub cusolverMgCreate:
-            unsafe extern "C" fn(handle: *mut cusolverMgHandle_t) -> cusolverStatus_t,
-        pub cusolverMgCreateDeviceGrid: unsafe extern "C" fn(
-            grid: *mut cudaLibMgGrid_t,
-            numRowDevices: i32,
-            numColDevices: i32,
-            deviceId: *const i32,
-            mapping: cusolverMgGridMapping_t,
-        ) -> cusolverStatus_t,
-        pub cusolverMgCreateMatrixDesc: unsafe extern "C" fn(
-            desc: *mut cudaLibMgMatrixDesc_t,
-            numRows: i64,
-            numCols: i64,
-            rowBlockSize: i64,
-            colBlockSize: i64,
-            dataType: cudaDataType,
-            grid: cudaLibMgGrid_t,
-        ) -> cusolverStatus_t,
-        pub cusolverMgDestroy: unsafe extern "C" fn(handle: cusolverMgHandle_t) -> cusolverStatus_t,
-        pub cusolverMgDestroyGrid: unsafe extern "C" fn(grid: cudaLibMgGrid_t) -> cusolverStatus_t,
-        pub cusolverMgDestroyMatrixDesc:
-            unsafe extern "C" fn(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t,
-        pub cusolverMgDeviceSelect: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            nbDevices: ::core::ffi::c_int,
-            deviceId: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgGetrf: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            M: ::core::ffi::c_int,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            array_d_IPIV: *mut *mut ::core::ffi::c_int,
-            computeType: cudaDataType,
-            array_d_work: *mut *mut ::core::ffi::c_void,
-            lwork: i64,
-            info: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgGetrf_bufferSize: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            M: ::core::ffi::c_int,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            array_d_IPIV: *mut *mut ::core::ffi::c_int,
-            computeType: cudaDataType,
-            lwork: *mut i64,
-        ) -> cusolverStatus_t,
-        pub cusolverMgGetrs: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            TRANS: cublasOperation_t,
-            N: ::core::ffi::c_int,
-            NRHS: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            array_d_IPIV: *mut *mut ::core::ffi::c_int,
-            array_d_B: *mut *mut ::core::ffi::c_void,
-            IB: ::core::ffi::c_int,
-            JB: ::core::ffi::c_int,
-            descrB: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            array_d_work: *mut *mut ::core::ffi::c_void,
-            lwork: i64,
-            info: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgGetrs_bufferSize: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            TRANS: cublasOperation_t,
-            N: ::core::ffi::c_int,
-            NRHS: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            array_d_IPIV: *mut *mut ::core::ffi::c_int,
-            array_d_B: *mut *mut ::core::ffi::c_void,
-            IB: ::core::ffi::c_int,
-            JB: ::core::ffi::c_int,
-            descrB: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            lwork: *mut i64,
-        ) -> cusolverStatus_t,
-        pub cusolverMgPotrf: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            uplo: cublasFillMode_t,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            array_d_work: *mut *mut ::core::ffi::c_void,
-            lwork: i64,
-            h_info: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgPotrf_bufferSize: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            uplo: cublasFillMode_t,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            lwork: *mut i64,
-        ) -> cusolverStatus_t,
-        pub cusolverMgPotri: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            uplo: cublasFillMode_t,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            array_d_work: *mut *mut ::core::ffi::c_void,
-            lwork: i64,
-            h_info: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgPotri_bufferSize: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            uplo: cublasFillMode_t,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            lwork: *mut i64,
-        ) -> cusolverStatus_t,
-        pub cusolverMgPotrs: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            uplo: cublasFillMode_t,
-            n: ::core::ffi::c_int,
-            nrhs: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            array_d_B: *mut *mut ::core::ffi::c_void,
-            IB: ::core::ffi::c_int,
-            JB: ::core::ffi::c_int,
-            descrB: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            array_d_work: *mut *mut ::core::ffi::c_void,
-            lwork: i64,
-            h_info: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgPotrs_bufferSize: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            uplo: cublasFillMode_t,
-            n: ::core::ffi::c_int,
-            nrhs: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            array_d_B: *mut *mut ::core::ffi::c_void,
-            IB: ::core::ffi::c_int,
-            JB: ::core::ffi::c_int,
-            descrB: cudaLibMgMatrixDesc_t,
-            computeType: cudaDataType,
-            lwork: *mut i64,
-        ) -> cusolverStatus_t,
-        pub cusolverMgSyevd: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            jobz: cusolverEigMode_t,
-            uplo: cublasFillMode_t,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            W: *mut ::core::ffi::c_void,
-            dataTypeW: cudaDataType,
-            computeType: cudaDataType,
-            array_d_work: *mut *mut ::core::ffi::c_void,
-            lwork: i64,
-            info: *mut ::core::ffi::c_int,
-        ) -> cusolverStatus_t,
-        pub cusolverMgSyevd_bufferSize: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-            jobz: cusolverEigMode_t,
-            uplo: cublasFillMode_t,
-            N: ::core::ffi::c_int,
-            array_d_A: *mut *mut ::core::ffi::c_void,
-            IA: ::core::ffi::c_int,
-            JA: ::core::ffi::c_int,
-            descrA: cudaLibMgMatrixDesc_t,
-            W: *mut ::core::ffi::c_void,
-            dataTypeW: cudaDataType,
-            computeType: cudaDataType,
-            lwork: *mut i64,
-        ) -> cusolverStatus_t,
         pub cusolverRfAccessBundledFactorsDevice: unsafe extern "C" fn(
             handle: cusolverRfHandle_t,
             nnzM: *mut ::core::ffi::c_int,
@@ -23294,108 +22187,6 @@ mod loaded {
                 .get(b"cusolverDnIRSXgesv_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            ))]
-            let cusolverDnLoggerForceDisable = __library
-                .get(b"cusolverDnLoggerForceDisable\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            ))]
-            let cusolverDnLoggerOpenFile = __library
-                .get(b"cusolverDnLoggerOpenFile\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            ))]
-            let cusolverDnLoggerSetCallback = __library
-                .get(b"cusolverDnLoggerSetCallback\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            ))]
-            let cusolverDnLoggerSetFile = __library
-                .get(b"cusolverDnLoggerSetFile\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            ))]
-            let cusolverDnLoggerSetLevel = __library
-                .get(b"cusolverDnLoggerSetLevel\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            ))]
-            let cusolverDnLoggerSetMask = __library
-                .get(b"cusolverDnLoggerSetMask\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusolverDnPotrf = __library
                 .get(b"cusolverDnPotrf\0")
                 .map(|sym| *sym)
@@ -24215,82 +23006,6 @@ mod loaded {
                 .get(b"cusolverGetVersion\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusolverMgCreate = __library
-                .get(b"cusolverMgCreate\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgCreateDeviceGrid = __library
-                .get(b"cusolverMgCreateDeviceGrid\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgCreateMatrixDesc = __library
-                .get(b"cusolverMgCreateMatrixDesc\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgDestroy = __library
-                .get(b"cusolverMgDestroy\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgDestroyGrid = __library
-                .get(b"cusolverMgDestroyGrid\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgDestroyMatrixDesc = __library
-                .get(b"cusolverMgDestroyMatrixDesc\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgDeviceSelect = __library
-                .get(b"cusolverMgDeviceSelect\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgGetrf = __library
-                .get(b"cusolverMgGetrf\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgGetrf_bufferSize = __library
-                .get(b"cusolverMgGetrf_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgGetrs = __library
-                .get(b"cusolverMgGetrs\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgGetrs_bufferSize = __library
-                .get(b"cusolverMgGetrs_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgPotrf = __library
-                .get(b"cusolverMgPotrf\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgPotrf_bufferSize = __library
-                .get(b"cusolverMgPotrf_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgPotri = __library
-                .get(b"cusolverMgPotri\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgPotri_bufferSize = __library
-                .get(b"cusolverMgPotri_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgPotrs = __library
-                .get(b"cusolverMgPotrs\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgPotrs_bufferSize = __library
-                .get(b"cusolverMgPotrs_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgSyevd = __library
-                .get(b"cusolverMgSyevd\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusolverMgSyevd_bufferSize = __library
-                .get(b"cusolverMgSyevd_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusolverRfAccessBundledFactorsDevice = __library
                 .get(b"cusolverRfAccessBundledFactorsDevice\0")
                 .map(|sym| *sym)
@@ -24841,90 +23556,6 @@ mod loaded {
                 cusolverDnIRSXgels_bufferSize,
                 cusolverDnIRSXgesv,
                 cusolverDnIRSXgesv_bufferSize,
-                #[cfg(any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
-                cusolverDnLoggerForceDisable,
-                #[cfg(any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
-                cusolverDnLoggerOpenFile,
-                #[cfg(any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
-                cusolverDnLoggerSetCallback,
-                #[cfg(any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
-                cusolverDnLoggerSetFile,
-                #[cfg(any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
-                cusolverDnLoggerSetLevel,
-                #[cfg(any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
-                cusolverDnLoggerSetMask,
                 cusolverDnPotrf,
                 cusolverDnPotrf_bufferSize,
                 cusolverDnPotrs,
@@ -25166,25 +23797,6 @@ mod loaded {
                 cusolverDnZunmtr_bufferSize,
                 cusolverGetProperty,
                 cusolverGetVersion,
-                cusolverMgCreate,
-                cusolverMgCreateDeviceGrid,
-                cusolverMgCreateMatrixDesc,
-                cusolverMgDestroy,
-                cusolverMgDestroyGrid,
-                cusolverMgDestroyMatrixDesc,
-                cusolverMgDeviceSelect,
-                cusolverMgGetrf,
-                cusolverMgGetrf_bufferSize,
-                cusolverMgGetrs,
-                cusolverMgGetrs_bufferSize,
-                cusolverMgPotrf,
-                cusolverMgPotrf_bufferSize,
-                cusolverMgPotri,
-                cusolverMgPotri_bufferSize,
-                cusolverMgPotrs,
-                cusolverMgPotrs_bufferSize,
-                cusolverMgSyevd,
-                cusolverMgSyevd_bufferSize,
                 cusolverRfAccessBundledFactorsDevice,
                 cusolverRfAnalyze,
                 cusolverRfBatchAnalyze,

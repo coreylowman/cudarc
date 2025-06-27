@@ -30,7 +30,7 @@ fn main() -> Result<(), DriverError> {
     let a_host_2 = stream.memcpy_dtov(&a_dev)?;
     let b_host = stream.memcpy_dtov(&b_dev)?;
 
-    println!("Found {:?}", b_host);
+    println!("Found {b_host:?}");
     println!("Expected {:?}", a_host.map(f32::sin));
     assert_eq!(&a_host, a_host_2.as_slice());
 
