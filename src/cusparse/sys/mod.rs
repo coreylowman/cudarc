@@ -1288,19 +1288,6 @@ extern "C" {
         info: bsric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseCbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseCbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -1341,19 +1328,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseCbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseCbsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -1433,22 +1407,6 @@ extern "C" {
         info: bsrsm2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseCbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseCbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -1499,20 +1457,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrsv2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseCbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut cuComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseCbsrsv2_solve(
         handle: cusparseHandle_t,
@@ -1659,19 +1603,6 @@ extern "C" {
         rowBlockDim: ::core::ffi::c_int,
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseCcsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const cuComplex,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseCcsrcolor(
         handle: cusparseHandle_t,
@@ -1831,17 +1762,6 @@ extern "C" {
         info: csric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseCcsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseCcsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -1876,17 +1796,6 @@ extern "C" {
         csrSortedColIndA: *const ::core::ffi::c_int,
         info: csrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseCcsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseCcsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -2160,18 +2069,6 @@ extern "C" {
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseCgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseCgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -2207,22 +2104,6 @@ extern "C" {
         rowBlockDimC: ::core::ffi::c_int,
         colBlockDimC: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseCgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const cuComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     #[cfg(any(
         feature = "cuda-11040",
@@ -3379,19 +3260,6 @@ extern "C" {
         info: bsric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseDbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseDbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -3432,19 +3300,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseDbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseDbsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -3524,22 +3379,6 @@ extern "C" {
         info: bsrsm2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseDbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseDbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -3590,20 +3429,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrsv2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseDbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut f64,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseDbsrsv2_solve(
         handle: cusparseHandle_t,
@@ -3750,19 +3575,6 @@ extern "C" {
         rowBlockDim: ::core::ffi::c_int,
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseDcsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const f64,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseDcsrcolor(
         handle: cusparseHandle_t,
@@ -3922,17 +3734,6 @@ extern "C" {
         info: csric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseDcsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f64,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseDcsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -3967,17 +3768,6 @@ extern "C" {
         csrSortedColIndA: *const ::core::ffi::c_int,
         info: csrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseDcsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f64,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseDcsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -4476,18 +4266,6 @@ extern "C" {
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseDgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseDgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -4523,22 +4301,6 @@ extern "C" {
         rowBlockDimC: ::core::ffi::c_int,
         colBlockDimC: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseDgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const f64,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     #[cfg(any(
         feature = "cuda-11040",
@@ -5393,19 +5155,6 @@ extern "C" {
         info: bsric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseSbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseSbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -5446,19 +5195,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseSbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseSbsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -5538,22 +5274,6 @@ extern "C" {
         info: bsrsm2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseSbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseSbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -5604,20 +5324,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrsv2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseSbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut f32,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseSbsrsv2_solve(
         handle: cusparseHandle_t,
@@ -5793,19 +5499,6 @@ extern "C" {
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseScsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const f32,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseScsrcolor(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -5964,17 +5657,6 @@ extern "C" {
         info: csric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseScsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f32,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseScsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -6009,17 +5691,6 @@ extern "C" {
         csrSortedColIndA: *const ::core::ffi::c_int,
         info: csrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseScsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f32,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseScsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -6326,18 +5997,6 @@ extern "C" {
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseSgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseSgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -6373,22 +6032,6 @@ extern "C" {
         rowBlockDimC: ::core::ffi::c_int,
         colBlockDimC: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseSgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const f32,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     #[cfg(any(
         feature = "cuda-11040",
@@ -8347,20 +7990,6 @@ extern "C" {
         info: csrsv2Info_t,
         position: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseXgebsr2csr(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        descrC: cusparseMatDescr_t,
-        csrSortedRowPtrC: *mut ::core::ffi::c_int,
-        csrSortedColIndC: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
     pub fn cusparseXgebsr2gebsrNnz(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -8451,19 +8080,6 @@ extern "C" {
         info: bsric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseZbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseZbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -8504,19 +8120,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseZbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseZbsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -8596,22 +8199,6 @@ extern "C" {
         info: bsrsm2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseZbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseZbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -8662,20 +8249,6 @@ extern "C" {
         blockDim: ::core::ffi::c_int,
         info: bsrsv2Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseZbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut cuDoubleComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseZbsrsv2_solve(
         handle: cusparseHandle_t,
@@ -8822,19 +8395,6 @@ extern "C" {
         rowBlockDim: ::core::ffi::c_int,
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseZcsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const cuDoubleComplex,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseZcsrcolor(
         handle: cusparseHandle_t,
@@ -8994,17 +8554,6 @@ extern "C" {
         info: csric02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseZcsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuDoubleComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseZcsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -9039,17 +8588,6 @@ extern "C" {
         csrSortedColIndA: *const ::core::ffi::c_int,
         info: csrilu02Info_t,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseZcsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuDoubleComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     pub fn cusparseZcsrilu02_numericBoost(
         handle: cusparseHandle_t,
@@ -9323,18 +8861,6 @@ extern "C" {
         colBlockDim: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
     ) -> cusparseStatus_t;
-    pub fn cusparseZgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t;
     pub fn cusparseZgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -9370,22 +8896,6 @@ extern "C" {
         rowBlockDimC: ::core::ffi::c_int,
         colBlockDimC: ::core::ffi::c_int,
         pBufferSizeInBytes: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t;
-    pub fn cusparseZgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const cuDoubleComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
     ) -> cusparseStatus_t;
     #[cfg(any(
         feature = "cuda-11040",
@@ -9853,33 +9363,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseCbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCbsric02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseCbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -9963,33 +9446,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseCbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCbsrilu02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseCbsrilu02_numericBoost(
@@ -10147,39 +9603,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseCbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCbsrsm2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            transB,
-            mb,
-            n,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseCbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -10283,35 +9706,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseCbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut cuComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCbsrsv2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseCbsrsv2_solve(
@@ -10590,33 +9984,6 @@ mod loaded {
             rowBlockDim,
             colBlockDim,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseCcsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const cuComplex,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCcsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            m,
-            n,
-            descrA,
-            csrSortedValA,
-            csrSortedRowPtrA,
-            csrSortedColIndA,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseCcsrcolor(
@@ -10929,29 +10296,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseCcsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCcsric02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseCcsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -11023,29 +10367,6 @@ mod loaded {
             csrSortedColIndA,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseCcsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCcsrilu02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseCcsrilu02_numericBoost(
@@ -11529,31 +10850,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseCgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const cuComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCgebsr2gebsc_bufferSizeExt)(
-            handle,
-            mb,
-            nb,
-            nnzb,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseCgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -11626,39 +10922,6 @@ mod loaded {
             rowBlockDimC,
             colBlockDimC,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseCgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const cuComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseCgebsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            rowBlockDimA,
-            colBlockDimA,
-            rowBlockDimC,
-            colBlockDimC,
-            pBufferSize,
         )
     }
     #[cfg(any(
@@ -13416,33 +12679,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseDbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDbsric02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseDbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -13526,33 +12762,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseDbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDbsrilu02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseDbsrilu02_numericBoost(
@@ -13710,39 +12919,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseDbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDbsrsm2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            transB,
-            mb,
-            n,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseDbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -13846,35 +13022,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseDbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut f64,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDbsrsv2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseDbsrsv2_solve(
@@ -14153,33 +13300,6 @@ mod loaded {
             rowBlockDim,
             colBlockDim,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseDcsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const f64,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDcsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            m,
-            n,
-            descrA,
-            csrSortedValA,
-            csrSortedRowPtrA,
-            csrSortedColIndA,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseDcsrcolor(
@@ -14492,29 +13612,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseDcsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f64,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDcsric02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseDcsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -14586,29 +13683,6 @@ mod loaded {
             csrSortedColIndA,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseDcsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f64,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDcsrilu02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseDcsrilu02_numericBoost(
@@ -15377,31 +14451,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseDgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const f64,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDgebsr2gebsc_bufferSizeExt)(
-            handle,
-            mb,
-            nb,
-            nnzb,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseDgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -15474,39 +14523,6 @@ mod loaded {
             rowBlockDimC,
             colBlockDimC,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseDgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const f64,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseDgebsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            rowBlockDimA,
-            colBlockDimA,
-            rowBlockDimC,
-            colBlockDimC,
-            pBufferSize,
         )
     }
     #[cfg(any(
@@ -16871,33 +15887,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseSbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseSbsric02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseSbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -16981,33 +15970,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseSbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseSbsrilu02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseSbsrilu02_numericBoost(
@@ -17165,39 +16127,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseSbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseSbsrsm2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            transB,
-            mb,
-            n,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseSbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -17301,35 +16230,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseSbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut f32,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseSbsrsv2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseSbsrsv2_solve(
@@ -17642,33 +16542,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseScsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const f32,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseScsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            m,
-            n,
-            descrA,
-            csrSortedValA,
-            csrSortedRowPtrA,
-            csrSortedColIndA,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseScsrcolor(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -17979,29 +16852,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseScsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f32,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseScsric02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseScsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -18073,29 +16923,6 @@ mod loaded {
             csrSortedColIndA,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseScsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut f32,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseScsrilu02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseScsrilu02_numericBoost(
@@ -18629,31 +17456,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseSgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const f32,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseSgebsr2gebsc_bufferSizeExt)(
-            handle,
-            mb,
-            nb,
-            nnzb,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseSgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -18726,39 +17528,6 @@ mod loaded {
             rowBlockDimC,
             colBlockDimC,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseSgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const f32,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseSgebsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            rowBlockDimA,
-            colBlockDimA,
-            rowBlockDimC,
-            colBlockDimC,
-            pBufferSize,
         )
     }
     #[cfg(any(
@@ -21806,35 +20575,6 @@ mod loaded {
     ) -> cusparseStatus_t {
         (culib().cusparseXcsrsv2_zeroPivot)(handle, info, position)
     }
-    pub unsafe fn cusparseXgebsr2csr(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        descrC: cusparseMatDescr_t,
-        csrSortedRowPtrC: *mut ::core::ffi::c_int,
-        csrSortedColIndC: *mut ::core::ffi::c_int,
-    ) -> cusparseStatus_t {
-        (culib().cusparseXgebsr2csr)(
-            handle,
-            dirA,
-            mb,
-            nb,
-            descrA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            rowBlockDim,
-            colBlockDim,
-            descrC,
-            csrSortedRowPtrC,
-            csrSortedColIndC,
-        )
-    }
     pub unsafe fn cusparseXgebsr2gebsrNnz(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -22006,33 +20746,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseZbsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZbsric02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseZbsrilu02(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -22116,33 +20829,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseZbsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZbsrilu02_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseZbsrilu02_numericBoost(
@@ -22300,39 +20986,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseZbsrsm2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        transB: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedVal: *mut cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsm2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZbsrsm2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            transB,
-            mb,
-            n,
-            nnzb,
-            descrA,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            blockSize,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseZbsrsm2_solve(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -22436,35 +21089,6 @@ mod loaded {
             blockDim,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseZbsrsv2_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        transA: cusparseOperation_t,
-        mb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *mut cuDoubleComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        blockSize: ::core::ffi::c_int,
-        info: bsrsv2Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZbsrsv2_bufferSizeExt)(
-            handle,
-            dirA,
-            transA,
-            mb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            blockSize,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseZbsrsv2_solve(
@@ -22743,33 +21367,6 @@ mod loaded {
             rowBlockDim,
             colBlockDim,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseZcsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        m: ::core::ffi::c_int,
-        n: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedValA: *const cuDoubleComplex,
-        csrSortedRowPtrA: *const ::core::ffi::c_int,
-        csrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZcsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            m,
-            n,
-            descrA,
-            csrSortedValA,
-            csrSortedRowPtrA,
-            csrSortedColIndA,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseZcsrcolor(
@@ -23082,29 +21679,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseZcsric02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuDoubleComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csric02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZcsric02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseZcsrilu02(
         handle: cusparseHandle_t,
         m: ::core::ffi::c_int,
@@ -23176,29 +21750,6 @@ mod loaded {
             csrSortedColIndA,
             info,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseZcsrilu02_bufferSizeExt(
-        handle: cusparseHandle_t,
-        m: ::core::ffi::c_int,
-        nnz: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        csrSortedVal: *mut cuDoubleComplex,
-        csrSortedRowPtr: *const ::core::ffi::c_int,
-        csrSortedColInd: *const ::core::ffi::c_int,
-        info: csrilu02Info_t,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZcsrilu02_bufferSizeExt)(
-            handle,
-            m,
-            nnz,
-            descrA,
-            csrSortedVal,
-            csrSortedRowPtr,
-            csrSortedColInd,
-            info,
-            pBufferSize,
         )
     }
     pub unsafe fn cusparseZcsrilu02_numericBoost(
@@ -23682,31 +22233,6 @@ mod loaded {
             pBufferSizeInBytes,
         )
     }
-    pub unsafe fn cusparseZgebsr2gebsc_bufferSizeExt(
-        handle: cusparseHandle_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        bsrSortedVal: *const cuDoubleComplex,
-        bsrSortedRowPtr: *const ::core::ffi::c_int,
-        bsrSortedColInd: *const ::core::ffi::c_int,
-        rowBlockDim: ::core::ffi::c_int,
-        colBlockDim: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZgebsr2gebsc_bufferSizeExt)(
-            handle,
-            mb,
-            nb,
-            nnzb,
-            bsrSortedVal,
-            bsrSortedRowPtr,
-            bsrSortedColInd,
-            rowBlockDim,
-            colBlockDim,
-            pBufferSize,
-        )
-    }
     pub unsafe fn cusparseZgebsr2gebsr(
         handle: cusparseHandle_t,
         dirA: cusparseDirection_t,
@@ -23779,39 +22305,6 @@ mod loaded {
             rowBlockDimC,
             colBlockDimC,
             pBufferSizeInBytes,
-        )
-    }
-    pub unsafe fn cusparseZgebsr2gebsr_bufferSizeExt(
-        handle: cusparseHandle_t,
-        dirA: cusparseDirection_t,
-        mb: ::core::ffi::c_int,
-        nb: ::core::ffi::c_int,
-        nnzb: ::core::ffi::c_int,
-        descrA: cusparseMatDescr_t,
-        bsrSortedValA: *const cuDoubleComplex,
-        bsrSortedRowPtrA: *const ::core::ffi::c_int,
-        bsrSortedColIndA: *const ::core::ffi::c_int,
-        rowBlockDimA: ::core::ffi::c_int,
-        colBlockDimA: ::core::ffi::c_int,
-        rowBlockDimC: ::core::ffi::c_int,
-        colBlockDimC: ::core::ffi::c_int,
-        pBufferSize: *mut usize,
-    ) -> cusparseStatus_t {
-        (culib().cusparseZgebsr2gebsr_bufferSizeExt)(
-            handle,
-            dirA,
-            mb,
-            nb,
-            nnzb,
-            descrA,
-            bsrSortedValA,
-            bsrSortedRowPtrA,
-            bsrSortedColIndA,
-            rowBlockDimA,
-            colBlockDimA,
-            rowBlockDimC,
-            colBlockDimC,
-            pBufferSize,
         )
     }
     #[cfg(any(
@@ -24296,19 +22789,6 @@ mod loaded {
             info: bsric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseCbsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut cuComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseCbsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -24349,19 +22829,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseCbsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut cuComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseCbsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -24441,22 +22908,6 @@ mod loaded {
             info: bsrsm2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseCbsrsm2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            transB: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut cuComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsm2Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseCbsrsm2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -24507,20 +22958,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrsv2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseCbsrsv2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *mut cuComplex,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsv2Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseCbsrsv2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -24667,19 +23104,6 @@ mod loaded {
             rowBlockDim: ::core::ffi::c_int,
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseCcsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            m: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedValA: *const cuComplex,
-            csrSortedRowPtrA: *const ::core::ffi::c_int,
-            csrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseCcsrcolor: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -24839,17 +23263,6 @@ mod loaded {
             info: csric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseCcsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut cuComplex,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseCcsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             m: ::core::ffi::c_int,
@@ -24884,17 +23297,6 @@ mod loaded {
             csrSortedColIndA: *const ::core::ffi::c_int,
             info: csrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseCcsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut cuComplex,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseCcsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -25168,18 +23570,6 @@ mod loaded {
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseCgebsr2gebsc_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            bsrSortedVal: *const cuComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseCgebsr2gebsr: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -25215,22 +23605,6 @@ mod loaded {
             rowBlockDimC: ::core::ffi::c_int,
             colBlockDimC: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseCgebsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *const cuComplex,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDimA: ::core::ffi::c_int,
-            colBlockDimA: ::core::ffi::c_int,
-            rowBlockDimC: ::core::ffi::c_int,
-            colBlockDimC: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         #[cfg(any(
             feature = "cuda-11040",
@@ -26403,19 +24777,6 @@ mod loaded {
             info: bsric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseDbsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut f64,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseDbsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -26456,19 +24817,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseDbsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut f64,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseDbsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -26548,22 +24896,6 @@ mod loaded {
             info: bsrsm2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseDbsrsm2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            transB: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut f64,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsm2Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseDbsrsm2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -26614,20 +24946,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrsv2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseDbsrsv2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *mut f64,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsv2Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseDbsrsv2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -26774,19 +25092,6 @@ mod loaded {
             rowBlockDim: ::core::ffi::c_int,
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseDcsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            m: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedValA: *const f64,
-            csrSortedRowPtrA: *const ::core::ffi::c_int,
-            csrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseDcsrcolor: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -26946,17 +25251,6 @@ mod loaded {
             info: csric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseDcsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut f64,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseDcsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             m: ::core::ffi::c_int,
@@ -26991,17 +25285,6 @@ mod loaded {
             csrSortedColIndA: *const ::core::ffi::c_int,
             info: csrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseDcsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut f64,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseDcsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -27516,18 +25799,6 @@ mod loaded {
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseDgebsr2gebsc_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            bsrSortedVal: *const f64,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseDgebsr2gebsr: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -27563,22 +25834,6 @@ mod loaded {
             rowBlockDimC: ::core::ffi::c_int,
             colBlockDimC: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseDgebsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *const f64,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDimA: ::core::ffi::c_int,
-            colBlockDimA: ::core::ffi::c_int,
-            rowBlockDimC: ::core::ffi::c_int,
-            colBlockDimC: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         #[cfg(any(
             feature = "cuda-11040",
@@ -28450,19 +26705,6 @@ mod loaded {
             info: bsric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseSbsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut f32,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseSbsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -28503,19 +26745,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseSbsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut f32,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseSbsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -28595,22 +26824,6 @@ mod loaded {
             info: bsrsm2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseSbsrsm2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            transB: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut f32,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsm2Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseSbsrsm2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -28661,20 +26874,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrsv2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseSbsrsv2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *mut f32,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsv2Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseSbsrsv2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -28850,19 +27049,6 @@ mod loaded {
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseScsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            m: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedValA: *const f32,
-            csrSortedRowPtrA: *const ::core::ffi::c_int,
-            csrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseScsrcolor: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             m: ::core::ffi::c_int,
@@ -29021,17 +27207,6 @@ mod loaded {
             info: csric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseScsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut f32,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseScsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             m: ::core::ffi::c_int,
@@ -29066,17 +27241,6 @@ mod loaded {
             csrSortedColIndA: *const ::core::ffi::c_int,
             info: csrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseScsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut f32,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseScsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -29386,18 +27550,6 @@ mod loaded {
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseSgebsr2gebsc_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            bsrSortedVal: *const f32,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseSgebsr2gebsr: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -29433,22 +27585,6 @@ mod loaded {
             rowBlockDimC: ::core::ffi::c_int,
             colBlockDimC: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseSgebsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *const f32,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDimA: ::core::ffi::c_int,
-            colBlockDimA: ::core::ffi::c_int,
-            rowBlockDimC: ::core::ffi::c_int,
-            colBlockDimC: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         #[cfg(any(
             feature = "cuda-11040",
@@ -31421,20 +29557,6 @@ mod loaded {
             info: csrsv2Info_t,
             position: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseXgebsr2csr: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            descrC: cusparseMatDescr_t,
-            csrSortedRowPtrC: *mut ::core::ffi::c_int,
-            csrSortedColIndC: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
         pub cusparseXgebsr2gebsrNnz: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -31525,19 +29647,6 @@ mod loaded {
             info: bsric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseZbsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut cuDoubleComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseZbsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -31578,19 +29687,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseZbsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut cuDoubleComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseZbsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -31670,22 +29766,6 @@ mod loaded {
             info: bsrsm2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseZbsrsm2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            transB: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedVal: *mut cuDoubleComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsm2Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseZbsrsm2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -31736,20 +29816,6 @@ mod loaded {
             blockDim: ::core::ffi::c_int,
             info: bsrsv2Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseZbsrsv2_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            transA: cusparseOperation_t,
-            mb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *mut cuDoubleComplex,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            blockSize: ::core::ffi::c_int,
-            info: bsrsv2Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseZbsrsv2_solve: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -31896,19 +29962,6 @@ mod loaded {
             rowBlockDim: ::core::ffi::c_int,
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseZcsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            m: ::core::ffi::c_int,
-            n: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedValA: *const cuDoubleComplex,
-            csrSortedRowPtrA: *const ::core::ffi::c_int,
-            csrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseZcsrcolor: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -32068,17 +30121,6 @@ mod loaded {
             info: csric02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseZcsric02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut cuDoubleComplex,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csric02Info_t,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseZcsrilu02: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             m: ::core::ffi::c_int,
@@ -32113,17 +30155,6 @@ mod loaded {
             csrSortedColIndA: *const ::core::ffi::c_int,
             info: csrilu02Info_t,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseZcsrilu02_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            m: ::core::ffi::c_int,
-            nnz: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            csrSortedVal: *mut cuDoubleComplex,
-            csrSortedRowPtr: *const ::core::ffi::c_int,
-            csrSortedColInd: *const ::core::ffi::c_int,
-            info: csrilu02Info_t,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         pub cusparseZcsrilu02_numericBoost: unsafe extern "C" fn(
             handle: cusparseHandle_t,
@@ -32397,18 +30428,6 @@ mod loaded {
             colBlockDim: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
         ) -> cusparseStatus_t,
-        pub cusparseZgebsr2gebsc_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            bsrSortedVal: *const cuDoubleComplex,
-            bsrSortedRowPtr: *const ::core::ffi::c_int,
-            bsrSortedColInd: *const ::core::ffi::c_int,
-            rowBlockDim: ::core::ffi::c_int,
-            colBlockDim: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
-        ) -> cusparseStatus_t,
         pub cusparseZgebsr2gebsr: unsafe extern "C" fn(
             handle: cusparseHandle_t,
             dirA: cusparseDirection_t,
@@ -32444,22 +30463,6 @@ mod loaded {
             rowBlockDimC: ::core::ffi::c_int,
             colBlockDimC: ::core::ffi::c_int,
             pBufferSizeInBytes: *mut ::core::ffi::c_int,
-        ) -> cusparseStatus_t,
-        pub cusparseZgebsr2gebsr_bufferSizeExt: unsafe extern "C" fn(
-            handle: cusparseHandle_t,
-            dirA: cusparseDirection_t,
-            mb: ::core::ffi::c_int,
-            nb: ::core::ffi::c_int,
-            nnzb: ::core::ffi::c_int,
-            descrA: cusparseMatDescr_t,
-            bsrSortedValA: *const cuDoubleComplex,
-            bsrSortedRowPtrA: *const ::core::ffi::c_int,
-            bsrSortedColIndA: *const ::core::ffi::c_int,
-            rowBlockDimA: ::core::ffi::c_int,
-            colBlockDimA: ::core::ffi::c_int,
-            rowBlockDimC: ::core::ffi::c_int,
-            colBlockDimC: ::core::ffi::c_int,
-            pBufferSize: *mut usize,
         ) -> cusparseStatus_t,
         #[cfg(any(
             feature = "cuda-11040",
@@ -32780,10 +30783,6 @@ mod loaded {
                 .get(b"cusparseCbsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseCbsric02_bufferSizeExt = __library
-                .get(b"cusparseCbsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseCbsrilu02 = __library
                 .get(b"cusparseCbsrilu02\0")
                 .map(|sym| *sym)
@@ -32794,10 +30793,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseCbsrilu02_bufferSize = __library
                 .get(b"cusparseCbsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseCbsrilu02_bufferSizeExt = __library
-                .get(b"cusparseCbsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseCbsrilu02_numericBoost = __library
@@ -32820,10 +30815,6 @@ mod loaded {
                 .get(b"cusparseCbsrsm2_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseCbsrsm2_bufferSizeExt = __library
-                .get(b"cusparseCbsrsm2_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseCbsrsm2_solve = __library
                 .get(b"cusparseCbsrsm2_solve\0")
                 .map(|sym| *sym)
@@ -32834,10 +30825,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseCbsrsv2_bufferSize = __library
                 .get(b"cusparseCbsrsv2_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseCbsrsv2_bufferSizeExt = __library
-                .get(b"cusparseCbsrsv2_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseCbsrsv2_solve = __library
@@ -32890,10 +30877,6 @@ mod loaded {
                 .get(b"cusparseCcsr2gebsr_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseCcsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseCcsr2gebsr_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseCcsrcolor = __library
                 .get(b"cusparseCcsrcolor\0")
                 .map(|sym| *sym)
@@ -32940,10 +30923,6 @@ mod loaded {
                 .get(b"cusparseCcsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseCcsric02_bufferSizeExt = __library
-                .get(b"cusparseCcsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseCcsrilu02 = __library
                 .get(b"cusparseCcsrilu02\0")
                 .map(|sym| *sym)
@@ -32954,10 +30933,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseCcsrilu02_bufferSize = __library
                 .get(b"cusparseCcsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseCcsrilu02_bufferSizeExt = __library
-                .get(b"cusparseCcsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseCcsrilu02_numericBoost = __library
@@ -33083,20 +31058,12 @@ mod loaded {
                 .get(b"cusparseCgebsr2gebsc_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseCgebsr2gebsc_bufferSizeExt = __library
-                .get(b"cusparseCgebsr2gebsc_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseCgebsr2gebsr = __library
                 .get(b"cusparseCgebsr2gebsr\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseCgebsr2gebsr_bufferSize = __library
                 .get(b"cusparseCgebsr2gebsr_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseCgebsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseCgebsr2gebsr_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             #[cfg(any(
@@ -33795,10 +31762,6 @@ mod loaded {
                 .get(b"cusparseDbsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseDbsric02_bufferSizeExt = __library
-                .get(b"cusparseDbsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseDbsrilu02 = __library
                 .get(b"cusparseDbsrilu02\0")
                 .map(|sym| *sym)
@@ -33809,10 +31772,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseDbsrilu02_bufferSize = __library
                 .get(b"cusparseDbsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseDbsrilu02_bufferSizeExt = __library
-                .get(b"cusparseDbsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseDbsrilu02_numericBoost = __library
@@ -33835,10 +31794,6 @@ mod loaded {
                 .get(b"cusparseDbsrsm2_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseDbsrsm2_bufferSizeExt = __library
-                .get(b"cusparseDbsrsm2_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseDbsrsm2_solve = __library
                 .get(b"cusparseDbsrsm2_solve\0")
                 .map(|sym| *sym)
@@ -33849,10 +31804,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseDbsrsv2_bufferSize = __library
                 .get(b"cusparseDbsrsv2_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseDbsrsv2_bufferSizeExt = __library
-                .get(b"cusparseDbsrsv2_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseDbsrsv2_solve = __library
@@ -33905,10 +31856,6 @@ mod loaded {
                 .get(b"cusparseDcsr2gebsr_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseDcsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseDcsr2gebsr_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseDcsrcolor = __library
                 .get(b"cusparseDcsrcolor\0")
                 .map(|sym| *sym)
@@ -33955,10 +31902,6 @@ mod loaded {
                 .get(b"cusparseDcsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseDcsric02_bufferSizeExt = __library
-                .get(b"cusparseDcsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseDcsrilu02 = __library
                 .get(b"cusparseDcsrilu02\0")
                 .map(|sym| *sym)
@@ -33969,10 +31912,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseDcsrilu02_bufferSize = __library
                 .get(b"cusparseDcsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseDcsrilu02_bufferSizeExt = __library
-                .get(b"cusparseDcsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseDcsrilu02_numericBoost = __library
@@ -34365,20 +32304,12 @@ mod loaded {
                 .get(b"cusparseDgebsr2gebsc_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseDgebsr2gebsc_bufferSizeExt = __library
-                .get(b"cusparseDgebsr2gebsc_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseDgebsr2gebsr = __library
                 .get(b"cusparseDgebsr2gebsr\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseDgebsr2gebsr_bufferSize = __library
                 .get(b"cusparseDgebsr2gebsr_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseDgebsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseDgebsr2gebsr_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             #[cfg(any(
@@ -34895,10 +32826,6 @@ mod loaded {
                 .get(b"cusparseSbsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseSbsric02_bufferSizeExt = __library
-                .get(b"cusparseSbsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseSbsrilu02 = __library
                 .get(b"cusparseSbsrilu02\0")
                 .map(|sym| *sym)
@@ -34909,10 +32836,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseSbsrilu02_bufferSize = __library
                 .get(b"cusparseSbsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseSbsrilu02_bufferSizeExt = __library
-                .get(b"cusparseSbsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseSbsrilu02_numericBoost = __library
@@ -34935,10 +32858,6 @@ mod loaded {
                 .get(b"cusparseSbsrsm2_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseSbsrsm2_bufferSizeExt = __library
-                .get(b"cusparseSbsrsm2_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseSbsrsm2_solve = __library
                 .get(b"cusparseSbsrsm2_solve\0")
                 .map(|sym| *sym)
@@ -34949,10 +32868,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseSbsrsv2_bufferSize = __library
                 .get(b"cusparseSbsrsv2_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseSbsrsv2_bufferSizeExt = __library
-                .get(b"cusparseSbsrsv2_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseSbsrsv2_solve = __library
@@ -35031,10 +32946,6 @@ mod loaded {
                 .get(b"cusparseScsr2gebsr_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseScsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseScsr2gebsr_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseScsrcolor = __library
                 .get(b"cusparseScsrcolor\0")
                 .map(|sym| *sym)
@@ -35081,10 +32992,6 @@ mod loaded {
                 .get(b"cusparseScsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseScsric02_bufferSizeExt = __library
-                .get(b"cusparseScsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseScsrilu02 = __library
                 .get(b"cusparseScsrilu02\0")
                 .map(|sym| *sym)
@@ -35095,10 +33002,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseScsrilu02_bufferSize = __library
                 .get(b"cusparseScsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseScsrilu02_bufferSizeExt = __library
-                .get(b"cusparseScsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseScsrilu02_numericBoost = __library
@@ -35260,20 +33163,12 @@ mod loaded {
                 .get(b"cusparseSgebsr2gebsc_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseSgebsr2gebsc_bufferSizeExt = __library
-                .get(b"cusparseSgebsr2gebsc_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseSgebsr2gebsr = __library
                 .get(b"cusparseSgebsr2gebsr\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseSgebsr2gebsr_bufferSize = __library
                 .get(b"cusparseSgebsr2gebsr_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseSgebsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseSgebsr2gebsr_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             #[cfg(any(
@@ -36460,10 +34355,6 @@ mod loaded {
                 .get(b"cusparseXcsrsv2_zeroPivot\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseXgebsr2csr = __library
-                .get(b"cusparseXgebsr2csr\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseXgebsr2gebsrNnz = __library
                 .get(b"cusparseXgebsr2gebsrNnz\0")
                 .map(|sym| *sym)
@@ -36495,10 +34386,6 @@ mod loaded {
                 .get(b"cusparseZbsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseZbsric02_bufferSizeExt = __library
-                .get(b"cusparseZbsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseZbsrilu02 = __library
                 .get(b"cusparseZbsrilu02\0")
                 .map(|sym| *sym)
@@ -36509,10 +34396,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseZbsrilu02_bufferSize = __library
                 .get(b"cusparseZbsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseZbsrilu02_bufferSizeExt = __library
-                .get(b"cusparseZbsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseZbsrilu02_numericBoost = __library
@@ -36535,10 +34418,6 @@ mod loaded {
                 .get(b"cusparseZbsrsm2_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseZbsrsm2_bufferSizeExt = __library
-                .get(b"cusparseZbsrsm2_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseZbsrsm2_solve = __library
                 .get(b"cusparseZbsrsm2_solve\0")
                 .map(|sym| *sym)
@@ -36549,10 +34428,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseZbsrsv2_bufferSize = __library
                 .get(b"cusparseZbsrsv2_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseZbsrsv2_bufferSizeExt = __library
-                .get(b"cusparseZbsrsv2_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseZbsrsv2_solve = __library
@@ -36605,10 +34480,6 @@ mod loaded {
                 .get(b"cusparseZcsr2gebsr_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseZcsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseZcsr2gebsr_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseZcsrcolor = __library
                 .get(b"cusparseZcsrcolor\0")
                 .map(|sym| *sym)
@@ -36655,10 +34526,6 @@ mod loaded {
                 .get(b"cusparseZcsric02_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseZcsric02_bufferSizeExt = __library
-                .get(b"cusparseZcsric02_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseZcsrilu02 = __library
                 .get(b"cusparseZcsrilu02\0")
                 .map(|sym| *sym)
@@ -36669,10 +34536,6 @@ mod loaded {
                 .expect("Expected symbol in library");
             let cusparseZcsrilu02_bufferSize = __library
                 .get(b"cusparseZcsrilu02_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseZcsrilu02_bufferSizeExt = __library
-                .get(b"cusparseZcsrilu02_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseZcsrilu02_numericBoost = __library
@@ -36798,20 +34661,12 @@ mod loaded {
                 .get(b"cusparseZgebsr2gebsc_bufferSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let cusparseZgebsr2gebsc_bufferSizeExt = __library
-                .get(b"cusparseZgebsr2gebsc_bufferSizeExt\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let cusparseZgebsr2gebsr = __library
                 .get(b"cusparseZgebsr2gebsr\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cusparseZgebsr2gebsr_bufferSize = __library
                 .get(b"cusparseZgebsr2gebsr_bufferSize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            let cusparseZgebsr2gebsr_bufferSizeExt = __library
-                .get(b"cusparseZgebsr2gebsr_bufferSizeExt\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             #[cfg(any(
@@ -36961,21 +34816,17 @@ mod loaded {
                 cusparseCbsric02,
                 cusparseCbsric02_analysis,
                 cusparseCbsric02_bufferSize,
-                cusparseCbsric02_bufferSizeExt,
                 cusparseCbsrilu02,
                 cusparseCbsrilu02_analysis,
                 cusparseCbsrilu02_bufferSize,
-                cusparseCbsrilu02_bufferSizeExt,
                 cusparseCbsrilu02_numericBoost,
                 cusparseCbsrmm,
                 cusparseCbsrmv,
                 cusparseCbsrsm2_analysis,
                 cusparseCbsrsm2_bufferSize,
-                cusparseCbsrsm2_bufferSizeExt,
                 cusparseCbsrsm2_solve,
                 cusparseCbsrsv2_analysis,
                 cusparseCbsrsv2_bufferSize,
-                cusparseCbsrsv2_bufferSizeExt,
                 cusparseCbsrsv2_solve,
                 cusparseCbsrxmv,
                 #[cfg(any(
@@ -36999,7 +34850,6 @@ mod loaded {
                 cusparseCcsr2dense,
                 cusparseCcsr2gebsr,
                 cusparseCcsr2gebsr_bufferSize,
-                cusparseCcsr2gebsr_bufferSizeExt,
                 cusparseCcsrcolor,
                 cusparseCcsrgeam2,
                 cusparseCcsrgeam2_bufferSizeExt,
@@ -37022,11 +34872,9 @@ mod loaded {
                 cusparseCcsric02,
                 cusparseCcsric02_analysis,
                 cusparseCcsric02_bufferSize,
-                cusparseCcsric02_bufferSizeExt,
                 cusparseCcsrilu02,
                 cusparseCcsrilu02_analysis,
                 cusparseCcsrilu02_bufferSize,
-                cusparseCcsrilu02_bufferSizeExt,
                 cusparseCcsrilu02_numericBoost,
                 #[cfg(any(
                     feature = "cuda-11040",
@@ -37105,10 +34953,8 @@ mod loaded {
                 cusparseCgebsr2csr,
                 cusparseCgebsr2gebsc,
                 cusparseCgebsr2gebsc_bufferSize,
-                cusparseCgebsr2gebsc_bufferSizeExt,
                 cusparseCgebsr2gebsr,
                 cusparseCgebsr2gebsr_bufferSize,
-                cusparseCgebsr2gebsr_bufferSizeExt,
                 #[cfg(any(
                     feature = "cuda-11040",
                     feature = "cuda-11050",
@@ -37550,21 +35396,17 @@ mod loaded {
                 cusparseDbsric02,
                 cusparseDbsric02_analysis,
                 cusparseDbsric02_bufferSize,
-                cusparseDbsric02_bufferSizeExt,
                 cusparseDbsrilu02,
                 cusparseDbsrilu02_analysis,
                 cusparseDbsrilu02_bufferSize,
-                cusparseDbsrilu02_bufferSizeExt,
                 cusparseDbsrilu02_numericBoost,
                 cusparseDbsrmm,
                 cusparseDbsrmv,
                 cusparseDbsrsm2_analysis,
                 cusparseDbsrsm2_bufferSize,
-                cusparseDbsrsm2_bufferSizeExt,
                 cusparseDbsrsm2_solve,
                 cusparseDbsrsv2_analysis,
                 cusparseDbsrsv2_bufferSize,
-                cusparseDbsrsv2_bufferSizeExt,
                 cusparseDbsrsv2_solve,
                 cusparseDbsrxmv,
                 #[cfg(any(
@@ -37588,7 +35430,6 @@ mod loaded {
                 cusparseDcsr2dense,
                 cusparseDcsr2gebsr,
                 cusparseDcsr2gebsr_bufferSize,
-                cusparseDcsr2gebsr_bufferSizeExt,
                 cusparseDcsrcolor,
                 cusparseDcsrgeam2,
                 cusparseDcsrgeam2_bufferSizeExt,
@@ -37611,11 +35452,9 @@ mod loaded {
                 cusparseDcsric02,
                 cusparseDcsric02_analysis,
                 cusparseDcsric02_bufferSize,
-                cusparseDcsric02_bufferSizeExt,
                 cusparseDcsrilu02,
                 cusparseDcsrilu02_analysis,
                 cusparseDcsrilu02_bufferSize,
-                cusparseDcsrilu02_bufferSizeExt,
                 cusparseDcsrilu02_numericBoost,
                 #[cfg(any(
                     feature = "cuda-11040",
@@ -37871,10 +35710,8 @@ mod loaded {
                 cusparseDgebsr2csr,
                 cusparseDgebsr2gebsc,
                 cusparseDgebsr2gebsc_bufferSize,
-                cusparseDgebsr2gebsc_bufferSizeExt,
                 cusparseDgebsr2gebsr,
                 cusparseDgebsr2gebsr_bufferSize,
-                cusparseDgebsr2gebsr_bufferSizeExt,
                 #[cfg(any(
                     feature = "cuda-11040",
                     feature = "cuda-11050",
@@ -38176,21 +36013,17 @@ mod loaded {
                 cusparseSbsric02,
                 cusparseSbsric02_analysis,
                 cusparseSbsric02_bufferSize,
-                cusparseSbsric02_bufferSizeExt,
                 cusparseSbsrilu02,
                 cusparseSbsrilu02_analysis,
                 cusparseSbsrilu02_bufferSize,
-                cusparseSbsrilu02_bufferSizeExt,
                 cusparseSbsrilu02_numericBoost,
                 cusparseSbsrmm,
                 cusparseSbsrmv,
                 cusparseSbsrsm2_analysis,
                 cusparseSbsrsm2_bufferSize,
-                cusparseSbsrsm2_bufferSizeExt,
                 cusparseSbsrsm2_solve,
                 cusparseSbsrsv2_analysis,
                 cusparseSbsrsv2_bufferSize,
-                cusparseSbsrsv2_bufferSizeExt,
                 cusparseSbsrsv2_solve,
                 cusparseSbsrxmv,
                 #[cfg(any(
@@ -38234,7 +36067,6 @@ mod loaded {
                 cusparseScsr2dense,
                 cusparseScsr2gebsr,
                 cusparseScsr2gebsr_bufferSize,
-                cusparseScsr2gebsr_bufferSizeExt,
                 cusparseScsrcolor,
                 cusparseScsrgeam2,
                 cusparseScsrgeam2_bufferSizeExt,
@@ -38257,11 +36089,9 @@ mod loaded {
                 cusparseScsric02,
                 cusparseScsric02_analysis,
                 cusparseScsric02_bufferSize,
-                cusparseScsric02_bufferSizeExt,
                 cusparseScsrilu02,
                 cusparseScsrilu02_analysis,
                 cusparseScsrilu02_bufferSize,
-                cusparseScsrilu02_bufferSizeExt,
                 cusparseScsrilu02_numericBoost,
                 #[cfg(any(
                     feature = "cuda-11040",
@@ -38355,10 +36185,8 @@ mod loaded {
                 cusparseSgebsr2csr,
                 cusparseSgebsr2gebsc,
                 cusparseSgebsr2gebsc_bufferSize,
-                cusparseSgebsr2gebsc_bufferSizeExt,
                 cusparseSgebsr2gebsr,
                 cusparseSgebsr2gebsr_bufferSize,
-                cusparseSgebsr2gebsr_bufferSizeExt,
                 #[cfg(any(
                     feature = "cuda-11040",
                     feature = "cuda-11050",
@@ -39150,7 +36978,6 @@ mod loaded {
                     feature = "cuda-11080"
                 ))]
                 cusparseXcsrsv2_zeroPivot,
-                cusparseXgebsr2csr,
                 cusparseXgebsr2gebsrNnz,
                 #[cfg(any(
                     feature = "cuda-11040",
@@ -39164,21 +36991,17 @@ mod loaded {
                 cusparseZbsric02,
                 cusparseZbsric02_analysis,
                 cusparseZbsric02_bufferSize,
-                cusparseZbsric02_bufferSizeExt,
                 cusparseZbsrilu02,
                 cusparseZbsrilu02_analysis,
                 cusparseZbsrilu02_bufferSize,
-                cusparseZbsrilu02_bufferSizeExt,
                 cusparseZbsrilu02_numericBoost,
                 cusparseZbsrmm,
                 cusparseZbsrmv,
                 cusparseZbsrsm2_analysis,
                 cusparseZbsrsm2_bufferSize,
-                cusparseZbsrsm2_bufferSizeExt,
                 cusparseZbsrsm2_solve,
                 cusparseZbsrsv2_analysis,
                 cusparseZbsrsv2_bufferSize,
-                cusparseZbsrsv2_bufferSizeExt,
                 cusparseZbsrsv2_solve,
                 cusparseZbsrxmv,
                 #[cfg(any(
@@ -39202,7 +37025,6 @@ mod loaded {
                 cusparseZcsr2dense,
                 cusparseZcsr2gebsr,
                 cusparseZcsr2gebsr_bufferSize,
-                cusparseZcsr2gebsr_bufferSizeExt,
                 cusparseZcsrcolor,
                 cusparseZcsrgeam2,
                 cusparseZcsrgeam2_bufferSizeExt,
@@ -39225,11 +37047,9 @@ mod loaded {
                 cusparseZcsric02,
                 cusparseZcsric02_analysis,
                 cusparseZcsric02_bufferSize,
-                cusparseZcsric02_bufferSizeExt,
                 cusparseZcsrilu02,
                 cusparseZcsrilu02_analysis,
                 cusparseZcsrilu02_bufferSize,
-                cusparseZcsrilu02_bufferSizeExt,
                 cusparseZcsrilu02_numericBoost,
                 #[cfg(any(
                     feature = "cuda-11040",
@@ -39308,10 +37128,8 @@ mod loaded {
                 cusparseZgebsr2csr,
                 cusparseZgebsr2gebsc,
                 cusparseZgebsr2gebsc_bufferSize,
-                cusparseZgebsr2gebsc_bufferSizeExt,
                 cusparseZgebsr2gebsr,
                 cusparseZgebsr2gebsr_bufferSize,
-                cusparseZgebsr2gebsr_bufferSizeExt,
                 #[cfg(any(
                     feature = "cuda-11040",
                     feature = "cuda-11050",
