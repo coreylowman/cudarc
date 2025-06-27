@@ -49,7 +49,7 @@ cudnn = ["driver"]
 curand = ["driver"]
 nccl = ["driver"]
 cusparse = ["driver"]
-cusolver = ["driver"]
+cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
 
 std = []
 no-std = ["no-std-compat/std"]
