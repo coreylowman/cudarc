@@ -50,6 +50,7 @@ curand = ["driver"]
 nccl = ["driver"]
 cusparse = ["driver"]
 cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
+cusolvermg = ["cusolver"]
 
 std = []
 no-std = ["no-std-compat/std"]
