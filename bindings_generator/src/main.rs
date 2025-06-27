@@ -222,7 +222,7 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 },
                 blocklist: Filters {
                     types: vec!["^cusolverMg.*".to_string()],
-                    functions: vec!["^cusolverMg.*".to_string()],
+                    functions: vec!["^cusolverMg.*".to_string(), "^cusolverDnLogger.*".to_string()],
                     vars: vec!["^cusolverMg.*".to_string()],
                 },
                 libs: vec!["cusolver".to_string()],

@@ -25,14 +25,12 @@ pub enum cublasOperation_t {
     CUBLAS_OP_C = 2,
     CUBLAS_OP_CONJG = 3,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDataType_t {
@@ -65,18 +63,16 @@ pub enum cudaDataType_t {
     CUDA_R_64U = 26,
     CUDA_C_64U = 27,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDataType_t {
@@ -418,14 +414,7 @@ mod loaded {
         deviceId: *const i32,
         mapping: cusolverMgGridMapping_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgCreateDeviceGrid)(
-            grid,
-            numRowDevices,
-            numColDevices,
-            deviceId,
-            mapping,
-        )
+        (culib().cusolverMgCreateDeviceGrid)(grid, numRowDevices, numColDevices, deviceId, mapping)
     }
     pub unsafe fn cusolverMgCreateMatrixDesc(
         desc: *mut cudaLibMgMatrixDesc_t,
@@ -436,8 +425,7 @@ mod loaded {
         dataType: cudaDataType,
         grid: cudaLibMgGrid_t,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgCreateMatrixDesc)(
+        (culib().cusolverMgCreateMatrixDesc)(
             desc,
             numRows,
             numCols,
@@ -453,9 +441,7 @@ mod loaded {
     pub unsafe fn cusolverMgDestroyGrid(grid: cudaLibMgGrid_t) -> cusolverStatus_t {
         (culib().cusolverMgDestroyGrid)(grid)
     }
-    pub unsafe fn cusolverMgDestroyMatrixDesc(
-        desc: cudaLibMgMatrixDesc_t,
-    ) -> cusolverStatus_t {
+    pub unsafe fn cusolverMgDestroyMatrixDesc(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t {
         (culib().cusolverMgDestroyMatrixDesc)(desc)
     }
     pub unsafe fn cusolverMgDeviceSelect(
@@ -479,8 +465,7 @@ mod loaded {
         lwork: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrf)(
+        (culib().cusolverMgGetrf)(
             handle,
             M,
             N,
@@ -507,8 +492,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrf_bufferSize)(
+        (culib().cusolverMgGetrf_bufferSize)(
             handle,
             M,
             N,
@@ -540,8 +524,7 @@ mod loaded {
         lwork: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrs)(
+        (culib().cusolverMgGetrs)(
             handle,
             TRANS,
             N,
@@ -578,8 +561,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgGetrs_bufferSize)(
+        (culib().cusolverMgGetrs_bufferSize)(
             handle,
             TRANS,
             N,
@@ -610,8 +592,7 @@ mod loaded {
         lwork: i64,
         h_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrf)(
+        (culib().cusolverMgPotrf)(
             handle,
             uplo,
             N,
@@ -636,8 +617,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrf_bufferSize)(
+        (culib().cusolverMgPotrf_bufferSize)(
             handle,
             uplo,
             N,
@@ -662,8 +642,7 @@ mod loaded {
         lwork: i64,
         h_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotri)(
+        (culib().cusolverMgPotri)(
             handle,
             uplo,
             N,
@@ -688,8 +667,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotri_bufferSize)(
+        (culib().cusolverMgPotri_bufferSize)(
             handle,
             uplo,
             N,
@@ -719,8 +697,7 @@ mod loaded {
         lwork: i64,
         h_info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrs)(
+        (culib().cusolverMgPotrs)(
             handle,
             uplo,
             n,
@@ -755,8 +732,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgPotrs_bufferSize)(
+        (culib().cusolverMgPotrs_bufferSize)(
             handle,
             uplo,
             n,
@@ -789,8 +765,7 @@ mod loaded {
         lwork: i64,
         info: *mut ::core::ffi::c_int,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgSyevd)(
+        (culib().cusolverMgSyevd)(
             handle,
             jobz,
             uplo,
@@ -821,8 +796,7 @@ mod loaded {
         computeType: cudaDataType,
         lwork: *mut i64,
     ) -> cusolverStatus_t {
-        (culib()
-            .cusolverMgSyevd_bufferSize)(
+        (culib().cusolverMgSyevd_bufferSize)(
             handle,
             jobz,
             uplo,
@@ -839,9 +813,8 @@ mod loaded {
     }
     pub struct Lib {
         __library: ::libloading::Library,
-        pub cusolverMgCreate: unsafe extern "C" fn(
-            handle: *mut cusolverMgHandle_t,
-        ) -> cusolverStatus_t,
+        pub cusolverMgCreate:
+            unsafe extern "C" fn(handle: *mut cusolverMgHandle_t) -> cusolverStatus_t,
         pub cusolverMgCreateDeviceGrid: unsafe extern "C" fn(
             grid: *mut cudaLibMgGrid_t,
             numRowDevices: i32,
@@ -858,15 +831,10 @@ mod loaded {
             dataType: cudaDataType,
             grid: cudaLibMgGrid_t,
         ) -> cusolverStatus_t,
-        pub cusolverMgDestroy: unsafe extern "C" fn(
-            handle: cusolverMgHandle_t,
-        ) -> cusolverStatus_t,
-        pub cusolverMgDestroyGrid: unsafe extern "C" fn(
-            grid: cudaLibMgGrid_t,
-        ) -> cusolverStatus_t,
-        pub cusolverMgDestroyMatrixDesc: unsafe extern "C" fn(
-            desc: cudaLibMgMatrixDesc_t,
-        ) -> cusolverStatus_t,
+        pub cusolverMgDestroy: unsafe extern "C" fn(handle: cusolverMgHandle_t) -> cusolverStatus_t,
+        pub cusolverMgDestroyGrid: unsafe extern "C" fn(grid: cudaLibMgGrid_t) -> cusolverStatus_t,
+        pub cusolverMgDestroyMatrixDesc:
+            unsafe extern "C" fn(desc: cudaLibMgMatrixDesc_t) -> cusolverStatus_t,
         pub cusolverMgDeviceSelect: unsafe extern "C" fn(
             handle: cusolverMgHandle_t,
             nbDevices: ::core::ffi::c_int,
