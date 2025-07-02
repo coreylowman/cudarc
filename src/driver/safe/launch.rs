@@ -269,6 +269,82 @@ impl LaunchArgs<'_> {
         }
         Ok(start_event.zip(end_event))
     }
+
+    /// Submits the configuration [CudaFunction] to execute asychronously on
+    /// the configured device stream.
+    ///
+    /// # Safety
+    ///
+    /// This is generally unsafe for two main reasons:
+    ///
+    /// 1. We can't guarantee that the arguments are valid for the configured [CudaFunction].
+    ///    We don't know if the types are correct, if the arguments are in the correct order,
+    ///    if the types are representable in CUDA, etc.
+    /// 2. We can't guarantee that the cuda kernel follows the mutability of the arguments
+    ///    configured with [LaunchArgs::arg()]. For instance, you can pass a reference to a [CudaSlice],
+    ///    which on rust side can't be mutated, but on cuda side the kernel can mutate it.
+    /// 3. [CudaFunction] can access memory outside of limits.
+    ///
+    /// ## Handling asynchronous mutation
+    ///
+    /// All [CudaSlice]/[CudaView]/[CudaViewMut] contain 2 events that record
+    /// when the data associated with them are read from/written to.
+    ///
+    /// The [PushKernelArg] implementation of these adds these events to [LaunchArgs],
+    /// so when [LaunchArgs::launch()] is called, we properly do multi stream synchronization.
+    ///
+    /// So in practice it is not possible to have multiple kernels concurrently modify device
+    /// data while using the safe api.
+    ///
+    /// ## Handling use after free
+    ///
+    /// Since [LaunchArgs::launch()] properly records reads/writes for [CudaSlice]/[CudaView]/[CudaViewMut],
+    /// and the drop implementation of [CudaSlice] waits on those events to finish,
+    /// we will never encounter a use after free situation.
+    #[cfg(any(
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    #[inline(always)]
+    pub unsafe fn launch_ex(
+        &mut self,
+        cfg: LaunchConfig,
+        attrs: &mut [sys::CUlaunchAttribute],
+    ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
+        self.stream.ctx.bind_to_thread()?;
+        for &event in self.waits.iter() {
+            self.stream.wait(event)?;
+        }
+        let start_event = self
+            .flags
+            .map(|flags| self.stream.record_event(Some(flags)))
+            .transpose()?;
+        result::launch_kernel_ex(
+            self.func.cu_function,
+            cfg.grid_dim,
+            cfg.block_dim,
+            cfg.shared_mem_bytes,
+            self.stream.cu_stream,
+            &mut self.args,
+            attrs,
+        )?;
+        let end_event = self
+            .flags
+            .map(|flags| self.stream.record_event(Some(flags)))
+            .transpose()?;
+        for &event in self.records.iter() {
+            event.record(self.stream)?;
+        }
+        Ok(start_event.zip(end_event))
+    }
 }
 
 #[cfg(test)]
