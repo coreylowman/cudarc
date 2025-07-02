@@ -1136,7 +1136,7 @@ pub unsafe fn launch_kernel_ex(
         sharedMemBytes: shared_mem_bytes,
         hStream: stream,
         attrs: attrs.as_mut_ptr(),
-        numAttrs: 1,
+        numAttrs: attrs.len() as c_uint,
     };
 
     sys::cuLaunchKernelEx(&cfg, f, kernel_params.as_mut_ptr(), std::ptr::null_mut()).result()
