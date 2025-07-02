@@ -1711,6 +1711,13 @@ unsafe impl Send for CudaFunction {}
 unsafe impl Sync for CudaFunction {}
 
 impl CudaModule {
+    /// The underlying cuda module object
+    /// # Safety
+    /// Do not destroy this value.
+    pub fn cu_module(&self) -> sys::CUmodule {
+        self.cu_module
+    }
+
     /// Loads a function from the loaded module with the given name.
     pub fn load_function(self: &Arc<Self>, fn_name: &str) -> Result<CudaFunction, DriverError> {
         let fn_name_c = CString::new(fn_name).unwrap();
@@ -1723,6 +1730,13 @@ impl CudaModule {
 }
 
 impl CudaFunction {
+    /// The underlying cuda function object
+    /// # Safety
+    /// Do not destroy this value.
+    pub fn cu_function(&self) -> sys::CUfunction {
+        self.cu_function
+    }
+
     pub fn occupancy_available_dynamic_smem_per_block(
         &self,
         num_blocks: u32,
