@@ -100,16 +100,24 @@ pub unsafe trait KernelArg {
     fn as_kernel_arg(&self) -> *mut std::ffi::c_void;
 }
 
-unsafe impl <T: DeviceRepr> KernelArg for &T {
+unsafe impl <T: DeviceRepr> KernelArg for T {
     #[inline(always)]
     fn as_kernel_arg(&self) -> *mut std::ffi::c_void {
-        (*self) as *const T as *mut _
+        self as *const T as *mut _
     }
 }
 
-unsafe impl<'a, T: KernelArg> PushKernelArg<T> for LaunchArgs<'a> {
+unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b T> for LaunchArgs<'a> {
     #[inline(always)]
-    fn arg(&mut self, arg: T) -> &mut Self {
+    fn arg(&mut self, arg: &'b T) -> &mut Self {
+        self.args.push(arg.as_kernel_arg());
+        self
+    }
+}
+
+unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b mut T> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b mut T) -> &mut Self {
         self.args.push(arg.as_kernel_arg());
         self
     }
