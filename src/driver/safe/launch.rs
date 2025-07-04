@@ -107,17 +107,9 @@ unsafe impl <T: DeviceRepr> KernelArg for T {
     }
 }
 
-unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b T> for LaunchArgs<'a> {
+unsafe impl<'a, T: KernelArg> PushKernelArg<T> for LaunchArgs<'a> {
     #[inline(always)]
-    fn arg(&mut self, arg: &'b T) -> &mut Self {
-        self.args.push(arg.as_kernel_arg());
-        self
-    }
-}
-
-unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b mut T> for LaunchArgs<'a> {
-    #[inline(always)]
-    fn arg(&mut self, arg: &'b mut T) -> &mut Self {
+    fn arg(&mut self, arg: T) -> &mut Self {
         self.args.push(arg.as_kernel_arg());
         self
     }
