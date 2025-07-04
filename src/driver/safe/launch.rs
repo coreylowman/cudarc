@@ -111,7 +111,9 @@ unsafe impl <T: DeviceRepr> KernelArg for T {
 unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b T> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b T) -> &mut Self {
-        self.args.push(arg.as_kernel_arg());
+        let a = arg.as_kernel_arg();
+        println!("{a:?}");
+        self.args.push(a);
         self
     }
 }
