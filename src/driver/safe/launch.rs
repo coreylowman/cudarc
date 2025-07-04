@@ -139,8 +139,15 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
                 self.records.push(read);
             }
         }
+        let device_ptr = arg.cu_device_ptr;
+        println!("true cu_device_ptr {device_ptr:?}");
+        let device_ptr = &arg.cu_device_ptr;
+        println!("true &cu_device_ptr {device_ptr:?}");
+        let device_ptr = (&arg.cu_device_ptr) as *const sys::CUdeviceptr;
+        println!("true *const sys... {device_ptr:?}");
+
         let t = (&arg.cu_device_ptr) as *const sys::CUdeviceptr as _;
-        println!("{t:?}");
+        println!("true final {t:?}");
         self.args
             .push(t);
         self
