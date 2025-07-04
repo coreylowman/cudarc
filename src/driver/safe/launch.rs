@@ -103,7 +103,7 @@ pub unsafe trait KernelArg {
 unsafe impl <T: DeviceRepr> KernelArg for &T {
     #[inline(always)]
     fn as_kernel_arg(&self) -> *mut std::ffi::c_void {
-        self as *const T as *mut _
+        (*self) as *const T as *mut _
     }
 }
 
