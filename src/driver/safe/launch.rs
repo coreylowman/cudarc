@@ -89,10 +89,28 @@ pub unsafe trait PushKernelArg<T> {
     fn arg(&mut self, arg: T) -> &mut Self;
 }
 
-unsafe impl<'a, 'b: 'a, T: DeviceRepr> PushKernelArg<&'b T> for LaunchArgs<'a> {
+/// Something that can be copied to device memory and
+/// turned into a parameter for [result::launch_kernel].
+///
+/// See the [cuda docs](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#global-function-argument-processing)
+/// on argument processing.
+///
+/// Helper trait to allow client libraries to use `LaunchArgs` with their types.
+pub unsafe trait KernelArg {
+    fn as_kernel_arg(&self) -> *mut std::ffi::c_void;
+}
+
+unsafe impl <T: DeviceRepr> KernelArg for T {
+    #[inline(always)]
+    fn as_kernel_arg(&self) -> *mut std::ffi::c_void {
+        self as *const T as *mut _
+    }
+}
+
+unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b T> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b T) -> &mut Self {
-        self.args.push(arg as *const T as *mut _);
+        self.args.push(arg.as_kernel_arg());
         self
     }
 }
@@ -164,26 +182,6 @@ unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut CudaViewMut<'c, T>> for
         self
     }
 }
-
-/// Something that can be copied to device memory and
-/// turned into a parameter for [result::launch_kernel].
-///
-/// See the [cuda docs](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#global-function-argument-processing)
-/// on argument processing.
-///
-/// Helper trait to allow client libraries to use `LaunchArgs` with their types.
-pub unsafe trait KernelArg<'a> {
-    fn as_kernel_arg(&'a self) -> &'a *mut std::ffi::c_void;
-}
-
-unsafe impl <'a, 'b: 'a, T: KernelArg<'b>> PushKernelArg<T> for LaunchArgs<'a> {
-    #[inline(always)]
-    fn arg(&mut self, arg: T) -> &mut Self {
-        self.args.push(*arg.as_kernel_arg());
-        self
-    }
-}
-
 
 impl LaunchArgs<'_> {
     /// Calling this will make [LaunchArgs::launch()] and [LaunchArgs::launch_cooperative()]
