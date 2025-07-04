@@ -1,3 +1,4 @@
+use std::println;
 use std::vec::Vec;
 
 use crate::driver::{
@@ -118,7 +119,9 @@ unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b T> for LaunchArgs<'a> {
 unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b mut T> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b mut T) -> &mut Self {
-        self.args.push(arg.as_kernel_arg());
+        let a = arg.as_kernel_arg();
+        println!("{a:?}");
+        self.args.push(a);
         self
     }
 }
@@ -134,8 +137,10 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
                 self.records.push(read);
             }
         }
+        let t = (&arg.cu_device_ptr) as *const sys::CUdeviceptr as _;
+        println!("{t:?}");
         self.args
-            .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
+            .push(t);
         self
     }
 }
@@ -152,8 +157,10 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a
                 self.records.push(write);
             }
         }
+        let t = (&arg.cu_device_ptr) as *const sys::CUdeviceptr as _;
+        println!("{t:?}");
         self.args
-            .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
+            .push(t);
         self
     }
 }
