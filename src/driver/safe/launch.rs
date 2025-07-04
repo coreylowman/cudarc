@@ -115,6 +115,14 @@ unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b T> for LaunchArgs<'a> {
     }
 }
 
+unsafe impl<'a, 'b: 'a, T: KernelArg> PushKernelArg<&'b mut T> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b mut T) -> &mut Self {
+        self.args.push(arg.as_kernel_arg());
+        self
+    }
+}
+
 unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
     #[inline(always)]
     fn arg(&mut self, arg: &'b CudaSlice<T>) -> &mut Self {
