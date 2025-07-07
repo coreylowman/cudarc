@@ -1,3 +1,4 @@
+use core::ops::{Deref, DerefMut};
 use crate::driver::{
     result::{self, DriverError},
     sys::{self, CUfunc_cache_enum, CUfunction_attribute_enum},
@@ -479,12 +480,48 @@ impl CudaStream {
     }
 }
 
+#[derive(Debug)]
+pub enum CuDevicePtr {
+    Owned(sys::CUdeviceptr, Arc<CudaStream>),
+    Shared(sys::CUdeviceptr, Arc<CudaStream>),
+}
+
+
+impl Deref for CuDevicePtr {
+    type Target = sys::CUdeviceptr;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            CuDevicePtr::Owned(cu_device_ptr, _) => cu_device_ptr,
+            CuDevicePtr::Shared(cu_device_ptr, _) => cu_device_ptr
+        }
+    }
+}
+
+impl DerefMut for CuDevicePtr {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        match self {
+            CuDevicePtr::Owned(cu_device_ptr, _) => cu_device_ptr,
+            CuDevicePtr::Shared(cu_device_ptr, _) => cu_device_ptr
+        }
+    }
+}
+
+impl Drop for CuDevicePtr {
+    fn drop(&mut self) {
+        if let CuDevicePtr::Shared(cu_device_ptr, stream) = self {
+            let ctx = &stream.ctx;
+            ctx.record_err(unsafe { result::free_async(*cu_device_ptr, stream.cu_stream) });
+        }
+    }
+}
+
 /// `Vec<T>` on a cuda device. You can allocate and modify this with [CudaStream].
 ///
 /// This object is thread safe.
 #[derive(Debug)]
 pub struct CudaSlice<T> {
-    pub(crate) cu_device_ptr: sys::CUdeviceptr,
+    pub(crate) cu_device_ptr: CuDevicePtr,
     pub(crate) len: usize,
     pub(crate) read: Option<CudaEvent>,
     pub(crate) write: Option<CudaEvent>,
@@ -504,7 +541,6 @@ impl<T> Drop for CudaSlice<T> {
         if let Some(write) = self.write.as_ref() {
             ctx.record_err(self.stream.wait(write));
         }
-        ctx.record_err(unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) });
     }
 }
 
@@ -574,7 +610,7 @@ pub struct CudaView<'a, T> {
 impl<T> CudaSlice<T> {
     pub fn as_view(&self) -> CudaView<'_, T> {
         CudaView {
-            ptr: self.cu_device_ptr,
+            ptr: *self.cu_device_ptr,
             len: self.len,
             read: &self.read,
             write: &self.write,
@@ -621,7 +657,7 @@ pub struct CudaViewMut<'a, T> {
 impl<T> CudaSlice<T> {
     pub fn as_view_mut(&self) -> CudaViewMut<'_, T> {
         CudaViewMut {
-            ptr: self.cu_device_ptr,
+            ptr: *self.cu_device_ptr,
             len: self.len,
             read: &self.read,
             write: &self.write,
@@ -846,7 +882,7 @@ impl<T> DevicePtr<T> for CudaSlice<T> {
             }
         }
         (
-            self.cu_device_ptr,
+            *self.cu_device_ptr,
             SyncOnDrop::record_event(&self.read, stream),
         )
     }
@@ -910,7 +946,7 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
             }
         }
         (
-            self.cu_device_ptr,
+            *self.cu_device_ptr,
             SyncOnDrop::record_event(&self.write, stream),
         )
     }
@@ -1148,7 +1184,7 @@ impl CudaStream {
             unsafe { result::malloc_sync(0) }?
         };
         Ok(CudaSlice {
-            cu_device_ptr,
+            cu_device_ptr: CuDevicePtr::Owned(cu_device_ptr, self.clone()),
             len: 0,
             read: None,
             write: None,
@@ -1179,7 +1215,7 @@ impl CudaStream {
             (None, None)
         };
         Ok(CudaSlice {
-            cu_device_ptr,
+            cu_device_ptr: CuDevicePtr::Owned(cu_device_ptr, self.clone()),
             len,
             read,
             write,
@@ -1382,7 +1418,7 @@ impl<T> CudaSlice<T> {
     pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaView {
-                ptr: self.cu_device_ptr,
+                ptr: *self.cu_device_ptr,
                 len,
                 read: &self.read,
                 write: &self.write,
@@ -1402,7 +1438,7 @@ impl<T> CudaSlice<T> {
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaViewMut {
-                ptr: self.cu_device_ptr,
+                ptr: *self.cu_device_ptr,
                 len,
                 read: &self.read,
                 write: &self.write,
@@ -1902,14 +1938,14 @@ impl<T> CudaSlice<T> {
         // drop self.stream
         unsafe { Arc::decrement_strong_count(Arc::as_ptr(&self.stream)) };
 
-        let ptr = self.cu_device_ptr;
+        let ptr = *self.cu_device_ptr;
         std::mem::forget(self);
         ptr
     }
 }
 
 impl CudaStream {
-    /// Creates a [CudaSlice] from a [sys::CUdeviceptr]. Useful in conjunction with
+    /// Creates a [CudaSlice] from a [CuDevicePtr]. Useful in conjunction with
     /// [`CudaSlice::leak()`].
     ///
     /// # Safety
@@ -1919,7 +1955,7 @@ impl CudaStream {
     ///   should be called on the memory.
     pub unsafe fn upgrade_device_ptr<T>(
         self: &Arc<Self>,
-        cu_device_ptr: sys::CUdeviceptr,
+        cu_device_ptr: CuDevicePtr,
         len: usize,
     ) -> CudaSlice<T> {
         let (read, write) = if self.ctx.is_event_tracking() {
@@ -2004,7 +2040,7 @@ mod tests {
         assert_eq!(Arc::strong_count(&ctx), 2);
         let t = stream.alloc_zeros::<f32>(1).unwrap();
         assert_eq!(Arc::strong_count(&ctx), 4);
-        assert_eq!(Arc::strong_count(&stream), 2);
+        assert_eq!(Arc::strong_count(&stream), 3);
         drop(t);
         assert_eq!(Arc::strong_count(&ctx), 2);
         assert_eq!(Arc::strong_count(&stream), 1);
@@ -2069,11 +2105,11 @@ mod tests {
         let a = stream.memcpy_stod(&[1.0f32, 2.0, 3.0, 4.0, 5.0]).unwrap();
 
         let ptr = a.leak();
-        let b = unsafe { stream.upgrade_device_ptr::<f32>(ptr, 3) };
+        let b = unsafe { stream.upgrade_device_ptr::<f32>(CuDevicePtr::Owned(ptr,stream.clone()), 3) };
         assert_eq!(stream.memcpy_dtov(&b).unwrap(), &[1.0, 2.0, 3.0]);
 
         let ptr = b.leak();
-        let c = unsafe { stream.upgrade_device_ptr::<f32>(ptr, 5) };
+        let c = unsafe { stream.upgrade_device_ptr::<f32>(CuDevicePtr::Owned(ptr,stream.clone()), 5) };
         assert_eq!(stream.memcpy_dtov(&c).unwrap(), &[1.0, 2.0, 3.0, 4.0, 5.0]);
     }
 
