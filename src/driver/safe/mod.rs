@@ -8,7 +8,7 @@ pub(crate) mod profile;
 pub(crate) mod unified_memory;
 
 pub use self::core::{
-    CudaContext, CudaEvent, CudaFunction, CudaModule, CudaSlice, CudaStream, CudaView, CudaViewMut,
+    CudaContext, CudaEvent, CudaFunction, CudaModule, CuDevicePtr, CudaSlice, CudaStream, CudaView, CudaViewMut,
     DevicePtr, DevicePtrMut, DeviceRepr, DeviceSlice, HostSlice, PinnedHostSlice, SyncOnDrop,
     ValidAsZeroBits,
 };
