@@ -1,8 +1,8 @@
-use core::ops::{Deref, DerefMut};
 use crate::driver::{
     result::{self, DriverError},
     sys::{self, CUfunc_cache_enum, CUfunction_attribute_enum},
 };
+use core::ops::{Deref, DerefMut};
 
 use std::{
     ffi::CString,
@@ -486,14 +486,13 @@ pub enum CuDevicePtr {
     Shared(sys::CUdeviceptr, Arc<CudaStream>),
 }
 
-
 impl Deref for CuDevicePtr {
     type Target = sys::CUdeviceptr;
 
     fn deref(&self) -> &Self::Target {
         match self {
             CuDevicePtr::Owned(cu_device_ptr, _) => cu_device_ptr,
-            CuDevicePtr::Shared(cu_device_ptr, _) => cu_device_ptr
+            CuDevicePtr::Shared(cu_device_ptr, _) => cu_device_ptr,
         }
     }
 }
@@ -502,7 +501,7 @@ impl DerefMut for CuDevicePtr {
     fn deref_mut(&mut self) -> &mut Self::Target {
         match self {
             CuDevicePtr::Owned(cu_device_ptr, _) => cu_device_ptr,
-            CuDevicePtr::Shared(cu_device_ptr, _) => cu_device_ptr
+            CuDevicePtr::Shared(cu_device_ptr, _) => cu_device_ptr,
         }
     }
 }
@@ -2105,11 +2104,13 @@ mod tests {
         let a = stream.memcpy_stod(&[1.0f32, 2.0, 3.0, 4.0, 5.0]).unwrap();
 
         let ptr = a.leak();
-        let b = unsafe { stream.upgrade_device_ptr::<f32>(CuDevicePtr::Owned(ptr,stream.clone()), 3) };
+        let b =
+            unsafe { stream.upgrade_device_ptr::<f32>(CuDevicePtr::Owned(ptr, stream.clone()), 3) };
         assert_eq!(stream.memcpy_dtov(&b).unwrap(), &[1.0, 2.0, 3.0]);
 
         let ptr = b.leak();
-        let c = unsafe { stream.upgrade_device_ptr::<f32>(CuDevicePtr::Owned(ptr,stream.clone()), 5) };
+        let c =
+            unsafe { stream.upgrade_device_ptr::<f32>(CuDevicePtr::Owned(ptr, stream.clone()), 5) };
         assert_eq!(stream.memcpy_dtov(&c).unwrap(), &[1.0, 2.0, 3.0, 4.0, 5.0]);
     }
 
