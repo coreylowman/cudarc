@@ -109,7 +109,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b CudaSlice<T>> for LaunchArgs<'a> {
             }
         }
         self.args
-            .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
+            .push((&*arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
     }
 }
@@ -127,7 +127,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut CudaSlice<T>> for LaunchArgs<'a
             }
         }
         self.args
-            .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
+            .push((&*arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
     }
 }
