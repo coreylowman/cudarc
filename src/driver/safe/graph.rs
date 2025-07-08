@@ -27,7 +27,7 @@ pub struct CudaGraph {
 
 impl Drop for CudaGraph {
     fn drop(&mut self) {
-        let ctx = &self.stream.ctx;
+        let ctx = &self.stream.context();
 
         let cu_graph_exec = std::mem::replace(&mut self.cu_graph_exec, std::ptr::null_mut());
         if !cu_graph_exec.is_null() {
@@ -44,8 +44,8 @@ impl Drop for CudaGraph {
 impl CudaStream {
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g767167da0bbf07157dc20b6c258a2143)
     pub fn begin_capture(&self, mode: sys::CUstreamCaptureMode) -> Result<(), DriverError> {
-        self.ctx.bind_to_thread()?;
-        unsafe { result::stream::begin_capture(self.cu_stream, mode) }
+        self.context().bind_to_thread()?;
+        unsafe { result::stream::begin_capture(*self.cu_stream, mode) }
     }
 
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g03dab8b2ba76b00718955177a929970c)
@@ -55,8 +55,8 @@ impl CudaStream {
         self: &Arc<Self>,
         flags: sys::CUgraphInstantiate_flags,
     ) -> Result<Option<CudaGraph>, DriverError> {
-        self.ctx.bind_to_thread()?;
-        let cu_graph = unsafe { result::stream::end_capture(self.cu_stream) }?;
+        self.context().bind_to_thread()?;
+        let cu_graph = unsafe { result::stream::end_capture(*self.cu_stream) }?;
         if cu_graph.is_null() {
             return Ok(None);
         }
@@ -70,15 +70,15 @@ impl CudaStream {
 
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g37823c49206e3704ae23c7ad78560bca)
     pub fn capture_status(&self) -> Result<sys::CUstreamCaptureStatus, DriverError> {
-        self.ctx.bind_to_thread()?;
-        unsafe { result::stream::is_capturing(self.cu_stream) }
+        self.context().bind_to_thread()?;
+        unsafe { result::stream::is_capturing(*self.cu_stream) }
     }
 }
 
 impl CudaGraph {
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__GRAPH.html#group__CUDA__GRAPH_1g6b2dceb3901e71a390d2bd8b0491e471)
     pub fn launch(&self) -> Result<(), DriverError> {
-        self.stream.ctx.bind_to_thread()?;
-        unsafe { result::graph::launch(self.cu_graph_exec, self.stream.cu_stream) }
+        self.stream.context().bind_to_thread()?;
+        unsafe { result::graph::launch(self.cu_graph_exec, self.stream.cu_stream()) }
     }
 }

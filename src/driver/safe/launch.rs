@@ -107,7 +107,7 @@ pub unsafe trait KernelArg {
     fn as_kernel_arg(&self) -> *mut std::ffi::c_void;
 }
 
-unsafe impl <T: DeviceRepr> KernelArg for T {
+unsafe impl<T: DeviceRepr> KernelArg for T {
     #[inline(always)]
     fn as_kernel_arg(&self) -> *mut std::ffi::c_void {
         self as *const T as *mut _
@@ -242,7 +242,7 @@ impl LaunchArgs<'_> {
         &mut self,
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
-        self.stream.ctx.bind_to_thread()?;
+        self.stream.context().bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
@@ -255,7 +255,7 @@ impl LaunchArgs<'_> {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.stream.cu_stream,
+            self.stream.cu_stream(),
             &mut self.args,
         )?;
         let end_event = self
@@ -277,7 +277,7 @@ impl LaunchArgs<'_> {
         &mut self,
         cfg: LaunchConfig,
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
-        self.stream.ctx.bind_to_thread()?;
+        self.stream.context().bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
@@ -290,7 +290,7 @@ impl LaunchArgs<'_> {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.stream.cu_stream,
+            self.stream.cu_stream(),
             &mut self.args,
         )?;
         let end_event = self
@@ -352,7 +352,7 @@ impl LaunchArgs<'_> {
         cfg: LaunchConfig,
         attrs: &mut [sys::CUlaunchAttribute],
     ) -> Result<Option<(CudaEvent, CudaEvent)>, DriverError> {
-        self.stream.ctx.bind_to_thread()?;
+        self.stream.context().bind_to_thread()?;
         for &event in self.waits.iter() {
             self.stream.wait(event)?;
         }
@@ -365,7 +365,7 @@ impl LaunchArgs<'_> {
             cfg.grid_dim,
             cfg.block_dim,
             cfg.shared_mem_bytes,
-            self.stream.cu_stream,
+            self.stream.cu_stream(),
             &mut self.args,
             attrs,
         )?;

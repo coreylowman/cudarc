@@ -354,7 +354,7 @@ mod tests {
                     sys::ncclDataType_t::ncclFloat32,
                     sys::ncclRedOp_t::ncclSum,
                     comms[i],
-                    stream.cu_stream as sys::cudaStream_t,
+                    stream.cu_stream() as sys::cudaStream_t,
                 )
                 .unwrap();
             }
@@ -396,7 +396,7 @@ mod tests {
                             sys::ncclDataType_t::ncclFloat32,
                             sys::ncclRedOp_t::ncclSum,
                             comm,
-                            stream.cu_stream as sys::cudaStream_t,
+                            stream.cu_stream() as sys::cudaStream_t,
                         )
                         .unwrap();
                     }

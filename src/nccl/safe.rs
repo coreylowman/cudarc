@@ -144,7 +144,7 @@ impl Comm {
     }
 
     pub fn ordinal(&self) -> usize {
-        self.stream.ctx.ordinal
+        self.stream.context().ordinal
     }
 
     pub fn rank(&self) -> usize {
@@ -223,7 +223,7 @@ impl Comm {
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }?;
         Ok(())
@@ -243,7 +243,7 @@ impl Comm {
                 T::as_nccl_type(),
                 peer,
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -273,7 +273,7 @@ impl Comm {
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -295,7 +295,7 @@ impl Comm {
                 T::as_nccl_type(),
                 root,
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -315,7 +315,7 @@ impl Comm {
                 sendbuff.len(),
                 T::as_nccl_type(),
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -337,7 +337,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -359,7 +359,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -390,7 +390,7 @@ impl Comm {
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -414,7 +414,7 @@ impl Comm {
                 convert_to_nccl_reduce_op(reduce_op),
                 root,
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }
@@ -437,7 +437,7 @@ impl Comm {
                 T::as_nccl_type(),
                 convert_to_nccl_reduce_op(reduce_op),
                 self.comm,
-                self.stream.cu_stream as _,
+                self.stream.cu_stream() as _,
             )
         }
     }

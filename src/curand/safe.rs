@@ -35,10 +35,10 @@ pub struct CudaRng {
 impl CudaRng {
     /// Constructs the RNG with the given `seed`. All calls run on `stream`.
     pub fn new(seed: u64, stream: Arc<CudaStream>) -> Result<Self, result::CurandError> {
-        let ctx = &stream.ctx;
+        let ctx = stream.context();
         ctx.record_err(ctx.bind_to_thread());
         let gen = result::create_generator()?;
-        unsafe { result::set_stream(gen, stream.cu_stream as _) }?;
+        unsafe { result::set_stream(gen, stream.cu_stream() as _) }?;
         let mut rng = Self { gen, stream };
         rng.set_seed(seed)?;
         Ok(rng)
@@ -51,7 +51,7 @@ impl CudaRng {
         stream: Arc<CudaStream>,
     ) -> Result<(), result::CurandError> {
         self.stream = stream;
-        result::set_stream(self.gen, self.stream.cu_stream as _)
+        result::set_stream(self.gen, self.stream.cu_stream() as _)
     }
 
     /// Re-seed the RNG.
