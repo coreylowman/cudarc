@@ -1091,6 +1091,57 @@ pub unsafe fn launch_kernel(
     .result()
 }
 
+/// Launches a cuda functions with launch-time configuration
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1gb9c891eb6bb8f4089758e64c9c976db9)
+///
+/// # Safety
+/// This method is **very unsafe**.
+///
+/// 1. The cuda function must be a valid handle returned from a non-unloaded module.
+/// 2. This is asynchronous, so the results of calling this function happen
+///    at a later point after this function returns.
+/// 3. All parameters used for this kernel should have been allocated by stream (I think?)
+/// 4. The cuda kernel has mutable access to every parameter, that means every parameter
+///    can change at a later point after callign this function. *Even non-mutable references*.
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+#[inline]
+pub unsafe fn launch_kernel_ex(
+    f: sys::CUfunction,
+    grid_dim: (c_uint, c_uint, c_uint),
+    block_dim: (c_uint, c_uint, c_uint),
+    shared_mem_bytes: c_uint,
+    stream: sys::CUstream,
+    kernel_params: &mut [*mut c_void],
+    attrs: &mut [sys::CUlaunchAttribute],
+) -> Result<(), DriverError> {
+    let cfg = sys::CUlaunchConfig {
+        gridDimX: grid_dim.0,
+        gridDimY: grid_dim.1,
+        gridDimZ: grid_dim.2,
+        blockDimX: block_dim.0,
+        blockDimY: block_dim.1,
+        blockDimZ: block_dim.2,
+        sharedMemBytes: shared_mem_bytes,
+        hStream: stream,
+        attrs: attrs.as_mut_ptr(),
+        numAttrs: attrs.len() as c_uint,
+    };
+
+    sys::cuLaunchKernelEx(&cfg, f, kernel_params.as_mut_ptr(), std::ptr::null_mut()).result()
+}
+
 /// Launches a cuda functions
 ///
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1g06d753134145c4584c0c62525c1894cb)

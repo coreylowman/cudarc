@@ -348,8 +348,8 @@ mod tests {
                 let ctx = CudaContext::new(i).unwrap();
                 let stream = ctx.default_stream();
                 all_reduce(
-                    sendslices[i].cu_device_ptr as *const c_void,
-                    recvslices[i].cu_device_ptr as *mut c_void,
+                    *sendslices[i].cu_device_ptr as *const c_void,
+                    *recvslices[i].cu_device_ptr as *mut c_void,
                     n,
                     sys::ncclDataType_t::ncclFloat32,
                     sys::ncclRedOp_t::ncclSum,
@@ -390,8 +390,8 @@ mod tests {
                         let comm = comm.assume_init();
                         use std::ffi::c_void;
                         all_reduce(
-                            sendslice.cu_device_ptr as *const c_void,
-                            recvslice.cu_device_ptr as *mut c_void,
+                            *sendslice.cu_device_ptr as *const c_void,
+                            *recvslice.cu_device_ptr as *mut c_void,
                             n,
                             sys::ncclDataType_t::ncclFloat32,
                             sys::ncclRedOp_t::ncclSum,

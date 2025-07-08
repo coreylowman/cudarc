@@ -508,7 +508,7 @@ impl DerefMut for CuDevicePtr {
 
 impl Drop for CuDevicePtr {
     fn drop(&mut self) {
-        if let CuDevicePtr::Shared(cu_device_ptr, stream) = self {
+        if let CuDevicePtr::Owned(cu_device_ptr, stream) = self {
             let ctx = &stream.ctx;
             ctx.record_err(unsafe { result::free_async(*cu_device_ptr, stream.cu_stream) });
         }
