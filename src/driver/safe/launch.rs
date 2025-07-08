@@ -96,6 +96,13 @@ pub unsafe trait PushKernelArg<T> {
 /// on argument processing.
 ///
 /// Helper trait to allow client libraries to use `LaunchArgs` with their types.
+///
+/// # Safety
+///
+/// This is unsafe you need to ensure that references to it can be properly passed to CUDA.
+///
+/// Most implementations will be required to use `#[inline(always)]`
+/// to ensure that references are handled properly.
 pub unsafe trait KernelArg {
     fn as_kernel_arg(&self) -> *mut std::ffi::c_void;
 }
