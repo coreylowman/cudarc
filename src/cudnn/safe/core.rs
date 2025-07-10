@@ -10,8 +10,8 @@ use std::{marker::PhantomData, sync::Arc};
 /// This type is not send/sync because of <https://docs.nvidia.com/deeplearning/cudnn/developer-guide/index.html#thread-safety>
 #[derive(Debug)]
 pub struct Cudnn {
-    pub(crate) handle: sys::cudnnHandle_t,
-    pub(crate) stream: Arc<CudaStream>,
+    pub handle: sys::cudnnHandle_t,
+    pub stream: Arc<CudaStream>,
 }
 
 impl Cudnn {
