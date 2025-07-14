@@ -624,7 +624,7 @@ pub mod stream {
 /// 1. The stream should be an already created stream.
 /// 2. The memory return by this is unset, which may be invalid for `T`.
 /// 3. All uses of this memory must be on the same stream.
-pub unsafe fn malloc_async(
+pub(crate) unsafe fn malloc_async(
     stream: sys::CUstream,
     num_bytes: usize,
 ) -> Result<sys::CUdeviceptr, DriverError> {
@@ -639,7 +639,7 @@ pub unsafe fn malloc_async(
 ///
 /// # Safety
 /// 1. The memory return by this is unset, which may be invalid for `T`.
-pub unsafe fn malloc_sync(num_bytes: usize) -> Result<sys::CUdeviceptr, DriverError> {
+pub(crate) unsafe fn malloc_sync(num_bytes: usize) -> Result<sys::CUdeviceptr, DriverError> {
     let mut dev_ptr = MaybeUninit::uninit();
     sys::cuMemAlloc_v2(dev_ptr.as_mut_ptr(), num_bytes).result()?;
     Ok(dev_ptr.assume_init())
@@ -651,7 +651,7 @@ pub unsafe fn malloc_sync(num_bytes: usize) -> Result<sys::CUdeviceptr, DriverEr
 ///
 /// # Safety
 /// 1. The memory return by this is unset, which may be invalid for `T`.
-pub unsafe fn malloc_managed(
+pub(crate) unsafe fn malloc_managed(
     num_bytes: usize,
     flags: sys::CUmemAttach_flags,
 ) -> Result<sys::CUdeviceptr, DriverError> {
@@ -663,7 +663,7 @@ pub unsafe fn malloc_managed(
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
 /// # Safety
 /// 1. The memory return by this is unset, which may be invalid for `T`.
-pub unsafe fn malloc_host(num_bytes: usize, flags: c_uint) -> Result<*mut c_void, DriverError> {
+pub(crate) unsafe fn malloc_host(num_bytes: usize, flags: c_uint) -> Result<*mut c_void, DriverError> {
     let mut host_ptr = MaybeUninit::uninit();
     sys::cuMemHostAlloc(host_ptr.as_mut_ptr(), num_bytes, flags).result()?;
     Ok(host_ptr.assume_init())
@@ -673,7 +673,7 @@ pub unsafe fn malloc_host(num_bytes: usize, flags: c_uint) -> Result<*mut c_void
 /// # Safety
 /// 1. `host_ptr` must have been returned by [malloc_host]
 /// 2. `host_ptr` should not be null.
-pub unsafe fn free_host(host_ptr: *mut c_void) -> Result<(), DriverError> {
+pub(crate) unsafe fn free_host(host_ptr: *mut c_void) -> Result<(), DriverError> {
     sys::cuMemFreeHost(host_ptr).result()
 }
 
@@ -734,7 +734,7 @@ pub unsafe fn mem_prefetch_async(
 /// 1. The stream should be an already created stream.
 /// 2. The memory should have been allocated on this stream.
 /// 3. The memory should not have been freed already (double free)
-pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), DriverError> {
+pub(crate) unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Result<(), DriverError> {
     sys::cuMemFreeAsync(dptr, stream).result()
 }
 
@@ -744,7 +744,7 @@ pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: sys::CUstream) -> Resul
 ///
 /// # Safety
 /// 1. The memory should have been allocated with malloc_sync
-pub unsafe fn free_sync(dptr: sys::CUdeviceptr) -> Result<(), DriverError> {
+pub(crate) unsafe fn free_sync(dptr: sys::CUdeviceptr) -> Result<(), DriverError> {
     sys::cuMemFree_v2(dptr).result()
 }
 
@@ -755,7 +755,7 @@ pub unsafe fn free_sync(dptr: sys::CUdeviceptr) -> Result<(), DriverError> {
 /// # Safety
 /// 1. Memory must only be freed once.
 /// 2. All async accesses to this pointer must have been completed.
-pub unsafe fn memory_free(device_ptr: sys::CUdeviceptr) -> Result<(), DriverError> {
+pub(crate) unsafe fn memory_free(device_ptr: sys::CUdeviceptr) -> Result<(), DriverError> {
     sys::cuMemFree_v2(device_ptr).result()
 }
 

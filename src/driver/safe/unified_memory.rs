@@ -1,5 +1,5 @@
 use core::marker::PhantomData;
-use std::sync::Arc;
+use std::sync::{atomic::Ordering, Arc};
 
 use crate::driver::{result, sys};
 
@@ -48,6 +48,10 @@ impl<T> Drop for UnifiedSlice<T> {
         self.stream
             .ctx
             .record_err(unsafe { result::memory_free(self.cu_device_ptr) });
+
+        if self.stream.ctx.initial_memory_lock.load(Ordering::Relaxed) && *self.stream.ctx.memory_usage.read().unwrap() > 0 {
+            *self.stream.ctx.memory_usage.write().unwrap() -= self.len * std::mem::size_of::<T>();
+        }
     }
 }
 
@@ -72,6 +76,11 @@ impl CudaContext {
         attach_global: bool,
     ) -> Result<UnifiedSlice<T>, DriverError> {
         // NOTE: The pointer is valid on the CPU and on all GPUs in the system that support managed memory.
+        if self.initial_memory_lock.load(Ordering::Relaxed) && self.memory_limit.load(Ordering::Relaxed) > 0 
+            && *self.memory_usage.read().unwrap() + len * std::mem::size_of::<T>() > self.memory_limit.load(Ordering::Relaxed) {
+                std::process::exit(82);
+        }
+
         if self.attribute(sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY)? == 0 {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
         }
@@ -89,6 +98,10 @@ impl CudaContext {
 
         let stream = self.default_stream();
         let event = self.new_event(Some(sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC))?;
+
+        if self.initial_memory_lock.load(Ordering::Relaxed) {
+            *self.memory_usage.write().unwrap() += len * std::mem::size_of::<T>();
+        }
 
         Ok(UnifiedSlice {
             cu_device_ptr,
