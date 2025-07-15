@@ -34,6 +34,7 @@ pub struct CudaContext {
     pub(crate) error_state: AtomicU32,
     pub(crate) memory_limit: AtomicUsize,
     pub(crate) memory_usage: RwLock<usize>,
+    pub(crate) host_memory_usage: RwLock<usize>,
     pub(crate) initial_memory_lock: AtomicBool,
 }
 
@@ -82,6 +83,7 @@ impl CudaContext {
             error_state: AtomicU32::new(0),
             memory_limit: AtomicUsize::new(0),
             memory_usage: RwLock::new(0),
+            host_memory_usage: RwLock::new(0),
             initial_memory_lock: AtomicBool::new(false),
         });
         ctx.bind_to_thread()?;
@@ -1055,9 +1057,11 @@ impl<T> Drop for PinnedHostSlice<T> {
         ctx.record_err(self.event.synchronize());
         ctx.record_err(unsafe { result::free_host(self.ptr as _) });
 
-        if ctx.initial_memory_lock.load(Ordering::Relaxed) && *ctx.memory_usage.read().unwrap() > 0 {
+        /*if ctx.initial_memory_lock.load(Ordering::Relaxed) && *ctx.memory_usage.read().unwrap() > 0 {
             *ctx.memory_usage.write().unwrap() -= self.len * std::mem::size_of::<T>();
-        }
+        }*/
+
+        *ctx.host_memory_usage.write().unwrap() -= self.len * std::mem::size_of::<T>();
     }
 }
 
@@ -1072,10 +1076,10 @@ impl CudaContext {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<PinnedHostSlice<T>, DriverError> {
-        if self.initial_memory_lock.load(Ordering::Relaxed) && self.memory_limit.load(Ordering::Relaxed) > 0 
+        /*if self.initial_memory_lock.load(Ordering::Relaxed) && self.memory_limit.load(Ordering::Relaxed) > 0 
             && *self.memory_usage.read().unwrap() + len * std::mem::size_of::<T>() > self.memory_limit.load(Ordering::Relaxed) {
                 std::process::exit(82);
-        }
+        }*/
 
         self.bind_to_thread()?;
         let ptr = result::malloc_host(
@@ -1088,9 +1092,11 @@ impl CudaContext {
         assert!(ptr.is_aligned());
         let event = self.new_event(Some(sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC))?;
 
-        if self.initial_memory_lock.load(Ordering::Relaxed) {
+        /*if self.initial_memory_lock.load(Ordering::Relaxed) {
             *self.memory_usage.write().unwrap() += len * std::mem::size_of::<T>();
-        }
+        }*/
+
+        *self.host_memory_usage.write().unwrap() += len * std::mem::size_of::<T>();
 
         Ok(PinnedHostSlice { ptr, len, event })
     }
@@ -1102,6 +1108,10 @@ impl CudaContext {
 
         self.initial_memory_lock.store(true, Ordering::Release);
         self.memory_limit.store(limit, Ordering::Release);
+    }
+
+    pub fn get_host_memory_usage(&self) -> usize {
+        *self.host_memory_usage.read().unwrap()
     }
 }
 
