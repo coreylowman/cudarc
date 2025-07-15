@@ -1110,7 +1110,7 @@ impl CudaContext {
         self.memory_limit.store(limit, Ordering::Release);
     }
 
-    pub fn get_host_memory_usage(&self) -> usize {
+    pub fn get_host_memory_usage(self: &Arc<Self>) -> usize {
         *self.host_memory_usage.read().unwrap()
     }
 }
