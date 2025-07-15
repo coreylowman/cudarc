@@ -18,7 +18,7 @@
 
 mod activation;
 mod conv;
-mod core;
+pub(crate) mod core;
 mod pooling;
 mod reduce;
 

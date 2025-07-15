@@ -3,7 +3,10 @@ use crate::{
     driver::CudaStream,
 };
 
-use std::{marker::PhantomData, sync::Arc};
+use std::{
+    marker::PhantomData, sync::Arc, sync::atomic::{AtomicU64, AtomicUsize}, 
+    sync::RwLock, sync::OnceLock
+};
 
 /// A handle to cuDNN.
 ///
@@ -12,6 +15,58 @@ use std::{marker::PhantomData, sync::Arc};
 pub struct Cudnn {
     pub handle: sys::cudnnHandle_t,
     pub stream: Arc<CudaStream>,
+    pub(crate) fuel_used: AtomicUsize,
+}
+
+struct SafeHandle(sys::cudnnHandle_t);
+
+unsafe impl Send for SafeHandle {}
+unsafe impl Sync for SafeHandle {}
+
+pub struct CudnnRegistry {
+    //handles: RwLock<Vec<SafeHandle>>,
+    pub(crate) fuel_used: AtomicUsize,
+    pub(crate) runtime_signature: AtomicU64
+}
+
+pub(crate) static REGISTRY: OnceLock<CudnnRegistry> = OnceLock::new();
+
+impl CudnnRegistry {
+    pub fn get() -> &'static CudnnRegistry {
+        REGISTRY.get_or_init(|| CudnnRegistry {
+            //handles: RwLock::new(Vec::new()),
+            fuel_used: AtomicUsize::new(0),
+            runtime_signature: AtomicU64::new(0),
+        })
+    }
+
+    /*pub fn register(handle: SafeHandle) {
+        if REGISTRY.get().unwrap().handles.read().unwrap().iter().any(|c| c.0 == handle.0) {
+            return;
+        }
+
+        REGISTRY.get().unwrap().handles.write().unwrap().push(handle);
+    }
+
+    pub(crate) fn unregister(handle: SafeHandle) {
+        REGISTRY.get().unwrap().handles.write().unwrap().retain(|c| c.0 != handle.0);
+    }*/
+
+    pub(crate) fn add_fuel(amount: usize) {
+        REGISTRY.get().unwrap().fuel_used.fetch_add(amount, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn get_total_fuel_used() -> usize {
+        REGISTRY.get().unwrap().fuel_used.load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    pub(crate) fn mix_runtime_signature(signature: u64) {
+        REGISTRY.get().unwrap().runtime_signature.fetch_xor(signature, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn get_runtime_signature() -> u64 {
+        REGISTRY.get().unwrap().runtime_signature.load(std::sync::atomic::Ordering::Relaxed)
+    }
 }
 
 impl Cudnn {
@@ -21,7 +76,15 @@ impl Cudnn {
         stream.context().bind_to_thread().unwrap();
         let handle = result::create_handle()?;
         unsafe { result::set_stream(handle, stream.cu_stream as *mut _) }?;
-        Ok(Arc::new(Self { handle, stream }))
+        let cudnn = Arc::new(Self {
+            handle,
+            stream,
+            fuel_used: AtomicUsize::new(0),
+        });
+
+        //CudnnRegistry::register(SafeHandle(handle));
+
+        Ok(cudnn)
     }
 
     /// Sets the handle's current to either the stream specified, or the device's default work
@@ -34,13 +97,20 @@ impl Cudnn {
         self.stream = stream;
         unsafe { result::set_stream(self.handle, self.stream.cu_stream as *mut _) }
     }
+
+    pub fn get_fuel_used(&self) -> usize {
+        self.fuel_used.load(std::sync::atomic::Ordering::Relaxed)
+    }
 }
+
+
 
 impl Drop for Cudnn {
     fn drop(&mut self) {
         let handle = std::mem::replace(&mut self.handle, std::ptr::null_mut());
         if !handle.is_null() {
             unsafe { result::destroy_handle(handle) }.unwrap();
+            //CudnnRegistry::unregister(SafeHandle(handle));
         }
     }
 }
