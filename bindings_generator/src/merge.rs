@@ -315,6 +315,20 @@ impl BindingMerger {
 
                #loading_lib
 
+               pub unsafe fn is_culib_present() -> bool {
+                   let lib_names = [#(#lib_names),*];
+                   let choices = lib_names
+                       .iter()
+                       .map(|l| crate::get_lib_name_candidates(l))
+                       .flatten();
+                   for choice in choices {
+                       if Lib::new(choice).is_ok() {
+                           return true;
+                       }
+                   }
+                   false
+               }
+
                pub unsafe fn culib() -> &'static Lib {
                    static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
                    LIB.get_or_init(|| {

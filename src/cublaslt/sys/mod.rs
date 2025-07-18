@@ -9,9 +9,6 @@ extern crate no_std_compat as std;
 pub use self::cudaDataType_t as cudaDataType;
 pub use self::libraryPropertyType_t as libraryPropertyType;
 pub type FILE = _IO_FILE;
-pub type _IO_lock_t = ::core::ffi::c_void;
-pub type __off64_t = ::core::ffi::c_long;
-pub type __off_t = ::core::ffi::c_long;
 pub type cublasLtHandle_t = *mut cublasLtContext;
 pub type cublasLtLoggerCallback_t = ::core::option::Option<
     unsafe extern "C" fn(
@@ -2493,51 +2490,8 @@ pub struct CUstream_st {
     _unused: [u8; 0],
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 pub struct _IO_FILE {
-    pub _flags: ::core::ffi::c_int,
-    pub _IO_read_ptr: *mut ::core::ffi::c_char,
-    pub _IO_read_end: *mut ::core::ffi::c_char,
-    pub _IO_read_base: *mut ::core::ffi::c_char,
-    pub _IO_write_base: *mut ::core::ffi::c_char,
-    pub _IO_write_ptr: *mut ::core::ffi::c_char,
-    pub _IO_write_end: *mut ::core::ffi::c_char,
-    pub _IO_buf_base: *mut ::core::ffi::c_char,
-    pub _IO_buf_end: *mut ::core::ffi::c_char,
-    pub _IO_save_base: *mut ::core::ffi::c_char,
-    pub _IO_backup_base: *mut ::core::ffi::c_char,
-    pub _IO_save_end: *mut ::core::ffi::c_char,
-    pub _markers: *mut _IO_marker,
-    pub _chain: *mut _IO_FILE,
-    pub _fileno: ::core::ffi::c_int,
-    pub _flags2: ::core::ffi::c_int,
-    pub _old_offset: __off_t,
-    pub _cur_column: ::core::ffi::c_ushort,
-    pub _vtable_offset: ::core::ffi::c_schar,
-    pub _shortbuf: [::core::ffi::c_char; 1usize],
-    pub _lock: *mut _IO_lock_t,
-    pub _offset: __off64_t,
-    pub _codecvt: *mut _IO_codecvt,
-    pub _wide_data: *mut _IO_wide_data,
-    pub _freeres_list: *mut _IO_FILE,
-    pub _freeres_buf: *mut ::core::ffi::c_void,
-    pub __pad5: usize,
-    pub _mode: ::core::ffi::c_int,
-    pub _unused2: [::core::ffi::c_char; 20usize],
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _IO_codecvt {
-    _unused: [u8; 0],
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _IO_marker {
-    _unused: [u8; 0],
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _IO_wide_data {
     _unused: [u8; 0],
 }
 #[repr(C)]
@@ -2632,15 +2586,6 @@ pub struct cublasLtMatrixTransformDescOpaque_t {
 #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
 impl cudaDataType_t {
     pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
-}
-impl Default for _IO_FILE {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
 }
 impl Default for cublasLtMatmulHeuristicResult_t {
     fn default() -> Self {
@@ -3833,6 +3778,19 @@ mod loaded {
                 cublasLtMatrixTransformDescSetAttribute,
             })
         }
+    }
+    pub unsafe fn is_culib_present() -> bool {
+        let lib_names = ["cublasLt"];
+        let choices = lib_names
+            .iter()
+            .map(|l| crate::get_lib_name_candidates(l))
+            .flatten();
+        for choice in choices {
+            if Lib::new(choice).is_ok() {
+                return true;
+            }
+        }
+        false
     }
     pub unsafe fn culib() -> &'static Lib {
         static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
