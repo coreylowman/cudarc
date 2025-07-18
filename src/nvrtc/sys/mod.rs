@@ -725,35 +725,20 @@ mod loaded {
                     feature = "cuda-12090"
                 ))]
                 nvrtcGetOptiXIRSize,
-                #[cfg(any(
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
+                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 nvrtcGetPCHCreateStatus,
-                #[cfg(any(
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
+                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 nvrtcGetPCHHeapSize,
-                #[cfg(any(
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
+                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 nvrtcGetPCHHeapSizeRequired,
                 nvrtcGetPTX,
                 nvrtcGetPTXSize,
                 nvrtcGetProgramLog,
                 nvrtcGetProgramLogSize,
                 nvrtcGetSupportedArchs,
-                #[cfg(any(
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
+                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 nvrtcSetFlowCallback,
-                #[cfg(any(
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                ))]
+                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 nvrtcSetPCHHeapSize,
                 nvrtcVersion,
             })
