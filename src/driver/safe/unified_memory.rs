@@ -44,9 +44,9 @@ unsafe impl<T> Sync for UnifiedSlice<T> {}
 
 impl<T> Drop for UnifiedSlice<T> {
     fn drop(&mut self) {
-        self.stream.ctx.record_err(self.event.synchronize());
+        self.stream.context().record_err(self.event.synchronize());
         self.stream
-            .ctx
+            .context()
             .record_err(unsafe { result::memory_free(self.cu_device_ptr) });
     }
 }
@@ -132,7 +132,7 @@ impl<T> UnifiedSlice<T> {
         self.attach_mode = flags;
         unsafe {
             result::stream::attach_mem_async(
-                self.stream.cu_stream,
+                self.stream.cu_stream(),
                 self.cu_device_ptr,
                 self.num_bytes(),
                 self.attach_mode,
@@ -160,7 +160,7 @@ impl<T> UnifiedSlice<T> {
                 }
                 sys::CUmemLocation {
                     type_: sys::CUmemLocationType::CU_MEM_LOCATION_TYPE_DEVICE,
-                    id: self.stream.ctx.ordinal as i32,
+                    id: self.stream.context().ordinal as i32,
                 }
             }
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
@@ -176,7 +176,7 @@ impl<T> UnifiedSlice<T> {
                 self.cu_device_ptr,
                 self.len * std::mem::size_of::<T>(),
                 location,
-                self.stream.cu_stream,
+                self.stream.cu_stream(),
             )
         }
     }
@@ -248,8 +248,10 @@ impl<T> DevicePtr<T> for UnifiedSlice<T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.check_device_access(stream));
-        stream.ctx.record_err(stream.wait(&self.event));
+        stream
+            .context()
+            .record_err(self.check_device_access(stream));
+        stream.context().record_err(stream.wait(&self.event));
         (
             self.cu_device_ptr,
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -262,8 +264,10 @@ impl<T> DevicePtrMut<T> for UnifiedSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.check_device_access(stream));
-        stream.ctx.record_err(stream.wait(&self.event));
+        stream
+            .context()
+            .record_err(self.check_device_access(stream));
+        stream.context().record_err(stream.wait(&self.event));
         (
             self.cu_device_ptr,
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -297,8 +301,10 @@ impl<T> HostSlice<T> for UnifiedSlice<T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (&'a [T], super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.check_device_access(stream));
-        stream.ctx.record_err(stream.wait(&self.event));
+        stream
+            .context()
+            .record_err(self.check_device_access(stream));
+        stream.context().record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts(self.cu_device_ptr as *const T, self.len),
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -309,8 +315,10 @@ impl<T> HostSlice<T> for UnifiedSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (&'a mut [T], super::SyncOnDrop<'a>) {
-        stream.ctx.record_err(self.check_device_access(stream));
-        stream.ctx.record_err(stream.wait(&self.event));
+        stream
+            .context()
+            .record_err(self.check_device_access(stream));
+        stream.context().record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts_mut(self.cu_device_ptr as *mut T, self.len),
             super::SyncOnDrop::Record(Some((&self.event, stream))),
@@ -322,7 +330,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedSlice<T>> for LaunchArgs<'a>
     #[inline(always)]
     fn arg(&mut self, arg: &'b UnifiedSlice<T>) -> &mut Self {
         self.stream
-            .ctx
+            .context()
             .record_err(arg.check_device_access(self.stream));
         self.waits.push(&arg.event);
         self.records.push(&arg.event);
@@ -336,7 +344,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut UnifiedSlice<T>> for LaunchArgs
     #[inline(always)]
     fn arg(&mut self, arg: &'b mut UnifiedSlice<T>) -> &mut Self {
         self.stream
-            .ctx
+            .context()
             .record_err(arg.check_device_access(self.stream));
         self.waits.push(&arg.event);
         self.records.push(&arg.event);

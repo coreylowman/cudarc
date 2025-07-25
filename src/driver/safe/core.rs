@@ -318,11 +318,11 @@ impl CudaEvent {
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EVENT.html#group__CUDA__EVENT_1g95424d3be52c4eb95d83861b70fb89d1)
     pub fn record(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        if self.ctx != stream.ctx {
+        if &self.ctx != stream.context() {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
         }
         self.ctx.bind_to_thread()?;
-        unsafe { result::event::record(self.cu_event, stream.cu_stream) }
+        unsafe { result::event::record(self.cu_event, stream.cu_stream()) }
     }
 
     /// Will only block CPU thraed if [sys::CUevent_flags::CU_EVENT_BLOCKING_SYNC] was used to create this event.
@@ -349,6 +349,61 @@ impl CudaEvent {
     }
 }
 
+/// A wrapper around [sys::CUstream].
+/// Shared variant is required for interop with other frameworks.
+/// If shared variant is used, it is up to the user to manually drop the pointer and ensure
+/// it lives long enough.
+#[derive(Debug, PartialEq, Eq)]
+pub enum CuStream {
+    Owned(sys::CUstream, Arc<CudaContext>),
+    Shared(sys::CUstream, Arc<CudaContext>),
+}
+
+impl CuStream {
+    fn ctx(&self) -> &Arc<CudaContext> {
+        match self {
+            CuStream::Owned(_, ctx) => ctx,
+            CuStream::Shared(_, ctx) => ctx,
+        }
+    }
+}
+
+impl Deref for CuStream {
+    type Target = sys::CUstream;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            CuStream::Owned(cu_stream, _) => cu_stream,
+            CuStream::Shared(cu_stream, _) => cu_stream,
+        }
+    }
+}
+
+impl DerefMut for CuStream {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        match self {
+            CuStream::Owned(cu_stream, _) => cu_stream,
+            CuStream::Shared(cu_stream, _) => cu_stream,
+        }
+    }
+}
+
+impl Drop for CuStream {
+    fn drop(&mut self) {
+        match self {
+            CuStream::Owned(cu_stream, ctx) if !cu_stream.is_null() => {
+                ctx.record_err(ctx.bind_to_thread());
+                ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
+                ctx.record_err(unsafe { result::stream::destroy(*cu_stream) });
+            }
+            CuStream::Shared(cu_stream, ctx) if !cu_stream.is_null() => {
+                ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
+            }
+            _ => {}
+        }
+    }
+}
+
 /// A wrapper around [sys::CUstream] that you can schedule work on.
 ///
 /// - Create with [CudaContext::new_stream()], [CudaContext::default_stream()], or [CudaStream::fork()].
@@ -362,31 +417,18 @@ impl CudaEvent {
 /// See [Dependence analysis](https://en.wikipedia.org/wiki/Dependence_analysis)
 #[derive(Debug, PartialEq, Eq)]
 pub struct CudaStream {
-    pub(crate) cu_stream: sys::CUstream,
-    pub(crate) ctx: Arc<CudaContext>,
+    pub(crate) cu_stream: CuStream,
 }
 
 unsafe impl Send for CudaStream {}
 unsafe impl Sync for CudaStream {}
-
-impl Drop for CudaStream {
-    fn drop(&mut self) {
-        self.ctx.record_err(self.ctx.bind_to_thread());
-        if !self.cu_stream.is_null() {
-            self.ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
-            self.ctx
-                .record_err(unsafe { result::stream::destroy(self.cu_stream) });
-        }
-    }
-}
 
 impl CudaContext {
     /// Get's the default stream for this context (the null ptr stream). Note that context's
     /// on the same device can all submit to the same default stream from separate context objects.
     pub fn default_stream(self: &Arc<Self>) -> Arc<CudaStream> {
         Arc::new(CudaStream {
-            cu_stream: std::ptr::null_mut(),
-            ctx: self.clone(),
+            cu_stream: CuStream::Owned(std::ptr::null_mut(), self.clone()),
         })
     }
 
@@ -402,8 +444,33 @@ impl CudaContext {
         }
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         Ok(Arc::new(CudaStream {
-            cu_stream,
-            ctx: self.clone(),
+            cu_stream: CuStream::Owned(cu_stream, self.clone()),
+        }))
+    }
+
+    /// Wraps an externally allocated CUDA stream.
+    ///
+    /// This is used to wrap streams allocated in other libraries in order
+    /// to facilitate data exchange and multi-library interactions.
+    ///
+    /// This will swap the calling context to multi stream mode [CudaContext::is_in_multi_stream_mode()].
+    /// If the context is not already in multiple stream mode, then this function will also call [CudaContext::synchronize()].
+    ///
+    /// # Safety
+    ///
+    /// This stream doesn't manage the stream life-cycle, it is the user
+    /// responsibility to keep the referenced stream alive.
+    pub unsafe fn new_external_stream(
+        self: &Arc<Self>,
+        cu_stream: sys::CUstream,
+    ) -> Result<Arc<CudaStream>, DriverError> {
+        self.bind_to_thread()?;
+        let prev_num_streams = self.num_streams.fetch_add(1, Ordering::Relaxed);
+        if prev_num_streams == 0 && self.is_event_tracking() {
+            self.synchronize()?;
+        }
+        Ok(Arc::new(CudaStream {
+            cu_stream: CuStream::Shared(cu_stream, self.clone()),
         }))
     }
 }
@@ -411,12 +478,11 @@ impl CudaContext {
 impl CudaStream {
     /// Create's a new stream and then makes the new stream wait on `self`
     pub fn fork(&self) -> Result<Arc<Self>, DriverError> {
-        self.ctx.bind_to_thread()?;
-        self.ctx.num_streams.fetch_add(1, Ordering::Relaxed);
+        self.context().bind_to_thread()?;
+        self.context().num_streams.fetch_add(1, Ordering::Relaxed);
         let cu_stream = result::stream::create(result::stream::StreamKind::NonBlocking)?;
         let stream = Arc::new(CudaStream {
-            cu_stream,
-            ctx: self.ctx.clone(),
+            cu_stream: CuStream::Owned(cu_stream, self.context().clone()),
         });
         stream.join(self)?;
         Ok(stream)
@@ -426,12 +492,12 @@ impl CudaStream {
     /// # Safety
     /// Do not destroy this value.
     pub fn cu_stream(&self) -> sys::CUstream {
-        self.cu_stream
+        *self.cu_stream
     }
 
     /// The context the stream belongs to.
     pub fn context(&self) -> &Arc<CudaContext> {
-        &self.ctx
+        self.cu_stream.ctx()
     }
 
     /// Will only block CPU if you call [CudaContext::set_flags()] with
@@ -439,8 +505,8 @@ impl CudaStream {
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g15e49dd91ec15991eb7c0a741beb7dad)
     pub fn synchronize(&self) -> Result<(), DriverError> {
-        self.ctx.bind_to_thread()?;
-        unsafe { result::stream::synchronize(self.cu_stream) }
+        self.context().bind_to_thread()?;
+        unsafe { result::stream::synchronize(*self.cu_stream) }
     }
 
     /// Creates a new [CudaEvent] and records the current work in the stream to the event.
@@ -448,7 +514,7 @@ impl CudaStream {
         &self,
         flags: Option<sys::CUevent_flags>,
     ) -> Result<CudaEvent, DriverError> {
-        let event = self.ctx.new_event(flags)?;
+        let event = self.context().new_event(flags)?;
         event.record(self)?;
         Ok(event)
     }
@@ -460,13 +526,13 @@ impl CudaStream {
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__STREAM.html#group__CUDA__STREAM_1g6a898b652dfc6aa1d5c8d97062618b2f)
     pub fn wait(&self, event: &CudaEvent) -> Result<(), DriverError> {
-        if self.ctx != event.ctx {
+        if self.context() != &event.ctx {
             return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_CONTEXT));
         }
-        self.ctx.bind_to_thread()?;
+        self.context().bind_to_thread()?;
         unsafe {
             result::stream::wait_event(
-                self.cu_stream,
+                *self.cu_stream,
                 event.cu_event,
                 sys::CUevent_wait_flags::CU_EVENT_WAIT_DEFAULT,
             )
@@ -480,6 +546,10 @@ impl CudaStream {
     }
 }
 
+/// A wrapper around [sys::CUdeviceptr].
+/// Shared variant is required for interop with other frameworks.
+/// If shared variant is used, it is up to the user to manually drop the pointer and ensure
+/// it lives long enough.
 #[derive(Debug)]
 pub enum CuDevicePtr {
     Owned(sys::CUdeviceptr, Arc<CudaStream>),
@@ -509,8 +579,8 @@ impl DerefMut for CuDevicePtr {
 impl Drop for CuDevicePtr {
     fn drop(&mut self) {
         if let CuDevicePtr::Owned(cu_device_ptr, stream) = self {
-            let ctx = &stream.ctx;
-            ctx.record_err(unsafe { result::free_async(*cu_device_ptr, stream.cu_stream) });
+            let ctx = &stream.context();
+            ctx.record_err(unsafe { result::free_async(*cu_device_ptr, *stream.cu_stream) });
         }
     }
 }
@@ -533,7 +603,7 @@ unsafe impl<T> Sync for CudaSlice<T> {}
 
 impl<T> Drop for CudaSlice<T> {
     fn drop(&mut self) {
-        let ctx = &self.stream.ctx;
+        let ctx = self.stream.context();
         if let Some(read) = self.read.as_ref() {
             ctx.record_err(self.stream.wait(read));
         }
@@ -561,12 +631,12 @@ impl<T> CudaSlice<T> {
 
     /// The device ordinal this belongs to
     pub fn ordinal(&self) -> usize {
-        self.stream.ctx.ordinal
+        self.stream.context().ordinal
     }
 
     /// The context this belongs to
     pub fn context(&self) -> &Arc<CudaContext> {
-        &self.stream.ctx
+        self.stream.context()
     }
 
     /// The stream this object was allocated on and later will be dropped on.
@@ -842,12 +912,12 @@ impl Drop for SyncOnDrop<'_> {
         match self {
             SyncOnDrop::Record(target) => {
                 if let Some((event, stream)) = std::mem::take(target) {
-                    stream.ctx.record_err(event.record(stream));
+                    stream.context().record_err(event.record(stream));
                 }
             }
             SyncOnDrop::Sync(target) => {
                 if let Some(stream) = std::mem::take(target) {
-                    stream.ctx.record_err(stream.synchronize());
+                    stream.context().record_err(stream.synchronize());
                 }
             }
         }
@@ -877,7 +947,7 @@ impl<T> DevicePtr<T> for CudaSlice<T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(write) = self.write.as_ref() {
-                stream.ctx.record_err(stream.wait(write));
+                stream.context().record_err(stream.wait(write));
             }
         }
         (
@@ -891,7 +961,7 @@ impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(write) = self.write.as_ref() {
-                stream.ctx.record_err(stream.wait(write));
+                stream.context().record_err(stream.wait(write));
             }
         }
         (self.ptr, SyncOnDrop::record_event(self.read, stream))
@@ -902,7 +972,7 @@ impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(write) = self.write.as_ref() {
-                stream.ctx.record_err(stream.wait(write));
+                stream.context().record_err(stream.wait(write));
             }
         }
         (self.ptr, SyncOnDrop::record_event(self.read, stream))
@@ -938,10 +1008,10 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(read) = self.read.as_ref() {
-                stream.ctx.record_err(stream.wait(read));
+                stream.context().record_err(stream.wait(read));
             }
             if let Some(write) = self.write.as_ref() {
-                stream.ctx.record_err(stream.wait(write));
+                stream.context().record_err(stream.wait(write));
             }
         }
         (
@@ -958,10 +1028,10 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
         if self.stream.context().is_in_multi_stream_mode() {
             if let Some(read) = self.read.as_ref() {
-                stream.ctx.record_err(stream.wait(read));
+                stream.context().record_err(stream.wait(read));
             }
             if let Some(write) = self.write.as_ref() {
-                stream.ctx.record_err(stream.wait(write));
+                stream.context().record_err(stream.wait(write));
             }
         }
         (self.ptr, SyncOnDrop::record_event(self.write, stream))
@@ -1155,7 +1225,7 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (&'a [T], SyncOnDrop<'a>) {
-        stream.ctx.record_err(stream.wait(&self.event));
+        stream.context().record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts(self.ptr, self.len),
             SyncOnDrop::Record(Some((&self.event, stream))),
@@ -1165,7 +1235,7 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (&'a mut [T], SyncOnDrop<'a>) {
-        stream.ctx.record_err(stream.wait(&self.event));
+        stream.context().record_err(stream.wait(&self.event));
         (
             std::slice::from_raw_parts_mut(self.ptr, self.len),
             SyncOnDrop::Record(Some((&self.event, stream))),
@@ -1176,9 +1246,9 @@ impl<T> HostSlice<T> for PinnedHostSlice<T> {
 impl CudaStream {
     /// Allocates an empty [CudaSlice] with 0 length.
     pub fn null<T>(self: &Arc<Self>) -> Result<CudaSlice<T>, result::DriverError> {
-        self.ctx.bind_to_thread()?;
-        let cu_device_ptr = if self.ctx.has_async_alloc {
-            unsafe { result::malloc_async(self.cu_stream, 0) }?
+        self.context().bind_to_thread()?;
+        let cu_device_ptr = if self.context().has_async_alloc {
+            unsafe { result::malloc_async(*self.cu_stream, 0) }?
         } else {
             unsafe { result::malloc_sync(0) }?
         };
@@ -1199,16 +1269,16 @@ impl CudaStream {
         self: &Arc<Self>,
         len: usize,
     ) -> Result<CudaSlice<T>, DriverError> {
-        self.ctx.bind_to_thread()?;
-        let cu_device_ptr = if self.ctx.has_async_alloc {
-            result::malloc_async(self.cu_stream, len * std::mem::size_of::<T>())?
+        self.context().bind_to_thread()?;
+        let cu_device_ptr = if self.context().has_async_alloc {
+            result::malloc_async(*self.cu_stream, len * std::mem::size_of::<T>())?
         } else {
             result::malloc_sync(len * std::mem::size_of::<T>())?
         };
-        let (read, write) = if self.ctx.is_event_tracking() {
+        let (read, write) = if self.context().is_event_tracking() {
             (
-                Some(self.ctx.new_event(None)?),
-                Some(self.ctx.new_event(None)?),
+                Some(self.context().new_event(None)?),
+                Some(self.context().new_event(None)?),
             )
         } else {
             (None, None)
@@ -1240,7 +1310,7 @@ impl CudaStream {
     ) -> Result<(), DriverError> {
         let num_bytes = dst.num_bytes();
         let (dptr, _record) = dst.device_ptr_mut(self);
-        unsafe { result::memset_d8_async(dptr, 0, num_bytes, self.cu_stream) }?;
+        unsafe { result::memset_d8_async(dptr, 0, num_bytes, *self.cu_stream) }?;
         Ok(())
     }
 
@@ -1263,7 +1333,7 @@ impl CudaStream {
         assert!(dst.len() >= src.len());
         let (src, _record_src) = unsafe { src.stream_synced_slice(self) };
         let (dst, _record_dst) = dst.device_ptr_mut(self);
-        unsafe { result::memcpy_htod_async(dst, src, self.cu_stream) }
+        unsafe { result::memcpy_htod_async(dst, src, *self.cu_stream) }
     }
 
     /// Copy a [`CudaSlice`]/[`CudaView`] to a new [`Vec<T>`].
@@ -1289,7 +1359,7 @@ impl CudaStream {
         assert!(dst.len() >= src.len());
         let (src, _record_src) = src.device_ptr(self);
         let (dst, _record_dst) = unsafe { dst.stream_synced_mut_slice(self) };
-        unsafe { result::memcpy_dtoh_async(dst, src, self.cu_stream) }
+        unsafe { result::memcpy_dtoh_async(dst, src, *self.cu_stream) }
     }
 
     /// Copy a [`CudaSlice`]/[`CudaView`] to a existing [`CudaSlice`]/[`CudaViewMut`].
@@ -1302,7 +1372,7 @@ impl CudaStream {
         let num_bytes = src.num_bytes();
         let (src, _record_src) = src.device_ptr(self);
         let (dst, _record_dst) = dst.device_ptr_mut(self);
-        unsafe { result::memcpy_dtod_async(dst, src, num_bytes, self.cu_stream) }
+        unsafe { result::memcpy_dtod_async(dst, src, num_bytes, *self.cu_stream) }
     }
 
     /// Copy a [`CudaSlice`]/[`CudaView`] to a new [`CudaSlice`].
@@ -1822,7 +1892,7 @@ impl CudaFunction {
             blockDimY: config.block_dim.1,
             blockDimZ: config.block_dim.2,
             sharedMemBytes: config.shared_mem_bytes,
-            hStream: stream.cu_stream,
+            hStream: *stream.cu_stream,
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
         };
@@ -1882,7 +1952,7 @@ impl CudaFunction {
             blockDimY: config.block_dim.1,
             blockDimZ: config.block_dim.2,
             sharedMemBytes: config.shared_mem_bytes,
-            hStream: stream.cu_stream,
+            hStream: *stream.cu_stream,
             attrs: std::ptr::null_mut(),
             numAttrs: 0,
         };
@@ -1919,7 +1989,7 @@ impl<T> CudaSlice<T> {
     ///
     /// Drops the underlying host_buf if there is one.
     pub fn leak(self) -> sys::CUdeviceptr {
-        let ctx = &self.stream.ctx;
+        let ctx = &self.stream.context();
         // drop self.read
         if let Some(read) = self.read.as_ref() {
             ctx.record_err(self.stream.wait(read));
@@ -1957,10 +2027,10 @@ impl CudaStream {
         cu_device_ptr: CuDevicePtr,
         len: usize,
     ) -> CudaSlice<T> {
-        let (read, write) = if self.ctx.is_event_tracking() {
+        let (read, write) = if self.context().is_event_tracking() {
             (
-                Some(self.ctx.new_event(None).unwrap()),
-                Some(self.ctx.new_event(None).unwrap()),
+                Some(self.context().new_event(None).unwrap()),
+                Some(self.context().new_event(None).unwrap()),
             )
         } else {
             (None, None)

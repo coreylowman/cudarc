@@ -20,7 +20,7 @@ impl Cudnn {
     pub fn new(stream: Arc<CudaStream>) -> Result<Arc<Self>, CudnnError> {
         stream.context().bind_to_thread().unwrap();
         let handle = result::create_handle()?;
-        unsafe { result::set_stream(handle, stream.cu_stream as *mut _) }?;
+        unsafe { result::set_stream(handle, stream.cu_stream() as *mut _) }?;
         Ok(Arc::new(Self { handle, stream }))
     }
 
@@ -32,7 +32,7 @@ impl Cudnn {
     /// write to the same memory address.
     pub unsafe fn set_stream(&mut self, stream: Arc<CudaStream>) -> Result<(), CudnnError> {
         self.stream = stream;
-        unsafe { result::set_stream(self.handle, self.stream.cu_stream as *mut _) }
+        unsafe { result::set_stream(self.handle, self.stream.cu_stream() as *mut _) }
     }
 }
 
