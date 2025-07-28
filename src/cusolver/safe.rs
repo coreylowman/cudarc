@@ -2,10 +2,7 @@ use std::sync::Arc;
 
 use crate::driver::CudaStream;
 
-use super::{
-    result,
-    sys,
-};
+use super::{result, sys};
 
 pub use super::result::CusolverError;
 
