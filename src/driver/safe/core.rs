@@ -619,7 +619,7 @@ pub struct CudaViewMut<'a, T> {
 }
 
 impl<T> CudaSlice<T> {
-    pub fn as_view_mut(&self) -> CudaViewMut<'_, T> {
+    pub fn as_view_mut(&mut self) -> CudaViewMut<'_, T> {
         CudaViewMut {
             ptr: self.cu_device_ptr,
             len: self.len,
@@ -1450,9 +1450,10 @@ impl<T> CudaSlice<T> {
         &mut self,
         mid: usize,
     ) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
-        (mid <= self.len()).then(|| {
+        let length = self.len;
+        (mid <= length).then(|| {
             let view = self.as_view_mut();
-            (view.resize(0, mid), view.resize(mid, self.len))
+            (view.resize(0, mid), view.resize(mid, length))
         })
     }
 }
