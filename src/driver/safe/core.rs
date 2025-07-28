@@ -199,6 +199,14 @@ impl CudaContext {
         self.event_tracking.load(Ordering::Relaxed)
     }
 
+    /// Whether the context is automatically managing multiple stream synchronization.
+    /// Both of these must be true:
+    /// - [CudaContext::is_in_multi_stream_mode()]
+    /// - [CudaContext::is_event_tracking()]
+    pub fn is_managing_stream_synchronization(&self) -> bool {
+        self.is_in_multi_stream_mode() && self.is_event_tracking()
+    }
+
     /// When turned on, all [CudaSlice] **created after calling this function** will
     /// record usages using [CudaEvent] to ensure proper synchronization between streams.
     ///
@@ -840,7 +848,7 @@ pub trait DevicePtr<T>: DeviceSlice<T> {
 
 impl<T> DevicePtr<T> for CudaSlice<T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.stream.context().is_in_multi_stream_mode() {
+        if self.stream.context().is_managing_stream_synchronization() {
             if let Some(write) = self.write.as_ref() {
                 stream.ctx.record_err(stream.wait(write));
             }
@@ -854,7 +862,7 @@ impl<T> DevicePtr<T> for CudaSlice<T> {
 
 impl<T> DevicePtr<T> for CudaView<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.stream.context().is_in_multi_stream_mode() {
+        if self.stream.context().is_managing_stream_synchronization() {
             if let Some(write) = self.write.as_ref() {
                 stream.ctx.record_err(stream.wait(write));
             }
@@ -865,7 +873,7 @@ impl<T> DevicePtr<T> for CudaView<'_, T> {
 
 impl<T> DevicePtr<T> for CudaViewMut<'_, T> {
     fn device_ptr<'a>(&'a self, stream: &'a CudaStream) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.stream.context().is_in_multi_stream_mode() {
+        if self.stream.context().is_managing_stream_synchronization() {
             if let Some(write) = self.write.as_ref() {
                 stream.ctx.record_err(stream.wait(write));
             }
@@ -901,7 +909,7 @@ impl<T> DevicePtrMut<T> for CudaSlice<T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.stream.context().is_in_multi_stream_mode() {
+        if self.stream.context().is_managing_stream_synchronization() {
             if let Some(read) = self.read.as_ref() {
                 stream.ctx.record_err(stream.wait(read));
             }
@@ -921,7 +929,7 @@ impl<T> DevicePtrMut<T> for CudaViewMut<'_, T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, SyncOnDrop<'a>) {
-        if self.stream.context().is_in_multi_stream_mode() {
+        if self.stream.context().is_managing_stream_synchronization() {
             if let Some(read) = self.read.as_ref() {
                 stream.ctx.record_err(stream.wait(read));
             }
