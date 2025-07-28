@@ -49,6 +49,15 @@ impl DnHandle {
         result::dn_set_stream(self.handle, self.stream.cu_stream() as _)
     }
 
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn set_deterministic_mode(
         &self,
         mode: sys::cusolverDeterministicMode_t,
@@ -56,6 +65,15 @@ impl DnHandle {
         unsafe { result::dn_set_deterministic_mode(self.handle, mode) }
     }
 
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn get_deterministic_mode(&self) -> sys::cusolverDeterministicMode_t {
         // NOTE: the possible errors here are `CUSOLVER_STATUS_NOT_INITIALIZED`, which is not possible
         // since we have `&self`, and `CUSOLVER_STATUS_INVALID_VALUE` when mode is a null pointer, which
