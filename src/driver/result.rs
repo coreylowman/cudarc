@@ -1322,3 +1322,151 @@ pub mod graph {
         sys::cuGraphLaunch(graph_exec, stream).result()
     }
 }
+
+pub mod virtual_memory {
+    use super::*;
+
+    /// Creates a memory allocation handle representing a memory allocation of a given size.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1g899d69684d8f741a3ab25dd2a2c8b9b8)
+    ///
+    /// # Safety
+    /// The allocation properties must be valid.
+    pub unsafe fn create(size: usize, prop: &sys::CUmemAllocationProp) -> Result<sys::CUmemGenericAllocationHandle, DriverError> {
+        let mut handle = MaybeUninit::uninit();
+        sys::cuMemCreate(handle.as_mut_ptr(), size, prop, 0).result()?;
+        Ok(handle.assume_init())
+    }
+
+    /// Reserves a virtual address range.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1g6b1d4b7a2e5f7c3e6a3b2c1d1e2f3a4b)
+    ///
+    /// # Safety
+    /// The address range must be valid and not already reserved.
+    pub unsafe fn address_reserve(size: usize, alignment: usize, addr: Option<sys::CUdeviceptr>) -> Result<sys::CUdeviceptr, DriverError> {
+        let mut ptr = MaybeUninit::uninit();
+        sys::cuMemAddressReserve(ptr.as_mut_ptr(), size, alignment, addr.unwrap_or(0), 0).result()?;
+        Ok(ptr.assume_init())
+    }
+
+    /// Maps a virtual address range to a physical memory allocation.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1g5b1c0a7a3b2c1d1e2f3a4b5c6d7e8f9)
+    ///
+    /// # Safety
+    /// The virtual address range must be reserved and the handle must be valid.
+    pub unsafe fn map(ptr: sys::CUdeviceptr, size: usize, offset: Option<usize>, handle: sys::CUmemGenericAllocationHandle) -> Result<(), DriverError> {
+        sys::cuMemMap(ptr, size, offset.unwrap_or(0), handle, 0).result()
+    }
+
+    /// Sets access permissions for a virtual address range.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1g7c8d3a2b1e4f5c6d7e8f9a0b1c2d3e4f)
+    ///
+    /// # Safety
+    /// The virtual address range must be mapped and the access descriptors must be valid.
+    pub unsafe fn set_access(ptr: sys::CUdeviceptr, size: usize, desc: &[sys::CUmemAccessDesc]) -> Result<(), DriverError> {
+        sys::cuMemSetAccess(ptr, size, desc.as_ptr(), desc.len()).result()
+    }
+
+    /// Unmaps a virtual address range.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1g8b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e)
+    ///
+    /// # Safety
+    /// The virtual address range must be mapped.
+    pub unsafe fn unmap(ptr: sys::CUdeviceptr, size: usize) -> Result<(), DriverError> {
+        sys::cuMemUnmap(ptr, size).result()
+    }
+
+    /// Releases a memory allocation handle.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1g9d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a)
+    ///
+    /// # Safety
+    /// The handle must be valid and not already released.
+    pub unsafe fn release(handle: sys::CUmemGenericAllocationHandle) -> Result<(), DriverError> {
+        sys::cuMemRelease(handle).result()
+    }
+
+    /// Frees a reserved virtual address range.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__VA.html#group__CUDA__VA_1ga1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e)
+    ///
+    /// # Safety
+    /// The virtual address range must be reserved and not already freed.
+    pub unsafe fn address_free(ptr: sys::CUdeviceptr, size: usize) -> Result<(), DriverError> {
+        sys::cuMemAddressFree(ptr, size).result()
+    }
+}
+
+
+pub mod multicast {
+    use super::*;
+
+    /// Gets the granularity at which the multicast allocation can be mapped.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST_1g2c7e8b9d0e2a1b3c4d5e6f7a8b9c0d1e)
+    ///
+    /// # Safety
+    /// The multicast object properties must be valid.
+    pub unsafe fn get_granularity(prop: &sys::CUmulticastObjectProp, option: sys::CUmulticastGranularity_flags) -> Result<usize, DriverError> {
+        let mut granularity = MaybeUninit::uninit();
+        sys::cuMulticastGetGranularity(granularity.as_mut_ptr(), prop, option).result()?;
+        Ok(granularity.assume_init())
+    }
+
+    /// Creates a multicast object.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST_1g3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a)
+    ///
+    /// # Safety
+    /// The multicast object properties must be valid.
+    pub unsafe fn create(prop: &sys::CUmulticastObjectProp) -> Result<sys::CUmemGenericAllocationHandle, DriverError> {
+        let mut handle = MaybeUninit::uninit();
+        sys::cuMulticastCreate(handle.as_mut_ptr(), prop).result()?;
+        Ok(handle.assume_init())
+    }
+
+    /// Adds a device to the multicast object.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST_1g4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b)
+    ///
+    /// # Safety
+    /// The multicast handle must be valid and the device must exist.
+    pub unsafe fn add_device(handle: sys::CUmemGenericAllocationHandle, device: sys::CUdevice) -> Result<(), DriverError> {
+        sys::cuMulticastAddDevice(handle, device).result()
+    }
+
+    /// Binds memory to a multicast object.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST_1g5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c)
+    ///
+    /// # Safety
+    /// Both handles must be valid and the memory ranges must be appropriate.
+    pub unsafe fn bind_mem(
+        mc_handle: sys::CUmemGenericAllocationHandle,
+        mc_offset: Option<usize>,
+        mem_handle: sys::CUmemGenericAllocationHandle,
+        mem_offset: Option<usize>,
+        size: usize,
+    ) -> Result<(), DriverError> {
+        sys::cuMulticastBindMem(mc_handle, mc_offset.unwrap_or(0), mem_handle, mem_offset.unwrap_or(0), size, 0).result()
+    }
+
+    /// Unbinds memory from a multicast object.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MULTICAST.html#group__CUDA__MULTICAST_1g6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d)
+    ///
+    /// # Safety
+    /// The multicast handle must be valid and the device must exist.
+    pub unsafe fn unbind(
+        mc_handle: sys::CUmemGenericAllocationHandle,
+        dev: sys::CUdevice,
+        mc_offset: Option<usize>,
+        size: usize,
+    ) -> Result<(), DriverError> {
+        sys::cuMulticastUnbind(mc_handle, dev, mc_offset.unwrap_or(0), size).result()
+    }
+}
