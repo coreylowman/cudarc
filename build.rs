@@ -158,7 +158,10 @@ fn dynamic_linking(major: usize, minor: usize) {
     #[cfg(feature = "runtime")]
     println!("cargo:rustc-link-lib=dylib=cudart");
     #[cfg(feature = "cufile")]
-    println!("cargo:rustc-link-lib=dylib=cufile");
+    {
+        println!("cargo:rustc-link-lib=dylib=cufile");
+        println!("cargo:rustc-link-lib=dylib=cufile_rdma");
+    }
 }
 
 #[allow(unused)]
@@ -207,6 +210,11 @@ fn static_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=dylib=cusolverMg");
     #[cfg(feature = "cudnn")]
     println!("cargo:rustc-link-lib=static:+whole-archive=cudnn");
+    #[cfg(feature = "cufile")]
+    {
+        println!("cargo:rustc-link-lib=static:+whole-archive=cufile_static");
+        println!("cargo:rustc-link-lib=static:+whole-archive=cufile_rdma_static");
+    }
 }
 
 #[allow(unused)]
