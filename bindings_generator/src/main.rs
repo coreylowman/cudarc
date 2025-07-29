@@ -11,7 +11,7 @@ use std::{
 use anyhow::{Context, Result};
 use bindgen::Builder;
 use lazy_static::lazy_static;
-use reqwest::blocking::{get, Response};
+use reqwest::blocking::{Response, get};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -27,7 +27,7 @@ lazy_static! {
 /// The cuda versions we're building against.
 /// Those are the feature names used in cudarc
 const CUDA_VERSIONS: &[&str] = &[
-    "cuda-11040",
+    // "cuda-11040",
     "cuda-11050",
     "cuda-11060",
     "cuda-11070",
@@ -293,6 +293,20 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 }),
             },
         ),
+        (
+            "cufile".to_string(),
+            ModuleConfig {
+                cuda: "libcufile".to_string(),
+                allowlist: Filters {
+                    types: vec!["^[Cc][Uu][Ff][Ii][Ll][Ee].*".to_string()],
+                    functions: vec!["^cuFile.*".to_string()],
+                    vars: vec![],
+                },
+                blocklist: Filters::none(),
+                libs: vec!["cufile".to_string()],
+                redist: None,
+            }
+        )
     ]
 }
 
