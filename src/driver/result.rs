@@ -1332,7 +1332,10 @@ pub mod virtual_memory {
     ///
     /// # Safety
     /// The allocation properties must be valid.
-    pub unsafe fn create(size: usize, prop: &sys::CUmemAllocationProp) -> Result<sys::CUmemGenericAllocationHandle, DriverError> {
+    pub unsafe fn create(
+        size: usize,
+        prop: &sys::CUmemAllocationProp,
+    ) -> Result<sys::CUmemGenericAllocationHandle, DriverError> {
         let mut handle = MaybeUninit::uninit();
         sys::cuMemCreate(handle.as_mut_ptr(), size, prop, 0).result()?;
         Ok(handle.assume_init())
@@ -1344,9 +1347,14 @@ pub mod virtual_memory {
     ///
     /// # Safety
     /// The address range must be valid and not already reserved.
-    pub unsafe fn address_reserve(size: usize, alignment: usize, addr: Option<sys::CUdeviceptr>) -> Result<sys::CUdeviceptr, DriverError> {
+    pub unsafe fn address_reserve(
+        size: usize,
+        alignment: usize,
+        addr: Option<sys::CUdeviceptr>,
+    ) -> Result<sys::CUdeviceptr, DriverError> {
         let mut ptr = MaybeUninit::uninit();
-        sys::cuMemAddressReserve(ptr.as_mut_ptr(), size, alignment, addr.unwrap_or(0), 0).result()?;
+        sys::cuMemAddressReserve(ptr.as_mut_ptr(), size, alignment, addr.unwrap_or(0), 0)
+            .result()?;
         Ok(ptr.assume_init())
     }
 
@@ -1356,7 +1364,12 @@ pub mod virtual_memory {
     ///
     /// # Safety
     /// The virtual address range must be reserved and the handle must be valid.
-    pub unsafe fn map(ptr: sys::CUdeviceptr, size: usize, offset: Option<usize>, handle: sys::CUmemGenericAllocationHandle) -> Result<(), DriverError> {
+    pub unsafe fn map(
+        ptr: sys::CUdeviceptr,
+        size: usize,
+        offset: Option<usize>,
+        handle: sys::CUmemGenericAllocationHandle,
+    ) -> Result<(), DriverError> {
         sys::cuMemMap(ptr, size, offset.unwrap_or(0), handle, 0).result()
     }
 
@@ -1366,7 +1379,11 @@ pub mod virtual_memory {
     ///
     /// # Safety
     /// The virtual address range must be mapped and the access descriptors must be valid.
-    pub unsafe fn set_access(ptr: sys::CUdeviceptr, size: usize, desc: &[sys::CUmemAccessDesc]) -> Result<(), DriverError> {
+    pub unsafe fn set_access(
+        ptr: sys::CUdeviceptr,
+        size: usize,
+        desc: &[sys::CUmemAccessDesc],
+    ) -> Result<(), DriverError> {
         sys::cuMemSetAccess(ptr, size, desc.as_ptr(), desc.len()).result()
     }
 
@@ -1401,7 +1418,6 @@ pub mod virtual_memory {
     }
 }
 
-
 pub mod multicast {
     use super::*;
 
@@ -1411,7 +1427,10 @@ pub mod multicast {
     ///
     /// # Safety
     /// The multicast object properties must be valid.
-    pub unsafe fn get_granularity(prop: &sys::CUmulticastObjectProp, option: sys::CUmulticastGranularity_flags) -> Result<usize, DriverError> {
+    pub unsafe fn get_granularity(
+        prop: &sys::CUmulticastObjectProp,
+        option: sys::CUmulticastGranularity_flags,
+    ) -> Result<usize, DriverError> {
         let mut granularity = MaybeUninit::uninit();
         sys::cuMulticastGetGranularity(granularity.as_mut_ptr(), prop, option).result()?;
         Ok(granularity.assume_init())
@@ -1423,7 +1442,9 @@ pub mod multicast {
     ///
     /// # Safety
     /// The multicast object properties must be valid.
-    pub unsafe fn create(prop: &sys::CUmulticastObjectProp) -> Result<sys::CUmemGenericAllocationHandle, DriverError> {
+    pub unsafe fn create(
+        prop: &sys::CUmulticastObjectProp,
+    ) -> Result<sys::CUmemGenericAllocationHandle, DriverError> {
         let mut handle = MaybeUninit::uninit();
         sys::cuMulticastCreate(handle.as_mut_ptr(), prop).result()?;
         Ok(handle.assume_init())
@@ -1435,7 +1456,10 @@ pub mod multicast {
     ///
     /// # Safety
     /// The multicast handle must be valid and the device must exist.
-    pub unsafe fn add_device(handle: sys::CUmemGenericAllocationHandle, device: sys::CUdevice) -> Result<(), DriverError> {
+    pub unsafe fn add_device(
+        handle: sys::CUmemGenericAllocationHandle,
+        device: sys::CUdevice,
+    ) -> Result<(), DriverError> {
         sys::cuMulticastAddDevice(handle, device).result()
     }
 
@@ -1452,7 +1476,15 @@ pub mod multicast {
         mem_offset: Option<usize>,
         size: usize,
     ) -> Result<(), DriverError> {
-        sys::cuMulticastBindMem(mc_handle, mc_offset.unwrap_or(0), mem_handle, mem_offset.unwrap_or(0), size, 0).result()
+        sys::cuMulticastBindMem(
+            mc_handle,
+            mc_offset.unwrap_or(0),
+            mem_handle,
+            mem_offset.unwrap_or(0),
+            size,
+            0,
+        )
+        .result()
     }
 
     /// Unbinds memory from a multicast object.
