@@ -1088,11 +1088,18 @@ struct Args {
     /// exist and are up to date.
     #[arg(long, action)]
     skip_bindings: bool,
+
+    /// Specify a single target to generate bindings for.
+    #[arg(long, action)]
+    target: Option<String>
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
-    let modules = create_modules();
+    let mut modules = create_modules();
+    if let Some(target) = args.target {
+        modules.retain(|(k, _)| k.contains(&target));
+    }
     if !args.skip_bindings {
         create_bindings(&modules)?;
     }
