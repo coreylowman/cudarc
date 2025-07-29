@@ -128,7 +128,12 @@ pub enum cublasSideMode_t {
     CUBLAS_SIDE_LEFT = 0,
     CUBLAS_SIDE_RIGHT = 1,
 }
-#[cfg(any(feature = "cuda-11050", feature = "cuda-11060", feature = "cuda-11070"))]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cudaDataType_t {
