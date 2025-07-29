@@ -4,13 +4,14 @@ version = "0.17.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
-description = "Safe wrappers around CUDA apis"
+description = "Safe and minimal api wrappers around NVIDIA cuda bindings"
 homepage = "https://github.com/coreylowman/cudarc"
 documentation = "https://docs.rs/cudarc"
 repository = "https://github.com/coreylowman/cudarc"
 readme = "README.md"
 
 keywords = ["cuda", "nvidia", "gpu", "nvrtc", "cublas"]
+categories = ["api-bindings", "hardware-support", "memory-management", "no-std", "science"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -58,8 +59,8 @@ f16 = ["dep:half"]
 
 [dependencies]
 no-std-compat = { version = "0.4.1", optional = true, features = ["alloc"] }
-half = { version = "2.4.1", optional = true, default-features = false, features = [
+half = { version = "2", optional = true, default-features = false, features = [
     "num-traits",
     "rand_distr",
 ] }
-libloading = "0.8.5"
+libloading = "0.8"
