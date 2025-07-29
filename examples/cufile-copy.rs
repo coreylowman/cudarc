@@ -3,7 +3,7 @@ use std::{ffi::c_void, fs, os::fd::AsRawFd};
 use cudarc::{
     cufile::{
         result::{
-            cufile_driver_get_properties, cufile_driver_open, cufile_handle_register, cufile_read,
+            driver_get_properties, driver_open, handle_register, read,
         },
         sys::{
             cuFileDriverClose_v2, CUfileDescr_t, CUfileDescr_t__bindgen_ty_1, CUfileFileHandleType,
@@ -20,9 +20,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(src_file, &data)?;
 
     unsafe {
-        cufile_driver_open()?;
+        driver_open()?;
 
-        let props = cufile_driver_get_properties()?;
+        let props = driver_get_properties()?;
 
         println!("props: {:#?}", props);
 
@@ -34,7 +34,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         cuda_file.handle = CUfileDescr_t__bindgen_ty_1::default();
         cuda_file.handle.fd = fd;
 
-        let fh = cufile_handle_register(fd)?;
+        let fh = handle_register(fd)?;
 
         let ctx = CudaContext::new(0)?;
         let stream = ctx.default_stream();
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // stream.synchronize()?;
 
-        let result = cufile_read(fh, cuda_buf as *mut c_void, data_sz, 0, 0)?;
+        let result = read(fh, cuda_buf as *mut c_void, data_sz, 0, 0)?;
         println!("cuFileRead result: {:?}", result);
 
         let mut verify_dst = vec![0; data_sz];

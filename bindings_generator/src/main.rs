@@ -27,7 +27,7 @@ lazy_static! {
 /// The cuda versions we're building against.
 /// Those are the feature names used in cudarc
 const CUDA_VERSIONS: &[&str] = &[
-    // "cuda-11040",
+    "cuda-11040",
     "cuda-11050",
     "cuda-11060",
     "cuda-11070",
@@ -247,7 +247,7 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                         "cusparseZgebsr2gebsc_bufferSizeExt".into(),
                         "cusparseZgebsr2gebsr_bufferSizeExt".into(),
                     ],
-                    vars: vec![]
+                    vars: vec![],
                 },
                 libs: vec!["cusparse".to_string()],
                 redist: None,
@@ -264,7 +264,10 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 },
                 blocklist: Filters {
                     types: vec!["^cusolverMg.*".to_string()],
-                    functions: vec!["^cusolverMg.*".to_string(), "^cusolverDnLogger.*".to_string()],
+                    functions: vec![
+                        "^cusolverMg.*".to_string(),
+                        "^cusolverDnLogger.*".to_string(),
+                    ],
                     vars: vec!["^cusolverMg.*".to_string()],
                 },
                 libs: vec!["cusolver".to_string()],
@@ -305,8 +308,8 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 blocklist: Filters::none(),
                 libs: vec!["cufile".to_string()],
                 redist: None,
-            }
-        )
+            },
+        ),
     ]
 }
 
@@ -411,7 +414,7 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
                         &multi_progress,
                     )
                     .context(format!("Failed to generate nccl for {}", cuda_version))?,
-                    "cusolver"=> generate_cusolver(
+                    "cusolver" => generate_cusolver(
                         cuda_version,
                         module_name,
                         module,
@@ -419,7 +422,7 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
                         &multi_progress,
                     )
                     .context(format!("Failed to generate cusolver for {}", cuda_version))?,
-                    "cusolvermg"=> generate_cusolvermg(
+                    "cusolvermg" => generate_cusolvermg(
                         cuda_version,
                         module_name,
                         module,
