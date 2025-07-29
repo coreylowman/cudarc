@@ -237,7 +237,7 @@ pub unsafe fn batch_io_submit(
 }
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiogetstatus)
-/// 
+///
 /// # Safety
 /// A lot of weirdness in this api. Just check cuda docs
 pub unsafe fn batch_io_get_status(
@@ -258,7 +258,7 @@ pub unsafe fn batch_io_get_status(
 }
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiocancel)
-/// 
+///
 /// # Safety
 /// handle must be valid
 pub unsafe fn batch_io_cancel(handle: sys::CUfileBatchHandle_t) -> Result<(), CufileError> {
@@ -266,7 +266,7 @@ pub unsafe fn batch_io_cancel(handle: sys::CUfileBatchHandle_t) -> Result<(), Cu
 }
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiodestroy)
-/// 
+///
 /// # Safety
 /// Must not already be destroyed
 pub unsafe fn batch_io_destroy(handle: sys::CUfileBatchHandle_t) -> Result<(), CufileError> {

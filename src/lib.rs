@@ -84,7 +84,7 @@ pub mod cublas;
 pub mod cublaslt;
 #[cfg(feature = "cudnn")]
 pub mod cudnn;
-#[cfg(all(feature = "cufile", any(target_os = "windows", target_os = "linux")))]
+#[cfg(all(feature = "cufile"))]
 pub mod cufile;
 #[cfg(feature = "curand")]
 pub mod curand;

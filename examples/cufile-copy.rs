@@ -2,9 +2,7 @@ use std::{ffi::c_void, fs, os::fd::AsRawFd};
 
 use cudarc::{
     cufile::{
-        result::{
-            driver_get_properties, driver_open, handle_register, read,
-        },
+        result::{driver_get_properties, driver_open, handle_register, read},
         sys::{
             cuFileDriverClose_v2, CUfileDescr_t, CUfileDescr_t__bindgen_ty_1, CUfileFileHandleType,
         },
@@ -33,8 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         cuda_file.type_ = CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_FD;
         cuda_file.handle = CUfileDescr_t__bindgen_ty_1::default();
         cuda_file.handle.fd = fd;
-
-        let fh = handle_register(fd)?;
+        let fh = handle_register(&cuda_file)?;
 
         let ctx = CudaContext::new(0)?;
         let stream = ctx.default_stream();
