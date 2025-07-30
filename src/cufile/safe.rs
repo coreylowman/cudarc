@@ -1,5 +1,4 @@
-#[allow(unused)]
-use std::{fs::File, os::fd::AsRawFd, sync::Arc};
+use std::{fs::File, sync::Arc};
 
 use crate::driver::{CudaStream, DevicePtr, DevicePtrMut, DeviceRepr};
 
@@ -115,21 +114,27 @@ impl Cufile {
             ))
         } else {
             #[cfg(target_os = "linux")]
-            let descr = sys::CUfileDescr_t {
-                type_: sys::CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_FD,
-                handle: sys::CUfileDescr_t__bindgen_ty_1 {
-                    fd: file.as_raw_fd(),
-                },
-                fs_ops: std::ptr::null(),
+            let descr = {
+                use std::os::unix::io::AsRawFd;
+                sys::CUfileDescr_t {
+                    type_: sys::CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_FD,
+                    handle: sys::CUfileDescr_t__bindgen_ty_1 {
+                        fd: file.as_raw_fd(),
+                    },
+                    fs_ops: std::ptr::null(),
+                }
             };
 
             #[cfg(target_os = "windows")]
-            let descr = sys::CUfileDescr_t {
-                type_: sys::CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_WIN32,
-                handle: sys::CUfileDescr_t__bindgen_ty_1 {
-                    handle: file.as_raw_fd(),
-                },
-                fs_ops: std::ptr::null(),
+            let descr = {
+                use std::os::windows::io::AsRawHandle;
+                sys::CUfileDescr_t {
+                    type_: sys::CUfileFileHandleType::CU_FILE_HANDLE_TYPE_OPAQUE_WIN32,
+                    handle: sys::CUfileDescr_t__bindgen_ty_1 {
+                        handle: file.as_raw_handle(),
+                    },
+                    fs_ops: std::ptr::null(),
+                }
             };
 
             // NOTE: placeholder, shouldn't ever reach this
