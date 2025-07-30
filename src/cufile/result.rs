@@ -44,7 +44,7 @@ pub fn driver_open() -> Result<(), CufileError> {
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufiledriverclose)
 pub fn driver_close() -> Result<(), CufileError> {
-    unsafe { sys::cuFileDriverClose_v2() }.result()
+    unsafe { sys::cuFileDriverClose() }.result()
 }
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufiledrivergetproperties)
@@ -165,6 +165,15 @@ pub unsafe fn buf_deregister(buf_ptr_base: *const ::core::ffi::c_void) -> Result
 ///
 /// # Safety
 /// `stream` must be valid
+#[cfg(not(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+)))]
 pub unsafe fn stream_register(stream: sys::CUstream, flags: u32) -> Result<(), CufileError> {
     sys::cuFileStreamRegister(stream, flags).result()
 }
@@ -173,6 +182,15 @@ pub unsafe fn stream_register(stream: sys::CUstream, flags: u32) -> Result<(), C
 ///
 /// # Safety
 /// `stream` must be valid
+#[cfg(not(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+)))]
 pub unsafe fn stream_deregister(stream: sys::CUstream) -> Result<(), CufileError> {
     sys::cuFileStreamDeregister(stream).result()
 }
@@ -181,6 +199,15 @@ pub unsafe fn stream_deregister(stream: sys::CUstream) -> Result<(), CufileError
 ///
 /// # Safety
 /// Ensure data ranges are valid & pointers are valid
+#[cfg(not(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+)))]
 pub unsafe fn read_async(
     fh: sys::CUfileHandle_t,
     buf_ptr_base: *mut ::core::ffi::c_void,
@@ -205,6 +232,15 @@ pub unsafe fn read_async(
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewriteasync)
 /// # Safety
 /// Ensure data rangefs are valid & pointers are valid
+#[cfg(not(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+)))]
 pub unsafe fn write_async(
     fh: sys::CUfileHandle_t,
     buf_ptr_base: *mut ::core::ffi::c_void,
@@ -226,58 +262,82 @@ pub unsafe fn write_async(
     .result()
 }
 
-/// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiosetup)
-pub fn batch_io_setup(max_nr: u32) -> Result<sys::CUfileBatchHandle_t, CufileError> {
-    let mut batch_idp = MaybeUninit::uninit();
-    unsafe { sys::cuFileBatchIOSetUp(batch_idp.as_mut_ptr(), max_nr) }.result()?;
-    Ok(unsafe { batch_idp.assume_init() })
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+mod batch_io {}
+
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+mod batch_io {
+    use super::*;
+
+    /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiosetup)
+    pub fn batch_io_setup(max_nr: u32) -> Result<sys::CUfileBatchHandle_t, CufileError> {
+        let mut batch_idp = MaybeUninit::uninit();
+        unsafe { sys::cuFileBatchIOSetUp(batch_idp.as_mut_ptr(), max_nr) }.result()?;
+        Ok(unsafe { batch_idp.assume_init() })
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiosubmit)
+    /// # Safety
+    /// `handle` must be valid (not destroyed)
+    pub unsafe fn batch_io_submit(
+        handle: sys::CUfileBatchHandle_t,
+        items: &[sys::CUfileIOParams_t],
+        flags: u32,
+    ) -> Result<(), CufileError> {
+        sys::cuFileBatchIOSubmit(handle, items.len() as u32, items.as_ptr() as _, flags).result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiogetstatus)
+    ///
+    /// # Safety
+    /// A lot of weirdness in this api. Just check cuda docs
+    pub unsafe fn batch_io_get_status(
+        handle: sys::CUfileBatchHandle_t,
+        min_nr: u32,
+        nr: &mut u32,
+        events: &mut [sys::CUfileIOEvents_t],
+        timeout: &sys::timespec,
+    ) -> Result<(), CufileError> {
+        sys::cuFileBatchIOGetStatus(
+            handle,
+            min_nr,
+            nr as _,
+            events.as_mut_ptr(),
+            timeout as *const _ as _,
+        )
+        .result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiocancel)
+    ///
+    /// # Safety
+    /// handle must be valid
+    pub unsafe fn batch_io_cancel(handle: sys::CUfileBatchHandle_t) -> Result<(), CufileError> {
+        sys::cuFileBatchIOCancel(handle).result()
+    }
+
+    /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiodestroy)
+    ///
+    /// # Safety
+    /// Must not already be destroyed
+    pub unsafe fn batch_io_destroy(handle: sys::CUfileBatchHandle_t) -> Result<(), CufileError> {
+        sys::cuFileBatchIODestroy(handle);
+        Ok(())
+    }
 }
 
-/// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiosubmit)
-/// # Safety
-/// `handle` must be valid (not destroyed)
-pub unsafe fn batch_io_submit(
-    handle: sys::CUfileBatchHandle_t,
-    items: &[sys::CUfileIOParams_t],
-    flags: u32,
-) -> Result<(), CufileError> {
-    sys::cuFileBatchIOSubmit(handle, items.len() as u32, items.as_ptr() as _, flags).result()
-}
-
-/// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiogetstatus)
-///
-/// # Safety
-/// A lot of weirdness in this api. Just check cuda docs
-pub unsafe fn batch_io_get_status(
-    handle: sys::CUfileBatchHandle_t,
-    min_nr: u32,
-    nr: &mut u32,
-    events: &mut [sys::CUfileIOEvents_t],
-    timeout: &sys::timespec,
-) -> Result<(), CufileError> {
-    sys::cuFileBatchIOGetStatus(
-        handle,
-        min_nr,
-        nr as _,
-        events.as_mut_ptr(),
-        timeout as *const _ as _,
-    )
-    .result()
-}
-
-/// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiocancel)
-///
-/// # Safety
-/// handle must be valid
-pub unsafe fn batch_io_cancel(handle: sys::CUfileBatchHandle_t) -> Result<(), CufileError> {
-    sys::cuFileBatchIOCancel(handle).result()
-}
-
-/// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiodestroy)
-///
-/// # Safety
-/// Must not already be destroyed
-pub unsafe fn batch_io_destroy(handle: sys::CUfileBatchHandle_t) -> Result<(), CufileError> {
-    sys::cuFileBatchIODestroy(handle);
-    Ok(())
-}
+#[allow(unused_imports)]
+pub use batch_io::*;

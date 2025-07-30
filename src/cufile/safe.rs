@@ -54,6 +54,15 @@ impl Cufile {
     }
 
     /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilestreamregister)
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+    )))]
     pub fn stream_register(
         &self,
         stream: &crate::driver::CudaStream,
@@ -63,6 +72,15 @@ impl Cufile {
     }
 
     /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilestreamderegister)
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+    )))]
     pub fn stream_deregister(&self, stream: &crate::driver::CudaStream) -> Result<(), CufileError> {
         unsafe { result::stream_deregister(stream.cu_stream() as _) }
     }
@@ -174,6 +192,8 @@ impl CudaStream {
     /// on the stream, it will contain a value other than 0. See the docs for possible values.
     ///
     /// Wrapper around [cuFileReadAsync](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilereadasync)
+    /// 
+    /// When cuda version is < 12.2 (which is when cufile async was introduced), this uses [cuFileRead](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufileread).
     pub fn memcpy_ftod<T: DeviceRepr, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         fh: &FileHandle,
@@ -183,6 +203,29 @@ impl CudaStream {
         let num_bytes = dst.num_bytes();
         let (dst, _record_dst) = dst.device_ptr_mut(self);
         let mut bytes_read = Box::new(0);
+
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+        ))]
+        {
+            *bytes_read = unsafe { result::read(fh.cu() as _, dst as _, num_bytes, file_offset, 0) }?;
+        }
+
+        #[cfg(not(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+        )))]
         unsafe {
             result::read_async(
                 fh.cu() as _,
@@ -203,6 +246,8 @@ impl CudaStream {
     /// on the stream, it will contain a value other than 0. See the docs for possible values.
     ///
     /// Wrapper around [cuFileWriteAsync](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewriteasync)
+    /// 
+    /// When cuda version is < 12.2 (which is when cufile async was introduced), this uses [cuFileWrite](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewrite).
     pub fn memcpy_dtof<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -212,6 +257,29 @@ impl CudaStream {
         let num_bytes = src.num_bytes();
         let (src, _record_src) = src.device_ptr(self);
         let mut bytes_written = Box::new(0);
+
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+        ))]
+        {
+            *bytes_written = unsafe { result::write(fh.cu(), src as _, num_bytes, file_offset, 0) }?;
+        }
+
+        #[cfg(not(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+        )))]
         unsafe {
             result::write_async(
                 fh.cu() as _,
@@ -223,6 +291,7 @@ impl CudaStream {
                 self.cu_stream() as _,
             )
         }?;
+
         Ok(bytes_written)
     }
 }
