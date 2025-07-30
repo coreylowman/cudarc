@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[cfg(not(any(feature = "std", feature = "cufile")))]
+#[cfg(not(all(feature = "std", feature = "cufile")))]
 fn main() {
     println!("This example requires `std` and `cufile` features")
 }
