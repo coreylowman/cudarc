@@ -1,4 +1,4 @@
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "cufile"))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     use std::fs;
 
@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[cfg(not(feature = "std"))]
+#[cfg(not(any(feature = "std", feature = "cufile")))]
 fn main() {
-    println!("This example requires std")
+    println!("This example requires `std` and `cufile` features")
 }
