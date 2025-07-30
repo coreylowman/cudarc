@@ -192,7 +192,7 @@ impl CudaStream {
     /// on the stream, it will contain a value other than 0. See the docs for possible values.
     ///
     /// Wrapper around [cuFileReadAsync](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilereadasync)
-    /// 
+    ///
     /// When cuda version is < 12.2 (which is when cufile async was introduced), this uses [cuFileRead](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufileread).
     pub fn memcpy_ftod<T: DeviceRepr, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
@@ -214,7 +214,8 @@ impl CudaStream {
             feature = "cuda-12010",
         ))]
         {
-            *bytes_read = unsafe { result::read(fh.cu() as _, dst as _, num_bytes, file_offset, 0) }?;
+            *bytes_read =
+                unsafe { result::read(fh.cu() as _, dst as _, num_bytes, file_offset, 0) }?;
         }
 
         #[cfg(not(any(
@@ -246,7 +247,7 @@ impl CudaStream {
     /// on the stream, it will contain a value other than 0. See the docs for possible values.
     ///
     /// Wrapper around [cuFileWriteAsync](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewriteasync)
-    /// 
+    ///
     /// When cuda version is < 12.2 (which is when cufile async was introduced), this uses [cuFileWrite](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewrite).
     pub fn memcpy_dtof<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
@@ -268,7 +269,8 @@ impl CudaStream {
             feature = "cuda-12010",
         ))]
         {
-            *bytes_written = unsafe { result::write(fh.cu(), src as _, num_bytes, file_offset, 0) }?;
+            *bytes_written =
+                unsafe { result::write(fh.cu(), src as _, num_bytes, file_offset, 0) }?;
         }
 
         #[cfg(not(any(
