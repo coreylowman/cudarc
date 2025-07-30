@@ -19,7 +19,7 @@ categories = ["api-bindings", "hardware-support", "memory-management", "no-std",
 features = ["cuda-12090", "f16", "cudnn"]
 
 [features]
-default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc", "dynamic-loading", "cufile", "cuda-12080"]
+default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc", "dynamic-loading"]
 
 cuda-version-from-build-system = []
 cuda-11040 = []
