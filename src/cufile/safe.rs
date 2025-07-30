@@ -280,6 +280,10 @@ mod tests {
         stream.synchronize().unwrap();
         assert_eq!(*read, data.len() as isize);
 
+        // NOTE: asserting device equals our data
+        let host_buf = stream.memcpy_dtov(&buf).unwrap();
+        assert_eq!(&host_buf, &data);
+
         // NOTE: asserting file is unchanged
         handle.file.seek(std::io::SeekFrom::Start(0)).unwrap();
         let mut buf = std::vec::Vec::new();
