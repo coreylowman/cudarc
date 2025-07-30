@@ -6,186 +6,166 @@
 extern crate alloc;
 #[cfg(feature = "no-std")]
 extern crate no_std_compat as std;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+pub use self::cudaError_enum as CUresult;
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+pub use self::cufileBatchMode as CUfileBatchMode_t;
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUFILEStatus_enum as CUfileStatus_t;
 pub use self::CUfileDriverControlFlags as CUfileDriverControlFlags_t;
 pub use self::CUfileDriverStatusFlags as CUfileDriverStatusFlags_t;
 pub use self::CUfileFeatureFlags as CUfileFeatureFlags_t;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUfileOpcode as CUfileOpcode_t;
-pub use self::cudaError_enum as CUresult;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
-pub use self::cufileBatchMode as CUfileBatchMode_t;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUfileBatchHandle_t = *mut ::core::ffi::c_void;
 pub type CUfileDrvProps_t = CUfileDrvProps;
 pub type CUfileError_t = CUfileError;
 pub type CUfileFSOps_t = CUfileFSOps;
 pub type CUfileHandle_t = *mut ::core::ffi::c_void;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUfileIOEvents_t = CUfileIOEvents;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUfileIOParams_t = CUfileIOParams;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUstream = *mut CUstream_st;
 pub type __loff_t = __off64_t;
 pub type __off64_t = ::core::ffi::c_long;
 pub type __off_t = ::core::ffi::c_long;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type __syscall_slong_t = ::core::ffi::c_long;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type __time_t = ::core::ffi::c_long;
 pub type cufileRDMAInfo_t = cufileRDMAInfo;
 pub type loff_t = __loff_t;
 pub type off_t = __off_t;
 pub type sa_family_t = ::core::ffi::c_ushort;
 pub type sockaddr_t = sockaddr;
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUFILEStatus_enum {
@@ -259,21 +239,19 @@ pub enum CUfileDriverStatusFlags {
     CU_FILE_SCALEFLUX_CSD_SUPPORTED = 7,
     CU_FILE_NVMESH_SUPPORTED = 8,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUfileDriverStatusFlags {
@@ -321,18 +299,16 @@ pub enum CUfileDriverStatusFlags {
     CU_FILE_NVME_P2P_SUPPORTED = 11,
     CU_FILE_SCATEFS_SUPPORTED = 12,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUfileFeatureFlags {
@@ -340,16 +316,14 @@ pub enum CUfileFeatureFlags {
     CU_FILE_BATCH_IO_SUPPORTED = 1,
     CU_FILE_STREAMS_SUPPORTED = 2,
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUfileFeatureFlags {
@@ -525,17 +499,15 @@ pub enum CUfileOpError {
     CU_FILE_BATCH_FULL = 5037,
     CU_FILE_IO_MAX_ERROR = 5038,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUfileOpError {
@@ -578,22 +550,20 @@ pub enum CUfileOpError {
     CU_FILE_ASYNC_NOT_SUPPORTED = 5038,
     CU_FILE_IO_MAX_ERROR = 5039,
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUfileOpcode {
@@ -1381,22 +1351,20 @@ pub enum cudaError_enum {
     CUDA_ERROR_KEY_ROTATION = 916,
     CUDA_ERROR_UNKNOWN = 999,
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cufileBatchMode {
@@ -1420,22 +1388,20 @@ pub struct CUfileDrvProps {
     pub max_device_pinned_mem_size: ::core::ffi::c_uint,
     pub max_batch_io_timeout_msecs: ::core::ffi::c_uint,
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileDrvProps {
@@ -1467,9 +1433,7 @@ pub struct CUfileError {
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileFSOps {
     pub fs_type: ::core::option::Option<
-        unsafe extern "C" fn(
-            handle: *mut ::core::ffi::c_void,
-        ) -> *const ::core::ffi::c_char,
+        unsafe extern "C" fn(handle: *mut ::core::ffi::c_void) -> *const ::core::ffi::c_char,
     >,
     pub getRDMADeviceList: ::core::option::Option<
         unsafe extern "C" fn(
@@ -1505,22 +1469,20 @@ pub struct CUfileFSOps {
         ) -> isize,
     >,
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileIOEvents {
@@ -1528,22 +1490,20 @@ pub struct CUfileIOEvents {
     pub status: CUfileStatus_t,
     pub ret: usize,
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUfileIOParams {
@@ -1553,22 +1513,20 @@ pub struct CUfileIOParams {
     pub opcode: CUfileOpcode_t,
     pub cookie: *mut ::core::ffi::c_void,
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileIOParams__bindgen_ty_1__bindgen_ty_1 {
@@ -1577,17 +1535,15 @@ pub struct CUfileIOParams__bindgen_ty_1__bindgen_ty_1 {
     pub devPtr_offset: off_t,
     pub size: usize,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct CUstream_st {
@@ -1606,22 +1562,20 @@ pub struct sockaddr {
     pub sa_family: sa_family_t,
     pub sa_data: [::core::ffi::c_char; 14usize],
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct timespec {
@@ -1655,22 +1609,20 @@ impl Default for CUfileError {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUfileIOEvents {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1680,22 +1632,20 @@ impl Default for CUfileIOEvents {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUfileIOParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1705,22 +1655,20 @@ impl Default for CUfileIOParams {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUfileIOParams__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1730,22 +1678,20 @@ impl Default for CUfileIOParams__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUfileIOParams__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -1770,8 +1716,28 @@ pub union CUfileDescr_t__bindgen_ty_1 {
     pub fd: ::core::ffi::c_int,
     pub handle: *mut ::core::ffi::c_void,
 }
-#[cfg(
-    any(
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union CUfileIOParams__bindgen_ty_1 {
+    pub batch: CUfileIOParams__bindgen_ty_1__bindgen_ty_1,
+}
+#[cfg(not(feature = "dynamic-loading"))]
+extern "C" {
+    #[cfg(any(
         feature = "cuda-11060",
         feature = "cuda-11070",
         feature = "cuda-11080",
@@ -1784,65 +1750,37 @@ pub union CUfileDescr_t__bindgen_ty_1 {
         feature = "cuda-12060",
         feature = "cuda-12080",
         feature = "cuda-12090"
-    )
-)]
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub union CUfileIOParams__bindgen_ty_1 {
-    pub batch: CUfileIOParams__bindgen_ty_1__bindgen_ty_1,
-}
-#[cfg(not(feature = "dynamic-loading"))]
-extern "C" {
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    ))]
     pub fn cuFileBatchIOCancel(batch_idp: CUfileBatchHandle_t) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileBatchIODestroy(batch_idp: CUfileBatchHandle_t);
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileBatchIOGetStatus(
         batch_idp: CUfileBatchHandle_t,
         min_nr: ::core::ffi::c_uint,
@@ -1850,129 +1788,112 @@ extern "C" {
         iocbp: *mut CUfileIOEvents_t,
         timeout: *mut timespec,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileBatchIOSetUp(
         batch_idp: *mut CUfileBatchHandle_t,
         nr: ::core::ffi::c_uint,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileBatchIOSubmit(
         batch_idp: CUfileBatchHandle_t,
         nr: ::core::ffi::c_uint,
         iocbp: *mut CUfileIOParams_t,
         flags: ::core::ffi::c_uint,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub fn cuFileBufDeregister(devPtr_base: *const ::core::ffi::c_void) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileBufDeregister(bufPtr_base: *const ::core::ffi::c_void) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub fn cuFileBufRegister(
         devPtr_base: *const ::core::ffi::c_void,
         length: usize,
         flags: ::core::ffi::c_int,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileBufRegister(
         bufPtr_base: *const ::core::ffi::c_void,
         length: usize,
         flags: ::core::ffi::c_int,
     ) -> CUfileError_t;
     pub fn cuFileDriverClose() -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileDriverClose_v2() -> CUfileError_t;
     pub fn cuFileDriverGetProperties(props: *mut CUfileDrvProps_t) -> CUfileError_t;
     pub fn cuFileDriverOpen() -> CUfileError_t;
     pub fn cuFileDriverSetMaxCacheSize(max_cache_size: usize) -> CUfileError_t;
     pub fn cuFileDriverSetMaxDirectIOSize(max_direct_io_size: usize) -> CUfileError_t;
     pub fn cuFileDriverSetMaxPinnedMemSize(max_pinned_size: usize) -> CUfileError_t;
-    pub fn cuFileDriverSetPollMode(
-        poll: bool,
-        poll_threshold_size: usize,
-    ) -> CUfileError_t;
+    pub fn cuFileDriverSetPollMode(poll: bool, poll_threshold_size: usize) -> CUfileError_t;
     #[cfg(any(feature = "cuda-12090"))]
     pub fn cuFileGetParameterBool(
         param: CUFileBoolConfigParameter_t,
@@ -1989,34 +1910,30 @@ extern "C" {
         desc_str: *mut ::core::ffi::c_char,
         len: ::core::ffi::c_int,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileGetVersion(version: *mut ::core::ffi::c_int) -> CUfileError_t;
     pub fn cuFileHandleDeregister(fh: CUfileHandle_t);
     pub fn cuFileHandleRegister(
         fh: *mut CUfileHandle_t,
         descr: *mut CUfileDescr_t,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub fn cuFileRead(
         fh: CUfileHandle_t,
         devPtr_base: *mut ::core::ffi::c_void,
@@ -2024,16 +1941,14 @@ extern "C" {
         file_offset: off_t,
         devPtr_offset: off_t,
     ) -> isize;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileRead(
         fh: CUfileHandle_t,
         bufPtr_base: *mut ::core::ffi::c_void,
@@ -2041,17 +1956,15 @@ extern "C" {
         file_offset: off_t,
         bufPtr_offset: off_t,
     ) -> isize;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileReadAsync(
         fh: CUfileHandle_t,
         bufPtr_base: *mut ::core::ffi::c_void,
@@ -2062,10 +1975,8 @@ extern "C" {
         stream: CUstream,
     ) -> CUfileError_t;
     #[cfg(any(feature = "cuda-12090"))]
-    pub fn cuFileSetParameterBool(
-        param: CUFileBoolConfigParameter_t,
-        value: bool,
-    ) -> CUfileError_t;
+    pub fn cuFileSetParameterBool(param: CUFileBoolConfigParameter_t, value: bool)
+        -> CUfileError_t;
     #[cfg(any(feature = "cuda-12090"))]
     pub fn cuFileSetParameterSizeT(
         param: CUFileSizeTConfigParameter_t,
@@ -2076,60 +1987,49 @@ extern "C" {
         param: CUFileStringConfigParameter_t,
         desc_str: *const ::core::ffi::c_char,
     ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileStreamDeregister(stream: CUstream) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub fn cuFileStreamRegister(
-        stream: CUstream,
-        flags: ::core::ffi::c_uint,
-    ) -> CUfileError_t;
-    #[cfg(
-        any(
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub fn cuFileStreamRegister(stream: CUstream, flags: ::core::ffi::c_uint) -> CUfileError_t;
+    #[cfg(any(
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileUseCount() -> ::core::ffi::c_long;
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub fn cuFileWrite(
         fh: CUfileHandle_t,
         devPtr_base: *const ::core::ffi::c_void,
@@ -2137,16 +2037,14 @@ extern "C" {
         file_offset: off_t,
         devPtr_offset: off_t,
     ) -> isize;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileWrite(
         fh: CUfileHandle_t,
         bufPtr_base: *const ::core::ffi::c_void,
@@ -2154,17 +2052,15 @@ extern "C" {
         file_offset: off_t,
         bufPtr_offset: off_t,
     ) -> isize;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuFileWriteAsync(
         fh: CUfileHandle_t,
         bufPtr_base: *mut ::core::ffi::c_void,
@@ -2178,60 +2074,54 @@ extern "C" {
 #[cfg(feature = "dynamic-loading")]
 mod loaded {
     use super::*;
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileBatchIOCancel(batch_idp: CUfileBatchHandle_t) -> CUfileError_t {
         (culib().cuFileBatchIOCancel)(batch_idp)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileBatchIODestroy(batch_idp: CUfileBatchHandle_t) {
         (culib().cuFileBatchIODestroy)(batch_idp)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileBatchIOGetStatus(
         batch_idp: CUfileBatchHandle_t,
         min_nr: ::core::ffi::c_uint,
@@ -2241,44 +2131,40 @@ mod loaded {
     ) -> CUfileError_t {
         (culib().cuFileBatchIOGetStatus)(batch_idp, min_nr, nr, iocbp, timeout)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileBatchIOSetUp(
         batch_idp: *mut CUfileBatchHandle_t,
         nr: ::core::ffi::c_uint,
     ) -> CUfileError_t {
         (culib().cuFileBatchIOSetUp)(batch_idp, nr)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileBatchIOSubmit(
         batch_idp: CUfileBatchHandle_t,
         nr: ::core::ffi::c_uint,
@@ -2287,50 +2173,40 @@ mod loaded {
     ) -> CUfileError_t {
         (culib().cuFileBatchIOSubmit)(batch_idp, nr, iocbp, flags)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
-    pub unsafe fn cuFileBufDeregister(
-        devPtr_base: *const ::core::ffi::c_void,
-    ) -> CUfileError_t {
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
+    pub unsafe fn cuFileBufDeregister(devPtr_base: *const ::core::ffi::c_void) -> CUfileError_t {
         (culib().cuFileBufDeregister)(devPtr_base)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub unsafe fn cuFileBufDeregister(
-        bufPtr_base: *const ::core::ffi::c_void,
-    ) -> CUfileError_t {
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub unsafe fn cuFileBufDeregister(bufPtr_base: *const ::core::ffi::c_void) -> CUfileError_t {
         (culib().cuFileBufDeregister)(bufPtr_base)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub unsafe fn cuFileBufRegister(
         devPtr_base: *const ::core::ffi::c_void,
         length: usize,
@@ -2338,16 +2214,14 @@ mod loaded {
     ) -> CUfileError_t {
         (culib().cuFileBufRegister)(devPtr_base, length, flags)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileBufRegister(
         bufPtr_base: *const ::core::ffi::c_void,
         length: usize,
@@ -2358,26 +2232,22 @@ mod loaded {
     pub unsafe fn cuFileDriverClose() -> CUfileError_t {
         (culib().cuFileDriverClose)()
     }
-    #[cfg(
-        any(
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileDriverClose_v2() -> CUfileError_t {
         (culib().cuFileDriverClose_v2)()
     }
-    pub unsafe fn cuFileDriverGetProperties(
-        props: *mut CUfileDrvProps_t,
-    ) -> CUfileError_t {
+    pub unsafe fn cuFileDriverGetProperties(props: *mut CUfileDrvProps_t) -> CUfileError_t {
         (culib().cuFileDriverGetProperties)(props)
     }
     pub unsafe fn cuFileDriverOpen() -> CUfileError_t {
@@ -2386,20 +2256,13 @@ mod loaded {
     pub unsafe fn cuFileDriverSetMaxCacheSize(max_cache_size: usize) -> CUfileError_t {
         (culib().cuFileDriverSetMaxCacheSize)(max_cache_size)
     }
-    pub unsafe fn cuFileDriverSetMaxDirectIOSize(
-        max_direct_io_size: usize,
-    ) -> CUfileError_t {
+    pub unsafe fn cuFileDriverSetMaxDirectIOSize(max_direct_io_size: usize) -> CUfileError_t {
         (culib().cuFileDriverSetMaxDirectIOSize)(max_direct_io_size)
     }
-    pub unsafe fn cuFileDriverSetMaxPinnedMemSize(
-        max_pinned_size: usize,
-    ) -> CUfileError_t {
+    pub unsafe fn cuFileDriverSetMaxPinnedMemSize(max_pinned_size: usize) -> CUfileError_t {
         (culib().cuFileDriverSetMaxPinnedMemSize)(max_pinned_size)
     }
-    pub unsafe fn cuFileDriverSetPollMode(
-        poll: bool,
-        poll_threshold_size: usize,
-    ) -> CUfileError_t {
+    pub unsafe fn cuFileDriverSetPollMode(poll: bool, poll_threshold_size: usize) -> CUfileError_t {
         (culib().cuFileDriverSetPollMode)(poll, poll_threshold_size)
     }
     #[cfg(any(feature = "cuda-12090"))]
@@ -2424,16 +2287,14 @@ mod loaded {
     ) -> CUfileError_t {
         (culib().cuFileGetParameterString)(param, desc_str, len)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileGetVersion(version: *mut ::core::ffi::c_int) -> CUfileError_t {
         (culib().cuFileGetVersion)(version)
     }
@@ -2446,18 +2307,16 @@ mod loaded {
     ) -> CUfileError_t {
         (culib().cuFileHandleRegister)(fh, descr)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub unsafe fn cuFileRead(
         fh: CUfileHandle_t,
         devPtr_base: *mut ::core::ffi::c_void,
@@ -2467,16 +2326,14 @@ mod loaded {
     ) -> isize {
         (culib().cuFileRead)(fh, devPtr_base, size, file_offset, devPtr_offset)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileRead(
         fh: CUfileHandle_t,
         bufPtr_base: *mut ::core::ffi::c_void,
@@ -2486,17 +2343,15 @@ mod loaded {
     ) -> isize {
         (culib().cuFileRead)(fh, bufPtr_base, size, file_offset, bufPtr_offset)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileReadAsync(
         fh: CUfileHandle_t,
         bufPtr_base: *mut ::core::ffi::c_void,
@@ -2506,8 +2361,7 @@ mod loaded {
         bytes_read_p: *mut isize,
         stream: CUstream,
     ) -> CUfileError_t {
-        (culib()
-            .cuFileReadAsync)(
+        (culib().cuFileReadAsync)(
             fh,
             bufPtr_base,
             size_p,
@@ -2538,66 +2392,58 @@ mod loaded {
     ) -> CUfileError_t {
         (culib().cuFileSetParameterString)(param, desc_str)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileStreamDeregister(stream: CUstream) -> CUfileError_t {
         (culib().cuFileStreamDeregister)(stream)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileStreamRegister(
         stream: CUstream,
         flags: ::core::ffi::c_uint,
     ) -> CUfileError_t {
         (culib().cuFileStreamRegister)(stream, flags)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileUseCount() -> ::core::ffi::c_long {
         (culib().cuFileUseCount)()
     }
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11060",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020"
+    ))]
     pub unsafe fn cuFileWrite(
         fh: CUfileHandle_t,
         devPtr_base: *const ::core::ffi::c_void,
@@ -2607,16 +2453,14 @@ mod loaded {
     ) -> isize {
         (culib().cuFileWrite)(fh, devPtr_base, size, file_offset, devPtr_offset)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileWrite(
         fh: CUfileHandle_t,
         bufPtr_base: *const ::core::ffi::c_void,
@@ -2626,17 +2470,15 @@ mod loaded {
     ) -> isize {
         (culib().cuFileWrite)(fh, bufPtr_base, size, file_offset, bufPtr_offset)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuFileWriteAsync(
         fh: CUfileHandle_t,
         bufPtr_base: *mut ::core::ffi::c_void,
@@ -2646,8 +2488,7 @@ mod loaded {
         bytes_written_p: *mut isize,
         stream: CUstream,
     ) -> CUfileError_t {
-        (culib()
-            .cuFileWriteAsync)(
+        (culib().cuFileWriteAsync)(
             fh,
             bufPtr_base,
             size_p,
@@ -2659,58 +2500,51 @@ mod loaded {
     }
     pub struct Lib {
         __library: ::libloading::Library,
-        #[cfg(
-            any(
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuFileBatchIOCancel: unsafe extern "C" fn(
-            batch_idp: CUfileBatchHandle_t,
-        ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuFileBatchIOCancel:
+            unsafe extern "C" fn(batch_idp: CUfileBatchHandle_t) -> CUfileError_t,
+        #[cfg(any(
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileBatchIODestroy: unsafe extern "C" fn(batch_idp: CUfileBatchHandle_t),
-        #[cfg(
-            any(
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileBatchIOGetStatus: unsafe extern "C" fn(
             batch_idp: CUfileBatchHandle_t,
             min_nr: ::core::ffi::c_uint,
@@ -2718,141 +2552,119 @@ mod loaded {
             iocbp: *mut CUfileIOEvents_t,
             timeout: *mut timespec,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileBatchIOSetUp: unsafe extern "C" fn(
             batch_idp: *mut CUfileBatchHandle_t,
             nr: ::core::ffi::c_uint,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileBatchIOSubmit: unsafe extern "C" fn(
             batch_idp: CUfileBatchHandle_t,
             nr: ::core::ffi::c_uint,
             iocbp: *mut CUfileIOParams_t,
             flags: ::core::ffi::c_uint,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11040",
-                feature = "cuda-11050",
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020"
-            )
-        )]
-        pub cuFileBufDeregister: unsafe extern "C" fn(
-            devPtr_base: *const ::core::ffi::c_void,
-        ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuFileBufDeregister: unsafe extern "C" fn(
-            bufPtr_base: *const ::core::ffi::c_void,
-        ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11040",
-                feature = "cuda-11050",
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020"
+        ))]
+        pub cuFileBufDeregister:
+            unsafe extern "C" fn(devPtr_base: *const ::core::ffi::c_void) -> CUfileError_t,
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuFileBufDeregister:
+            unsafe extern "C" fn(bufPtr_base: *const ::core::ffi::c_void) -> CUfileError_t,
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020"
+        ))]
         pub cuFileBufRegister: unsafe extern "C" fn(
             devPtr_base: *const ::core::ffi::c_void,
             length: usize,
             flags: ::core::ffi::c_int,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileBufRegister: unsafe extern "C" fn(
             bufPtr_base: *const ::core::ffi::c_void,
             length: usize,
             flags: ::core::ffi::c_int,
         ) -> CUfileError_t,
         pub cuFileDriverClose: unsafe extern "C" fn() -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileDriverClose_v2: unsafe extern "C" fn() -> CUfileError_t,
-        pub cuFileDriverGetProperties: unsafe extern "C" fn(
-            props: *mut CUfileDrvProps_t,
-        ) -> CUfileError_t,
+        pub cuFileDriverGetProperties:
+            unsafe extern "C" fn(props: *mut CUfileDrvProps_t) -> CUfileError_t,
         pub cuFileDriverOpen: unsafe extern "C" fn() -> CUfileError_t,
-        pub cuFileDriverSetMaxCacheSize: unsafe extern "C" fn(
-            max_cache_size: usize,
-        ) -> CUfileError_t,
-        pub cuFileDriverSetMaxDirectIOSize: unsafe extern "C" fn(
-            max_direct_io_size: usize,
-        ) -> CUfileError_t,
-        pub cuFileDriverSetMaxPinnedMemSize: unsafe extern "C" fn(
-            max_pinned_size: usize,
-        ) -> CUfileError_t,
-        pub cuFileDriverSetPollMode: unsafe extern "C" fn(
-            poll: bool,
-            poll_threshold_size: usize,
-        ) -> CUfileError_t,
+        pub cuFileDriverSetMaxCacheSize:
+            unsafe extern "C" fn(max_cache_size: usize) -> CUfileError_t,
+        pub cuFileDriverSetMaxDirectIOSize:
+            unsafe extern "C" fn(max_direct_io_size: usize) -> CUfileError_t,
+        pub cuFileDriverSetMaxPinnedMemSize:
+            unsafe extern "C" fn(max_pinned_size: usize) -> CUfileError_t,
+        pub cuFileDriverSetPollMode:
+            unsafe extern "C" fn(poll: bool, poll_threshold_size: usize) -> CUfileError_t,
         #[cfg(any(feature = "cuda-12090"))]
         pub cuFileGetParameterBool: unsafe extern "C" fn(
             param: CUFileBoolConfigParameter_t,
@@ -2869,36 +2681,31 @@ mod loaded {
             desc_str: *mut ::core::ffi::c_char,
             len: ::core::ffi::c_int,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuFileGetVersion: unsafe extern "C" fn(
-            version: *mut ::core::ffi::c_int,
-        ) -> CUfileError_t,
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuFileGetVersion:
+            unsafe extern "C" fn(version: *mut ::core::ffi::c_int) -> CUfileError_t,
         pub cuFileHandleDeregister: unsafe extern "C" fn(fh: CUfileHandle_t),
         pub cuFileHandleRegister: unsafe extern "C" fn(
             fh: *mut CUfileHandle_t,
             descr: *mut CUfileDescr_t,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11040",
-                feature = "cuda-11050",
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020"
+        ))]
         pub cuFileRead: unsafe extern "C" fn(
             fh: CUfileHandle_t,
             devPtr_base: *mut ::core::ffi::c_void,
@@ -2906,16 +2713,14 @@ mod loaded {
             file_offset: off_t,
             devPtr_offset: off_t,
         ) -> isize,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileRead: unsafe extern "C" fn(
             fh: CUfileHandle_t,
             bufPtr_base: *mut ::core::ffi::c_void,
@@ -2923,17 +2728,15 @@ mod loaded {
             file_offset: off_t,
             bufPtr_offset: off_t,
         ) -> isize,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileReadAsync: unsafe extern "C" fn(
             fh: CUfileHandle_t,
             bufPtr_base: *mut ::core::ffi::c_void,
@@ -2944,10 +2747,8 @@ mod loaded {
             stream: CUstream,
         ) -> CUfileError_t,
         #[cfg(any(feature = "cuda-12090"))]
-        pub cuFileSetParameterBool: unsafe extern "C" fn(
-            param: CUFileBoolConfigParameter_t,
-            value: bool,
-        ) -> CUfileError_t,
+        pub cuFileSetParameterBool:
+            unsafe extern "C" fn(param: CUFileBoolConfigParameter_t, value: bool) -> CUfileError_t,
         #[cfg(any(feature = "cuda-12090"))]
         pub cuFileSetParameterSizeT: unsafe extern "C" fn(
             param: CUFileSizeTConfigParameter_t,
@@ -2958,62 +2759,50 @@ mod loaded {
             param: CUFileStringConfigParameter_t,
             desc_str: *const ::core::ffi::c_char,
         ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuFileStreamDeregister: unsafe extern "C" fn(
-            stream: CUstream,
-        ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuFileStreamRegister: unsafe extern "C" fn(
-            stream: CUstream,
-            flags: ::core::ffi::c_uint,
-        ) -> CUfileError_t,
-        #[cfg(
-            any(
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuFileStreamDeregister: unsafe extern "C" fn(stream: CUstream) -> CUfileError_t,
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuFileStreamRegister:
+            unsafe extern "C" fn(stream: CUstream, flags: ::core::ffi::c_uint) -> CUfileError_t,
+        #[cfg(any(
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileUseCount: unsafe extern "C" fn() -> ::core::ffi::c_long,
-        #[cfg(
-            any(
-                feature = "cuda-11040",
-                feature = "cuda-11050",
-                feature = "cuda-11060",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020"
+        ))]
         pub cuFileWrite: unsafe extern "C" fn(
             fh: CUfileHandle_t,
             devPtr_base: *const ::core::ffi::c_void,
@@ -3021,16 +2810,14 @@ mod loaded {
             file_offset: off_t,
             devPtr_offset: off_t,
         ) -> isize,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileWrite: unsafe extern "C" fn(
             fh: CUfileHandle_t,
             bufPtr_base: *const ::core::ffi::c_void,
@@ -3038,17 +2825,15 @@ mod loaded {
             file_offset: off_t,
             bufPtr_offset: off_t,
         ) -> isize,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuFileWriteAsync: unsafe extern "C" fn(
             fh: CUfileHandle_t,
             bufPtr_base: *mut ::core::ffi::c_void,
@@ -3072,162 +2857,144 @@ mod loaded {
             L: Into<::libloading::Library>,
         {
             let __library = library.into();
-            #[cfg(
-                any(
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBatchIOCancel = __library
                 .get(b"cuFileBatchIOCancel\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBatchIODestroy = __library
                 .get(b"cuFileBatchIODestroy\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBatchIOGetStatus = __library
                 .get(b"cuFileBatchIOGetStatus\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBatchIOSetUp = __library
                 .get(b"cuFileBatchIOSetUp\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBatchIOSubmit = __library
                 .get(b"cuFileBatchIOSubmit\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11040",
-                    feature = "cuda-11050",
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020"
+            ))]
             let cuFileBufDeregister = __library
                 .get(b"cuFileBufDeregister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBufDeregister = __library
                 .get(b"cuFileBufDeregister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11040",
-                    feature = "cuda-11050",
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020"
+            ))]
             let cuFileBufRegister = __library
                 .get(b"cuFileBufRegister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileBufRegister = __library
                 .get(b"cuFileBufRegister\0")
                 .map(|sym| *sym)
@@ -3236,20 +3003,18 @@ mod loaded {
                 .get(b"cuFileDriverClose\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileDriverClose_v2 = __library
                 .get(b"cuFileDriverClose_v2\0")
                 .map(|sym| *sym)
@@ -3293,16 +3058,14 @@ mod loaded {
                 .get(b"cuFileGetParameterString\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileGetVersion = __library
                 .get(b"cuFileGetVersion\0")
                 .map(|sym| *sym)
@@ -3315,47 +3078,41 @@ mod loaded {
                 .get(b"cuFileHandleRegister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11040",
-                    feature = "cuda-11050",
-                    feature = "cuda-11060",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020"
+            ))]
             let cuFileRead = __library
                 .get(b"cuFileRead\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileRead = __library
                 .get(b"cuFileRead\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileReadAsync = __library
                 .get(b"cuFileReadAsync\0")
                 .map(|sym| *sym)
@@ -3375,38 +3132,92 @@ mod loaded {
                 .get(b"cuFileSetParameterString\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileStreamDeregister = __library
                 .get(b"cuFileStreamDeregister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuFileStreamRegister = __library
                 .get(b"cuFileStreamRegister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
+            #[cfg(any(
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
+            let cuFileUseCount = __library
+                .get(b"cuFileUseCount\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020"
+            ))]
+            let cuFileWrite = __library
+                .get(b"cuFileWrite\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
+            let cuFileWrite = __library
+                .get(b"cuFileWrite\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
+            let cuFileWriteAsync = __library
+                .get(b"cuFileWriteAsync\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            Ok(Self {
+                __library,
+                #[cfg(any(
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
                     feature = "cuda-11080",
                     feature = "cuda-12000",
                     feature = "cuda-12010",
@@ -3417,14 +3228,69 @@ mod loaded {
                     feature = "cuda-12060",
                     feature = "cuda-12080",
                     feature = "cuda-12090"
-                )
-            )]
-            let cuFileUseCount = __library
-                .get(b"cuFileUseCount\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(
-                any(
+                ))]
+                cuFileBatchIOCancel,
+                #[cfg(any(
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
+                cuFileBatchIODestroy,
+                #[cfg(any(
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
+                cuFileBatchIOGetStatus,
+                #[cfg(any(
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
+                cuFileBatchIOSetUp,
+                #[cfg(any(
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
+                cuFileBatchIOSubmit,
+                #[cfg(any(
                     feature = "cuda-11040",
                     feature = "cuda-11050",
                     feature = "cuda-11060",
@@ -3433,28 +3299,42 @@ mod loaded {
                     feature = "cuda-12000",
                     feature = "cuda-12010",
                     feature = "cuda-12020"
-                )
-            )]
-            let cuFileWrite = __library
-                .get(b"cuFileWrite\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(
-                any(
+                ))]
+                cuFileBufDeregister,
+                #[cfg(any(
                     feature = "cuda-12030",
                     feature = "cuda-12040",
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
                     feature = "cuda-12090"
-                )
-            )]
-            let cuFileWrite = __library
-                .get(b"cuFileWrite\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            #[cfg(
-                any(
+                ))]
+                cuFileBufDeregister,
+                #[cfg(any(
+                    feature = "cuda-11040",
+                    feature = "cuda-11050",
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020"
+                ))]
+                cuFileBufRegister,
+                #[cfg(any(
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
+                cuFileBufRegister,
+                cuFileDriverClose,
+                #[cfg(any(
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
                     feature = "cuda-12020",
                     feature = "cuda-12030",
                     feature = "cuda-12040",
@@ -3462,162 +3342,7 @@ mod loaded {
                     feature = "cuda-12060",
                     feature = "cuda-12080",
                     feature = "cuda-12090"
-                )
-            )]
-            let cuFileWriteAsync = __library
-                .get(b"cuFileWriteAsync\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
-            Ok(Self {
-                __library,
-                #[cfg(
-                    any(
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBatchIOCancel,
-                #[cfg(
-                    any(
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBatchIODestroy,
-                #[cfg(
-                    any(
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBatchIOGetStatus,
-                #[cfg(
-                    any(
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBatchIOSetUp,
-                #[cfg(
-                    any(
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBatchIOSubmit,
-                #[cfg(
-                    any(
-                        feature = "cuda-11040",
-                        feature = "cuda-11050",
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020"
-                    )
-                )]
-                cuFileBufDeregister,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBufDeregister,
-                #[cfg(
-                    any(
-                        feature = "cuda-11040",
-                        feature = "cuda-11050",
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020"
-                    )
-                )]
-                cuFileBufRegister,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
-                cuFileBufRegister,
-                cuFileDriverClose,
-                #[cfg(
-                    any(
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                ))]
                 cuFileDriverClose_v2,
                 cuFileDriverGetProperties,
                 cuFileDriverOpen,
@@ -3631,54 +3356,46 @@ mod loaded {
                 cuFileGetParameterSizeT,
                 #[cfg(any(feature = "cuda-12090"))]
                 cuFileGetParameterString,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileGetVersion,
                 cuFileHandleDeregister,
                 cuFileHandleRegister,
-                #[cfg(
-                    any(
-                        feature = "cuda-11040",
-                        feature = "cuda-11050",
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11040",
+                    feature = "cuda-11050",
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020"
+                ))]
                 cuFileRead,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileRead,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileReadAsync,
                 #[cfg(any(feature = "cuda-12090"))]
                 cuFileSetParameterBool,
@@ -3686,80 +3403,68 @@ mod loaded {
                 cuFileSetParameterSizeT,
                 #[cfg(any(feature = "cuda-12090"))]
                 cuFileSetParameterString,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileStreamDeregister,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileStreamRegister,
-                #[cfg(
-                    any(
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileUseCount,
-                #[cfg(
-                    any(
-                        feature = "cuda-11040",
-                        feature = "cuda-11050",
-                        feature = "cuda-11060",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11040",
+                    feature = "cuda-11050",
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020"
+                ))]
                 cuFileWrite,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileWrite,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuFileWriteAsync,
             })
         }

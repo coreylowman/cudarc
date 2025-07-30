@@ -27,12 +27,14 @@ impl sys::CUfileError {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::fmt::Display for CufileError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for CufileError {}
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufiledriveropen)
@@ -105,8 +107,10 @@ pub unsafe fn read(
         Err(CufileError::IO(std::io::Error::last_os_error()))
     } else if bytes_read < -1 {
         let errno = -bytes_read;
+        assert!(errno > 0);
         let errno = errno as u32;
-        Err(CufileError::Cufile(std::mem::transmute(errno)))
+        let err: sys::CUfileOpError = std::mem::transmute(errno);
+        Err(CufileError::Cufile(err))
     } else {
         Ok(bytes_read)
     }
@@ -128,8 +132,10 @@ pub unsafe fn write(
         Err(CufileError::IO(std::io::Error::last_os_error()))
     } else if bytes_written < -1 {
         let errno = -bytes_written;
+        assert!(errno > 0);
         let errno = errno as u32;
-        Err(CufileError::Cufile(std::mem::transmute(errno)))
+        let err: sys::CUfileOpError = std::mem::transmute(errno);
+        Err(CufileError::Cufile(err))
     } else {
         Ok(bytes_written)
     }
@@ -228,6 +234,8 @@ pub fn batch_io_setup(max_nr: u32) -> Result<sys::CUfileBatchHandle_t, CufileErr
 }
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilebatchiosubmit)
+/// # Safety
+/// `handle` must be valid (not destroyed)
 pub unsafe fn batch_io_submit(
     handle: sys::CUfileBatchHandle_t,
     items: &[sys::CUfileIOParams_t],

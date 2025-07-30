@@ -1,4 +1,4 @@
-use std::{fs::File, sync::Arc};
+use std::{boxed::Box, fs::File, sync::Arc};
 
 use crate::driver::{CudaStream, DevicePtr, DevicePtrMut, DeviceRepr};
 
@@ -254,7 +254,7 @@ mod tests {
         assert_eq!(*written, data.len() as isize);
 
         handle.file.seek(std::io::SeekFrom::Start(0)).unwrap();
-        let mut buf = Vec::new();
+        let mut buf = std::vec::Vec::new();
         handle.file.read_to_end(&mut buf).unwrap();
         assert_eq!(&buf, &data);
 
@@ -268,7 +268,7 @@ mod tests {
         let cufile = Cufile::new()?;
 
         let data = [0u8, 1, 2, 3, 4];
-        fs::write("/tmp/cudarc-cufile-test_ftod", &data).unwrap();
+        fs::write("/tmp/cudarc-cufile-test_ftod", data).unwrap();
 
         let file = std::fs::File::open("/tmp/cudarc-cufile-test_ftod").unwrap();
         let mut handle = cufile.register(file)?;
@@ -282,7 +282,7 @@ mod tests {
 
         // NOTE: asserting file is unchanged
         handle.file.seek(std::io::SeekFrom::Start(0)).unwrap();
-        let mut buf = Vec::new();
+        let mut buf = std::vec::Vec::new();
         handle.file.read_to_end(&mut buf).unwrap();
         assert_eq!(&buf, &data);
 
