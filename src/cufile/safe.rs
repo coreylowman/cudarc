@@ -320,7 +320,7 @@ impl CudaStream {
             )
         }?;
 
-        op.event.record(&self).unwrap();
+        op.event.record(self).unwrap();
 
         Ok(op)
     }
@@ -378,7 +378,7 @@ impl CudaStream {
             )
         }?;
 
-        op.event.record(&self).unwrap();
+        op.event.record(self).unwrap();
 
         Ok(op)
     }
