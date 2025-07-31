@@ -1,4 +1,4 @@
-use std::{fs::File, pin::Pin, sync::Arc};
+use std::{boxed::Box, fs::File, pin::Pin, sync::Arc};
 
 use crate::driver::{CudaStream, DevicePtr, DevicePtrMut, DeviceRepr};
 
@@ -386,7 +386,8 @@ impl CudaStream {
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
+    #[allow(unused_imports)]
+    use std::{fs, vec::Vec};
 
     use super::*;
     use crate::driver::*;
@@ -437,6 +438,15 @@ mod tests {
         Ok(())
     }
 
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+    )))]
     #[test]
     fn test_cufile_async_dtof() -> Result<(), CufileError> {
         let ctx = CudaContext::new(0).unwrap();
@@ -461,6 +471,15 @@ mod tests {
         Ok(())
     }
 
+    #[cfg(not(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+    )))]
     #[test]
     fn test_cufile_async_ftod() -> Result<(), CufileError> {
         let ctx = CudaContext::new(0).unwrap();
