@@ -227,6 +227,7 @@ impl FileHandle {
 }
 
 /// Result of [CudaStream::memcpy_dtof()]. Use [AsyncFileWrite::synchronize()] to get result of operation
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct AsyncFileWrite<'a> {
     file_handle: &'a mut FileHandle,
@@ -246,6 +247,7 @@ impl<'a> AsyncFileWrite<'a> {
 }
 
 /// Result of [CudaStream::memcpy_ftod()]. Use [AsyncFileRead::synchronize()] to get result of operation
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct AsyncFileRead<'a> {
     file_handle: &'a FileHandle,
