@@ -36,7 +36,8 @@ pub enum nvrtcResult {
     feature = "cuda-12020",
     feature = "cuda-12030",
     feature = "cuda-12040",
-    feature = "cuda-12050"
+    feature = "cuda-12050",
+    feature = "cuda-12060"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -55,7 +56,7 @@ pub enum nvrtcResult {
     NVRTC_ERROR_INTERNAL_ERROR = 11,
     NVRTC_ERROR_TIME_FILE_WRITE_FAILED = 12,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum nvrtcResult {
@@ -743,6 +744,19 @@ mod loaded {
                 nvrtcVersion,
             })
         }
+    }
+    pub unsafe fn is_culib_present() -> bool {
+        let lib_names = ["nvrtc"];
+        let choices = lib_names
+            .iter()
+            .map(|l| crate::get_lib_name_candidates(l))
+            .flatten();
+        for choice in choices {
+            if Lib::new(choice).is_ok() {
+                return true;
+            }
+        }
+        false
     }
     pub unsafe fn culib() -> &'static Lib {
         static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
