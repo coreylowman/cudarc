@@ -52,6 +52,7 @@ nccl = ["driver"]
 cusparse = ["driver"]
 cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
 cusolvermg = ["cusolver"]
+cufile = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]

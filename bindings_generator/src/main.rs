@@ -11,7 +11,7 @@ use std::{
 use anyhow::{Context, Result};
 use bindgen::Builder;
 use lazy_static::lazy_static;
-use reqwest::blocking::{get, Response};
+use reqwest::blocking::{Response, get};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -247,7 +247,7 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                         "cusparseZgebsr2gebsc_bufferSizeExt".into(),
                         "cusparseZgebsr2gebsr_bufferSizeExt".into(),
                     ],
-                    vars: vec![]
+                    vars: vec![],
                 },
                 libs: vec!["cusparse".to_string()],
                 redist: None,
@@ -264,7 +264,10 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                 },
                 blocklist: Filters {
                     types: vec!["^cusolverMg.*".to_string()],
-                    functions: vec!["^cusolverMg.*".to_string(), "^cusolverDnLogger.*".to_string()],
+                    functions: vec![
+                        "^cusolverMg.*".to_string(),
+                        "^cusolverDnLogger.*".to_string(),
+                    ],
                     vars: vec!["^cusolverMg.*".to_string()],
                 },
                 libs: vec!["cusolver".to_string()],
@@ -291,6 +294,20 @@ fn create_modules() -> Vec<(String, ModuleConfig)> {
                     url: "".to_string(),
                     version: "".to_string(),
                 }),
+            },
+        ),
+        (
+            "cufile".to_string(),
+            ModuleConfig {
+                cuda: "libcufile".to_string(),
+                allowlist: Filters {
+                    types: vec!["^[Cc][Uu][Ff][Ii][Ll][Ee].*".to_string()],
+                    functions: vec!["^cuFile.*".to_string()],
+                    vars: vec![],
+                },
+                blocklist: Filters::none(),
+                libs: vec!["cufile".to_string()],
+                redist: None,
             },
         ),
     ]
@@ -397,7 +414,7 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
                         &multi_progress,
                     )
                     .context(format!("Failed to generate nccl for {}", cuda_version))?,
-                    "cusolver"=> generate_cusolver(
+                    "cusolver" => generate_cusolver(
                         cuda_version,
                         module_name,
                         module,
@@ -405,7 +422,7 @@ fn create_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
                         &multi_progress,
                     )
                     .context(format!("Failed to generate cusolver for {}", cuda_version))?,
-                    "cusolvermg"=> generate_cusolvermg(
+                    "cusolvermg" => generate_cusolvermg(
                         cuda_version,
                         module_name,
                         module,
@@ -1071,11 +1088,18 @@ struct Args {
     /// exist and are up to date.
     #[arg(long, action)]
     skip_bindings: bool,
+
+    /// Specify a single target to generate bindings for.
+    #[arg(long, action)]
+    target: Option<String>
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
-    let modules = create_modules();
+    let mut modules = create_modules();
+    if let Some(target) = args.target {
+        modules.retain(|(k, _)| k.contains(&target));
+    }
     if !args.skip_bindings {
         create_bindings(&modules)?;
     }
