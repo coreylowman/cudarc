@@ -198,7 +198,8 @@ pub unsafe fn stream_deregister(stream: sys::CUstream) -> Result<(), CufileError
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufileread)
 ///
 /// # Safety
-/// Ensure data ranges are valid & pointers are valid
+/// Ensure data rangefs are valid & pointers are valid **until execution time**. __NOT__ submission time. This executes
+/// asynchronusly wrt host, so utilize pins appropriately.
 #[cfg(not(any(
     feature = "cuda-11040",
     feature = "cuda-11050",
@@ -231,7 +232,8 @@ pub unsafe fn read_async(
 
 /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewriteasync)
 /// # Safety
-/// Ensure data rangefs are valid & pointers are valid
+/// Ensure data rangefs are valid & pointers are valid **until execution time**. __NOT__ submission time. This executes
+/// asynchronusly wrt host, so utilize pins appropriately.
 #[cfg(not(any(
     feature = "cuda-11040",
     feature = "cuda-11050",

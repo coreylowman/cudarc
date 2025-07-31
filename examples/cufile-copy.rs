@@ -19,7 +19,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ctx = CudaContext::new(0)?;
     let stream = ctx.default_stream();
     let mut buf = stream.alloc_zeros::<u8>(data_sz)?;
-    stream.memcpy_ftod(&handle, 0, &mut buf)?;
+
+    handle.sync_read(0, &mut buf)?;
 
     let verify_dst = stream.memcpy_dtov(&buf)?;
     assert_eq!(verify_dst, data);
