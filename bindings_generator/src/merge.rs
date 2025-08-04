@@ -535,11 +535,11 @@ fn extract_version_from_filename(cuda_version: &str) -> Result<Version> {
     })
 }
 
-pub fn merge_bindings(modules: &[(String, ModuleConfig)]) -> Result<()> {
-    for (name, config) in modules {
+pub fn merge_bindings(modules: &[ModuleConfig]) -> Result<()> {
+    for config in modules {
         merge(
-            format!("out/{name}/sys/linked"),
-            format!("../src/{name}/sys/mod.rs"),
+            format!("out/{}/sys/linked", config.cudarc_name),
+            format!("../src/{}/sys/mod.rs", config.cudarc_name),
             config.libs.clone(),
         )?;
     }
