@@ -427,12 +427,6 @@ fn create_bindings(modules: &[ModuleConfig]) -> Result<()> {
             match module.cudarc_name.as_str() {
                 "cudnn" => generate_cudnn(cuda_version, module, &primary_archives, &multi_progress),
                 "nccl" => generate_nccl(cuda_version, module, &primary_archives, &multi_progress),
-                "cusolver" => {
-                    generate_cusolver(cuda_version, module, &primary_archives, &multi_progress)
-                }
-                "cusolvermg" => {
-                    generate_cusolvermg(cuda_version, module, &primary_archives, &multi_progress)
-                }
                 _ => generate_sys(cuda_version, module, &primary_archives, &multi_progress),
             }
             .context(format!(
@@ -567,19 +561,17 @@ fn generate_cudnn(
     };
 
     let path = lib["relative_path"].as_str().context(format!(
-        "Missing relative_path in redistrib data for {}",
-        cuda_name
+        "Missing relative_path in redistrib data for {cuda_name}",
     ))?;
-    let checksum = lib["sha256"].as_str().context(format!(
-        "Missing sha256 in redistrib data for {}",
-        cuda_name
-    ))?;
-    let url = format!("{}/{}", url, path);
+    let checksum = lib["sha256"]
+        .as_str()
+        .context(format!("Missing sha256 in redistrib data for {cuda_name}"))?;
+    let url = format!("{url}/{path}");
 
     let output_dir = Path::new("downloads").join(&module.cudarc_name);
     let parts: Vec<_> = Path::new(path)
         .file_name()
-        .context(format!("Failed to get file name from {}", path))?
+        .context(format!("Failed to get file name from {path}"))?
         .to_str()
         .expect("A valid filename")
         .split(".")
@@ -596,7 +588,7 @@ fn generate_cudnn(
         let out_path = output_dir.join(
             Path::new(path)
                 .file_name()
-                .context(format!("Failed to get file name from {}", path))?,
+                .context(format!("Failed to get file name from {path}"))?,
         );
         download::to_file_with_checksum(&url, &out_path, checksum, multi_progress)?;
         extract::extract_archive(&out_path, &output_dir, multi_progress)
@@ -615,8 +607,8 @@ fn generate_nccl(
     let url = "https://developer.download.nvidia.com/compute/redist/nccl/";
     let version = "2.26.2";
 
-    let path = format!("v{}/nccl_{}-1+cuda12.8_x86_64.txz", version, version);
-    let full_url = format!("{}/{}", url, path);
+    let path = format!("v{version}/nccl_{version}-1+cuda12.8_x86_64.txz");
+    let full_url = format!("{url}/{path}");
     log::debug!("{}", full_url);
 
     let output_dir = Path::new("downloads").join(&module.cudarc_name);
@@ -648,72 +640,6 @@ fn generate_nccl(
         extract::extract_archive(&out_path, &output_dir, multi_progress)?;
     }
     assert!(archive_dir.exists());
-
-    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
-}
-
-fn generate_cusolver(
-    cuda_version: &str,
-    module: &ModuleConfig,
-    primary_archives: &[PathBuf],
-    multi_progress: &MultiProgress,
-) -> Result<()> {
-    let cuda_name = &module.redist_name;
-
-    let archive_dir = get_archive(cuda_version, cuda_name, &module.cudarc_name, multi_progress)?;
-
-    // copy essential cublas and cusolver to the archive directory
-    let archive_dir_cublas = get_archive(cuda_version, "libcublas", "cublas", multi_progress)?;
-    let archive_dir_cusparse =
-        get_archive(cuda_version, "libcusparse", "cusparse", multi_progress)?;
-    fs::copy(
-        archive_dir_cublas.join("include").join("cublas_v2.h"),
-        archive_dir.join("include").join("cublas_v2.h"),
-    )
-    .context("Failed to copy cublas_v2.h".to_string())?;
-    fs::copy(
-        archive_dir_cublas.join("include").join("cublas_api.h"),
-        archive_dir.join("include").join("cublas_api.h"),
-    )
-    .context("Failed to copy cublas_api.h".to_string())?;
-    fs::copy(
-        archive_dir_cusparse.join("include").join("cusparse.h"),
-        archive_dir.join("include").join("cusparse.h"),
-    )
-    .context("Failed to copy cusparse.h".to_string())?;
-
-    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
-}
-
-fn generate_cusolvermg(
-    cuda_version: &str,
-    module: &ModuleConfig,
-    primary_archives: &[PathBuf],
-    multi_progress: &MultiProgress,
-) -> Result<()> {
-    let cuda_name = &module.redist_name;
-
-    let archive_dir = get_archive(cuda_version, cuda_name, &module.cudarc_name, multi_progress)?;
-
-    // copy essential cublas and cusolver to the archive directory
-    let archive_dir_cublas = get_archive(cuda_version, "libcublas", "cublas", multi_progress)?;
-    let archive_dir_cusparse =
-        get_archive(cuda_version, "libcusparse", "cusparse", multi_progress)?;
-    fs::copy(
-        archive_dir_cublas.join("include").join("cublas_v2.h"),
-        archive_dir.join("include").join("cublas_v2.h"),
-    )
-    .context("Failed to copy cublas_v2.h".to_string())?;
-    fs::copy(
-        archive_dir_cublas.join("include").join("cublas_api.h"),
-        archive_dir.join("include").join("cublas_api.h"),
-    )
-    .context("Failed to copy cublas_api.h".to_string())?;
-    fs::copy(
-        archive_dir_cusparse.join("include").join("cusparse.h"),
-        archive_dir.join("include").join("cusparse.h"),
-    )
-    .context("Failed to copy cusparse.h".to_string())?;
 
     module.run_bindgen(cuda_version, &archive_dir, primary_archives)
 }
