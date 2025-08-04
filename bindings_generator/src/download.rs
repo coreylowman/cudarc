@@ -10,10 +10,13 @@ use anyhow::{Context, Result};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use lazy_static::lazy_static;
 use reqwest::blocking::{Response, get};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 
 lazy_static! {
     static ref DOWNLOAD_CACHE: Mutex<HashMap<String, PathBuf>> = Mutex::new(HashMap::new());
+    static ref REVISION: Mutex<HashMap<(u32, u32, u32, String), PathBuf>> =
+        Mutex::new(HashMap::new());
 }
 
 fn download_response(url: &str) -> Result<Response> {
@@ -164,4 +167,62 @@ pub fn to_file_with_checksum(
     log::debug!("Checksum ok");
 
     Ok(())
+}
+
+fn get_redistrib_path(
+    major: u32,
+    minor: u32,
+    patch: u32,
+    base_url: &str,
+    multi_progress: &MultiProgress,
+) -> Result<PathBuf> {
+    {
+        let revision = REVISION.lock().unwrap();
+        if let Some(out_path) = revision.get(&(major, minor, patch, base_url.to_string())) {
+            log::debug!("Already downloaded redistrib {}", out_path.display());
+            return Ok(out_path.to_path_buf());
+        }
+    }
+
+    let response = get(base_url).context("Getting redistrib version")?;
+    let response = response.error_for_status()?;
+    let content = response.text()?;
+    let mut redist = None;
+    for chunk in content.split("'") {
+        if chunk.starts_with(&format!("redistrib_{major}.{minor}")) && chunk.ends_with(".json") {
+            redist = Some(chunk);
+        }
+    }
+
+    let filename =
+        redist.expect("Expected a redistrib.json file for {major}.{minor}.{patch} at {base_url}");
+
+    let url = format!("{}/{}", base_url, filename);
+    log::debug!("Trying {}", url);
+
+    let out_path = Path::new("downloads").join(&filename);
+
+    if to_file(&url, &out_path, multi_progress).is_ok() {
+        let mut lock = REVISION.lock().unwrap();
+        lock.insert(
+            (major, minor, patch, base_url.to_string()),
+            out_path.clone(),
+        );
+        return Ok(out_path);
+    }
+    Err(anyhow::anyhow!("Couldn't find a suitable patch"))
+}
+
+pub fn cuda_redist(
+    major: u32,
+    minor: u32,
+    patch: u32,
+    base_url: &str,
+    multi_progress: &MultiProgress,
+) -> Result<Value> {
+    let out_path = get_redistrib_path(major, minor, patch, base_url, multi_progress)?;
+    let content = fs::read_to_string(&out_path)
+        .context(format!("Failed to read cached file {}", out_path.display()))?;
+    serde_json::from_str(&content)
+        .context(format!("Failed to parse JSON from {}", out_path.display()))
 }

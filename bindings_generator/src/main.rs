@@ -1,26 +1,16 @@
 use clap::Parser;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::{
-    collections::HashMap,
     fs,
     path::{Path, PathBuf},
-    sync::Mutex,
 };
 
 use anyhow::{Context, Result};
 use bindgen::Builder;
-use lazy_static::lazy_static;
-use reqwest::blocking::get;
-use serde_json::Value;
 
 mod download;
 mod extract;
 mod merge;
-
-lazy_static! {
-    static ref REVISION: Mutex<HashMap<(u32, u32, u32, String), PathBuf>> =
-        Mutex::new(HashMap::new());
-}
 
 /// The cuda versions we're building against.
 /// Those are the feature names used in cudarc
@@ -277,6 +267,108 @@ struct ModuleConfig {
     libs: Vec<String>,
 }
 
+impl ModuleConfig {
+    fn run_bindgen(
+        &self,
+        cuda_version: &str,
+        archive_directory: &Path,
+        primary_archives: &[PathBuf],
+    ) -> Result<()> {
+        let sysdir = Path::new(".")
+            .join("out")
+            .join(&self.cudarc_name)
+            .join("sys");
+        fs::create_dir_all(&sysdir)
+            .context(format!("Failed to create directory {}", sysdir.display()))?;
+
+        let linked_dir = sysdir.join("linked");
+        fs::create_dir_all(&linked_dir).context(format!(
+            "Failed to create directory {}",
+            linked_dir.display()
+        ))?;
+
+        let outfilename = linked_dir.join(format!("{}.rs", cuda_version.replace("cuda-", "sys_")));
+
+        // Generate linked bindings using bindgen library
+        let mut builder = Builder::default()
+            .default_enum_style(bindgen::EnumVariation::Rust {
+                non_exhaustive: false,
+            })
+            .derive_default(true)
+            .derive_eq(true)
+            .derive_hash(true)
+            .derive_ord(true)
+            .generate_comments(false)
+            .layout_tests(false)
+            .use_core();
+
+        for filter_name in self.allowlist.types.iter() {
+            builder = builder.allowlist_type(filter_name);
+        }
+        for filter_name in self.allowlist.vars.iter() {
+            builder = builder.allowlist_var(filter_name);
+        }
+        for filter_name in self.allowlist.functions.iter() {
+            builder = builder.allowlist_function(filter_name);
+        }
+        for filter_name in self.blocklist.types.iter() {
+            builder = builder.blocklist_type(filter_name);
+        }
+        for filter_name in self.blocklist.vars.iter() {
+            builder = builder.blocklist_var(filter_name);
+        }
+        for filter_name in self.blocklist.functions.iter() {
+            builder = builder.blocklist_function(filter_name);
+        }
+
+        let parent_sysdir = Path::new("..")
+            .join("src")
+            .join(&self.cudarc_name)
+            .join("sys");
+        let wrapper_h = parent_sysdir.join("wrapper.h");
+        let cuda_directory = archive_directory.join("include");
+        let primary_includes: Vec<_> = primary_archives
+            .into_iter()
+            .map(|c| c.join("include"))
+            .collect();
+        log::debug!("Include directories {}", cuda_directory.display());
+        log::debug!(
+            "Include primary directories {:?}",
+            primary_includes
+                .iter()
+                .map(|p| p.display())
+                .collect::<Vec<_>>()
+        );
+        builder = builder
+            .header(wrapper_h.to_string_lossy())
+            .clang_arg(format!("-I{}", cuda_directory.display()))
+            // For cuda profiler which has a very simple consistent API
+            .clang_arg(format!(
+                "-I{}",
+                std::env::current_dir()
+                    .expect("Current directory")
+                    .join("include")
+                    .display()
+            ));
+        for include in primary_includes {
+            builder = builder.clang_arg(format!("-I{}", include.display()));
+        }
+
+        let bindings = builder.generate().context(format!(
+            "Failed to generate bindings for {}",
+            wrapper_h.display()
+        ))?;
+
+        bindings.write_to_file(&outfilename).context(format!(
+            "Failed to write bindings to {}",
+            outfilename.display()
+        ))?;
+        log::debug!("Wrote linked bindings to {}", outfilename.display());
+
+        Ok(())
+    }
+}
+
 #[derive(Debug)]
 /// Bindgen filters
 struct Filters {
@@ -379,64 +471,6 @@ fn get_version(cuda_version: &str) -> Result<(u32, u32, u32)> {
     Ok((major, minor, patch))
 }
 
-fn get_redistrib_path(
-    major: u32,
-    minor: u32,
-    patch: u32,
-    base_url: &str,
-    multi_progress: &MultiProgress,
-) -> Result<PathBuf> {
-    {
-        let revision = REVISION.lock().unwrap();
-        if let Some(out_path) = revision.get(&(major, minor, patch, base_url.to_string())) {
-            log::debug!("Already downloaded redistrib {}", out_path.display());
-            return Ok(out_path.to_path_buf());
-        }
-    }
-
-    let response = get(base_url).context("Getting redistrib version")?;
-    let response = response.error_for_status()?;
-    let content = response.text()?;
-    let mut redist = None;
-    for chunk in content.split("'") {
-        if chunk.starts_with(&format!("redistrib_{major}.{minor}")) && chunk.ends_with(".json") {
-            redist = Some(chunk);
-        }
-    }
-
-    let filename =
-        redist.expect("Expected a redistrib.json file for {major}.{minor}.{patch} at {base_url}");
-
-    let url = format!("{}/{}", base_url, filename);
-    log::debug!("Trying {}", url);
-
-    let out_path = Path::new("downloads").join(&filename);
-
-    if download::to_file(&url, &out_path, multi_progress).is_ok() {
-        let mut lock = REVISION.lock().unwrap();
-        lock.insert(
-            (major, minor, patch, base_url.to_string()),
-            out_path.clone(),
-        );
-        return Ok(out_path);
-    }
-    Err(anyhow::anyhow!("Couldn't find a suitable patch"))
-}
-
-fn get_redistrib(
-    major: u32,
-    minor: u32,
-    patch: u32,
-    base_url: &str,
-    multi_progress: &MultiProgress,
-) -> Result<Value> {
-    let out_path = get_redistrib_path(major, minor, patch, base_url, multi_progress)?;
-    let content = fs::read_to_string(&out_path)
-        .context(format!("Failed to read cached file {}", out_path.display()))?;
-    serde_json::from_str(&content)
-        .context(format!("Failed to parse JSON from {}", out_path.display()))
-}
-
 fn get_archive(
     cuda_version: &str,
     cuda_name: &str,
@@ -445,7 +479,7 @@ fn get_archive(
 ) -> Result<PathBuf> {
     let (major, minor, patch) = get_version(cuda_version)?;
     let url = "https://developer.download.nvidia.com/compute/cuda/redist/";
-    let data = get_redistrib(major, minor, patch, url, multi_progress)?;
+    let data = download::cuda_redist(major, minor, patch, url, multi_progress)?;
 
     let lib = &data[cuda_name]["linux-x86_64"];
     let path = lib["relative_path"].as_str().context(format!(
@@ -496,102 +530,6 @@ fn get_archive(
     Ok(archive_dir)
 }
 
-fn create_system_folders(
-    cuda_version: &str,
-    module_name: &str,
-    allowlist: &Filters,
-    blocklist: &Filters,
-    archive_directory: &Path,
-    primary_archives: &[PathBuf],
-) -> Result<()> {
-    let sysdir = Path::new(".").join("out").join(module_name).join("sys");
-    fs::create_dir_all(&sysdir)
-        .context(format!("Failed to create directory {}", sysdir.display()))?;
-
-    let linked_dir = sysdir.join("linked");
-    fs::create_dir_all(&linked_dir).context(format!(
-        "Failed to create directory {}",
-        linked_dir.display()
-    ))?;
-
-    let outfilename = linked_dir.join(format!("{}.rs", cuda_version.replace("cuda-", "sys_")));
-
-    // Generate linked bindings using bindgen library
-    let mut builder = Builder::default()
-        .default_enum_style(bindgen::EnumVariation::Rust {
-            non_exhaustive: false,
-        })
-        .derive_default(true)
-        .derive_eq(true)
-        .derive_hash(true)
-        .derive_ord(true)
-        .generate_comments(false)
-        .layout_tests(false)
-        .use_core();
-
-    for filter_name in allowlist.types.iter() {
-        builder = builder.allowlist_type(filter_name);
-    }
-    for filter_name in allowlist.vars.iter() {
-        builder = builder.allowlist_var(filter_name);
-    }
-    for filter_name in allowlist.functions.iter() {
-        builder = builder.allowlist_function(filter_name);
-    }
-    for filter_name in blocklist.types.iter() {
-        builder = builder.blocklist_type(filter_name);
-    }
-    for filter_name in blocklist.vars.iter() {
-        builder = builder.blocklist_var(filter_name);
-    }
-    for filter_name in blocklist.functions.iter() {
-        builder = builder.blocklist_function(filter_name);
-    }
-
-    let parent_sysdir = Path::new("..").join("src").join(module_name).join("sys");
-    let wrapper_h = parent_sysdir.join("wrapper.h");
-    let cuda_directory = archive_directory.join("include");
-    let primary_includes: Vec<_> = primary_archives
-        .into_iter()
-        .map(|c| c.join("include"))
-        .collect();
-    log::debug!("Include directories {}", cuda_directory.display());
-    log::debug!(
-        "Include primary directories {:?}",
-        primary_includes
-            .iter()
-            .map(|p| p.display())
-            .collect::<Vec<_>>()
-    );
-    builder = builder
-        .header(wrapper_h.to_string_lossy())
-        .clang_arg(format!("-I{}", cuda_directory.display()))
-        // For cuda profiler which has a very simple consistent API
-        .clang_arg(format!(
-            "-I{}",
-            std::env::current_dir()
-                .expect("Current directory")
-                .join("include")
-                .display()
-        ));
-    for include in primary_includes {
-        builder = builder.clang_arg(format!("-I{}", include.display()));
-    }
-
-    let bindings = builder.generate().context(format!(
-        "Failed to generate bindings for {}",
-        wrapper_h.display()
-    ))?;
-
-    bindings.write_to_file(&outfilename).context(format!(
-        "Failed to write bindings to {}",
-        outfilename.display()
-    ))?;
-    log::debug!("Wrote linked bindings to {}", outfilename.display());
-
-    Ok(())
-}
-
 fn generate_sys(
     cuda_version: &str,
     module: &ModuleConfig,
@@ -604,14 +542,7 @@ fn generate_sys(
         &module.cudarc_name,
         multi_progress,
     )?;
-    create_system_folders(
-        cuda_version,
-        &module.cudarc_name,
-        &module.allowlist,
-        &module.blocklist,
-        &archive_dir,
-        primary_archives,
-    )?;
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
     Ok(())
 }
 
@@ -627,7 +558,7 @@ fn generate_cudnn(
     let cuda_name = &module.redist_name;
     let (cuda_major, _, _) = get_version(cuda_version)?;
 
-    let data = get_redistrib(major, minor, patch, url, multi_progress)?;
+    let data = download::cuda_redist(major, minor, patch, url, multi_progress)?;
     let lib = &data[cuda_name]["linux-x86_64"];
     let lib = match cuda_major {
         11 => &lib["cuda11"],
@@ -672,14 +603,7 @@ fn generate_cudnn(
             .context("Extracting archive")?;
     }
 
-    create_system_folders(
-        cuda_version,
-        &module.cudarc_name,
-        &module.allowlist,
-        &module.blocklist,
-        &archive_dir,
-        primary_archives,
-    )
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
 }
 
 fn generate_nccl(
@@ -725,14 +649,7 @@ fn generate_nccl(
     }
     assert!(archive_dir.exists());
 
-    create_system_folders(
-        cuda_version,
-        &module.cudarc_name,
-        &module.allowlist,
-        &module.blocklist,
-        &archive_dir,
-        primary_archives,
-    )
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
 }
 
 fn generate_cusolver(
@@ -765,15 +682,7 @@ fn generate_cusolver(
     )
     .context("Failed to copy cusparse.h".to_string())?;
 
-    create_system_folders(
-        cuda_version,
-        &module.cudarc_name,
-        &module.allowlist,
-        &module.blocklist,
-        &archive_dir,
-        primary_archives,
-    )?;
-    Ok(())
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
 }
 
 fn generate_cusolvermg(
@@ -806,15 +715,7 @@ fn generate_cusolvermg(
     )
     .context("Failed to copy cusparse.h".to_string())?;
 
-    create_system_folders(
-        cuda_version,
-        &module.cudarc_name,
-        &module.allowlist,
-        &module.blocklist,
-        &archive_dir,
-        primary_archives,
-    )?;
-    Ok(())
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
 }
 
 #[derive(Parser)]
