@@ -1091,7 +1091,7 @@ struct Args {
 
     /// Specify a single target to generate bindings for.
     #[arg(long, action)]
-    target: Option<String>
+    target: Option<String>,
 }
 
 fn main() -> Result<()> {
