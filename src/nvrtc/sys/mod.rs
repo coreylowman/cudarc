@@ -36,8 +36,7 @@ pub enum nvrtcResult {
     feature = "cuda-12020",
     feature = "cuda-12030",
     feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060"
+    feature = "cuda-12050"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -56,7 +55,7 @@ pub enum nvrtcResult {
     NVRTC_ERROR_INTERNAL_ERROR = 11,
     NVRTC_ERROR_TIME_FILE_WRITE_FAILED = 12,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum nvrtcResult {
@@ -77,6 +76,29 @@ pub enum nvrtcResult {
     NVRTC_ERROR_PCH_CREATE_HEAP_EXHAUSTED = 14,
     NVRTC_ERROR_PCH_CREATE = 15,
     NVRTC_ERROR_CANCELLED = 16,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum nvrtcResult {
+    NVRTC_SUCCESS = 0,
+    NVRTC_ERROR_OUT_OF_MEMORY = 1,
+    NVRTC_ERROR_PROGRAM_CREATION_FAILURE = 2,
+    NVRTC_ERROR_INVALID_INPUT = 3,
+    NVRTC_ERROR_INVALID_PROGRAM = 4,
+    NVRTC_ERROR_INVALID_OPTION = 5,
+    NVRTC_ERROR_COMPILATION = 6,
+    NVRTC_ERROR_BUILTIN_OPERATION_FAILURE = 7,
+    NVRTC_ERROR_NO_NAME_EXPRESSIONS_AFTER_COMPILATION = 8,
+    NVRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION = 9,
+    NVRTC_ERROR_NAME_EXPRESSION_NOT_VALID = 10,
+    NVRTC_ERROR_INTERNAL_ERROR = 11,
+    NVRTC_ERROR_TIME_FILE_WRITE_FAILED = 12,
+    NVRTC_ERROR_NO_PCH_CREATE_ATTEMPTED = 13,
+    NVRTC_ERROR_PCH_CREATE_HEAP_EXHAUSTED = 14,
+    NVRTC_ERROR_PCH_CREATE = 15,
+    NVRTC_ERROR_CANCELLED = 16,
+    NVRTC_ERROR_TIME_TRACE_FILE_WRITE_FAILED = 17,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -115,7 +137,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn nvrtcGetLTOIR(prog: nvrtcProgram, LTOIR: *mut ::core::ffi::c_char) -> nvrtcResult;
     #[cfg(any(
@@ -127,7 +150,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn nvrtcGetLTOIRSize(prog: nvrtcProgram, LTOIRSizeRet: *mut usize) -> nvrtcResult;
     pub fn nvrtcGetLoweredName(
@@ -135,7 +159,39 @@ extern "C" {
         name_expression: *const ::core::ffi::c_char,
         lowered_name: *mut *const ::core::ffi::c_char,
     ) -> nvrtcResult;
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn nvrtcGetNVVM(prog: nvrtcProgram, nvvm: *mut ::core::ffi::c_char) -> nvrtcResult;
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn nvrtcGetNVVMSize(prog: nvrtcProgram, nvvmSizeRet: *mut usize) -> nvrtcResult;
     pub fn nvrtcGetNumSupportedArchs(numArchs: *mut ::core::ffi::c_int) -> nvrtcResult;
     #[cfg(any(
@@ -147,7 +203,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn nvrtcGetOptiXIR(prog: nvrtcProgram, optixir: *mut ::core::ffi::c_char) -> nvrtcResult;
     #[cfg(any(
@@ -159,21 +216,42 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn nvrtcGetOptiXIRSize(prog: nvrtcProgram, optixirSizeRet: *mut usize) -> nvrtcResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn nvrtcGetPCHCreateStatus(prog: nvrtcProgram) -> nvrtcResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn nvrtcGetPCHHeapSize(ret: *mut usize) -> nvrtcResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn nvrtcGetPCHHeapSizeRequired(prog: nvrtcProgram, size: *mut usize) -> nvrtcResult;
     pub fn nvrtcGetPTX(prog: nvrtcProgram, ptx: *mut ::core::ffi::c_char) -> nvrtcResult;
     pub fn nvrtcGetPTXSize(prog: nvrtcProgram, ptxSizeRet: *mut usize) -> nvrtcResult;
     pub fn nvrtcGetProgramLog(prog: nvrtcProgram, log: *mut ::core::ffi::c_char) -> nvrtcResult;
     pub fn nvrtcGetProgramLogSize(prog: nvrtcProgram, logSizeRet: *mut usize) -> nvrtcResult;
     pub fn nvrtcGetSupportedArchs(supportedArchs: *mut ::core::ffi::c_int) -> nvrtcResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn nvrtcSetFlowCallback(
         prog: nvrtcProgram,
         callback: ::core::option::Option<
@@ -184,7 +262,12 @@ extern "C" {
         >,
         payload: *mut ::core::ffi::c_void,
     ) -> nvrtcResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn nvrtcSetPCHHeapSize(size: usize) -> nvrtcResult;
     pub fn nvrtcVersion(
         major: *mut ::core::ffi::c_int,
@@ -241,7 +324,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn nvrtcGetLTOIR(
         prog: nvrtcProgram,
@@ -258,7 +342,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn nvrtcGetLTOIRSize(prog: nvrtcProgram, LTOIRSizeRet: *mut usize) -> nvrtcResult {
         (culib().nvrtcGetLTOIRSize)(prog, LTOIRSizeRet)
@@ -270,9 +355,41 @@ mod loaded {
     ) -> nvrtcResult {
         (culib().nvrtcGetLoweredName)(prog, name_expression, lowered_name)
     }
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn nvrtcGetNVVM(prog: nvrtcProgram, nvvm: *mut ::core::ffi::c_char) -> nvrtcResult {
         (culib().nvrtcGetNVVM)(prog, nvvm)
     }
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn nvrtcGetNVVMSize(prog: nvrtcProgram, nvvmSizeRet: *mut usize) -> nvrtcResult {
         (culib().nvrtcGetNVVMSize)(prog, nvvmSizeRet)
     }
@@ -288,7 +405,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn nvrtcGetOptiXIR(
         prog: nvrtcProgram,
@@ -305,7 +423,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn nvrtcGetOptiXIRSize(
         prog: nvrtcProgram,
@@ -313,15 +432,30 @@ mod loaded {
     ) -> nvrtcResult {
         (culib().nvrtcGetOptiXIRSize)(prog, optixirSizeRet)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn nvrtcGetPCHCreateStatus(prog: nvrtcProgram) -> nvrtcResult {
         (culib().nvrtcGetPCHCreateStatus)(prog)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn nvrtcGetPCHHeapSize(ret: *mut usize) -> nvrtcResult {
         (culib().nvrtcGetPCHHeapSize)(ret)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn nvrtcGetPCHHeapSizeRequired(prog: nvrtcProgram, size: *mut usize) -> nvrtcResult {
         (culib().nvrtcGetPCHHeapSizeRequired)(prog, size)
     }
@@ -346,7 +480,12 @@ mod loaded {
     pub unsafe fn nvrtcGetSupportedArchs(supportedArchs: *mut ::core::ffi::c_int) -> nvrtcResult {
         (culib().nvrtcGetSupportedArchs)(supportedArchs)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn nvrtcSetFlowCallback(
         prog: nvrtcProgram,
         callback: ::core::option::Option<
@@ -359,7 +498,12 @@ mod loaded {
     ) -> nvrtcResult {
         (culib().nvrtcSetFlowCallback)(prog, callback, payload)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn nvrtcSetPCHHeapSize(size: usize) -> nvrtcResult {
         (culib().nvrtcSetPCHHeapSize)(size)
     }
@@ -406,7 +550,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub nvrtcGetLTOIR: unsafe extern "C" fn(
             prog: nvrtcProgram,
@@ -421,7 +566,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub nvrtcGetLTOIRSize:
             unsafe extern "C" fn(prog: nvrtcProgram, LTOIRSizeRet: *mut usize) -> nvrtcResult,
@@ -430,8 +576,40 @@ mod loaded {
             name_expression: *const ::core::ffi::c_char,
             lowered_name: *mut *const ::core::ffi::c_char,
         ) -> nvrtcResult,
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub nvrtcGetNVVM:
             unsafe extern "C" fn(prog: nvrtcProgram, nvvm: *mut ::core::ffi::c_char) -> nvrtcResult,
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub nvrtcGetNVVMSize:
             unsafe extern "C" fn(prog: nvrtcProgram, nvvmSizeRet: *mut usize) -> nvrtcResult,
         pub nvrtcGetNumSupportedArchs:
@@ -445,7 +623,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub nvrtcGetOptiXIR: unsafe extern "C" fn(
             prog: nvrtcProgram,
@@ -460,15 +639,31 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub nvrtcGetOptiXIRSize:
             unsafe extern "C" fn(prog: nvrtcProgram, optixirSizeRet: *mut usize) -> nvrtcResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub nvrtcGetPCHCreateStatus: unsafe extern "C" fn(prog: nvrtcProgram) -> nvrtcResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub nvrtcGetPCHHeapSize: unsafe extern "C" fn(ret: *mut usize) -> nvrtcResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub nvrtcGetPCHHeapSizeRequired:
             unsafe extern "C" fn(prog: nvrtcProgram, size: *mut usize) -> nvrtcResult,
         pub nvrtcGetPTX:
@@ -481,7 +676,12 @@ mod loaded {
             unsafe extern "C" fn(prog: nvrtcProgram, logSizeRet: *mut usize) -> nvrtcResult,
         pub nvrtcGetSupportedArchs:
             unsafe extern "C" fn(supportedArchs: *mut ::core::ffi::c_int) -> nvrtcResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub nvrtcSetFlowCallback: unsafe extern "C" fn(
             prog: nvrtcProgram,
             callback: ::core::option::Option<
@@ -492,7 +692,12 @@ mod loaded {
             >,
             payload: *mut ::core::ffi::c_void,
         ) -> nvrtcResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub nvrtcSetPCHHeapSize: unsafe extern "C" fn(size: usize) -> nvrtcResult,
         pub nvrtcVersion: unsafe extern "C" fn(
             major: *mut ::core::ffi::c_int,
@@ -549,7 +754,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let nvrtcGetLTOIR = __library
                 .get(b"nvrtcGetLTOIR\0")
@@ -564,7 +770,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let nvrtcGetLTOIRSize = __library
                 .get(b"nvrtcGetLTOIRSize\0")
@@ -574,10 +781,42 @@ mod loaded {
                 .get(b"nvrtcGetLoweredName\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let nvrtcGetNVVM = __library
                 .get(b"nvrtcGetNVVM\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let nvrtcGetNVVMSize = __library
                 .get(b"nvrtcGetNVVMSize\0")
                 .map(|sym| *sym)
@@ -595,7 +834,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let nvrtcGetOptiXIR = __library
                 .get(b"nvrtcGetOptiXIR\0")
@@ -610,23 +850,39 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let nvrtcGetOptiXIRSize = __library
                 .get(b"nvrtcGetOptiXIRSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let nvrtcGetPCHCreateStatus = __library
                 .get(b"nvrtcGetPCHCreateStatus\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let nvrtcGetPCHHeapSize = __library
                 .get(b"nvrtcGetPCHHeapSize\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let nvrtcGetPCHHeapSizeRequired = __library
                 .get(b"nvrtcGetPCHHeapSizeRequired\0")
                 .map(|sym| *sym)
@@ -651,12 +907,22 @@ mod loaded {
                 .get(b"nvrtcGetSupportedArchs\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let nvrtcSetFlowCallback = __library
                 .get(b"nvrtcSetFlowCallback\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let nvrtcSetPCHHeapSize = __library
                 .get(b"nvrtcSetPCHHeapSize\0")
                 .map(|sym| *sym)
@@ -683,7 +949,8 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 nvrtcGetLTOIR,
                 #[cfg(any(
@@ -695,11 +962,44 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 nvrtcGetLTOIRSize,
                 nvrtcGetLoweredName,
+                #[cfg(any(
+                    feature = "cuda-11040",
+                    feature = "cuda-11050",
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 nvrtcGetNVVM,
+                #[cfg(any(
+                    feature = "cuda-11040",
+                    feature = "cuda-11050",
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 nvrtcGetNVVMSize,
                 nvrtcGetNumSupportedArchs,
                 #[cfg(any(
@@ -711,7 +1011,8 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 nvrtcGetOptiXIR,
                 #[cfg(any(
@@ -723,23 +1024,49 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 nvrtcGetOptiXIRSize,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 nvrtcGetPCHCreateStatus,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 nvrtcGetPCHHeapSize,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 nvrtcGetPCHHeapSizeRequired,
                 nvrtcGetPTX,
                 nvrtcGetPTXSize,
                 nvrtcGetProgramLog,
                 nvrtcGetProgramLogSize,
                 nvrtcGetSupportedArchs,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 nvrtcSetFlowCallback,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 nvrtcSetPCHHeapSize,
                 nvrtcVersion,
             })
