@@ -138,6 +138,20 @@ struct FunctionInfo<T> {
     declarations: BTreeMap<Version, T>, // version -> declaration
 }
 
+impl<T> Default for FunctionInfo<T> {
+    fn default() -> Self {
+        Self {
+            declarations: BTreeMap::new(),
+        }
+    }
+}
+
+impl<T> FunctionInfo<T> {
+    fn insert(&mut self, version: &Version, value: T) -> Option<T> {
+        self.declarations.insert(version.clone(), value)
+    }
+}
+
 #[derive(Default)]
 struct BindingMerger {
     functions: BTreeMap<String, FunctionInfo<ForeignItemFn>>,
@@ -174,14 +188,10 @@ impl BindingMerger {
                         match &item {
                             syn::ForeignItem::Fn(func) => {
                                 let name = func.sig.ident.to_string();
-                                // let declaration = quote::quote!(#func).to_string();
-
-                                let entry =
-                                    self.functions.entry(name).or_insert_with(|| FunctionInfo {
-                                        declarations: BTreeMap::new(),
-                                    });
-
-                                entry.declarations.insert(version.clone(), func.clone());
+                                self.functions
+                                    .entry(name)
+                                    .or_default()
+                                    .insert(version, func.clone());
                             }
                             other => panic!("Unhandled foreign item {other:?}"),
                         }
@@ -189,64 +199,31 @@ impl BindingMerger {
                 }
                 Item::Struct(st) => {
                     let name = st.ident.to_string();
-                    let entry = self.structs.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), st);
+                    self.structs.entry(name).or_default().insert(version, st);
                 }
                 Item::Type(typ) => {
                     let name = typ.ident.to_string();
-
-                    let entry = self.types.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), typ);
+                    self.types.entry(name).or_default().insert(version, typ);
                 }
                 Item::Impl(imp) => {
-                    let name = format!("{:?}", imp);
-
-                    let entry = self.impls.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), imp);
+                    let name = format!("{imp:?}");
+                    self.impls.entry(name).or_default().insert(version, imp);
                 }
                 Item::Enum(en) => {
                     let name = en.ident.to_string();
-
-                    let entry = self.enums.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), en);
+                    self.enums.entry(name).or_default().insert(version, en);
                 }
                 Item::Use(us) => {
                     let name = format!("{us:?}");
-
-                    let entry = self.uses.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), us);
+                    self.uses.entry(name).or_default().insert(version, us);
                 }
                 Item::Union(un) => {
                     let name = un.ident.to_string();
-                    let entry = self.unions.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), un);
+                    self.unions.entry(name).or_default().insert(version, un);
                 }
                 Item::Const(con) => {
                     let name = con.ident.to_string();
-
-                    let entry = self.consts.entry(name).or_insert_with(|| FunctionInfo {
-                        declarations: BTreeMap::new(),
-                    });
-
-                    entry.declarations.insert(version.clone(), con);
+                    self.consts.entry(name).or_default().insert(version, con);
                 }
                 other_item => {
                     panic!("Unhandled item {other_item:?}");
