@@ -16,7 +16,7 @@ categories = ["api-bindings", "hardware-support", "memory-management", "no-std",
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package.metadata.docs.rs]
-features = ["cuda-12090", "f16", "cudnn"]
+features = ["cuda-13000", "f16", "cudnn"]
 
 [features]
 default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc", "dynamic-loading"]
@@ -36,6 +36,7 @@ cuda-12050 = []
 cuda-12060 = []
 cuda-12080 = []
 cuda-12090 = []
+cuda-13000 = []
 
 dynamic-loading = []
 dynamic-linking = []
