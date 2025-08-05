@@ -56,7 +56,8 @@ impl DnHandle {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000",
     ))]
     pub fn set_deterministic_mode(
         &self,
@@ -72,7 +73,8 @@ impl DnHandle {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000",
     ))]
     pub fn get_deterministic_mode(&self) -> sys::cusolverDeterministicMode_t {
         // NOTE: the possible errors here are `CUSOLVER_STATUS_NOT_INITIALIZED`, which is not possible

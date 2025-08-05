@@ -279,7 +279,8 @@ mod batch_io {}
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000",
 ))]
 mod batch_io {
     use super::*;

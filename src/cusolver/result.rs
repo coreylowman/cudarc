@@ -62,7 +62,8 @@ pub unsafe fn dn_set_stream(
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000",
 ))]
 pub unsafe fn dn_get_deterministic_mode(
     handle: sys::cusolverDnHandle_t,
@@ -83,7 +84,8 @@ pub unsafe fn dn_get_deterministic_mode(
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000",
 ))]
 pub unsafe fn dn_set_deterministic_mode(
     handle: sys::cusolverDnHandle_t,
