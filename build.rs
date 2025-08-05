@@ -106,19 +106,15 @@ fn main() {
     for (maj, min) in all_versions {
         if (maj, min) < (major, minor) {
             println!("cargo:rustc-cfg=feature=\"gt-{maj}0{min}0\"");
-            println!("cargo:warning=gt-{maj}0{min}0");
         }
         if (maj, min) <= (major, minor) {
             println!("cargo:rustc-cfg=feature=\"gte-{maj}0{min}0\"");
-            println!("cargo:warning=gte-{maj}0{min}0");
         }
         if (maj, min) > (major, minor) {
             println!("cargo:rustc-cfg=feature=\"lt-{maj}0{min}0\"");
-            println!("cargo:warning=lt-{maj}0{min}0");
         }
         if (maj, min) >= (major, minor) {
             println!("cargo:rustc-cfg=feature=\"lte-{maj}0{min}0\"");
-            println!("cargo:warning=lte-{maj}0{min}0");
         }
     }
 
