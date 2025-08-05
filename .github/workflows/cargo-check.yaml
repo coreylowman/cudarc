@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         version:
           - cuda-11040
@@ -23,6 +24,7 @@ jobs:
           - cuda-12060
           - cuda-12080
           - cuda-12090
+          - cuda-13000
 
     steps:
       - uses: actions/checkout@v2
@@ -34,7 +36,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all-targets -F ${{ matrix.version }},cudnn,nccl
+          args: --all-targets -F ${{ matrix.version }},cudnn,nccl,cusolver,cusolvermg,cusparse,cufile
       - uses: actions-rs/cargo@v1
         with:
           command: check

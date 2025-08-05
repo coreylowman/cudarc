@@ -15,4 +15,4 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --no-default-features --features cuda-12090,no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl,dynamic-loading,cufile --all-targets -- -D warnings
+          args: --no-default-features --features cuda-13000,no-std,cudnn,cublas,cublaslt,nvrtc,driver,curand,nccl,dynamic-loading,cufile --all-targets -- -D warnings

@@ -12,25 +12,6 @@ mod download;
 mod extract;
 mod merge;
 
-/// The cuda versions we're building against.
-/// Those are the feature names used in cudarc
-const CUDA_VERSIONS: &[&str] = &[
-    "cuda-11040",
-    "cuda-11050",
-    "cuda-11060",
-    "cuda-11070",
-    "cuda-11080",
-    "cuda-12000",
-    "cuda-12010",
-    "cuda-12020",
-    "cuda-12030",
-    "cuda-12040",
-    "cuda-12050",
-    "cuda-12060",
-    "cuda-12080",
-    "cuda-12090",
-];
-
 /// Cuda is split in various modules in cudarc.
 /// Those configs decide how to download and
 /// export bindings with bindgen. See [`ModuleConfig`].
@@ -388,17 +369,17 @@ impl Filters {
 }
 
 /// Downloads, unpacks and generate bindings for all modules.
-fn create_bindings(modules: &[ModuleConfig]) -> Result<()> {
+fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<()> {
     let downloads_dir = Path::new("downloads");
     fs::create_dir_all(downloads_dir).context("Failed to create downloads directory")?;
 
     let multi_progress = MultiProgress::new();
-    let overall_pb = multi_progress.add(ProgressBar::new(CUDA_VERSIONS.len() as u64));
+    let overall_pb = multi_progress.add(ProgressBar::new(cuda_versions.len() as u64));
     overall_pb.set_style(
         ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?, // .progress_chars("#>-"),
     );
 
-    for (i, cuda_version) in CUDA_VERSIONS.iter().enumerate() {
+    for (i, cuda_version) in cuda_versions.iter().enumerate() {
         overall_pb.set_position(i as u64);
         overall_pb.set_message(format!("{}", cuda_version));
 
@@ -557,6 +538,7 @@ fn generate_cudnn(
     let lib = match cuda_major {
         11 => &lib["cuda11"],
         12 => &lib["cuda12"],
+        13 => &lib["cuda13"],
         _ => return Err(anyhow::anyhow!("Unknown cuda version {}", cuda_major)),
     };
 
@@ -655,6 +637,9 @@ struct Args {
     #[arg(long, action)]
     skip_bindings: bool,
 
+    #[arg(long, action)]
+    version: Option<String>,
+
     /// Specify a single target to generate bindings for.
     #[arg(long, action)]
     target: Option<String>,
@@ -662,13 +647,41 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
+
     let mut modules = create_modules();
     if let Some(target) = args.target {
         modules.retain(|m| m.cudarc_name.contains(&target));
     }
+
+    let mut cuda_versions = vec![
+        "cuda-11040",
+        "cuda-11050",
+        "cuda-11060",
+        "cuda-11070",
+        "cuda-11080",
+        "cuda-12000",
+        "cuda-12010",
+        "cuda-12020",
+        "cuda-12030",
+        "cuda-12040",
+        "cuda-12050",
+        "cuda-12060",
+        "cuda-12080",
+        "cuda-12090",
+        "cuda-13000",
+    ];
+    if let Some(version) = args.version {
+        cuda_versions.retain(|&v| v == version);
+    }
+
     if !args.skip_bindings {
-        create_bindings(&modules)?;
+        create_bindings(&modules, &cuda_versions)?;
     }
     merge::merge_bindings(&modules)?;
+
+    std::process::Command::new("cargo")
+        .arg("fmt")
+        .current_dir(std::fs::canonicalize("../")?)
+        .status()?;
     Ok(())
 }
