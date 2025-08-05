@@ -198,7 +198,8 @@ pub mod device {
             feature = "cuda-11070",
             feature = "cuda-11060",
             feature = "cuda-11050",
-            feature = "cuda-11040"
+            feature = "cuda-11040",
+            feature = "cuda-13000",
         )))]
         unsafe {
             sys::cudaGetDeviceProperties_v2(prop.as_mut_ptr(), ordinal).result()?;
@@ -209,7 +210,8 @@ pub mod device {
             feature = "cuda-11070",
             feature = "cuda-11060",
             feature = "cuda-11050",
-            feature = "cuda-11040"
+            feature = "cuda-11040",
+            feature = "cuda-13000",
         ))]
         unsafe {
             sys::cudaGetDeviceProperties(prop.as_mut_ptr(), ordinal).result()?;

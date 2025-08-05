@@ -168,7 +168,10 @@ pub mod device {
         let id: sys::CUuuid;
         unsafe {
             let mut uuid = MaybeUninit::uninit();
+            #[cfg(not(feature = "cuda-13000"))]
             sys::cuDeviceGetUuid(uuid.as_mut_ptr(), dev).result()?;
+            #[cfg(feature = "cuda-13000")]
+            sys::cuDeviceGetUuid_v2(uuid.as_mut_ptr(), dev).result()?;
             id = uuid.assume_init();
         }
         Ok(id)
@@ -1011,7 +1014,10 @@ pub mod event {
     pub unsafe fn elapsed(start: sys::CUevent, end: sys::CUevent) -> Result<f32, DriverError> {
         let mut ms: f32 = 0.0;
         unsafe {
+            #[cfg(not(feature = "cuda-13000"))]
             sys::cuEventElapsedTime((&mut ms) as *mut _, start, end).result()?;
+            #[cfg(feature = "cuda-13000")]
+            sys::cuEventElapsedTime_v2((&mut ms) as *mut _, start, end).result()?;
         }
         Ok(ms)
     }
