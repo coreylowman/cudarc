@@ -189,7 +189,11 @@ fn get_redistrib_path(
     let content = response.text()?;
     let mut redist = None;
     for chunk in content.split("'") {
-        if chunk.starts_with(&format!("redistrib_{major}.{minor}")) && chunk.ends_with(".json") {
+        if chunk.starts_with(&format!("redistrib_{major}.{minor}"))
+            && chunk.ends_with(".json")
+            // NOTE: some of the versions have a 4th part, and are formatted differently.
+            && chunk.chars().filter(|&c| c == '.').count() == 3
+        {
             redist = Some(chunk);
         }
     }
