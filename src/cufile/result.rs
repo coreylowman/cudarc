@@ -342,4 +342,4 @@ mod batch_io {
 }
 
 #[allow(unused_imports)]
-pub use batch_io::*;
+pub use self::batch_io::*;
