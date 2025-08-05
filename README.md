@@ -7,41 +7,20 @@
 Checkout cudarc on [crates.io](https://crates.io/crates/cudarc) and [docs.rs](https://docs.rs/cudarc/latest/cudarc/).
 
 Safe abstractions over:
-1. [CUDA driver API](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
-2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
-3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
-4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
-5. [cuBLASLt API](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
-6. [NCCL API](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
+1. [CUDA driver](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
+2. [NVRTC](https://docs.nvidia.com/cuda/nvrtc/index.html)
+3. [cuRAND](https://docs.nvidia.com/cuda/curand/index.html)
+4. [cuBLAS](https://docs.nvidia.com/cuda/cublas/index.html)
+5. [cuBLASLt](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
+6. [NCCL](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
+7. [cuDNN](https://docs.nvidia.com/deeplearning/cudnn/backend/latest/api/overview.html)
+8. [cuSPARSE](https://docs.nvidia.com/cuda/cusparse/)
+9. [cuSOLVER](https://docs.nvidia.com/cuda/cusolver/)
+10. [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction)
 
-**Pre-alpha state**, expect breaking changes and not all cuda functions
-contain a safe wrapper. **Contributions welcome for any that aren't included!**
+**Contributions welcome!**
 
-# Design
-
-Goals are:
-1. As safe as possible (there will still be a lot of unsafe due to ffi & async)
-2. As ergonomic as possible
-3. Allow mixing of high level `safe` apis, with low level `sys` apis
-
-To that end there are three levels to each wrapper (by default the safe api is exported):
-```rust
-use cudarc::driver::{safe, result, sys};
-use cudarc::nvrtc::{safe, result, sys};
-use cudarc::cublas::{safe, result, sys};
-use cudarc::cublaslt::{safe, result, sys};
-use cudarc::curand::{safe, result, sys};
-use cudarc::nccl::{safe, result, sys};
-```
-
-where:
-1. `sys` is the raw ffi apis generated with bindgen
-2. `result` is a very small wrapper around sys to return `Result` from each function
-3. `safe` is a wrapper around result/sys to provide safe abstractions
-
-*Heavily recommend sticking with safe APIs*
-
-# API Preview
+# API 👀
 
 It's easy to create a new device and transfer data to the gpu:
 
@@ -89,6 +68,30 @@ And of course it's easy to copy things back to host after you're done:
 let out_host: Vec<f32> = stream.memcpy_dtov(&out)?;
 assert_eq!(out_host, [1.0; 100].map(f32::sin));
 ```
+
+# Design
+
+Goals are:
+1. As safe as possible (there will still be a lot of unsafe due to ffi & async)
+2. As ergonomic as possible
+3. Allow mixing of high level `safe` apis, with low level `sys` apis
+
+To that end there are three levels to each wrapper (by default the safe api is exported):
+```rust
+use cudarc::driver::{safe, result, sys};
+use cudarc::nvrtc::{safe, result, sys};
+use cudarc::cublas::{safe, result, sys};
+use cudarc::cublaslt::{safe, result, sys};
+use cudarc::curand::{safe, result, sys};
+use cudarc::nccl::{safe, result, sys};
+```
+
+where:
+1. `sys` is the raw ffi apis generated with bindgen
+2. `result` is a very small wrapper around sys to return `Result` from each function
+3. `safe` is a wrapper around result/sys to provide safe abstractions
+
+*Heavily recommend sticking with safe APIs*
 
 # License
 
