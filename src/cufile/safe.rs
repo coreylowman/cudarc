@@ -56,15 +56,7 @@ impl Cufile {
     }
 
     /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilestreamregister)
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-    )))]
+    #[cfg(feature = "gte-12020")]
     pub fn stream_register(
         &self,
         stream: &crate::driver::CudaStream,
@@ -74,15 +66,7 @@ impl Cufile {
     }
 
     /// See [cuda docs](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilestreamderegister)
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-    )))]
+    #[cfg(feature = "gte-12020")]
     pub fn stream_deregister(&self, stream: &crate::driver::CudaStream) -> Result<(), CufileError> {
         unsafe { result::stream_deregister(stream.cu_stream() as _) }
     }
@@ -275,15 +259,7 @@ impl CudaStream {
     /// Wrapper around [cuFileReadAsync](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilereadasync)
     ///
     /// See [FileHandle::sync_read()] for synchronous version.
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-    )))]
+    #[cfg(feature = "gte-12020")]
     pub fn memcpy_ftod<'a, T: DeviceRepr, Dst: DevicePtrMut<T>>(
         self: &Arc<Self>,
         fh: &'a FileHandle,
@@ -333,15 +309,7 @@ impl CudaStream {
     /// Wrapper around [cuFileWriteAsync](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#cufilewriteasync)
     ///
     /// See [FileHandle::sync_write()] for synchronous version.
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-    )))]
+    #[cfg(feature = "gte-12020")]
     pub fn memcpy_dtof<'a, T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
         src: &Src,
@@ -438,15 +406,7 @@ mod tests {
         Ok(())
     }
 
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-    )))]
+    #[cfg(feature = "gte-12020")]
     #[test]
     fn test_cufile_async_dtof() -> Result<(), CufileError> {
         let ctx = CudaContext::new(0).unwrap();
@@ -471,15 +431,7 @@ mod tests {
         Ok(())
     }
 
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-    )))]
+    #[cfg(feature = "gte-12020")]
     #[test]
     fn test_cufile_async_ftod() -> Result<(), CufileError> {
         let ctx = CudaContext::new(0).unwrap();

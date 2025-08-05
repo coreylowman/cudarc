@@ -165,15 +165,7 @@ pub unsafe fn buf_deregister(buf_ptr_base: *const ::core::ffi::c_void) -> Result
 ///
 /// # Safety
 /// `stream` must be valid
-#[cfg(not(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-)))]
+#[cfg(feature = "gte-12020")]
 pub unsafe fn stream_register(stream: sys::CUstream, flags: u32) -> Result<(), CufileError> {
     sys::cuFileStreamRegister(stream, flags).result()
 }
@@ -182,15 +174,7 @@ pub unsafe fn stream_register(stream: sys::CUstream, flags: u32) -> Result<(), C
 ///
 /// # Safety
 /// `stream` must be valid
-#[cfg(not(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-)))]
+#[cfg(feature = "gte-12020")]
 pub unsafe fn stream_deregister(stream: sys::CUstream) -> Result<(), CufileError> {
     sys::cuFileStreamDeregister(stream).result()
 }
@@ -200,15 +184,7 @@ pub unsafe fn stream_deregister(stream: sys::CUstream) -> Result<(), CufileError
 /// # Safety
 /// Ensure data rangefs are valid & pointers are valid **until execution time**. __NOT__ submission time. This executes
 /// asynchronusly wrt host, so utilize pins appropriately.
-#[cfg(not(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-)))]
+#[cfg(feature = "gte-12020")]
 pub unsafe fn read_async(
     fh: sys::CUfileHandle_t,
     buf_ptr_base: *mut ::core::ffi::c_void,
@@ -234,15 +210,7 @@ pub unsafe fn read_async(
 /// # Safety
 /// Ensure data rangefs are valid & pointers are valid **until execution time**. __NOT__ submission time. This executes
 /// asynchronusly wrt host, so utilize pins appropriately.
-#[cfg(not(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-)))]
+#[cfg(feature = "gte-12020")]
 pub unsafe fn write_async(
     fh: sys::CUfileHandle_t,
     buf_ptr_base: *mut ::core::ffi::c_void,
@@ -264,24 +232,10 @@ pub unsafe fn write_async(
     .result()
 }
 
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(feature = "lt-11060")]
 mod batch_io {}
 
-#[cfg(any(
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090",
-    feature = "cuda-13000",
-))]
+#[cfg(feature = "gte-11060")]
 mod batch_io {
     use super::*;
 

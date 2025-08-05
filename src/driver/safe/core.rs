@@ -157,27 +157,13 @@ impl CudaContext {
     /// Ensures calls to [CudaContext::synchronize()] block the calling thread.
     ///
     /// Sets [sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC]
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
-    )))]
+    #[cfg(feature = "gte-12010")]
     pub fn set_blocking_synchronize(&self) -> Result<(), DriverError> {
         self.set_flags(sys::CUctx_flags::CU_CTX_SCHED_BLOCKING_SYNC)
     }
 
     /// Set flags for this context
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
-    )))]
+    #[cfg(feature = "gte-12010")]
     pub fn set_flags(&self, flags: sys::CUctx_flags) -> Result<(), DriverError> {
         self.bind_to_thread()?;
         result::ctx::set_flags(flags)
@@ -1775,12 +1761,7 @@ impl CudaFunction {
         Ok(num_blocks as u32)
     }
 
-    #[cfg(not(any(
-        feature = "cuda-11070",
-        feature = "cuda-11060",
-        feature = "cuda-11050",
-        feature = "cuda-11040"
-    )))]
+    #[cfg(feature = "gte-11080")]
     pub fn occupancy_max_active_clusters(
         &self,
         config: crate::driver::LaunchConfig,
@@ -1835,12 +1816,7 @@ impl CudaFunction {
         Ok((min_grid_size as u32, block_size as u32))
     }
 
-    #[cfg(not(any(
-        feature = "cuda-11070",
-        feature = "cuda-11060",
-        feature = "cuda-11050",
-        feature = "cuda-11040"
-    )))]
+    #[cfg(feature = "gte-11080")]
     pub fn occupancy_max_potential_cluster_size(
         &self,
         config: crate::driver::LaunchConfig,

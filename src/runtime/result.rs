@@ -99,14 +99,7 @@ pub enum CudaDeviceFlags {
     CudaDeviceScheduleBlockingSync = sys::cudaDeviceScheduleBlockingSync as isize,
     CudaDeviceMapHost = sys::cudaDeviceMapHost as isize,
     CudaDeviceLmemResizeToMax = sys::cudaDeviceLmemResizeToMax as isize,
-    #[cfg(not(any(
-        feature = "cuda-12000",
-        feature = "cuda-11080",
-        feature = "cuda-11070",
-        feature = "cuda-11060",
-        feature = "cuda-11050",
-        feature = "cuda-11040"
-    )))]
+    #[cfg(feature = "gte-12010")]
     CudaDeviceSyncMemops = sys::cudaDeviceSyncMemops as isize,
 }
 

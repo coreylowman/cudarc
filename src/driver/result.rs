@@ -444,14 +444,7 @@ pub mod ctx {
     }
 
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g66655c37602c8628eae3e40c82619f1e)
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000"
-    )))]
+    #[cfg(feature = "gte-12010")]
     pub fn set_flags(flags: sys::CUctx_flags) -> Result<(), DriverError> {
         unsafe { sys::cuCtxSetFlags(flags as u32).result() }
     }
@@ -682,15 +675,7 @@ pub unsafe fn free_host(host_ptr: *mut c_void) -> Result<(), DriverError> {
 /// # Safety
 /// 1. Memory must have been allocated by [malloc_managed()]
 /// 2. num_bytes must be the amount of bytes passed to [malloc_managed()]
-#[cfg(not(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010"
-)))]
+#[cfg(feature = "gte-12020")]
 pub unsafe fn mem_advise(
     dptr: sys::CUdeviceptr,
     num_bytes: usize,
@@ -705,15 +690,7 @@ pub unsafe fn mem_advise(
 ///
 /// # Safety
 /// 1. The dptr/num_bytes must be allocated by [malloc_managed()] and must be the exact same memory range.
-#[cfg(not(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010"
-)))]
+#[cfg(feature = "gte-12020")]
 pub unsafe fn mem_prefetch_async(
     dptr: sys::CUdeviceptr,
     num_bytes: usize,

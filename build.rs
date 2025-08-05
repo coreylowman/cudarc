@@ -86,6 +86,42 @@ fn main() {
     println!("cargo:rustc-env=CUDA_MAJOR_VERSION={major}");
     println!("cargo:rustc-env=CUDA_MINOR_VERSION={minor}");
 
+    let all_versions = vec![
+        (13, 0),
+        (12, 9),
+        (12, 8),
+        (12, 6),
+        (12, 5),
+        (12, 4),
+        (12, 3),
+        (12, 2),
+        (12, 1),
+        (12, 0),
+        (11, 8),
+        (11, 7),
+        (11, 6),
+        (11, 5),
+        (11, 4),
+    ];
+    for (maj, min) in all_versions {
+        if (maj, min) < (major, minor) {
+            println!("cargo:rustc-cfg=feature=\"gt-{maj}0{min}0\"");
+            println!("cargo:warning=gt-{maj}0{min}0");
+        }
+        if (maj, min) <= (major, minor) {
+            println!("cargo:rustc-cfg=feature=\"gte-{maj}0{min}0\"");
+            println!("cargo:warning=gte-{maj}0{min}0");
+        }
+        if (maj, min) > (major, minor) {
+            println!("cargo:rustc-cfg=feature=\"lt-{maj}0{min}0\"");
+            println!("cargo:warning=lt-{maj}0{min}0");
+        }
+        if (maj, min) >= (major, minor) {
+            println!("cargo:rustc-cfg=feature=\"lte-{maj}0{min}0\"");
+            println!("cargo:warning=lte-{maj}0{min}0");
+        }
+    }
+
     #[cfg(feature = "dynamic-linking")]
     dynamic_linking(major, minor);
 

@@ -141,15 +141,7 @@ impl<T> UnifiedSlice<T> {
     }
 
     /// See [cuMemPrefetchAsync_v2 cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__UNIFIED.html#group__CUDA__UNIFIED_1gaf4f188a71891ad6a71fdd2850c8d638)
-    #[cfg(not(any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11060",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010"
-    )))]
+    #[cfg(feature = "gte-12020")]
     pub fn prefetch(&self) -> Result<(), DriverError> {
         let location = match self.attach_mode {
             sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL
