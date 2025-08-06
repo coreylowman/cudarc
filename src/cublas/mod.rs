@@ -7,6 +7,9 @@
 //! 3. f16/bf16/f32/f64 are all supported at the trait level.
 //! 4. Instantiate your corresponding config: [GemmConfig], [StridedBatchedConfig], [GemvConfig], [AsumConfig]
 //! 5. Call using [CudaBlas::gemm()], [CudaBlas::gemv()], or [CudaBlas::asum()]
+//! 
+//! Note that all above apis work with [crate::driver::DevicePtr]/[crate::driver::DevicePtrMut], so they
+//! accept [crate::driver::CudaSlice], [crate::driver::CudaView], and [crate::driver::CudaViewMut].
 
 pub mod result;
 pub mod safe;
