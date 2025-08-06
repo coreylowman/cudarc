@@ -668,6 +668,7 @@ mod tests {
                 MatmulConfig {
                     transa: false,
                     transb: false,
+                    transc: false,
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
@@ -722,6 +723,7 @@ mod tests {
                 MatmulConfig {
                     transa: false,
                     transb: false,
+                    transc: false,
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
