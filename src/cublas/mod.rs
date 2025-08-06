@@ -1,4 +1,4 @@
-//! Wrappers around the [cublas API](https://docs.nvidia.com/cuda/cublas/index.html).
+//! [CudaBlas] wraps around the [cublas API](https://docs.nvidia.com/cuda/cublas/index.html).
 //! 
 //! To use:
 //! 
