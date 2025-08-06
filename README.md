@@ -6,7 +6,7 @@
 
 Checkout cudarc on [crates.io](https://crates.io/crates/cudarc) and [docs.rs](https://docs.rs/cudarc/latest/cudarc/).
 
-Safe abstractions over:
+Safe CUDA wrappers for:
 1. [CUDA driver](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
 2. [NVRTC](https://docs.nvidia.com/cuda/nvrtc/index.html)
 3. [cuRAND](https://docs.nvidia.com/cuda/curand/index.html)

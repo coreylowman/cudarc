@@ -1,8 +1,14 @@
-//! Safe abstractions over:
-//! 1. [CUDA driver API](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
-//! 2. [NVRTC API](https://docs.nvidia.com/cuda/nvrtc/index.html)
-//! 3. [cuRAND API](https://docs.nvidia.com/cuda/curand/index.html)
-//! 4. [cuBLAS API](https://docs.nvidia.com/cuda/cublas/index.html)
+//! Safe CUDA wrappers for:
+//! 1. [CUDA driver](https://docs.nvidia.com/cuda/cuda-driver-api/index.html)
+//! 2. [NVRTC](https://docs.nvidia.com/cuda/nvrtc/index.html)
+//! 3. [cuRAND](https://docs.nvidia.com/cuda/curand/index.html)
+//! 4. [cuBLAS](https://docs.nvidia.com/cuda/cublas/index.html)
+//! 5. [cuBLASLt](https://docs.nvidia.com/cuda/cublas/#using-the-cublaslt-api)
+//! 6. [NCCL](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
+//! 7. [cuDNN](https://docs.nvidia.com/deeplearning/cudnn/backend/latest/api/overview.html)
+//! 8. [cuSPARSE](https://docs.nvidia.com/cuda/cusparse/)
+//! 9. [cuSOLVER](https://docs.nvidia.com/cuda/cusolver/)
+//! 10. [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction)
 //!
 //! # crate organization
 //!
@@ -18,7 +24,10 @@
 //! | cublaslt | [cublaslt::safe] | [cublaslt::result] | [cublaslt::sys] |
 //! | nvrtc | [nvrtc::safe] | [nvrtc::result] | [nvrtc::sys] |
 //! | curand | [curand::safe] | [curand::result] | [curand::sys] |
-//! | cudnn | - | [cudnn::result] | [cudnn::sys] |
+//! | cudnn | [cudnn::safe] | [cudnn::result] | [cudnn::sys] |
+//! | cusparse | - | [cusparse::result] | [cusparse::sys] |
+//! | cusolver | [cusolver::safe] | [cusolver::result] | [cusolver::sys] |
+//! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
 //!
 //! # Core Concepts
 //!
