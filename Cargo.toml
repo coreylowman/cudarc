@@ -2,15 +2,16 @@
 name = "cudarc"
 version = "0.17.1"
 edition = "2021"
+authors = ["Corey Lowman <clowman1993@gmail.com>"]
 license = "MIT OR Apache-2.0"
 
-description = "Safe and minimal api wrappers around NVIDIA cuda bindings"
+description = "Safe and minimal CUDA bindings"
 homepage = "https://github.com/coreylowman/cudarc"
 documentation = "https://docs.rs/cudarc"
 repository = "https://github.com/coreylowman/cudarc"
 readme = "README.md"
 
-keywords = ["cuda", "nvidia", "gpu", "nvrtc", "cublas"]
+keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas"]
 categories = ["api-bindings", "hardware-support", "memory-management", "no-std", "science"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
