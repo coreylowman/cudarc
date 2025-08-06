@@ -747,6 +747,18 @@ unsafe impl DeviceRepr for half::f16 {}
 #[cfg(feature = "f16")]
 unsafe impl DeviceRepr for half::bf16 {}
 
+#[cfg(feature = "f8")]
+unsafe impl DeviceRepr for float8::F8E4M3 {}
+
+#[cfg(feature = "f8")]
+unsafe impl ValidAsZeroBits for float8::F8E4M3 {}
+
+#[cfg(feature = "f8")]
+unsafe impl DeviceRepr for float8::F8E5M2 {}
+
+#[cfg(feature = "f8")]
+unsafe impl ValidAsZeroBits for float8::F8E5M2 {}
+
 /// Base trait for abstracting over [CudaSlice]/[CudaView]/[CudaViewMut].
 ///
 /// Don't use this directly - use [DevicePtr]/[DevicePtrMut].
