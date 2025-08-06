@@ -1,5 +1,12 @@
-//! Wrappers around the [cublas API](https://docs.nvidia.com/cuda/cublas/index.html),
-//! in three levels. See crate documentation for description of each.
+//! Wrappers around the [cublas API](https://docs.nvidia.com/cuda/cublas/index.html).
+//! 
+//! To use:
+//! 
+//! 1. Instantiate a [CudaBlas] handle with [CudaBlas::new()]
+//! 2. Choose your operation: [Gemm], [Gemv], and [Asum] traits, which [CudaBlas] implements.
+//! 3. f16/bf16/f32/f64 are all supported at the trait level.
+//! 4. Instantiate your corresponding config: [GemmConfig], [StridedBatchedConfig], [GemvConfig], [AsumConfig]
+//! 5. Call using [CudaBlas::gemm()], [CudaBlas::gemv()], or [CudaBlas::asum()]
 
 pub mod result;
 pub mod safe;
