@@ -1,6 +1,6 @@
 [package]
 name = "cudarc"
-version = "0.17.1"
+version = "0.17.2"
 edition = "2021"
 authors = ["Corey Lowman <clowman1993@gmail.com>"]
 license = "MIT OR Apache-2.0"
@@ -12,15 +12,39 @@ repository = "https://github.com/coreylowman/cudarc"
 readme = "README.md"
 
 keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas"]
-categories = ["api-bindings", "hardware-support", "memory-management", "no-std", "science"]
+categories = [
+    "api-bindings",
+    "hardware-support",
+    "memory-management",
+    "no-std",
+    "science",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package.metadata.docs.rs]
-features = ["cuda-12090", "f16", "cudnn", "nccl", "cusparse", "cusolver", "cusolvermg", "cufile"]
+features = [
+    "cuda-12090",
+    "f16",
+    "cudnn",
+    "nccl",
+    "cusparse",
+    "cusolver",
+    "cusolvermg",
+    "cufile",
+]
 
 [features]
-default = ["std", "cublas", "cublaslt", "curand", "driver", "runtime", "nvrtc", "dynamic-loading"]
+default = [
+    "std",
+    "cublas",
+    "cublaslt",
+    "curand",
+    "driver",
+    "runtime",
+    "nvrtc",
+    "dynamic-loading",
+]
 
 cuda-version-from-build-system = []
 cuda-11040 = []
@@ -59,6 +83,8 @@ cufile = ["driver"]
 std = []
 no-std = ["no-std-compat/std"]
 f16 = ["dep:half"]
+f8 = ["dep:float8"]
+f4 = ["dep:float4"]
 
 [dependencies]
 no-std-compat = { version = "0.4.1", optional = true, features = ["alloc"] }
@@ -66,4 +92,6 @@ half = { version = "2", optional = true, default-features = false, features = [
     "num-traits",
     "rand_distr",
 ] }
+float8 = { version = "0.3.0", optional = true }
+float4 = { version = "0.1.0", optional = true }
 libloading = "0.8"
