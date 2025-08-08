@@ -100,19 +100,6 @@ impl MatrixLayout {
         Ok(Self { handle })
     }
 
-    fn set_row_major(&self) -> Result<(), CublasError> {
-        let order = sys::cublasLtOrder_t::CUBLASLT_ORDER_ROW;
-        unsafe {
-            set_matrix_layout_attribute(
-                self.handle,
-                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_ORDER,
-                (&order) as *const _ as *const _,
-                core::mem::size_of::<sys::cublasLtOrder_t>(),
-            )?;
-        }
-        Ok(())
-    }
-
     fn set_batch(&self, size: c_int, stride: i64) -> Result<(), CublasError> {
         unsafe {
             // Set batch size
@@ -606,10 +593,6 @@ pub trait Fp8Matmul<T>: MatmulShared {
             c_layout.set_batch(batch_size, stride_c)?;
         }
 
-        // a_layout.set_row_major()?;
-        // b_layout.set_row_major()?;
-        // c_layout.set_row_major()?;
-
         // Matmul description
         let matmul_desc = MatmulDesc::new(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
 
@@ -686,7 +669,7 @@ mod tests {
 
     use super::sys;
     use super::*;
-    use ndarray::prelude::*;
+
     use ndarray_rand::RandomExt;
     use std::ffi::CString;
 
@@ -998,7 +981,7 @@ mod tests {
 
         const M: usize = 16;
         const K: usize = 32;
-        const N: usize = 32;
+        const N: usize = 64;
 
         use ndarray_rand::rand;
 
@@ -1006,29 +989,25 @@ mod tests {
         let a_f32_ref = ndarray::Array2::<f32>::random((M, K), rand::distributions::Standard);
         let b_f32_ref = ndarray::Array2::<f32>::random((K, N), rand::distributions::Standard);
 
-        // Quantize for device: A^T (K, M), B (K, N)
-        let (a_scale, a_f8) = quantize_fp8_scalar_ndarray(&a_f32_ref); // A^T
-        let (b_scale, b_f8) = quantize_fp8_scalar_ndarray(&b_f32_ref);
+        let (a_scale, a_f8) = quantize_fp8_scalar(&a_f32_ref);
+        let (b_scale, b_f8) = quantize_fp8_scalar(&b_f32_ref);
 
-        // ndarray truth expects A (M, K) and B (K, N). Use A = (A^T)^T.
-        let c_f16_truth = matmul_truth_fp8_scalar_ndarray(
-            1.0, &a_f8, // shape (M, K)
-            a_scale, &b_f8, // shape (K, N)
-            b_scale, 0.0,
-        );
+        // ndarray truth expects A (M, K) and B (K, N).
+        let c_f16_truth = matmul_truth_fp8_scalar(&a_f8, a_scale, &b_f8, b_scale);
 
-        // transpose for TN layout
-        let a_f8_t = a_f8.t().as_standard_layout().to_owned();
+        // transpose for TN layout (this is reverse from what is intuitive because transa=true + row/col major mismatch)
+        let b_f8_t = b_f8.t().as_standard_layout().to_owned();
 
-        let a_dev = stream.memcpy_stod(a_f8_t.as_slice().unwrap()).unwrap();
-        let b_dev = stream.memcpy_stod(b_f8.as_slice().unwrap()).unwrap();
+        let a_dev = stream.memcpy_stod(a_f8.as_slice().unwrap()).unwrap();
+        let b_dev = stream.memcpy_stod(b_f8_t.as_slice().unwrap()).unwrap();
         let a_scale_dev = stream.memcpy_stod(&[a_scale]).unwrap();
         let b_scale_dev = stream.memcpy_stod(&[b_scale]).unwrap();
         let mut c_dev = stream.alloc_zeros::<half::f16>(M * N).unwrap();
 
+        // leading dims for TN, src = row major, dst = col major
         let lda = K;
         let ldb = K;
-        let ldc = N;
+        let ldc = M;
 
         let config = MatmulConfig {
             transa: true,
@@ -1051,24 +1030,6 @@ mod tests {
 
         unsafe {
             blas.fp8_matmul(
-                // MatmulConfig {
-                //     transa: true, // TN required for fp8 kernels
-                //     transb: false,
-                //     transc: false,
-                //     m: M as u64,
-                //     n: N as u64,
-                //     k: K as u64,
-                //     alpha: 1.0,
-                //     lda: M as i64, // A^T has shape (K, M) → row-major ld = M
-                //     ldb: N as i64, // B has shape (K, N)   → row-major ld = N
-                //     beta: 0.0,
-                //     ldc: N as i64, // C has shape (M, N)   → row-major ld = N
-                //     stride_a: None,
-                //     stride_b: None,
-                //     stride_c: None,
-                //     stride_bias: None,
-                //     batch_size: None,
-                // },
                 config,
                 &a_dev,
                 &a_scale_dev,
@@ -1085,21 +1046,19 @@ mod tests {
 
         let c_host = stream.memcpy_dtov(&c_dev).unwrap();
 
-        // Compare against c_f16_truth (shape (M, N))
         for m in 0..M {
             for n in 0..N {
-                let found = c_host[m * N + n];
+                // C from cublaslt has column-major indexing, so indices are transpsosed:
+                // index = n * ldc + m, with ldc = M
+                let found = c_host[n * M + m];
                 let expected = c_f16_truth[(m, n)];
                 let err = (half::f16::to_f32(found) - half::f16::to_f32(expected)).abs();
-                println!("(m={m}, n={n}) err={err:?}");
-                assert!(err <= 1e-1);
+                assert!(err <= 1e-1, "(m={m}, n={n}) err={err}");
             }
         }
     }
 
-    fn quantize_fp8_scalar_ndarray(
-        x: &ndarray::Array2<f32>,
-    ) -> (f32, ndarray::Array2<float8::F8E4M3>) {
+    fn quantize_fp8_scalar(x: &ndarray::Array2<f32>) -> (f32, ndarray::Array2<float8::F8E4M3>) {
         let max_abs = x
             .iter()
             .map(|x| x.abs())
@@ -1123,32 +1082,17 @@ mod tests {
     }
 
     #[cfg(all(feature = "f16", feature = "f8"))]
-    fn matmul_truth_fp8_scalar_ndarray(
-        alpha: f32,
+    fn matmul_truth_fp8_scalar(
         a: &ndarray::Array2<float8::F8E4M3>,
         a_scale: f32,
         b: &ndarray::Array2<float8::F8E4M3>,
         b_scale: f32,
-        beta: f32,
     ) -> ndarray::Array2<half::f16> {
         let a_f32 = a.map(|x| x.to_f32() * a_scale);
         let b_f32 = b.map(|x| x.to_f32() * b_scale);
         let c_f32 = a_f32.dot(&b_f32);
         let c_f16 = c_f32.map(|x| half::f16::from_f32(*x));
-        // let c_f16 = c_f16 * beta;
-        c_f16
-    }
 
-    fn flatten_fp8<const M: usize, const N: usize>(
-        a: &[[float8::F8E4M3; N]; M],
-    ) -> Vec<float8::F8E4M3> {
-        // let mut y = [F8E4M3::default(); M * N];
-        let mut y = Vec::with_capacity(M * N);
-        for m in 0..M {
-            for n in 0..N {
-                y.push(a[m][n]);
-            }
-        }
-        y
+        c_f16
     }
 }
