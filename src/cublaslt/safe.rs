@@ -135,11 +135,19 @@ enum Matrix {
     B,
     #[allow(dead_code)]
     C,
+    #[allow(dead_code)]
+    D,
 }
 
 /// MatmulDesc helper type
 struct MatmulDesc {
     handle: sys::cublasLtMatmulDesc_t,
+}
+
+// introduce an enum here for future scaling modes (rowwise, blockwise)
+#[cfg(feature = "f8")]
+pub enum ScaleMode {
+    Scalar32f,
 }
 
 impl MatmulDesc {
@@ -159,6 +167,11 @@ impl MatmulDesc {
             Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSA,
             Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSB,
             Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_TRANSC,
+            Matrix::D => {
+                return Err(CublasError(
+                    sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
+                ))
+            }
         };
 
         unsafe {
@@ -229,6 +242,33 @@ impl MatmulDesc {
                 sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_EPILOGUE,
                 (&epilogue) as *const _ as *const _,
                 mem::size_of::<sys::cublasLtMatmulDescAttributes_t>(),
+            )?;
+        }
+        Ok(())
+    }
+
+    //TODO set correct feature gate for cuda
+    #[cfg(feature = "f8")]
+    fn set_fp8_scale(
+        &self,
+        scale_ptr: CUdeviceptr,
+        #[allow(unused_variables)] //keep for future scaling modes to minimize breaking changes
+        scale_mode: ScaleMode,
+        matrix: Matrix,
+    ) -> Result<(), CublasError> {
+        let scale_ptr_attr = match matrix {
+            Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_POINTER,
+            Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_POINTER,
+            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_POINTER,
+            Matrix::D => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_D_SCALE_POINTER,
+        };
+
+        unsafe {
+            result::set_matmul_desc_attribute(
+                self.handle,
+                scale_ptr_attr,
+                (&scale_ptr) as *const CUdeviceptr as *const _,
+                mem::size_of::<CUdeviceptr>(),
             )?;
         }
         Ok(())
@@ -394,6 +434,7 @@ pub trait Matmul<T>: MatmulShared {
         let (b, _record_b) = b.device_ptr(stream);
         let (c, _record_c) = c.device_ptr_mut(stream);
         let (w, _record_w) = workspace.buffer.device_ptr(stream);
+
         result::matmul(
             *self.handle(),
             matmul_desc.handle,
@@ -461,6 +502,145 @@ impl Matmul<half::bf16> for CudaBlasLT {
     }
 }
 
+#[cfg(feature = "f8")]
+pub trait Fp8Matmul<T>: MatmulShared {
+    fn a_matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType::CUDA_R_8F_E4M3
+    }
+
+    fn b_matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType::CUDA_R_8F_E4M3
+    }
+
+    fn c_matrix_type() -> sys::cudaDataType;
+
+    fn compute_type() -> sys::cublasComputeType_t {
+        sys::cublasComputeType_t::CUBLAS_COMPUTE_32F
+    }
+
+    unsafe fn fp8_matmul(
+        &self,
+        cfg: MatmulConfig,
+        a: &impl DevicePtr<float8::F8E4M3>,
+        a_scale: &impl DevicePtr<f32>,
+        a_scale_mode: ScaleMode,
+        b: &impl DevicePtr<float8::F8E4M3>,
+        b_scale: &impl DevicePtr<f32>,
+        b_scale_mode: ScaleMode,
+        c: &mut impl DevicePtrMut<T>,
+        bias: Option<&dyn DevicePtr<T>>, //nb: dynamic dispatch to not require type on None
+        act: Option<&Activation>,
+    ) -> Result<(), CublasError> {
+        let stream = self.stream();
+        let workspace = self.workspace();
+
+        let (a_rows, a_cols) = if cfg.transa {
+            (cfg.k, cfg.m)
+        } else {
+            (cfg.m, cfg.k)
+        };
+
+        let (b_rows, b_cols) = if cfg.transb {
+            (cfg.n, cfg.k)
+        } else {
+            (cfg.k, cfg.n)
+        };
+
+        // Creates matrix layouts
+        let a_layout = MatrixLayout::new(Self::a_matrix_type(), a_rows, a_cols, cfg.lda)?;
+        if let (Some(batch_size), Some(stride_a)) = (cfg.batch_size, cfg.stride_a) {
+            a_layout.set_batch(batch_size, stride_a)?;
+        }
+
+        let b_layout = MatrixLayout::new(Self::b_matrix_type(), b_rows, b_cols, cfg.ldb)?;
+        if let (Some(batch_size), Some(stride_b)) = (cfg.batch_size, cfg.stride_b) {
+            b_layout.set_batch(batch_size, stride_b)?;
+        }
+
+        let c_layout = MatrixLayout::new(Self::c_matrix_type(), cfg.m, cfg.n, cfg.ldc)?;
+        if let (Some(batch_size), Some(stride_c)) = (cfg.batch_size, cfg.stride_c) {
+            c_layout.set_batch(batch_size, stride_c)?;
+        }
+
+        // matmul compute for fp8 is required to be f32
+        let matmul_desc = MatmulDesc::new(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
+
+        // Set transa
+        matmul_desc.set_transpose(cfg.transa, Matrix::A)?;
+        // Set transb
+        matmul_desc.set_transpose(cfg.transb, Matrix::B)?;
+        // Set transc
+        matmul_desc.set_transpose(cfg.transc, Matrix::C)?;
+
+        let (a_scale, _record_a_scale) = a_scale.device_ptr(stream);
+        let (b_scale, _record_b_scale) = b_scale.device_ptr(stream);
+
+        matmul_desc.set_fp8_scale(a_scale, a_scale_mode, Matrix::A)?;
+        matmul_desc.set_fp8_scale(b_scale, b_scale_mode, Matrix::B)?;
+
+        // Epilogue system can be leveraged to fuse add and activation operations
+        //TODO bias/activation fuse
+        let (bias, _record_bias) = bias.map(|b| b.device_ptr(stream)).unzip();
+        matmul_desc.set_epilogue(act, bias.as_ref(), cfg.stride_bias)?;
+
+        // Create matmul heuristic search preferences
+        let matmul_pref = MatmulPref::new()?;
+
+        // Set workspace size
+        matmul_pref.set_workspace_size(self.workspace().size)?;
+
+        // Get heuristic given Config, bias, act and workspace size
+        let heuristic = result::get_matmul_algo_heuristic(
+            *self.handle(),
+            matmul_desc.handle,
+            a_layout.handle,
+            b_layout.handle,
+            c_layout.handle,
+            c_layout.handle,
+            matmul_pref.handle,
+        )?;
+
+        // Launch matmul kernel
+        let (a, _record_a) = a.device_ptr(stream);
+        let (b, _record_b) = b.device_ptr(stream);
+        let (c, _record_c) = c.device_ptr_mut(stream);
+        let (w, _record_w) = workspace.buffer.device_ptr(stream);
+
+        result::matmul(
+            *self.handle(),
+            matmul_desc.handle,
+            (&cfg.alpha) as *const _ as *const _,
+            (&cfg.beta) as *const _ as *const _,
+            a as *const _,
+            a_layout.handle,
+            b as *const _,
+            b_layout.handle,
+            c as *const _,
+            c_layout.handle,
+            c as *mut _,
+            c_layout.handle,
+            (&heuristic.algo) as *const _,
+            w as *mut _,
+            workspace.size,
+            stream.cu_stream() as *mut _,
+        )
+    }
+}
+
+// E4M3 A @ E4M3 B = F16 C
+impl Fp8Matmul<half::f16> for CudaBlasLT {
+    fn c_matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType::CUDA_R_16F
+    }
+}
+
+// E4M3 A @ E4M3 B = BF16 C
+impl Fp8Matmul<half::bf16> for CudaBlasLT {
+    fn c_matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType::CUDA_R_16BF
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #![allow(clippy::needless_range_loop)]
@@ -469,6 +649,7 @@ mod tests {
 
     use super::sys;
     use super::*;
+
     use std::ffi::CString;
 
     fn matmul_truth<T, const M: usize, const N: usize, const K: usize>(
@@ -668,6 +849,7 @@ mod tests {
                 MatmulConfig {
                     transa: false,
                     transb: false,
+                    transc: false,
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
@@ -722,6 +904,7 @@ mod tests {
                 MatmulConfig {
                     transa: false,
                     transb: false,
+                    transc: false,
                     m: N as u64,
                     n: M as u64,
                     k: K as u64,
@@ -755,5 +938,153 @@ mod tests {
                 );
             }
         }
+    }
+}
+
+#[cfg(test)]
+#[cfg(feature = "f8")]
+mod f8_tests {
+
+    #![allow(clippy::needless_range_loop)]
+
+    use crate::driver::CudaContext;
+
+    use super::sys;
+    use super::*;
+
+    use ndarray_rand::RandomExt;
+    use std::ffi::CString;
+
+    /// tests A @ B = C where A, B are fp8 and C is fp16 and the scale for A and B are scalar
+    #[test]
+    fn test_matmul_fp8_scalar_scale() {
+        use Fp8Matmul;
+
+        let logpath = CString::new("log_matmul_fp8").unwrap();
+        unsafe { sys::cublasLtLoggerSetLevel(5).result().unwrap() };
+        unsafe {
+            sys::cublasLtLoggerOpenFile(logpath.as_ptr())
+                .result()
+                .unwrap()
+        };
+
+        let ctx = CudaContext::new(0).unwrap();
+        let stream = ctx.default_stream();
+        let blas = CudaBlasLT::new(stream.clone()).unwrap();
+
+        const M: usize = 16;
+        const K: usize = 32;
+        const N: usize = 64;
+
+        use ndarray_rand::rand;
+
+        // reference matrices
+        let a_f32_ref = ndarray::Array2::<f32>::random((M, K), rand::distributions::Standard);
+        let b_f32_ref = ndarray::Array2::<f32>::random((K, N), rand::distributions::Standard);
+
+        let (a_scale, a_f8) = quantize_fp8_scalar(&a_f32_ref);
+        let (b_scale, b_f8) = quantize_fp8_scalar(&b_f32_ref);
+
+        // ndarray truth expects A (M, K) and B (K, N).
+        let c_f16_truth = matmul_truth_fp8_scalar(&a_f8, a_scale, &b_f8, b_scale);
+
+        // transpose for TN layout (this is reverse from what is intuitive because transa=true + row/col major mismatch)
+        let b_f8_t = b_f8.t().as_standard_layout().to_owned();
+
+        let a_dev = stream.memcpy_stod(a_f8.as_slice().unwrap()).unwrap();
+        let b_dev = stream.memcpy_stod(b_f8_t.as_slice().unwrap()).unwrap();
+        let a_scale_dev = stream.memcpy_stod(&[a_scale]).unwrap();
+        let b_scale_dev = stream.memcpy_stod(&[b_scale]).unwrap();
+        let mut c_dev = stream.alloc_zeros::<half::f16>(M * N).unwrap();
+
+        // leading dims for TN, src = row major, dst = col major
+        let lda = K;
+        let ldb = K;
+        let ldc = M;
+
+        let config = MatmulConfig {
+            transa: true,
+            transb: false,
+            transc: false,
+            m: M as u64,
+            n: N as u64,
+            k: K as u64,
+            alpha: 1.0,
+            lda: lda as i64,
+            ldb: ldb as i64,
+            beta: 0.0,
+            ldc: ldc as i64,
+            stride_a: None,
+            stride_b: None,
+            stride_c: None,
+            stride_bias: None,
+            batch_size: None,
+        };
+
+        unsafe {
+            blas.fp8_matmul(
+                config,
+                &a_dev,
+                &a_scale_dev,
+                ScaleMode::Scalar32f,
+                &b_dev,
+                &b_scale_dev,
+                ScaleMode::Scalar32f,
+                &mut c_dev,
+                None,
+                None,
+            )
+        }
+        .unwrap();
+
+        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+
+        for m in 0..M {
+            for n in 0..N {
+                // C from cublaslt has column-major indexing, so indices are transpsosed:
+                // index = n * ldc + m, with ldc = M
+                let found = c_host[n * M + m];
+                let expected = c_f16_truth[(m, n)];
+                let err = (half::f16::to_f32(found) - half::f16::to_f32(expected)).abs();
+                assert!(err <= 1e-1, "(m={m}, n={n}) err={err})");
+            }
+        }
+    }
+
+    fn quantize_fp8_scalar(x: &ndarray::Array2<f32>) -> (f32, ndarray::Array2<float8::F8E4M3>) {
+        let max_abs = x
+            .iter()
+            .map(|x| x.abs())
+            .max_by(|x, y| x.abs().partial_cmp(&y.abs()).unwrap())
+            .unwrap();
+
+        let fp8_max = float8::F8E4M3::MAX.to_f32();
+        let epsilon = 1e-6f32;
+
+        // Choose dequantization scale S so that quantized = val / S fits in FP8
+        let scale = if max_abs > epsilon {
+            max_abs / (fp8_max - epsilon)
+        } else {
+            1.0f32
+        };
+
+        // Quantize: divide by scale, then convert to FP8
+        let y = x.map(|v| float8::F8E4M3::from_f32(v / scale));
+
+        (scale, y)
+    }
+
+    fn matmul_truth_fp8_scalar(
+        a: &ndarray::Array2<float8::F8E4M3>,
+        a_scale: f32,
+        b: &ndarray::Array2<float8::F8E4M3>,
+        b_scale: f32,
+    ) -> ndarray::Array2<half::f16> {
+        let a_f32 = a.map(|x| x.to_f32() * a_scale);
+        let b_f32 = b.map(|x| x.to_f32() * b_scale);
+        let c_f32 = a_f32.dot(&b_f32);
+        let c_f16 = c_f32.map(|x| half::f16::from_f32(*x));
+
+        c_f16
     }
 }
