@@ -669,6 +669,8 @@ mod tests {
 
     use super::sys;
     use super::*;
+    use ndarray::prelude::*;
+    use ndarray_rand::RandomExt;
     use std::ffi::CString;
 
     fn matmul_truth<T, const M: usize, const N: usize, const K: usize>(
@@ -977,67 +979,64 @@ mod tests {
         let stream = ctx.default_stream();
         let blas = CudaBlasLT::new(stream.clone()).unwrap();
 
-        const M: usize = 2;
-        const K: usize = 4;
-        const N: usize = 6;
+        const M: usize = 16;
+        const K: usize = 32;
+        const N: usize = 32;
 
-        let a_f32: [[f32; K]; M] = [
-            [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
-            [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
-        ];
+        // let a_f32: [[f32; K]; M] = [
+        //     [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
+        //     [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
+        // ];
 
-        let b_f32: [[f32; N]; K] = [
-            [
-                1.1292169,
-                -0.13450263,
-                0.62789696,
-                -0.5685516,
-                0.21946938,
-                -1.6661372,
-            ],
-            [
-                1.0585804,
-                -0.39789402,
-                0.90205914,
-                0.989318,
-                -0.3443096,
-                -0.4568837,
-            ],
-            [
-                1.3412506,
-                0.3059701,
-                -0.9714474,
-                -0.36113533,
-                -1.6809629,
-                -0.9043474,
-            ],
-            [
-                3.4746711,
-                -1.0930681,
-                0.16502666,
-                -0.59988785,
-                0.41375792,
-                0.39125723,
-            ],
-        ];
+        // let b_f32: [[f32; N]; K] = [
+        //     [
+        //         1.1292169,
+        //         -0.13450263,
+        //         0.62789696,
+        //         -0.5685516,
+        //         0.21946938,
+        //         -1.6661372,
+        //     ],
+        //     [
+        //         1.0585804,
+        //         -0.39789402,
+        //         0.90205914,
+        //         0.989318,
+        //         -0.3443096,
+        //         -0.4568837,
+        //     ],
+        //     [
+        //         1.3412506,
+        //         0.3059701,
+        //         -0.9714474,
+        //         -0.36113533,
+        //         -1.6809629,
+        //         -0.9043474,
+        //     ],
+        //     [
+        //         3.4746711,
+        //         -1.0930681,
+        //         0.16502666,
+        //         -0.59988785,
+        //         0.41375792,
+        //         0.39125723,
+        //     ],
+        // ];
 
-        let (a_scale, a_f8) = fp8_quantize_scalar(&a_f32);
-        let (b_scale, b_f8) = fp8_quantize_scalar(&b_f32);
+        use ndarray_rand::rand;
 
-        let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
+        let a_f32 = ndarray::Array2::<f32>::random((M, N), rand::distributions::Standard);
+        let b_f32 = ndarray::Array2::<f32>::random((N, K), rand::distributions::Standard);
 
-        matmul_truth_fp8_scalar(
-            half::f16::from_f32(1.0),
-            &a_f8,
-            half::f16::from_f32(a_scale),
-            &b_f8,
-            half::f16::from_f32(b_scale),
-            half::f16::from_f32(0.0),
-            &mut c,
-        );
+        let (a_scale, a_f8) = quantize_fp8_scalar_ndarray(&a_f32);
+        let (b_scale, b_f8) = quantize_fp8_scalar_ndarray(&b_f32);
 
-        let a_dev = stream.memcpy_stod(&flatten_fp8(&a_f8)).unwrap();
-        let b_dev = stream.memcpy_stod(&flatten_fp8(&b_f8)).unwrap();
+        // let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
+
+        let c_f16 = matmul_truth_fp8_scalar_ndarray(1.0, &a_f8, a_scale, &b_f8, b_scale, 0.0);
+
+        let a_dev = stream.memcpy_stod(a_f8.as_slice().unwrap()).unwrap();
+        let b_dev = stream.memcpy_stod(b_f8.as_slice().unwrap()).unwrap();
         let a_scale_dev = stream.memcpy_stod(&[a_scale]).unwrap();
         let b_scale_dev = stream.memcpy_stod(&[b_scale]).unwrap();
         let mut c_dev = stream.alloc_zeros::<half::f16>(M * N).unwrap();
@@ -1088,19 +1087,68 @@ mod tests {
         }
     }
 
-    #[cfg(all(feature = "f16", feature = "f8"))]
-    fn fp8_quantize_scalar<const M: usize, const K: usize>(
-        a: &[[f32; K]; M],
-    ) -> (f32, [[float8::F8E4M3; K]; M]) {
-        // Find the maximum absolute value in the matrix
-        let mut max_abs = 0.0f32;
-        for m in 0..M {
-            for k in 0..K {
-                max_abs = max_abs.max(a[m][k].abs());
-            }
-        }
+    // #[cfg(all(feature = "f16", feature = "f8"))]
+    // fn fp8_quantize_scalar<const M: usize, const K: usize>(
+    //     a: &[[f32; K]; M],
+    // ) -> (f32, [[float8::F8E4M3; K]; M]) {
+    //     // Find the maximum absolute value in the matrix
+    //     let mut max_abs = 0.0f32;
+    //     for m in 0..M {
+    //         for k in 0..K {
+    //             max_abs = max_abs.max(a[m][k].abs());
+    //         }
+    //     }
 
-        // FP8E4M3 maximum representable value
+    //     // FP8E4M3 maximum representable value
+    //     let fp8_max = float8::F8E4M3::MAX.to_f32();
+    //     let epsilon = 1e-6f32;
+
+    //     // Choose dequantization scale S so that quantized = val / S fits in FP8
+    //     let scale = if max_abs > epsilon {
+    //         max_abs / (fp8_max - epsilon)
+    //     } else {
+    //         1.0f32
+    //     };
+
+    //     // Quantize: divide by scale, then convert to FP8
+    //     let y = a.map(|row| row.map(|val| float8::F8E4M3::from_f32(val / scale)));
+
+    //     (scale, y)
+    // }
+
+    // #[cfg(all(feature = "f16", feature = "f8"))]
+    // fn matmul_truth_fp8_scalar<const M: usize, const N: usize, const K: usize>(
+    //     alpha: half::f16,
+    //     a: &[[float8::F8E4M3; K]; M],
+    //     a_scale: half::f16,
+    //     b: &[[float8::F8E4M3; N]; K],
+    //     b_scale: half::f16,
+    //     beta: half::f16,
+    //     c: &mut [[half::f16; N]; M],
+    // ) {
+    //     //TODO check numerics
+    //     for m in 0..M {
+    //         for n in 0..N {
+    //             c[m][n] = beta;
+
+    //             for k in 0..K {
+    //                 let a = a[m][k].to_f32() * half::f16::to_f32(a_scale);
+    //                 let b = b[k][n].to_f32() * half::f16::to_f32(b_scale);
+    //                 c[m][n] += half::f16::from_f32(alpha.to_f32() * a * b);
+    //             }
+    //         }
+    //     }
+    // }
+
+    fn quantize_fp8_scalar_ndarray(
+        x: &ndarray::Array2<f32>,
+    ) -> (f32, ndarray::Array2<float8::F8E4M3>) {
+        let max_abs = x
+            .iter()
+            .map(|x| x.abs())
+            .max_by(|x, y| x.abs().partial_cmp(&y.abs()).unwrap())
+            .unwrap();
+
         let fp8_max = float8::F8E4M3::MAX.to_f32();
         let epsilon = 1e-6f32;
 
@@ -1112,33 +1160,26 @@ mod tests {
         };
 
         // Quantize: divide by scale, then convert to FP8
-        let y = a.map(|row| row.map(|val| float8::F8E4M3::from_f32(val / scale)));
+        let y = x.map(|v| float8::F8E4M3::from_f32(v / scale));
 
         (scale, y)
     }
 
     #[cfg(all(feature = "f16", feature = "f8"))]
-    fn matmul_truth_fp8_scalar<const M: usize, const N: usize, const K: usize>(
-        alpha: half::f16,
-        a: &[[float8::F8E4M3; K]; M],
-        a_scale: half::f16,
-        b: &[[float8::F8E4M3; N]; K],
-        b_scale: half::f16,
-        beta: half::f16,
-        c: &mut [[half::f16; N]; M],
-    ) {
-        //TODO check numerics
-        for m in 0..M {
-            for n in 0..N {
-                c[m][n] = beta;
-
-                for k in 0..K {
-                    let a = a[m][k].to_f32() * half::f16::to_f32(a_scale);
-                    let b = b[k][n].to_f32() * half::f16::to_f32(b_scale);
-                    c[m][n] += half::f16::from_f32(alpha.to_f32() * a * b);
-                }
-            }
-        }
+    fn matmul_truth_fp8_scalar_ndarray(
+        alpha: f32,
+        a: &ndarray::Array2<float8::F8E4M3>,
+        a_scale: f32,
+        b: &ndarray::Array2<float8::F8E4M3>,
+        b_scale: f32,
+        beta: f32,
+    ) -> ndarray::Array2<half::f16> {
+        let a_f32 = a.map(|x| x.to_f32() * a_scale);
+        let b_f32 = b.map(|x| x.to_f32() * b_scale);
+        let c_f32 = a_f32.dot(&b_f32);
+        let c_f16 = c_f32.map(|x| half::f16::from_f32(*x));
+        // let c_f16 = c_f16 * beta;
+        c_f16
     }
 
     fn flatten_fp8<const M: usize, const N: usize>(
