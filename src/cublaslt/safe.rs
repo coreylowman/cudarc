@@ -249,7 +249,7 @@ impl MatmulDesc {
     #[cfg(all(feature = "f8", any(feature = "cuda-12090")))]
     fn set_fp8_scale(
         &self,
-        scale_ptr: &impl DevicePtr<f32>,
+        scale_ptr: CUdeviceptr,
         scale_mode: ScaleMode,
         matrix: Matrix,
     ) -> Result<(), CublasError> {
@@ -290,7 +290,7 @@ impl MatmulDesc {
             result::set_matmul_desc_attribute(
                 self.handle,
                 scale_ptr_attr,
-                scale_ptr as *const _ as *const _,
+                scale_ptr as *const _,
                 mem::size_of::<f32>() * scale_elems,
             )?;
 
@@ -551,7 +551,7 @@ pub trait Fp8Matmul<T>: MatmulShared {
     }
 
     fn compute_type() -> sys::cublasComputeType_t {
-        sys::cublasComputeType_t::CUBLAS_COMPUTE_16F
+        sys::cublasComputeType_t::CUBLAS_COMPUTE_32F
     }
 
     unsafe fn fp8_matmul<O: DevicePtrMut<T>>(
@@ -608,6 +608,9 @@ pub trait Fp8Matmul<T>: MatmulShared {
         // Set transc
         matmul_desc.set_transpose(cfg.transc, Matrix::C)?;
 
+        let (a_scale, _record_a_scale) = a_scale.device_ptr(stream);
+        let (b_scale, _record_b_scale) = b_scale.device_ptr(stream);
+
         matmul_desc.set_fp8_scale(a_scale, a_scale_mode, Matrix::A)?;
         matmul_desc.set_fp8_scale(b_scale, b_scale_mode, Matrix::B)?;
 
@@ -661,7 +664,7 @@ pub trait Fp8Matmul<T>: MatmulShared {
 }
 
 impl Fp8Matmul<half::f16> for CudaBlasLT {}
-impl Fp8Matmul<half::bf16> for CudaBlasLT {}
+// impl Fp8Matmul<half::bf16> for CudaBlasLT {}
 
 #[cfg(test)]
 mod tests {
@@ -1050,12 +1053,12 @@ mod tests {
                     transa: false,
                     transb: false,
                     transc: false,
-                    m: N as u64,
-                    n: M as u64,
+                    m: M as u64,
+                    n: N as u64,
                     k: K as u64,
                     alpha: 1.0,
-                    lda: N as i64,
-                    ldb: K as i64,
+                    lda: K as i64,
+                    ldb: N as i64,
                     beta: 0.0,
                     ldc: N as i64,
                     stride_a: None,
