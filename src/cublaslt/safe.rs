@@ -135,6 +135,7 @@ enum Matrix {
     B,
     #[allow(dead_code)]
     C,
+    #[allow(dead_code)]
     D,
 }
 
@@ -143,10 +144,10 @@ struct MatmulDesc {
     handle: sys::cublasLtMatmulDesc_t,
 }
 
-#[cfg(all(feature = "f8"))]
+// introduce an enum here for future scaling modes (rowwise, blockwise)
+#[cfg(feature = "f8")]
 pub enum ScaleMode {
     Scalar32f,
-    RowWise32f,
 }
 
 impl MatmulDesc {
@@ -247,10 +248,11 @@ impl MatmulDesc {
     }
 
     //TODO set correct feature gate for cuda
-    #[cfg(all(feature = "f8"))]
+    #[cfg(feature = "f8")]
     fn set_fp8_scale(
         &self,
         scale_ptr: CUdeviceptr,
+        #[allow(unused_variables)] //keep for future scaling modes to minimize breaking changes
         scale_mode: ScaleMode,
         matrix: Matrix,
     ) -> Result<(), CublasError> {
@@ -261,26 +263,6 @@ impl MatmulDesc {
             Matrix::D => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_D_SCALE_POINTER,
         };
 
-        // let scale_mode_attr = match matrix {
-        //     Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_MODE,
-        //     Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_MODE,
-        //     Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_MODE,
-        //     Matrix::D => {
-        //         return Err(CublasError(
-        //             sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
-        //         ))
-        //     }
-        // };
-
-        // let scale_mode = match scale_mode {
-        //     ScaleMode::Scalar32f => {
-        //         sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_SCALAR_32F
-        //     }
-        //     ScaleMode::RowWise32f => {
-        //         sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_OUTER_VEC_32F
-        //     }
-        // };
-
         unsafe {
             result::set_matmul_desc_attribute(
                 self.handle,
@@ -288,13 +270,6 @@ impl MatmulDesc {
                 (&scale_ptr) as *const CUdeviceptr as *const _,
                 mem::size_of::<CUdeviceptr>(),
             )?;
-
-            // result::set_matmul_desc_attribute(
-            //     self.handle,
-            //     scale_mode_attr,
-            //     (&scale_mode) as *const _ as *const _,
-            //     mem::size_of::<sys::cublasLtMatmulMatrixScale_t>(),
-            // )?;
         }
         Ok(())
     }
@@ -527,7 +502,7 @@ impl Matmul<half::bf16> for CudaBlasLT {
     }
 }
 
-#[cfg(all(feature = "f8", feature = "f16"))]
+#[cfg(feature = "f8")]
 pub trait Fp8Matmul<T>: MatmulShared {
     fn a_matrix_type() -> sys::cudaDataType {
         sys::cudaDataType::CUDA_R_8F_E4M3
@@ -537,19 +512,13 @@ pub trait Fp8Matmul<T>: MatmulShared {
         sys::cudaDataType::CUDA_R_8F_E4M3
     }
 
-    fn c_matrix_type() -> sys::cudaDataType {
-        sys::cudaDataType::CUDA_R_16F
-    }
-
-    fn d_matrix_type() -> sys::cudaDataType {
-        sys::cudaDataType::CUDA_R_16F
-    }
+    fn c_matrix_type() -> sys::cudaDataType;
 
     fn compute_type() -> sys::cublasComputeType_t {
         sys::cublasComputeType_t::CUBLAS_COMPUTE_32F
     }
 
-    unsafe fn fp8_matmul<O: DevicePtrMut<T>>(
+    unsafe fn fp8_matmul(
         &self,
         cfg: MatmulConfig,
         a: &impl DevicePtr<float8::F8E4M3>,
@@ -558,8 +527,8 @@ pub trait Fp8Matmul<T>: MatmulShared {
         b: &impl DevicePtr<float8::F8E4M3>,
         b_scale: &impl DevicePtr<f32>,
         b_scale_mode: ScaleMode,
-        c: &mut O,
-        bias: Option<&O>,
+        c: &mut impl DevicePtrMut<T>,
+        bias: Option<&dyn DevicePtr<T>>, //nb: dynamic dispatch to not require type on None
         act: Option<&Activation>,
     ) -> Result<(), CublasError> {
         let stream = self.stream();
@@ -593,7 +562,7 @@ pub trait Fp8Matmul<T>: MatmulShared {
             c_layout.set_batch(batch_size, stride_c)?;
         }
 
-        // Matmul description
+        // matmul compute for fp8 is required to be f32
         let matmul_desc = MatmulDesc::new(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
 
         // Set transa
@@ -611,8 +580,8 @@ pub trait Fp8Matmul<T>: MatmulShared {
 
         // Epilogue system can be leveraged to fuse add and activation operations
         //TODO bias/activation fuse
-        // let (bias, _record_bias) = bias.map(|b| b.device_ptr(stream)).unzip();
-        // matmul_desc.set_epilogue(act, bias.as_ref(), cfg.stride_bias)?;
+        let (bias, _record_bias) = bias.map(|b| b.device_ptr(stream)).unzip();
+        matmul_desc.set_epilogue(act, bias.as_ref(), cfg.stride_bias)?;
 
         // Create matmul heuristic search preferences
         let matmul_pref = MatmulPref::new()?;
@@ -658,8 +627,19 @@ pub trait Fp8Matmul<T>: MatmulShared {
     }
 }
 
-impl Fp8Matmul<half::f16> for CudaBlasLT {}
-// impl Fp8Matmul<half::bf16> for CudaBlasLT {}
+// E4M3 A @ E4M3 B = F16 C
+impl Fp8Matmul<half::f16> for CudaBlasLT {
+    fn c_matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType::CUDA_R_16F
+    }
+}
+
+// E4M3 A @ E4M3 B = BF16 C
+impl Fp8Matmul<half::bf16> for CudaBlasLT {
+    fn c_matrix_type() -> sys::cudaDataType {
+        sys::cudaDataType::CUDA_R_16BF
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -670,7 +650,6 @@ mod tests {
     use super::sys;
     use super::*;
 
-    use ndarray_rand::RandomExt;
     use std::ffi::CString;
 
     fn matmul_truth<T, const M: usize, const N: usize, const K: usize>(
@@ -960,9 +939,23 @@ mod tests {
             }
         }
     }
+}
+
+#[cfg(test)]
+#[cfg(feature = "f8")]
+mod f8_tests {
+
+    #![allow(clippy::needless_range_loop)]
+
+    use crate::driver::CudaContext;
+
+    use super::sys;
+    use super::*;
+
+    use ndarray_rand::RandomExt;
+    use std::ffi::CString;
 
     /// tests A @ B = C where A, B are fp8 and C is fp16 and the scale for A and B are scalar
-    #[cfg(all(feature = "f16", feature = "f8"))]
     #[test]
     fn test_matmul_fp8_scalar_scale() {
         use Fp8Matmul;
@@ -1053,7 +1046,7 @@ mod tests {
                 let found = c_host[n * M + m];
                 let expected = c_f16_truth[(m, n)];
                 let err = (half::f16::to_f32(found) - half::f16::to_f32(expected)).abs();
-                assert!(err <= 1e-1, "(m={m}, n={n}) err={err}");
+                assert!(err <= 1e-1, "(m={m}, n={n}) err={err})");
             }
         }
     }
@@ -1081,7 +1074,6 @@ mod tests {
         (scale, y)
     }
 
-    #[cfg(all(feature = "f16", feature = "f8"))]
     fn matmul_truth_fp8_scalar(
         a: &ndarray::Array2<float8::F8E4M3>,
         a_scale: f32,

@@ -83,8 +83,8 @@ cufile = ["driver"]
 std = []
 no-std = ["no-std-compat/std"]
 f16 = ["dep:half"]
-f8 = ["dep:float8"]
-f4 = ["dep:float4"]
+f8 = ["f16", "dep:float8"]
+f4 = ["f16", "f8", "dep:float4"]
 
 [dependencies]
 no-std-compat = { version = "0.4.1", optional = true, features = ["alloc"] }
