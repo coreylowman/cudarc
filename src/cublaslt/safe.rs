@@ -246,7 +246,8 @@ impl MatmulDesc {
         Ok(())
     }
 
-    #[cfg(all(feature = "f8", any(feature = "cuda-12090")))]
+    //TODO set correct feature gate for cuda
+    #[cfg(all(feature = "f8"))]
     fn set_fp8_scale(
         &self,
         scale_ptr: CUdeviceptr,
@@ -257,49 +258,43 @@ impl MatmulDesc {
             Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_POINTER,
             Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_POINTER,
             Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_POINTER,
-            Matrix::D => {
-                return Err(CublasError(
-                    sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
-                ))
-            }
+            Matrix::D => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_D_SCALE_POINTER,
         };
 
-        let scale_mode_attr = match matrix {
-            Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_MODE,
-            Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_MODE,
-            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_MODE,
-            Matrix::D => {
-                return Err(CublasError(
-                    sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
-                ))
-            }
-        };
+        // let scale_mode_attr = match matrix {
+        //     Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_MODE,
+        //     Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_MODE,
+        //     Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_MODE,
+        //     Matrix::D => {
+        //         return Err(CublasError(
+        //             sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
+        //         ))
+        //     }
+        // };
 
-        let scale_mode = match scale_mode {
-            ScaleMode::Scalar32f => {
-                sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_SCALAR_32F
-            }
-            ScaleMode::RowWise32f => {
-                sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_OUTER_VEC_32F
-            }
-        };
-
-        let scale_elems = 1;
+        // let scale_mode = match scale_mode {
+        //     ScaleMode::Scalar32f => {
+        //         sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_SCALAR_32F
+        //     }
+        //     ScaleMode::RowWise32f => {
+        //         sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_OUTER_VEC_32F
+        //     }
+        // };
 
         unsafe {
             result::set_matmul_desc_attribute(
                 self.handle,
                 scale_ptr_attr,
-                scale_ptr as *const _,
-                mem::size_of::<f32>() * scale_elems,
+                (&scale_ptr) as *const CUdeviceptr as *const _,
+                mem::size_of::<CUdeviceptr>(),
             )?;
 
-            result::set_matmul_desc_attribute(
-                self.handle,
-                scale_mode_attr,
-                (&scale_mode) as *const _ as *const _,
-                mem::size_of::<sys::cublasLtMatmulMatrixScale_t>(),
-            )?;
+            // result::set_matmul_desc_attribute(
+            //     self.handle,
+            //     scale_mode_attr,
+            //     (&scale_mode) as *const _ as *const _,
+            //     mem::size_of::<sys::cublasLtMatmulMatrixScale_t>(),
+            // )?;
         }
         Ok(())
     }
@@ -971,7 +966,7 @@ mod tests {
         use Fp8Matmul;
 
         let logpath = CString::new("log_matmul_fp8").unwrap();
-        unsafe { sys::cublasLtLoggerSetLevel(4).result().unwrap() };
+        unsafe { sys::cublasLtLoggerSetLevel(5).result().unwrap() };
         unsafe {
             sys::cublasLtLoggerOpenFile(logpath.as_ptr())
                 .result()
@@ -1050,15 +1045,15 @@ mod tests {
         unsafe {
             blas.fp8_matmul(
                 MatmulConfig {
-                    transa: false,
+                    transa: true,
                     transb: false,
                     transc: false,
                     m: M as u64,
                     n: N as u64,
                     k: K as u64,
                     alpha: 1.0,
-                    lda: K as i64,
-                    ldb: N as i64,
+                    lda: N as i64,
+                    ldb: K as i64,
                     beta: 0.0,
                     ldc: N as i64,
                     stride_a: None,

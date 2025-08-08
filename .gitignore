@@ -1,3 +1,4 @@
 /Cargo.lock
 /target
 /.vscode/
+log_matmul*
