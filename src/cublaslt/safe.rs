@@ -247,7 +247,34 @@ impl MatmulDesc {
     }
 
     #[cfg(all(feature = "f8", any(feature = "cuda-12090")))]
-    fn set_scale_mode(&self, scale_mode: ScaleMode, matrix: Matrix) -> Result<(), CublasError> {
+    fn set_fp8_scale(
+        &self,
+        scale_ptr: &impl DevicePtr<f32>,
+        scale_mode: ScaleMode,
+        matrix: Matrix,
+    ) -> Result<(), CublasError> {
+        let scale_ptr_attr = match matrix {
+            Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_POINTER,
+            Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_POINTER,
+            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_POINTER,
+            Matrix::D => {
+                return Err(CublasError(
+                    sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
+                ))
+            }
+        };
+
+        let scale_mode_attr = match matrix {
+            Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_MODE,
+            Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_MODE,
+            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_MODE,
+            Matrix::D => {
+                return Err(CublasError(
+                    sys::cublasStatus_t::CUBLAS_STATUS_INVALID_VALUE,
+                ))
+            }
+        };
+
         let scale_mode = match scale_mode {
             ScaleMode::Scalar32f => {
                 sys::cublasLtMatmulMatrixScale_t::CUBLASLT_MATMUL_MATRIX_SCALE_SCALAR_32F
@@ -257,21 +284,23 @@ impl MatmulDesc {
             }
         };
 
-        let attr = match matrix {
-            Matrix::A => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_A_SCALE_MODE,
-            Matrix::B => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_B_SCALE_MODE,
-            Matrix::C => sys::cublasLtMatmulDescAttributes_t::CUBLASLT_MATMUL_DESC_C_SCALE_MODE,
-        };
+        let scale_elems = 1;
 
         unsafe {
             result::set_matmul_desc_attribute(
                 self.handle,
-                attr,
+                scale_ptr_attr,
+                scale_ptr as *const _ as *const _,
+                mem::size_of::<f32>() * scale_elems,
+            )?;
+
+            result::set_matmul_desc_attribute(
+                self.handle,
+                scale_mode_attr,
                 (&scale_mode) as *const _ as *const _,
                 mem::size_of::<sys::cublasLtMatmulMatrixScale_t>(),
             )?;
         }
-
         Ok(())
     }
 }
@@ -579,8 +608,8 @@ pub trait Fp8Matmul<T>: MatmulShared {
         // Set transc
         matmul_desc.set_transpose(cfg.transc, Matrix::C)?;
 
-        matmul_desc.set_scale_mode(a_scale_mode, Matrix::A)?;
-        matmul_desc.set_scale_mode(b_scale_mode, Matrix::B)?;
+        matmul_desc.set_fp8_scale(a_scale, a_scale_mode, Matrix::A)?;
+        matmul_desc.set_fp8_scale(b_scale, b_scale_mode, Matrix::B)?;
 
         // Epilogue system can be leveraged to fuse add and activation operations
         //TODO bias/activation fuse
@@ -1073,21 +1102,19 @@ mod tests {
             }
         }
 
-        // FP8E4M3 maximum representable value is 448.0
-        // We add a small epsilon to avoid overflow at the boundary
+        // FP8E4M3 maximum representable value
         let fp8_max = float8::F8E4M3::MAX.to_f32();
         let epsilon = 1e-6f32;
 
-        // Calculate scale factor to map the maximum value to near the FP8 maximum
-        // If max_abs is very small, use a reasonable default scale
+        // Choose dequantization scale S so that quantized = val / S fits in FP8
         let scale = if max_abs > epsilon {
-            (fp8_max - epsilon) / max_abs
+            max_abs / (fp8_max - epsilon)
         } else {
             1.0f32
         };
 
-        // Apply scaling and convert to FP8
-        let y = a.map(|row| row.map(|val| float8::F8E4M3::from_f32(val * scale)));
+        // Quantize: divide by scale, then convert to FP8
+        let y = a.map(|row| row.map(|val| float8::F8E4M3::from_f32(val / scale)));
 
         (scale, y)
     }
