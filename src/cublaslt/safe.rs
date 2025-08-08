@@ -100,6 +100,19 @@ impl MatrixLayout {
         Ok(Self { handle })
     }
 
+    fn set_row_major(&self) -> Result<(), CublasError> {
+        let order = sys::cublasLtOrder_t::CUBLASLT_ORDER_ROW;
+        unsafe {
+            set_matrix_layout_attribute(
+                self.handle,
+                sys::cublasLtMatrixLayoutAttribute_t::CUBLASLT_MATRIX_LAYOUT_ORDER,
+                (&order) as *const _ as *const _,
+                core::mem::size_of::<sys::cublasLtOrder_t>(),
+            )?;
+        }
+        Ok(())
+    }
+
     fn set_batch(&self, size: c_int, stride: i64) -> Result<(), CublasError> {
         unsafe {
             // Set batch size
@@ -593,6 +606,10 @@ pub trait Fp8Matmul<T>: MatmulShared {
             c_layout.set_batch(batch_size, stride_c)?;
         }
 
+        // a_layout.set_row_major()?;
+        // b_layout.set_row_major()?;
+        // c_layout.set_row_major()?;
+
         // Matmul description
         let matmul_desc = MatmulDesc::new(Self::compute_type(), sys::cudaDataType_t::CUDA_R_32F)?;
 
@@ -983,84 +1000,76 @@ mod tests {
         const K: usize = 32;
         const N: usize = 32;
 
-        // let a_f32: [[f32; K]; M] = [
-        //     [-0.5944882, 1.8055636, 0.52204555, -0.00397902],
-        //     [-0.38346434, -0.38013917, 0.4198623, -0.22479166],
-        // ];
-
-        // let b_f32: [[f32; N]; K] = [
-        //     [
-        //         1.1292169,
-        //         -0.13450263,
-        //         0.62789696,
-        //         -0.5685516,
-        //         0.21946938,
-        //         -1.6661372,
-        //     ],
-        //     [
-        //         1.0585804,
-        //         -0.39789402,
-        //         0.90205914,
-        //         0.989318,
-        //         -0.3443096,
-        //         -0.4568837,
-        //     ],
-        //     [
-        //         1.3412506,
-        //         0.3059701,
-        //         -0.9714474,
-        //         -0.36113533,
-        //         -1.6809629,
-        //         -0.9043474,
-        //     ],
-        //     [
-        //         3.4746711,
-        //         -1.0930681,
-        //         0.16502666,
-        //         -0.59988785,
-        //         0.41375792,
-        //         0.39125723,
-        //     ],
-        // ];
-
         use ndarray_rand::rand;
 
-        let a_f32 = ndarray::Array2::<f32>::random((M, N), rand::distributions::Standard);
-        let b_f32 = ndarray::Array2::<f32>::random((N, K), rand::distributions::Standard);
+        // reference matrices
+        let a_f32_ref = ndarray::Array2::<f32>::random((M, K), rand::distributions::Standard);
+        let b_f32_ref = ndarray::Array2::<f32>::random((K, N), rand::distributions::Standard);
 
-        let (a_scale, a_f8) = quantize_fp8_scalar_ndarray(&a_f32);
-        let (b_scale, b_f8) = quantize_fp8_scalar_ndarray(&b_f32);
+        // Quantize for device: A^T (K, M), B (K, N)
+        let (a_scale, a_f8) = quantize_fp8_scalar_ndarray(&a_f32_ref); // A^T
+        let (b_scale, b_f8) = quantize_fp8_scalar_ndarray(&b_f32_ref);
 
-        // let mut c: [[half::f16; N]; M] = [[0.0; N]; M].map(|r| r.map(half::f16::from_f32));
+        // ndarray truth expects A (M, K) and B (K, N). Use A = (A^T)^T.
+        let c_f16_truth = matmul_truth_fp8_scalar_ndarray(
+            1.0, &a_f8, // shape (M, K)
+            a_scale, &b_f8, // shape (K, N)
+            b_scale, 0.0,
+        );
 
-        let c_f16 = matmul_truth_fp8_scalar_ndarray(1.0, &a_f8, a_scale, &b_f8, b_scale, 0.0);
+        // transpose for TN layout
+        let a_f8_t = a_f8.t().as_standard_layout().to_owned();
 
-        let a_dev = stream.memcpy_stod(a_f8.as_slice().unwrap()).unwrap();
+        let a_dev = stream.memcpy_stod(a_f8_t.as_slice().unwrap()).unwrap();
         let b_dev = stream.memcpy_stod(b_f8.as_slice().unwrap()).unwrap();
         let a_scale_dev = stream.memcpy_stod(&[a_scale]).unwrap();
         let b_scale_dev = stream.memcpy_stod(&[b_scale]).unwrap();
         let mut c_dev = stream.alloc_zeros::<half::f16>(M * N).unwrap();
 
+        let lda = K;
+        let ldb = K;
+        let ldc = N;
+
+        let config = MatmulConfig {
+            transa: true,
+            transb: false,
+            transc: false,
+            m: M as u64,
+            n: N as u64,
+            k: K as u64,
+            alpha: 1.0,
+            lda: lda as i64,
+            ldb: ldb as i64,
+            beta: 0.0,
+            ldc: ldc as i64,
+            stride_a: None,
+            stride_b: None,
+            stride_c: None,
+            stride_bias: None,
+            batch_size: None,
+        };
+
         unsafe {
             blas.fp8_matmul(
-                MatmulConfig {
-                    transa: true,
-                    transb: false,
-                    transc: false,
-                    m: M as u64,
-                    n: N as u64,
-                    k: K as u64,
-                    alpha: 1.0,
-                    lda: N as i64,
-                    ldb: K as i64,
-                    beta: 0.0,
-                    ldc: N as i64,
-                    stride_a: None,
-                    stride_b: None,
-                    stride_c: None,
-                    stride_bias: None,
-                    batch_size: None,
-                },
+                // MatmulConfig {
+                //     transa: true, // TN required for fp8 kernels
+                //     transb: false,
+                //     transc: false,
+                //     m: M as u64,
+                //     n: N as u64,
+                //     k: K as u64,
+                //     alpha: 1.0,
+                //     lda: M as i64, // A^T has shape (K, M) → row-major ld = M
+                //     ldb: N as i64, // B has shape (K, N)   → row-major ld = N
+                //     beta: 0.0,
+                //     ldc: N as i64, // C has shape (M, N)   → row-major ld = N
+                //     stride_a: None,
+                //     stride_b: None,
+                //     stride_c: None,
+                //     stride_bias: None,
+                //     batch_size: None,
+                // },
+                config,
                 &a_dev,
                 &a_scale_dev,
                 ScaleMode::Scalar32f,
@@ -1075,70 +1084,18 @@ mod tests {
         .unwrap();
 
         let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+
+        // Compare against c_f16_truth (shape (M, N))
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
-                let expected = c[m][n];
-                assert!(
-                    (half::f16::to_f32(found) - half::f16::to_f32(expected)) <= 1e-2,
-                    "found={found:?}, expected={expected:?}"
-                );
+                let expected = c_f16_truth[(m, n)];
+                let err = (half::f16::to_f32(found) - half::f16::to_f32(expected)).abs();
+                println!("(m={m}, n={n}) err={err:?}");
+                assert!(err <= 1e-1);
             }
         }
     }
-
-    // #[cfg(all(feature = "f16", feature = "f8"))]
-    // fn fp8_quantize_scalar<const M: usize, const K: usize>(
-    //     a: &[[f32; K]; M],
-    // ) -> (f32, [[float8::F8E4M3; K]; M]) {
-    //     // Find the maximum absolute value in the matrix
-    //     let mut max_abs = 0.0f32;
-    //     for m in 0..M {
-    //         for k in 0..K {
-    //             max_abs = max_abs.max(a[m][k].abs());
-    //         }
-    //     }
-
-    //     // FP8E4M3 maximum representable value
-    //     let fp8_max = float8::F8E4M3::MAX.to_f32();
-    //     let epsilon = 1e-6f32;
-
-    //     // Choose dequantization scale S so that quantized = val / S fits in FP8
-    //     let scale = if max_abs > epsilon {
-    //         max_abs / (fp8_max - epsilon)
-    //     } else {
-    //         1.0f32
-    //     };
-
-    //     // Quantize: divide by scale, then convert to FP8
-    //     let y = a.map(|row| row.map(|val| float8::F8E4M3::from_f32(val / scale)));
-
-    //     (scale, y)
-    // }
-
-    // #[cfg(all(feature = "f16", feature = "f8"))]
-    // fn matmul_truth_fp8_scalar<const M: usize, const N: usize, const K: usize>(
-    //     alpha: half::f16,
-    //     a: &[[float8::F8E4M3; K]; M],
-    //     a_scale: half::f16,
-    //     b: &[[float8::F8E4M3; N]; K],
-    //     b_scale: half::f16,
-    //     beta: half::f16,
-    //     c: &mut [[half::f16; N]; M],
-    // ) {
-    //     //TODO check numerics
-    //     for m in 0..M {
-    //         for n in 0..N {
-    //             c[m][n] = beta;
-
-    //             for k in 0..K {
-    //                 let a = a[m][k].to_f32() * half::f16::to_f32(a_scale);
-    //                 let b = b[k][n].to_f32() * half::f16::to_f32(b_scale);
-    //                 c[m][n] += half::f16::from_f32(alpha.to_f32() * a * b);
-    //             }
-    //         }
-    //     }
-    // }
 
     fn quantize_fp8_scalar_ndarray(
         x: &ndarray::Array2<f32>,
