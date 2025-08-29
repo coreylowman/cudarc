@@ -111,7 +111,18 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^nvrtc.*".to_string()],
                 vars: vec!["^nvrtc.*".to_string()],
             },
-            blocklist: Filters::none(),
+            blocklist: Filters {
+                // NOTE: see https://github.com/coreylowman/cudarc/pull/431
+                types: vec![],
+                functions: vec![
+                    "nvrtcGetPCHCreateStatus".to_string(),
+                    "nvrtcGetPCHHeapSize".to_string(),
+                    "nvrtcGetPCHHeapSizeRequired".to_string(),
+                    "nvrtcSetFlowCallback".to_string(),
+                    "nvrtcSetPCHHeapSize".to_string(),
+                ],
+                vars: vec![],
+            },
             libs: vec!["nvrtc".to_string()],
         },
         ModuleConfig {
