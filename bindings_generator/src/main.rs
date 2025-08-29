@@ -528,10 +528,16 @@ fn generate_cudnn(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let url = "https://developer.download.nvidia.com/compute/cudnn/redist/";
-    let (major, minor, patch) = (9, 8, 0);
 
     let cuda_name = &module.redist_name;
     let (cuda_major, _, _) = get_version(cuda_version)?;
+
+    let (major, minor, patch) = match cuda_major {
+        11 => (9, 10, 2), // NOTE: this is the last cudnn version that supports cuda 11
+        12 => (9, 12, 0),
+        13 => (9, 12, 0),
+        _ => return Err(anyhow::anyhow!("Unknown cuda version {}", cuda_major)),
+    };
 
     let data = download::cuda_redist(major, minor, patch, url, multi_progress)?;
     let lib = &data[cuda_name]["linux-x86_64"];
