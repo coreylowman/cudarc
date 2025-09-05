@@ -32,6 +32,7 @@ features = [
     "cusolver",
     "cusolvermg",
     "cufile",
+    "cupti",
 ]
 
 [features]
@@ -39,6 +40,7 @@ default = [
     "std",
     "cublas",
     "cublaslt",
+    "cupti",
     "curand",
     "driver",
     "runtime",
@@ -79,6 +81,7 @@ cusparse = ["driver"]
 cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
 cusolvermg = ["cusolver"]
 cufile = ["driver"]
+cupti = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]
