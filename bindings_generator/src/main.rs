@@ -684,7 +684,7 @@ fn main() -> Result<()> {
     let mut cuda_versions = vec![
         "cuda-11040",
         "cuda-11050",
-        // "cuda-11060",
+        "cuda-11060",
         "cuda-11070",
         "cuda-11080",
         "cuda-12000",
@@ -696,7 +696,7 @@ fn main() -> Result<()> {
         "cuda-12060",
         "cuda-12080",
         "cuda-12090",
-        // "cuda-13000",
+        "cuda-13000",
     ];
     if let Some(version) = args.version {
         cuda_versions.retain(|&v| v == version);

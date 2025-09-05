@@ -73,12 +73,10 @@ fn main() -> Result<(), CuptiError> {
     }
 
     // Step 2: set activity API buffer callbacks
-    unsafe {
-        cupti::result::activity::register_callbacks(
-            Some(buffer_requested_callback),
-            Some(buffer_complete_callback),
-        )?;
-    }
+    cupti::result::activity::register_callbacks(
+        Some(buffer_requested_callback),
+        Some(buffer_complete_callback),
+    )?;
 
     // Step 3: enable events of some kind
     cupti::result::activity::enable(cupti::sys::CUpti_ActivityKind::CUPTI_ACTIVITY_KIND_RUNTIME)?;
@@ -86,7 +84,7 @@ fn main() -> Result<(), CuptiError> {
     // Step 4: do something with cuda
     let device_count =
         cudarc::runtime::result::device::get_count().expect("couldn't get device count");
-    println!("Device count: {device_count}");
+    println!("device count: {device_count}");
 
     // Step 5: flush and observe the callbacks printing stuff on stdout
     //
