@@ -240,6 +240,17 @@ fn create_modules() -> Vec<ModuleConfig> {
             blocklist: Filters::none(),
             libs: vec!["cufile".to_string()],
         },
+        ModuleConfig {
+            cudarc_name: "cupti".to_string(),
+            redist_name: "cuda_cupti".to_string(),
+            allowlist: Filters {
+                types: vec!["^[Cc][Uu][Pp][Tt][Ii].*".to_string()],
+                functions: vec!["^cupti.*".to_string()],
+                vars: vec![],
+            },
+            blocklist: Filters::none(),
+            libs: vec!["cupti".to_string()],
+        },
     ]
 }
 
