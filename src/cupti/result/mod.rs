@@ -22,11 +22,11 @@ impl sys::CUptiResult {
 impl CuptiError {
     /// Gets the error string for this error.
     ///
-    /// See [cuptiGetErrorMessage()](https://docs.nvidia.com/cupti/api/group__CUPTI__RESULT__API.html?highlight=cuptiGetErrorMessage#_CPPv420cuptiGetErrorMessage11CUptiResultPPKc)
+    /// See [cuptiGetResultString()](https://docs.nvidia.com/cupti/api/group__CUPTI__RESULT__API.html?highlight=cuptiGetErrorMessage#_CPPv420cuptiGetErrorMessage11CUptiResultPPKc)
     pub fn error_string(&self) -> Result<&CStr, CuptiError> {
         let mut err_str = std::ptr::null();
         unsafe {
-            sys::cuptiGetErrorMessage(self.0, &mut err_str).result()?;
+            sys::cuptiGetResultString(self.0, &mut err_str).result()?;
             Ok(CStr::from_ptr(err_str))
         }
     }
@@ -137,6 +137,14 @@ pub unsafe fn get_device_id(
 ///
 /// # Safety
 /// P ID must exist.
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub unsafe fn get_graph_exec_id(
     graph_exec: sys::CUgraphExec,
     p_id: *mut u32,
