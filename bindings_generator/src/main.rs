@@ -246,7 +246,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             allowlist: Filters {
                 types: vec!["^[Cc][Uu][Pp][Tt][Ii].*".to_string()],
                 functions: vec!["^cupti.*".to_string()],
-                vars: vec![],
+                vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*".to_string()],
             },
             blocklist: Filters::none(),
             libs: vec!["cupti".to_string()],

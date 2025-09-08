@@ -7,123 +7,171 @@ extern crate alloc;
 #[cfg(feature = "no-std")]
 extern crate no_std_compat as std;
 pub use self::CUaccessProperty_enum as CUaccessProperty;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUclusterSchedulingPolicy_enum as CUclusterSchedulingPolicy;
 pub use self::CUdevice_attribute_enum as CUdevice_attribute;
 pub use self::CUgraphNodeType_enum as CUgraphNodeType;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUlaunchAttributeID as CUstreamAttrID;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUlaunchAttributeID_enum as CUlaunchAttributeID;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUlaunchMemSyncDomain_enum as CUlaunchMemSyncDomain;
 pub use self::CUpti_driver_api_trace_cbid_enum as CUpti_driver_api_trace_cbid;
 pub use self::CUpti_runtime_api_trace_cbid_enum as CUpti_runtime_api_trace_cbid;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub use self::CUsynchronizationPolicy_enum as CUsynchronizationPolicy;
+pub const CUPTILP64: u32 = 1;
+#[cfg(any(feature = "cuda-11040"))]
+pub const CUPTI_API_VERSION: u32 = 14;
+#[cfg(any(feature = "cuda-11050", feature = "cuda-11060"))]
+pub const CUPTI_API_VERSION: u32 = 16;
+#[cfg(any(feature = "cuda-11070"))]
+pub const CUPTI_API_VERSION: u32 = 17;
+#[cfg(any(feature = "cuda-11080", feature = "cuda-12000", feature = "cuda-12010"))]
+pub const CUPTI_API_VERSION: u32 = 18;
+#[cfg(any(feature = "cuda-12020"))]
+pub const CUPTI_API_VERSION: u32 = 20;
+#[cfg(any(feature = "cuda-12030"))]
+pub const CUPTI_API_VERSION: u32 = 21;
+#[cfg(any(feature = "cuda-12040"))]
+pub const CUPTI_API_VERSION: u32 = 22;
+#[cfg(any(feature = "cuda-12050"))]
+pub const CUPTI_API_VERSION: u32 = 23;
+#[cfg(any(feature = "cuda-12060"))]
+pub const CUPTI_API_VERSION: u32 = 24;
+#[cfg(any(feature = "cuda-12080"))]
+pub const CUPTI_API_VERSION: u32 = 26;
+#[cfg(any(feature = "cuda-12090"))]
+pub const CUPTI_API_VERSION: u32 = 28;
+pub const CUPTI_AUTO_BOOST_INVALID_CLIENT_PID: u32 = 0;
+pub const CUPTI_CORRELATION_ID_UNKNOWN: u32 = 0;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+pub const CUPTI_DECOMPRESSED_BYTES_UNKNOWN: u32 = 0;
+pub const CUPTI_FUNCTION_INDEX_ID_INVALID: u32 = 0;
+pub const CUPTI_GRID_ID_UNKNOWN: u32 = 0;
+pub const CUPTI_MAX_GPUS: u32 = 32;
+#[cfg(any(feature = "cuda-11040"))]
+pub const CUPTI_MAX_NVLINK_PORTS: u32 = 16;
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+pub const CUPTI_MAX_NVLINK_PORTS: u32 = 32;
+pub const CUPTI_NVLINK_INVALID_PORT: i32 = -1;
+pub const CUPTI_SOURCE_LOCATOR_ID_UNKNOWN: u32 = 0;
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
+pub const CUPTI_SYNCHRONIZATION_INVALID_VALUE: i32 = -1;
+pub const CUPTI_TIMESTAMP_UNKNOWN: u32 = 0;
 pub type CUaccessPolicyWindow = CUaccessPolicyWindow_v1;
 pub type CUaccessPolicyWindow_v1 = CUaccessPolicyWindow_st;
 pub type CUcontext = *mut CUctx_st;
 pub type CUdevice = CUdevice_v1;
 pub type CUdevice_v1 = ::core::ffi::c_int;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUevent = *mut CUevent_st;
 pub type CUgraph = *mut CUgraph_st;
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUgraphDeviceNode = *mut CUgraphDeviceUpdatableNode_st;
 pub type CUgraphExec = *mut CUgraphExec_st;
 pub type CUgraphNode = *mut CUgraphNode_st;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUlaunchAttributeValue = CUlaunchAttributeValue_union;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUlaunchMemSyncDomainMap = CUlaunchMemSyncDomainMap_st;
 pub type CUpti_ActivityMemcpy2 = CUpti_ActivityMemcpyPtoP;
 pub type CUpti_BuffersCallbackCompleteFunc = ::core::option::Option<
@@ -136,11 +184,7 @@ pub type CUpti_BuffersCallbackCompleteFunc = ::core::option::Option<
     ),
 >;
 pub type CUpti_BuffersCallbackRequestFunc = ::core::option::Option<
-    unsafe extern "C" fn(
-        buffer: *mut *mut u8,
-        size: *mut usize,
-        maxNumRecords: *mut usize,
-    ),
+    unsafe extern "C" fn(buffer: *mut *mut u8, size: *mut usize, maxNumRecords: *mut usize),
 >;
 pub type CUpti_CallbackFunc = ::core::option::Option<
     unsafe extern "C" fn(
@@ -164,48 +208,41 @@ pub type CUpti_KernelReplayUpdateFunc = ::core::option::Option<
 >;
 pub type CUpti_MetricID = u32;
 pub type CUpti_SubscriberHandle = *mut CUpti_Subscriber_st;
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
-pub type CUpti_TimestampCallbackFunc = ::core::option::Option<
-    unsafe extern "C" fn() -> u64,
->;
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
+pub type CUpti_TimestampCallbackFunc = ::core::option::Option<unsafe extern "C" fn() -> u64>;
 pub type CUstream = *mut CUstream_st;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUstreamAttrValue = CUstreamAttrValue_v1;
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 pub type CUstreamAttrValue_v1 = CUlaunchAttributeValue;
 pub type CUuuid = CUuuid_st;
 #[repr(u32)]
@@ -215,17 +252,15 @@ pub enum CUaccessProperty_enum {
     CU_ACCESS_PROPERTY_STREAMING = 1,
     CU_ACCESS_PROPERTY_PERSISTING = 2,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUclusterSchedulingPolicy_enum {
@@ -357,6 +392,132 @@ pub enum CUdevice_attribute_enum {
     CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WRITES_ORDERING = 118,
     CU_DEVICE_ATTRIBUTE_MEMPOOL_SUPPORTED_HANDLE_TYPES = 119,
     CU_DEVICE_ATTRIBUTE_MAX = 120,
+}
+#[cfg(any(feature = "cuda-11060"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUdevice_attribute_enum {
+    CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK = 1,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X = 2,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y = 3,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z = 4,
+    CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X = 5,
+    CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y = 6,
+    CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z = 7,
+    CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK = 8,
+    CU_DEVICE_ATTRIBUTE_TOTAL_CONSTANT_MEMORY = 9,
+    CU_DEVICE_ATTRIBUTE_WARP_SIZE = 10,
+    CU_DEVICE_ATTRIBUTE_MAX_PITCH = 11,
+    CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK = 12,
+    CU_DEVICE_ATTRIBUTE_CLOCK_RATE = 13,
+    CU_DEVICE_ATTRIBUTE_TEXTURE_ALIGNMENT = 14,
+    CU_DEVICE_ATTRIBUTE_GPU_OVERLAP = 15,
+    CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT = 16,
+    CU_DEVICE_ATTRIBUTE_KERNEL_EXEC_TIMEOUT = 17,
+    CU_DEVICE_ATTRIBUTE_INTEGRATED = 18,
+    CU_DEVICE_ATTRIBUTE_CAN_MAP_HOST_MEMORY = 19,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_MODE = 20,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_WIDTH = 21,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_WIDTH = 22,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_HEIGHT = 23,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH = 24,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT = 25,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH = 26,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH = 27,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT = 28,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS = 29,
+    CU_DEVICE_ATTRIBUTE_SURFACE_ALIGNMENT = 30,
+    CU_DEVICE_ATTRIBUTE_CONCURRENT_KERNELS = 31,
+    CU_DEVICE_ATTRIBUTE_ECC_ENABLED = 32,
+    CU_DEVICE_ATTRIBUTE_PCI_BUS_ID = 33,
+    CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID = 34,
+    CU_DEVICE_ATTRIBUTE_TCC_DRIVER = 35,
+    CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE = 36,
+    CU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH = 37,
+    CU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE = 38,
+    CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR = 39,
+    CU_DEVICE_ATTRIBUTE_ASYNC_ENGINE_COUNT = 40,
+    CU_DEVICE_ATTRIBUTE_UNIFIED_ADDRESSING = 41,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_WIDTH = 42,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_LAYERS = 43,
+    CU_DEVICE_ATTRIBUTE_CAN_TEX2D_GATHER = 44,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_WIDTH = 45,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_HEIGHT = 46,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH_ALTERNATE = 47,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT_ALTERNATE = 48,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH_ALTERNATE = 49,
+    CU_DEVICE_ATTRIBUTE_PCI_DOMAIN_ID = 50,
+    CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT = 51,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_WIDTH = 52,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_WIDTH = 53,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_LAYERS = 54,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_WIDTH = 55,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_WIDTH = 56,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_HEIGHT = 57,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_WIDTH = 58,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_HEIGHT = 59,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_DEPTH = 60,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_WIDTH = 61,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_LAYERS = 62,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_WIDTH = 63,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_HEIGHT = 64,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_LAYERS = 65,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_WIDTH = 66,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_WIDTH = 67,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_LAYERS = 68,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LINEAR_WIDTH = 69,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_WIDTH = 70,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_HEIGHT = 71,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_PITCH = 72,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_WIDTH = 73,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_HEIGHT = 74,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR = 75,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR = 76,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_MIPMAPPED_WIDTH = 77,
+    CU_DEVICE_ATTRIBUTE_STREAM_PRIORITIES_SUPPORTED = 78,
+    CU_DEVICE_ATTRIBUTE_GLOBAL_L1_CACHE_SUPPORTED = 79,
+    CU_DEVICE_ATTRIBUTE_LOCAL_L1_CACHE_SUPPORTED = 80,
+    CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_MULTIPROCESSOR = 81,
+    CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_MULTIPROCESSOR = 82,
+    CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY = 83,
+    CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD = 84,
+    CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD_GROUP_ID = 85,
+    CU_DEVICE_ATTRIBUTE_HOST_NATIVE_ATOMIC_SUPPORTED = 86,
+    CU_DEVICE_ATTRIBUTE_SINGLE_TO_DOUBLE_PRECISION_PERF_RATIO = 87,
+    CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS = 88,
+    CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS = 89,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_PREEMPTION_SUPPORTED = 90,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_HOST_POINTER_FOR_REGISTERED_MEM = 91,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_MEM_OPS = 92,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_64_BIT_STREAM_MEM_OPS = 93,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_WAIT_VALUE_NOR = 94,
+    CU_DEVICE_ATTRIBUTE_COOPERATIVE_LAUNCH = 95,
+    CU_DEVICE_ATTRIBUTE_COOPERATIVE_MULTI_DEVICE_LAUNCH = 96,
+    CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK_OPTIN = 97,
+    CU_DEVICE_ATTRIBUTE_CAN_FLUSH_REMOTE_WRITES = 98,
+    CU_DEVICE_ATTRIBUTE_HOST_REGISTER_SUPPORTED = 99,
+    CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES = 100,
+    CU_DEVICE_ATTRIBUTE_DIRECT_MANAGED_MEM_ACCESS_FROM_HOST = 101,
+    CU_DEVICE_ATTRIBUTE_VIRTUAL_ADDRESS_MANAGEMENT_SUPPORTED = 102,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_POSIX_FILE_DESCRIPTOR_SUPPORTED = 103,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_HANDLE_SUPPORTED = 104,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_KMT_HANDLE_SUPPORTED = 105,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCKS_PER_MULTIPROCESSOR = 106,
+    CU_DEVICE_ATTRIBUTE_GENERIC_COMPRESSION_SUPPORTED = 107,
+    CU_DEVICE_ATTRIBUTE_MAX_PERSISTING_L2_CACHE_SIZE = 108,
+    CU_DEVICE_ATTRIBUTE_MAX_ACCESS_POLICY_WINDOW_SIZE = 109,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WITH_CUDA_VMM_SUPPORTED = 110,
+    CU_DEVICE_ATTRIBUTE_RESERVED_SHARED_MEMORY_PER_BLOCK = 111,
+    CU_DEVICE_ATTRIBUTE_SPARSE_CUDA_ARRAY_SUPPORTED = 112,
+    CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED = 113,
+    CU_DEVICE_ATTRIBUTE_TIMELINE_SEMAPHORE_INTEROP_SUPPORTED = 114,
+    CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED = 115,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_SUPPORTED = 116,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_FLUSH_WRITES_OPTIONS = 117,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WRITES_ORDERING = 118,
+    CU_DEVICE_ATTRIBUTE_MEMPOOL_SUPPORTED_HANDLE_TYPES = 119,
+    CU_DEVICE_ATTRIBUTE_DEFERRED_MAPPING_CUDA_ARRAY_SUPPORTED = 121,
+    CU_DEVICE_ATTRIBUTE_MAX = 122,
 }
 #[cfg(any(feature = "cuda-11070"))]
 #[repr(u32)]
@@ -1600,7 +1761,7 @@ pub enum CUdevice_attribute_enum {
     CU_DEVICE_ATTRIBUTE_HOST_NUMA_MULTINODE_IPC_SUPPORTED = 143,
     CU_DEVICE_ATTRIBUTE_MAX = 144,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUgraphNodeType_enum {
@@ -1617,15 +1778,13 @@ pub enum CUgraphNodeType_enum {
     CU_GRAPH_NODE_TYPE_MEM_ALLOC = 10,
     CU_GRAPH_NODE_TYPE_MEM_FREE = 11,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUgraphNodeType_enum {
@@ -1643,16 +1802,14 @@ pub enum CUgraphNodeType_enum {
     CU_GRAPH_NODE_TYPE_MEM_FREE = 11,
     CU_GRAPH_NODE_TYPE_BATCH_MEM_OP = 12,
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUgraphNodeType_enum {
@@ -1761,17 +1918,15 @@ pub enum CUlaunchAttributeID_enum {
     CU_LAUNCH_ATTRIBUTE_DEVICE_UPDATABLE_KERNEL_NODE = 13,
     CU_LAUNCH_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT = 14,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUlaunchMemSyncDomain_enum {
@@ -1827,20 +1982,19 @@ pub enum CUptiResult {
     CUPTI_ERROR_UNKNOWN = 999,
     CUPTI_ERROR_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUptiResult {
@@ -1943,17 +2097,16 @@ pub enum CUptiResult {
     CUPTI_ERROR_UNKNOWN = 999,
     CUPTI_ERROR_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityAttribute {
@@ -1968,15 +2121,13 @@ pub enum CUpti_ActivityAttribute {
     CUPTI_ACTIVITY_ATTR_MEM_ALLOCATION_TYPE_HOST_PINNED = 8,
     CUPTI_ACTIVITY_ATTR_DEVICE_BUFFER_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityAttribute {
@@ -2071,20 +2222,18 @@ pub enum CUpti_ActivityInstructionClass {
     CUPTI_ACTIVITY_INSTRUCTION_CLASS_UNIFORM = 20,
     CUPTI_ACTIVITY_INSTRUCTION_CLASS_KIND_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityJitEntryType {
@@ -2093,20 +2242,18 @@ pub enum CUpti_ActivityJitEntryType {
     CUPTI_ACTIVITY_JIT_ENTRY_NVVM_IR_TO_PTX = 2,
     CUPTI_ACTIVITY_JIT_ENTRY_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityJitOperationType {
@@ -2116,7 +2263,7 @@ pub enum CUpti_ActivityJitOperationType {
     CUPTI_ACTIVITY_JIT_OPERATION_COMPILE = 3,
     CUPTI_ACTIVITY_JIT_OPERATION_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
+#[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityKind {
@@ -2233,18 +2380,16 @@ pub enum CUpti_ActivityKind {
     CUPTI_ACTIVITY_KIND_COUNT = 52,
     CUPTI_ACTIVITY_KIND_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityKind {
@@ -2429,14 +2574,13 @@ pub enum CUpti_ActivityKind {
     CUPTI_ACTIVITY_KIND_COUNT = 56,
     CUPTI_ACTIVITY_KIND_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityLaunchType {
@@ -2444,19 +2588,17 @@ pub enum CUpti_ActivityLaunchType {
     CUPTI_ACTIVITY_LAUNCH_TYPE_COOPERATIVE_SINGLE_DEVICE = 1,
     CUPTI_ACTIVITY_LAUNCH_TYPE_COOPERATIVE_MULTI_DEVICE = 2,
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityLaunchType {
@@ -2530,17 +2672,16 @@ pub enum CUpti_ActivityObjectKind {
     CUPTI_ACTIVITY_OBJECT_STREAM = 5,
     CUPTI_ACTIVITY_OBJECT_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityOverheadKind {
@@ -2675,18 +2816,17 @@ pub enum CUpti_ActivitySynchronizationType {
     CUPTI_ACTIVITY_SYNCHRONIZATION_TYPE_CONTEXT_SYNCHRONIZE = 4,
     CUPTI_ACTIVITY_SYNCHRONIZATION_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityThreadIdType {
@@ -2694,15 +2834,13 @@ pub enum CUpti_ActivityThreadIdType {
     CUPTI_ACTIVITY_THREAD_ID_TYPE_SYSTEM = 1,
     CUPTI_ACTIVITY_THREAD_ID_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityThreadIdType {
@@ -2771,16 +2909,15 @@ pub enum CUpti_ApiCallbackSite {
     CUPTI_API_EXIT = 1,
     CUPTI_API_CBSITE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_CallbackDomain {
@@ -2793,17 +2930,15 @@ pub enum CUpti_CallbackDomain {
     CUPTI_CB_DOMAIN_SIZE = 6,
     CUPTI_CB_DOMAIN_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_CallbackDomain {
@@ -2817,16 +2952,15 @@ pub enum CUpti_CallbackDomain {
     CUPTI_CB_DOMAIN_SIZE = 7,
     CUPTI_CB_DOMAIN_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_CallbackIdResource {
@@ -2854,17 +2988,15 @@ pub enum CUpti_CallbackIdResource {
     CUPTI_CBID_RESOURCE_SIZE = 21,
     CUPTI_CBID_RESOURCE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_CallbackIdResource {
@@ -2893,17 +3025,15 @@ pub enum CUpti_CallbackIdResource {
     CUPTI_CBID_RESOURCE_SIZE = 22,
     CUPTI_CBID_RESOURCE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_CallbackIdState {
@@ -2923,18 +3053,17 @@ pub enum CUpti_CallbackIdSync {
     CUPTI_CBID_SYNCHRONIZE_SIZE = 3,
     CUPTI_CBID_SYNCHRONIZE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ChannelType {
@@ -2971,14 +3100,12 @@ pub enum CUpti_ConfidentialComputeRotationEventType {
     CUPTI_CONFIDENTIAL_COMPUTE_KEY_ROTATION_CHANNEL_UNBLOCKED = 3,
     CUPTI_CONFIDENTIAL_COMPUTE_EVENT_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ContextCigMode {
@@ -3293,21 +3420,20 @@ pub enum CUpti_PcieDeviceType {
     CUPTI_PCIE_DEVICE_TYPE_BRIDGE = 1,
     CUPTI_PCIE_DEVICE_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-11040",
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_PcieGen {
@@ -3991,6 +4117,669 @@ pub enum CUpti_driver_api_trace_cbid_enum {
     CUPTI_DRIVER_TRACE_CBID_cuGraphMemAllocNodeGetParams = 648,
     CUPTI_DRIVER_TRACE_CBID_cuGraphMemFreeNodeGetParams = 649,
     CUPTI_DRIVER_TRACE_CBID_SIZE = 650,
+    CUPTI_DRIVER_TRACE_CBID_FORCE_INT = 2147483647,
+}
+#[cfg(any(feature = "cuda-11060"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUpti_driver_api_trace_cbid_enum {
+    CUPTI_DRIVER_TRACE_CBID_INVALID = 0,
+    CUPTI_DRIVER_TRACE_CBID_cuInit = 1,
+    CUPTI_DRIVER_TRACE_CBID_cuDriverGetVersion = 2,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGet = 3,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetCount = 4,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetName = 5,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceComputeCapability = 6,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceTotalMem = 7,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetProperties = 8,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetAttribute = 9,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate = 10,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDestroy = 11,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxAttach = 12,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDetach = 13,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPushCurrent = 14,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPopCurrent = 15,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetDevice = 16,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSynchronize = 17,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoad = 18,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoadData = 19,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoadDataEx = 20,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoadFatBinary = 21,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleUnload = 22,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetFunction = 23,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetGlobal = 24,
+    CUPTI_DRIVER_TRACE_CBID_cu64ModuleGetGlobal = 25,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetTexRef = 26,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetInfo = 27,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemGetInfo = 28,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAlloc = 29,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemAlloc = 30,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocPitch = 31,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemAllocPitch = 32,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFree = 33,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemFree = 34,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAddressRange = 35,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemGetAddressRange = 36,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocHost = 37,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFreeHost = 38,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostAlloc = 39,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostGetDevicePointer = 40,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemHostGetDevicePointer = 41,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostGetFlags = 42,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoD = 43,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyHtoD = 44,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoH = 45,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoH = 46,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoD = 47,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoD = 48,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoA = 49,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoA = 50,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoD = 51,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyAtoD = 52,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoA = 53,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoH = 54,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoA = 55,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2D = 56,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DUnaligned = 57,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3D = 58,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy3D = 59,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoDAsync = 60,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyHtoDAsync = 61,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoHAsync = 62,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoHAsync = 63,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoDAsync = 64,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoDAsync = 65,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoAAsync = 66,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoHAsync = 67,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DAsync = 68,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DAsync = 69,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy3DAsync = 70,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8 = 71,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD8 = 72,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16 = 73,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD16 = 74,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32 = 75,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD32 = 76,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8 = 77,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D8 = 78,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16 = 79,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D16 = 80,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32 = 81,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D32 = 82,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetBlockShape = 83,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetSharedSize = 84,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncGetAttribute = 85,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetCacheConfig = 86,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayCreate = 87,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetDescriptor = 88,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayDestroy = 89,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DCreate = 90,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DGetDescriptor = 91,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefCreate = 92,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefDestroy = 93,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetArray = 94,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress = 95,
+    CUPTI_DRIVER_TRACE_CBID_cu64TexRefSetAddress = 96,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress2D = 97,
+    CUPTI_DRIVER_TRACE_CBID_cu64TexRefSetAddress2D = 98,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetFormat = 99,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddressMode = 100,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetFilterMode = 101,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetFlags = 102,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetAddress = 103,
+    CUPTI_DRIVER_TRACE_CBID_cu64TexRefGetAddress = 104,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetArray = 105,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetAddressMode = 106,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetFilterMode = 107,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetFormat = 108,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetFlags = 109,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetSize = 110,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSeti = 111,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetf = 112,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetv = 113,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetTexRef = 114,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunch = 115,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchGrid = 116,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchGridAsync = 117,
+    CUPTI_DRIVER_TRACE_CBID_cuEventCreate = 118,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecord = 119,
+    CUPTI_DRIVER_TRACE_CBID_cuEventQuery = 120,
+    CUPTI_DRIVER_TRACE_CBID_cuEventSynchronize = 121,
+    CUPTI_DRIVER_TRACE_CBID_cuEventDestroy = 122,
+    CUPTI_DRIVER_TRACE_CBID_cuEventElapsedTime = 123,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCreate = 124,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamQuery = 125,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSynchronize = 126,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamDestroy = 127,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsUnregisterResource = 128,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsSubResourceGetMappedArray = 129,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedPointer = 130,
+    CUPTI_DRIVER_TRACE_CBID_cu64GraphicsResourceGetMappedPointer = 131,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceSetMapFlags = 132,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsMapResources = 133,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsUnmapResources = 134,
+    CUPTI_DRIVER_TRACE_CBID_cuGetExportTable = 135,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetLimit = 136,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetLimit = 137,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10GetDevice = 138,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10CtxCreate = 139,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsD3D10RegisterResource = 140,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10RegisterResource = 141,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10UnregisterResource = 142,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10MapResources = 143,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10UnmapResources = 144,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceSetMapFlags = 145,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedArray = 146,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPointer = 147,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedSize = 148,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPitch = 149,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetSurfaceDimensions = 150,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11GetDevice = 151,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11CtxCreate = 152,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsD3D11RegisterResource = 153,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9GetDevice = 154,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9CtxCreate = 155,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsD3D9RegisterResource = 156,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9GetDirect3DDevice = 157,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9RegisterResource = 158,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnregisterResource = 159,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9MapResources = 160,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnmapResources = 161,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceSetMapFlags = 162,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetSurfaceDimensions = 163,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedArray = 164,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPointer = 165,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedSize = 166,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPitch = 167,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9Begin = 168,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9End = 169,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9RegisterVertexBuffer = 170,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9MapVertexBuffer = 171,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnmapVertexBuffer = 172,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnregisterVertexBuffer = 173,
+    CUPTI_DRIVER_TRACE_CBID_cuGLCtxCreate = 174,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsGLRegisterBuffer = 175,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsGLRegisterImage = 176,
+    CUPTI_DRIVER_TRACE_CBID_cuWGLGetDevice = 177,
+    CUPTI_DRIVER_TRACE_CBID_cuGLInit = 178,
+    CUPTI_DRIVER_TRACE_CBID_cuGLRegisterBufferObject = 179,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObject = 180,
+    CUPTI_DRIVER_TRACE_CBID_cuGLUnmapBufferObject = 181,
+    CUPTI_DRIVER_TRACE_CBID_cuGLUnregisterBufferObject = 182,
+    CUPTI_DRIVER_TRACE_CBID_cuGLSetBufferObjectMapFlags = 183,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObjectAsync = 184,
+    CUPTI_DRIVER_TRACE_CBID_cuGLUnmapBufferObjectAsync = 185,
+    CUPTI_DRIVER_TRACE_CBID_cuVDPAUGetDevice = 186,
+    CUPTI_DRIVER_TRACE_CBID_cuVDPAUCtxCreate = 187,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsVDPAURegisterVideoSurface = 188,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsVDPAURegisterOutputSurface = 189,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetSurfRef = 190,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefCreate = 191,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefDestroy = 192,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefSetFormat = 193,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefSetArray = 194,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefGetFormat = 195,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefGetArray = 196,
+    CUPTI_DRIVER_TRACE_CBID_cu64DeviceTotalMem = 197,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetMappedPointer = 198,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetMappedSize = 199,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetMappedPitch = 200,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetSurfaceDimensions = 201,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetSurfaceDimensions = 202,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetMappedPointer = 203,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetMappedSize = 204,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetMappedPitch = 205,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9MapVertexBuffer = 206,
+    CUPTI_DRIVER_TRACE_CBID_cu64GLMapBufferObject = 207,
+    CUPTI_DRIVER_TRACE_CBID_cu64GLMapBufferObjectAsync = 208,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11GetDevices = 209,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11CtxCreateOnDevice = 210,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10GetDevices = 211,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10CtxCreateOnDevice = 212,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9GetDevices = 213,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9CtxCreateOnDevice = 214,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemHostAlloc = 215,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8Async = 216,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD8Async = 217,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16Async = 218,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD16Async = 219,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32Async = 220,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD32Async = 221,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8Async = 222,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D8Async = 223,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16Async = 224,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D16Async = 225,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32Async = 226,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D32Async = 227,
+    CUPTI_DRIVER_TRACE_CBID_cu64ArrayCreate = 228,
+    CUPTI_DRIVER_TRACE_CBID_cu64ArrayGetDescriptor = 229,
+    CUPTI_DRIVER_TRACE_CBID_cu64Array3DCreate = 230,
+    CUPTI_DRIVER_TRACE_CBID_cu64Array3DGetDescriptor = 231,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy2D = 232,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy2DUnaligned = 233,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy2DAsync = 234,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate_v2 = 235,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10CtxCreate_v2 = 236,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11CtxCreate_v2 = 237,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9CtxCreate_v2 = 238,
+    CUPTI_DRIVER_TRACE_CBID_cuGLCtxCreate_v2 = 239,
+    CUPTI_DRIVER_TRACE_CBID_cuVDPAUCtxCreate_v2 = 240,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetGlobal_v2 = 241,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetInfo_v2 = 242,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAlloc_v2 = 243,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocPitch_v2 = 244,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFree_v2 = 245,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAddressRange_v2 = 246,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostGetDevicePointer_v2 = 247,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy_v2 = 248,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8_v2 = 249,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16_v2 = 250,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32_v2 = 251,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8_v2 = 252,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16_v2 = 253,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32_v2 = 254,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress_v2 = 255,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress2D_v2 = 256,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetAddress_v2 = 257,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedPointer_v2 = 258,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceTotalMem_v2 = 259,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPointer_v2 = 260,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedSize_v2 = 261,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPitch_v2 = 262,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetSurfaceDimensions_v2 = 263,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetSurfaceDimensions_v2 = 264,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPointer_v2 = 265,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedSize_v2 = 266,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPitch_v2 = 267,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9MapVertexBuffer_v2 = 268,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObject_v2 = 269,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObjectAsync_v2 = 270,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostAlloc_v2 = 271,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayCreate_v2 = 272,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetDescriptor_v2 = 273,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DCreate_v2 = 274,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DGetDescriptor_v2 = 275,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoD_v2 = 276,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoDAsync_v2 = 277,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoH_v2 = 278,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoHAsync_v2 = 279,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoD_v2 = 280,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoDAsync_v2 = 281,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoH_v2 = 282,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoHAsync_v2 = 283,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoD_v2 = 284,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoA_v2 = 285,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoA_v2 = 286,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2D_v2 = 287,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DUnaligned_v2 = 288,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DAsync_v2 = 289,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3D_v2 = 290,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DAsync_v2 = 291,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoA_v2 = 292,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoAAsync_v2 = 293,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocHost_v2 = 294,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitEvent = 295,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetApiVersion = 296,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10GetDirect3DDevice = 297,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11GetDirect3DDevice = 298,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetCacheConfig = 299,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetCacheConfig = 300,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostRegister = 301,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostUnregister = 302,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetCurrent = 303,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetCurrent = 304,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy = 305,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAsync = 306,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernel = 307,
+    CUPTI_DRIVER_TRACE_CBID_cuProfilerStart = 308,
+    CUPTI_DRIVER_TRACE_CBID_cuProfilerStop = 309,
+    CUPTI_DRIVER_TRACE_CBID_cuPointerGetAttribute = 310,
+    CUPTI_DRIVER_TRACE_CBID_cuProfilerInitialize = 311,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceCanAccessPeer = 312,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxEnablePeerAccess = 313,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDisablePeerAccess = 314,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPeerRegister = 315,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPeerUnregister = 316,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPeerGetDevicePointer = 317,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeer = 318,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeerAsync = 319,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeer = 320,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeerAsync = 321,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDestroy_v2 = 322,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPushCurrent_v2 = 323,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPopCurrent_v2 = 324,
+    CUPTI_DRIVER_TRACE_CBID_cuEventDestroy_v2 = 325,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamDestroy_v2 = 326,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress2D_v3 = 327,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcGetMemHandle = 328,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcOpenMemHandle = 329,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcCloseMemHandle = 330,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetByPCIBusId = 331,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetPCIBusId = 332,
+    CUPTI_DRIVER_TRACE_CBID_cuGLGetDevices = 333,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcGetEventHandle = 334,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcOpenEventHandle = 335,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetSharedMemConfig = 336,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetSharedMemConfig = 337,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetSharedMemConfig = 338,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectCreate = 339,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectDestroy = 340,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectGetResourceDesc = 341,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectGetTextureDesc = 342,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfObjectCreate = 343,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfObjectDestroy = 344,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfObjectGetResourceDesc = 345,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAddCallback = 346,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayCreate = 347,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayGetLevel = 348,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayDestroy = 349,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmappedArray = 350,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmapFilterMode = 351,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmapLevelBias = 352,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmapLevelClamp = 353,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMaxAnisotropy = 354,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmappedArray = 355,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmapFilterMode = 356,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmapLevelBias = 357,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmapLevelClamp = 358,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMaxAnisotropy = 359,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedMipmappedArray = 360,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectGetResourceViewDesc = 361,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkCreate = 362,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddData = 363,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddFile = 364,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkComplete = 365,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkDestroy = 366,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCreateWithPriority = 367,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetPriority = 368,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetFlags = 369,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetStreamPriorityRange = 370,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocManaged = 371,
+    CUPTI_DRIVER_TRACE_CBID_cuGetErrorString = 372,
+    CUPTI_DRIVER_TRACE_CBID_cuGetErrorName = 373,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxActiveBlocksPerMultiprocessor = 374,
+    CUPTI_DRIVER_TRACE_CBID_cuCompilePtx = 375,
+    CUPTI_DRIVER_TRACE_CBID_cuBinaryFree = 376,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAttachMemAsync = 377,
+    CUPTI_DRIVER_TRACE_CBID_cuPointerSetAttribute = 378,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostRegister_v2 = 379,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceSetMapFlags_v2 = 380,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkCreate_v2 = 381,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddData_v2 = 382,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddFile_v2 = 383,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxPotentialBlockSize = 384,
+    CUPTI_DRIVER_TRACE_CBID_cuGLGetDevices_v2 = 385,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxRetain = 386,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxRelease = 387,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxSetFlags = 388,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxReset = 389,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsEGLRegisterImage = 390,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetFlags = 391,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxGetState = 392,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerConnect = 393,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerDisconnect = 394,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerAcquireFrame = 395,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerReleaseFrame = 396,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoD_v2_ptds = 397,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoH_v2_ptds = 398,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoD_v2_ptds = 399,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoA_v2_ptds = 400,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoD_v2_ptds = 401,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoA_v2_ptds = 402,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoH_v2_ptds = 403,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoA_v2_ptds = 404,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2D_v2_ptds = 405,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DUnaligned_v2_ptds = 406,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3D_v2_ptds = 407,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy_ptds = 408,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeer_ptds = 409,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeer_ptds = 410,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8_v2_ptds = 411,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16_v2_ptds = 412,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32_v2_ptds = 413,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8_v2_ptds = 414,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16_v2_ptds = 415,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32_v2_ptds = 416,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObject_v2_ptds = 417,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAsync_ptsz = 418,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoAAsync_v2_ptsz = 419,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoHAsync_v2_ptsz = 420,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoDAsync_v2_ptsz = 421,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoHAsync_v2_ptsz = 422,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoDAsync_v2_ptsz = 423,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DAsync_v2_ptsz = 424,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DAsync_v2_ptsz = 425,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeerAsync_ptsz = 426,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeerAsync_ptsz = 427,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8Async_ptsz = 428,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16Async_ptsz = 429,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32Async_ptsz = 430,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8Async_ptsz = 431,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16Async_ptsz = 432,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32Async_ptsz = 433,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetPriority_ptsz = 434,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetFlags_ptsz = 435,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitEvent_ptsz = 436,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAddCallback_ptsz = 437,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAttachMemAsync_ptsz = 438,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamQuery_ptsz = 439,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSynchronize_ptsz = 440,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecord_ptsz = 441,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernel_ptsz = 442,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsMapResources_ptsz = 443,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsUnmapResources_ptsz = 444,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObjectAsync_v2_ptsz = 445,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerConnect = 446,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerDisconnect = 447,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerPresentFrame = 448,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedEglFrame = 449,
+    CUPTI_DRIVER_TRACE_CBID_cuPointerGetAttributes = 450,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags = 451,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxPotentialBlockSizeWithFlags = 452,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerReturnFrame = 453,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetP2PAttribute = 454,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetBorderColor = 455,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetBorderColor = 456,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAdvise = 457,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue32 = 458,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue32_ptsz = 459,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue32 = 460,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue32_ptsz = 461,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBatchMemOp = 462,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBatchMemOp_ptsz = 463,
+    CUPTI_DRIVER_TRACE_CBID_cuNVNbufferGetPointer = 464,
+    CUPTI_DRIVER_TRACE_CBID_cuNVNtextureGetArray = 465,
+    CUPTI_DRIVER_TRACE_CBID_cuNNSetAllocator = 466,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchAsync = 467,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchAsync_ptsz = 468,
+    CUPTI_DRIVER_TRACE_CBID_cuEventCreateFromNVNSync = 469,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerConnectWithFlags = 470,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRangeGetAttribute = 471,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRangeGetAttributes = 472,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue64 = 473,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue64_ptsz = 474,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue64 = 475,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue64_ptsz = 476,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchCooperativeKernel = 477,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchCooperativeKernel_ptsz = 478,
+    CUPTI_DRIVER_TRACE_CBID_cuEventCreateFromEGLSync = 479,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchCooperativeKernelMultiDevice = 480,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetAttribute = 481,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetUuid = 482,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCtx = 483,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCtx_ptsz = 484,
+    CUPTI_DRIVER_TRACE_CBID_cuImportExternalMemory = 485,
+    CUPTI_DRIVER_TRACE_CBID_cuExternalMemoryGetMappedBuffer = 486,
+    CUPTI_DRIVER_TRACE_CBID_cuExternalMemoryGetMappedMipmappedArray = 487,
+    CUPTI_DRIVER_TRACE_CBID_cuDestroyExternalMemory = 488,
+    CUPTI_DRIVER_TRACE_CBID_cuImportExternalSemaphore = 489,
+    CUPTI_DRIVER_TRACE_CBID_cuSignalExternalSemaphoresAsync = 490,
+    CUPTI_DRIVER_TRACE_CBID_cuSignalExternalSemaphoresAsync_ptsz = 491,
+    CUPTI_DRIVER_TRACE_CBID_cuWaitExternalSemaphoresAsync = 492,
+    CUPTI_DRIVER_TRACE_CBID_cuWaitExternalSemaphoresAsync_ptsz = 493,
+    CUPTI_DRIVER_TRACE_CBID_cuDestroyExternalSemaphore = 494,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture = 495,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture_ptsz = 496,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamEndCapture = 497,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamEndCapture_ptsz = 498,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamIsCapturing = 499,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamIsCapturing_ptsz = 500,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphCreate = 501,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddKernelNode = 502,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeGetParams = 503,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemcpyNode = 504,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemcpyNodeGetParams = 505,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemsetNode = 506,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemsetNodeGetParams = 507,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemsetNodeSetParams = 508,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetType = 509,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetRootNodes = 510,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetDependencies = 511,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetDependentNodes = 512,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiate = 513,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphLaunch = 514,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphLaunch_ptsz = 515,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecDestroy = 516,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphDestroy = 517,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddDependencies = 518,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphRemoveDependencies = 519,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemcpyNodeSetParams = 520,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeSetParams = 521,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphDestroyNode = 522,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphClone = 523,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeFindInClone = 524,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddChildGraphNode = 525,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddEmptyNode = 526,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchHostFunc = 527,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchHostFunc_ptsz = 528,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphChildGraphNodeGetGraph = 529,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddHostNode = 530,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphHostNodeGetParams = 531,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetLuid = 532,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphHostNodeSetParams = 533,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetNodes = 534,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetEdges = 535,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo = 536,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_ptsz = 537,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecKernelNodeSetParams = 538,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture_v2 = 539,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture_v2_ptsz = 540,
+    CUPTI_DRIVER_TRACE_CBID_cuThreadExchangeStreamCaptureMode = 541,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetNvSciSyncAttributes = 542,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyAvailableDynamicSMemPerBlock = 543,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxRelease_v2 = 544,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxReset_v2 = 545,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxSetFlags_v2 = 546,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAddressReserve = 547,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAddressFree = 548,
+    CUPTI_DRIVER_TRACE_CBID_cuMemCreate = 549,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRelease = 550,
+    CUPTI_DRIVER_TRACE_CBID_cuMemMap = 551,
+    CUPTI_DRIVER_TRACE_CBID_cuMemUnmap = 552,
+    CUPTI_DRIVER_TRACE_CBID_cuMemSetAccess = 553,
+    CUPTI_DRIVER_TRACE_CBID_cuMemExportToShareableHandle = 554,
+    CUPTI_DRIVER_TRACE_CBID_cuMemImportFromShareableHandle = 555,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAllocationGranularity = 556,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAllocationPropertiesFromHandle = 557,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAccess = 558,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetFlags = 559,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetFlags_ptsz = 560,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecUpdate = 561,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecMemcpyNodeSetParams = 562,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecMemsetNodeSetParams = 563,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecHostNodeSetParams = 564,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRetainAllocationHandle = 565,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncGetModule = 566,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcOpenMemHandle_v2 = 567,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxResetPersistingL2Cache = 568,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeCopyAttributes = 569,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeGetAttribute = 570,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeSetAttribute = 571,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCopyAttributes = 572,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCopyAttributes_ptsz = 573,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetAttribute = 574,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetAttribute_ptsz = 575,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetAttribute = 576,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetAttribute_ptsz = 577,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiate_v2 = 578,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetTexture1DLinearMaxWidth = 579,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphUpload = 580,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphUpload_ptsz = 581,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetSparseProperties = 582,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayGetSparseProperties = 583,
+    CUPTI_DRIVER_TRACE_CBID_cuMemMapArrayAsync = 584,
+    CUPTI_DRIVER_TRACE_CBID_cuMemMapArrayAsync_ptsz = 585,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecChildGraphNodeSetParams = 586,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecordWithFlags = 587,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecordWithFlags_ptsz = 588,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddEventRecordNode = 589,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddEventWaitNode = 590,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventRecordNodeGetEvent = 591,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventWaitNodeGetEvent = 592,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventRecordNodeSetEvent = 593,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventWaitNodeSetEvent = 594,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecEventRecordNodeSetEvent = 595,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecEventWaitNodeSetEvent = 596,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetPlane = 597,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocAsync = 598,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocAsync_ptsz = 599,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFreeAsync = 600,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFreeAsync_ptsz = 601,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolTrimTo = 602,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolSetAttribute = 603,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolGetAttribute = 604,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolSetAccess = 605,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetDefaultMemPool = 606,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolCreate = 607,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolDestroy = 608,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceSetMemPool = 609,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetMemPool = 610,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocFromPoolAsync = 611,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocFromPoolAsync_ptsz = 612,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolExportToShareableHandle = 613,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolImportFromShareableHandle = 614,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolExportPointer = 615,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolImportPointer = 616,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolGetAccess = 617,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddExternalSemaphoresSignalNode = 618,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresSignalNodeGetParams = 619,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresSignalNodeSetParams = 620,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddExternalSemaphoresWaitNode = 621,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresWaitNodeGetParams = 622,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresWaitNodeSetParams = 623,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecExternalSemaphoresSignalNodeSetParams = 624,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecExternalSemaphoresWaitNodeSetParams = 625,
+    CUPTI_DRIVER_TRACE_CBID_cuGetProcAddress = 626,
+    CUPTI_DRIVER_TRACE_CBID_cuFlushGPUDirectRDMAWrites = 627,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphDebugDotPrint = 628,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_v2 = 629,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_v2_ptsz = 630,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamUpdateCaptureDependencies = 631,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamUpdateCaptureDependencies_ptsz = 632,
+    CUPTI_DRIVER_TRACE_CBID_cuUserObjectCreate = 633,
+    CUPTI_DRIVER_TRACE_CBID_cuUserObjectRetain = 634,
+    CUPTI_DRIVER_TRACE_CBID_cuUserObjectRelease = 635,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphRetainUserObject = 636,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphReleaseUserObject = 637,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemAllocNode = 638,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemFreeNode = 639,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGraphMemTrim = 640,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetGraphMemAttribute = 641,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceSetGraphMemAttribute = 642,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiateWithFlags = 643,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetExecAffinitySupport = 644,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate_v3 = 645,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetExecAffinity = 646,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetUuid_v2 = 647,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemAllocNodeGetParams = 648,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemFreeNodeGetParams = 649,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeSetEnabled = 650,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetEnabled = 651,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernelEx = 652,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernelEx_ptsz = 653,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetMemoryRequirements = 654,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayGetMemoryRequirements = 655,
+    CUPTI_DRIVER_TRACE_CBID_SIZE = 656,
     CUPTI_DRIVER_TRACE_CBID_FORCE_INT = 2147483647,
 }
 #[cfg(any(feature = "cuda-11070", feature = "cuda-11080"))]
@@ -11937,7 +12726,7 @@ pub enum CUpti_runtime_api_trace_cbid_enum {
     CUPTI_RUNTIME_TRACE_CBID_SIZE = 426,
     CUPTI_RUNTIME_TRACE_CBID_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-11070"))]
+#[cfg(any(feature = "cuda-11060", feature = "cuda-11070"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_runtime_api_trace_cbid_enum {
@@ -17076,17 +17865,15 @@ pub enum CUpti_runtime_api_trace_cbid_enum {
     CUPTI_RUNTIME_TRACE_CBID_SIZE = 487,
     CUPTI_RUNTIME_TRACE_CBID_FORCE_INT = 2147483647,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUsynchronizationPolicy_enum {
@@ -17109,31 +17896,27 @@ pub struct CUaccessPolicyWindow_st {
 pub struct CUctx_st {
     _unused: [u8; 0],
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct CUevent_st {
     _unused: [u8; 0],
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct CUgraphDeviceUpdatableNode_st {
@@ -17154,17 +17937,15 @@ pub struct CUgraphNode_st {
 pub struct CUgraph_st {
     _unused: [u8; 0],
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUlaunchAttributeValue_union__bindgen_ty_1 {
@@ -17172,17 +17953,15 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_1 {
     pub y: ::core::ffi::c_uint,
     pub z: ::core::ffi::c_uint,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUlaunchAttributeValue_union__bindgen_ty_2 {
@@ -17190,16 +17969,14 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_2 {
     pub flags: ::core::ffi::c_int,
     pub triggerAtBlockStart: ::core::ffi::c_int,
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUlaunchAttributeValue_union__bindgen_ty_3 {
@@ -17228,17 +18005,15 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_5 {
     pub deviceUpdatable: ::core::ffi::c_int,
     pub devNode: CUgraphDeviceNode,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUlaunchMemSyncDomainMap_st {
@@ -17370,14 +18145,12 @@ pub struct CUpti_ActivityContext2 {
     pub isGreenContext: u8,
     pub padding: [u8; 3usize],
 }
-#[cfg(
-    any(
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[repr(align(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -17392,14 +18165,12 @@ pub struct CUpti_ActivityContext2 {
     pub padding: u8,
     pub numMultiprocessors: u16,
 }
-#[cfg(
-    any(
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[repr(align(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -17508,22 +18279,21 @@ pub struct CUpti_ActivityDevice2 {
     pub uuid: CUuuid,
     pub name: *const ::core::ffi::c_char,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityDevice3 {
@@ -17560,21 +18330,20 @@ pub struct CUpti_ActivityDevice3 {
     pub isCudaVisible: u8,
     pub reserved: [u8; 7usize],
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityDevice4 {
@@ -17615,17 +18384,15 @@ pub struct CUpti_ActivityDevice4 {
     pub computeInstanceId: u32,
     pub migUuid: CUuuid,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityDevice5 {
@@ -17807,21 +18574,19 @@ pub struct CUpti_ActivityGlobalAccess3 {
     pub l2_transactions: u64,
     pub theoreticalL2Transactions: u64,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityGraphTrace {
@@ -17835,16 +18600,14 @@ pub struct CUpti_ActivityGraphTrace {
     pub streamId: u32,
     pub reserved: *mut ::core::ffi::c_void,
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityGraphTrace2 {
@@ -17929,20 +18692,18 @@ pub struct CUpti_ActivityInstructionExecution {
     pub executed: u32,
     pub pad: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityJit {
@@ -17958,15 +18719,13 @@ pub struct CUpti_ActivityJit {
     pub cacheSize: u64,
     pub cachePath: *const ::core::ffi::c_char,
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityJit2 {
@@ -18218,21 +18977,20 @@ pub struct CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1 {
     pub _bitfield_align_1: [u8; 0],
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityKernel7 {
@@ -18276,41 +19034,38 @@ pub struct CUpti_ActivityKernel7 {
     pub channelID: u32,
     pub channelType: CUpti_ChannelType,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     pub _bitfield_align_1: [u8; 0],
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityKernel8 {
@@ -18359,39 +19114,35 @@ pub struct CUpti_ActivityKernel8 {
     pub clusterSchedulingPolicy: u32,
     pub localMemoryTotal_v2: u64,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     pub _bitfield_align_1: [u8; 0],
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityKernel9 {
@@ -18442,19 +19193,17 @@ pub struct CUpti_ActivityKernel9 {
     pub maxPotentialClusterSize: u32,
     pub maxActiveClusters: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityKernel9__bindgen_ty_1__bindgen_ty_1 {
@@ -18575,21 +19324,20 @@ pub struct CUpti_ActivityMemcpy4 {
     pub graphId: u32,
     pub padding: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityMemcpy5 {
@@ -18707,21 +19455,20 @@ pub struct CUpti_ActivityMemcpyPtoP3 {
     pub graphId: u32,
     pub padding: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityMemcpyPtoP4 {
@@ -18794,21 +19541,20 @@ pub struct CUpti_ActivityMemory2__bindgen_ty_1 {
     pub releaseThreshold: u64,
     pub pool: CUpti_ActivityMemory2__bindgen_ty_1__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityMemory2__bindgen_ty_1 {
@@ -18818,21 +19564,20 @@ pub struct CUpti_ActivityMemory2__bindgen_ty_1 {
     pub releaseThreshold: u64,
     pub pool: CUpti_ActivityMemory2__bindgen_ty_1__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityMemory3 {
@@ -18853,21 +19598,20 @@ pub struct CUpti_ActivityMemory3 {
     pub pad1: u32,
     pub memoryPoolConfig: CUpti_ActivityMemory3__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityMemory3__bindgen_ty_1 {
@@ -18926,21 +19670,20 @@ pub struct CUpti_ActivityMemoryPool {
     pub releaseThreshold: u64,
     pub timestamp: u64,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityMemoryPool2 {
@@ -19012,21 +19755,20 @@ pub struct CUpti_ActivityMemset3 {
     pub graphId: u32,
     pub padding: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityMemset4 {
@@ -19119,22 +19861,21 @@ pub struct CUpti_ActivityNvLink2 {
     pub portDev1: [i8; 16usize],
     pub bandwidth: u64,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityNvLink2 {
@@ -19180,22 +19921,21 @@ pub struct CUpti_ActivityNvLink3 {
     pub nvswitchConnected: u8,
     pub pad: [u8; 7usize],
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityNvLink3 {
@@ -19225,22 +19965,21 @@ pub struct CUpti_ActivityNvLink3__bindgen_ty_2__bindgen_ty_1 {
     pub index: u32,
     pub domainId: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityNvLink4 {
@@ -19258,44 +19997,42 @@ pub struct CUpti_ActivityNvLink4 {
     pub nvswitchConnected: u8,
     pub pad: [u8; 7usize],
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityNvLink4__bindgen_ty_1__bindgen_ty_1 {
     pub index: u32,
     pub domainId: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityNvLink4__bindgen_ty_2__bindgen_ty_1 {
@@ -19469,16 +20206,14 @@ pub struct CUpti_ActivityOverhead {
     pub start: u64,
     pub end: u64,
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityOverhead2 {
@@ -19491,15 +20226,13 @@ pub struct CUpti_ActivityOverhead2 {
     pub correlationId: u32,
     pub reserved0: u32,
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityOverhead3 {
@@ -19513,15 +20246,13 @@ pub struct CUpti_ActivityOverhead3 {
     pub reserved0: u32,
     pub overheadData: *mut ::core::ffi::c_void,
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityOverheadCommandBufferFullData {
@@ -19795,22 +20526,21 @@ pub struct CUpti_NvtxData {
     pub functionName: *const ::core::ffi::c_char,
     pub functionParams: *const ::core::ffi::c_void,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_NvtxData {
@@ -19825,50 +20555,44 @@ pub struct CUpti_ResourceData {
     pub resourceHandle: CUpti_ResourceData__bindgen_ty_1,
     pub resourceDescriptor: *mut ::core::ffi::c_void,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct CUpti_StateData {
     pub __bindgen_anon_1: CUpti_StateData__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_StateData__bindgen_ty_1__bindgen_ty_1 {
     pub result: CUptiResult,
     pub message: *const ::core::ffi::c_char,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_StreamAttrData {
@@ -19903,22 +20627,28 @@ pub struct __BindgenBitfieldUnit<Storage> {
     storage: Storage,
 }
 impl CUdevice_attribute_enum {
-    pub const CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_HEIGHT: CUdevice_attribute_enum = CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT;
+    pub const CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_HEIGHT: CUdevice_attribute_enum =
+        CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT;
 }
 impl CUdevice_attribute_enum {
-    pub const CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_NUMSLICES: CUdevice_attribute_enum = CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS;
+    pub const CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_NUMSLICES: CUdevice_attribute_enum =
+        CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS;
 }
 impl CUdevice_attribute_enum {
-    pub const CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_WIDTH: CUdevice_attribute_enum = CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH;
+    pub const CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_WIDTH: CUdevice_attribute_enum =
+        CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH;
 }
 impl CUdevice_attribute_enum {
-    pub const CU_DEVICE_ATTRIBUTE_REGISTERS_PER_BLOCK: CUdevice_attribute_enum = CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK;
+    pub const CU_DEVICE_ATTRIBUTE_REGISTERS_PER_BLOCK: CUdevice_attribute_enum =
+        CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK;
 }
 impl CUdevice_attribute_enum {
-    pub const CU_DEVICE_ATTRIBUTE_SHARED_MEMORY_PER_BLOCK: CUdevice_attribute_enum = CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK;
+    pub const CU_DEVICE_ATTRIBUTE_SHARED_MEMORY_PER_BLOCK: CUdevice_attribute_enum =
+        CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK;
 }
 impl CUdevice_attribute_enum {
-    pub const CU_DEVICE_ATTRIBUTE_VIRTUAL_MEMORY_MANAGEMENT_SUPPORTED: CUdevice_attribute_enum = CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_VIRTUAL_ADDRESS_MANAGEMENT_SUPPORTED;
+    pub const CU_DEVICE_ATTRIBUTE_VIRTUAL_MEMORY_MANAGEMENT_SUPPORTED: CUdevice_attribute_enum =
+        CUdevice_attribute_enum::CU_DEVICE_ATTRIBUTE_VIRTUAL_ADDRESS_MANAGEMENT_SUPPORTED;
 }
 impl CUpti_ActivityCdpKernel__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
@@ -19935,21 +20665,18 @@ impl CUpti_ActivityCdpKernel__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -19971,21 +20698,18 @@ impl CUpti_ActivityCdpKernel__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -19994,73 +20718,74 @@ impl CUpti_ActivityCdpKernel__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_DEVICE_ATTRIBUTE_CUDEVICE: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_DEVICE_ATTRIBUTE_CUDEVICE: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_FLUSH_FORCED: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_FLUSH_FORCED: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_INSTRUCTION_VALUE_INVALID: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_INSTRUCTION_VALUE_INVALID: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_MARKER_COLOR_ARGB: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_MARKER_START;
+    pub const CUPTI_ACTIVITY_FLAG_MARKER_COLOR_ARGB: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_MARKER_START;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_MARKER_COLOR_NONE: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_MARKER_COLOR_NONE: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_MARKER_INSTANTANEOUS: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_MARKER_INSTANTANEOUS: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_MEMCPY_ASYNC: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_MEMCPY_ASYNC: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_MEMSET_ASYNC: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_MEMSET_ASYNC: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_METRIC_OVERFLOWED: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_METRIC_OVERFLOWED: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_METRIC_VALUE_INVALID: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_MARKER_START;
+    pub const CUPTI_ACTIVITY_FLAG_METRIC_VALUE_INVALID: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_MARKER_START;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_SHARED_ACCESS_KIND_LOAD: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_GLOBAL_ACCESS_KIND_LOAD;
+    pub const CUPTI_ACTIVITY_FLAG_SHARED_ACCESS_KIND_LOAD: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_GLOBAL_ACCESS_KIND_LOAD;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_SHARED_ACCESS_KIND_SIZE_MASK: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_GLOBAL_ACCESS_KIND_SIZE_MASK;
+    pub const CUPTI_ACTIVITY_FLAG_SHARED_ACCESS_KIND_SIZE_MASK: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_GLOBAL_ACCESS_KIND_SIZE_MASK;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_THRASHING_IN_CPU: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_THRASHING_IN_CPU: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityFlag {
-    pub const CUPTI_ACTIVITY_FLAG_THROTTLING_IN_CPU: CUpti_ActivityFlag = CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+    pub const CUPTI_ACTIVITY_FLAG_THROTTLING_IN_CPU: CUpti_ActivityFlag =
+        CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
 }
 impl CUpti_ActivityKernel2__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
@@ -20077,21 +20802,18 @@ impl CUpti_ActivityKernel2__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20113,21 +20835,18 @@ impl CUpti_ActivityKernel2__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20136,29 +20855,16 @@ impl CUpti_ActivityKernel2__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
@@ -20177,21 +20883,18 @@ impl CUpti_ActivityKernel3__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20213,21 +20916,18 @@ impl CUpti_ActivityKernel3__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20236,29 +20936,16 @@ impl CUpti_ActivityKernel3__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
@@ -20277,21 +20964,18 @@ impl CUpti_ActivityKernel4__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20313,21 +20997,18 @@ impl CUpti_ActivityKernel4__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20336,29 +21017,16 @@ impl CUpti_ActivityKernel4__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
@@ -20377,21 +21045,18 @@ impl CUpti_ActivityKernel5__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20413,21 +21078,18 @@ impl CUpti_ActivityKernel5__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20436,29 +21098,16 @@ impl CUpti_ActivityKernel5__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
@@ -20477,21 +21126,18 @@ impl CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20513,21 +21159,18 @@ impl CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20536,47 +21179,33 @@ impl CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub fn requested(&self) -> u8 {
@@ -20592,21 +21221,18 @@ impl CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20628,21 +21254,18 @@ impl CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20651,46 +21274,31 @@ impl CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub fn requested(&self) -> u8 {
@@ -20706,21 +21314,18 @@ impl CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20742,21 +21347,18 @@ impl CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20765,45 +21367,30 @@ impl CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl CUpti_ActivityKernel9__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub fn requested(&self) -> u8 {
@@ -20819,21 +21406,18 @@ impl CUpti_ActivityKernel9__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn requested_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 0usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 0usize,
                 4u8,
@@ -20855,21 +21439,18 @@ impl CUpti_ActivityKernel9__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
     pub unsafe fn executed_raw(this: *const Self) -> u8 {
         unsafe {
-            ::core::mem::transmute(
-                <__BindgenBitfieldUnit<
-                    [u8; 1usize],
-                >>::raw_get(::core::ptr::addr_of!((*this)._bitfield_1), 4usize, 4u8)
-                    as u8,
-            )
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
         }
     }
     #[inline]
     pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
         unsafe {
             let val: u8 = ::core::mem::transmute(val);
-            <__BindgenBitfieldUnit<
-                [u8; 1usize],
-            >>::raw_set(
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
                 ::core::ptr::addr_of_mut!((*this)._bitfield_1),
                 4usize,
                 4u8,
@@ -20878,29 +21459,16 @@ impl CUpti_ActivityKernel9__bindgen_ty_1__bindgen_ty_1 {
         }
     }
     #[inline]
-    pub fn new_bitfield_1(
-        requested: u8,
-        executed: u8,
-    ) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
-        __bindgen_bitfield_unit
-            .set(
-                0usize,
-                4u8,
-                {
-                    let requested: u8 = unsafe { ::core::mem::transmute(requested) };
-                    requested as u64
-                },
-            );
-        __bindgen_bitfield_unit
-            .set(
-                4usize,
-                4u8,
-                {
-                    let executed: u8 = unsafe { ::core::mem::transmute(executed) };
-                    executed as u64
-                },
-            );
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
         __bindgen_bitfield_unit
     }
 }
@@ -20913,17 +21481,15 @@ impl Default for CUaccessPolicyWindow_st {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUlaunchAttributeValue_union {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -20933,17 +21499,15 @@ impl Default for CUlaunchAttributeValue_union {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUlaunchAttributeValue_union__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -20953,16 +21517,14 @@ impl Default for CUlaunchAttributeValue_union__bindgen_ty_2 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUlaunchAttributeValue_union__bindgen_ty_3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21065,15 +21627,13 @@ impl Default for CUpti_ActivityContext {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityContext2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21083,14 +21643,12 @@ impl Default for CUpti_ActivityContext2 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityContext3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21137,22 +21695,21 @@ impl Default for CUpti_ActivityDevice2 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityDevice3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21162,21 +21719,20 @@ impl Default for CUpti_ActivityDevice3 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityDevice4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21186,17 +21742,15 @@ impl Default for CUpti_ActivityDevice4 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityDevice5 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21333,21 +21887,19 @@ impl Default for CUpti_ActivityGlobalAccess3 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityGraphTrace {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21357,16 +21909,14 @@ impl Default for CUpti_ActivityGraphTrace {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityGraphTrace2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21430,20 +21980,18 @@ impl Default for CUpti_ActivityInstructionExecution {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityJit {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21453,15 +22001,13 @@ impl Default for CUpti_ActivityJit {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityJit2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21570,21 +22116,20 @@ impl Default for CUpti_ActivityKernel6__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityKernel7 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21594,21 +22139,20 @@ impl Default for CUpti_ActivityKernel7 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityKernel7__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21618,20 +22162,18 @@ impl Default for CUpti_ActivityKernel7__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityKernel8 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21641,20 +22183,18 @@ impl Default for CUpti_ActivityKernel8 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityKernel8__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21664,19 +22204,17 @@ impl Default for CUpti_ActivityKernel8__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityKernel9 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21686,19 +22224,17 @@ impl Default for CUpti_ActivityKernel9 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityKernel9__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21772,21 +22308,20 @@ impl Default for CUpti_ActivityMemcpy4 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemcpy5 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21833,21 +22368,20 @@ impl Default for CUpti_ActivityMemcpyPtoP3 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemcpyPtoP4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21893,21 +22427,20 @@ impl Default for CUpti_ActivityMemory2__bindgen_ty_1__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemory3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21917,21 +22450,20 @@ impl Default for CUpti_ActivityMemory3 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemory3__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21941,21 +22473,20 @@ impl Default for CUpti_ActivityMemory3__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemory3__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22004,21 +22535,20 @@ impl Default for CUpti_ActivityMemoryPool {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemoryPool2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22055,21 +22585,20 @@ impl Default for CUpti_ActivityMemset3 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityMemset4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22178,22 +22707,21 @@ impl Default for CUpti_ActivityNvLink3__bindgen_ty_2 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityNvLink4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22203,22 +22731,21 @@ impl Default for CUpti_ActivityNvLink4 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityNvLink4__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22228,22 +22755,21 @@ impl Default for CUpti_ActivityNvLink4__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityNvLink4__bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22334,16 +22860,14 @@ impl Default for CUpti_ActivityOverhead {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityOverhead2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22353,15 +22877,13 @@ impl Default for CUpti_ActivityOverhead2 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_ActivityOverhead3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22616,17 +23138,15 @@ impl Default for CUpti_ResourceData__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_StateData {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22636,17 +23156,15 @@ impl Default for CUpti_StateData {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_StateData__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22656,17 +23174,15 @@ impl Default for CUpti_StateData__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_StateData__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22676,17 +23192,15 @@ impl Default for CUpti_StateData__bindgen_ty_1__bindgen_ty_1 {
         }
     }
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 impl Default for CUpti_StreamAttrData {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22736,8 +23250,7 @@ where
     pub unsafe fn raw_get_bit(this: *const Self, index: usize) -> bool {
         debug_assert!(index / 8 < core::mem::size_of::<Storage>());
         let byte_index = index / 8;
-        let byte = *(core::ptr::addr_of!((*this).storage) as *const u8)
-            .offset(byte_index as isize);
+        let byte = *(core::ptr::addr_of!((*this).storage) as *const u8).offset(byte_index as isize);
         Self::extract_bit(byte, index)
     }
     #[inline]
@@ -22748,7 +23261,11 @@ where
             index % 8
         };
         let mask = 1 << bit_index;
-        if val { byte | mask } else { byte & !mask }
+        if val {
+            byte | mask
+        } else {
+            byte & !mask
+        }
     }
     #[inline]
     pub fn set_bit(&mut self, index: usize, val: bool) {
@@ -22761,17 +23278,15 @@ where
     pub unsafe fn raw_set_bit(this: *mut Self, index: usize, val: bool) {
         debug_assert!(index / 8 < core::mem::size_of::<Storage>());
         let byte_index = index / 8;
-        let byte = (core::ptr::addr_of_mut!((*this).storage) as *mut u8)
-            .offset(byte_index as isize);
+        let byte =
+            (core::ptr::addr_of_mut!((*this).storage) as *mut u8).offset(byte_index as isize);
         *byte = Self::change_bit(*byte, index, val);
     }
     #[inline]
     pub fn get(&self, bit_offset: usize, bit_width: u8) -> u64 {
         debug_assert!(bit_width <= 64);
         debug_assert!(bit_offset / 8 < self.storage.as_ref().len());
-        debug_assert!(
-            (bit_offset + (bit_width as usize)) / 8 <= self.storage.as_ref().len(),
-        );
+        debug_assert!((bit_offset + (bit_width as usize)) / 8 <= self.storage.as_ref().len(),);
         let mut val = 0;
         for i in 0..(bit_width as usize) {
             if self.get_bit(i + bit_offset) {
@@ -22789,9 +23304,7 @@ where
     pub unsafe fn raw_get(this: *const Self, bit_offset: usize, bit_width: u8) -> u64 {
         debug_assert!(bit_width <= 64);
         debug_assert!(bit_offset / 8 < core::mem::size_of::<Storage>());
-        debug_assert!(
-            (bit_offset + (bit_width as usize)) / 8 <= core::mem::size_of::<Storage>(),
-        );
+        debug_assert!((bit_offset + (bit_width as usize)) / 8 <= core::mem::size_of::<Storage>(),);
         let mut val = 0;
         for i in 0..(bit_width as usize) {
             if Self::raw_get_bit(this, i + bit_offset) {
@@ -22809,9 +23322,7 @@ where
     pub fn set(&mut self, bit_offset: usize, bit_width: u8, val: u64) {
         debug_assert!(bit_width <= 64);
         debug_assert!(bit_offset / 8 < self.storage.as_ref().len());
-        debug_assert!(
-            (bit_offset + (bit_width as usize)) / 8 <= self.storage.as_ref().len(),
-        );
+        debug_assert!((bit_offset + (bit_width as usize)) / 8 <= self.storage.as_ref().len(),);
         for i in 0..(bit_width as usize) {
             let mask = 1 << i;
             let val_bit_is_set = val & mask == mask;
@@ -22827,9 +23338,7 @@ where
     pub unsafe fn raw_set(this: *mut Self, bit_offset: usize, bit_width: u8, val: u64) {
         debug_assert!(bit_width <= 64);
         debug_assert!(bit_offset / 8 < core::mem::size_of::<Storage>());
-        debug_assert!(
-            (bit_offset + (bit_width as usize)) / 8 <= core::mem::size_of::<Storage>(),
-        );
+        debug_assert!((bit_offset + (bit_width as usize)) / 8 <= core::mem::size_of::<Storage>(),);
         for i in 0..(bit_width as usize) {
             let mask = 1 << i;
             let val_bit_is_set = val & mask == mask;
@@ -22991,60 +23500,55 @@ pub union CUpti_ActivityKernel6__bindgen_ty_1 {
     pub both: u8,
     pub config: CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityKernel7__bindgen_ty_1 {
     pub both: u8,
     pub config: CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityKernel8__bindgen_ty_1 {
     pub both: u8,
     pub config: CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityKernel9__bindgen_ty_1 {
@@ -23057,21 +23561,20 @@ pub union CUpti_ActivityMemory2__bindgen_ty_1__bindgen_ty_1 {
     pub size: u64,
     pub processId: u64,
 }
-#[cfg(
-    any(
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityMemory3__bindgen_ty_1__bindgen_ty_1 {
@@ -23109,44 +23612,42 @@ pub union CUpti_ActivityNvLink3__bindgen_ty_2 {
     pub uuidDev: CUuuid,
     pub npu: CUpti_ActivityNvLink3__bindgen_ty_2__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityNvLink4__bindgen_ty_1 {
     pub uuidDev: CUuuid,
     pub npu: CUpti_ActivityNvLink4__bindgen_ty_1__bindgen_ty_1,
 }
-#[cfg(
-    any(
-        feature = "cuda-11050",
-        feature = "cuda-11070",
-        feature = "cuda-11080",
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityNvLink4__bindgen_ty_2 {
@@ -23198,17 +23699,15 @@ pub union CUpti_MetricValue {
 pub union CUpti_ResourceData__bindgen_ty_1 {
     pub stream: CUstream,
 }
-#[cfg(
-    any(
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_StateData__bindgen_ty_1 {
@@ -23225,79 +23724,56 @@ extern "C" {
         count: u32,
     ) -> CUptiResult;
     pub fn cuptiActivityDisable(kind: CUpti_ActivityKind) -> CUptiResult;
-    pub fn cuptiActivityDisableContext(
-        context: CUcontext,
-        kind: CUpti_ActivityKind,
-    ) -> CUptiResult;
+    pub fn cuptiActivityDisableContext(context: CUcontext, kind: CUpti_ActivityKind)
+        -> CUptiResult;
     pub fn cuptiActivityEnable(kind: CUpti_ActivityKind) -> CUptiResult;
     #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
     pub fn cuptiActivityEnableAllSyncRecords(enable: u8) -> CUptiResult;
     #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
     pub fn cuptiActivityEnableAllocationSource(enable: u8) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuptiActivityEnableAndDump(kind: CUpti_ActivityKind) -> CUptiResult;
-    pub fn cuptiActivityEnableContext(
-        context: CUcontext,
-        kind: CUpti_ActivityKind,
-    ) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    pub fn cuptiActivityEnableContext(context: CUcontext, kind: CUpti_ActivityKind) -> CUptiResult;
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuptiActivityEnableDeviceGraph(enable: u8) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub fn cuptiActivityEnableDriverApi(
-        cbid: CUpti_CallbackId,
-        enable: u8,
-    ) -> CUptiResult;
+    #[cfg(any(
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub fn cuptiActivityEnableDriverApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult;
     #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
     pub fn cuptiActivityEnableHWTrace(enable: u8) -> CUptiResult;
     pub fn cuptiActivityEnableLatencyTimestamps(enable: u8) -> CUptiResult;
     pub fn cuptiActivityEnableLaunchAttributes(enable: u8) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub fn cuptiActivityEnableRuntimeApi(
-        cbid: CUpti_CallbackId,
-        enable: u8,
-    ) -> CUptiResult;
-    pub fn cuptiActivityFlush(
-        context: CUcontext,
-        streamId: u32,
-        flag: u32,
-    ) -> CUptiResult;
+    #[cfg(any(
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub fn cuptiActivityEnableRuntimeApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult;
+    pub fn cuptiActivityFlush(context: CUcontext, streamId: u32, flag: u32) -> CUptiResult;
     pub fn cuptiActivityFlushAll(flag: u32) -> CUptiResult;
     pub fn cuptiActivityFlushPeriod(time: u32) -> CUptiResult;
     pub fn cuptiActivityGetAttribute(
@@ -23327,21 +23803,20 @@ extern "C" {
         funcBufferRequested: CUpti_BuffersCallbackRequestFunc,
         funcBufferCompleted: CUpti_BuffersCallbackCompleteFunc,
     ) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuptiActivityRegisterTimestampCallback(
         funcTimestamp: CUpti_TimestampCallbackFunc,
     ) -> CUptiResult;
@@ -23378,41 +23853,25 @@ extern "C" {
         valueSize: *mut usize,
         value: *mut ::core::ffi::c_void,
     ) -> CUptiResult;
-    pub fn cuptiDeviceGetNumEventDomains(
-        device: CUdevice,
-        numDomains: *mut u32,
-    ) -> CUptiResult;
-    pub fn cuptiDeviceGetNumMetrics(
-        device: CUdevice,
-        numMetrics: *mut u32,
-    ) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010"
-        )
-    )]
-    pub fn cuptiDeviceGetTimestamp(
-        context: CUcontext,
-        timestamp: *mut u64,
-    ) -> CUptiResult;
-    pub fn cuptiDeviceSupported(
-        dev: CUdevice,
-        support: *mut ::core::ffi::c_int,
-    ) -> CUptiResult;
+    pub fn cuptiDeviceGetNumEventDomains(device: CUdevice, numDomains: *mut u32) -> CUptiResult;
+    pub fn cuptiDeviceGetNumMetrics(device: CUdevice, numMetrics: *mut u32) -> CUptiResult;
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010"
+    ))]
+    pub fn cuptiDeviceGetTimestamp(context: CUcontext, timestamp: *mut u64) -> CUptiResult;
+    pub fn cuptiDeviceSupported(dev: CUdevice, support: *mut ::core::ffi::c_int) -> CUptiResult;
     pub fn cuptiDeviceVirtualizationMode(
         dev: CUdevice,
         mode: *mut CUpti_DeviceVirtualizationMode,
     ) -> CUptiResult;
     pub fn cuptiDisableKernelReplayMode(context: CUcontext) -> CUptiResult;
-    pub fn cuptiEnableAllDomains(
-        enable: u32,
-        subscriber: CUpti_SubscriberHandle,
-    ) -> CUptiResult;
+    pub fn cuptiEnableAllDomains(enable: u32, subscriber: CUpti_SubscriberHandle) -> CUptiResult;
     pub fn cuptiEnableCallback(
         enable: u32,
         subscriber: CUpti_SubscriberHandle,
@@ -23505,21 +23964,15 @@ extern "C" {
         valueSize: usize,
         value: *mut ::core::ffi::c_void,
     ) -> CUptiResult;
-    pub fn cuptiEventGroupSetDisable(
-        eventGroupSet: *mut CUpti_EventGroupSet,
-    ) -> CUptiResult;
-    pub fn cuptiEventGroupSetEnable(
-        eventGroupSet: *mut CUpti_EventGroupSet,
-    ) -> CUptiResult;
+    pub fn cuptiEventGroupSetDisable(eventGroupSet: *mut CUpti_EventGroupSet) -> CUptiResult;
+    pub fn cuptiEventGroupSetEnable(eventGroupSet: *mut CUpti_EventGroupSet) -> CUptiResult;
     pub fn cuptiEventGroupSetsCreate(
         context: CUcontext,
         eventIdArraySizeBytes: usize,
         eventIdArray: *mut CUpti_EventID,
         eventGroupPasses: *mut *mut CUpti_EventGroupSets,
     ) -> CUptiResult;
-    pub fn cuptiEventGroupSetsDestroy(
-        eventGroupSets: *mut CUpti_EventGroupSets,
-    ) -> CUptiResult;
+    pub fn cuptiEventGroupSetsDestroy(eventGroupSets: *mut CUpti_EventGroupSets) -> CUptiResult;
     pub fn cuptiFinalize() -> CUptiResult;
     pub fn cuptiGetAutoBoostState(
         context: CUcontext,
@@ -23538,31 +23991,27 @@ extern "C" {
     ) -> CUptiResult;
     pub fn cuptiGetContextId(context: CUcontext, contextId: *mut u32) -> CUptiResult;
     pub fn cuptiGetDeviceId(context: CUcontext, deviceId: *mut u32) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuptiGetErrorMessage(
         result: CUptiResult,
         str_: *mut *const ::core::ffi::c_char,
     ) -> CUptiResult;
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub fn cuptiGetGraphExecId(graphExec: CUgraphExec, pId: *mut u32) -> CUptiResult;
     pub fn cuptiGetGraphId(graph: CUgraph, pId: *mut u32) -> CUptiResult;
     pub fn cuptiGetGraphNodeId(node: CUgraphNode, nodeId: *mut u64) -> CUptiResult;
@@ -23618,14 +24067,8 @@ extern "C" {
         metricName: *const ::core::ffi::c_char,
         metric: *mut CUpti_MetricID,
     ) -> CUptiResult;
-    pub fn cuptiMetricGetNumEvents(
-        metric: CUpti_MetricID,
-        numEvents: *mut u32,
-    ) -> CUptiResult;
-    pub fn cuptiMetricGetNumProperties(
-        metric: CUpti_MetricID,
-        numProp: *mut u32,
-    ) -> CUptiResult;
+    pub fn cuptiMetricGetNumEvents(metric: CUpti_MetricID, numEvents: *mut u32) -> CUptiResult;
+    pub fn cuptiMetricGetNumProperties(metric: CUpti_MetricID, numProp: *mut u32) -> CUptiResult;
     pub fn cuptiMetricGetRequiredEventGroupSets(
         context: CUcontext,
         metric: CUpti_MetricID,
@@ -23704,21 +24147,19 @@ mod loaded {
     pub unsafe fn cuptiActivityEnableAllocationSource(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableAllocationSource)(enable)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuptiActivityEnableAndDump(kind: CUpti_ActivityKind) -> CUptiResult {
         (culib().cuptiActivityEnableAndDump)(kind)
     }
@@ -23728,31 +24169,24 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiActivityEnableContext)(context, kind)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuptiActivityEnableDeviceGraph(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableDeviceGraph)(enable)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub unsafe fn cuptiActivityEnableDriverApi(
-        cbid: CUpti_CallbackId,
-        enable: u8,
-    ) -> CUptiResult {
+    #[cfg(any(
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub unsafe fn cuptiActivityEnableDriverApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableDriverApi)(cbid, enable)
     }
     #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
@@ -23765,25 +24199,16 @@ mod loaded {
     pub unsafe fn cuptiActivityEnableLaunchAttributes(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableLaunchAttributes)(enable)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub unsafe fn cuptiActivityEnableRuntimeApi(
-        cbid: CUpti_CallbackId,
-        enable: u8,
-    ) -> CUptiResult {
+    #[cfg(any(
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub unsafe fn cuptiActivityEnableRuntimeApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableRuntimeApi)(cbid, enable)
     }
-    pub unsafe fn cuptiActivityFlush(
-        context: CUcontext,
-        streamId: u32,
-        flag: u32,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiActivityFlush(context: CUcontext, streamId: u32, flag: u32) -> CUptiResult {
         (culib().cuptiActivityFlush)(context, streamId, flag)
     }
     pub unsafe fn cuptiActivityFlushAll(flag: u32) -> CUptiResult {
@@ -23829,24 +24254,22 @@ mod loaded {
         funcBufferRequested: CUpti_BuffersCallbackRequestFunc,
         funcBufferCompleted: CUpti_BuffersCallbackCompleteFunc,
     ) -> CUptiResult {
-        (culib()
-            .cuptiActivityRegisterCallbacks)(funcBufferRequested, funcBufferCompleted)
+        (culib().cuptiActivityRegisterCallbacks)(funcBufferRequested, funcBufferCompleted)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010",
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010",
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuptiActivityRegisterTimestampCallback(
         funcTimestamp: CUpti_TimestampCallbackFunc,
     ) -> CUptiResult {
@@ -23895,14 +24318,7 @@ mod loaded {
         valueSize: *mut usize,
         value: *mut ::core::ffi::c_void,
     ) -> CUptiResult {
-        (culib()
-            .cuptiDeviceGetEventDomainAttribute)(
-            device,
-            eventDomain,
-            attrib,
-            valueSize,
-            value,
-        )
+        (culib().cuptiDeviceGetEventDomainAttribute)(device, eventDomain, attrib, valueSize, value)
     }
     pub unsafe fn cuptiDeviceGetNumEventDomains(
         device: CUdevice,
@@ -23910,26 +24326,19 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiDeviceGetNumEventDomains)(device, numDomains)
     }
-    pub unsafe fn cuptiDeviceGetNumMetrics(
-        device: CUdevice,
-        numMetrics: *mut u32,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiDeviceGetNumMetrics(device: CUdevice, numMetrics: *mut u32) -> CUptiResult {
         (culib().cuptiDeviceGetNumMetrics)(device, numMetrics)
     }
-    #[cfg(
-        any(
-            feature = "cuda-11040",
-            feature = "cuda-11050",
-            feature = "cuda-11070",
-            feature = "cuda-11080",
-            feature = "cuda-12000",
-            feature = "cuda-12010"
-        )
-    )]
-    pub unsafe fn cuptiDeviceGetTimestamp(
-        context: CUcontext,
-        timestamp: *mut u64,
-    ) -> CUptiResult {
+    #[cfg(any(
+        feature = "cuda-11040",
+        feature = "cuda-11050",
+        feature = "cuda-11060",
+        feature = "cuda-11070",
+        feature = "cuda-11080",
+        feature = "cuda-12000",
+        feature = "cuda-12010"
+    ))]
+    pub unsafe fn cuptiDeviceGetTimestamp(context: CUcontext, timestamp: *mut u64) -> CUptiResult {
         (culib().cuptiDeviceGetTimestamp)(context, timestamp)
     }
     pub unsafe fn cuptiDeviceSupported(
@@ -24058,8 +24467,7 @@ mod loaded {
         eventIdArray: *mut CUpti_EventID,
         numEventIdsRead: *mut usize,
     ) -> CUptiResult {
-        (culib()
-            .cuptiEventGroupReadAllEvents)(
+        (culib().cuptiEventGroupReadAllEvents)(
             eventGroup,
             flags,
             eventValueBufferSizeBytes,
@@ -24076,8 +24484,7 @@ mod loaded {
         eventValueBufferSizeBytes: *mut usize,
         eventValueBuffer: *mut u64,
     ) -> CUptiResult {
-        (culib()
-            .cuptiEventGroupReadEvent)(
+        (culib().cuptiEventGroupReadEvent)(
             eventGroup,
             flags,
             event,
@@ -24085,9 +24492,7 @@ mod loaded {
             eventValueBuffer,
         )
     }
-    pub unsafe fn cuptiEventGroupRemoveAllEvents(
-        eventGroup: CUpti_EventGroup,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiEventGroupRemoveAllEvents(eventGroup: CUpti_EventGroup) -> CUptiResult {
         (culib().cuptiEventGroupRemoveAllEvents)(eventGroup)
     }
     pub unsafe fn cuptiEventGroupRemoveEvent(
@@ -24096,9 +24501,7 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiEventGroupRemoveEvent)(eventGroup, event)
     }
-    pub unsafe fn cuptiEventGroupResetAllEvents(
-        eventGroup: CUpti_EventGroup,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiEventGroupResetAllEvents(eventGroup: CUpti_EventGroup) -> CUptiResult {
         (culib().cuptiEventGroupResetAllEvents)(eventGroup)
     }
     pub unsafe fn cuptiEventGroupSetAttribute(
@@ -24114,9 +24517,7 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiEventGroupSetDisable)(eventGroupSet)
     }
-    pub unsafe fn cuptiEventGroupSetEnable(
-        eventGroupSet: *mut CUpti_EventGroupSet,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiEventGroupSetEnable(eventGroupSet: *mut CUpti_EventGroupSet) -> CUptiResult {
         (culib().cuptiEventGroupSetEnable)(eventGroupSet)
     }
     pub unsafe fn cuptiEventGroupSetsCreate(
@@ -24125,8 +24526,7 @@ mod loaded {
         eventIdArray: *mut CUpti_EventID,
         eventGroupPasses: *mut *mut CUpti_EventGroupSets,
     ) -> CUptiResult {
-        (culib()
-            .cuptiEventGroupSetsCreate)(
+        (culib().cuptiEventGroupSetsCreate)(
             context,
             eventIdArraySizeBytes,
             eventIdArray,
@@ -24162,58 +24562,42 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiGetCallbackState)(enable, subscriber, domain, cbid)
     }
-    pub unsafe fn cuptiGetContextId(
-        context: CUcontext,
-        contextId: *mut u32,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiGetContextId(context: CUcontext, contextId: *mut u32) -> CUptiResult {
         (culib().cuptiGetContextId)(context, contextId)
     }
-    pub unsafe fn cuptiGetDeviceId(
-        context: CUcontext,
-        deviceId: *mut u32,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiGetDeviceId(context: CUcontext, deviceId: *mut u32) -> CUptiResult {
         (culib().cuptiGetDeviceId)(context, deviceId)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12020",
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12020",
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
     pub unsafe fn cuptiGetErrorMessage(
         result: CUptiResult,
         str_: *mut *const ::core::ffi::c_char,
     ) -> CUptiResult {
         (culib().cuptiGetErrorMessage)(result, str_)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12030",
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090"
-        )
-    )]
-    pub unsafe fn cuptiGetGraphExecId(
-        graphExec: CUgraphExec,
-        pId: *mut u32,
-    ) -> CUptiResult {
+    #[cfg(any(
+        feature = "cuda-12030",
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090"
+    ))]
+    pub unsafe fn cuptiGetGraphExecId(graphExec: CUgraphExec, pId: *mut u32) -> CUptiResult {
         (culib().cuptiGetGraphExecId)(graphExec, pId)
     }
     pub unsafe fn cuptiGetGraphId(graph: CUgraph, pId: *mut u32) -> CUptiResult {
         (culib().cuptiGetGraphId)(graph, pId)
     }
-    pub unsafe fn cuptiGetGraphNodeId(
-        node: CUgraphNode,
-        nodeId: *mut u64,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiGetGraphNodeId(node: CUgraphNode, nodeId: *mut u64) -> CUptiResult {
         (culib().cuptiGetGraphNodeId)(node, nodeId)
     }
     pub unsafe fn cuptiGetLastError() -> CUptiResult {
@@ -24246,9 +24630,7 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiGetStreamIdEx)(context, stream, perThreadStream, streamId)
     }
-    pub unsafe fn cuptiGetThreadIdType(
-        type_: *mut CUpti_ActivityThreadIdType,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiGetThreadIdType(type_: *mut CUpti_ActivityThreadIdType) -> CUptiResult {
         (culib().cuptiGetThreadIdType)(type_)
     }
     pub unsafe fn cuptiGetTimestamp(timestamp: *mut u64) -> CUptiResult {
@@ -24269,8 +24651,7 @@ mod loaded {
         metricIdArray: *mut CUpti_MetricID,
         eventGroupPasses: *mut *mut CUpti_EventGroupSets,
     ) -> CUptiResult {
-        (culib()
-            .cuptiMetricCreateEventGroupSets)(
+        (culib().cuptiMetricCreateEventGroupSets)(
             context,
             metricIdArraySizeBytes,
             metricIdArray,
@@ -24335,8 +24716,7 @@ mod loaded {
         timeDuration: u64,
         metricValue: *mut CUpti_MetricValue,
     ) -> CUptiResult {
-        (culib()
-            .cuptiMetricGetValue)(
+        (culib().cuptiMetricGetValue)(
             device,
             metric,
             eventIdArraySizeBytes,
@@ -24359,8 +24739,7 @@ mod loaded {
         propValueArray: *mut u64,
         metricValue: *mut CUpti_MetricValue,
     ) -> CUptiResult {
-        (culib()
-            .cuptiMetricGetValue2)(
+        (culib().cuptiMetricGetValue2)(
             metric,
             eventIdArraySizeBytes,
             eventIdArray,
@@ -24379,9 +24758,7 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiSetEventCollectionMode)(context, mode)
     }
-    pub unsafe fn cuptiSetThreadIdType(
-        type_: CUpti_ActivityThreadIdType,
-    ) -> CUptiResult {
+    pub unsafe fn cuptiSetThreadIdType(type_: CUpti_ActivityThreadIdType) -> CUptiResult {
         (culib().cuptiSetThreadIdType)(type_)
     }
     pub unsafe fn cuptiSubscribe(
@@ -24409,99 +24786,64 @@ mod loaded {
         pub cuptiActivityConfigureUnifiedMemoryCounter: unsafe extern "C" fn(
             config: *mut CUpti_ActivityUnifiedMemoryCounterConfig,
             count: u32,
-        ) -> CUptiResult,
-        pub cuptiActivityDisable: unsafe extern "C" fn(
-            kind: CUpti_ActivityKind,
-        ) -> CUptiResult,
-        pub cuptiActivityDisableContext: unsafe extern "C" fn(
-            context: CUcontext,
-            kind: CUpti_ActivityKind,
-        ) -> CUptiResult,
-        pub cuptiActivityEnable: unsafe extern "C" fn(
-            kind: CUpti_ActivityKind,
-        ) -> CUptiResult,
+        )
+            -> CUptiResult,
+        pub cuptiActivityDisable: unsafe extern "C" fn(kind: CUpti_ActivityKind) -> CUptiResult,
+        pub cuptiActivityDisableContext:
+            unsafe extern "C" fn(context: CUcontext, kind: CUpti_ActivityKind) -> CUptiResult,
+        pub cuptiActivityEnable: unsafe extern "C" fn(kind: CUpti_ActivityKind) -> CUptiResult,
         #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
-        pub cuptiActivityEnableAllSyncRecords: unsafe extern "C" fn(
-            enable: u8,
-        ) -> CUptiResult,
-        #[cfg(
-            any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090")
-        )]
-        pub cuptiActivityEnableAllocationSource: unsafe extern "C" fn(
-            enable: u8,
-        ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuptiActivityEnableAndDump: unsafe extern "C" fn(
-            kind: CUpti_ActivityKind,
-        ) -> CUptiResult,
-        pub cuptiActivityEnableContext: unsafe extern "C" fn(
-            context: CUcontext,
-            kind: CUpti_ActivityKind,
-        ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuptiActivityEnableDeviceGraph: unsafe extern "C" fn(
-            enable: u8,
-        ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuptiActivityEnableDriverApi: unsafe extern "C" fn(
-            cbid: CUpti_CallbackId,
-            enable: u8,
-        ) -> CUptiResult,
+        pub cuptiActivityEnableAllSyncRecords: unsafe extern "C" fn(enable: u8) -> CUptiResult,
+        #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+        pub cuptiActivityEnableAllocationSource: unsafe extern "C" fn(enable: u8) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuptiActivityEnableAndDump:
+            unsafe extern "C" fn(kind: CUpti_ActivityKind) -> CUptiResult,
+        pub cuptiActivityEnableContext:
+            unsafe extern "C" fn(context: CUcontext, kind: CUpti_ActivityKind) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuptiActivityEnableDeviceGraph: unsafe extern "C" fn(enable: u8) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuptiActivityEnableDriverApi:
+            unsafe extern "C" fn(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult,
         #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
         pub cuptiActivityEnableHWTrace: unsafe extern "C" fn(enable: u8) -> CUptiResult,
-        pub cuptiActivityEnableLatencyTimestamps: unsafe extern "C" fn(
-            enable: u8,
-        ) -> CUptiResult,
-        pub cuptiActivityEnableLaunchAttributes: unsafe extern "C" fn(
-            enable: u8,
-        ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuptiActivityEnableRuntimeApi: unsafe extern "C" fn(
-            cbid: CUpti_CallbackId,
-            enable: u8,
-        ) -> CUptiResult,
-        pub cuptiActivityFlush: unsafe extern "C" fn(
-            context: CUcontext,
-            streamId: u32,
-            flag: u32,
-        ) -> CUptiResult,
+        pub cuptiActivityEnableLatencyTimestamps: unsafe extern "C" fn(enable: u8) -> CUptiResult,
+        pub cuptiActivityEnableLaunchAttributes: unsafe extern "C" fn(enable: u8) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuptiActivityEnableRuntimeApi:
+            unsafe extern "C" fn(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult,
+        pub cuptiActivityFlush:
+            unsafe extern "C" fn(context: CUcontext, streamId: u32, flag: u32) -> CUptiResult,
         pub cuptiActivityFlushAll: unsafe extern "C" fn(flag: u32) -> CUptiResult,
         pub cuptiActivityFlushPeriod: unsafe extern "C" fn(time: u32) -> CUptiResult,
         pub cuptiActivityGetAttribute: unsafe extern "C" fn(
@@ -24523,32 +24865,28 @@ mod loaded {
             kind: CUpti_ExternalCorrelationKind,
             lastId: *mut u64,
         ) -> CUptiResult,
-        pub cuptiActivityPushExternalCorrelationId: unsafe extern "C" fn(
-            kind: CUpti_ExternalCorrelationKind,
-            id: u64,
-        ) -> CUptiResult,
+        pub cuptiActivityPushExternalCorrelationId:
+            unsafe extern "C" fn(kind: CUpti_ExternalCorrelationKind, id: u64) -> CUptiResult,
         pub cuptiActivityRegisterCallbacks: unsafe extern "C" fn(
             funcBufferRequested: CUpti_BuffersCallbackRequestFunc,
             funcBufferCompleted: CUpti_BuffersCallbackCompleteFunc,
         ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010",
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuptiActivityRegisterTimestampCallback: unsafe extern "C" fn(
-            funcTimestamp: CUpti_TimestampCallbackFunc,
-        ) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010",
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuptiActivityRegisterTimestampCallback:
+            unsafe extern "C" fn(funcTimestamp: CUpti_TimestampCallbackFunc) -> CUptiResult,
         pub cuptiActivitySetAttribute: unsafe extern "C" fn(
             attr: CUpti_ActivityAttribute,
             valueSize: *mut usize,
@@ -24582,43 +24920,30 @@ mod loaded {
             valueSize: *mut usize,
             value: *mut ::core::ffi::c_void,
         ) -> CUptiResult,
-        pub cuptiDeviceGetNumEventDomains: unsafe extern "C" fn(
-            device: CUdevice,
-            numDomains: *mut u32,
-        ) -> CUptiResult,
-        pub cuptiDeviceGetNumMetrics: unsafe extern "C" fn(
-            device: CUdevice,
-            numMetrics: *mut u32,
-        ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-11040",
-                feature = "cuda-11050",
-                feature = "cuda-11070",
-                feature = "cuda-11080",
-                feature = "cuda-12000",
-                feature = "cuda-12010"
-            )
-        )]
-        pub cuptiDeviceGetTimestamp: unsafe extern "C" fn(
-            context: CUcontext,
-            timestamp: *mut u64,
-        ) -> CUptiResult,
-        pub cuptiDeviceSupported: unsafe extern "C" fn(
-            dev: CUdevice,
-            support: *mut ::core::ffi::c_int,
-        ) -> CUptiResult,
+        pub cuptiDeviceGetNumEventDomains:
+            unsafe extern "C" fn(device: CUdevice, numDomains: *mut u32) -> CUptiResult,
+        pub cuptiDeviceGetNumMetrics:
+            unsafe extern "C" fn(device: CUdevice, numMetrics: *mut u32) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-11040",
+            feature = "cuda-11050",
+            feature = "cuda-11060",
+            feature = "cuda-11070",
+            feature = "cuda-11080",
+            feature = "cuda-12000",
+            feature = "cuda-12010"
+        ))]
+        pub cuptiDeviceGetTimestamp:
+            unsafe extern "C" fn(context: CUcontext, timestamp: *mut u64) -> CUptiResult,
+        pub cuptiDeviceSupported:
+            unsafe extern "C" fn(dev: CUdevice, support: *mut ::core::ffi::c_int) -> CUptiResult,
         pub cuptiDeviceVirtualizationMode: unsafe extern "C" fn(
             dev: CUdevice,
             mode: *mut CUpti_DeviceVirtualizationMode,
         ) -> CUptiResult,
-        pub cuptiDisableKernelReplayMode: unsafe extern "C" fn(
-            context: CUcontext,
-        ) -> CUptiResult,
-        pub cuptiEnableAllDomains: unsafe extern "C" fn(
-            enable: u32,
-            subscriber: CUpti_SubscriberHandle,
-        ) -> CUptiResult,
+        pub cuptiDisableKernelReplayMode: unsafe extern "C" fn(context: CUcontext) -> CUptiResult,
+        pub cuptiEnableAllDomains:
+            unsafe extern "C" fn(enable: u32, subscriber: CUpti_SubscriberHandle) -> CUptiResult,
         pub cuptiEnableCallback: unsafe extern "C" fn(
             enable: u32,
             subscriber: CUpti_SubscriberHandle,
@@ -24630,9 +24955,7 @@ mod loaded {
             subscriber: CUpti_SubscriberHandle,
             domain: CUpti_CallbackDomain,
         ) -> CUptiResult,
-        pub cuptiEnableKernelReplayMode: unsafe extern "C" fn(
-            context: CUcontext,
-        ) -> CUptiResult,
+        pub cuptiEnableKernelReplayMode: unsafe extern "C" fn(context: CUcontext) -> CUptiResult,
         pub cuptiEnumEventDomains: unsafe extern "C" fn(
             arraySizeBytes: *mut usize,
             domainArray: *mut CUpti_EventDomainID,
@@ -24667,24 +24990,19 @@ mod loaded {
             eventName: *const ::core::ffi::c_char,
             event: *mut CUpti_EventID,
         ) -> CUptiResult,
-        pub cuptiEventGroupAddEvent: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-            event: CUpti_EventID,
-        ) -> CUptiResult,
+        pub cuptiEventGroupAddEvent:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup, event: CUpti_EventID) -> CUptiResult,
         pub cuptiEventGroupCreate: unsafe extern "C" fn(
             context: CUcontext,
             eventGroup: *mut CUpti_EventGroup,
             flags: u32,
         ) -> CUptiResult,
-        pub cuptiEventGroupDestroy: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-        ) -> CUptiResult,
-        pub cuptiEventGroupDisable: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-        ) -> CUptiResult,
-        pub cuptiEventGroupEnable: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-        ) -> CUptiResult,
+        pub cuptiEventGroupDestroy:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup) -> CUptiResult,
+        pub cuptiEventGroupDisable:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup) -> CUptiResult,
+        pub cuptiEventGroupEnable:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup) -> CUptiResult,
         pub cuptiEventGroupGetAttribute: unsafe extern "C" fn(
             eventGroup: CUpti_EventGroup,
             attrib: CUpti_EventGroupAttribute,
@@ -24707,37 +25025,30 @@ mod loaded {
             eventValueBufferSizeBytes: *mut usize,
             eventValueBuffer: *mut u64,
         ) -> CUptiResult,
-        pub cuptiEventGroupRemoveAllEvents: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-        ) -> CUptiResult,
-        pub cuptiEventGroupRemoveEvent: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-            event: CUpti_EventID,
-        ) -> CUptiResult,
-        pub cuptiEventGroupResetAllEvents: unsafe extern "C" fn(
-            eventGroup: CUpti_EventGroup,
-        ) -> CUptiResult,
+        pub cuptiEventGroupRemoveAllEvents:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup) -> CUptiResult,
+        pub cuptiEventGroupRemoveEvent:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup, event: CUpti_EventID) -> CUptiResult,
+        pub cuptiEventGroupResetAllEvents:
+            unsafe extern "C" fn(eventGroup: CUpti_EventGroup) -> CUptiResult,
         pub cuptiEventGroupSetAttribute: unsafe extern "C" fn(
             eventGroup: CUpti_EventGroup,
             attrib: CUpti_EventGroupAttribute,
             valueSize: usize,
             value: *mut ::core::ffi::c_void,
         ) -> CUptiResult,
-        pub cuptiEventGroupSetDisable: unsafe extern "C" fn(
-            eventGroupSet: *mut CUpti_EventGroupSet,
-        ) -> CUptiResult,
-        pub cuptiEventGroupSetEnable: unsafe extern "C" fn(
-            eventGroupSet: *mut CUpti_EventGroupSet,
-        ) -> CUptiResult,
+        pub cuptiEventGroupSetDisable:
+            unsafe extern "C" fn(eventGroupSet: *mut CUpti_EventGroupSet) -> CUptiResult,
+        pub cuptiEventGroupSetEnable:
+            unsafe extern "C" fn(eventGroupSet: *mut CUpti_EventGroupSet) -> CUptiResult,
         pub cuptiEventGroupSetsCreate: unsafe extern "C" fn(
             context: CUcontext,
             eventIdArraySizeBytes: usize,
             eventIdArray: *mut CUpti_EventID,
             eventGroupPasses: *mut *mut CUpti_EventGroupSets,
         ) -> CUptiResult,
-        pub cuptiEventGroupSetsDestroy: unsafe extern "C" fn(
-            eventGroupSets: *mut CUpti_EventGroupSets,
-        ) -> CUptiResult,
+        pub cuptiEventGroupSetsDestroy:
+            unsafe extern "C" fn(eventGroupSets: *mut CUpti_EventGroupSets) -> CUptiResult,
         pub cuptiFinalize: unsafe extern "C" fn() -> CUptiResult,
         pub cuptiGetAutoBoostState: unsafe extern "C" fn(
             context: CUcontext,
@@ -24754,58 +25065,39 @@ mod loaded {
             domain: CUpti_CallbackDomain,
             cbid: CUpti_CallbackId,
         ) -> CUptiResult,
-        pub cuptiGetContextId: unsafe extern "C" fn(
-            context: CUcontext,
-            contextId: *mut u32,
-        ) -> CUptiResult,
-        pub cuptiGetDeviceId: unsafe extern "C" fn(
-            context: CUcontext,
-            deviceId: *mut u32,
-        ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-12020",
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
+        pub cuptiGetContextId:
+            unsafe extern "C" fn(context: CUcontext, contextId: *mut u32) -> CUptiResult,
+        pub cuptiGetDeviceId:
+            unsafe extern "C" fn(context: CUcontext, deviceId: *mut u32) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-12020",
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
         pub cuptiGetErrorMessage: unsafe extern "C" fn(
             result: CUptiResult,
             str_: *mut *const ::core::ffi::c_char,
         ) -> CUptiResult,
-        #[cfg(
-            any(
-                feature = "cuda-12030",
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090"
-            )
-        )]
-        pub cuptiGetGraphExecId: unsafe extern "C" fn(
-            graphExec: CUgraphExec,
-            pId: *mut u32,
-        ) -> CUptiResult,
-        pub cuptiGetGraphId: unsafe extern "C" fn(
-            graph: CUgraph,
-            pId: *mut u32,
-        ) -> CUptiResult,
-        pub cuptiGetGraphNodeId: unsafe extern "C" fn(
-            node: CUgraphNode,
-            nodeId: *mut u64,
-        ) -> CUptiResult,
+        #[cfg(any(
+            feature = "cuda-12030",
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090"
+        ))]
+        pub cuptiGetGraphExecId:
+            unsafe extern "C" fn(graphExec: CUgraphExec, pId: *mut u32) -> CUptiResult,
+        pub cuptiGetGraphId: unsafe extern "C" fn(graph: CUgraph, pId: *mut u32) -> CUptiResult,
+        pub cuptiGetGraphNodeId:
+            unsafe extern "C" fn(node: CUgraphNode, nodeId: *mut u64) -> CUptiResult,
         pub cuptiGetLastError: unsafe extern "C" fn() -> CUptiResult,
-        pub cuptiGetNumEventDomains: unsafe extern "C" fn(
-            numDomains: *mut u32,
-        ) -> CUptiResult,
-        pub cuptiGetNumMetrics: unsafe extern "C" fn(
-            numMetrics: *mut u32,
-        ) -> CUptiResult,
+        pub cuptiGetNumEventDomains: unsafe extern "C" fn(numDomains: *mut u32) -> CUptiResult,
+        pub cuptiGetNumMetrics: unsafe extern "C" fn(numMetrics: *mut u32) -> CUptiResult,
         pub cuptiGetResultString: unsafe extern "C" fn(
             result: CUptiResult,
             str_: *mut *const ::core::ffi::c_char,
@@ -24821,9 +25113,8 @@ mod loaded {
             perThreadStream: u8,
             streamId: *mut u32,
         ) -> CUptiResult,
-        pub cuptiGetThreadIdType: unsafe extern "C" fn(
-            type_: *mut CUpti_ActivityThreadIdType,
-        ) -> CUptiResult,
+        pub cuptiGetThreadIdType:
+            unsafe extern "C" fn(type_: *mut CUpti_ActivityThreadIdType) -> CUptiResult,
         pub cuptiGetTimestamp: unsafe extern "C" fn(timestamp: *mut u64) -> CUptiResult,
         pub cuptiGetVersion: unsafe extern "C" fn(version: *mut u32) -> CUptiResult,
         pub cuptiKernelReplaySubscribeUpdate: unsafe extern "C" fn(
@@ -24857,14 +25148,10 @@ mod loaded {
             metricName: *const ::core::ffi::c_char,
             metric: *mut CUpti_MetricID,
         ) -> CUptiResult,
-        pub cuptiMetricGetNumEvents: unsafe extern "C" fn(
-            metric: CUpti_MetricID,
-            numEvents: *mut u32,
-        ) -> CUptiResult,
-        pub cuptiMetricGetNumProperties: unsafe extern "C" fn(
-            metric: CUpti_MetricID,
-            numProp: *mut u32,
-        ) -> CUptiResult,
+        pub cuptiMetricGetNumEvents:
+            unsafe extern "C" fn(metric: CUpti_MetricID, numEvents: *mut u32) -> CUptiResult,
+        pub cuptiMetricGetNumProperties:
+            unsafe extern "C" fn(metric: CUpti_MetricID, numProp: *mut u32) -> CUptiResult,
         pub cuptiMetricGetRequiredEventGroupSets: unsafe extern "C" fn(
             context: CUcontext,
             metric: CUpti_MetricID,
@@ -24896,9 +25183,8 @@ mod loaded {
             context: CUcontext,
             mode: CUpti_EventCollectionMode,
         ) -> CUptiResult,
-        pub cuptiSetThreadIdType: unsafe extern "C" fn(
-            type_: CUpti_ActivityThreadIdType,
-        ) -> CUptiResult,
+        pub cuptiSetThreadIdType:
+            unsafe extern "C" fn(type_: CUpti_ActivityThreadIdType) -> CUptiResult,
         pub cuptiSubscribe: unsafe extern "C" fn(
             subscriber: *mut CUpti_SubscriberHandle,
             callback: CUpti_CallbackFunc,
@@ -24908,9 +25194,8 @@ mod loaded {
             domainCount: *mut usize,
             domainTable: *mut CUpti_DomainTable,
         ) -> CUptiResult,
-        pub cuptiUnsubscribe: unsafe extern "C" fn(
-            subscriber: CUpti_SubscriberHandle,
-        ) -> CUptiResult,
+        pub cuptiUnsubscribe:
+            unsafe extern "C" fn(subscriber: CUpti_SubscriberHandle) -> CUptiResult,
     }
     impl Lib {
         pub unsafe fn new<P>(path: P) -> Result<Self, ::libloading::Error>
@@ -24950,32 +25235,24 @@ mod loaded {
                 .get(b"cuptiActivityEnableAllSyncRecords\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
             let cuptiActivityEnableAllocationSource = __library
                 .get(b"cuptiActivityEnableAllocationSource\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiActivityEnableAndDump = __library
                 .get(b"cuptiActivityEnableAndDump\0")
                 .map(|sym| *sym)
@@ -24984,28 +25261,24 @@ mod loaded {
                 .get(b"cuptiActivityEnableContext\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiActivityEnableDeviceGraph = __library
                 .get(b"cuptiActivityEnableDeviceGraph\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiActivityEnableDriverApi = __library
                 .get(b"cuptiActivityEnableDriverApi\0")
                 .map(|sym| *sym)
@@ -25023,14 +25296,12 @@ mod loaded {
                 .get(b"cuptiActivityEnableLaunchAttributes\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiActivityEnableRuntimeApi = __library
                 .get(b"cuptiActivityEnableRuntimeApi\0")
                 .map(|sym| *sym)
@@ -25071,21 +25342,20 @@ mod loaded {
                 .get(b"cuptiActivityRegisterCallbacks\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010",
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010",
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiActivityRegisterTimestampCallback = __library
                 .get(b"cuptiActivityRegisterTimestampCallback\0")
                 .map(|sym| *sym)
@@ -25122,16 +25392,15 @@ mod loaded {
                 .get(b"cuptiDeviceGetNumMetrics\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-11040",
-                    feature = "cuda-11050",
-                    feature = "cuda-11070",
-                    feature = "cuda-11080",
-                    feature = "cuda-12000",
-                    feature = "cuda-12010"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-11040",
+                feature = "cuda-11050",
+                feature = "cuda-11060",
+                feature = "cuda-11070",
+                feature = "cuda-11080",
+                feature = "cuda-12000",
+                feature = "cuda-12010"
+            ))]
             let cuptiDeviceGetTimestamp = __library
                 .get(b"cuptiDeviceGetTimestamp\0")
                 .map(|sym| *sym)
@@ -25280,31 +25549,27 @@ mod loaded {
                 .get(b"cuptiGetDeviceId\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12020",
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12020",
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiGetErrorMessage = __library
                 .get(b"cuptiGetErrorMessage\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12030",
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12030",
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090"
+            ))]
             let cuptiGetGraphExecId = __library
                 .get(b"cuptiGetGraphExecId\0")
                 .map(|sym| *sym)
@@ -25426,63 +25691,53 @@ mod loaded {
                 cuptiActivityEnable,
                 #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 cuptiActivityEnableAllSyncRecords,
-                #[cfg(
-                    any(
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiActivityEnableAllocationSource,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiActivityEnableAndDump,
                 cuptiActivityEnableContext,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiActivityEnableDeviceGraph,
-                #[cfg(
-                    any(
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiActivityEnableDriverApi,
                 #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
                 cuptiActivityEnableHWTrace,
                 cuptiActivityEnableLatencyTimestamps,
                 cuptiActivityEnableLaunchAttributes,
-                #[cfg(
-                    any(
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiActivityEnableRuntimeApi,
                 cuptiActivityFlush,
                 cuptiActivityFlushAll,
@@ -25493,21 +25748,20 @@ mod loaded {
                 cuptiActivityPopExternalCorrelationId,
                 cuptiActivityPushExternalCorrelationId,
                 cuptiActivityRegisterCallbacks,
-                #[cfg(
-                    any(
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010",
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010",
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiActivityRegisterTimestampCallback,
                 cuptiActivitySetAttribute,
                 cuptiComputeCapabilitySupported,
@@ -25517,16 +25771,15 @@ mod loaded {
                 cuptiDeviceGetEventDomainAttribute,
                 cuptiDeviceGetNumEventDomains,
                 cuptiDeviceGetNumMetrics,
-                #[cfg(
-                    any(
-                        feature = "cuda-11040",
-                        feature = "cuda-11050",
-                        feature = "cuda-11070",
-                        feature = "cuda-11080",
-                        feature = "cuda-12000",
-                        feature = "cuda-12010"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-11040",
+                    feature = "cuda-11050",
+                    feature = "cuda-11060",
+                    feature = "cuda-11070",
+                    feature = "cuda-11080",
+                    feature = "cuda-12000",
+                    feature = "cuda-12010"
+                ))]
                 cuptiDeviceGetTimestamp,
                 cuptiDeviceSupported,
                 cuptiDeviceVirtualizationMode,
@@ -25564,28 +25817,24 @@ mod loaded {
                 cuptiGetCallbackState,
                 cuptiGetContextId,
                 cuptiGetDeviceId,
-                #[cfg(
-                    any(
-                        feature = "cuda-12020",
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12020",
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiGetErrorMessage,
-                #[cfg(
-                    any(
-                        feature = "cuda-12030",
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12030",
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090"
+                ))]
                 cuptiGetGraphExecId,
                 cuptiGetGraphId,
                 cuptiGetGraphNodeId,
