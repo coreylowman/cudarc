@@ -287,6 +287,9 @@ pub fn register_callbacks(
         .result()
 }
 
+/// Registers callback function with CUPTI for providing timestamp.
+///
+/// See [cuptiActivityRegisterTimestampCallback()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html?highlight=cuptiActivityGetAttribute#_CPPv438cuptiActivityRegisterTimestampCallback27CUpti_TimestampCallbackFunc)
 #[cfg(any(
     feature = "cuda-11070",
     feature = "cuda-11080",
@@ -301,9 +304,6 @@ pub fn register_callbacks(
     feature = "cuda-12090",
     feature = "cuda-13000"
 ))]
-/// Registers callback function with CUPTI for providing timestamp.
-///
-/// See [cuptiActivityRegisterTimestampCallback()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html?highlight=cuptiActivityGetAttribute#_CPPv438cuptiActivityRegisterTimestampCallback27CUpti_TimestampCallbackFunc)
 pub fn register_timestamp_callback(
     func_timestamp: sys::CUpti_TimestampCallbackFunc,
 ) -> Result<(), CuptiError> {
