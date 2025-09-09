@@ -407,7 +407,9 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
 
         let mut primary_archives = vec![];
 
-        let names = if cuda_version.starts_with("cuda-12") {
+        let names = if cuda_version.starts_with("cuda-13") {
+            vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl", "cuda_crt"]
+        } else if cuda_version.starts_with("cuda-12") {
             vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl"]
         } else {
             vec!["cuda_cudart", "cuda_nvcc"]

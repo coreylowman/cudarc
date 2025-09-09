@@ -14,7 +14,8 @@ pub use self::CUaccessProperty_enum as CUaccessProperty;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub use self::CUclusterSchedulingPolicy_enum as CUclusterSchedulingPolicy;
 pub use self::CUdevice_attribute_enum as CUdevice_attribute;
@@ -26,7 +27,8 @@ pub use self::CUgraphNodeType_enum as CUgraphNodeType;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub use self::CUlaunchAttributeID as CUstreamAttrID;
 #[cfg(any(
@@ -36,7 +38,8 @@ pub use self::CUlaunchAttributeID as CUstreamAttrID;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub use self::CUlaunchAttributeID_enum as CUlaunchAttributeID;
 #[cfg(any(
@@ -46,7 +49,8 @@ pub use self::CUlaunchAttributeID_enum as CUlaunchAttributeID;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub use self::CUlaunchMemSyncDomain_enum as CUlaunchMemSyncDomain;
 pub use self::CUpti_driver_api_trace_cbid_enum as CUpti_driver_api_trace_cbid;
@@ -58,7 +62,8 @@ pub use self::CUpti_runtime_api_trace_cbid_enum as CUpti_runtime_api_trace_cbid;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub use self::CUsynchronizationPolicy_enum as CUsynchronizationPolicy;
 pub const CUPTILP64: u32 = 1;
@@ -84,9 +89,11 @@ pub const CUPTI_API_VERSION: u32 = 24;
 pub const CUPTI_API_VERSION: u32 = 26;
 #[cfg(any(feature = "cuda-12090"))]
 pub const CUPTI_API_VERSION: u32 = 28;
+#[cfg(any(feature = "cuda-13000"))]
+pub const CUPTI_API_VERSION: u32 = 130001;
 pub const CUPTI_AUTO_BOOST_INVALID_CLIENT_PID: u32 = 0;
 pub const CUPTI_CORRELATION_ID_UNKNOWN: u32 = 0;
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 pub const CUPTI_DECOMPRESSED_BYTES_UNKNOWN: u32 = 0;
 pub const CUPTI_FUNCTION_INDEX_ID_INVALID: u32 = 0;
 pub const CUPTI_GRID_ID_UNKNOWN: u32 = 0;
@@ -106,11 +113,16 @@ pub const CUPTI_MAX_NVLINK_PORTS: u32 = 16;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub const CUPTI_MAX_NVLINK_PORTS: u32 = 32;
 pub const CUPTI_NVLINK_INVALID_PORT: i32 = -1;
+#[cfg(any(feature = "cuda-13000"))]
+pub const CUPTI_OLD_SUBSCRIBER_NAME_MIN_LEN: u32 = 64;
 pub const CUPTI_SOURCE_LOCATOR_ID_UNKNOWN: u32 = 0;
+#[cfg(any(feature = "cuda-13000"))]
+pub const CUPTI_SUBSCRIBER_NAME_MAX_LEN: u32 = 53;
 #[cfg(any(
     feature = "cuda-11040",
     feature = "cuda-11050",
@@ -139,7 +151,8 @@ pub type CUdevice_v1 = ::core::ffi::c_int;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUevent = *mut CUevent_st;
 pub type CUgraph = *mut CUgraph_st;
@@ -148,7 +161,8 @@ pub type CUgraph = *mut CUgraph_st;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUgraphDeviceNode = *mut CUgraphDeviceUpdatableNode_st;
 pub type CUgraphExec = *mut CUgraphExec_st;
@@ -160,7 +174,8 @@ pub type CUgraphNode = *mut CUgraphNode_st;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUlaunchAttributeValue = CUlaunchAttributeValue_union;
 #[cfg(any(
@@ -170,7 +185,8 @@ pub type CUlaunchAttributeValue = CUlaunchAttributeValue_union;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUlaunchMemSyncDomainMap = CUlaunchMemSyncDomainMap_st;
 pub type CUpti_ActivityMemcpy2 = CUpti_ActivityMemcpyPtoP;
@@ -220,7 +236,8 @@ pub type CUpti_SubscriberHandle = *mut CUpti_Subscriber_st;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUpti_TimestampCallbackFunc = ::core::option::Option<unsafe extern "C" fn() -> u64>;
 pub type CUstream = *mut CUstream_st;
@@ -231,7 +248,8 @@ pub type CUstream = *mut CUstream_st;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUstreamAttrValue = CUstreamAttrValue_v1;
 #[cfg(any(
@@ -241,7 +259,8 @@ pub type CUstreamAttrValue = CUstreamAttrValue_v1;
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub type CUstreamAttrValue_v1 = CUlaunchAttributeValue;
 pub type CUuuid = CUuuid_st;
@@ -259,7 +278,8 @@ pub enum CUaccessProperty_enum {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1761,6 +1781,159 @@ pub enum CUdevice_attribute_enum {
     CU_DEVICE_ATTRIBUTE_HOST_NUMA_MULTINODE_IPC_SUPPORTED = 143,
     CU_DEVICE_ATTRIBUTE_MAX = 144,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUdevice_attribute_enum {
+    CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK = 1,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X = 2,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y = 3,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z = 4,
+    CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X = 5,
+    CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y = 6,
+    CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z = 7,
+    CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK = 8,
+    CU_DEVICE_ATTRIBUTE_TOTAL_CONSTANT_MEMORY = 9,
+    CU_DEVICE_ATTRIBUTE_WARP_SIZE = 10,
+    CU_DEVICE_ATTRIBUTE_MAX_PITCH = 11,
+    CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK = 12,
+    CU_DEVICE_ATTRIBUTE_CLOCK_RATE = 13,
+    CU_DEVICE_ATTRIBUTE_TEXTURE_ALIGNMENT = 14,
+    CU_DEVICE_ATTRIBUTE_GPU_OVERLAP = 15,
+    CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT = 16,
+    CU_DEVICE_ATTRIBUTE_KERNEL_EXEC_TIMEOUT = 17,
+    CU_DEVICE_ATTRIBUTE_INTEGRATED = 18,
+    CU_DEVICE_ATTRIBUTE_CAN_MAP_HOST_MEMORY = 19,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_MODE = 20,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_WIDTH = 21,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_WIDTH = 22,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_HEIGHT = 23,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH = 24,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT = 25,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH = 26,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH = 27,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT = 28,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS = 29,
+    CU_DEVICE_ATTRIBUTE_SURFACE_ALIGNMENT = 30,
+    CU_DEVICE_ATTRIBUTE_CONCURRENT_KERNELS = 31,
+    CU_DEVICE_ATTRIBUTE_ECC_ENABLED = 32,
+    CU_DEVICE_ATTRIBUTE_PCI_BUS_ID = 33,
+    CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID = 34,
+    CU_DEVICE_ATTRIBUTE_TCC_DRIVER = 35,
+    CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE = 36,
+    CU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH = 37,
+    CU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE = 38,
+    CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR = 39,
+    CU_DEVICE_ATTRIBUTE_ASYNC_ENGINE_COUNT = 40,
+    CU_DEVICE_ATTRIBUTE_UNIFIED_ADDRESSING = 41,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_WIDTH = 42,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_LAYERS = 43,
+    CU_DEVICE_ATTRIBUTE_CAN_TEX2D_GATHER = 44,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_WIDTH = 45,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_HEIGHT = 46,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH_ALTERNATE = 47,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT_ALTERNATE = 48,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH_ALTERNATE = 49,
+    CU_DEVICE_ATTRIBUTE_PCI_DOMAIN_ID = 50,
+    CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT = 51,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_WIDTH = 52,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_WIDTH = 53,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_LAYERS = 54,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_WIDTH = 55,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_WIDTH = 56,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_HEIGHT = 57,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_WIDTH = 58,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_HEIGHT = 59,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_DEPTH = 60,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_WIDTH = 61,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_LAYERS = 62,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_WIDTH = 63,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_HEIGHT = 64,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_LAYERS = 65,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_WIDTH = 66,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_WIDTH = 67,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_LAYERS = 68,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LINEAR_WIDTH = 69,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_WIDTH = 70,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_HEIGHT = 71,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_PITCH = 72,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_WIDTH = 73,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_HEIGHT = 74,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR = 75,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR = 76,
+    CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_MIPMAPPED_WIDTH = 77,
+    CU_DEVICE_ATTRIBUTE_STREAM_PRIORITIES_SUPPORTED = 78,
+    CU_DEVICE_ATTRIBUTE_GLOBAL_L1_CACHE_SUPPORTED = 79,
+    CU_DEVICE_ATTRIBUTE_LOCAL_L1_CACHE_SUPPORTED = 80,
+    CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_MULTIPROCESSOR = 81,
+    CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_MULTIPROCESSOR = 82,
+    CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY = 83,
+    CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD = 84,
+    CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD_GROUP_ID = 85,
+    CU_DEVICE_ATTRIBUTE_HOST_NATIVE_ATOMIC_SUPPORTED = 86,
+    CU_DEVICE_ATTRIBUTE_SINGLE_TO_DOUBLE_PRECISION_PERF_RATIO = 87,
+    CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS = 88,
+    CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS = 89,
+    CU_DEVICE_ATTRIBUTE_COMPUTE_PREEMPTION_SUPPORTED = 90,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_HOST_POINTER_FOR_REGISTERED_MEM = 91,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_MEM_OPS_V1 = 92,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_64_BIT_STREAM_MEM_OPS_V1 = 93,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_WAIT_VALUE_NOR_V1 = 94,
+    CU_DEVICE_ATTRIBUTE_COOPERATIVE_LAUNCH = 95,
+    CU_DEVICE_ATTRIBUTE_COOPERATIVE_MULTI_DEVICE_LAUNCH = 96,
+    CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK_OPTIN = 97,
+    CU_DEVICE_ATTRIBUTE_CAN_FLUSH_REMOTE_WRITES = 98,
+    CU_DEVICE_ATTRIBUTE_HOST_REGISTER_SUPPORTED = 99,
+    CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES = 100,
+    CU_DEVICE_ATTRIBUTE_DIRECT_MANAGED_MEM_ACCESS_FROM_HOST = 101,
+    CU_DEVICE_ATTRIBUTE_VIRTUAL_ADDRESS_MANAGEMENT_SUPPORTED = 102,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_POSIX_FILE_DESCRIPTOR_SUPPORTED = 103,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_HANDLE_SUPPORTED = 104,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_WIN32_KMT_HANDLE_SUPPORTED = 105,
+    CU_DEVICE_ATTRIBUTE_MAX_BLOCKS_PER_MULTIPROCESSOR = 106,
+    CU_DEVICE_ATTRIBUTE_GENERIC_COMPRESSION_SUPPORTED = 107,
+    CU_DEVICE_ATTRIBUTE_MAX_PERSISTING_L2_CACHE_SIZE = 108,
+    CU_DEVICE_ATTRIBUTE_MAX_ACCESS_POLICY_WINDOW_SIZE = 109,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WITH_CUDA_VMM_SUPPORTED = 110,
+    CU_DEVICE_ATTRIBUTE_RESERVED_SHARED_MEMORY_PER_BLOCK = 111,
+    CU_DEVICE_ATTRIBUTE_SPARSE_CUDA_ARRAY_SUPPORTED = 112,
+    CU_DEVICE_ATTRIBUTE_READ_ONLY_HOST_REGISTER_SUPPORTED = 113,
+    CU_DEVICE_ATTRIBUTE_TIMELINE_SEMAPHORE_INTEROP_SUPPORTED = 114,
+    CU_DEVICE_ATTRIBUTE_MEMORY_POOLS_SUPPORTED = 115,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_SUPPORTED = 116,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_FLUSH_WRITES_OPTIONS = 117,
+    CU_DEVICE_ATTRIBUTE_GPU_DIRECT_RDMA_WRITES_ORDERING = 118,
+    CU_DEVICE_ATTRIBUTE_MEMPOOL_SUPPORTED_HANDLE_TYPES = 119,
+    CU_DEVICE_ATTRIBUTE_CLUSTER_LAUNCH = 120,
+    CU_DEVICE_ATTRIBUTE_DEFERRED_MAPPING_CUDA_ARRAY_SUPPORTED = 121,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_64_BIT_STREAM_MEM_OPS = 122,
+    CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_WAIT_VALUE_NOR = 123,
+    CU_DEVICE_ATTRIBUTE_DMA_BUF_SUPPORTED = 124,
+    CU_DEVICE_ATTRIBUTE_IPC_EVENT_SUPPORTED = 125,
+    CU_DEVICE_ATTRIBUTE_MEM_SYNC_DOMAIN_COUNT = 126,
+    CU_DEVICE_ATTRIBUTE_TENSOR_MAP_ACCESS_SUPPORTED = 127,
+    CU_DEVICE_ATTRIBUTE_HANDLE_TYPE_FABRIC_SUPPORTED = 128,
+    CU_DEVICE_ATTRIBUTE_UNIFIED_FUNCTION_POINTERS = 129,
+    CU_DEVICE_ATTRIBUTE_NUMA_CONFIG = 130,
+    CU_DEVICE_ATTRIBUTE_NUMA_ID = 131,
+    CU_DEVICE_ATTRIBUTE_MULTICAST_SUPPORTED = 132,
+    CU_DEVICE_ATTRIBUTE_MPS_ENABLED = 133,
+    CU_DEVICE_ATTRIBUTE_HOST_NUMA_ID = 134,
+    CU_DEVICE_ATTRIBUTE_D3D12_CIG_SUPPORTED = 135,
+    CU_DEVICE_ATTRIBUTE_MEM_DECOMPRESS_ALGORITHM_MASK = 136,
+    CU_DEVICE_ATTRIBUTE_MEM_DECOMPRESS_MAXIMUM_LENGTH = 137,
+    CU_DEVICE_ATTRIBUTE_VULKAN_CIG_SUPPORTED = 138,
+    CU_DEVICE_ATTRIBUTE_GPU_PCI_DEVICE_ID = 139,
+    CU_DEVICE_ATTRIBUTE_GPU_PCI_SUBSYSTEM_ID = 140,
+    CU_DEVICE_ATTRIBUTE_HOST_NUMA_VIRTUAL_MEMORY_MANAGEMENT_SUPPORTED = 141,
+    CU_DEVICE_ATTRIBUTE_HOST_NUMA_MEMORY_POOLS_SUPPORTED = 142,
+    CU_DEVICE_ATTRIBUTE_HOST_NUMA_MULTINODE_IPC_SUPPORTED = 143,
+    CU_DEVICE_ATTRIBUTE_HOST_MEMORY_POOLS_SUPPORTED = 144,
+    CU_DEVICE_ATTRIBUTE_HOST_VIRTUAL_MEMORY_MANAGEMENT_SUPPORTED = 145,
+    CU_DEVICE_ATTRIBUTE_HOST_ALLOC_DMA_BUF_SUPPORTED = 146,
+    CU_DEVICE_ATTRIBUTE_ONLY_PARTIAL_HOST_NATIVE_ATOMIC_SUPPORTED = 147,
+    CU_DEVICE_ATTRIBUTE_MAX = 148,
+}
 #[cfg(any(feature = "cuda-11040", feature = "cuda-11050", feature = "cuda-11060"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1808,7 +1981,8 @@ pub enum CUgraphNodeType_enum {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1918,6 +2092,27 @@ pub enum CUlaunchAttributeID_enum {
     CU_LAUNCH_ATTRIBUTE_DEVICE_UPDATABLE_KERNEL_NODE = 13,
     CU_LAUNCH_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT = 14,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUlaunchAttributeID_enum {
+    CU_LAUNCH_ATTRIBUTE_IGNORE = 0,
+    CU_LAUNCH_ATTRIBUTE_ACCESS_POLICY_WINDOW = 1,
+    CU_LAUNCH_ATTRIBUTE_COOPERATIVE = 2,
+    CU_LAUNCH_ATTRIBUTE_SYNCHRONIZATION_POLICY = 3,
+    CU_LAUNCH_ATTRIBUTE_CLUSTER_DIMENSION = 4,
+    CU_LAUNCH_ATTRIBUTE_CLUSTER_SCHEDULING_POLICY_PREFERENCE = 5,
+    CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION = 6,
+    CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_EVENT = 7,
+    CU_LAUNCH_ATTRIBUTE_PRIORITY = 8,
+    CU_LAUNCH_ATTRIBUTE_MEM_SYNC_DOMAIN_MAP = 9,
+    CU_LAUNCH_ATTRIBUTE_MEM_SYNC_DOMAIN = 10,
+    CU_LAUNCH_ATTRIBUTE_PREFERRED_CLUSTER_DIMENSION = 11,
+    CU_LAUNCH_ATTRIBUTE_LAUNCH_COMPLETION_EVENT = 12,
+    CU_LAUNCH_ATTRIBUTE_DEVICE_UPDATABLE_KERNEL_NODE = 13,
+    CU_LAUNCH_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT = 14,
+    CU_LAUNCH_ATTRIBUTE_NVLINK_UTIL_CENTRIC_SCHEDULING = 16,
+}
 #[cfg(any(
     feature = "cuda-12020",
     feature = "cuda-12030",
@@ -1925,7 +2120,8 @@ pub enum CUlaunchAttributeID_enum {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -2097,6 +2293,60 @@ pub enum CUptiResult {
     CUPTI_ERROR_UNKNOWN = 999,
     CUPTI_ERROR_FORCE_INT = 2147483647,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUptiResult {
+    CUPTI_SUCCESS = 0,
+    CUPTI_ERROR_INVALID_PARAMETER = 1,
+    CUPTI_ERROR_INVALID_DEVICE = 2,
+    CUPTI_ERROR_INVALID_CONTEXT = 3,
+    CUPTI_ERROR_INVALID_EVENT_DOMAIN_ID = 4,
+    CUPTI_ERROR_INVALID_EVENT_ID = 5,
+    CUPTI_ERROR_INVALID_EVENT_NAME = 6,
+    CUPTI_ERROR_INVALID_OPERATION = 7,
+    CUPTI_ERROR_OUT_OF_MEMORY = 8,
+    CUPTI_ERROR_HARDWARE = 9,
+    CUPTI_ERROR_PARAMETER_SIZE_NOT_SUFFICIENT = 10,
+    CUPTI_ERROR_API_NOT_IMPLEMENTED = 11,
+    CUPTI_ERROR_MAX_LIMIT_REACHED = 12,
+    CUPTI_ERROR_NOT_READY = 13,
+    CUPTI_ERROR_NOT_COMPATIBLE = 14,
+    CUPTI_ERROR_NOT_INITIALIZED = 15,
+    CUPTI_ERROR_INVALID_METRIC_ID = 16,
+    CUPTI_ERROR_INVALID_METRIC_NAME = 17,
+    CUPTI_ERROR_QUEUE_EMPTY = 18,
+    CUPTI_ERROR_INVALID_HANDLE = 19,
+    CUPTI_ERROR_INVALID_STREAM = 20,
+    CUPTI_ERROR_INVALID_KIND = 21,
+    CUPTI_ERROR_INVALID_EVENT_VALUE = 22,
+    CUPTI_ERROR_DISABLED = 23,
+    CUPTI_ERROR_INVALID_MODULE = 24,
+    CUPTI_ERROR_INVALID_METRIC_VALUE = 25,
+    CUPTI_ERROR_HARDWARE_BUSY = 26,
+    CUPTI_ERROR_NOT_SUPPORTED = 27,
+    CUPTI_ERROR_UM_PROFILING_NOT_SUPPORTED = 28,
+    CUPTI_ERROR_UM_PROFILING_NOT_SUPPORTED_ON_DEVICE = 29,
+    CUPTI_ERROR_UM_PROFILING_NOT_SUPPORTED_ON_NON_P2P_DEVICES = 30,
+    CUPTI_ERROR_UM_PROFILING_NOT_SUPPORTED_WITH_MPS = 31,
+    CUPTI_ERROR_CDP_TRACING_NOT_SUPPORTED = 32,
+    CUPTI_ERROR_VIRTUALIZED_DEVICE_NOT_SUPPORTED = 33,
+    CUPTI_ERROR_CUDA_COMPILER_NOT_COMPATIBLE = 34,
+    CUPTI_ERROR_INSUFFICIENT_PRIVILEGES = 35,
+    CUPTI_ERROR_OLD_PROFILER_API_INITIALIZED = 36,
+    CUPTI_ERROR_OPENACC_UNDEFINED_ROUTINE = 37,
+    CUPTI_ERROR_LEGACY_PROFILER_NOT_SUPPORTED = 38,
+    CUPTI_ERROR_MULTIPLE_SUBSCRIBERS_NOT_SUPPORTED = 39,
+    CUPTI_ERROR_VIRTUALIZED_DEVICE_INSUFFICIENT_PRIVILEGES = 40,
+    CUPTI_ERROR_CONFIDENTIAL_COMPUTING_NOT_SUPPORTED = 41,
+    CUPTI_ERROR_CMP_DEVICE_NOT_SUPPORTED = 42,
+    CUPTI_ERROR_MIG_DEVICE_NOT_SUPPORTED = 43,
+    CUPTI_ERROR_SLI_DEVICE_NOT_SUPPORTED = 44,
+    CUPTI_ERROR_WSL_DEVICE_NOT_SUPPORTED = 45,
+    CUPTI_ERROR_INVALID_CHIP_NAME = 46,
+    CUPTI_ERROR_UNKNOWN = 999,
+    CUPTI_ERROR_FORCE_INT = 2147483647,
+}
 #[cfg(any(
     feature = "cuda-11040",
     feature = "cuda-11050",
@@ -2143,7 +2393,7 @@ pub enum CUpti_ActivityAttribute {
     CUPTI_ACTIVITY_ATTR_PER_THREAD_ACTIVITY_BUFFER = 9,
     CUPTI_ACTIVITY_ATTR_DEVICE_BUFFER_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityAttribute {
@@ -2232,7 +2482,8 @@ pub enum CUpti_ActivityInstructionClass {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -2252,7 +2503,8 @@ pub enum CUpti_ActivityJitEntryType {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -2511,7 +2763,7 @@ pub enum CUpti_ActivityKind {
     CUPTI_ACTIVITY_KIND_COUNT = 55,
     CUPTI_ACTIVITY_KIND_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityKind {
@@ -2597,7 +2849,8 @@ pub enum CUpti_ActivityLaunchType {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -2734,7 +2987,7 @@ pub enum CUpti_ActivityOverheadKind {
     CUPTI_ACTIVITY_OVERHEAD_ACTIVITY_BUFFER_REQUEST = 458752,
     CUPTI_ACTIVITY_OVERHEAD_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ActivityOverheadKind {
@@ -2839,7 +3092,8 @@ pub enum CUpti_ActivityThreadIdType {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -2937,7 +3191,8 @@ pub enum CUpti_CallbackDomain {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -3025,6 +3280,37 @@ pub enum CUpti_CallbackIdResource {
     CUPTI_CBID_RESOURCE_SIZE = 22,
     CUPTI_CBID_RESOURCE_FORCE_INT = 2147483647,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUpti_CallbackIdResource {
+    CUPTI_CBID_RESOURCE_INVALID = 0,
+    CUPTI_CBID_RESOURCE_CONTEXT_CREATED = 1,
+    CUPTI_CBID_RESOURCE_CONTEXT_DESTROY_STARTING = 2,
+    CUPTI_CBID_RESOURCE_STREAM_CREATED = 3,
+    CUPTI_CBID_RESOURCE_STREAM_DESTROY_STARTING = 4,
+    CUPTI_CBID_RESOURCE_CU_INIT_FINISHED = 5,
+    CUPTI_CBID_RESOURCE_MODULE_LOADED = 6,
+    CUPTI_CBID_RESOURCE_MODULE_UNLOAD_STARTING = 7,
+    CUPTI_CBID_RESOURCE_MODULE_PROFILED = 8,
+    CUPTI_CBID_RESOURCE_GRAPH_CREATED = 9,
+    CUPTI_CBID_RESOURCE_GRAPH_DESTROY_STARTING = 10,
+    CUPTI_CBID_RESOURCE_GRAPH_CLONED = 11,
+    CUPTI_CBID_RESOURCE_GRAPHNODE_CREATE_STARTING = 12,
+    CUPTI_CBID_RESOURCE_GRAPHNODE_CREATED = 13,
+    CUPTI_CBID_RESOURCE_GRAPHNODE_DESTROY_STARTING = 14,
+    CUPTI_CBID_RESOURCE_GRAPHNODE_DEPENDENCY_CREATED = 15,
+    CUPTI_CBID_RESOURCE_GRAPHNODE_DEPENDENCY_DESTROY_STARTING = 16,
+    CUPTI_CBID_RESOURCE_GRAPHEXEC_CREATE_STARTING = 17,
+    CUPTI_CBID_RESOURCE_GRAPHEXEC_CREATED = 18,
+    CUPTI_CBID_RESOURCE_GRAPHEXEC_DESTROY_STARTING = 19,
+    CUPTI_CBID_RESOURCE_GRAPHNODE_CLONED = 20,
+    CUPTI_CBID_RESOURCE_STREAM_ATTRIBUTE_CHANGED = 21,
+    CUPTI_CBID_RESOURCE_GRAPH_NODE_UPDATED = 22,
+    CUPTI_CBID_RESOURCE_GRAPH_NODE_SET_PARAMS = 23,
+    CUPTI_CBID_RESOURCE_SIZE = 24,
+    CUPTI_CBID_RESOURCE_FORCE_INT = 2147483647,
+}
 #[cfg(any(
     feature = "cuda-12020",
     feature = "cuda-12030",
@@ -3032,7 +3318,8 @@ pub enum CUpti_CallbackIdResource {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -3080,7 +3367,7 @@ pub enum CUpti_ChannelType {
     CUPTI_CHANNEL_TYPE_ASYNC_MEMCPY = 2,
     CUPTI_CHANNEL_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ChannelType {
@@ -3090,7 +3377,7 @@ pub enum CUpti_ChannelType {
     CUPTI_CHANNEL_TYPE_DECOMP = 3,
     CUPTI_CHANNEL_TYPE_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_ConfidentialComputeRotationEventType {
@@ -3104,7 +3391,8 @@ pub enum CUpti_ConfidentialComputeRotationEventType {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -3155,7 +3443,7 @@ pub enum CUpti_DeviceAttributeDeviceClass {
     CUPTI_DEVICE_ATTR_DEVICE_CLASS_GEFORCE = 2,
     CUPTI_DEVICE_ATTR_DEVICE_CLASS_TEGRA = 3,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_DeviceGraphLaunchMode {
@@ -3336,6 +3624,22 @@ pub enum CUpti_MetricPropertyID {
     CUPTI_METRIC_PROPERTY_FLOP_HP_PER_CYCLE = 14,
     CUPTI_METRIC_PROPERTY_GPU_CPU_NVLINK_BANDWIDTH = 15,
 }
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_MetricValueKind {
@@ -3347,6 +3651,19 @@ pub enum CUpti_MetricValueKind {
     CUPTI_METRIC_VALUE_KIND_UTILIZATION_LEVEL = 5,
     CUPTI_METRIC_VALUE_KIND_FORCE_INT = 2147483647,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUpti_MetricValueKind {
+    CUPTI_METRIC_VALUE_KIND_DOUBLE = 0,
+    CUPTI_METRIC_VALUE_KIND_UINT64 = 1,
+    CUPTI_METRIC_VALUE_KIND_PERCENT = 2,
+    CUPTI_METRIC_VALUE_KIND_THROUGHPUT = 3,
+    CUPTI_METRIC_VALUE_KIND_INT64 = 4,
+    CUPTI_METRIC_VALUE_KIND_UTILIZATION_LEVEL = 5,
+    CUPTI_METRIC_VALUE_KIND_NVTX_EXTENDED_PAYLOAD = 6,
+    CUPTI_METRIC_VALUE_KIND_FORCE_INT = 2147483647,
+}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_MetricValueUtilizationLevel {
@@ -3356,6 +3673,15 @@ pub enum CUpti_MetricValueUtilizationLevel {
     CUPTI_METRIC_VALUE_UTILIZATION_HIGH = 8,
     CUPTI_METRIC_VALUE_UTILIZATION_MAX = 10,
     CUPTI_METRIC_VALUE_UTILIZATION_FORCE_INT = 2147483647,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUpti_NvtxExtPayloadType {
+    CUPTI_NVTX_EXT_PAYLOAD_TYPE_UNKNOWN = 0,
+    CUPTI_NVTX_EXT_PAYLOAD_TYPE_SCHEMA = 1,
+    CUPTI_NVTX_EXT_PAYLOAD_TYPE_ENUM = 2,
+    CUPTI_NVTX_EXT_PAYLOAD_TYPE_FORCE_INT = 2147483647,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -3444,7 +3770,7 @@ pub enum CUpti_PcieGen {
     CUPTI_PCIE_GEN_GEN5 = 5,
     CUPTI_PCIE_GEN_FORCE_INT = 2147483647,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_PcieGen {
@@ -12237,6 +12563,820 @@ pub enum CUpti_driver_api_trace_cbid_enum {
     CUPTI_DRIVER_TRACE_CBID_SIZE = 784,
     CUPTI_DRIVER_TRACE_CBID_FORCE_INT = 2147483647,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUpti_driver_api_trace_cbid_enum {
+    CUPTI_DRIVER_TRACE_CBID_INVALID = 0,
+    CUPTI_DRIVER_TRACE_CBID_cuInit = 1,
+    CUPTI_DRIVER_TRACE_CBID_cuDriverGetVersion = 2,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGet = 3,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetCount = 4,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetName = 5,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceComputeCapability = 6,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceTotalMem = 7,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetProperties = 8,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetAttribute = 9,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate = 10,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDestroy = 11,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxAttach = 12,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDetach = 13,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPushCurrent = 14,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPopCurrent = 15,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetDevice = 16,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSynchronize = 17,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoad = 18,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoadData = 19,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoadDataEx = 20,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleLoadFatBinary = 21,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleUnload = 22,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetFunction = 23,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetGlobal = 24,
+    CUPTI_DRIVER_TRACE_CBID_cu64ModuleGetGlobal = 25,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetTexRef = 26,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetInfo = 27,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemGetInfo = 28,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAlloc = 29,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemAlloc = 30,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocPitch = 31,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemAllocPitch = 32,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFree = 33,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemFree = 34,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAddressRange = 35,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemGetAddressRange = 36,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocHost = 37,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFreeHost = 38,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostAlloc = 39,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostGetDevicePointer = 40,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemHostGetDevicePointer = 41,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostGetFlags = 42,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoD = 43,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyHtoD = 44,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoH = 45,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoH = 46,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoD = 47,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoD = 48,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoA = 49,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoA = 50,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoD = 51,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyAtoD = 52,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoA = 53,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoH = 54,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoA = 55,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2D = 56,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DUnaligned = 57,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3D = 58,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy3D = 59,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoDAsync = 60,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyHtoDAsync = 61,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoHAsync = 62,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoHAsync = 63,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoDAsync = 64,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemcpyDtoDAsync = 65,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoAAsync = 66,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoHAsync = 67,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DAsync = 68,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DAsync = 69,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy3DAsync = 70,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8 = 71,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD8 = 72,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16 = 73,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD16 = 74,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32 = 75,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD32 = 76,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8 = 77,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D8 = 78,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16 = 79,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D16 = 80,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32 = 81,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D32 = 82,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetBlockShape = 83,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetSharedSize = 84,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncGetAttribute = 85,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetCacheConfig = 86,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayCreate = 87,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetDescriptor = 88,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayDestroy = 89,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DCreate = 90,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DGetDescriptor = 91,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefCreate = 92,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefDestroy = 93,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetArray = 94,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress = 95,
+    CUPTI_DRIVER_TRACE_CBID_cu64TexRefSetAddress = 96,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress2D = 97,
+    CUPTI_DRIVER_TRACE_CBID_cu64TexRefSetAddress2D = 98,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetFormat = 99,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddressMode = 100,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetFilterMode = 101,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetFlags = 102,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetAddress = 103,
+    CUPTI_DRIVER_TRACE_CBID_cu64TexRefGetAddress = 104,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetArray = 105,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetAddressMode = 106,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetFilterMode = 107,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetFormat = 108,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetFlags = 109,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetSize = 110,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSeti = 111,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetf = 112,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetv = 113,
+    CUPTI_DRIVER_TRACE_CBID_cuParamSetTexRef = 114,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunch = 115,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchGrid = 116,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchGridAsync = 117,
+    CUPTI_DRIVER_TRACE_CBID_cuEventCreate = 118,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecord = 119,
+    CUPTI_DRIVER_TRACE_CBID_cuEventQuery = 120,
+    CUPTI_DRIVER_TRACE_CBID_cuEventSynchronize = 121,
+    CUPTI_DRIVER_TRACE_CBID_cuEventDestroy = 122,
+    CUPTI_DRIVER_TRACE_CBID_cuEventElapsedTime = 123,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCreate = 124,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamQuery = 125,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSynchronize = 126,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamDestroy = 127,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsUnregisterResource = 128,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsSubResourceGetMappedArray = 129,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedPointer = 130,
+    CUPTI_DRIVER_TRACE_CBID_cu64GraphicsResourceGetMappedPointer = 131,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceSetMapFlags = 132,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsMapResources = 133,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsUnmapResources = 134,
+    CUPTI_DRIVER_TRACE_CBID_cuGetExportTable = 135,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetLimit = 136,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetLimit = 137,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10GetDevice = 138,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10CtxCreate = 139,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsD3D10RegisterResource = 140,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10RegisterResource = 141,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10UnregisterResource = 142,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10MapResources = 143,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10UnmapResources = 144,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceSetMapFlags = 145,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedArray = 146,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPointer = 147,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedSize = 148,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPitch = 149,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetSurfaceDimensions = 150,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11GetDevice = 151,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11CtxCreate = 152,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsD3D11RegisterResource = 153,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9GetDevice = 154,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9CtxCreate = 155,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsD3D9RegisterResource = 156,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9GetDirect3DDevice = 157,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9RegisterResource = 158,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnregisterResource = 159,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9MapResources = 160,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnmapResources = 161,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceSetMapFlags = 162,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetSurfaceDimensions = 163,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedArray = 164,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPointer = 165,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedSize = 166,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPitch = 167,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9Begin = 168,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9End = 169,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9RegisterVertexBuffer = 170,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9MapVertexBuffer = 171,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnmapVertexBuffer = 172,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9UnregisterVertexBuffer = 173,
+    CUPTI_DRIVER_TRACE_CBID_cuGLCtxCreate = 174,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsGLRegisterBuffer = 175,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsGLRegisterImage = 176,
+    CUPTI_DRIVER_TRACE_CBID_cuWGLGetDevice = 177,
+    CUPTI_DRIVER_TRACE_CBID_cuGLInit = 178,
+    CUPTI_DRIVER_TRACE_CBID_cuGLRegisterBufferObject = 179,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObject = 180,
+    CUPTI_DRIVER_TRACE_CBID_cuGLUnmapBufferObject = 181,
+    CUPTI_DRIVER_TRACE_CBID_cuGLUnregisterBufferObject = 182,
+    CUPTI_DRIVER_TRACE_CBID_cuGLSetBufferObjectMapFlags = 183,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObjectAsync = 184,
+    CUPTI_DRIVER_TRACE_CBID_cuGLUnmapBufferObjectAsync = 185,
+    CUPTI_DRIVER_TRACE_CBID_cuVDPAUGetDevice = 186,
+    CUPTI_DRIVER_TRACE_CBID_cuVDPAUCtxCreate = 187,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsVDPAURegisterVideoSurface = 188,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsVDPAURegisterOutputSurface = 189,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetSurfRef = 190,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefCreate = 191,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefDestroy = 192,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefSetFormat = 193,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefSetArray = 194,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefGetFormat = 195,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfRefGetArray = 196,
+    CUPTI_DRIVER_TRACE_CBID_cu64DeviceTotalMem = 197,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetMappedPointer = 198,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetMappedSize = 199,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetMappedPitch = 200,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D10ResourceGetSurfaceDimensions = 201,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetSurfaceDimensions = 202,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetMappedPointer = 203,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetMappedSize = 204,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9ResourceGetMappedPitch = 205,
+    CUPTI_DRIVER_TRACE_CBID_cu64D3D9MapVertexBuffer = 206,
+    CUPTI_DRIVER_TRACE_CBID_cu64GLMapBufferObject = 207,
+    CUPTI_DRIVER_TRACE_CBID_cu64GLMapBufferObjectAsync = 208,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11GetDevices = 209,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11CtxCreateOnDevice = 210,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10GetDevices = 211,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10CtxCreateOnDevice = 212,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9GetDevices = 213,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9CtxCreateOnDevice = 214,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemHostAlloc = 215,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8Async = 216,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD8Async = 217,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16Async = 218,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD16Async = 219,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32Async = 220,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD32Async = 221,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8Async = 222,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D8Async = 223,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16Async = 224,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D16Async = 225,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32Async = 226,
+    CUPTI_DRIVER_TRACE_CBID_cu64MemsetD2D32Async = 227,
+    CUPTI_DRIVER_TRACE_CBID_cu64ArrayCreate = 228,
+    CUPTI_DRIVER_TRACE_CBID_cu64ArrayGetDescriptor = 229,
+    CUPTI_DRIVER_TRACE_CBID_cu64Array3DCreate = 230,
+    CUPTI_DRIVER_TRACE_CBID_cu64Array3DGetDescriptor = 231,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy2D = 232,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy2DUnaligned = 233,
+    CUPTI_DRIVER_TRACE_CBID_cu64Memcpy2DAsync = 234,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate_v2 = 235,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10CtxCreate_v2 = 236,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11CtxCreate_v2 = 237,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9CtxCreate_v2 = 238,
+    CUPTI_DRIVER_TRACE_CBID_cuGLCtxCreate_v2 = 239,
+    CUPTI_DRIVER_TRACE_CBID_cuVDPAUCtxCreate_v2 = 240,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetGlobal_v2 = 241,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetInfo_v2 = 242,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAlloc_v2 = 243,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocPitch_v2 = 244,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFree_v2 = 245,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAddressRange_v2 = 246,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostGetDevicePointer_v2 = 247,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy_v2 = 248,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8_v2 = 249,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16_v2 = 250,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32_v2 = 251,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8_v2 = 252,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16_v2 = 253,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32_v2 = 254,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress_v2 = 255,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress2D_v2 = 256,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetAddress_v2 = 257,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedPointer_v2 = 258,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceTotalMem_v2 = 259,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPointer_v2 = 260,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedSize_v2 = 261,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetMappedPitch_v2 = 262,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10ResourceGetSurfaceDimensions_v2 = 263,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetSurfaceDimensions_v2 = 264,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPointer_v2 = 265,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedSize_v2 = 266,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9ResourceGetMappedPitch_v2 = 267,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D9MapVertexBuffer_v2 = 268,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObject_v2 = 269,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObjectAsync_v2 = 270,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostAlloc_v2 = 271,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayCreate_v2 = 272,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetDescriptor_v2 = 273,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DCreate_v2 = 274,
+    CUPTI_DRIVER_TRACE_CBID_cuArray3DGetDescriptor_v2 = 275,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoD_v2 = 276,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoDAsync_v2 = 277,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoH_v2 = 278,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoHAsync_v2 = 279,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoD_v2 = 280,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoDAsync_v2 = 281,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoH_v2 = 282,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoHAsync_v2 = 283,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoD_v2 = 284,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoA_v2 = 285,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoA_v2 = 286,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2D_v2 = 287,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DUnaligned_v2 = 288,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DAsync_v2 = 289,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3D_v2 = 290,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DAsync_v2 = 291,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoA_v2 = 292,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoAAsync_v2 = 293,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocHost_v2 = 294,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitEvent = 295,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetApiVersion = 296,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D10GetDirect3DDevice = 297,
+    CUPTI_DRIVER_TRACE_CBID_cuD3D11GetDirect3DDevice = 298,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetCacheConfig = 299,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetCacheConfig = 300,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostRegister = 301,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostUnregister = 302,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetCurrent = 303,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetCurrent = 304,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy = 305,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAsync = 306,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernel = 307,
+    CUPTI_DRIVER_TRACE_CBID_cuProfilerStart = 308,
+    CUPTI_DRIVER_TRACE_CBID_cuProfilerStop = 309,
+    CUPTI_DRIVER_TRACE_CBID_cuPointerGetAttribute = 310,
+    CUPTI_DRIVER_TRACE_CBID_cuProfilerInitialize = 311,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceCanAccessPeer = 312,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxEnablePeerAccess = 313,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDisablePeerAccess = 314,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPeerRegister = 315,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPeerUnregister = 316,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPeerGetDevicePointer = 317,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeer = 318,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeerAsync = 319,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeer = 320,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeerAsync = 321,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxDestroy_v2 = 322,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPushCurrent_v2 = 323,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxPopCurrent_v2 = 324,
+    CUPTI_DRIVER_TRACE_CBID_cuEventDestroy_v2 = 325,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamDestroy_v2 = 326,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetAddress2D_v3 = 327,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcGetMemHandle = 328,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcOpenMemHandle = 329,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcCloseMemHandle = 330,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetByPCIBusId = 331,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetPCIBusId = 332,
+    CUPTI_DRIVER_TRACE_CBID_cuGLGetDevices = 333,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcGetEventHandle = 334,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcOpenEventHandle = 335,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetSharedMemConfig = 336,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetSharedMemConfig = 337,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetSharedMemConfig = 338,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectCreate = 339,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectDestroy = 340,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectGetResourceDesc = 341,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectGetTextureDesc = 342,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfObjectCreate = 343,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfObjectDestroy = 344,
+    CUPTI_DRIVER_TRACE_CBID_cuSurfObjectGetResourceDesc = 345,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAddCallback = 346,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayCreate = 347,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayGetLevel = 348,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayDestroy = 349,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmappedArray = 350,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmapFilterMode = 351,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmapLevelBias = 352,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMipmapLevelClamp = 353,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetMaxAnisotropy = 354,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmappedArray = 355,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmapFilterMode = 356,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmapLevelBias = 357,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMipmapLevelClamp = 358,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetMaxAnisotropy = 359,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedMipmappedArray = 360,
+    CUPTI_DRIVER_TRACE_CBID_cuTexObjectGetResourceViewDesc = 361,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkCreate = 362,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddData = 363,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddFile = 364,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkComplete = 365,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkDestroy = 366,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCreateWithPriority = 367,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetPriority = 368,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetFlags = 369,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetStreamPriorityRange = 370,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocManaged = 371,
+    CUPTI_DRIVER_TRACE_CBID_cuGetErrorString = 372,
+    CUPTI_DRIVER_TRACE_CBID_cuGetErrorName = 373,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxActiveBlocksPerMultiprocessor = 374,
+    CUPTI_DRIVER_TRACE_CBID_cuCompilePtx = 375,
+    CUPTI_DRIVER_TRACE_CBID_cuBinaryFree = 376,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAttachMemAsync = 377,
+    CUPTI_DRIVER_TRACE_CBID_cuPointerSetAttribute = 378,
+    CUPTI_DRIVER_TRACE_CBID_cuMemHostRegister_v2 = 379,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceSetMapFlags_v2 = 380,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkCreate_v2 = 381,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddData_v2 = 382,
+    CUPTI_DRIVER_TRACE_CBID_cuLinkAddFile_v2 = 383,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxPotentialBlockSize = 384,
+    CUPTI_DRIVER_TRACE_CBID_cuGLGetDevices_v2 = 385,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxRetain = 386,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxRelease = 387,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxSetFlags = 388,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxReset = 389,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsEGLRegisterImage = 390,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetFlags = 391,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxGetState = 392,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerConnect = 393,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerDisconnect = 394,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerAcquireFrame = 395,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerReleaseFrame = 396,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoD_v2_ptds = 397,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoH_v2_ptds = 398,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoD_v2_ptds = 399,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoA_v2_ptds = 400,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoD_v2_ptds = 401,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoA_v2_ptds = 402,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoH_v2_ptds = 403,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoA_v2_ptds = 404,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2D_v2_ptds = 405,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DUnaligned_v2_ptds = 406,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3D_v2_ptds = 407,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy_ptds = 408,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeer_ptds = 409,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeer_ptds = 410,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8_v2_ptds = 411,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16_v2_ptds = 412,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32_v2_ptds = 413,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8_v2_ptds = 414,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16_v2_ptds = 415,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32_v2_ptds = 416,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObject_v2_ptds = 417,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAsync_ptsz = 418,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoAAsync_v2_ptsz = 419,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyAtoHAsync_v2_ptsz = 420,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyHtoDAsync_v2_ptsz = 421,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoHAsync_v2_ptsz = 422,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyDtoDAsync_v2_ptsz = 423,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy2DAsync_v2_ptsz = 424,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DAsync_v2_ptsz = 425,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyPeerAsync_ptsz = 426,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DPeerAsync_ptsz = 427,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD8Async_ptsz = 428,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD16Async_ptsz = 429,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD32Async_ptsz = 430,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D8Async_ptsz = 431,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D16Async_ptsz = 432,
+    CUPTI_DRIVER_TRACE_CBID_cuMemsetD2D32Async_ptsz = 433,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetPriority_ptsz = 434,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetFlags_ptsz = 435,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitEvent_ptsz = 436,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAddCallback_ptsz = 437,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamAttachMemAsync_ptsz = 438,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamQuery_ptsz = 439,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSynchronize_ptsz = 440,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecord_ptsz = 441,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernel_ptsz = 442,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsMapResources_ptsz = 443,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsUnmapResources_ptsz = 444,
+    CUPTI_DRIVER_TRACE_CBID_cuGLMapBufferObjectAsync_v2_ptsz = 445,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerConnect = 446,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerDisconnect = 447,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerPresentFrame = 448,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphicsResourceGetMappedEglFrame = 449,
+    CUPTI_DRIVER_TRACE_CBID_cuPointerGetAttributes = 450,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags = 451,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxPotentialBlockSizeWithFlags = 452,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamProducerReturnFrame = 453,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetP2PAttribute = 454,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefSetBorderColor = 455,
+    CUPTI_DRIVER_TRACE_CBID_cuTexRefGetBorderColor = 456,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAdvise = 457,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue32 = 458,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue32_ptsz = 459,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue32 = 460,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue32_ptsz = 461,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBatchMemOp = 462,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBatchMemOp_ptsz = 463,
+    CUPTI_DRIVER_TRACE_CBID_cuNVNbufferGetPointer = 464,
+    CUPTI_DRIVER_TRACE_CBID_cuNVNtextureGetArray = 465,
+    CUPTI_DRIVER_TRACE_CBID_cuNNSetAllocator = 466,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchAsync = 467,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchAsync_ptsz = 468,
+    CUPTI_DRIVER_TRACE_CBID_cuEventCreateFromNVNSync = 469,
+    CUPTI_DRIVER_TRACE_CBID_cuEGLStreamConsumerConnectWithFlags = 470,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRangeGetAttribute = 471,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRangeGetAttributes = 472,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue64 = 473,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue64_ptsz = 474,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue64 = 475,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue64_ptsz = 476,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchCooperativeKernel = 477,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchCooperativeKernel_ptsz = 478,
+    CUPTI_DRIVER_TRACE_CBID_cuEventCreateFromEGLSync = 479,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchCooperativeKernelMultiDevice = 480,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncSetAttribute = 481,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetUuid = 482,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCtx = 483,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCtx_ptsz = 484,
+    CUPTI_DRIVER_TRACE_CBID_cuImportExternalMemory = 485,
+    CUPTI_DRIVER_TRACE_CBID_cuExternalMemoryGetMappedBuffer = 486,
+    CUPTI_DRIVER_TRACE_CBID_cuExternalMemoryGetMappedMipmappedArray = 487,
+    CUPTI_DRIVER_TRACE_CBID_cuDestroyExternalMemory = 488,
+    CUPTI_DRIVER_TRACE_CBID_cuImportExternalSemaphore = 489,
+    CUPTI_DRIVER_TRACE_CBID_cuSignalExternalSemaphoresAsync = 490,
+    CUPTI_DRIVER_TRACE_CBID_cuSignalExternalSemaphoresAsync_ptsz = 491,
+    CUPTI_DRIVER_TRACE_CBID_cuWaitExternalSemaphoresAsync = 492,
+    CUPTI_DRIVER_TRACE_CBID_cuWaitExternalSemaphoresAsync_ptsz = 493,
+    CUPTI_DRIVER_TRACE_CBID_cuDestroyExternalSemaphore = 494,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture = 495,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture_ptsz = 496,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamEndCapture = 497,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamEndCapture_ptsz = 498,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamIsCapturing = 499,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamIsCapturing_ptsz = 500,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphCreate = 501,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddKernelNode = 502,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeGetParams = 503,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemcpyNode = 504,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemcpyNodeGetParams = 505,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemsetNode = 506,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemsetNodeGetParams = 507,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemsetNodeSetParams = 508,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetType = 509,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetRootNodes = 510,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetDependencies = 511,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetDependentNodes = 512,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiate = 513,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphLaunch = 514,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphLaunch_ptsz = 515,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecDestroy = 516,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphDestroy = 517,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddDependencies = 518,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphRemoveDependencies = 519,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemcpyNodeSetParams = 520,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeSetParams = 521,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphDestroyNode = 522,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphClone = 523,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeFindInClone = 524,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddChildGraphNode = 525,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddEmptyNode = 526,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchHostFunc = 527,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchHostFunc_ptsz = 528,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphChildGraphNodeGetGraph = 529,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddHostNode = 530,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphHostNodeGetParams = 531,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetLuid = 532,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphHostNodeSetParams = 533,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetNodes = 534,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetEdges = 535,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo = 536,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_ptsz = 537,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecKernelNodeSetParams = 538,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture_v2 = 539,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCapture_v2_ptsz = 540,
+    CUPTI_DRIVER_TRACE_CBID_cuThreadExchangeStreamCaptureMode = 541,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetNvSciSyncAttributes = 542,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyAvailableDynamicSMemPerBlock = 543,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxRelease_v2 = 544,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxReset_v2 = 545,
+    CUPTI_DRIVER_TRACE_CBID_cuDevicePrimaryCtxSetFlags_v2 = 546,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAddressReserve = 547,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAddressFree = 548,
+    CUPTI_DRIVER_TRACE_CBID_cuMemCreate = 549,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRelease = 550,
+    CUPTI_DRIVER_TRACE_CBID_cuMemMap = 551,
+    CUPTI_DRIVER_TRACE_CBID_cuMemUnmap = 552,
+    CUPTI_DRIVER_TRACE_CBID_cuMemSetAccess = 553,
+    CUPTI_DRIVER_TRACE_CBID_cuMemExportToShareableHandle = 554,
+    CUPTI_DRIVER_TRACE_CBID_cuMemImportFromShareableHandle = 555,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAllocationGranularity = 556,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAllocationPropertiesFromHandle = 557,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetAccess = 558,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetFlags = 559,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetFlags_ptsz = 560,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecUpdate = 561,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecMemcpyNodeSetParams = 562,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecMemsetNodeSetParams = 563,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecHostNodeSetParams = 564,
+    CUPTI_DRIVER_TRACE_CBID_cuMemRetainAllocationHandle = 565,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncGetModule = 566,
+    CUPTI_DRIVER_TRACE_CBID_cuIpcOpenMemHandle_v2 = 567,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxResetPersistingL2Cache = 568,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeCopyAttributes = 569,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeGetAttribute = 570,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeSetAttribute = 571,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCopyAttributes = 572,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCopyAttributes_ptsz = 573,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetAttribute = 574,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetAttribute_ptsz = 575,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetAttribute = 576,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamSetAttribute_ptsz = 577,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiate_v2 = 578,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetTexture1DLinearMaxWidth = 579,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphUpload = 580,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphUpload_ptsz = 581,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetSparseProperties = 582,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayGetSparseProperties = 583,
+    CUPTI_DRIVER_TRACE_CBID_cuMemMapArrayAsync = 584,
+    CUPTI_DRIVER_TRACE_CBID_cuMemMapArrayAsync_ptsz = 585,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecChildGraphNodeSetParams = 586,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecordWithFlags = 587,
+    CUPTI_DRIVER_TRACE_CBID_cuEventRecordWithFlags_ptsz = 588,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddEventRecordNode = 589,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddEventWaitNode = 590,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventRecordNodeGetEvent = 591,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventWaitNodeGetEvent = 592,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventRecordNodeSetEvent = 593,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphEventWaitNodeSetEvent = 594,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecEventRecordNodeSetEvent = 595,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecEventWaitNodeSetEvent = 596,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetPlane = 597,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocAsync = 598,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocAsync_ptsz = 599,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFreeAsync = 600,
+    CUPTI_DRIVER_TRACE_CBID_cuMemFreeAsync_ptsz = 601,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolTrimTo = 602,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolSetAttribute = 603,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolGetAttribute = 604,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolSetAccess = 605,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetDefaultMemPool = 606,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolCreate = 607,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolDestroy = 608,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceSetMemPool = 609,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetMemPool = 610,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocFromPoolAsync = 611,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAllocFromPoolAsync_ptsz = 612,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolExportToShareableHandle = 613,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolImportFromShareableHandle = 614,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolExportPointer = 615,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolImportPointer = 616,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPoolGetAccess = 617,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddExternalSemaphoresSignalNode = 618,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresSignalNodeGetParams = 619,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresSignalNodeSetParams = 620,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddExternalSemaphoresWaitNode = 621,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresWaitNodeGetParams = 622,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExternalSemaphoresWaitNodeSetParams = 623,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecExternalSemaphoresSignalNodeSetParams = 624,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecExternalSemaphoresWaitNodeSetParams = 625,
+    CUPTI_DRIVER_TRACE_CBID_cuGetProcAddress = 626,
+    CUPTI_DRIVER_TRACE_CBID_cuFlushGPUDirectRDMAWrites = 627,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphDebugDotPrint = 628,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_v2 = 629,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_v2_ptsz = 630,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamUpdateCaptureDependencies = 631,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamUpdateCaptureDependencies_ptsz = 632,
+    CUPTI_DRIVER_TRACE_CBID_cuUserObjectCreate = 633,
+    CUPTI_DRIVER_TRACE_CBID_cuUserObjectRetain = 634,
+    CUPTI_DRIVER_TRACE_CBID_cuUserObjectRelease = 635,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphRetainUserObject = 636,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphReleaseUserObject = 637,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemAllocNode = 638,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddMemFreeNode = 639,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGraphMemTrim = 640,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetGraphMemAttribute = 641,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceSetGraphMemAttribute = 642,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiateWithFlags = 643,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetExecAffinitySupport = 644,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate_v3 = 645,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetExecAffinity = 646,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetUuid_v2 = 647,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemAllocNodeGetParams = 648,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphMemFreeNodeGetParams = 649,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeSetEnabled = 650,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetEnabled = 651,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernelEx = 652,
+    CUPTI_DRIVER_TRACE_CBID_cuLaunchKernelEx_ptsz = 653,
+    CUPTI_DRIVER_TRACE_CBID_cuArrayGetMemoryRequirements = 654,
+    CUPTI_DRIVER_TRACE_CBID_cuMipmappedArrayGetMemoryRequirements = 655,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiateWithParams = 656,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphInstantiateWithParams_ptsz = 657,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecGetFlags = 658,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue32_v2 = 659,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue32_v2_ptsz = 660,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue64_v2 = 661,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWaitValue64_v2_ptsz = 662,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue32_v2 = 663,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue32_v2_ptsz = 664,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue64_v2 = 665,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamWriteValue64_v2_ptsz = 666,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBatchMemOp_v2 = 667,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBatchMemOp_v2_ptsz = 668,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddBatchMemOpNode = 669,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphBatchMemOpNodeGetParams = 670,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphBatchMemOpNodeSetParams = 671,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecBatchMemOpNodeSetParams = 672,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetLoadingMode = 673,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetHandleForAddressRange = 674,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxPotentialClusterSize = 675,
+    CUPTI_DRIVER_TRACE_CBID_cuOccupancyMaxActiveClusters = 676,
+    CUPTI_DRIVER_TRACE_CBID_cuGetProcAddress_v2 = 677,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryLoadData = 678,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryLoadFromFile = 679,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryUnload = 680,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryGetKernel = 681,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryGetModule = 682,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelGetFunction = 683,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryGetGlobal = 684,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryGetManaged = 685,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelGetAttribute = 686,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelSetAttribute = 687,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelSetCacheConfig = 688,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddKernelNode_v2 = 689,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeGetParams_v2 = 690,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphKernelNodeSetParams_v2 = 691,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecKernelNodeSetParams_v2 = 692,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetId = 693,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetId_ptsz = 694,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetId = 695,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecUpdate_v2 = 696,
+    CUPTI_DRIVER_TRACE_CBID_cuTensorMapEncodeTiled = 697,
+    CUPTI_DRIVER_TRACE_CBID_cuTensorMapEncodeIm2col = 698,
+    CUPTI_DRIVER_TRACE_CBID_cuTensorMapReplaceAddress = 699,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryGetUnifiedFunction = 700,
+    CUPTI_DRIVER_TRACE_CBID_cuCoredumpGetAttribute = 701,
+    CUPTI_DRIVER_TRACE_CBID_cuCoredumpGetAttributeGlobal = 702,
+    CUPTI_DRIVER_TRACE_CBID_cuCoredumpSetAttribute = 703,
+    CUPTI_DRIVER_TRACE_CBID_cuCoredumpSetAttributeGlobal = 704,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSetFlags = 705,
+    CUPTI_DRIVER_TRACE_CBID_cuMulticastCreate = 706,
+    CUPTI_DRIVER_TRACE_CBID_cuMulticastAddDevice = 707,
+    CUPTI_DRIVER_TRACE_CBID_cuMulticastBindMem = 708,
+    CUPTI_DRIVER_TRACE_CBID_cuMulticastBindAddr = 709,
+    CUPTI_DRIVER_TRACE_CBID_cuMulticastUnbind = 710,
+    CUPTI_DRIVER_TRACE_CBID_cuMulticastGetGranularity = 711,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddNode = 712,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeSetParams = 713,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphExecNodeSetParams = 714,
+    CUPTI_DRIVER_TRACE_CBID_cuMemAdvise_v2 = 715,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchAsync_v2 = 716,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchAsync_v2_ptsz = 717,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncGetName = 718,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelGetName = 719,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCaptureToGraph = 720,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamBeginCaptureToGraph_ptsz = 721,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphConditionalHandleCreate = 722,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddNode_v2 = 723,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphGetEdges_v2 = 724,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetDependencies_v2 = 725,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphNodeGetDependentNodes_v2 = 726,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphAddDependencies_v2 = 727,
+    CUPTI_DRIVER_TRACE_CBID_cuGraphRemoveDependencies_v2 = 728,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_v3 = 729,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCaptureInfo_v3_ptsz = 730,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamUpdateCaptureDependencies_v2 = 731,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamUpdateCaptureDependencies_v2_ptsz = 732,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncGetParamInfo = 733,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelGetParamInfo = 734,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceRegisterAsyncNotification = 735,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceUnregisterAsyncNotification = 736,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleGetFunctionCount = 737,
+    CUPTI_DRIVER_TRACE_CBID_cuModuleEnumerateFunctions = 738,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryGetKernelCount = 739,
+    CUPTI_DRIVER_TRACE_CBID_cuLibraryEnumerateKernels = 740,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncIsLoaded = 741,
+    CUPTI_DRIVER_TRACE_CBID_cuFuncLoad = 742,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxCreate = 743,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxDestroy = 744,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetDevResource = 745,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetDevResource = 746,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxGetDevResource = 747,
+    CUPTI_DRIVER_TRACE_CBID_cuDevResourceGenerateDesc = 748,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxRecordEvent = 749,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxWaitEvent = 750,
+    CUPTI_DRIVER_TRACE_CBID_cuDevSmResourceSplitByCount = 751,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetGreenCtx = 752,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxFromGreenCtx = 753,
+    CUPTI_DRIVER_TRACE_CBID_cuKernelGetLibrary = 754,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxRecordEvent = 755,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxWaitEvent = 756,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxCreate_v4 = 757,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxStreamCreate = 758,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCtx_v2 = 759,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetCtx_v2_ptsz = 760,
+    CUPTI_DRIVER_TRACE_CBID_cuMemBatchDecompressAsync = 761,
+    CUPTI_DRIVER_TRACE_CBID_cuMemBatchDecompressAsync_ptsz = 762,
+    CUPTI_DRIVER_TRACE_CBID_cuLogsRegisterCallback = 763,
+    CUPTI_DRIVER_TRACE_CBID_cuLogsUnregisterCallback = 764,
+    CUPTI_DRIVER_TRACE_CBID_cuLogsCurrent = 765,
+    CUPTI_DRIVER_TRACE_CBID_cuLogsDumpToFile = 766,
+    CUPTI_DRIVER_TRACE_CBID_cuLogsDumpToMemory = 767,
+    CUPTI_DRIVER_TRACE_CBID_cuCheckpointProcessGetRestoreThreadId = 768,
+    CUPTI_DRIVER_TRACE_CBID_cuCheckpointProcessGetState = 769,
+    CUPTI_DRIVER_TRACE_CBID_cuCheckpointProcessLock = 770,
+    CUPTI_DRIVER_TRACE_CBID_cuCheckpointProcessCheckpoint = 771,
+    CUPTI_DRIVER_TRACE_CBID_cuCheckpointProcessRestore = 772,
+    CUPTI_DRIVER_TRACE_CBID_cuCheckpointProcessUnlock = 773,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetDevice = 774,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamGetDevice_ptsz = 775,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyBatchAsync = 776,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyBatchAsync_ptsz = 777,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DBatchAsync = 778,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DBatchAsync_ptsz = 779,
+    CUPTI_DRIVER_TRACE_CBID_cuEventElapsedTime_v2 = 780,
+    CUPTI_DRIVER_TRACE_CBID_cuTensorMapEncodeIm2colWide = 781,
+    CUPTI_DRIVER_TRACE_CBID_cuGreenCtxGetId = 782,
+    CUPTI_DRIVER_TRACE_CBID_cuStreamCreateForCaptureToCig = 783,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchBatchAsync = 784,
+    CUPTI_DRIVER_TRACE_CBID_cuMemPrefetchBatchAsync_ptsz = 785,
+    CUPTI_DRIVER_TRACE_CBID_cuSemaphoreCreate = 786,
+    CUPTI_DRIVER_TRACE_CBID_cuSemaphoreExport = 787,
+    CUPTI_DRIVER_TRACE_CBID_cuSemaphoreDestroy = 788,
+    CUPTI_DRIVER_TRACE_CBID_cuMemDiscardBatchAsync = 789,
+    CUPTI_DRIVER_TRACE_CBID_cuMemDiscardBatchAsync_ptsz = 790,
+    CUPTI_DRIVER_TRACE_CBID_cuMemDiscardAndPrefetchBatchAsync = 791,
+    CUPTI_DRIVER_TRACE_CBID_cuMemDiscardAndPrefetchBatchAsync_ptsz = 792,
+    CUPTI_DRIVER_TRACE_CBID_cuMultiKernelCooperativeDomainCreate = 793,
+    CUPTI_DRIVER_TRACE_CBID_cuMultiKernelCooperativeDomainDestroy = 794,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxGetDevice_v2 = 795,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyBatchAsync_v2 = 796,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpyBatchAsync_v2_ptsz = 797,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DBatchAsync_v2 = 798,
+    CUPTI_DRIVER_TRACE_CBID_cuMemcpy3DBatchAsync_v2_ptsz = 799,
+    CUPTI_DRIVER_TRACE_CBID_cuCtxSynchronize_v2 = 800,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetDefaultMemPool = 801,
+    CUPTI_DRIVER_TRACE_CBID_cuMemGetMemPool = 802,
+    CUPTI_DRIVER_TRACE_CBID_cuMemSetMemPool = 803,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetP2PAtomicCapabilities = 804,
+    CUPTI_DRIVER_TRACE_CBID_cuDeviceGetHostAtomicCapabilities = 805,
+    CUPTI_DRIVER_TRACE_CBID_cuDriverGetGpuCodeIsaVersion = 806,
+    CUPTI_DRIVER_TRACE_CBID_SIZE = 807,
+    CUPTI_DRIVER_TRACE_CBID_FORCE_INT = 2147483647,
+}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum CUpti_nvtx_api_trace_cbid {
@@ -17865,6 +19005,536 @@ pub enum CUpti_runtime_api_trace_cbid_enum {
     CUPTI_RUNTIME_TRACE_CBID_SIZE = 487,
     CUPTI_RUNTIME_TRACE_CBID_FORCE_INT = 2147483647,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum CUpti_runtime_api_trace_cbid_enum {
+    CUPTI_RUNTIME_TRACE_CBID_INVALID = 0,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDriverGetVersion_v3020 = 1,
+    CUPTI_RUNTIME_TRACE_CBID_cudaRuntimeGetVersion_v3020 = 2,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceCount_v3020 = 3,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceProperties_v3020 = 4,
+    CUPTI_RUNTIME_TRACE_CBID_cudaChooseDevice_v3020 = 5,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetChannelDesc_v3020 = 6,
+    CUPTI_RUNTIME_TRACE_CBID_cudaCreateChannelDesc_v3020 = 7,
+    CUPTI_RUNTIME_TRACE_CBID_cudaConfigureCall_v3020 = 8,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSetupArgument_v3020 = 9,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetLastError_v3020 = 10,
+    CUPTI_RUNTIME_TRACE_CBID_cudaPeekAtLastError_v3020 = 11,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetErrorString_v3020 = 12,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_v3020 = 13,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFuncSetCacheConfig_v3020 = 14,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFuncGetAttributes_v3020 = 15,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSetDevice_v3020 = 16,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDevice_v3020 = 17,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSetValidDevices_v3020 = 18,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSetDeviceFlags_v3020 = 19,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMalloc_v3020 = 20,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocPitch_v3020 = 21,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFree_v3020 = 22,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocArray_v3020 = 23,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFreeArray_v3020 = 24,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocHost_v3020 = 25,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFreeHost_v3020 = 26,
+    CUPTI_RUNTIME_TRACE_CBID_cudaHostAlloc_v3020 = 27,
+    CUPTI_RUNTIME_TRACE_CBID_cudaHostGetDevicePointer_v3020 = 28,
+    CUPTI_RUNTIME_TRACE_CBID_cudaHostGetFlags_v3020 = 29,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemGetInfo_v3020 = 30,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_v3020 = 31,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2D_v3020 = 32,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToArray_v3020 = 33,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DToArray_v3020 = 34,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromArray_v3020 = 35,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DFromArray_v3020 = 36,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyArrayToArray_v3020 = 37,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DArrayToArray_v3020 = 38,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToSymbol_v3020 = 39,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromSymbol_v3020 = 40,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_v3020 = 41,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToArrayAsync_v3020 = 42,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromArrayAsync_v3020 = 43,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DAsync_v3020 = 44,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DToArrayAsync_v3020 = 45,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DFromArrayAsync_v3020 = 46,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToSymbolAsync_v3020 = 47,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromSymbolAsync_v3020 = 48,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset_v3020 = 49,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset2D_v3020 = 50,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemsetAsync_v3020 = 51,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset2DAsync_v3020 = 52,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetSymbolAddress_v3020 = 53,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetSymbolSize_v3020 = 54,
+    CUPTI_RUNTIME_TRACE_CBID_cudaBindTexture_v3020 = 55,
+    CUPTI_RUNTIME_TRACE_CBID_cudaBindTexture2D_v3020 = 56,
+    CUPTI_RUNTIME_TRACE_CBID_cudaBindTextureToArray_v3020 = 57,
+    CUPTI_RUNTIME_TRACE_CBID_cudaUnbindTexture_v3020 = 58,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetTextureAlignmentOffset_v3020 = 59,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetTextureReference_v3020 = 60,
+    CUPTI_RUNTIME_TRACE_CBID_cudaBindSurfaceToArray_v3020 = 61,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetSurfaceReference_v3020 = 62,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLSetGLDevice_v3020 = 63,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLRegisterBufferObject_v3020 = 64,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLMapBufferObject_v3020 = 65,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLUnmapBufferObject_v3020 = 66,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLUnregisterBufferObject_v3020 = 67,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLSetBufferObjectMapFlags_v3020 = 68,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLMapBufferObjectAsync_v3020 = 69,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLUnmapBufferObjectAsync_v3020 = 70,
+    CUPTI_RUNTIME_TRACE_CBID_cudaWGLGetDevice_v3020 = 71,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsGLRegisterImage_v3020 = 72,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsGLRegisterBuffer_v3020 = 73,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsUnregisterResource_v3020 = 74,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsResourceSetMapFlags_v3020 = 75,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsMapResources_v3020 = 76,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsUnmapResources_v3020 = 77,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsResourceGetMappedPointer_v3020 = 78,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsSubResourceGetMappedArray_v3020 = 79,
+    CUPTI_RUNTIME_TRACE_CBID_cudaVDPAUGetDevice_v3020 = 80,
+    CUPTI_RUNTIME_TRACE_CBID_cudaVDPAUSetVDPAUDevice_v3020 = 81,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsVDPAURegisterVideoSurface_v3020 = 82,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsVDPAURegisterOutputSurface_v3020 = 83,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D11GetDevice_v3020 = 84,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D11GetDevices_v3020 = 85,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D11SetDirect3DDevice_v3020 = 86,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsD3D11RegisterResource_v3020 = 87,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10GetDevice_v3020 = 88,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10GetDevices_v3020 = 89,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10SetDirect3DDevice_v3020 = 90,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsD3D10RegisterResource_v3020 = 91,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10RegisterResource_v3020 = 92,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10UnregisterResource_v3020 = 93,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10MapResources_v3020 = 94,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10UnmapResources_v3020 = 95,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10ResourceSetMapFlags_v3020 = 96,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10ResourceGetSurfaceDimensions_v3020 = 97,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10ResourceGetMappedArray_v3020 = 98,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10ResourceGetMappedPointer_v3020 = 99,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10ResourceGetMappedSize_v3020 = 100,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10ResourceGetMappedPitch_v3020 = 101,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9GetDevice_v3020 = 102,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9GetDevices_v3020 = 103,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9SetDirect3DDevice_v3020 = 104,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9GetDirect3DDevice_v3020 = 105,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsD3D9RegisterResource_v3020 = 106,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9RegisterResource_v3020 = 107,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9UnregisterResource_v3020 = 108,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9MapResources_v3020 = 109,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9UnmapResources_v3020 = 110,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9ResourceSetMapFlags_v3020 = 111,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9ResourceGetSurfaceDimensions_v3020 = 112,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9ResourceGetMappedArray_v3020 = 113,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9ResourceGetMappedPointer_v3020 = 114,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9ResourceGetMappedSize_v3020 = 115,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9ResourceGetMappedPitch_v3020 = 116,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9Begin_v3020 = 117,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9End_v3020 = 118,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9RegisterVertexBuffer_v3020 = 119,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9UnregisterVertexBuffer_v3020 = 120,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9MapVertexBuffer_v3020 = 121,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D9UnmapVertexBuffer_v3020 = 122,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadExit_v3020 = 123,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSetDoubleForDevice_v3020 = 124,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSetDoubleForHost_v3020 = 125,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadSynchronize_v3020 = 126,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadGetLimit_v3020 = 127,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadSetLimit_v3020 = 128,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamCreate_v3020 = 129,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamDestroy_v3020 = 130,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamSynchronize_v3020 = 131,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamQuery_v3020 = 132,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventCreate_v3020 = 133,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventCreateWithFlags_v3020 = 134,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventRecord_v3020 = 135,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventDestroy_v3020 = 136,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventSynchronize_v3020 = 137,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventQuery_v3020 = 138,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventElapsedTime_v3020 = 139,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMalloc3D_v3020 = 140,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMalloc3DArray_v3020 = 141,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset3D_v3020 = 142,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset3DAsync_v3020 = 143,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3D_v3020 = 144,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DAsync_v3020 = 145,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadSetCacheConfig_v3020 = 146,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamWaitEvent_v3020 = 147,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D11GetDirect3DDevice_v3020 = 148,
+    CUPTI_RUNTIME_TRACE_CBID_cudaD3D10GetDirect3DDevice_v3020 = 149,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadGetCacheConfig_v3020 = 150,
+    CUPTI_RUNTIME_TRACE_CBID_cudaPointerGetAttributes_v4000 = 151,
+    CUPTI_RUNTIME_TRACE_CBID_cudaHostRegister_v4000 = 152,
+    CUPTI_RUNTIME_TRACE_CBID_cudaHostUnregister_v4000 = 153,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceCanAccessPeer_v4000 = 154,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceEnablePeerAccess_v4000 = 155,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceDisablePeerAccess_v4000 = 156,
+    CUPTI_RUNTIME_TRACE_CBID_cudaPeerRegister_v4000 = 157,
+    CUPTI_RUNTIME_TRACE_CBID_cudaPeerUnregister_v4000 = 158,
+    CUPTI_RUNTIME_TRACE_CBID_cudaPeerGetDevicePointer_v4000 = 159,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyPeer_v4000 = 160,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyPeerAsync_v4000 = 161,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DPeer_v4000 = 162,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DPeerAsync_v4000 = 163,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceReset_v3020 = 164,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSynchronize_v3020 = 165,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetLimit_v3020 = 166,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSetLimit_v3020 = 167,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetCacheConfig_v3020 = 168,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSetCacheConfig_v3020 = 169,
+    CUPTI_RUNTIME_TRACE_CBID_cudaProfilerInitialize_v4000 = 170,
+    CUPTI_RUNTIME_TRACE_CBID_cudaProfilerStart_v4000 = 171,
+    CUPTI_RUNTIME_TRACE_CBID_cudaProfilerStop_v4000 = 172,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetByPCIBusId_v4010 = 173,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetPCIBusId_v4010 = 174,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGLGetDevices_v4010 = 175,
+    CUPTI_RUNTIME_TRACE_CBID_cudaIpcGetEventHandle_v4010 = 176,
+    CUPTI_RUNTIME_TRACE_CBID_cudaIpcOpenEventHandle_v4010 = 177,
+    CUPTI_RUNTIME_TRACE_CBID_cudaIpcGetMemHandle_v4010 = 178,
+    CUPTI_RUNTIME_TRACE_CBID_cudaIpcOpenMemHandle_v4010 = 179,
+    CUPTI_RUNTIME_TRACE_CBID_cudaIpcCloseMemHandle_v4010 = 180,
+    CUPTI_RUNTIME_TRACE_CBID_cudaArrayGetInfo_v4010 = 181,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFuncSetSharedMemConfig_v4020 = 182,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetSharedMemConfig_v4020 = 183,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSetSharedMemConfig_v4020 = 184,
+    CUPTI_RUNTIME_TRACE_CBID_cudaCreateTextureObject_v5000 = 185,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDestroyTextureObject_v5000 = 186,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetTextureObjectResourceDesc_v5000 = 187,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetTextureObjectTextureDesc_v5000 = 188,
+    CUPTI_RUNTIME_TRACE_CBID_cudaCreateSurfaceObject_v5000 = 189,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDestroySurfaceObject_v5000 = 190,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetSurfaceObjectResourceDesc_v5000 = 191,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocMipmappedArray_v5000 = 192,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetMipmappedArrayLevel_v5000 = 193,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFreeMipmappedArray_v5000 = 194,
+    CUPTI_RUNTIME_TRACE_CBID_cudaBindTextureToMipmappedArray_v5000 = 195,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsResourceGetMappedMipmappedArray_v5000 = 196,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamAddCallback_v5000 = 197,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamCreateWithFlags_v5000 = 198,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetTextureObjectResourceViewDesc_v5000 = 199,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetAttribute_v5000 = 200,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamDestroy_v5050 = 201,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamCreateWithPriority_v5050 = 202,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetPriority_v5050 = 203,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetFlags_v5050 = 204,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetStreamPriorityRange_v5050 = 205,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocManaged_v6000 = 206,
+    CUPTI_RUNTIME_TRACE_CBID_cudaOccupancyMaxActiveBlocksPerMultiprocessor_v6000 = 207,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamAttachMemAsync_v6000 = 208,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetErrorName_v6050 = 209,
+    CUPTI_RUNTIME_TRACE_CBID_cudaOccupancyMaxActiveBlocksPerMultiprocessor_v6050 = 210,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_v7000 = 211,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceFlags_v7000 = 212,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunch_ptsz_v7000 = 213,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernel_ptsz_v7000 = 214,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy_ptds_v7000 = 215,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2D_ptds_v7000 = 216,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToArray_ptds_v7000 = 217,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DToArray_ptds_v7000 = 218,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromArray_ptds_v7000 = 219,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DFromArray_ptds_v7000 = 220,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyArrayToArray_ptds_v7000 = 221,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DArrayToArray_ptds_v7000 = 222,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToSymbol_ptds_v7000 = 223,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromSymbol_ptds_v7000 = 224,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyAsync_ptsz_v7000 = 225,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToArrayAsync_ptsz_v7000 = 226,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromArrayAsync_ptsz_v7000 = 227,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DAsync_ptsz_v7000 = 228,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DToArrayAsync_ptsz_v7000 = 229,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy2DFromArrayAsync_ptsz_v7000 = 230,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyToSymbolAsync_ptsz_v7000 = 231,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyFromSymbolAsync_ptsz_v7000 = 232,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset_ptds_v7000 = 233,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset2D_ptds_v7000 = 234,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemsetAsync_ptsz_v7000 = 235,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset2DAsync_ptsz_v7000 = 236,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetPriority_ptsz_v7000 = 237,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetFlags_ptsz_v7000 = 238,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamSynchronize_ptsz_v7000 = 239,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamQuery_ptsz_v7000 = 240,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamAttachMemAsync_ptsz_v7000 = 241,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventRecord_ptsz_v7000 = 242,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset3D_ptds_v7000 = 243,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemset3DAsync_ptsz_v7000 = 244,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3D_ptds_v7000 = 245,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DAsync_ptsz_v7000 = 246,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamWaitEvent_ptsz_v7000 = 247,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamAddCallback_ptsz_v7000 = 248,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DPeer_ptds_v7000 = 249,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DPeerAsync_ptsz_v7000 = 250,
+    CUPTI_RUNTIME_TRACE_CBID_cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags_v7000 = 251,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPrefetchAsync_v8000 = 252,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPrefetchAsync_ptsz_v8000 = 253,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemAdvise_v8000 = 254,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetP2PAttribute_v8000 = 255,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsEGLRegisterImage_v7000 = 256,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamConsumerConnect_v7000 = 257,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamConsumerDisconnect_v7000 = 258,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamConsumerAcquireFrame_v7000 = 259,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamConsumerReleaseFrame_v7000 = 260,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamProducerConnect_v7000 = 261,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamProducerDisconnect_v7000 = 262,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamProducerPresentFrame_v7000 = 263,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamProducerReturnFrame_v7000 = 264,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphicsResourceGetMappedEglFrame_v7000 = 265,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemRangeGetAttribute_v8000 = 266,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemRangeGetAttributes_v8000 = 267,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEGLStreamConsumerConnectWithFlags_v7000 = 268,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernel_v9000 = 269,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernel_ptsz_v9000 = 270,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventCreateFromEGLSync_v9000 = 271,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchCooperativeKernelMultiDevice_v9000 = 272,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFuncSetAttribute_v9000 = 273,
+    CUPTI_RUNTIME_TRACE_CBID_cudaImportExternalMemory_v10000 = 274,
+    CUPTI_RUNTIME_TRACE_CBID_cudaExternalMemoryGetMappedBuffer_v10000 = 275,
+    CUPTI_RUNTIME_TRACE_CBID_cudaExternalMemoryGetMappedMipmappedArray_v10000 = 276,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDestroyExternalMemory_v10000 = 277,
+    CUPTI_RUNTIME_TRACE_CBID_cudaImportExternalSemaphore_v10000 = 278,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSignalExternalSemaphoresAsync_v10000 = 279,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSignalExternalSemaphoresAsync_ptsz_v10000 = 280,
+    CUPTI_RUNTIME_TRACE_CBID_cudaWaitExternalSemaphoresAsync_v10000 = 281,
+    CUPTI_RUNTIME_TRACE_CBID_cudaWaitExternalSemaphoresAsync_ptsz_v10000 = 282,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDestroyExternalSemaphore_v10000 = 283,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchHostFunc_v10000 = 284,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchHostFunc_ptsz_v10000 = 285,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphCreate_v10000 = 286,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphKernelNodeGetParams_v10000 = 287,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphKernelNodeSetParams_v10000 = 288,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddKernelNode_v10000 = 289,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemcpyNode_v10000 = 290,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemcpyNodeGetParams_v10000 = 291,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemcpyNodeSetParams_v10000 = 292,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemsetNode_v10000 = 293,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemsetNodeGetParams_v10000 = 294,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemsetNodeSetParams_v10000 = 295,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddHostNode_v10000 = 296,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphHostNodeGetParams_v10000 = 297,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddChildGraphNode_v10000 = 298,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphChildGraphNodeGetGraph_v10000 = 299,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddEmptyNode_v10000 = 300,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphClone_v10000 = 301,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeFindInClone_v10000 = 302,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeGetType_v10000 = 303,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphGetRootNodes_v10000 = 304,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeGetDependencies_v10000 = 305,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeGetDependentNodes_v10000 = 306,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddDependencies_v10000 = 307,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphRemoveDependencies_v10000 = 308,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphDestroyNode_v10000 = 309,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphInstantiate_v10000 = 310,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphLaunch_v10000 = 311,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphLaunch_ptsz_v10000 = 312,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecDestroy_v10000 = 313,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphDestroy_v10000 = 314,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamBeginCapture_v10000 = 315,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamBeginCapture_ptsz_v10000 = 316,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamIsCapturing_v10000 = 317,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamIsCapturing_ptsz_v10000 = 318,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamEndCapture_v10000 = 319,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamEndCapture_ptsz_v10000 = 320,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphHostNodeSetParams_v10000 = 321,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphGetNodes_v10000 = 322,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphGetEdges_v10000 = 323,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetCaptureInfo_v10010 = 324,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetCaptureInfo_ptsz_v10010 = 325,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecKernelNodeSetParams_v10010 = 326,
+    CUPTI_RUNTIME_TRACE_CBID_cudaThreadExchangeStreamCaptureMode_v10010 = 327,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetNvSciSyncAttributes_v10020 = 328,
+    CUPTI_RUNTIME_TRACE_CBID_cudaOccupancyAvailableDynamicSMemPerBlock_v10200 = 329,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetFlags_v10200 = 330,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetFlags_ptsz_v10200 = 331,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecMemcpyNodeSetParams_v10020 = 332,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecMemsetNodeSetParams_v10020 = 333,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecHostNodeSetParams_v10020 = 334,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecUpdate_v10020 = 335,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetFuncBySymbol_v11000 = 336,
+    CUPTI_RUNTIME_TRACE_CBID_cudaCtxResetPersistingL2Cache_v11000 = 337,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphKernelNodeCopyAttributes_v11000 = 338,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphKernelNodeGetAttribute_v11000 = 339,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphKernelNodeSetAttribute_v11000 = 340,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamCopyAttributes_v11000 = 341,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamCopyAttributes_ptsz_v11000 = 342,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetAttribute_v11000 = 343,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetAttribute_ptsz_v11000 = 344,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetAttribute_v11000 = 345,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamSetAttribute_ptsz_v11000 = 346,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetTexture1DLinearMaxWidth_v11010 = 347,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphUpload_v10000 = 348,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphUpload_ptsz_v10000 = 349,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemcpyNodeToSymbol_v11010 = 350,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemcpyNodeFromSymbol_v11010 = 351,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemcpyNode1D_v11010 = 352,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemcpyNodeSetParamsToSymbol_v11010 = 353,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemcpyNodeSetParamsFromSymbol_v11010 = 354,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemcpyNodeSetParams1D_v11010 = 355,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecMemcpyNodeSetParamsToSymbol_v11010 = 356,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecMemcpyNodeSetParamsFromSymbol_v11010 = 357,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecMemcpyNodeSetParams1D_v11010 = 358,
+    CUPTI_RUNTIME_TRACE_CBID_cudaArrayGetSparseProperties_v11010 = 359,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMipmappedArrayGetSparseProperties_v11010 = 360,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecChildGraphNodeSetParams_v11010 = 361,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddEventRecordNode_v11010 = 362,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphEventRecordNodeGetEvent_v11010 = 363,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphEventRecordNodeSetEvent_v11010 = 364,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddEventWaitNode_v11010 = 365,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphEventWaitNodeGetEvent_v11010 = 366,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphEventWaitNodeSetEvent_v11010 = 367,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecEventRecordNodeSetEvent_v11010 = 368,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecEventWaitNodeSetEvent_v11010 = 369,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventRecordWithFlags_v11010 = 370,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventRecordWithFlags_ptsz_v11010 = 371,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetDefaultMemPool_v11020 = 372,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocAsync_v11020 = 373,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocAsync_ptsz_v11020 = 374,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFreeAsync_v11020 = 375,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFreeAsync_ptsz_v11020 = 376,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolTrimTo_v11020 = 377,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolSetAttribute_v11020 = 378,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolGetAttribute_v11020 = 379,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolSetAccess_v11020 = 380,
+    CUPTI_RUNTIME_TRACE_CBID_cudaArrayGetPlane_v11020 = 381,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolGetAccess_v11020 = 382,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolCreate_v11020 = 383,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolDestroy_v11020 = 384,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSetMemPool_v11020 = 385,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetMemPool_v11020 = 386,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolExportToShareableHandle_v11020 = 387,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolImportFromShareableHandle_v11020 = 388,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolExportPointer_v11020 = 389,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPoolImportPointer_v11020 = 390,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocFromPoolAsync_v11020 = 391,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMallocFromPoolAsync_ptsz_v11020 = 392,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSignalExternalSemaphoresAsync_v11020 = 393,
+    CUPTI_RUNTIME_TRACE_CBID_cudaSignalExternalSemaphoresAsync_ptsz_v11020 = 394,
+    CUPTI_RUNTIME_TRACE_CBID_cudaWaitExternalSemaphoresAsync_v11020 = 395,
+    CUPTI_RUNTIME_TRACE_CBID_cudaWaitExternalSemaphoresAsync_ptsz_v11020 = 396,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddExternalSemaphoresSignalNode_v11020 = 397,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExternalSemaphoresSignalNodeGetParams_v11020 = 398,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExternalSemaphoresSignalNodeSetParams_v11020 = 399,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddExternalSemaphoresWaitNode_v11020 = 400,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExternalSemaphoresWaitNodeGetParams_v11020 = 401,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExternalSemaphoresWaitNodeSetParams_v11020 = 402,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecExternalSemaphoresSignalNodeSetParams_v11020 = 403,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecExternalSemaphoresWaitNodeSetParams_v11020 = 404,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceFlushGPUDirectRDMAWrites_v11030 = 405,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDriverEntryPoint_v11030 = 406,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDriverEntryPoint_ptsz_v11030 = 407,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphDebugDotPrint_v11030 = 408,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetCaptureInfo_v2_v11030 = 409,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetCaptureInfo_v2_ptsz_v11030 = 410,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamUpdateCaptureDependencies_v11030 = 411,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamUpdateCaptureDependencies_ptsz_v11030 = 412,
+    CUPTI_RUNTIME_TRACE_CBID_cudaUserObjectCreate_v11030 = 413,
+    CUPTI_RUNTIME_TRACE_CBID_cudaUserObjectRetain_v11030 = 414,
+    CUPTI_RUNTIME_TRACE_CBID_cudaUserObjectRelease_v11030 = 415,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphRetainUserObject_v11030 = 416,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphReleaseUserObject_v11030 = 417,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphInstantiateWithFlags_v11040 = 418,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemAllocNode_v11040 = 419,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemAllocNodeGetParams_v11040 = 420,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddMemFreeNode_v11040 = 421,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphMemFreeNodeGetParams_v11040 = 422,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGraphMemTrim_v11040 = 423,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetGraphMemAttribute_v11040 = 424,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceSetGraphMemAttribute_v11040 = 425,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeSetEnabled_v11060 = 426,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeGetEnabled_v11060 = 427,
+    CUPTI_RUNTIME_TRACE_CBID_cudaArrayGetMemoryRequirements_v11060 = 428,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMipmappedArrayGetMemoryRequirements_v11060 = 429,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernelExC_v11060 = 430,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLaunchKernelExC_ptsz_v11060 = 431,
+    CUPTI_RUNTIME_TRACE_CBID_cudaOccupancyMaxPotentialClusterSize_v11070 = 432,
+    CUPTI_RUNTIME_TRACE_CBID_cudaOccupancyMaxActiveClusters_v11070 = 433,
+    CUPTI_RUNTIME_TRACE_CBID_cudaCreateTextureObject_v2_v11080 = 434,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetTextureObjectTextureDesc_v2_v11080 = 435,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphInstantiateWithParams_v12000 = 436,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphInstantiateWithParams_ptsz_v12000 = 437,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecGetFlags_v12000 = 438,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetKernel_v12000 = 439,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDeviceProperties_v12000 = 440,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetId_v12000 = 441,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetId_ptsz_v12000 = 442,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphInstantiate_v12000 = 443,
+    CUPTI_RUNTIME_TRACE_CBID_cudaInitDevice_v12000 = 444,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddNode_v12020 = 445,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeSetParams_v12020 = 446,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphExecNodeSetParams_v12020 = 447,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemAdvise_v12020 = 448,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPrefetchAsync_v12020 = 449,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPrefetchAsync_ptsz_v12020 = 450,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFuncGetName_v12030 = 451,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamBeginCaptureToGraph_v12030 = 452,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamBeginCaptureToGraph_ptsz_v12030 = 453,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphConditionalHandleCreate_v12030 = 454,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphGetEdges_v12030 = 455,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeGetDependencies_v12030 = 456,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphNodeGetDependentNodes_v12030 = 457,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddDependencies_v12030 = 458,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphRemoveDependencies_v12030 = 459,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGraphAddNode_v12030 = 460,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetCaptureInfo_v12030 = 461,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetCaptureInfo_ptsz_v12030 = 462,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamUpdateCaptureDependencies_v12030 = 463,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamUpdateCaptureDependencies_ptsz_v12030 = 464,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceRegisterAsyncNotification_v12040 = 465,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceUnregisterAsyncNotification_v12040 = 466,
+    CUPTI_RUNTIME_TRACE_CBID_cudaFuncGetParamInfo_v12040 = 467,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDriverEntryPointByVersion_v12050 = 468,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetDriverEntryPointByVersion_ptsz_v12050 = 469,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryLoadData_v12060 = 470,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryLoadFromFile_v12060 = 471,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryUnload_v12060 = 472,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryGetKernel_v12060 = 473,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryGetGlobal_v12060 = 474,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryGetManaged_v12060 = 475,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryGetUnifiedFunction_v12060 = 476,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryGetKernelCount_v12060 = 477,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLibraryEnumerateKernels_v12060 = 478,
+    CUPTI_RUNTIME_TRACE_CBID_cudaKernelSetAttributeForDevice_v12060 = 479,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetDevice_v12080 = 480,
+    CUPTI_RUNTIME_TRACE_CBID_cudaStreamGetDevice_ptsz_v12080 = 481,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyBatchAsync_v12080 = 482,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyBatchAsync_ptsz_v12080 = 483,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DBatchAsync_v12080 = 484,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DBatchAsync_ptsz_v12080 = 485,
+    CUPTI_RUNTIME_TRACE_CBID_cudaEventElapsedTime_v12080 = 486,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPrefetchBatchAsync_v13000 = 487,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemPrefetchBatchAsync_ptsz_v13000 = 488,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemDiscardBatchAsync_v13000 = 489,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemDiscardBatchAsync_ptsz_v13000 = 490,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemDiscardAndPrefetchBatchAsync_v13000 = 491,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemDiscardAndPrefetchBatchAsync_ptsz_v13000 = 492,
+    CUPTI_RUNTIME_TRACE_CBID_cudaGetExportTable_v13000 = 493,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterFatBinary_v13000 = 494,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterFatBinaryEnd_v13000 = 495,
+    CUPTI_RUNTIME_TRACE_CBID___cudaUnregisterFatBinary_v13000 = 496,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterVar_v13000 = 497,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterHostVar_v13000 = 498,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterFunction_v13000 = 499,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterManagedVar_v13000 = 500,
+    CUPTI_RUNTIME_TRACE_CBID___cudaInitModule_v13000 = 501,
+    CUPTI_RUNTIME_TRACE_CBID___cudaPushCallConfiguration_v13000 = 502,
+    CUPTI_RUNTIME_TRACE_CBID___cudaPopCallConfiguration_v13000 = 503,
+    CUPTI_RUNTIME_TRACE_CBID___cudaGetKernel_v13000 = 504,
+    CUPTI_RUNTIME_TRACE_CBID___cudaLaunchKernel_v13000 = 505,
+    CUPTI_RUNTIME_TRACE_CBID___cudaLaunchKernel_ptsz_v13000 = 506,
+    CUPTI_RUNTIME_TRACE_CBID___cudaRegisterUnifiedTable_v13000 = 507,
+    CUPTI_RUNTIME_TRACE_CBID___cudaGetProcAddress_v13000 = 508,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyBatchAsync_v13000 = 509,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpyBatchAsync_ptsz_v13000 = 510,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DBatchAsync_v13000 = 511,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemcpy3DBatchAsync_ptsz_v13000 = 512,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLogsRegisterCallback_v13000 = 513,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLogsUnregisterCallback_v13000 = 514,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLogsCurrent_v13000 = 515,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLogsDumpToFile_v13000 = 516,
+    CUPTI_RUNTIME_TRACE_CBID_cudaLogsDumpToMemory_v13000 = 517,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemGetDefaultMemPool_v13000 = 518,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemGetMemPool_v13000 = 519,
+    CUPTI_RUNTIME_TRACE_CBID_cudaMemSetMemPool_v13000 = 520,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetHostAtomicCapabilities_v13000 = 521,
+    CUPTI_RUNTIME_TRACE_CBID_cudaDeviceGetP2PAtomicCapabilities_v13000 = 522,
+    CUPTI_RUNTIME_TRACE_CBID_SIZE = 523,
+    CUPTI_RUNTIME_TRACE_CBID_FORCE_INT = 2147483647,
+}
 #[cfg(any(
     feature = "cuda-12020",
     feature = "cuda-12030",
@@ -17872,7 +19542,8 @@ pub enum CUpti_runtime_api_trace_cbid_enum {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -17903,7 +19574,8 @@ pub struct CUctx_st {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -17915,7 +19587,8 @@ pub struct CUevent_st {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -17944,7 +19617,8 @@ pub struct CUgraph_st {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -17960,7 +19634,8 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -17975,7 +19650,8 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -17990,7 +19666,7 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_4 {
     pub deviceUpdatable: ::core::ffi::c_int,
     pub devNode: CUgraphDeviceNode,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUlaunchAttributeValue_union__bindgen_ty_4 {
@@ -17998,7 +19674,7 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_4 {
     pub y: ::core::ffi::c_uint,
     pub z: ::core::ffi::c_uint,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUlaunchAttributeValue_union__bindgen_ty_5 {
@@ -18012,7 +19688,8 @@ pub struct CUlaunchAttributeValue_union__bindgen_ty_5 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18109,7 +19786,7 @@ pub struct CUpti_ActivityCdpKernel__bindgen_ty_1__bindgen_ty_1 {
     pub _bitfield_align_1: [u8; 0],
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
 }
-#[cfg(any(feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityConfidentialComputeRotation {
@@ -18149,7 +19826,8 @@ pub struct CUpti_ActivityContext2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[repr(align(8))]
@@ -18169,7 +19847,8 @@ pub struct CUpti_ActivityContext2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[repr(align(8))]
@@ -18198,7 +19877,7 @@ pub struct CUpti_ActivityCudaEvent {
     pub eventId: u32,
     pub pad: u32,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityCudaEvent2 {
@@ -18292,7 +19971,8 @@ pub struct CUpti_ActivityDevice2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18342,7 +20022,8 @@ pub struct CUpti_ActivityDevice3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18391,7 +20072,8 @@ pub struct CUpti_ActivityDevice4 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18444,7 +20126,7 @@ pub struct CUpti_ActivityDeviceAttribute {
     pub attribute: CUpti_ActivityDeviceAttribute__bindgen_ty_1,
     pub value: CUpti_ActivityDeviceAttribute__bindgen_ty_2,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityDeviceGraphTrace {
@@ -18585,7 +20267,8 @@ pub struct CUpti_ActivityGlobalAccess3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18606,7 +20289,8 @@ pub struct CUpti_ActivityGraphTrace {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18702,7 +20386,8 @@ pub struct CUpti_ActivityInstructionExecution {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18724,7 +20409,8 @@ pub struct CUpti_ActivityJit {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -18770,6 +20456,66 @@ pub struct CUpti_ActivityKernel {
     pub pad: u32,
     pub name: *const ::core::ffi::c_char,
     pub reserved0: *mut ::core::ffi::c_void,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C, packed(8))]
+#[derive(Copy, Clone)]
+pub struct CUpti_ActivityKernel10 {
+    pub kind: CUpti_ActivityKind,
+    pub cacheConfig: CUpti_ActivityKernel10__bindgen_ty_1,
+    pub sharedMemoryConfig: u8,
+    pub registersPerThread: u16,
+    pub partitionedGlobalCacheRequested: CUpti_ActivityPartitionedGlobalCacheConfig,
+    pub partitionedGlobalCacheExecuted: CUpti_ActivityPartitionedGlobalCacheConfig,
+    pub start: u64,
+    pub end: u64,
+    pub completed: u64,
+    pub deviceId: u32,
+    pub contextId: u32,
+    pub streamId: u32,
+    pub gridX: i32,
+    pub gridY: i32,
+    pub gridZ: i32,
+    pub blockX: i32,
+    pub blockY: i32,
+    pub blockZ: i32,
+    pub staticSharedMemory: i32,
+    pub dynamicSharedMemory: i32,
+    pub localMemoryPerThread: u32,
+    pub localMemoryTotal: u32,
+    pub correlationId: u32,
+    pub gridId: i64,
+    pub name: *const ::core::ffi::c_char,
+    pub reserved0: *mut ::core::ffi::c_void,
+    pub queued: u64,
+    pub submitted: u64,
+    pub launchType: u8,
+    pub isSharedMemoryCarveoutRequested: u8,
+    pub sharedMemoryCarveoutRequested: u8,
+    pub padding: u8,
+    pub sharedMemoryExecuted: u32,
+    pub graphNodeId: u64,
+    pub shmemLimitConfig: CUpti_FuncShmemLimitConfig,
+    pub graphId: u32,
+    pub pAccessPolicyWindow: *mut CUaccessPolicyWindow,
+    pub channelID: u32,
+    pub channelType: CUpti_ChannelType,
+    pub clusterX: u32,
+    pub clusterY: u32,
+    pub clusterZ: u32,
+    pub clusterSchedulingPolicy: u32,
+    pub localMemoryTotal_v2: u64,
+    pub maxPotentialClusterSize: u32,
+    pub maxActiveClusters: u32,
+    pub isDeviceLaunched: u8,
+    pub padding3: [u8; 7usize],
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUpti_ActivityKernel10__bindgen_ty_1__bindgen_ty_1 {
+    pub _bitfield_align_1: [u8; 0],
+    pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize]>,
 }
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -18989,7 +20735,8 @@ pub struct CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19046,7 +20793,8 @@ pub struct CUpti_ActivityKernel7 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19064,7 +20812,8 @@ pub struct CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19124,7 +20873,8 @@ pub struct CUpti_ActivityKernel8 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19141,7 +20891,8 @@ pub struct CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19202,7 +20953,8 @@ pub struct CUpti_ActivityKernel9 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19246,7 +20998,21 @@ pub struct CUpti_ActivityMarkerData {
     pub color: u32,
     pub category: u32,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C, packed(8))]
+#[derive(Copy, Clone)]
+pub struct CUpti_ActivityMarkerData2 {
+    pub kind: CUpti_ActivityKind,
+    pub flags: CUpti_ActivityFlag,
+    pub id: u32,
+    pub payloadKind: CUpti_MetricValueKind,
+    pub payload: CUpti_MetricValue,
+    pub color: u32,
+    pub category: u32,
+    pub cuptiDomainId: u32,
+    pub padding: u32,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityMemDecompress {
@@ -19336,7 +21102,8 @@ pub struct CUpti_ActivityMemcpy4 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19386,6 +21153,33 @@ pub struct CUpti_ActivityMemcpy6 {
     pub channelID: u32,
     pub channelType: CUpti_ChannelType,
     pub pad2: u32,
+    pub copyCount: u64,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C, packed(8))]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUpti_ActivityMemcpy6 {
+    pub kind: CUpti_ActivityKind,
+    pub copyKind: u8,
+    pub srcKind: u8,
+    pub dstKind: u8,
+    pub flags: u8,
+    pub bytes: u64,
+    pub start: u64,
+    pub end: u64,
+    pub deviceId: u32,
+    pub contextId: u32,
+    pub streamId: u32,
+    pub correlationId: u32,
+    pub runtimeCorrelationId: u32,
+    pub pad: u32,
+    pub reserved0: *mut ::core::ffi::c_void,
+    pub graphNodeId: u64,
+    pub graphId: u32,
+    pub channelID: u32,
+    pub channelType: CUpti_ChannelType,
+    pub isDeviceLaunched: u8,
+    pub pad2: [u8; 3usize],
     pub copyCount: u64,
 }
 #[repr(C, packed(8))]
@@ -19467,7 +21261,8 @@ pub struct CUpti_ActivityMemcpyPtoP3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19553,7 +21348,8 @@ pub struct CUpti_ActivityMemory2__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -19576,7 +21372,8 @@ pub struct CUpti_ActivityMemory2__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19610,7 +21407,8 @@ pub struct CUpti_ActivityMemory3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19622,7 +21420,12 @@ pub struct CUpti_ActivityMemory3__bindgen_ty_1 {
     pub pool: CUpti_ActivityMemory3__bindgen_ty_1__bindgen_ty_1,
     pub utilizedSize: u64,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityMemory4 {
@@ -19644,7 +21447,12 @@ pub struct CUpti_ActivityMemory4 {
     pub memoryPoolConfig: CUpti_ActivityMemory4__bindgen_ty_1,
     pub source: *const ::core::ffi::c_char,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityMemory4__bindgen_ty_1 {
@@ -19682,7 +21490,8 @@ pub struct CUpti_ActivityMemoryPool {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19699,6 +21508,25 @@ pub struct CUpti_ActivityMemoryPool2 {
     pub releaseThreshold: u64,
     pub timestamp: u64,
     pub utilizedSize: u64,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C, packed(8))]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUpti_ActivityMemoryPool3 {
+    pub kind: CUpti_ActivityKind,
+    pub memoryPoolOperationType: CUpti_ActivityMemoryPoolOperationType,
+    pub memoryPoolType: CUpti_ActivityMemoryPoolType,
+    pub correlationId: u32,
+    pub processId: u32,
+    pub deviceId: u32,
+    pub minBytesToKeep: usize,
+    pub address: u64,
+    pub size: u64,
+    pub releaseThreshold: u64,
+    pub timestamp: u64,
+    pub utilizedSize: u64,
+    pub isManagedPool: u8,
+    pub pad2: [u8; 7usize],
 }
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -19791,6 +21619,30 @@ pub struct CUpti_ActivityMemset4 {
     pub channelType: CUpti_ChannelType,
     pub pad2: u32,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C, packed(8))]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUpti_ActivityMemset4 {
+    pub kind: CUpti_ActivityKind,
+    pub value: u32,
+    pub bytes: u64,
+    pub start: u64,
+    pub end: u64,
+    pub deviceId: u32,
+    pub contextId: u32,
+    pub streamId: u32,
+    pub correlationId: u32,
+    pub flags: u16,
+    pub memoryKind: u16,
+    pub pad: u32,
+    pub reserved0: *mut ::core::ffi::c_void,
+    pub graphNodeId: u64,
+    pub graphId: u32,
+    pub channelID: u32,
+    pub channelType: CUpti_ChannelType,
+    pub isDeviceLaunched: u8,
+    pub pad2: [u8; 3usize],
+}
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
 pub struct CUpti_ActivityMetric {
@@ -19874,7 +21726,8 @@ pub struct CUpti_ActivityNvLink2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19934,7 +21787,8 @@ pub struct CUpti_ActivityNvLink3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -19978,7 +21832,8 @@ pub struct CUpti_ActivityNvLink3__bindgen_ty_2__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -20010,7 +21865,8 @@ pub struct CUpti_ActivityNvLink4 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -20031,7 +21887,8 @@ pub struct CUpti_ActivityNvLink4__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -20212,7 +22069,8 @@ pub struct CUpti_ActivityOverhead {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -20231,7 +22089,8 @@ pub struct CUpti_ActivityOverhead2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C, packed(8))]
 #[derive(Copy, Clone)]
@@ -20251,7 +22110,8 @@ pub struct CUpti_ActivityOverhead3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -20405,7 +22265,7 @@ pub struct CUpti_ActivitySynchronization {
     pub streamId: u32,
     pub cudaEventId: u32,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivitySynchronization2 {
@@ -20449,7 +22309,7 @@ pub struct CUpti_ActivityUnifiedMemoryCounter2 {
     pub flags: u32,
     pub pad: u32,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 #[repr(C, packed(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_ActivityUnifiedMemoryCounter3 {
@@ -20539,7 +22399,8 @@ pub struct CUpti_NvtxData {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -20547,6 +22408,14 @@ pub struct CUpti_NvtxData {
     pub functionName: *const ::core::ffi::c_char,
     pub functionParams: *const ::core::ffi::c_void,
     pub functionReturnValue: *const ::core::ffi::c_void,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUpti_NvtxExtPayloadAttr {
+    pub structSize: u32,
+    pub type_: u32,
+    pub attributes: *mut ::core::ffi::c_void,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -20562,7 +22431,8 @@ pub struct CUpti_ResourceData {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -20576,7 +22446,8 @@ pub struct CUpti_StateData {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -20591,7 +22462,8 @@ pub struct CUpti_StateData__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -20599,6 +22471,15 @@ pub struct CUpti_StreamAttrData {
     pub stream: CUstream,
     pub attr: CUstreamAttrID,
     pub value: *const CUstreamAttrValue,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUpti_SubscriberParams {
+    pub structSize: usize,
+    pub subscriberName: *const ::core::ffi::c_char,
+    pub oldSubscriberName: *mut ::core::ffi::c_char,
+    pub oldSubscriberSize: usize,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -20786,6 +22667,88 @@ impl CUpti_ActivityFlag {
 impl CUpti_ActivityFlag {
     pub const CUPTI_ACTIVITY_FLAG_THROTTLING_IN_CPU: CUpti_ActivityFlag =
         CUpti_ActivityFlag::CUPTI_ACTIVITY_FLAG_DEVICE_CONCURRENT_KERNELS;
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl CUpti_ActivityKernel10__bindgen_ty_1__bindgen_ty_1 {
+    #[inline]
+    pub fn requested(&self) -> u8 {
+        unsafe { ::core::mem::transmute(self._bitfield_1.get(0usize, 4u8) as u8) }
+    }
+    #[inline]
+    pub fn set_requested(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::core::mem::transmute(val);
+            self._bitfield_1.set(0usize, 4u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn requested_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                0usize,
+                4u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set_requested_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::core::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::core::ptr::addr_of_mut!((*this)._bitfield_1),
+                0usize,
+                4u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn executed(&self) -> u8 {
+        unsafe { ::core::mem::transmute(self._bitfield_1.get(4usize, 4u8) as u8) }
+    }
+    #[inline]
+    pub fn set_executed(&mut self, val: u8) {
+        unsafe {
+            let val: u8 = ::core::mem::transmute(val);
+            self._bitfield_1.set(4usize, 4u8, val as u64)
+        }
+    }
+    #[inline]
+    pub unsafe fn executed_raw(this: *const Self) -> u8 {
+        unsafe {
+            ::core::mem::transmute(<__BindgenBitfieldUnit<[u8; 1usize]>>::raw_get(
+                ::core::ptr::addr_of!((*this)._bitfield_1),
+                4usize,
+                4u8,
+            ) as u8)
+        }
+    }
+    #[inline]
+    pub unsafe fn set_executed_raw(this: *mut Self, val: u8) {
+        unsafe {
+            let val: u8 = ::core::mem::transmute(val);
+            <__BindgenBitfieldUnit<[u8; 1usize]>>::raw_set(
+                ::core::ptr::addr_of_mut!((*this)._bitfield_1),
+                4usize,
+                4u8,
+                val as u64,
+            )
+        }
+    }
+    #[inline]
+    pub fn new_bitfield_1(requested: u8, executed: u8) -> __BindgenBitfieldUnit<[u8; 1usize]> {
+        let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize]> = Default::default();
+        __bindgen_bitfield_unit.set(0usize, 4u8, {
+            let requested: u8 = unsafe { ::core::mem::transmute(requested) };
+            requested as u64
+        });
+        __bindgen_bitfield_unit.set(4usize, 4u8, {
+            let executed: u8 = unsafe { ::core::mem::transmute(executed) };
+            executed as u64
+        });
+        __bindgen_bitfield_unit
+    }
 }
 impl CUpti_ActivityKernel2__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
@@ -21204,7 +23167,8 @@ impl CUpti_ActivityKernel6__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
@@ -21297,7 +23261,8 @@ impl CUpti_ActivityKernel7__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
@@ -21389,7 +23354,8 @@ impl CUpti_ActivityKernel8__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl CUpti_ActivityKernel9__bindgen_ty_1__bindgen_ty_1 {
     #[inline]
@@ -21488,7 +23454,8 @@ impl Default for CUaccessPolicyWindow_st {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUlaunchAttributeValue_union {
     fn default() -> Self {
@@ -21506,7 +23473,8 @@ impl Default for CUlaunchAttributeValue_union {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUlaunchAttributeValue_union__bindgen_ty_2 {
     fn default() -> Self {
@@ -21523,7 +23491,8 @@ impl Default for CUlaunchAttributeValue_union__bindgen_ty_2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUlaunchAttributeValue_union__bindgen_ty_3 {
     fn default() -> Self {
@@ -21544,7 +23513,7 @@ impl Default for CUlaunchAttributeValue_union__bindgen_ty_4 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUlaunchAttributeValue_union__bindgen_ty_5 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21608,7 +23577,7 @@ impl Default for CUpti_ActivityCdpKernel__bindgen_ty_1 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivityConfidentialComputeRotation {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21632,7 +23601,8 @@ impl Default for CUpti_ActivityContext {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityContext2 {
     fn default() -> Self {
@@ -21647,7 +23617,8 @@ impl Default for CUpti_ActivityContext2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityContext3 {
     fn default() -> Self {
@@ -21667,7 +23638,7 @@ impl Default for CUpti_ActivityCudaEvent {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivityCudaEvent2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21708,7 +23679,8 @@ impl Default for CUpti_ActivityDevice2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityDevice3 {
     fn default() -> Self {
@@ -21731,7 +23703,8 @@ impl Default for CUpti_ActivityDevice3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityDevice4 {
     fn default() -> Self {
@@ -21749,7 +23722,8 @@ impl Default for CUpti_ActivityDevice4 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityDevice5 {
     fn default() -> Self {
@@ -21787,7 +23761,7 @@ impl Default for CUpti_ActivityDeviceAttribute__bindgen_ty_2 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivityDeviceGraphTrace {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -21898,7 +23872,8 @@ impl Default for CUpti_ActivityGlobalAccess3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityGraphTrace {
     fn default() -> Self {
@@ -21915,7 +23890,8 @@ impl Default for CUpti_ActivityGraphTrace {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityGraphTrace2 {
     fn default() -> Self {
@@ -21990,7 +23966,8 @@ impl Default for CUpti_ActivityInstructionExecution {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityJit {
     fn default() -> Self {
@@ -22006,7 +23983,8 @@ impl Default for CUpti_ActivityJit {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityJit2 {
     fn default() -> Self {
@@ -22018,6 +23996,26 @@ impl Default for CUpti_ActivityJit2 {
     }
 }
 impl Default for CUpti_ActivityKernel {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for CUpti_ActivityKernel10 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for CUpti_ActivityKernel10__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -22128,7 +24126,8 @@ impl Default for CUpti_ActivityKernel6__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityKernel7 {
     fn default() -> Self {
@@ -22151,7 +24150,8 @@ impl Default for CUpti_ActivityKernel7 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityKernel7__bindgen_ty_1 {
     fn default() -> Self {
@@ -22172,7 +24172,8 @@ impl Default for CUpti_ActivityKernel7__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityKernel8 {
     fn default() -> Self {
@@ -22193,7 +24194,8 @@ impl Default for CUpti_ActivityKernel8 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityKernel8__bindgen_ty_1 {
     fn default() -> Self {
@@ -22213,7 +24215,8 @@ impl Default for CUpti_ActivityKernel8__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityKernel9 {
     fn default() -> Self {
@@ -22233,7 +24236,8 @@ impl Default for CUpti_ActivityKernel9 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityKernel9__bindgen_ty_1 {
     fn default() -> Self {
@@ -22271,7 +24275,17 @@ impl Default for CUpti_ActivityMarkerData {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for CUpti_ActivityMarkerData2 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivityMemDecompress {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22320,7 +24334,8 @@ impl Default for CUpti_ActivityMemcpy4 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemcpy5 {
     fn default() -> Self {
@@ -22331,7 +24346,7 @@ impl Default for CUpti_ActivityMemcpy5 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivityMemcpy6 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22380,7 +24395,8 @@ impl Default for CUpti_ActivityMemcpyPtoP3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemcpyPtoP4 {
     fn default() -> Self {
@@ -22439,7 +24455,8 @@ impl Default for CUpti_ActivityMemory2__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemory3 {
     fn default() -> Self {
@@ -22462,7 +24479,8 @@ impl Default for CUpti_ActivityMemory3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemory3__bindgen_ty_1 {
     fn default() -> Self {
@@ -22485,7 +24503,8 @@ impl Default for CUpti_ActivityMemory3__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemory3__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
@@ -22496,7 +24515,12 @@ impl Default for CUpti_ActivityMemory3__bindgen_ty_1__bindgen_ty_1 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 impl Default for CUpti_ActivityMemory4 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22506,7 +24530,12 @@ impl Default for CUpti_ActivityMemory4 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 impl Default for CUpti_ActivityMemory4__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22516,7 +24545,12 @@ impl Default for CUpti_ActivityMemory4__bindgen_ty_1 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 impl Default for CUpti_ActivityMemory4__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -22547,9 +24581,20 @@ impl Default for CUpti_ActivityMemoryPool {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemoryPool2 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for CUpti_ActivityMemoryPool3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -22597,7 +24642,8 @@ impl Default for CUpti_ActivityMemset3 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityMemset4 {
     fn default() -> Self {
@@ -22720,7 +24766,8 @@ impl Default for CUpti_ActivityNvLink3__bindgen_ty_2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityNvLink4 {
     fn default() -> Self {
@@ -22744,7 +24791,8 @@ impl Default for CUpti_ActivityNvLink4 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityNvLink4__bindgen_ty_1 {
     fn default() -> Self {
@@ -22768,7 +24816,8 @@ impl Default for CUpti_ActivityNvLink4__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityNvLink4__bindgen_ty_2 {
     fn default() -> Self {
@@ -22866,7 +24915,8 @@ impl Default for CUpti_ActivityOverhead {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityOverhead2 {
     fn default() -> Self {
@@ -22882,7 +24932,8 @@ impl Default for CUpti_ActivityOverhead2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_ActivityOverhead3 {
     fn default() -> Self {
@@ -23010,7 +25061,7 @@ impl Default for CUpti_ActivitySynchronization {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivitySynchronization2 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -23038,7 +25089,7 @@ impl Default for CUpti_ActivityUnifiedMemoryCounter2 {
         }
     }
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl Default for CUpti_ActivityUnifiedMemoryCounter3 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -23120,6 +25171,16 @@ impl Default for CUpti_NvtxData {
         }
     }
 }
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for CUpti_NvtxExtPayloadAttr {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
 impl Default for CUpti_ResourceData {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -23145,7 +25206,8 @@ impl Default for CUpti_ResourceData__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_StateData {
     fn default() -> Self {
@@ -23163,7 +25225,8 @@ impl Default for CUpti_StateData {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_StateData__bindgen_ty_1 {
     fn default() -> Self {
@@ -23181,7 +25244,8 @@ impl Default for CUpti_StateData__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_StateData__bindgen_ty_1__bindgen_ty_1 {
     fn default() -> Self {
@@ -23199,9 +25263,20 @@ impl Default for CUpti_StateData__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 impl Default for CUpti_StreamAttrData {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for CUpti_SubscriberParams {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -23441,6 +25516,27 @@ pub union CUlaunchAttributeValue_union {
     pub deviceUpdatableKernelNode: CUlaunchAttributeValue_union__bindgen_ty_5,
     pub sharedMemCarveout: ::core::ffi::c_uint,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union CUlaunchAttributeValue_union {
+    pub pad: [::core::ffi::c_char; 64usize],
+    pub accessPolicyWindow: CUaccessPolicyWindow,
+    pub cooperative: ::core::ffi::c_int,
+    pub syncPolicy: CUsynchronizationPolicy,
+    pub clusterDim: CUlaunchAttributeValue_union__bindgen_ty_1,
+    pub clusterSchedulingPolicyPreference: CUclusterSchedulingPolicy,
+    pub programmaticStreamSerializationAllowed: ::core::ffi::c_int,
+    pub programmaticEvent: CUlaunchAttributeValue_union__bindgen_ty_2,
+    pub launchCompletionEvent: CUlaunchAttributeValue_union__bindgen_ty_3,
+    pub priority: ::core::ffi::c_int,
+    pub memSyncDomainMap: CUlaunchMemSyncDomainMap,
+    pub memSyncDomain: CUlaunchMemSyncDomain,
+    pub preferredClusterDim: CUlaunchAttributeValue_union__bindgen_ty_4,
+    pub deviceUpdatableKernelNode: CUlaunchAttributeValue_union__bindgen_ty_5,
+    pub sharedMemCarveout: ::core::ffi::c_uint,
+    pub nvlinkUtilCentricScheduling: ::core::ffi::c_uint,
+}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityCdpKernel__bindgen_ty_1 {
@@ -23469,6 +25565,13 @@ pub union CUpti_ActivityEnvironment__bindgen_ty_1 {
     pub temperature: CUpti_ActivityEnvironment__bindgen_ty_1__bindgen_ty_2,
     pub power: CUpti_ActivityEnvironment__bindgen_ty_1__bindgen_ty_3,
     pub cooling: CUpti_ActivityEnvironment__bindgen_ty_1__bindgen_ty_4,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union CUpti_ActivityKernel10__bindgen_ty_1 {
+    pub both: u8,
+    pub config: CUpti_ActivityKernel10__bindgen_ty_1__bindgen_ty_1,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23512,7 +25615,8 @@ pub union CUpti_ActivityKernel6__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23530,7 +25634,8 @@ pub union CUpti_ActivityKernel7__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23547,7 +25652,8 @@ pub union CUpti_ActivityKernel8__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23573,7 +25679,8 @@ pub union CUpti_ActivityMemory2__bindgen_ty_1__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23581,7 +25688,12 @@ pub union CUpti_ActivityMemory3__bindgen_ty_1__bindgen_ty_1 {
     pub size: u64,
     pub processId: u64,
 }
-#[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+#[cfg(any(
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_ActivityMemory4__bindgen_ty_1__bindgen_ty_1 {
@@ -23625,7 +25737,8 @@ pub union CUpti_ActivityNvLink3__bindgen_ty_2 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23646,7 +25759,8 @@ pub union CUpti_ActivityNvLink4__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23684,6 +25798,22 @@ pub union CUpti_ActivityPcie__bindgen_ty_2 {
     pub gpuAttr: CUpti_ActivityPcie__bindgen_ty_2__bindgen_ty_1,
     pub bridgeAttr: CUpti_ActivityPcie__bindgen_ty_2__bindgen_ty_2,
 }
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union CUpti_MetricValue {
@@ -23693,6 +25823,18 @@ pub union CUpti_MetricValue {
     pub metricValuePercent: f64,
     pub metricValueThroughput: u64,
     pub metricValueUtilizationLevel: CUpti_MetricValueUtilizationLevel,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union CUpti_MetricValue {
+    pub metricValueDouble: f64,
+    pub metricValueUint64: u64,
+    pub metricValueInt64: i64,
+    pub metricValuePercent: f64,
+    pub metricValueThroughput: u64,
+    pub metricValueUtilizationLevel: CUpti_MetricValueUtilizationLevel,
+    pub metricValueNvtxExtendedPayload: u64,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23706,7 +25848,8 @@ pub union CUpti_ResourceData__bindgen_ty_1 {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23727,9 +25870,14 @@ extern "C" {
     pub fn cuptiActivityDisableContext(context: CUcontext, kind: CUpti_ActivityKind)
         -> CUptiResult;
     pub fn cuptiActivityEnable(kind: CUpti_ActivityKind) -> CUptiResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
     pub fn cuptiActivityEnableAllSyncRecords(enable: u8) -> CUptiResult;
-    #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn cuptiActivityEnableAllocationSource(enable: u8) -> CUptiResult;
     #[cfg(any(
         feature = "cuda-11070",
@@ -23742,27 +25890,32 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiActivityEnableAndDump(kind: CUpti_ActivityKind) -> CUptiResult;
     pub fn cuptiActivityEnableContext(context: CUcontext, kind: CUpti_ActivityKind) -> CUptiResult;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cuptiActivityEnableCudaEventDeviceTimestamps(enable: u8) -> CUptiResult;
     #[cfg(any(
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiActivityEnableDeviceGraph(enable: u8) -> CUptiResult;
     #[cfg(any(
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiActivityEnableDriverApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult;
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
     pub fn cuptiActivityEnableHWTrace(enable: u8) -> CUptiResult;
     pub fn cuptiActivityEnableLatencyTimestamps(enable: u8) -> CUptiResult;
     pub fn cuptiActivityEnableLaunchAttributes(enable: u8) -> CUptiResult;
@@ -23770,7 +25923,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiActivityEnableRuntimeApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult;
     pub fn cuptiActivityFlush(context: CUcontext, streamId: u32, flag: u32) -> CUptiResult;
@@ -23815,7 +25969,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiActivityRegisterTimestampCallback(
         funcTimestamp: CUpti_TimestampCallbackFunc,
@@ -23998,7 +26153,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiGetErrorMessage(
         result: CUptiResult,
@@ -24010,7 +26166,8 @@ extern "C" {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub fn cuptiGetGraphExecId(graphExec: CUgraphExec, pId: *mut u32) -> CUptiResult;
     pub fn cuptiGetGraphId(graph: CUgraph, pId: *mut u32) -> CUptiResult;
@@ -24106,6 +26263,13 @@ extern "C" {
         callback: CUpti_CallbackFunc,
         userdata: *mut ::core::ffi::c_void,
     ) -> CUptiResult;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cuptiSubscribe_v2(
+        subscriber: *mut CUpti_SubscriberHandle,
+        callback: CUpti_CallbackFunc,
+        userdata: *mut ::core::ffi::c_void,
+        pParams: *mut CUpti_SubscriberParams,
+    ) -> CUptiResult;
     pub fn cuptiSupportedDomains(
         domainCount: *mut usize,
         domainTable: *mut CUpti_DomainTable,
@@ -24139,11 +26303,16 @@ mod loaded {
     pub unsafe fn cuptiActivityEnable(kind: CUpti_ActivityKind) -> CUptiResult {
         (culib().cuptiActivityEnable)(kind)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
     pub unsafe fn cuptiActivityEnableAllSyncRecords(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableAllSyncRecords)(enable)
     }
-    #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn cuptiActivityEnableAllocationSource(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableAllocationSource)(enable)
     }
@@ -24158,7 +26327,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiActivityEnableAndDump(kind: CUpti_ActivityKind) -> CUptiResult {
         (culib().cuptiActivityEnableAndDump)(kind)
@@ -24169,13 +26339,18 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiActivityEnableContext)(context, kind)
     }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cuptiActivityEnableCudaEventDeviceTimestamps(enable: u8) -> CUptiResult {
+        (culib().cuptiActivityEnableCudaEventDeviceTimestamps)(enable)
+    }
     #[cfg(any(
         feature = "cuda-12030",
         feature = "cuda-12040",
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiActivityEnableDeviceGraph(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableDeviceGraph)(enable)
@@ -24184,12 +26359,13 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiActivityEnableDriverApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableDriverApi)(cbid, enable)
     }
-    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+    #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
     pub unsafe fn cuptiActivityEnableHWTrace(enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableHWTrace)(enable)
     }
@@ -24203,7 +26379,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiActivityEnableRuntimeApi(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult {
         (culib().cuptiActivityEnableRuntimeApi)(cbid, enable)
@@ -24268,7 +26445,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiActivityRegisterTimestampCallback(
         funcTimestamp: CUpti_TimestampCallbackFunc,
@@ -24575,7 +26753,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiGetErrorMessage(
         result: CUptiResult,
@@ -24589,7 +26768,8 @@ mod loaded {
         feature = "cuda-12050",
         feature = "cuda-12060",
         feature = "cuda-12080",
-        feature = "cuda-12090"
+        feature = "cuda-12090",
+        feature = "cuda-13000"
     ))]
     pub unsafe fn cuptiGetGraphExecId(graphExec: CUgraphExec, pId: *mut u32) -> CUptiResult {
         (culib().cuptiGetGraphExecId)(graphExec, pId)
@@ -24768,6 +26948,15 @@ mod loaded {
     ) -> CUptiResult {
         (culib().cuptiSubscribe)(subscriber, callback, userdata)
     }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cuptiSubscribe_v2(
+        subscriber: *mut CUpti_SubscriberHandle,
+        callback: CUpti_CallbackFunc,
+        userdata: *mut ::core::ffi::c_void,
+        pParams: *mut CUpti_SubscriberParams,
+    ) -> CUptiResult {
+        (culib().cuptiSubscribe_v2)(subscriber, callback, userdata, pParams)
+    }
     pub unsafe fn cuptiSupportedDomains(
         domainCount: *mut usize,
         domainTable: *mut CUpti_DomainTable,
@@ -24792,9 +26981,14 @@ mod loaded {
         pub cuptiActivityDisableContext:
             unsafe extern "C" fn(context: CUcontext, kind: CUpti_ActivityKind) -> CUptiResult,
         pub cuptiActivityEnable: unsafe extern "C" fn(kind: CUpti_ActivityKind) -> CUptiResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
         pub cuptiActivityEnableAllSyncRecords: unsafe extern "C" fn(enable: u8) -> CUptiResult,
-        #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub cuptiActivityEnableAllocationSource: unsafe extern "C" fn(enable: u8) -> CUptiResult,
         #[cfg(any(
             feature = "cuda-11070",
@@ -24807,30 +27001,36 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiActivityEnableAndDump:
             unsafe extern "C" fn(kind: CUpti_ActivityKind) -> CUptiResult,
         pub cuptiActivityEnableContext:
             unsafe extern "C" fn(context: CUcontext, kind: CUpti_ActivityKind) -> CUptiResult,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cuptiActivityEnableCudaEventDeviceTimestamps:
+            unsafe extern "C" fn(enable: u8) -> CUptiResult,
         #[cfg(any(
             feature = "cuda-12030",
             feature = "cuda-12040",
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiActivityEnableDeviceGraph: unsafe extern "C" fn(enable: u8) -> CUptiResult,
         #[cfg(any(
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiActivityEnableDriverApi:
             unsafe extern "C" fn(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult,
-        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+        #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
         pub cuptiActivityEnableHWTrace: unsafe extern "C" fn(enable: u8) -> CUptiResult,
         pub cuptiActivityEnableLatencyTimestamps: unsafe extern "C" fn(enable: u8) -> CUptiResult,
         pub cuptiActivityEnableLaunchAttributes: unsafe extern "C" fn(enable: u8) -> CUptiResult,
@@ -24838,7 +27038,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiActivityEnableRuntimeApi:
             unsafe extern "C" fn(cbid: CUpti_CallbackId, enable: u8) -> CUptiResult,
@@ -24883,7 +27084,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiActivityRegisterTimestampCallback:
             unsafe extern "C" fn(funcTimestamp: CUpti_TimestampCallbackFunc) -> CUptiResult,
@@ -25076,7 +27278,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiGetErrorMessage: unsafe extern "C" fn(
             result: CUptiResult,
@@ -25088,7 +27291,8 @@ mod loaded {
             feature = "cuda-12050",
             feature = "cuda-12060",
             feature = "cuda-12080",
-            feature = "cuda-12090"
+            feature = "cuda-12090",
+            feature = "cuda-13000"
         ))]
         pub cuptiGetGraphExecId:
             unsafe extern "C" fn(graphExec: CUgraphExec, pId: *mut u32) -> CUptiResult,
@@ -25190,6 +27394,13 @@ mod loaded {
             callback: CUpti_CallbackFunc,
             userdata: *mut ::core::ffi::c_void,
         ) -> CUptiResult,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cuptiSubscribe_v2: unsafe extern "C" fn(
+            subscriber: *mut CUpti_SubscriberHandle,
+            callback: CUpti_CallbackFunc,
+            userdata: *mut ::core::ffi::c_void,
+            pParams: *mut CUpti_SubscriberParams,
+        ) -> CUptiResult,
         pub cuptiSupportedDomains: unsafe extern "C" fn(
             domainCount: *mut usize,
             domainTable: *mut CUpti_DomainTable,
@@ -25230,12 +27441,17 @@ mod loaded {
                 .get(b"cuptiActivityEnable\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
             let cuptiActivityEnableAllSyncRecords = __library
                 .get(b"cuptiActivityEnableAllSyncRecords\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12060", feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let cuptiActivityEnableAllocationSource = __library
                 .get(b"cuptiActivityEnableAllocationSource\0")
                 .map(|sym| *sym)
@@ -25251,7 +27467,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiActivityEnableAndDump = __library
                 .get(b"cuptiActivityEnableAndDump\0")
@@ -25261,13 +27478,19 @@ mod loaded {
                 .get(b"cuptiActivityEnableContext\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cuptiActivityEnableCudaEventDeviceTimestamps = __library
+                .get(b"cuptiActivityEnableCudaEventDeviceTimestamps\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             #[cfg(any(
                 feature = "cuda-12030",
                 feature = "cuda-12040",
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiActivityEnableDeviceGraph = __library
                 .get(b"cuptiActivityEnableDeviceGraph\0")
@@ -25277,13 +27500,14 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiActivityEnableDriverApi = __library
                 .get(b"cuptiActivityEnableDriverApi\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+            #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
             let cuptiActivityEnableHWTrace = __library
                 .get(b"cuptiActivityEnableHWTrace\0")
                 .map(|sym| *sym)
@@ -25300,7 +27524,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiActivityEnableRuntimeApi = __library
                 .get(b"cuptiActivityEnableRuntimeApi\0")
@@ -25354,7 +27579,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiActivityRegisterTimestampCallback = __library
                 .get(b"cuptiActivityRegisterTimestampCallback\0")
@@ -25556,7 +27782,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiGetErrorMessage = __library
                 .get(b"cuptiGetErrorMessage\0")
@@ -25568,7 +27795,8 @@ mod loaded {
                 feature = "cuda-12050",
                 feature = "cuda-12060",
                 feature = "cuda-12080",
-                feature = "cuda-12090"
+                feature = "cuda-12090",
+                feature = "cuda-13000"
             ))]
             let cuptiGetGraphExecId = __library
                 .get(b"cuptiGetGraphExecId\0")
@@ -25674,6 +27902,11 @@ mod loaded {
                 .get(b"cuptiSubscribe\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cuptiSubscribe_v2 = __library
+                .get(b"cuptiSubscribe_v2\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             let cuptiSupportedDomains = __library
                 .get(b"cuptiSupportedDomains\0")
                 .map(|sym| *sym)
@@ -25689,12 +27922,17 @@ mod loaded {
                 cuptiActivityDisable,
                 cuptiActivityDisableContext,
                 cuptiActivityEnable,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 cuptiActivityEnableAllSyncRecords,
                 #[cfg(any(
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiActivityEnableAllocationSource,
                 #[cfg(any(
@@ -25708,27 +27946,36 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiActivityEnableAndDump,
                 cuptiActivityEnableContext,
+                #[cfg(any(feature = "cuda-13000"))]
+                cuptiActivityEnableCudaEventDeviceTimestamps,
                 #[cfg(any(
                     feature = "cuda-12030",
                     feature = "cuda-12040",
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiActivityEnableDeviceGraph,
                 #[cfg(any(
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiActivityEnableDriverApi,
-                #[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
+                #[cfg(any(
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 cuptiActivityEnableHWTrace,
                 cuptiActivityEnableLatencyTimestamps,
                 cuptiActivityEnableLaunchAttributes,
@@ -25736,7 +27983,8 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiActivityEnableRuntimeApi,
                 cuptiActivityFlush,
@@ -25760,7 +28008,8 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiActivityRegisterTimestampCallback,
                 cuptiActivitySetAttribute,
@@ -25824,7 +28073,8 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiGetErrorMessage,
                 #[cfg(any(
@@ -25833,7 +28083,8 @@ mod loaded {
                     feature = "cuda-12050",
                     feature = "cuda-12060",
                     feature = "cuda-12080",
-                    feature = "cuda-12090"
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
                 ))]
                 cuptiGetGraphExecId,
                 cuptiGetGraphId,
@@ -25861,6 +28112,8 @@ mod loaded {
                 cuptiSetEventCollectionMode,
                 cuptiSetThreadIdType,
                 cuptiSubscribe,
+                #[cfg(any(feature = "cuda-13000"))]
+                cuptiSubscribe_v2,
                 cuptiSupportedDomains,
                 cuptiUnsubscribe,
             })
