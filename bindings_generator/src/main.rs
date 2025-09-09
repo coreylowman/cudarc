@@ -32,6 +32,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cu.*".to_string()],
                 vars: vec!["^CU.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/385
                 types: vec!["^cuCheckpoint.*".to_string()],
@@ -42,6 +43,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["cuda".to_string(), "nvcuda".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cublas".to_string(),
@@ -51,8 +53,10 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cublas.*".to_string()],
                 vars: vec!["^cublas.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cublas".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cublaslt".to_string(),
@@ -62,12 +66,14 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cublasLt.*".to_string()],
                 vars: vec!["^cublasLt.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
                 functions: vec!["cublasLtDisableCpuInstructionsSetMask".to_string()],
                 vars: vec![],
             },
             libs: vec!["cublasLt".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "curand".to_string(),
@@ -77,6 +83,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^curand.*".to_string()],
                 vars: vec!["^curand.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
                 functions: vec![
@@ -86,6 +93,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["curand".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "runtime".to_string(),
@@ -95,6 +103,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
                 vars: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/397
                 types: vec![],
@@ -102,6 +111,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["cudart".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "nvrtc".to_string(),
@@ -111,6 +121,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^nvrtc.*".to_string()],
                 vars: vec!["^nvrtc.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 // NOTE: see https://github.com/coreylowman/cudarc/pull/431
                 types: vec![],
@@ -124,6 +135,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["nvrtc".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cudnn".to_string(),
@@ -133,8 +145,10 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cudnn.*".to_string()],
                 vars: vec!["^cudnn.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cudnn".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "nccl".to_string(),
@@ -144,8 +158,10 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^nccl.*".to_string()],
                 vars: vec!["^nccl.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["nccl".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cusparse".to_string(),
@@ -155,6 +171,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cusparse.*".to_string()],
                 vars: vec!["^cusparse.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
                 functions: vec![
@@ -199,6 +216,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["cusparse".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cusolver".to_string(),
@@ -208,6 +226,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cusolver.*".to_string()],
                 vars: vec!["^cusolver.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec!["^cusolverMg.*".to_string()],
                 functions: vec![
@@ -217,6 +236,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec!["^cusolverMg.*".to_string()],
             },
             libs: vec!["cusolver".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cusolvermg".to_string(),
@@ -226,8 +246,10 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cusolverMg.*".to_string()],
                 vars: vec!["^cusolverMg.*".to_string()],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cusolverMg".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cufile".to_string(),
@@ -237,19 +259,43 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cuFile.*".to_string()],
                 vars: vec![],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cufile".to_string()],
+            raw_lines: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cupti".to_string(),
-            redist_name: "cuda_cupti".to_string(),
+            cudarc_name: "cupti".into(),
+            redist_name: "cuda_cupti".into(),
             allowlist: Filters {
-                types: vec!["^[Cc][Uu][Pp][Tt][Ii].*".to_string()],
-                functions: vec!["^cupti.*".to_string()],
-                vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*".to_string()],
+                types: vec!["^[Cc][Uu][Pp][Tt][Ii].*".into()],
+                functions: vec!["^cupti.*".into()],
+                vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*".into()],
             },
-            blocklist: Filters::none(),
-            libs: vec!["cupti".to_string()],
+            allowlist_recursively: false,
+            blocklist: Filters {
+                types: vec![],
+                functions: vec![],
+                vars: vec![],
+            },
+            libs: vec!["cupti".into()],
+            raw_lines: [
+                "CUaccessPolicyWindow",
+                "CUcontext",
+                "CUdevice",
+                "CUdevice_attribute",
+                "CUgraph",
+                "CUgraphExec",
+                "CUgraphNode",
+                "CUgraphNodeType",
+                "CUstream",
+                "CUstreamAttrID",
+                "CUstreamAttrValue",
+                "CUuuid",
+            ]
+            .into_iter()
+            .map(|type_name| format!("use crate::driver::sys::{type_name};"))
+            .collect(),
         },
     ]
 }
@@ -268,6 +314,12 @@ struct ModuleConfig {
     /// Those names are only used with the `dynamic-loading`
     /// feature.
     libs: Vec<String>,
+    /// Whether to recursively add types from allowlist items. This can be set to false
+    /// in order to prevent duplicate definitions for headers that include other headers
+    /// for which bindings are also generated.
+    allowlist_recursively: bool,
+    /// Lines of code to add at the beginning of the generated bindings.
+    raw_lines: Vec<String>,
 }
 
 impl ModuleConfig {
@@ -314,6 +366,8 @@ impl ModuleConfig {
         for filter_name in self.allowlist.functions.iter() {
             builder = builder.allowlist_function(filter_name);
         }
+        builder = builder.allowlist_recursively(self.allowlist_recursively);
+
         for filter_name in self.blocklist.types.iter() {
             builder = builder.blocklist_type(filter_name);
         }
@@ -322,6 +376,10 @@ impl ModuleConfig {
         }
         for filter_name in self.blocklist.functions.iter() {
             builder = builder.blocklist_function(filter_name);
+        }
+
+        for raw_line in self.raw_lines.iter() {
+            builder = builder.raw_line(raw_line);
         }
 
         let parent_sysdir = Path::new("..")

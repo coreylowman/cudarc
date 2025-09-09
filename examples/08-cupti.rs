@@ -1,9 +1,12 @@
 use std::alloc::{alloc, dealloc, Layout};
 
-use cudarc::cupti::{
-    self,
-    result::{activity, subscribe, unsubscribe, CuptiError},
-    sys::{self, CUcontext, CUptiResult},
+use cudarc::{
+    cupti::{
+        self,
+        result::{activity, subscribe, unsubscribe, CuptiError},
+        sys::{self, CUptiResult},
+    },
+    driver,
 };
 
 // Same constants as used in cuda/extras/CUPTI/samples/common/helper_cupti_activity.h
@@ -30,7 +33,7 @@ extern "C" fn buffer_requested_callback(
 
 #[unsafe(no_mangle)]
 extern "C" fn buffer_complete_callback(
-    _context: CUcontext,
+    _context: driver::sys::CUcontext,
     stream_id: u32,
     buffer: *mut u8,
     size: usize,

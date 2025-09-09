@@ -1,6 +1,7 @@
 //! Functions of the Activity API
 
 use super::super::{result::CuptiError, sys};
+use crate::driver;
 
 /// Set PC sampling configuration.
 ///
@@ -10,7 +11,7 @@ use super::super::{result::CuptiError, sys};
 /// Context must exist.
 /// Config must exist.
 pub unsafe fn configure_pc_sampling(
-    ctx: sys::CUcontext,
+    ctx: driver::sys::CUcontext,
     config: *mut sys::CUpti_ActivityPCSamplingConfig,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiActivityConfigurePCSampling(ctx, config) }.result()
@@ -43,7 +44,7 @@ pub fn disable(kind: sys::CUpti_ActivityKind) -> Result<(), CuptiError> {
 /// # Safety
 /// Context must exist.
 pub unsafe fn disable_context(
-    context: sys::CUcontext,
+    context: driver::sys::CUcontext,
     kind: sys::CUpti_ActivityKind,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiActivityDisableContext(context, kind) }.result()
@@ -105,7 +106,7 @@ pub fn enable_and_dump(kind: sys::CUpti_ActivityKind) -> Result<(), CuptiError> 
 /// # Safety
 /// Context must exist
 pub unsafe fn enable_context(
-    context: sys::CUcontext,
+    context: driver::sys::CUcontext,
     kind: sys::CUpti_ActivityKind,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiActivityEnableContext(context, kind) }.result()
@@ -191,7 +192,11 @@ pub fn enable_runtime_api(cbid: sys::CUpti_CallbackId, enable: u8) -> Result<(),
 ///
 /// # Safety
 /// Context must exist if it is not null.
-pub unsafe fn flush(context: sys::CUcontext, stream_id: u32, flag: u32) -> Result<(), CuptiError> {
+pub unsafe fn flush(
+    context: driver::sys::CUcontext,
+    stream_id: u32,
+    flag: u32,
+) -> Result<(), CuptiError> {
     unsafe { sys::cuptiActivityFlush(context, stream_id, flag) }.result()
 }
 
@@ -246,7 +251,7 @@ pub unsafe fn get_next_record(
 /// Context must exist if not null.
 /// Dropped must exist.
 pub unsafe fn get_num_dropped_records(
-    context: sys::CUcontext,
+    context: driver::sys::CUcontext,
     stream_id: u32,
     dropped: *mut usize,
 ) -> Result<(), CuptiError> {

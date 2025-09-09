@@ -1,6 +1,7 @@
 use core::ffi::CStr;
 
 use super::sys;
+use crate::driver;
 
 pub mod activity;
 
@@ -72,7 +73,7 @@ pub unsafe fn compute_capability_supported(
 /// # Safety
 /// Support must exist.
 pub unsafe fn device_supported(
-    dev: sys::CUdevice,
+    dev: driver::sys::CUdevice,
     support: *mut core::ffi::c_int,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiDeviceSupported(dev, support) }.result()
@@ -84,7 +85,7 @@ pub unsafe fn device_supported(
 /// # Safety
 /// Mode must exist.
 pub unsafe fn device_virtualization_mode(
-    dev: sys::CUdevice,
+    dev: driver::sys::CUdevice,
     mode: *mut sys::CUpti_DeviceVirtualizationMode,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiDeviceVirtualizationMode(dev, mode) }.result()
@@ -102,7 +103,7 @@ pub fn finalize() -> Result<(), CuptiError> {
 /// # Safety
 /// State must exist.
 pub unsafe fn get_auto_boost_state(
-    context: sys::CUcontext,
+    context: driver::sys::CUcontext,
     state: *mut sys::CUpti_ActivityAutoBoostState,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetAutoBoostState(context, state) }.result()
@@ -114,7 +115,7 @@ pub unsafe fn get_auto_boost_state(
 /// # Safety
 /// Context ID must exist.
 pub unsafe fn get_context_id(
-    context: sys::CUcontext,
+    context: driver::sys::CUcontext,
     context_id: *mut u32,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetContextId(context, context_id) }.result()
@@ -126,7 +127,7 @@ pub unsafe fn get_context_id(
 /// # Safety
 /// Device ID must exist.
 pub unsafe fn get_device_id(
-    context: sys::CUcontext,
+    context: driver::sys::CUcontext,
     device_id: *mut u32,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetDeviceId(context, device_id) }.result()
@@ -143,10 +144,11 @@ pub unsafe fn get_device_id(
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090"
+    feature = "cuda-12090",
+    feature = "cuda-13000"
 ))]
 pub unsafe fn get_graph_exec_id(
-    graph_exec: sys::CUgraphExec,
+    graph_exec: driver::sys::CUgraphExec,
     p_id: *mut u32,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetGraphExecId(graph_exec, p_id) }.result()
@@ -157,7 +159,7 @@ pub unsafe fn get_graph_exec_id(
 ///
 /// # Safety
 /// P ID must exist.
-pub unsafe fn get_graph_id(graph: sys::CUgraph, p_id: *mut u32) -> Result<(), CuptiError> {
+pub unsafe fn get_graph_id(graph: driver::sys::CUgraph, p_id: *mut u32) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetGraphId(graph, p_id) }.result()
 }
 /// Get the unique ID of a graph node.
@@ -167,7 +169,7 @@ pub unsafe fn get_graph_id(graph: sys::CUgraph, p_id: *mut u32) -> Result<(), Cu
 /// # Safety
 /// Node ID must exist.
 pub unsafe fn get_graph_node_id(
-    node: sys::CUgraphNode,
+    node: driver::sys::CUgraphNode,
     node_id: *mut u64,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetGraphNodeId(node, node_id) }.result()
@@ -185,8 +187,8 @@ pub fn get_last_error() -> Result<(), CuptiError> {
 /// # Safety
 /// Stream ID must exist.
 pub unsafe fn get_stream_id(
-    context: sys::CUcontext,
-    stream: sys::CUstream,
+    context: driver::sys::CUcontext,
+    stream: driver::sys::CUstream,
     stream_id: *mut u32,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetStreamId(context, stream, stream_id) }.result()
@@ -198,8 +200,8 @@ pub unsafe fn get_stream_id(
 /// # Safety
 /// Stream ID must exist.
 pub unsafe fn get_stream_id_ex(
-    context: sys::CUcontext,
-    stream: sys::CUstream,
+    context: driver::sys::CUcontext,
+    stream: driver::sys::CUstream,
     per_thread_stream: u8,
     stream_id: *mut u32,
 ) -> Result<(), CuptiError> {
