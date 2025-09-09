@@ -276,6 +276,24 @@ pub unsafe fn subscribe(
     unsafe { sys::cuptiSubscribe(subscriber, callback, userdata) }.result()
 }
 
+/// Initialize a callback subscriber with a callback function and user data.
+///
+/// See [cuptiSubscribe()](https://docs.nvidia.com/cupti/api/group__CUPTI__CALLBACK__API.html?highlight=cuptiSubscribe#_CPPv414cuptiSubscribeP22CUpti_SubscriberHandle18CUpti_CallbackFuncPv)
+///
+/// # Safety
+/// Subscriber handle must exist.
+/// Callback function must exist.
+/// Subscriber parameters `p_params` may be null.
+#[cfg(feature = "cuda-13000")]
+pub unsafe fn subscribe_v2(
+    subscriber: *mut sys::CUpti_SubscriberHandle,
+    callback: sys::CUpti_CallbackFunc,
+    userdata: *mut core::ffi::c_void,
+    p_params: *mut sys::CUpti_SubscriberParams,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiSubscribe_v2(subscriber, callback, userdata, p_params) }.result()
+}
+
 /// Unregister a callback subscriber.
 ///
 /// See [cuptiUnsubscribe()](https://docs.nvidia.com/cupti/api/group__CUPTI__CALLBACK__API.html?highlight=cuptiSubscribe#group__cupti__callback__api_1ga20b68c9c33f129179b56687a17356682)

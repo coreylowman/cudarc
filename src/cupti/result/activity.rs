@@ -115,7 +115,7 @@ pub unsafe fn enable_context(
 ///
 /// See [cuptiActivityEnableCudaEventDeviceTimestamps()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html?highlight=cuptiActivityEnableContext#_CPPv444cuptiActivityEnableCudaEventDeviceTimestamps7uint8_t)
 #[cfg(feature = "cuda-13000")]
-pub unsafe fn enable_cuda_event_device_timestamps(enable: u8) -> Result<(), CuptiError> {
+pub fn enable_cuda_event_device_timestamps(enable: u8) -> Result<(), CuptiError> {
     unsafe { sys::cuptiActivityEnableCudaEventDeviceTimestamps(enable) }.result()
 }
 
