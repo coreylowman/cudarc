@@ -11,7 +11,7 @@ documentation = "https://docs.rs/cudarc"
 repository = "https://github.com/coreylowman/cudarc"
 readme = "README.md"
 
-keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas"]
+keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas", "cupti"]
 categories = [
     "api-bindings",
     "hardware-support",
@@ -28,11 +28,11 @@ features = [
     "f16",
     "cudnn",
     "nccl",
+    "cupti",
     "cusparse",
     "cusolver",
     "cusolvermg",
     "cufile",
-    "cupti",
 ]
 
 [features]
@@ -40,7 +40,6 @@ default = [
     "std",
     "cublas",
     "cublaslt",
-    "cupti",
     "curand",
     "driver",
     "runtime",
