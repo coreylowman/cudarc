@@ -66,6 +66,7 @@ pub unsafe fn compute_capability_supported(
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiComputeCapabilitySupported(major, minor, support) }.result()
 }
+
 /// Check support for a compute device.
 ///
 /// See [cuptiDeviceSupported()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga2493c952b9ceccf953ade5a6816fefdb).
@@ -78,6 +79,7 @@ pub unsafe fn device_supported(
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiDeviceSupported(dev, support) }.result()
 }
+
 /// Query the virtualization mode of the device.
 ///
 /// See [cuptiDeviceVirtualizationMode()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga395c59b62aeac395e38ced9d40677c76).
@@ -90,12 +92,56 @@ pub unsafe fn device_virtualization_mode(
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiDeviceVirtualizationMode(dev, mode) }.result()
 }
+
+/// Enable or disable all callbacks in all domains.
+///
+/// See [cuptiEnableAllDomains()](https://docs.nvidia.com/cupti/api/group__CUPTI__CALLBACK__API.html#group__cupti__callback__api_1ga7dcebeb8ae4f79c90905a8f6befc51d7)
+///
+/// # Safety
+/// Subscriber must exist.
+pub unsafe fn enable_all_domains(
+    enable: u32,
+    subscriber: sys::CUpti_SubscriberHandle,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiEnableAllDomains(enable, subscriber) }.result()
+}
+
+/// Enable or disabled callbacks for a specific domain and callback ID.
+///
+/// See [cuptiEnableCallback()](https://docs.nvidia.com/cupti/api/group__CUPTI__CALLBACK__API.html#group__cupti__callback__api_1gace619a64b77d6533754de798b5e8263e)
+///
+/// # Safety
+/// Subscriber must exist.
+pub unsafe fn enable_callback(
+    enable: u32,
+    subscriber: sys::CUpti_SubscriberHandle,
+    domain: sys::CUpti_CallbackDomain,
+    cbid: sys::CUpti_CallbackId,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiEnableCallback(enable, subscriber, domain, cbid) }.result()
+}
+
+/// Enable or disabled all callbacks for a specific domain.
+///
+/// See [cuptiEnableDomain()](https://docs.nvidia.com/cupti/api/group__CUPTI__CALLBACK__API.html#group__cupti__callback__api_1ga926699208431270d4197fcb639da6a5c)
+///
+/// # Safety
+/// Subscriber must exist.
+pub unsafe fn enable_domain(
+    enable: u32,
+    subscriber: sys::CUpti_SubscriberHandle,
+    domain: sys::CUpti_CallbackDomain,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiEnableDomain(enable, subscriber, domain) }.result()
+}
+
 /// Detach CUPTI from the running process.
 ///
 /// See [cuptiFinalize()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1gaad1be905ea718ed54246e52e02667e8f).
 pub fn finalize() -> Result<(), CuptiError> {
     unsafe { sys::cuptiFinalize() }.result()
 }
+
 /// Get auto boost state.
 ///
 /// See [cuptiGetAutoBoostState()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga1ac1cce5ce788b9f2c679d13e982384b).
@@ -107,131 +153,6 @@ pub unsafe fn get_auto_boost_state(
     state: *mut sys::CUpti_ActivityAutoBoostState,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetAutoBoostState(context, state) }.result()
-}
-/// Get the ID of a context.
-///
-/// See [cuptiGetContextId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga036dfd802a6c28c7e4239c82ed98df21).
-///
-/// # Safety
-/// Context ID must exist.
-pub unsafe fn get_context_id(
-    context: driver::sys::CUcontext,
-    context_id: *mut u32,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetContextId(context, context_id) }.result()
-}
-/// Get the ID of a device.
-///
-/// See [cuptiGetDeviceId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga0cc36b42dbf08fffc772e9c932749c77).
-///
-/// # Safety
-/// Device ID must exist.
-pub unsafe fn get_device_id(
-    context: driver::sys::CUcontext,
-    device_id: *mut u32,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetDeviceId(context, device_id) }.result()
-}
-/// Get the unique ID of executable graph.
-///
-/// See [cuptiGetGraphExecId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga3a3fd5d89e51eeece46635d614624aa3).
-///
-/// # Safety
-/// P ID must exist.
-#[cfg(any(
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090",
-    feature = "cuda-13000"
-))]
-pub unsafe fn get_graph_exec_id(
-    graph_exec: driver::sys::CUgraphExec,
-    p_id: *mut u32,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetGraphExecId(graph_exec, p_id) }.result()
-}
-/// Get the unique ID of graph.
-///
-/// See [cuptiGetGraphId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga4add923efce4731de28c9f0b04e1e3f9).
-///
-/// # Safety
-/// P ID must exist.
-pub unsafe fn get_graph_id(graph: driver::sys::CUgraph, p_id: *mut u32) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetGraphId(graph, p_id) }.result()
-}
-/// Get the unique ID of a graph node.
-///
-/// See [cuptiGetGraphNodeId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga22370b53102428305a97cb37fbc14678).
-///
-/// # Safety
-/// Node ID must exist.
-pub unsafe fn get_graph_node_id(
-    node: driver::sys::CUgraphNode,
-    node_id: *mut u64,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetGraphNodeId(node, node_id) }.result()
-}
-/// Returns the last error from a cupti call or callback.
-///
-/// See [cuptiGetLastError()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga0c83719b0248e09ef94390000d3f1035).
-pub fn get_last_error() -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetLastError() }.result()
-}
-/// Get the ID of a stream.
-///
-/// See [cuptiGetStreamId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga04ece23d24e29e8d98daadba09f1839c).
-///
-/// # Safety
-/// Stream ID must exist.
-pub unsafe fn get_stream_id(
-    context: driver::sys::CUcontext,
-    stream: driver::sys::CUstream,
-    stream_id: *mut u32,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetStreamId(context, stream, stream_id) }.result()
-}
-/// Get the ID of a stream.
-///
-/// See [cuptiGetStreamIdEx()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga062d04c62fdfeed9adb8157cecbaaa55).
-///
-/// # Safety
-/// Stream ID must exist.
-pub unsafe fn get_stream_id_ex(
-    context: driver::sys::CUcontext,
-    stream: driver::sys::CUstream,
-    per_thread_stream: u8,
-    stream_id: *mut u32,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetStreamIdEx(context, stream, per_thread_stream, stream_id) }.result()
-}
-/// Get the thread-id type.
-///
-/// See [cuptiGetThreadIdType()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1gabc957f426b741e46d6e9a99a43a974b5).
-///
-/// # Safety
-/// Type must exist.
-pub unsafe fn get_thread_id_type(
-    r#type: *mut sys::CUpti_ActivityThreadIdType,
-) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetThreadIdType(r#type) }.result()
-}
-/// Get the CUPTI timestamp.
-///
-/// See [cuptiGetTimestamp()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga7d8294c686b5293237a6daae8eae3dde).
-///
-/// # Safety
-/// Timestamp must exist.
-pub unsafe fn get_timestamp(timestamp: *mut u64) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiGetTimestamp(timestamp) }.result()
-}
-/// Set the thread-id type.
-///
-/// See [cuptiSetThreadIdType()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga1821f090b841d60643ee37d977d9c64a).
-pub fn set_thread_id_type(r#type: sys::CUpti_ActivityThreadIdType) -> Result<(), CuptiError> {
-    unsafe { sys::cuptiSetThreadIdType(r#type) }.result()
 }
 
 /// Get the name of a callback for a specific domain and callback ID.
@@ -261,6 +182,142 @@ pub unsafe fn get_callback_state(
     cbid: sys::CUpti_CallbackId,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiGetCallbackState(enable, subscriber, domain, cbid) }.result()
+}
+
+/// Get the ID of a context.
+///
+/// See [cuptiGetContextId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga036dfd802a6c28c7e4239c82ed98df21).
+///
+/// # Safety
+/// Context ID must exist.
+pub unsafe fn get_context_id(
+    context: driver::sys::CUcontext,
+    context_id: *mut u32,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetContextId(context, context_id) }.result()
+}
+
+/// Get the ID of a device.
+///
+/// See [cuptiGetDeviceId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga0cc36b42dbf08fffc772e9c932749c77).
+///
+/// # Safety
+/// Device ID must exist.
+pub unsafe fn get_device_id(
+    context: driver::sys::CUcontext,
+    device_id: *mut u32,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetDeviceId(context, device_id) }.result()
+}
+
+/// Get the unique ID of executable graph.
+///
+/// See [cuptiGetGraphExecId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga3a3fd5d89e51eeece46635d614624aa3).
+///
+/// # Safety
+/// P ID must exist.
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub unsafe fn get_graph_exec_id(
+    graph_exec: driver::sys::CUgraphExec,
+    p_id: *mut u32,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetGraphExecId(graph_exec, p_id) }.result()
+}
+
+/// Get the unique ID of graph.
+///
+/// See [cuptiGetGraphId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga4add923efce4731de28c9f0b04e1e3f9).
+///
+/// # Safety
+/// P ID must exist.
+pub unsafe fn get_graph_id(graph: driver::sys::CUgraph, p_id: *mut u32) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetGraphId(graph, p_id) }.result()
+}
+
+/// Get the unique ID of a graph node.
+///
+/// See [cuptiGetGraphNodeId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga22370b53102428305a97cb37fbc14678).
+///
+/// # Safety
+/// Node ID must exist.
+pub unsafe fn get_graph_node_id(
+    node: driver::sys::CUgraphNode,
+    node_id: *mut u64,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetGraphNodeId(node, node_id) }.result()
+}
+
+/// Returns the last error from a cupti call or callback.
+///
+/// See [cuptiGetLastError()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga0c83719b0248e09ef94390000d3f1035).
+pub fn get_last_error() -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetLastError() }.result()
+}
+
+/// Get the ID of a stream.
+///
+/// See [cuptiGetStreamId()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga04ece23d24e29e8d98daadba09f1839c).
+///
+/// # Safety
+/// Stream ID must exist.
+pub unsafe fn get_stream_id(
+    context: driver::sys::CUcontext,
+    stream: driver::sys::CUstream,
+    stream_id: *mut u32,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetStreamId(context, stream, stream_id) }.result()
+}
+
+/// Get the ID of a stream.
+///
+/// See [cuptiGetStreamIdEx()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga062d04c62fdfeed9adb8157cecbaaa55).
+///
+/// # Safety
+/// Stream ID must exist.
+pub unsafe fn get_stream_id_ex(
+    context: driver::sys::CUcontext,
+    stream: driver::sys::CUstream,
+    per_thread_stream: u8,
+    stream_id: *mut u32,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetStreamIdEx(context, stream, per_thread_stream, stream_id) }.result()
+}
+
+/// Get the thread-id type.
+///
+/// See [cuptiGetThreadIdType()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1gabc957f426b741e46d6e9a99a43a974b5).
+///
+/// # Safety
+/// Type must exist.
+pub unsafe fn get_thread_id_type(
+    r#type: *mut sys::CUpti_ActivityThreadIdType,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetThreadIdType(r#type) }.result()
+}
+
+/// Get the CUPTI timestamp.
+///
+/// See [cuptiGetTimestamp()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga7d8294c686b5293237a6daae8eae3dde).
+///
+/// # Safety
+/// Timestamp must exist.
+pub unsafe fn get_timestamp(timestamp: *mut u64) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiGetTimestamp(timestamp) }.result()
+}
+
+/// Set the thread-id type.
+///
+/// See [cuptiSetThreadIdType()](https://docs.nvidia.com/cupti/api/group__CUPTI__ACTIVITY__API.html#group__cupti__activity__api_1ga1821f090b841d60643ee37d977d9c64a).
+pub fn set_thread_id_type(r#type: sys::CUpti_ActivityThreadIdType) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiSetThreadIdType(r#type) }.result()
 }
 
 /// Initialize a callback subscriber with a callback function and user data.
@@ -294,6 +351,20 @@ pub unsafe fn subscribe_v2(
     p_params: *mut sys::CUpti_SubscriberParams,
 ) -> Result<(), CuptiError> {
     unsafe { sys::cuptiSubscribe_v2(subscriber, callback, userdata, p_params) }.result()
+}
+
+/// Get the available callback domains.
+///
+/// See [cuptiSupportedDomains()](https://docs.nvidia.com/cupti/api/group__CUPTI__CALLBACK__API.html#group__cupti__callback__api_1ga4526fa1776292fa325971e815e0c7dc2)
+///
+/// # Safety
+/// Domain count must exist.
+/// Domain table must exist.
+pub unsafe fn supported_domains(
+    domain_count: *mut usize,
+    domain_table: *mut sys::CUpti_DomainTable,
+) -> Result<(), CuptiError> {
+    unsafe { sys::cuptiSupportedDomains(domain_count, domain_table) }.result()
 }
 
 /// Unregister a callback subscriber.
