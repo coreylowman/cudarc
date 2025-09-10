@@ -110,6 +110,7 @@ fn main() -> Result<(), CuptiError> {
     })?;
 
     // Step 6: clean up
+    activity::disable(sys::CUpti_ActivityKind::CUPTI_ACTIVITY_KIND_DRIVER)?;
     unsafe {
         unsubscribe(subscriber_handle)?;
     }
