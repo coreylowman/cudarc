@@ -268,7 +268,14 @@ fn create_modules() -> Vec<ModuleConfig> {
             cudarc_name: "cupti".into(),
             redist_name: "cuda_cupti".into(),
             allowlist: Filters {
-                types: vec!["^[Cc][Uu][Pp][Tt][Ii].*".into()],
+                types: vec![
+                    // CUPTI types:
+                    "^[Cc][Uu][Pp][Tt][Ii].*".into(),
+                    // Types from the generated_cuda(_meta / runtime_api_meta).h
+                    // headers. These help dissect data representing function arguments
+                    // of CUDA functions in the CUPTI Callback API.
+                    "^[Cc][Uu][Dd][Aa].*_params.*".into(),
+                ],
                 functions: vec!["^cupti.*".into()],
                 vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*".into()],
             },
