@@ -144,6 +144,1890 @@ pub type CUpti_SubscriberHandle = *mut CUpti_Subscriber_st;
     feature = "cuda-13000"
 ))]
 pub type CUpti_TimestampCallbackFunc = ::core::option::Option<unsafe extern "C" fn() -> u64>;
+pub type cuArray3DCreate_params = cuArray3DCreate_params_st;
+pub type cuArray3DCreate_v2_params = cuArray3DCreate_v2_params_st;
+pub type cuArray3DGetDescriptor_params = cuArray3DGetDescriptor_params_st;
+pub type cuArray3DGetDescriptor_v2_params = cuArray3DGetDescriptor_v2_params_st;
+pub type cuArrayCreate_params = cuArrayCreate_params_st;
+pub type cuArrayCreate_v2_params = cuArrayCreate_v2_params_st;
+pub type cuArrayDestroy_params = cuArrayDestroy_params_st;
+pub type cuArrayGetDescriptor_params = cuArrayGetDescriptor_params_st;
+pub type cuArrayGetDescriptor_v2_params = cuArrayGetDescriptor_v2_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuArrayGetMemoryRequirements_params = cuArrayGetMemoryRequirements_params_st;
+pub type cuArrayGetPlane_params = cuArrayGetPlane_params_st;
+pub type cuArrayGetSparseProperties_params = cuArrayGetSparseProperties_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuCheckpointProcessCheckpoint_params = cuCheckpointProcessCheckpoint_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuCheckpointProcessGetRestoreThreadId_params =
+    cuCheckpointProcessGetRestoreThreadId_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuCheckpointProcessGetState_params = cuCheckpointProcessGetState_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuCheckpointProcessLock_params = cuCheckpointProcessLock_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuCheckpointProcessRestore_params = cuCheckpointProcessRestore_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuCheckpointProcessUnlock_params = cuCheckpointProcessUnlock_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCoredumpGetAttributeGlobal_params = cuCoredumpGetAttributeGlobal_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCoredumpGetAttribute_params = cuCoredumpGetAttribute_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCoredumpSetAttributeGlobal_params = cuCoredumpSetAttributeGlobal_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCoredumpSetAttribute_params = cuCoredumpSetAttribute_params_st;
+pub type cuCtxAttach_params = cuCtxAttach_params_st;
+pub type cuCtxCreate_params = cuCtxCreate_params_st;
+pub type cuCtxCreate_v2_params = cuCtxCreate_v2_params_st;
+pub type cuCtxCreate_v3_params = cuCtxCreate_v3_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxCreate_v4_params = cuCtxCreate_v4_params_st;
+pub type cuCtxDestroy_params = cuCtxDestroy_params_st;
+pub type cuCtxDestroy_v2_params = cuCtxDestroy_v2_params_st;
+pub type cuCtxDetach_params = cuCtxDetach_params_st;
+pub type cuCtxDisablePeerAccess_params = cuCtxDisablePeerAccess_params_st;
+pub type cuCtxEnablePeerAccess_params = cuCtxEnablePeerAccess_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxFromGreenCtx_params = cuCtxFromGreenCtx_params_st;
+pub type cuCtxGetApiVersion_params = cuCtxGetApiVersion_params_st;
+pub type cuCtxGetCacheConfig_params = cuCtxGetCacheConfig_params_st;
+pub type cuCtxGetCurrent_params = cuCtxGetCurrent_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxGetDevResource_params = cuCtxGetDevResource_params_st;
+pub type cuCtxGetDevice_params = cuCtxGetDevice_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuCtxGetDevice_v2_params = cuCtxGetDevice_v2_params_st;
+pub type cuCtxGetExecAffinity_params = cuCtxGetExecAffinity_params_st;
+pub type cuCtxGetFlags_params = cuCtxGetFlags_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxGetId_params = cuCtxGetId_params_st;
+pub type cuCtxGetLimit_params = cuCtxGetLimit_params_st;
+pub type cuCtxGetSharedMemConfig_params = cuCtxGetSharedMemConfig_params_st;
+pub type cuCtxGetStreamPriorityRange_params = cuCtxGetStreamPriorityRange_params_st;
+pub type cuCtxPopCurrent_params = cuCtxPopCurrent_params_st;
+pub type cuCtxPopCurrent_v2_params = cuCtxPopCurrent_v2_params_st;
+pub type cuCtxPushCurrent_params = cuCtxPushCurrent_params_st;
+pub type cuCtxPushCurrent_v2_params = cuCtxPushCurrent_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxRecordEvent_params = cuCtxRecordEvent_params_st;
+pub type cuCtxSetCacheConfig_params = cuCtxSetCacheConfig_params_st;
+pub type cuCtxSetCurrent_params = cuCtxSetCurrent_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxSetFlags_params = cuCtxSetFlags_params_st;
+pub type cuCtxSetLimit_params = cuCtxSetLimit_params_st;
+pub type cuCtxSetSharedMemConfig_params = cuCtxSetSharedMemConfig_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuCtxSynchronize_v2_params = cuCtxSynchronize_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuCtxWaitEvent_params = cuCtxWaitEvent_params_st;
+pub type cuDestroyExternalMemory_params = cuDestroyExternalMemory_params_st;
+pub type cuDestroyExternalSemaphore_params = cuDestroyExternalSemaphore_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuDevResourceGenerateDesc_params = cuDevResourceGenerateDesc_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuDevSmResourceSplitByCount_params = cuDevSmResourceSplitByCount_params_st;
+pub type cuDeviceCanAccessPeer_params = cuDeviceCanAccessPeer_params_st;
+pub type cuDeviceComputeCapability_params = cuDeviceComputeCapability_params_st;
+pub type cuDeviceGetAttribute_params = cuDeviceGetAttribute_params_st;
+pub type cuDeviceGetByPCIBusId_params = cuDeviceGetByPCIBusId_params_st;
+pub type cuDeviceGetCount_params = cuDeviceGetCount_params_st;
+pub type cuDeviceGetDefaultMemPool_params = cuDeviceGetDefaultMemPool_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuDeviceGetDevResource_params = cuDeviceGetDevResource_params_st;
+pub type cuDeviceGetExecAffinitySupport_params = cuDeviceGetExecAffinitySupport_params_st;
+pub type cuDeviceGetGraphMemAttribute_params = cuDeviceGetGraphMemAttribute_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuDeviceGetHostAtomicCapabilities_params = cuDeviceGetHostAtomicCapabilities_params_st;
+pub type cuDeviceGetLuid_params = cuDeviceGetLuid_params_st;
+pub type cuDeviceGetMemPool_params = cuDeviceGetMemPool_params_st;
+pub type cuDeviceGetName_params = cuDeviceGetName_params_st;
+pub type cuDeviceGetNvSciSyncAttributes_params = cuDeviceGetNvSciSyncAttributes_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuDeviceGetP2PAtomicCapabilities_params = cuDeviceGetP2PAtomicCapabilities_params_st;
+pub type cuDeviceGetP2PAttribute_params = cuDeviceGetP2PAttribute_params_st;
+pub type cuDeviceGetPCIBusId_params = cuDeviceGetPCIBusId_params_st;
+pub type cuDeviceGetProperties_params = cuDeviceGetProperties_params_st;
+pub type cuDeviceGetTexture1DLinearMaxWidth_params = cuDeviceGetTexture1DLinearMaxWidth_params_st;
+pub type cuDeviceGetUuid_params = cuDeviceGetUuid_params_st;
+pub type cuDeviceGetUuid_v2_params = cuDeviceGetUuid_v2_params_st;
+pub type cuDeviceGet_params = cuDeviceGet_params_st;
+pub type cuDeviceGraphMemTrim_params = cuDeviceGraphMemTrim_params_st;
+pub type cuDevicePrimaryCtxGetState_params = cuDevicePrimaryCtxGetState_params_st;
+pub type cuDevicePrimaryCtxRelease_params = cuDevicePrimaryCtxRelease_params_st;
+pub type cuDevicePrimaryCtxRelease_v2_params = cuDevicePrimaryCtxRelease_v2_params_st;
+pub type cuDevicePrimaryCtxReset_params = cuDevicePrimaryCtxReset_params_st;
+pub type cuDevicePrimaryCtxReset_v2_params = cuDevicePrimaryCtxReset_v2_params_st;
+pub type cuDevicePrimaryCtxRetain_params = cuDevicePrimaryCtxRetain_params_st;
+pub type cuDevicePrimaryCtxSetFlags_params = cuDevicePrimaryCtxSetFlags_params_st;
+pub type cuDevicePrimaryCtxSetFlags_v2_params = cuDevicePrimaryCtxSetFlags_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuDeviceRegisterAsyncNotification_params = cuDeviceRegisterAsyncNotification_params_st;
+pub type cuDeviceSetGraphMemAttribute_params = cuDeviceSetGraphMemAttribute_params_st;
+pub type cuDeviceSetMemPool_params = cuDeviceSetMemPool_params_st;
+pub type cuDeviceTotalMem_params = cuDeviceTotalMem_params_st;
+pub type cuDeviceTotalMem_v2_params = cuDeviceTotalMem_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuDeviceUnregisterAsyncNotification_params = cuDeviceUnregisterAsyncNotification_params_st;
+pub type cuDriverGetVersion_params = cuDriverGetVersion_params_st;
+pub type cuEventCreate_params = cuEventCreate_params_st;
+pub type cuEventDestroy_params = cuEventDestroy_params_st;
+pub type cuEventDestroy_v2_params = cuEventDestroy_v2_params_st;
+pub type cuEventElapsedTime_params = cuEventElapsedTime_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuEventElapsedTime_v2_params = cuEventElapsedTime_v2_params_st;
+pub type cuEventQuery_params = cuEventQuery_params_st;
+pub type cuEventRecordWithFlags_params = cuEventRecordWithFlags_params_st;
+pub type cuEventRecordWithFlags_ptsz_params = cuEventRecordWithFlags_ptsz_params_st;
+pub type cuEventRecord_params = cuEventRecord_params_st;
+pub type cuEventRecord_ptsz_params = cuEventRecord_ptsz_params_st;
+pub type cuEventSynchronize_params = cuEventSynchronize_params_st;
+pub type cuExternalMemoryGetMappedBuffer_params = cuExternalMemoryGetMappedBuffer_params_st;
+pub type cuExternalMemoryGetMappedMipmappedArray_params =
+    cuExternalMemoryGetMappedMipmappedArray_params_st;
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuFlushGPUDirectRDMAWrites_params = cuFlushGPUDirectRDMAWrites_params_st;
+pub type cuFuncGetAttribute_params = cuFuncGetAttribute_params_st;
+pub type cuFuncGetModule_params = cuFuncGetModule_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuFuncGetName_params = cuFuncGetName_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuFuncGetParamInfo_params = cuFuncGetParamInfo_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuFuncIsLoaded_params = cuFuncIsLoaded_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuFuncLoad_params = cuFuncLoad_params_st;
+pub type cuFuncSetAttribute_params = cuFuncSetAttribute_params_st;
+pub type cuFuncSetBlockShape_params = cuFuncSetBlockShape_params_st;
+pub type cuFuncSetCacheConfig_params = cuFuncSetCacheConfig_params_st;
+pub type cuFuncSetSharedMemConfig_params = cuFuncSetSharedMemConfig_params_st;
+pub type cuFuncSetSharedSize_params = cuFuncSetSharedSize_params_st;
+pub type cuGetErrorName_params = cuGetErrorName_params_st;
+pub type cuGetErrorString_params = cuGetErrorString_params_st;
+pub type cuGetExportTable_params = cuGetExportTable_params_st;
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGetProcAddress_params = cuGetProcAddress_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGetProcAddress_v2_params = cuGetProcAddress_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphAddBatchMemOpNode_params = cuGraphAddBatchMemOpNode_params_st;
+pub type cuGraphAddChildGraphNode_params = cuGraphAddChildGraphNode_params_st;
+pub type cuGraphAddDependencies_params = cuGraphAddDependencies_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphAddDependencies_v2_params = cuGraphAddDependencies_v2_params_st;
+pub type cuGraphAddEmptyNode_params = cuGraphAddEmptyNode_params_st;
+pub type cuGraphAddEventRecordNode_params = cuGraphAddEventRecordNode_params_st;
+pub type cuGraphAddEventWaitNode_params = cuGraphAddEventWaitNode_params_st;
+pub type cuGraphAddExternalSemaphoresSignalNode_params =
+    cuGraphAddExternalSemaphoresSignalNode_params_st;
+pub type cuGraphAddExternalSemaphoresWaitNode_params =
+    cuGraphAddExternalSemaphoresWaitNode_params_st;
+pub type cuGraphAddHostNode_params = cuGraphAddHostNode_params_st;
+pub type cuGraphAddKernelNode_params = cuGraphAddKernelNode_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphAddKernelNode_v2_params = cuGraphAddKernelNode_v2_params_st;
+pub type cuGraphAddMemAllocNode_params = cuGraphAddMemAllocNode_params_st;
+pub type cuGraphAddMemFreeNode_params = cuGraphAddMemFreeNode_params_st;
+pub type cuGraphAddMemcpyNode_params = cuGraphAddMemcpyNode_params_st;
+pub type cuGraphAddMemsetNode_params = cuGraphAddMemsetNode_params_st;
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphAddNode_params = cuGraphAddNode_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphAddNode_v2_params = cuGraphAddNode_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphBatchMemOpNodeGetParams_params = cuGraphBatchMemOpNodeGetParams_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphBatchMemOpNodeSetParams_params = cuGraphBatchMemOpNodeSetParams_params_st;
+pub type cuGraphChildGraphNodeGetGraph_params = cuGraphChildGraphNodeGetGraph_params_st;
+pub type cuGraphClone_params = cuGraphClone_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphConditionalHandleCreate_params = cuGraphConditionalHandleCreate_params_st;
+pub type cuGraphCreate_params = cuGraphCreate_params_st;
+pub type cuGraphDebugDotPrint_params = cuGraphDebugDotPrint_params_st;
+pub type cuGraphDestroyNode_params = cuGraphDestroyNode_params_st;
+pub type cuGraphDestroy_params = cuGraphDestroy_params_st;
+pub type cuGraphEventRecordNodeGetEvent_params = cuGraphEventRecordNodeGetEvent_params_st;
+pub type cuGraphEventRecordNodeSetEvent_params = cuGraphEventRecordNodeSetEvent_params_st;
+pub type cuGraphEventWaitNodeGetEvent_params = cuGraphEventWaitNodeGetEvent_params_st;
+pub type cuGraphEventWaitNodeSetEvent_params = cuGraphEventWaitNodeSetEvent_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphExecBatchMemOpNodeSetParams_params = cuGraphExecBatchMemOpNodeSetParams_params_st;
+pub type cuGraphExecChildGraphNodeSetParams_params = cuGraphExecChildGraphNodeSetParams_params_st;
+pub type cuGraphExecDestroy_params = cuGraphExecDestroy_params_st;
+pub type cuGraphExecEventRecordNodeSetEvent_params = cuGraphExecEventRecordNodeSetEvent_params_st;
+pub type cuGraphExecEventWaitNodeSetEvent_params = cuGraphExecEventWaitNodeSetEvent_params_st;
+pub type cuGraphExecExternalSemaphoresSignalNodeSetParams_params =
+    cuGraphExecExternalSemaphoresSignalNodeSetParams_params_st;
+pub type cuGraphExecExternalSemaphoresWaitNodeSetParams_params =
+    cuGraphExecExternalSemaphoresWaitNodeSetParams_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphExecGetFlags_params = cuGraphExecGetFlags_params_st;
+pub type cuGraphExecHostNodeSetParams_params = cuGraphExecHostNodeSetParams_params_st;
+pub type cuGraphExecKernelNodeSetParams_params = cuGraphExecKernelNodeSetParams_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphExecKernelNodeSetParams_v2_params = cuGraphExecKernelNodeSetParams_v2_params_st;
+pub type cuGraphExecMemcpyNodeSetParams_params = cuGraphExecMemcpyNodeSetParams_params_st;
+pub type cuGraphExecMemsetNodeSetParams_params = cuGraphExecMemsetNodeSetParams_params_st;
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphExecNodeSetParams_params = cuGraphExecNodeSetParams_params_st;
+pub type cuGraphExecUpdate_params = cuGraphExecUpdate_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphExecUpdate_v2_params = cuGraphExecUpdate_v2_params_st;
+pub type cuGraphExternalSemaphoresSignalNodeGetParams_params =
+    cuGraphExternalSemaphoresSignalNodeGetParams_params_st;
+pub type cuGraphExternalSemaphoresSignalNodeSetParams_params =
+    cuGraphExternalSemaphoresSignalNodeSetParams_params_st;
+pub type cuGraphExternalSemaphoresWaitNodeGetParams_params =
+    cuGraphExternalSemaphoresWaitNodeGetParams_params_st;
+pub type cuGraphExternalSemaphoresWaitNodeSetParams_params =
+    cuGraphExternalSemaphoresWaitNodeSetParams_params_st;
+pub type cuGraphGetEdges_params = cuGraphGetEdges_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphGetEdges_v2_params = cuGraphGetEdges_v2_params_st;
+pub type cuGraphGetNodes_params = cuGraphGetNodes_params_st;
+pub type cuGraphGetRootNodes_params = cuGraphGetRootNodes_params_st;
+pub type cuGraphHostNodeGetParams_params = cuGraphHostNodeGetParams_params_st;
+pub type cuGraphHostNodeSetParams_params = cuGraphHostNodeSetParams_params_st;
+pub type cuGraphInstantiateWithFlags_params = cuGraphInstantiateWithFlags_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphInstantiateWithParams_params = cuGraphInstantiateWithParams_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphInstantiateWithParams_ptsz_params = cuGraphInstantiateWithParams_ptsz_params_st;
+pub type cuGraphInstantiate_params = cuGraphInstantiate_params_st;
+pub type cuGraphInstantiate_v2_params = cuGraphInstantiate_v2_params_st;
+pub type cuGraphKernelNodeCopyAttributes_params = cuGraphKernelNodeCopyAttributes_params_st;
+pub type cuGraphKernelNodeGetAttribute_params = cuGraphKernelNodeGetAttribute_params_st;
+pub type cuGraphKernelNodeGetParams_params = cuGraphKernelNodeGetParams_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphKernelNodeGetParams_v2_params = cuGraphKernelNodeGetParams_v2_params_st;
+pub type cuGraphKernelNodeSetAttribute_params = cuGraphKernelNodeSetAttribute_params_st;
+pub type cuGraphKernelNodeSetParams_params = cuGraphKernelNodeSetParams_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphKernelNodeSetParams_v2_params = cuGraphKernelNodeSetParams_v2_params_st;
+pub type cuGraphLaunch_params = cuGraphLaunch_params_st;
+pub type cuGraphLaunch_ptsz_params = cuGraphLaunch_ptsz_params_st;
+pub type cuGraphMemAllocNodeGetParams_params = cuGraphMemAllocNodeGetParams_params_st;
+pub type cuGraphMemFreeNodeGetParams_params = cuGraphMemFreeNodeGetParams_params_st;
+pub type cuGraphMemcpyNodeGetParams_params = cuGraphMemcpyNodeGetParams_params_st;
+pub type cuGraphMemcpyNodeSetParams_params = cuGraphMemcpyNodeSetParams_params_st;
+pub type cuGraphMemsetNodeGetParams_params = cuGraphMemsetNodeGetParams_params_st;
+pub type cuGraphMemsetNodeSetParams_params = cuGraphMemsetNodeSetParams_params_st;
+pub type cuGraphNodeFindInClone_params = cuGraphNodeFindInClone_params_st;
+pub type cuGraphNodeGetDependencies_params = cuGraphNodeGetDependencies_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphNodeGetDependencies_v2_params = cuGraphNodeGetDependencies_v2_params_st;
+pub type cuGraphNodeGetDependentNodes_params = cuGraphNodeGetDependentNodes_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphNodeGetDependentNodes_v2_params = cuGraphNodeGetDependentNodes_v2_params_st;
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphNodeGetEnabled_params = cuGraphNodeGetEnabled_params_st;
+pub type cuGraphNodeGetType_params = cuGraphNodeGetType_params_st;
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphNodeSetEnabled_params = cuGraphNodeSetEnabled_params_st;
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphNodeSetParams_params = cuGraphNodeSetParams_params_st;
+pub type cuGraphReleaseUserObject_params = cuGraphReleaseUserObject_params_st;
+pub type cuGraphRemoveDependencies_params = cuGraphRemoveDependencies_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGraphRemoveDependencies_v2_params = cuGraphRemoveDependencies_v2_params_st;
+pub type cuGraphRetainUserObject_params = cuGraphRetainUserObject_params_st;
+pub type cuGraphUpload_params = cuGraphUpload_params_st;
+pub type cuGraphUpload_ptsz_params = cuGraphUpload_ptsz_params_st;
+pub type cuGraphicsMapResources_params = cuGraphicsMapResources_params_st;
+pub type cuGraphicsMapResources_ptsz_params = cuGraphicsMapResources_ptsz_params_st;
+pub type cuGraphicsResourceGetMappedMipmappedArray_params =
+    cuGraphicsResourceGetMappedMipmappedArray_params_st;
+pub type cuGraphicsResourceGetMappedPointer_params = cuGraphicsResourceGetMappedPointer_params_st;
+pub type cuGraphicsResourceGetMappedPointer_v2_params =
+    cuGraphicsResourceGetMappedPointer_v2_params_st;
+pub type cuGraphicsResourceSetMapFlags_params = cuGraphicsResourceSetMapFlags_params_st;
+pub type cuGraphicsResourceSetMapFlags_v2_params = cuGraphicsResourceSetMapFlags_v2_params_st;
+pub type cuGraphicsSubResourceGetMappedArray_params = cuGraphicsSubResourceGetMappedArray_params_st;
+pub type cuGraphicsUnmapResources_params = cuGraphicsUnmapResources_params_st;
+pub type cuGraphicsUnmapResources_ptsz_params = cuGraphicsUnmapResources_ptsz_params_st;
+pub type cuGraphicsUnregisterResource_params = cuGraphicsUnregisterResource_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGreenCtxCreate_params = cuGreenCtxCreate_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGreenCtxDestroy_params = cuGreenCtxDestroy_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGreenCtxGetDevResource_params = cuGreenCtxGetDevResource_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuGreenCtxGetId_params = cuGreenCtxGetId_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGreenCtxRecordEvent_params = cuGreenCtxRecordEvent_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGreenCtxStreamCreate_params = cuGreenCtxStreamCreate_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuGreenCtxWaitEvent_params = cuGreenCtxWaitEvent_params_st;
+pub type cuImportExternalMemory_params = cuImportExternalMemory_params_st;
+pub type cuImportExternalSemaphore_params = cuImportExternalSemaphore_params_st;
+pub type cuInit_params = cuInit_params_st;
+pub type cuIpcCloseMemHandle_params = cuIpcCloseMemHandle_params_st;
+pub type cuIpcGetEventHandle_params = cuIpcGetEventHandle_params_st;
+pub type cuIpcGetMemHandle_params = cuIpcGetMemHandle_params_st;
+pub type cuIpcOpenEventHandle_params = cuIpcOpenEventHandle_params_st;
+pub type cuIpcOpenMemHandle_params = cuIpcOpenMemHandle_params_st;
+pub type cuIpcOpenMemHandle_v2_params = cuIpcOpenMemHandle_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelGetAttribute_params = cuKernelGetAttribute_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelGetFunction_params = cuKernelGetFunction_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelGetLibrary_params = cuKernelGetLibrary_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelGetName_params = cuKernelGetName_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelGetParamInfo_params = cuKernelGetParamInfo_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelSetAttribute_params = cuKernelSetAttribute_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuKernelSetCacheConfig_params = cuKernelSetCacheConfig_params_st;
+pub type cuLaunchCooperativeKernelMultiDevice_params =
+    cuLaunchCooperativeKernelMultiDevice_params_st;
+pub type cuLaunchCooperativeKernel_params = cuLaunchCooperativeKernel_params_st;
+pub type cuLaunchCooperativeKernel_ptsz_params = cuLaunchCooperativeKernel_ptsz_params_st;
+pub type cuLaunchGridAsync_params = cuLaunchGridAsync_params_st;
+pub type cuLaunchGrid_params = cuLaunchGrid_params_st;
+pub type cuLaunchHostFunc_params = cuLaunchHostFunc_params_st;
+pub type cuLaunchHostFunc_ptsz_params = cuLaunchHostFunc_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLaunchKernelEx_params = cuLaunchKernelEx_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLaunchKernelEx_ptsz_params = cuLaunchKernelEx_ptsz_params_st;
+pub type cuLaunchKernel_params = cuLaunchKernel_params_st;
+pub type cuLaunchKernel_ptsz_params = cuLaunchKernel_ptsz_params_st;
+pub type cuLaunch_params = cuLaunch_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryEnumerateKernels_params = cuLibraryEnumerateKernels_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryGetGlobal_params = cuLibraryGetGlobal_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryGetKernelCount_params = cuLibraryGetKernelCount_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryGetKernel_params = cuLibraryGetKernel_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryGetManaged_params = cuLibraryGetManaged_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryGetModule_params = cuLibraryGetModule_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryGetUnifiedFunction_params = cuLibraryGetUnifiedFunction_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryLoadData_params = cuLibraryLoadData_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryLoadFromFile_params = cuLibraryLoadFromFile_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuLibraryUnload_params = cuLibraryUnload_params_st;
+pub type cuLinkAddData_params = cuLinkAddData_params_st;
+pub type cuLinkAddData_v2_params = cuLinkAddData_v2_params_st;
+pub type cuLinkAddFile_params = cuLinkAddFile_params_st;
+pub type cuLinkAddFile_v2_params = cuLinkAddFile_v2_params_st;
+pub type cuLinkComplete_params = cuLinkComplete_params_st;
+pub type cuLinkCreate_params = cuLinkCreate_params_st;
+pub type cuLinkCreate_v2_params = cuLinkCreate_v2_params_st;
+pub type cuLinkDestroy_params = cuLinkDestroy_params_st;
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuLogsCurrent_params = cuLogsCurrent_params_st;
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuLogsDumpToFile_params = cuLogsDumpToFile_params_st;
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuLogsDumpToMemory_params = cuLogsDumpToMemory_params_st;
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuLogsRegisterCallback_params = cuLogsRegisterCallback_params_st;
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuLogsUnregisterCallback_params = cuLogsUnregisterCallback_params_st;
+pub type cuMemAddressFree_params = cuMemAddressFree_params_st;
+pub type cuMemAddressReserve_params = cuMemAddressReserve_params_st;
+pub type cuMemAdvise_params = cuMemAdvise_params_st;
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMemAdvise_v2_params = cuMemAdvise_v2_params_st;
+pub type cuMemAllocAsync_params = cuMemAllocAsync_params_st;
+pub type cuMemAllocAsync_ptsz_params = cuMemAllocAsync_ptsz_params_st;
+pub type cuMemAllocFromPoolAsync_params = cuMemAllocFromPoolAsync_params_st;
+pub type cuMemAllocFromPoolAsync_ptsz_params = cuMemAllocFromPoolAsync_ptsz_params_st;
+pub type cuMemAllocHost_params = cuMemAllocHost_params_st;
+pub type cuMemAllocHost_v2_params = cuMemAllocHost_v2_params_st;
+pub type cuMemAllocManaged_params = cuMemAllocManaged_params_st;
+pub type cuMemAllocPitch_params = cuMemAllocPitch_params_st;
+pub type cuMemAllocPitch_v2_params = cuMemAllocPitch_v2_params_st;
+pub type cuMemAlloc_params = cuMemAlloc_params_st;
+pub type cuMemAlloc_v2_params = cuMemAlloc_v2_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuMemBatchDecompressAsync_params = cuMemBatchDecompressAsync_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuMemBatchDecompressAsync_ptsz_params = cuMemBatchDecompressAsync_ptsz_params_st;
+pub type cuMemCreate_params = cuMemCreate_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemDiscardAndPrefetchBatchAsync_params = cuMemDiscardAndPrefetchBatchAsync_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemDiscardAndPrefetchBatchAsync_ptsz_params =
+    cuMemDiscardAndPrefetchBatchAsync_ptsz_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemDiscardBatchAsync_params = cuMemDiscardBatchAsync_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemDiscardBatchAsync_ptsz_params = cuMemDiscardBatchAsync_ptsz_params_st;
+pub type cuMemExportToShareableHandle_params = cuMemExportToShareableHandle_params_st;
+pub type cuMemFreeAsync_params = cuMemFreeAsync_params_st;
+pub type cuMemFreeAsync_ptsz_params = cuMemFreeAsync_ptsz_params_st;
+pub type cuMemFreeHost_params = cuMemFreeHost_params_st;
+pub type cuMemFree_params = cuMemFree_params_st;
+pub type cuMemFree_v2_params = cuMemFree_v2_params_st;
+pub type cuMemGetAccess_params = cuMemGetAccess_params_st;
+pub type cuMemGetAddressRange_params = cuMemGetAddressRange_params_st;
+pub type cuMemGetAddressRange_v2_params = cuMemGetAddressRange_v2_params_st;
+pub type cuMemGetAllocationGranularity_params = cuMemGetAllocationGranularity_params_st;
+pub type cuMemGetAllocationPropertiesFromHandle_params =
+    cuMemGetAllocationPropertiesFromHandle_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemGetDefaultMemPool_params = cuMemGetDefaultMemPool_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMemGetHandleForAddressRange_params = cuMemGetHandleForAddressRange_params_st;
+pub type cuMemGetInfo_params = cuMemGetInfo_params_st;
+pub type cuMemGetInfo_v2_params = cuMemGetInfo_v2_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemGetMemPool_params = cuMemGetMemPool_params_st;
+pub type cuMemHostAlloc_params = cuMemHostAlloc_params_st;
+pub type cuMemHostGetDevicePointer_params = cuMemHostGetDevicePointer_params_st;
+pub type cuMemHostGetDevicePointer_v2_params = cuMemHostGetDevicePointer_v2_params_st;
+pub type cuMemHostGetFlags_params = cuMemHostGetFlags_params_st;
+pub type cuMemHostRegister_params = cuMemHostRegister_params_st;
+pub type cuMemHostRegister_v2_params = cuMemHostRegister_v2_params_st;
+pub type cuMemHostUnregister_params = cuMemHostUnregister_params_st;
+pub type cuMemImportFromShareableHandle_params = cuMemImportFromShareableHandle_params_st;
+pub type cuMemMapArrayAsync_params = cuMemMapArrayAsync_params_st;
+pub type cuMemMapArrayAsync_ptsz_params = cuMemMapArrayAsync_ptsz_params_st;
+pub type cuMemMap_params = cuMemMap_params_st;
+pub type cuMemPoolCreate_params = cuMemPoolCreate_params_st;
+pub type cuMemPoolDestroy_params = cuMemPoolDestroy_params_st;
+pub type cuMemPoolExportPointer_params = cuMemPoolExportPointer_params_st;
+pub type cuMemPoolExportToShareableHandle_params = cuMemPoolExportToShareableHandle_params_st;
+pub type cuMemPoolGetAccess_params = cuMemPoolGetAccess_params_st;
+pub type cuMemPoolGetAttribute_params = cuMemPoolGetAttribute_params_st;
+pub type cuMemPoolImportFromShareableHandle_params = cuMemPoolImportFromShareableHandle_params_st;
+pub type cuMemPoolImportPointer_params = cuMemPoolImportPointer_params_st;
+pub type cuMemPoolSetAccess_params = cuMemPoolSetAccess_params_st;
+pub type cuMemPoolSetAttribute_params = cuMemPoolSetAttribute_params_st;
+pub type cuMemPoolTrimTo_params = cuMemPoolTrimTo_params_st;
+pub type cuMemPrefetchAsync_params = cuMemPrefetchAsync_params_st;
+pub type cuMemPrefetchAsync_ptsz_params = cuMemPrefetchAsync_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMemPrefetchAsync_v2_params = cuMemPrefetchAsync_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMemPrefetchAsync_v2_ptsz_params = cuMemPrefetchAsync_v2_ptsz_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemPrefetchBatchAsync_params = cuMemPrefetchBatchAsync_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemPrefetchBatchAsync_ptsz_params = cuMemPrefetchBatchAsync_ptsz_params_st;
+pub type cuMemRangeGetAttribute_params = cuMemRangeGetAttribute_params_st;
+pub type cuMemRangeGetAttributes_params = cuMemRangeGetAttributes_params_st;
+pub type cuMemRelease_params = cuMemRelease_params_st;
+pub type cuMemRetainAllocationHandle_params = cuMemRetainAllocationHandle_params_st;
+pub type cuMemSetAccess_params = cuMemSetAccess_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemSetMemPool_params = cuMemSetMemPool_params_st;
+pub type cuMemUnmap_params = cuMemUnmap_params_st;
+pub type cuMemcpy2DAsync_params = cuMemcpy2DAsync_params_st;
+pub type cuMemcpy2DAsync_v2_params = cuMemcpy2DAsync_v2_params_st;
+pub type cuMemcpy2DAsync_v2_ptsz_params = cuMemcpy2DAsync_v2_ptsz_params_st;
+pub type cuMemcpy2DUnaligned_params = cuMemcpy2DUnaligned_params_st;
+pub type cuMemcpy2DUnaligned_v2_params = cuMemcpy2DUnaligned_v2_params_st;
+pub type cuMemcpy2DUnaligned_v2_ptds_params = cuMemcpy2DUnaligned_v2_ptds_params_st;
+pub type cuMemcpy2D_params = cuMemcpy2D_params_st;
+pub type cuMemcpy2D_v2_params = cuMemcpy2D_v2_params_st;
+pub type cuMemcpy2D_v2_ptds_params = cuMemcpy2D_v2_ptds_params_st;
+pub type cuMemcpy3DAsync_params = cuMemcpy3DAsync_params_st;
+pub type cuMemcpy3DAsync_v2_params = cuMemcpy3DAsync_v2_params_st;
+pub type cuMemcpy3DAsync_v2_ptsz_params = cuMemcpy3DAsync_v2_ptsz_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuMemcpy3DBatchAsync_params = cuMemcpy3DBatchAsync_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuMemcpy3DBatchAsync_ptsz_params = cuMemcpy3DBatchAsync_ptsz_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemcpy3DBatchAsync_v2_params = cuMemcpy3DBatchAsync_v2_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemcpy3DBatchAsync_v2_ptsz_params = cuMemcpy3DBatchAsync_v2_ptsz_params_st;
+pub type cuMemcpy3DPeerAsync_params = cuMemcpy3DPeerAsync_params_st;
+pub type cuMemcpy3DPeerAsync_ptsz_params = cuMemcpy3DPeerAsync_ptsz_params_st;
+pub type cuMemcpy3DPeer_params = cuMemcpy3DPeer_params_st;
+pub type cuMemcpy3DPeer_ptds_params = cuMemcpy3DPeer_ptds_params_st;
+pub type cuMemcpy3D_params = cuMemcpy3D_params_st;
+pub type cuMemcpy3D_v2_params = cuMemcpy3D_v2_params_st;
+pub type cuMemcpy3D_v2_ptds_params = cuMemcpy3D_v2_ptds_params_st;
+pub type cuMemcpyAsync_params = cuMemcpyAsync_params_st;
+pub type cuMemcpyAsync_ptsz_params = cuMemcpyAsync_ptsz_params_st;
+pub type cuMemcpyAtoA_params = cuMemcpyAtoA_params_st;
+pub type cuMemcpyAtoA_v2_params = cuMemcpyAtoA_v2_params_st;
+pub type cuMemcpyAtoA_v2_ptds_params = cuMemcpyAtoA_v2_ptds_params_st;
+pub type cuMemcpyAtoD_params = cuMemcpyAtoD_params_st;
+pub type cuMemcpyAtoD_v2_params = cuMemcpyAtoD_v2_params_st;
+pub type cuMemcpyAtoD_v2_ptds_params = cuMemcpyAtoD_v2_ptds_params_st;
+pub type cuMemcpyAtoHAsync_params = cuMemcpyAtoHAsync_params_st;
+pub type cuMemcpyAtoHAsync_v2_params = cuMemcpyAtoHAsync_v2_params_st;
+pub type cuMemcpyAtoHAsync_v2_ptsz_params = cuMemcpyAtoHAsync_v2_ptsz_params_st;
+pub type cuMemcpyAtoH_params = cuMemcpyAtoH_params_st;
+pub type cuMemcpyAtoH_v2_params = cuMemcpyAtoH_v2_params_st;
+pub type cuMemcpyAtoH_v2_ptds_params = cuMemcpyAtoH_v2_ptds_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuMemcpyBatchAsync_params = cuMemcpyBatchAsync_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuMemcpyBatchAsync_ptsz_params = cuMemcpyBatchAsync_ptsz_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemcpyBatchAsync_v2_params = cuMemcpyBatchAsync_v2_params_st;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cuMemcpyBatchAsync_v2_ptsz_params = cuMemcpyBatchAsync_v2_ptsz_params_st;
+pub type cuMemcpyDtoA_params = cuMemcpyDtoA_params_st;
+pub type cuMemcpyDtoA_v2_params = cuMemcpyDtoA_v2_params_st;
+pub type cuMemcpyDtoA_v2_ptds_params = cuMemcpyDtoA_v2_ptds_params_st;
+pub type cuMemcpyDtoDAsync_params = cuMemcpyDtoDAsync_params_st;
+pub type cuMemcpyDtoDAsync_v2_params = cuMemcpyDtoDAsync_v2_params_st;
+pub type cuMemcpyDtoDAsync_v2_ptsz_params = cuMemcpyDtoDAsync_v2_ptsz_params_st;
+pub type cuMemcpyDtoD_params = cuMemcpyDtoD_params_st;
+pub type cuMemcpyDtoD_v2_params = cuMemcpyDtoD_v2_params_st;
+pub type cuMemcpyDtoD_v2_ptds_params = cuMemcpyDtoD_v2_ptds_params_st;
+pub type cuMemcpyDtoHAsync_params = cuMemcpyDtoHAsync_params_st;
+pub type cuMemcpyDtoHAsync_v2_params = cuMemcpyDtoHAsync_v2_params_st;
+pub type cuMemcpyDtoHAsync_v2_ptsz_params = cuMemcpyDtoHAsync_v2_ptsz_params_st;
+pub type cuMemcpyDtoH_params = cuMemcpyDtoH_params_st;
+pub type cuMemcpyDtoH_v2_params = cuMemcpyDtoH_v2_params_st;
+pub type cuMemcpyDtoH_v2_ptds_params = cuMemcpyDtoH_v2_ptds_params_st;
+pub type cuMemcpyHtoAAsync_params = cuMemcpyHtoAAsync_params_st;
+pub type cuMemcpyHtoAAsync_v2_params = cuMemcpyHtoAAsync_v2_params_st;
+pub type cuMemcpyHtoAAsync_v2_ptsz_params = cuMemcpyHtoAAsync_v2_ptsz_params_st;
+pub type cuMemcpyHtoA_params = cuMemcpyHtoA_params_st;
+pub type cuMemcpyHtoA_v2_params = cuMemcpyHtoA_v2_params_st;
+pub type cuMemcpyHtoA_v2_ptds_params = cuMemcpyHtoA_v2_ptds_params_st;
+pub type cuMemcpyHtoDAsync_params = cuMemcpyHtoDAsync_params_st;
+pub type cuMemcpyHtoDAsync_v2_params = cuMemcpyHtoDAsync_v2_params_st;
+pub type cuMemcpyHtoDAsync_v2_ptsz_params = cuMemcpyHtoDAsync_v2_ptsz_params_st;
+pub type cuMemcpyHtoD_params = cuMemcpyHtoD_params_st;
+pub type cuMemcpyHtoD_v2_params = cuMemcpyHtoD_v2_params_st;
+pub type cuMemcpyHtoD_v2_ptds_params = cuMemcpyHtoD_v2_ptds_params_st;
+pub type cuMemcpyPeerAsync_params = cuMemcpyPeerAsync_params_st;
+pub type cuMemcpyPeerAsync_ptsz_params = cuMemcpyPeerAsync_ptsz_params_st;
+pub type cuMemcpyPeer_params = cuMemcpyPeer_params_st;
+pub type cuMemcpyPeer_ptds_params = cuMemcpyPeer_ptds_params_st;
+pub type cuMemcpy_params = cuMemcpy_params_st;
+pub type cuMemcpy_ptds_params = cuMemcpy_ptds_params_st;
+pub type cuMemsetD16Async_params = cuMemsetD16Async_params_st;
+pub type cuMemsetD16Async_ptsz_params = cuMemsetD16Async_ptsz_params_st;
+pub type cuMemsetD16_params = cuMemsetD16_params_st;
+pub type cuMemsetD16_v2_params = cuMemsetD16_v2_params_st;
+pub type cuMemsetD16_v2_ptds_params = cuMemsetD16_v2_ptds_params_st;
+pub type cuMemsetD2D16Async_params = cuMemsetD2D16Async_params_st;
+pub type cuMemsetD2D16Async_ptsz_params = cuMemsetD2D16Async_ptsz_params_st;
+pub type cuMemsetD2D16_params = cuMemsetD2D16_params_st;
+pub type cuMemsetD2D16_v2_params = cuMemsetD2D16_v2_params_st;
+pub type cuMemsetD2D16_v2_ptds_params = cuMemsetD2D16_v2_ptds_params_st;
+pub type cuMemsetD2D32Async_params = cuMemsetD2D32Async_params_st;
+pub type cuMemsetD2D32Async_ptsz_params = cuMemsetD2D32Async_ptsz_params_st;
+pub type cuMemsetD2D32_params = cuMemsetD2D32_params_st;
+pub type cuMemsetD2D32_v2_params = cuMemsetD2D32_v2_params_st;
+pub type cuMemsetD2D32_v2_ptds_params = cuMemsetD2D32_v2_ptds_params_st;
+pub type cuMemsetD2D8Async_params = cuMemsetD2D8Async_params_st;
+pub type cuMemsetD2D8Async_ptsz_params = cuMemsetD2D8Async_ptsz_params_st;
+pub type cuMemsetD2D8_params = cuMemsetD2D8_params_st;
+pub type cuMemsetD2D8_v2_params = cuMemsetD2D8_v2_params_st;
+pub type cuMemsetD2D8_v2_ptds_params = cuMemsetD2D8_v2_ptds_params_st;
+pub type cuMemsetD32Async_params = cuMemsetD32Async_params_st;
+pub type cuMemsetD32Async_ptsz_params = cuMemsetD32Async_ptsz_params_st;
+pub type cuMemsetD32_params = cuMemsetD32_params_st;
+pub type cuMemsetD32_v2_params = cuMemsetD32_v2_params_st;
+pub type cuMemsetD32_v2_ptds_params = cuMemsetD32_v2_ptds_params_st;
+pub type cuMemsetD8Async_params = cuMemsetD8Async_params_st;
+pub type cuMemsetD8Async_ptsz_params = cuMemsetD8Async_ptsz_params_st;
+pub type cuMemsetD8_params = cuMemsetD8_params_st;
+pub type cuMemsetD8_v2_params = cuMemsetD8_v2_params_st;
+pub type cuMemsetD8_v2_ptds_params = cuMemsetD8_v2_ptds_params_st;
+pub type cuMipmappedArrayCreate_params = cuMipmappedArrayCreate_params_st;
+pub type cuMipmappedArrayDestroy_params = cuMipmappedArrayDestroy_params_st;
+pub type cuMipmappedArrayGetLevel_params = cuMipmappedArrayGetLevel_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMipmappedArrayGetMemoryRequirements_params =
+    cuMipmappedArrayGetMemoryRequirements_params_st;
+pub type cuMipmappedArrayGetSparseProperties_params = cuMipmappedArrayGetSparseProperties_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuModuleEnumerateFunctions_params = cuModuleEnumerateFunctions_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuModuleGetFunctionCount_params = cuModuleGetFunctionCount_params_st;
+pub type cuModuleGetFunction_params = cuModuleGetFunction_params_st;
+pub type cuModuleGetGlobal_params = cuModuleGetGlobal_params_st;
+pub type cuModuleGetGlobal_v2_params = cuModuleGetGlobal_v2_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuModuleGetLoadingMode_params = cuModuleGetLoadingMode_params_st;
+pub type cuModuleGetSurfRef_params = cuModuleGetSurfRef_params_st;
+pub type cuModuleGetTexRef_params = cuModuleGetTexRef_params_st;
+pub type cuModuleLoadDataEx_params = cuModuleLoadDataEx_params_st;
+pub type cuModuleLoadData_params = cuModuleLoadData_params_st;
+pub type cuModuleLoadFatBinary_params = cuModuleLoadFatBinary_params_st;
+pub type cuModuleLoad_params = cuModuleLoad_params_st;
+pub type cuModuleUnload_params = cuModuleUnload_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMulticastAddDevice_params = cuMulticastAddDevice_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMulticastBindAddr_params = cuMulticastBindAddr_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMulticastBindMem_params = cuMulticastBindMem_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMulticastCreate_params = cuMulticastCreate_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMulticastGetGranularity_params = cuMulticastGetGranularity_params_st;
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuMulticastUnbind_params = cuMulticastUnbind_params_st;
+pub type cuOccupancyAvailableDynamicSMemPerBlock_params =
+    cuOccupancyAvailableDynamicSMemPerBlock_params_st;
+pub type cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags_params =
+    cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags_params_st;
+pub type cuOccupancyMaxActiveBlocksPerMultiprocessor_params =
+    cuOccupancyMaxActiveBlocksPerMultiprocessor_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuOccupancyMaxActiveClusters_params = cuOccupancyMaxActiveClusters_params_st;
+pub type cuOccupancyMaxPotentialBlockSizeWithFlags_params =
+    cuOccupancyMaxPotentialBlockSizeWithFlags_params_st;
+pub type cuOccupancyMaxPotentialBlockSize_params = cuOccupancyMaxPotentialBlockSize_params_st;
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuOccupancyMaxPotentialClusterSize_params = cuOccupancyMaxPotentialClusterSize_params_st;
+pub type cuParamSetSize_params = cuParamSetSize_params_st;
+pub type cuParamSetTexRef_params = cuParamSetTexRef_params_st;
+pub type cuParamSetf_params = cuParamSetf_params_st;
+pub type cuParamSeti_params = cuParamSeti_params_st;
+pub type cuParamSetv_params = cuParamSetv_params_st;
+pub type cuPointerGetAttribute_params = cuPointerGetAttribute_params_st;
+pub type cuPointerGetAttributes_params = cuPointerGetAttributes_params_st;
+pub type cuPointerSetAttribute_params = cuPointerSetAttribute_params_st;
+pub type cuSignalExternalSemaphoresAsync_params = cuSignalExternalSemaphoresAsync_params_st;
+pub type cuSignalExternalSemaphoresAsync_ptsz_params =
+    cuSignalExternalSemaphoresAsync_ptsz_params_st;
+pub type cuStreamAddCallback_params = cuStreamAddCallback_params_st;
+pub type cuStreamAddCallback_ptsz_params = cuStreamAddCallback_ptsz_params_st;
+pub type cuStreamAttachMemAsync_params = cuStreamAttachMemAsync_params_st;
+pub type cuStreamAttachMemAsync_ptsz_params = cuStreamAttachMemAsync_ptsz_params_st;
+pub type cuStreamBatchMemOp_params = cuStreamBatchMemOp_params_st;
+pub type cuStreamBatchMemOp_ptsz_params = cuStreamBatchMemOp_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamBatchMemOp_v2_params = cuStreamBatchMemOp_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamBatchMemOp_v2_ptsz_params = cuStreamBatchMemOp_v2_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamBeginCaptureToGraph_params = cuStreamBeginCaptureToGraph_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamBeginCaptureToGraph_ptsz_params = cuStreamBeginCaptureToGraph_ptsz_params_st;
+pub type cuStreamBeginCapture_params = cuStreamBeginCapture_params_st;
+pub type cuStreamBeginCapture_ptsz_params = cuStreamBeginCapture_ptsz_params_st;
+pub type cuStreamBeginCapture_v2_params = cuStreamBeginCapture_v2_params_st;
+pub type cuStreamBeginCapture_v2_ptsz_params = cuStreamBeginCapture_v2_ptsz_params_st;
+pub type cuStreamCopyAttributes_params = cuStreamCopyAttributes_params_st;
+pub type cuStreamCopyAttributes_ptsz_params = cuStreamCopyAttributes_ptsz_params_st;
+pub type cuStreamCreateWithPriority_params = cuStreamCreateWithPriority_params_st;
+pub type cuStreamCreate_params = cuStreamCreate_params_st;
+pub type cuStreamDestroy_params = cuStreamDestroy_params_st;
+pub type cuStreamDestroy_v2_params = cuStreamDestroy_v2_params_st;
+pub type cuStreamEndCapture_params = cuStreamEndCapture_params_st;
+pub type cuStreamEndCapture_ptsz_params = cuStreamEndCapture_ptsz_params_st;
+pub type cuStreamGetAttribute_params = cuStreamGetAttribute_params_st;
+pub type cuStreamGetAttribute_ptsz_params = cuStreamGetAttribute_ptsz_params_st;
+pub type cuStreamGetCaptureInfo_params = cuStreamGetCaptureInfo_params_st;
+pub type cuStreamGetCaptureInfo_ptsz_params = cuStreamGetCaptureInfo_ptsz_params_st;
+pub type cuStreamGetCaptureInfo_v2_params = cuStreamGetCaptureInfo_v2_params_st;
+pub type cuStreamGetCaptureInfo_v2_ptsz_params = cuStreamGetCaptureInfo_v2_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetCaptureInfo_v3_params = cuStreamGetCaptureInfo_v3_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetCaptureInfo_v3_ptsz_params = cuStreamGetCaptureInfo_v3_ptsz_params_st;
+pub type cuStreamGetCtx_params = cuStreamGetCtx_params_st;
+pub type cuStreamGetCtx_ptsz_params = cuStreamGetCtx_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetCtx_v2_params = cuStreamGetCtx_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetCtx_v2_ptsz_params = cuStreamGetCtx_v2_ptsz_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuStreamGetDevice_params = cuStreamGetDevice_params_st;
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuStreamGetDevice_ptsz_params = cuStreamGetDevice_ptsz_params_st;
+pub type cuStreamGetFlags_params = cuStreamGetFlags_params_st;
+pub type cuStreamGetFlags_ptsz_params = cuStreamGetFlags_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetGreenCtx_params = cuStreamGetGreenCtx_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetId_params = cuStreamGetId_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamGetId_ptsz_params = cuStreamGetId_ptsz_params_st;
+pub type cuStreamGetPriority_params = cuStreamGetPriority_params_st;
+pub type cuStreamGetPriority_ptsz_params = cuStreamGetPriority_ptsz_params_st;
+pub type cuStreamIsCapturing_params = cuStreamIsCapturing_params_st;
+pub type cuStreamIsCapturing_ptsz_params = cuStreamIsCapturing_ptsz_params_st;
+pub type cuStreamQuery_params = cuStreamQuery_params_st;
+pub type cuStreamQuery_ptsz_params = cuStreamQuery_ptsz_params_st;
+pub type cuStreamSetAttribute_params = cuStreamSetAttribute_params_st;
+pub type cuStreamSetAttribute_ptsz_params = cuStreamSetAttribute_ptsz_params_st;
+pub type cuStreamSynchronize_params = cuStreamSynchronize_params_st;
+pub type cuStreamSynchronize_ptsz_params = cuStreamSynchronize_ptsz_params_st;
+pub type cuStreamUpdateCaptureDependencies_params = cuStreamUpdateCaptureDependencies_params_st;
+pub type cuStreamUpdateCaptureDependencies_ptsz_params =
+    cuStreamUpdateCaptureDependencies_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamUpdateCaptureDependencies_v2_params =
+    cuStreamUpdateCaptureDependencies_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamUpdateCaptureDependencies_v2_ptsz_params =
+    cuStreamUpdateCaptureDependencies_v2_ptsz_params_st;
+pub type cuStreamWaitEvent_params = cuStreamWaitEvent_params_st;
+pub type cuStreamWaitEvent_ptsz_params = cuStreamWaitEvent_ptsz_params_st;
+pub type cuStreamWaitValue32_params = cuStreamWaitValue32_params_st;
+pub type cuStreamWaitValue32_ptsz_params = cuStreamWaitValue32_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWaitValue32_v2_params = cuStreamWaitValue32_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWaitValue32_v2_ptsz_params = cuStreamWaitValue32_v2_ptsz_params_st;
+pub type cuStreamWaitValue64_params = cuStreamWaitValue64_params_st;
+pub type cuStreamWaitValue64_ptsz_params = cuStreamWaitValue64_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWaitValue64_v2_params = cuStreamWaitValue64_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWaitValue64_v2_ptsz_params = cuStreamWaitValue64_v2_ptsz_params_st;
+pub type cuStreamWriteValue32_params = cuStreamWriteValue32_params_st;
+pub type cuStreamWriteValue32_ptsz_params = cuStreamWriteValue32_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWriteValue32_v2_params = cuStreamWriteValue32_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWriteValue32_v2_ptsz_params = cuStreamWriteValue32_v2_ptsz_params_st;
+pub type cuStreamWriteValue64_params = cuStreamWriteValue64_params_st;
+pub type cuStreamWriteValue64_ptsz_params = cuStreamWriteValue64_ptsz_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWriteValue64_v2_params = cuStreamWriteValue64_v2_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuStreamWriteValue64_v2_ptsz_params = cuStreamWriteValue64_v2_ptsz_params_st;
+pub type cuSurfObjectCreate_params = cuSurfObjectCreate_params_st;
+pub type cuSurfObjectDestroy_params = cuSurfObjectDestroy_params_st;
+pub type cuSurfObjectGetResourceDesc_params = cuSurfObjectGetResourceDesc_params_st;
+pub type cuSurfRefGetArray_params = cuSurfRefGetArray_params_st;
+pub type cuSurfRefSetArray_params = cuSurfRefSetArray_params_st;
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+pub type cuTensorMapEncodeIm2colWide_params = cuTensorMapEncodeIm2colWide_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuTensorMapEncodeIm2col_params = cuTensorMapEncodeIm2col_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuTensorMapEncodeTiled_params = cuTensorMapEncodeTiled_params_st;
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+pub type cuTensorMapReplaceAddress_params = cuTensorMapReplaceAddress_params_st;
+pub type cuTexObjectCreate_params = cuTexObjectCreate_params_st;
+pub type cuTexObjectDestroy_params = cuTexObjectDestroy_params_st;
+pub type cuTexObjectGetResourceDesc_params = cuTexObjectGetResourceDesc_params_st;
+pub type cuTexObjectGetResourceViewDesc_params = cuTexObjectGetResourceViewDesc_params_st;
+pub type cuTexObjectGetTextureDesc_params = cuTexObjectGetTextureDesc_params_st;
+pub type cuTexRefCreate_params = cuTexRefCreate_params_st;
+pub type cuTexRefDestroy_params = cuTexRefDestroy_params_st;
+pub type cuTexRefGetAddressMode_params = cuTexRefGetAddressMode_params_st;
+pub type cuTexRefGetAddress_params = cuTexRefGetAddress_params_st;
+pub type cuTexRefGetAddress_v2_params = cuTexRefGetAddress_v2_params_st;
+pub type cuTexRefGetArray_params = cuTexRefGetArray_params_st;
+pub type cuTexRefGetBorderColor_params = cuTexRefGetBorderColor_params_st;
+pub type cuTexRefGetFilterMode_params = cuTexRefGetFilterMode_params_st;
+pub type cuTexRefGetFlags_params = cuTexRefGetFlags_params_st;
+pub type cuTexRefGetFormat_params = cuTexRefGetFormat_params_st;
+pub type cuTexRefGetMaxAnisotropy_params = cuTexRefGetMaxAnisotropy_params_st;
+pub type cuTexRefGetMipmapFilterMode_params = cuTexRefGetMipmapFilterMode_params_st;
+pub type cuTexRefGetMipmapLevelBias_params = cuTexRefGetMipmapLevelBias_params_st;
+pub type cuTexRefGetMipmapLevelClamp_params = cuTexRefGetMipmapLevelClamp_params_st;
+pub type cuTexRefGetMipmappedArray_params = cuTexRefGetMipmappedArray_params_st;
+pub type cuTexRefSetAddress2D_params = cuTexRefSetAddress2D_params_st;
+pub type cuTexRefSetAddress2D_v2_params = cuTexRefSetAddress2D_v2_params_st;
+pub type cuTexRefSetAddress2D_v3_params = cuTexRefSetAddress2D_v3_params_st;
+pub type cuTexRefSetAddressMode_params = cuTexRefSetAddressMode_params_st;
+pub type cuTexRefSetAddress_params = cuTexRefSetAddress_params_st;
+pub type cuTexRefSetAddress_v2_params = cuTexRefSetAddress_v2_params_st;
+pub type cuTexRefSetArray_params = cuTexRefSetArray_params_st;
+pub type cuTexRefSetBorderColor_params = cuTexRefSetBorderColor_params_st;
+pub type cuTexRefSetFilterMode_params = cuTexRefSetFilterMode_params_st;
+pub type cuTexRefSetFlags_params = cuTexRefSetFlags_params_st;
+pub type cuTexRefSetFormat_params = cuTexRefSetFormat_params_st;
+pub type cuTexRefSetMaxAnisotropy_params = cuTexRefSetMaxAnisotropy_params_st;
+pub type cuTexRefSetMipmapFilterMode_params = cuTexRefSetMipmapFilterMode_params_st;
+pub type cuTexRefSetMipmapLevelBias_params = cuTexRefSetMipmapLevelBias_params_st;
+pub type cuTexRefSetMipmapLevelClamp_params = cuTexRefSetMipmapLevelClamp_params_st;
+pub type cuTexRefSetMipmappedArray_params = cuTexRefSetMipmappedArray_params_st;
+pub type cuThreadExchangeStreamCaptureMode_params = cuThreadExchangeStreamCaptureMode_params_st;
+pub type cuUserObjectCreate_params = cuUserObjectCreate_params_st;
+pub type cuUserObjectRelease_params = cuUserObjectRelease_params_st;
+pub type cuUserObjectRetain_params = cuUserObjectRetain_params_st;
+pub type cuWaitExternalSemaphoresAsync_params = cuWaitExternalSemaphoresAsync_params_st;
+pub type cuWaitExternalSemaphoresAsync_ptsz_params = cuWaitExternalSemaphoresAsync_ptsz_params_st;
 pub type cudaArrayGetInfo_v4010_params = cudaArrayGetInfo_v4010_params_st;
 #[cfg(any(
     feature = "cuda-11060",
@@ -21971,6 +23855,5316 @@ pub struct __BindgenBitfieldUnit<Storage> {
 #[repr(C)]
 pub struct __BindgenUnionField<T>(::core::marker::PhantomData<T>);
 #[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuArray3DCreate_params_st {
+    pub pHandle: *mut CUarray,
+    pub pAllocateArray: *const CUDA_ARRAY3D_DESCRIPTOR_v1,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuArray3DCreate_v2_params_st {
+    pub pHandle: *mut CUarray,
+    pub pAllocateArray: *const CUDA_ARRAY3D_DESCRIPTOR,
+}
+#[repr(C)]
+pub struct cuArray3DGetDescriptor_params_st {
+    pub pArrayDescriptor: *mut CUDA_ARRAY3D_DESCRIPTOR_v1,
+    pub hArray: CUarray,
+}
+#[repr(C)]
+pub struct cuArray3DGetDescriptor_v2_params_st {
+    pub pArrayDescriptor: *mut CUDA_ARRAY3D_DESCRIPTOR,
+    pub hArray: CUarray,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuArrayCreate_params_st {
+    pub pHandle: *mut CUarray,
+    pub pAllocateArray: *const CUDA_ARRAY_DESCRIPTOR_v1,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuArrayCreate_v2_params_st {
+    pub pHandle: *mut CUarray,
+    pub pAllocateArray: *const CUDA_ARRAY_DESCRIPTOR,
+}
+#[repr(C)]
+pub struct cuArrayDestroy_params_st {
+    pub hArray: CUarray,
+}
+#[repr(C)]
+pub struct cuArrayGetDescriptor_params_st {
+    pub pArrayDescriptor: *mut CUDA_ARRAY_DESCRIPTOR_v1,
+    pub hArray: CUarray,
+}
+#[repr(C)]
+pub struct cuArrayGetDescriptor_v2_params_st {
+    pub pArrayDescriptor: *mut CUDA_ARRAY_DESCRIPTOR,
+    pub hArray: CUarray,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuArrayGetMemoryRequirements_params_st {
+    pub memoryRequirements: *mut CUDA_ARRAY_MEMORY_REQUIREMENTS,
+    pub array: CUarray,
+    pub device: CUdevice,
+}
+#[repr(C)]
+pub struct cuArrayGetPlane_params_st {
+    pub pPlaneArray: *mut CUarray,
+    pub hArray: CUarray,
+    pub planeIdx: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuArrayGetSparseProperties_params_st {
+    pub sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
+    pub array: CUarray,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCheckpointProcessCheckpoint_params_st {
+    pub pid: ::core::ffi::c_int,
+    pub args: *mut CUcheckpointCheckpointArgs,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCheckpointProcessGetRestoreThreadId_params_st {
+    pub pid: ::core::ffi::c_int,
+    pub tid: *mut ::core::ffi::c_int,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCheckpointProcessGetState_params_st {
+    pub pid: ::core::ffi::c_int,
+    pub state: *mut CUprocessState,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCheckpointProcessLock_params_st {
+    pub pid: ::core::ffi::c_int,
+    pub args: *mut CUcheckpointLockArgs,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCheckpointProcessRestore_params_st {
+    pub pid: ::core::ffi::c_int,
+    pub args: *mut CUcheckpointRestoreArgs,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCheckpointProcessUnlock_params_st {
+    pub pid: ::core::ffi::c_int,
+    pub args: *mut CUcheckpointUnlockArgs,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCoredumpGetAttributeGlobal_params_st {
+    pub attrib: CUcoredumpSettings,
+    pub value: *mut ::core::ffi::c_void,
+    pub size: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCoredumpGetAttribute_params_st {
+    pub attrib: CUcoredumpSettings,
+    pub value: *mut ::core::ffi::c_void,
+    pub size: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCoredumpSetAttributeGlobal_params_st {
+    pub attrib: CUcoredumpSettings,
+    pub value: *mut ::core::ffi::c_void,
+    pub size: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCoredumpSetAttribute_params_st {
+    pub attrib: CUcoredumpSettings,
+    pub value: *mut ::core::ffi::c_void,
+    pub size: *mut usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxAttach_params_st {
+    pub pctx: *mut CUcontext,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuCtxCreate_params_st {
+    pub pctx: *mut CUcontext,
+    pub flags: ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuCtxCreate_v2_params_st {
+    pub pctx: *mut CUcontext,
+    pub flags: ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuCtxCreate_v3_params_st {
+    pub pctx: *mut CUcontext,
+    pub paramsArray: *mut CUexecAffinityParam,
+    pub numParams: ::core::ffi::c_int,
+    pub flags: ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCtxCreate_v4_params_st {
+    pub pctx: *mut CUcontext,
+    pub ctxCreateParams: *mut CUctxCreateParams,
+    pub flags: ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuCtxDestroy_params_st {
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxDestroy_v2_params_st {
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxDetach_params_st {
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxDisablePeerAccess_params_st {
+    pub peerContext: CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxEnablePeerAccess_params_st {
+    pub peerContext: CUcontext,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCtxFromGreenCtx_params_st {
+    pub pContext: *mut CUcontext,
+    pub hCtx: CUgreenCtx,
+}
+#[repr(C)]
+pub struct cuCtxGetApiVersion_params_st {
+    pub ctx: CUcontext,
+    pub version: *mut ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxGetCacheConfig_params_st {
+    pub pconfig: *mut CUfunc_cache,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxGetCurrent_params_st {
+    pub pctx: *mut CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCtxGetDevResource_params_st {
+    pub hCtx: CUcontext,
+    pub resource: *mut CUdevResource,
+    pub type_: CUdevResourceType,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxGetDevice_params_st {
+    pub device: *mut CUdevice,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuCtxGetDevice_v2_params_st {
+    pub device: *mut CUdevice,
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxGetExecAffinity_params_st {
+    pub pExecAffinity: *mut CUexecAffinityParam,
+    pub type_: CUexecAffinityType,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxGetFlags_params_st {
+    pub flags: *mut ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCtxGetId_params_st {
+    pub ctx: CUcontext,
+    pub ctxId: *mut ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+pub struct cuCtxGetLimit_params_st {
+    pub pvalue: *mut usize,
+    pub limit: CUlimit,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxGetSharedMemConfig_params_st {
+    pub pConfig: *mut CUsharedconfig,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxGetStreamPriorityRange_params_st {
+    pub leastPriority: *mut ::core::ffi::c_int,
+    pub greatestPriority: *mut ::core::ffi::c_int,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxPopCurrent_params_st {
+    pub pctx: *mut CUcontext,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxPopCurrent_v2_params_st {
+    pub pctx: *mut CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxPushCurrent_params_st {
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuCtxPushCurrent_v2_params_st {
+    pub ctx: CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCtxRecordEvent_params_st {
+    pub hCtx: CUcontext,
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+pub struct cuCtxSetCacheConfig_params_st {
+    pub config: CUfunc_cache,
+}
+#[repr(C)]
+pub struct cuCtxSetCurrent_params_st {
+    pub ctx: CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuCtxSetFlags_params_st {
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuCtxSetLimit_params_st {
+    pub limit: CUlimit,
+    pub value: usize,
+}
+#[repr(C)]
+pub struct cuCtxSetSharedMemConfig_params_st {
+    pub config: CUsharedconfig,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuCtxSynchronize_v2_params_st {
+    pub ctx: CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuCtxWaitEvent_params_st {
+    pub hCtx: CUcontext,
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+pub struct cuDestroyExternalMemory_params_st {
+    pub extMem: CUexternalMemory,
+}
+#[repr(C)]
+pub struct cuDestroyExternalSemaphore_params_st {
+    pub extSem: CUexternalSemaphore,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuDevResourceGenerateDesc_params_st {
+    pub phDesc: *mut CUdevResourceDesc,
+    pub resources: *mut CUdevResource,
+    pub nbResources: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuDevSmResourceSplitByCount_params_st {
+    pub result: *mut CUdevResource,
+    pub nbGroups: *mut ::core::ffi::c_uint,
+    pub input: *const CUdevResource,
+    pub remaining: *mut CUdevResource,
+    pub useFlags: ::core::ffi::c_uint,
+    pub minCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuDeviceCanAccessPeer_params_st {
+    pub canAccessPeer: *mut ::core::ffi::c_int,
+    pub dev: CUdevice,
+    pub peerDev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceComputeCapability_params_st {
+    pub major: *mut ::core::ffi::c_int,
+    pub minor: *mut ::core::ffi::c_int,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetAttribute_params_st {
+    pub pi: *mut ::core::ffi::c_int,
+    pub attrib: CUdevice_attribute,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuDeviceGetByPCIBusId_params_st {
+    pub dev: *mut CUdevice,
+    pub pciBusId: *const ::core::ffi::c_char,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuDeviceGetCount_params_st {
+    pub count: *mut ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuDeviceGetDefaultMemPool_params_st {
+    pub pool_out: *mut CUmemoryPool,
+    pub dev: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuDeviceGetDevResource_params_st {
+    pub device: CUdevice,
+    pub resource: *mut CUdevResource,
+    pub type_: CUdevResourceType,
+}
+#[repr(C)]
+pub struct cuDeviceGetExecAffinitySupport_params_st {
+    pub pi: *mut ::core::ffi::c_int,
+    pub type_: CUexecAffinityType,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetGraphMemAttribute_params_st {
+    pub device: CUdevice,
+    pub attr: CUgraphMem_attribute,
+    pub value: *mut ::core::ffi::c_void,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuDeviceGetHostAtomicCapabilities_params_st {
+    pub capabilities: *mut ::core::ffi::c_uint,
+    pub operations: *const CUatomicOperation,
+    pub count: ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetLuid_params_st {
+    pub luid: *mut ::core::ffi::c_char,
+    pub deviceNodeMask: *mut ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetMemPool_params_st {
+    pub pool: *mut CUmemoryPool,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetName_params_st {
+    pub name: *mut ::core::ffi::c_char,
+    pub len: ::core::ffi::c_int,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetNvSciSyncAttributes_params_st {
+    pub nvSciSyncAttrList: *mut ::core::ffi::c_void,
+    pub dev: CUdevice,
+    pub flags: ::core::ffi::c_int,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuDeviceGetP2PAtomicCapabilities_params_st {
+    pub capabilities: *mut ::core::ffi::c_uint,
+    pub operations: *const CUatomicOperation,
+    pub count: ::core::ffi::c_uint,
+    pub srcDevice: CUdevice,
+    pub dstDevice: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetP2PAttribute_params_st {
+    pub value: *mut ::core::ffi::c_int,
+    pub attrib: CUdevice_P2PAttribute,
+    pub srcDevice: CUdevice,
+    pub dstDevice: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetPCIBusId_params_st {
+    pub pciBusId: *mut ::core::ffi::c_char,
+    pub len: ::core::ffi::c_int,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetProperties_params_st {
+    pub prop: *mut CUdevprop,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetTexture1DLinearMaxWidth_params_st {
+    pub maxWidthInElements: *mut usize,
+    pub format: CUarray_format,
+    pub numChannels: ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetUuid_params_st {
+    pub uuid: *mut CUuuid,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceGetUuid_v2_params_st {
+    pub uuid: *mut CUuuid,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuDeviceGet_params_st {
+    pub device: *mut CUdevice,
+    pub ordinal: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuDeviceGraphMemTrim_params_st {
+    pub device: CUdevice,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxGetState_params_st {
+    pub dev: CUdevice,
+    pub flags: *mut ::core::ffi::c_uint,
+    pub active: *mut ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxRelease_params_st {
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxRelease_v2_params_st {
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxReset_params_st {
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxReset_v2_params_st {
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxRetain_params_st {
+    pub pctx: *mut CUcontext,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxSetFlags_params_st {
+    pub dev: CUdevice,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuDevicePrimaryCtxSetFlags_v2_params_st {
+    pub dev: CUdevice,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuDeviceRegisterAsyncNotification_params_st {
+    pub device: CUdevice,
+    pub callbackFunc: CUasyncCallback,
+    pub userData: *mut ::core::ffi::c_void,
+    pub callback: *mut CUasyncCallbackHandle,
+}
+#[repr(C)]
+pub struct cuDeviceSetGraphMemAttribute_params_st {
+    pub device: CUdevice,
+    pub attr: CUgraphMem_attribute,
+    pub value: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuDeviceSetMemPool_params_st {
+    pub dev: CUdevice,
+    pub pool: CUmemoryPool,
+}
+#[repr(C)]
+pub struct cuDeviceTotalMem_params_st {
+    pub bytes: *mut ::core::ffi::c_uint,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+pub struct cuDeviceTotalMem_v2_params_st {
+    pub bytes: *mut usize,
+    pub dev: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuDeviceUnregisterAsyncNotification_params_st {
+    pub device: CUdevice,
+    pub callback: CUasyncCallbackHandle,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuDriverGetVersion_params_st {
+    pub driverVersion: *mut ::core::ffi::c_int,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuEventCreate_params_st {
+    pub phEvent: *mut CUevent,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuEventDestroy_params_st {
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+pub struct cuEventDestroy_v2_params_st {
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+pub struct cuEventElapsedTime_params_st {
+    pub pMilliseconds: *mut f32,
+    pub hStart: CUevent,
+    pub hEnd: CUevent,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuEventElapsedTime_v2_params_st {
+    pub pMilliseconds: *mut f32,
+    pub hStart: CUevent,
+    pub hEnd: CUevent,
+}
+#[repr(C)]
+pub struct cuEventQuery_params_st {
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+pub struct cuEventRecordWithFlags_params_st {
+    pub hEvent: CUevent,
+    pub hStream: CUstream,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuEventRecordWithFlags_ptsz_params_st {
+    pub hEvent: CUevent,
+    pub hStream: CUstream,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuEventRecord_params_st {
+    pub hEvent: CUevent,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuEventRecord_ptsz_params_st {
+    pub hEvent: CUevent,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuEventSynchronize_params_st {
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+pub struct cuExternalMemoryGetMappedBuffer_params_st {
+    pub devPtr: *mut CUdeviceptr,
+    pub extMem: CUexternalMemory,
+    pub bufferDesc: *const CUDA_EXTERNAL_MEMORY_BUFFER_DESC,
+}
+#[repr(C)]
+pub struct cuExternalMemoryGetMappedMipmappedArray_params_st {
+    pub mipmap: *mut CUmipmappedArray,
+    pub extMem: CUexternalMemory,
+    pub mipmapDesc: *const CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC,
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuFlushGPUDirectRDMAWrites_params_st {
+    pub target: CUflushGPUDirectRDMAWritesTarget,
+    pub scope: CUflushGPUDirectRDMAWritesScope,
+}
+#[repr(C)]
+pub struct cuFuncGetAttribute_params_st {
+    pub pi: *mut ::core::ffi::c_int,
+    pub attrib: CUfunction_attribute,
+    pub hfunc: CUfunction,
+}
+#[repr(C)]
+pub struct cuFuncGetModule_params_st {
+    pub hmod: *mut CUmodule,
+    pub hfunc: CUfunction,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuFuncGetName_params_st {
+    pub name: *mut *const ::core::ffi::c_char,
+    pub hfunc: CUfunction,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuFuncGetParamInfo_params_st {
+    pub func: CUfunction,
+    pub paramIndex: usize,
+    pub paramOffset: *mut usize,
+    pub paramSize: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuFuncIsLoaded_params_st {
+    pub state: *mut CUfunctionLoadingState,
+    pub function: CUfunction,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuFuncLoad_params_st {
+    pub function: CUfunction,
+}
+#[repr(C)]
+pub struct cuFuncSetAttribute_params_st {
+    pub hfunc: CUfunction,
+    pub attrib: CUfunction_attribute,
+    pub value: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuFuncSetBlockShape_params_st {
+    pub hfunc: CUfunction,
+    pub x: ::core::ffi::c_int,
+    pub y: ::core::ffi::c_int,
+    pub z: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuFuncSetCacheConfig_params_st {
+    pub hfunc: CUfunction,
+    pub config: CUfunc_cache,
+}
+#[repr(C)]
+pub struct cuFuncSetSharedMemConfig_params_st {
+    pub hfunc: CUfunction,
+    pub config: CUsharedconfig,
+}
+#[repr(C)]
+pub struct cuFuncSetSharedSize_params_st {
+    pub hfunc: CUfunction,
+    pub bytes: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGetErrorName_params_st {
+    pub error: CUresult,
+    pub pStr: *mut *const ::core::ffi::c_char,
+}
+#[repr(C)]
+pub struct cuGetErrorString_params_st {
+    pub error: CUresult,
+    pub pStr: *mut *const ::core::ffi::c_char,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuGetExportTable_params_st {
+    pub ppExportTable: *mut *const ::core::ffi::c_void,
+    pub pExportTableId: *const CUuuid,
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGetProcAddress_params_st {
+    pub symbol: *const ::core::ffi::c_char,
+    pub pfn: *mut *mut ::core::ffi::c_void,
+    pub cudaVersion: ::core::ffi::c_int,
+    pub flags: cuuint64_t,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGetProcAddress_v2_params_st {
+    pub symbol: *const ::core::ffi::c_char,
+    pub pfn: *mut *mut ::core::ffi::c_void,
+    pub cudaVersion: ::core::ffi::c_int,
+    pub flags: cuuint64_t,
+    pub symbolStatus: *mut CUdriverProcAddressQueryResult,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphAddBatchMemOpNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphAddChildGraphNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub childGraph: CUgraph,
+}
+#[repr(C)]
+pub struct cuGraphAddDependencies_params_st {
+    pub hGraph: CUgraph,
+    pub from: *const CUgraphNode,
+    pub to: *const CUgraphNode,
+    pub numDependencies: usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphAddDependencies_v2_params_st {
+    pub hGraph: CUgraph,
+    pub from: *const CUgraphNode,
+    pub to: *const CUgraphNode,
+    pub edgeData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+}
+#[repr(C)]
+pub struct cuGraphAddEmptyNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+}
+#[repr(C)]
+pub struct cuGraphAddEventRecordNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub event: CUevent,
+}
+#[repr(C)]
+pub struct cuGraphAddEventWaitNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub event: CUevent,
+}
+#[repr(C)]
+pub struct cuGraphAddExternalSemaphoresSignalNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphAddExternalSemaphoresWaitNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphAddHostNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_HOST_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080"
+))]
+#[repr(C)]
+pub struct cuGraphAddKernelNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphAddKernelNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS_v1,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphAddKernelNode_v2_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphAddMemAllocNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *mut CUDA_MEM_ALLOC_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphAddMemFreeNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub dptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuGraphAddMemcpyNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub copyParams: *const CUDA_MEMCPY3D,
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuGraphAddMemsetNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub memsetParams: *const CUDA_MEMSET_NODE_PARAMS,
+    pub ctx: CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphAddNode_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub numDependencies: usize,
+    pub nodeParams: *mut CUgraphNodeParams,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphAddNode_v2_params_st {
+    pub phGraphNode: *mut CUgraphNode,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub dependencyData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+    pub nodeParams: *mut CUgraphNodeParams,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphBatchMemOpNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams_out: *mut CUDA_BATCH_MEM_OP_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphBatchMemOpNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphChildGraphNodeGetGraph_params_st {
+    pub hNode: CUgraphNode,
+    pub phGraph: *mut CUgraph,
+}
+#[repr(C)]
+pub struct cuGraphClone_params_st {
+    pub phGraphClone: *mut CUgraph,
+    pub originalGraph: CUgraph,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphConditionalHandleCreate_params_st {
+    pub pHandle_out: *mut CUgraphConditionalHandle,
+    pub hGraph: CUgraph,
+    pub ctx: CUcontext,
+    pub defaultLaunchValue: ::core::ffi::c_uint,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuGraphCreate_params_st {
+    pub phGraph: *mut CUgraph,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphDebugDotPrint_params_st {
+    pub hGraph: CUgraph,
+    pub path: *const ::core::ffi::c_char,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphDestroyNode_params_st {
+    pub hNode: CUgraphNode,
+}
+#[repr(C)]
+pub struct cuGraphDestroy_params_st {
+    pub hGraph: CUgraph,
+}
+#[repr(C)]
+pub struct cuGraphEventRecordNodeGetEvent_params_st {
+    pub hNode: CUgraphNode,
+    pub event_out: *mut CUevent,
+}
+#[repr(C)]
+pub struct cuGraphEventRecordNodeSetEvent_params_st {
+    pub hNode: CUgraphNode,
+    pub event: CUevent,
+}
+#[repr(C)]
+pub struct cuGraphEventWaitNodeGetEvent_params_st {
+    pub hNode: CUgraphNode,
+    pub event_out: *mut CUevent,
+}
+#[repr(C)]
+pub struct cuGraphEventWaitNodeSetEvent_params_st {
+    pub hNode: CUgraphNode,
+    pub event: CUevent,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphExecBatchMemOpNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_BATCH_MEM_OP_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphExecChildGraphNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub childGraph: CUgraph,
+}
+#[repr(C)]
+pub struct cuGraphExecDestroy_params_st {
+    pub hGraphExec: CUgraphExec,
+}
+#[repr(C)]
+pub struct cuGraphExecEventRecordNodeSetEvent_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub event: CUevent,
+}
+#[repr(C)]
+pub struct cuGraphExecEventWaitNodeSetEvent_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub event: CUevent,
+}
+#[repr(C)]
+pub struct cuGraphExecExternalSemaphoresSignalNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphExecExternalSemaphoresWaitNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphExecGetFlags_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub flags: *mut cuuint64_t,
+}
+#[repr(C)]
+pub struct cuGraphExecHostNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_HOST_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080"
+))]
+#[repr(C)]
+pub struct cuGraphExecKernelNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphExecKernelNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS_v1,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphExecKernelNodeSetParams_v2_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphExecMemcpyNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub copyParams: *const CUDA_MEMCPY3D,
+    pub ctx: CUcontext,
+}
+#[repr(C)]
+pub struct cuGraphExecMemsetNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub memsetParams: *const CUDA_MEMSET_NODE_PARAMS,
+    pub ctx: CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphExecNodeSetParams_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUgraphNodeParams,
+}
+#[repr(C)]
+pub struct cuGraphExecUpdate_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hGraph: CUgraph,
+    pub hErrorNode_out: *mut CUgraphNode,
+    pub updateResult_out: *mut CUgraphExecUpdateResult,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphExecUpdate_v2_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hGraph: CUgraph,
+    pub resultInfo: *mut CUgraphExecUpdateResultInfo,
+}
+#[repr(C)]
+pub struct cuGraphExternalSemaphoresSignalNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub params_out: *mut CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphExternalSemaphoresSignalNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphExternalSemaphoresWaitNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub params_out: *mut CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphExternalSemaphoresWaitNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_EXT_SEM_WAIT_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphGetEdges_params_st {
+    pub hGraph: CUgraph,
+    pub from: *mut CUgraphNode,
+    pub to: *mut CUgraphNode,
+    pub numEdges: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphGetEdges_v2_params_st {
+    pub hGraph: CUgraph,
+    pub from: *mut CUgraphNode,
+    pub to: *mut CUgraphNode,
+    pub edgeData: *mut CUgraphEdgeData,
+    pub numEdges: *mut usize,
+}
+#[repr(C)]
+pub struct cuGraphGetNodes_params_st {
+    pub hGraph: CUgraph,
+    pub nodes: *mut CUgraphNode,
+    pub numNodes: *mut usize,
+}
+#[repr(C)]
+pub struct cuGraphGetRootNodes_params_st {
+    pub hGraph: CUgraph,
+    pub rootNodes: *mut CUgraphNode,
+    pub numRootNodes: *mut usize,
+}
+#[repr(C)]
+pub struct cuGraphHostNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUDA_HOST_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphHostNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_HOST_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphInstantiateWithFlags_params_st {
+    pub phGraphExec: *mut CUgraphExec,
+    pub hGraph: CUgraph,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphInstantiateWithParams_params_st {
+    pub phGraphExec: *mut CUgraphExec,
+    pub hGraph: CUgraph,
+    pub instantiateParams: *mut CUDA_GRAPH_INSTANTIATE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphInstantiateWithParams_ptsz_params_st {
+    pub phGraphExec: *mut CUgraphExec,
+    pub hGraph: CUgraph,
+    pub instantiateParams: *mut CUDA_GRAPH_INSTANTIATE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphInstantiate_params_st {
+    pub phGraphExec: *mut CUgraphExec,
+    pub hGraph: CUgraph,
+    pub phErrorNode: *mut CUgraphNode,
+    pub logBuffer: *mut ::core::ffi::c_char,
+    pub bufferSize: usize,
+}
+#[repr(C)]
+pub struct cuGraphInstantiate_v2_params_st {
+    pub phGraphExec: *mut CUgraphExec,
+    pub hGraph: CUgraph,
+    pub phErrorNode: *mut CUgraphNode,
+    pub logBuffer: *mut ::core::ffi::c_char,
+    pub bufferSize: usize,
+}
+#[repr(C)]
+pub struct cuGraphKernelNodeCopyAttributes_params_st {
+    pub dst: CUgraphNode,
+    pub src: CUgraphNode,
+}
+#[repr(C)]
+pub struct cuGraphKernelNodeGetAttribute_params_st {
+    pub hNode: CUgraphNode,
+    pub attr: CUkernelNodeAttrID,
+    pub value_out: *mut CUkernelNodeAttrValue,
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080"
+))]
+#[repr(C)]
+pub struct cuGraphKernelNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUDA_KERNEL_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphKernelNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUDA_KERNEL_NODE_PARAMS_v1,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphKernelNodeGetParams_v2_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUDA_KERNEL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphKernelNodeSetAttribute_params_st {
+    pub hNode: CUgraphNode,
+    pub attr: CUkernelNodeAttrID,
+    pub value: *const CUkernelNodeAttrValue,
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080"
+))]
+#[repr(C)]
+pub struct cuGraphKernelNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphKernelNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS_v1,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphKernelNodeSetParams_v2_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_KERNEL_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphLaunch_params_st {
+    pub hGraph: CUgraphExec,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphLaunch_ptsz_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphMemAllocNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub params_out: *mut CUDA_MEM_ALLOC_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphMemFreeNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub dptr_out: *mut CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuGraphMemcpyNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUDA_MEMCPY3D,
+}
+#[repr(C)]
+pub struct cuGraphMemcpyNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_MEMCPY3D,
+}
+#[repr(C)]
+pub struct cuGraphMemsetNodeGetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUDA_MEMSET_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphMemsetNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *const CUDA_MEMSET_NODE_PARAMS,
+}
+#[repr(C)]
+pub struct cuGraphNodeFindInClone_params_st {
+    pub phNode: *mut CUgraphNode,
+    pub hOriginalNode: CUgraphNode,
+    pub hClonedGraph: CUgraph,
+}
+#[repr(C)]
+pub struct cuGraphNodeGetDependencies_params_st {
+    pub hNode: CUgraphNode,
+    pub dependencies: *mut CUgraphNode,
+    pub numDependencies: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphNodeGetDependencies_v2_params_st {
+    pub hNode: CUgraphNode,
+    pub dependencies: *mut CUgraphNode,
+    pub edgeData: *mut CUgraphEdgeData,
+    pub numDependencies: *mut usize,
+}
+#[repr(C)]
+pub struct cuGraphNodeGetDependentNodes_params_st {
+    pub hNode: CUgraphNode,
+    pub dependentNodes: *mut CUgraphNode,
+    pub numDependentNodes: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphNodeGetDependentNodes_v2_params_st {
+    pub hNode: CUgraphNode,
+    pub dependentNodes: *mut CUgraphNode,
+    pub edgeData: *mut CUgraphEdgeData,
+    pub numDependentNodes: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphNodeGetEnabled_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub isEnabled: *mut ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphNodeGetType_params_st {
+    pub hNode: CUgraphNode,
+    pub type_: *mut CUgraphNodeType,
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphNodeSetEnabled_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hNode: CUgraphNode,
+    pub isEnabled: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphNodeSetParams_params_st {
+    pub hNode: CUgraphNode,
+    pub nodeParams: *mut CUgraphNodeParams,
+}
+#[repr(C)]
+pub struct cuGraphReleaseUserObject_params_st {
+    pub graph: CUgraph,
+    pub object: CUuserObject,
+    pub count: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphRemoveDependencies_params_st {
+    pub hGraph: CUgraph,
+    pub from: *const CUgraphNode,
+    pub to: *const CUgraphNode,
+    pub numDependencies: usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGraphRemoveDependencies_v2_params_st {
+    pub hGraph: CUgraph,
+    pub from: *const CUgraphNode,
+    pub to: *const CUgraphNode,
+    pub edgeData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+}
+#[repr(C)]
+pub struct cuGraphRetainUserObject_params_st {
+    pub graph: CUgraph,
+    pub object: CUuserObject,
+    pub count: ::core::ffi::c_uint,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphUpload_params_st {
+    pub hGraph: CUgraphExec,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphUpload_ptsz_params_st {
+    pub hGraphExec: CUgraphExec,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphicsMapResources_params_st {
+    pub count: ::core::ffi::c_uint,
+    pub resources: *mut CUgraphicsResource,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphicsMapResources_ptsz_params_st {
+    pub count: ::core::ffi::c_uint,
+    pub resources: *mut CUgraphicsResource,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphicsResourceGetMappedMipmappedArray_params_st {
+    pub pMipmappedArray: *mut CUmipmappedArray,
+    pub resource: CUgraphicsResource,
+}
+#[repr(C)]
+pub struct cuGraphicsResourceGetMappedPointer_params_st {
+    pub pDevPtr: *mut CUdeviceptr_v1,
+    pub pSize: *mut ::core::ffi::c_uint,
+    pub resource: CUgraphicsResource,
+}
+#[repr(C)]
+pub struct cuGraphicsResourceGetMappedPointer_v2_params_st {
+    pub pDevPtr: *mut CUdeviceptr,
+    pub pSize: *mut usize,
+    pub resource: CUgraphicsResource,
+}
+#[repr(C)]
+pub struct cuGraphicsResourceSetMapFlags_params_st {
+    pub resource: CUgraphicsResource,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphicsResourceSetMapFlags_v2_params_st {
+    pub resource: CUgraphicsResource,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphicsSubResourceGetMappedArray_params_st {
+    pub pArray: *mut CUarray,
+    pub resource: CUgraphicsResource,
+    pub arrayIndex: ::core::ffi::c_uint,
+    pub mipLevel: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuGraphicsUnmapResources_params_st {
+    pub count: ::core::ffi::c_uint,
+    pub resources: *mut CUgraphicsResource,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphicsUnmapResources_ptsz_params_st {
+    pub count: ::core::ffi::c_uint,
+    pub resources: *mut CUgraphicsResource,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuGraphicsUnregisterResource_params_st {
+    pub resource: CUgraphicsResource,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGreenCtxCreate_params_st {
+    pub phCtx: *mut CUgreenCtx,
+    pub desc: CUdevResourceDesc,
+    pub dev: CUdevice,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGreenCtxDestroy_params_st {
+    pub hCtx: CUgreenCtx,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGreenCtxGetDevResource_params_st {
+    pub hCtx: CUgreenCtx,
+    pub resource: *mut CUdevResource,
+    pub type_: CUdevResourceType,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuGreenCtxGetId_params_st {
+    pub greenCtx: CUgreenCtx,
+    pub greenCtxId: *mut ::core::ffi::c_ulonglong,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGreenCtxRecordEvent_params_st {
+    pub hCtx: CUgreenCtx,
+    pub hEvent: CUevent,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGreenCtxStreamCreate_params_st {
+    pub phStream: *mut CUstream,
+    pub greenCtx: CUgreenCtx,
+    pub flags: ::core::ffi::c_uint,
+    pub priority: ::core::ffi::c_int,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuGreenCtxWaitEvent_params_st {
+    pub hCtx: CUgreenCtx,
+    pub hEvent: CUevent,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuImportExternalMemory_params_st {
+    pub extMem_out: *mut CUexternalMemory,
+    pub memHandleDesc: *const CUDA_EXTERNAL_MEMORY_HANDLE_DESC,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuImportExternalSemaphore_params_st {
+    pub extSem_out: *mut CUexternalSemaphore,
+    pub semHandleDesc: *const CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuInit_params_st {
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuIpcCloseMemHandle_params_st {
+    pub dptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuIpcGetEventHandle_params_st {
+    pub pHandle: *mut CUipcEventHandle,
+    pub event: CUevent,
+}
+#[repr(C)]
+pub struct cuIpcGetMemHandle_params_st {
+    pub pHandle: *mut CUipcMemHandle,
+    pub dptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuIpcOpenEventHandle_params_st {
+    pub phEvent: *mut CUevent,
+    pub handle: CUipcEventHandle,
+}
+#[repr(C)]
+pub struct cuIpcOpenMemHandle_params_st {
+    pub pdptr: *mut CUdeviceptr,
+    pub handle: CUipcMemHandle,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuIpcOpenMemHandle_v2_params_st {
+    pub pdptr: *mut CUdeviceptr,
+    pub handle: CUipcMemHandle,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelGetAttribute_params_st {
+    pub pi: *mut ::core::ffi::c_int,
+    pub attrib: CUfunction_attribute,
+    pub kernel: CUkernel,
+    pub dev: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelGetFunction_params_st {
+    pub pFunc: *mut CUfunction,
+    pub kernel: CUkernel,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelGetLibrary_params_st {
+    pub pLib: *mut CUlibrary,
+    pub kernel: CUkernel,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelGetName_params_st {
+    pub name: *mut *const ::core::ffi::c_char,
+    pub hfunc: CUkernel,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelGetParamInfo_params_st {
+    pub kernel: CUkernel,
+    pub paramIndex: usize,
+    pub paramOffset: *mut usize,
+    pub paramSize: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelSetAttribute_params_st {
+    pub attrib: CUfunction_attribute,
+    pub val: ::core::ffi::c_int,
+    pub kernel: CUkernel,
+    pub dev: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuKernelSetCacheConfig_params_st {
+    pub kernel: CUkernel,
+    pub config: CUfunc_cache,
+    pub dev: CUdevice,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLaunchCooperativeKernelMultiDevice_params_st {
+    pub launchParamsList: *mut CUDA_LAUNCH_PARAMS,
+    pub numDevices: ::core::ffi::c_uint,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuLaunchCooperativeKernel_params_st {
+    pub f: CUfunction,
+    pub gridDimX: ::core::ffi::c_uint,
+    pub gridDimY: ::core::ffi::c_uint,
+    pub gridDimZ: ::core::ffi::c_uint,
+    pub blockDimX: ::core::ffi::c_uint,
+    pub blockDimY: ::core::ffi::c_uint,
+    pub blockDimZ: ::core::ffi::c_uint,
+    pub sharedMemBytes: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLaunchCooperativeKernel_ptsz_params_st {
+    pub f: CUfunction,
+    pub gridDimX: ::core::ffi::c_uint,
+    pub gridDimY: ::core::ffi::c_uint,
+    pub gridDimZ: ::core::ffi::c_uint,
+    pub blockDimX: ::core::ffi::c_uint,
+    pub blockDimY: ::core::ffi::c_uint,
+    pub blockDimZ: ::core::ffi::c_uint,
+    pub sharedMemBytes: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLaunchGridAsync_params_st {
+    pub f: CUfunction,
+    pub grid_width: ::core::ffi::c_int,
+    pub grid_height: ::core::ffi::c_int,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuLaunchGrid_params_st {
+    pub f: CUfunction,
+    pub grid_width: ::core::ffi::c_int,
+    pub grid_height: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuLaunchHostFunc_params_st {
+    pub hStream: CUstream,
+    pub fn_: CUhostFn,
+    pub userData: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLaunchHostFunc_ptsz_params_st {
+    pub hStream: CUstream,
+    pub fn_: CUhostFn,
+    pub userData: *mut ::core::ffi::c_void,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLaunchKernelEx_params_st {
+    pub config: *const CUlaunchConfig,
+    pub f: CUfunction,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLaunchKernelEx_ptsz_params_st {
+    pub config: *const CUlaunchConfig,
+    pub f: CUfunction,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLaunchKernel_params_st {
+    pub f: CUfunction,
+    pub gridDimX: ::core::ffi::c_uint,
+    pub gridDimY: ::core::ffi::c_uint,
+    pub gridDimZ: ::core::ffi::c_uint,
+    pub blockDimX: ::core::ffi::c_uint,
+    pub blockDimY: ::core::ffi::c_uint,
+    pub blockDimZ: ::core::ffi::c_uint,
+    pub sharedMemBytes: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLaunchKernel_ptsz_params_st {
+    pub f: CUfunction,
+    pub gridDimX: ::core::ffi::c_uint,
+    pub gridDimY: ::core::ffi::c_uint,
+    pub gridDimZ: ::core::ffi::c_uint,
+    pub blockDimX: ::core::ffi::c_uint,
+    pub blockDimY: ::core::ffi::c_uint,
+    pub blockDimZ: ::core::ffi::c_uint,
+    pub sharedMemBytes: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+    pub kernelParams: *mut *mut ::core::ffi::c_void,
+    pub extra: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLaunch_params_st {
+    pub f: CUfunction,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryEnumerateKernels_params_st {
+    pub kernels: *mut CUkernel,
+    pub numKernels: ::core::ffi::c_uint,
+    pub lib: CUlibrary,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryGetGlobal_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytes: *mut usize,
+    pub library: CUlibrary,
+    pub name: *const ::core::ffi::c_char,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryGetKernelCount_params_st {
+    pub count: *mut ::core::ffi::c_uint,
+    pub lib: CUlibrary,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryGetKernel_params_st {
+    pub pKernel: *mut CUkernel,
+    pub library: CUlibrary,
+    pub name: *const ::core::ffi::c_char,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryGetManaged_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytes: *mut usize,
+    pub library: CUlibrary,
+    pub name: *const ::core::ffi::c_char,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryGetModule_params_st {
+    pub pMod: *mut CUmodule,
+    pub library: CUlibrary,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryGetUnifiedFunction_params_st {
+    pub fptr: *mut *mut ::core::ffi::c_void,
+    pub library: CUlibrary,
+    pub symbol: *const ::core::ffi::c_char,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLibraryLoadData_params_st {
+    pub library: *mut CUlibrary,
+    pub code: *const ::core::ffi::c_void,
+    pub jitOptions: *mut CUjit_option,
+    pub jitOptionsValues: *mut *mut ::core::ffi::c_void,
+    pub numJitOptions: ::core::ffi::c_uint,
+    pub libraryOptions: *mut CUlibraryOption,
+    pub libraryOptionValues: *mut *mut ::core::ffi::c_void,
+    pub numLibraryOptions: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLibraryLoadFromFile_params_st {
+    pub library: *mut CUlibrary,
+    pub fileName: *const ::core::ffi::c_char,
+    pub jitOptions: *mut CUjit_option,
+    pub jitOptionsValues: *mut *mut ::core::ffi::c_void,
+    pub numJitOptions: ::core::ffi::c_uint,
+    pub libraryOptions: *mut CUlibraryOption,
+    pub libraryOptionValues: *mut *mut ::core::ffi::c_void,
+    pub numLibraryOptions: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuLibraryUnload_params_st {
+    pub library: CUlibrary,
+}
+#[repr(C)]
+pub struct cuLinkAddData_params_st {
+    pub state: CUlinkState,
+    pub type_: CUjitInputType,
+    pub data: *mut ::core::ffi::c_void,
+    pub size: usize,
+    pub name: *const ::core::ffi::c_char,
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLinkAddData_v2_params_st {
+    pub state: CUlinkState,
+    pub type_: CUjitInputType,
+    pub data: *mut ::core::ffi::c_void,
+    pub size: usize,
+    pub name: *const ::core::ffi::c_char,
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLinkAddFile_params_st {
+    pub state: CUlinkState,
+    pub type_: CUjitInputType,
+    pub path: *const ::core::ffi::c_char,
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLinkAddFile_v2_params_st {
+    pub state: CUlinkState,
+    pub type_: CUjitInputType,
+    pub path: *const ::core::ffi::c_char,
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuLinkComplete_params_st {
+    pub state: CUlinkState,
+    pub cubinOut: *mut *mut ::core::ffi::c_void,
+    pub sizeOut: *mut usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLinkCreate_params_st {
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+    pub stateOut: *mut CUlinkState,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLinkCreate_v2_params_st {
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+    pub stateOut: *mut CUlinkState,
+}
+#[repr(C)]
+pub struct cuLinkDestroy_params_st {
+    pub state: CUlinkState,
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLogsCurrent_params_st {
+    pub iterator_out: *mut CUlogIterator,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLogsDumpToFile_params_st {
+    pub iterator: *mut CUlogIterator,
+    pub pathToFile: *const ::core::ffi::c_char,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuLogsDumpToMemory_params_st {
+    pub iterator: *mut CUlogIterator,
+    pub buffer: *mut ::core::ffi::c_char,
+    pub size: *mut usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuLogsRegisterCallback_params_st {
+    pub callbackFunc: CUlogsCallback,
+    pub userData: *mut ::core::ffi::c_void,
+    pub callback_out: *mut CUlogsCallbackHandle,
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuLogsUnregisterCallback_params_st {
+    pub callback: CUlogsCallbackHandle,
+}
+#[repr(C)]
+pub struct cuMemAddressFree_params_st {
+    pub ptr: CUdeviceptr,
+    pub size: usize,
+}
+#[repr(C)]
+pub struct cuMemAddressReserve_params_st {
+    pub ptr: *mut CUdeviceptr,
+    pub size: usize,
+    pub alignment: usize,
+    pub addr: CUdeviceptr,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+pub struct cuMemAdvise_params_st {
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+    pub advice: CUmem_advise,
+    pub device: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMemAdvise_v2_params_st {
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+    pub advice: CUmem_advise,
+    pub location: CUmemLocation,
+}
+#[repr(C)]
+pub struct cuMemAllocAsync_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytesize: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemAllocAsync_ptsz_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytesize: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemAllocFromPoolAsync_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytesize: usize,
+    pub pool: CUmemoryPool,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemAllocFromPoolAsync_ptsz_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytesize: usize,
+    pub pool: CUmemoryPool,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAllocHost_params_st {
+    pub pp: *mut *mut ::core::ffi::c_void,
+    pub bytesize: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAllocHost_v2_params_st {
+    pub pp: *mut *mut ::core::ffi::c_void,
+    pub bytesize: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAllocManaged_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytesize: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAllocPitch_params_st {
+    pub dptr: *mut CUdeviceptr_v1,
+    pub pPitch: *mut ::core::ffi::c_uint,
+    pub WidthInBytes: ::core::ffi::c_uint,
+    pub Height: ::core::ffi::c_uint,
+    pub ElementSizeBytes: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAllocPitch_v2_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub pPitch: *mut usize,
+    pub WidthInBytes: usize,
+    pub Height: usize,
+    pub ElementSizeBytes: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAlloc_params_st {
+    pub dptr: *mut CUdeviceptr_v1,
+    pub bytesize: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemAlloc_v2_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytesize: usize,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemBatchDecompressAsync_params_st {
+    pub paramsArray: *mut CUmemDecompressParams,
+    pub count: usize,
+    pub flags: ::core::ffi::c_uint,
+    pub errorIndex: *mut usize,
+    pub stream: CUstream,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemBatchDecompressAsync_ptsz_params_st {
+    pub paramsArray: *mut CUmemDecompressParams,
+    pub count: usize,
+    pub flags: ::core::ffi::c_uint,
+    pub errorIndex: *mut usize,
+    pub stream: CUstream,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemCreate_params_st {
+    pub handle: *mut CUmemGenericAllocationHandle,
+    pub size: usize,
+    pub prop: *const CUmemAllocationProp,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemDiscardAndPrefetchBatchAsync_params_st {
+    pub dptrs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub prefetchLocs: *mut CUmemLocation,
+    pub prefetchLocIdxs: *mut usize,
+    pub numPrefetchLocs: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemDiscardAndPrefetchBatchAsync_ptsz_params_st {
+    pub dptrs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub prefetchLocs: *mut CUmemLocation,
+    pub prefetchLocIdxs: *mut usize,
+    pub numPrefetchLocs: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemDiscardBatchAsync_params_st {
+    pub dptrs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemDiscardBatchAsync_ptsz_params_st {
+    pub dptrs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemExportToShareableHandle_params_st {
+    pub shareableHandle: *mut ::core::ffi::c_void,
+    pub handle: CUmemGenericAllocationHandle,
+    pub handleType: CUmemAllocationHandleType,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+pub struct cuMemFreeAsync_params_st {
+    pub dptr: CUdeviceptr,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemFreeAsync_ptsz_params_st {
+    pub dptr: CUdeviceptr,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemFreeHost_params_st {
+    pub p: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuMemFree_params_st {
+    pub dptr: CUdeviceptr_v1,
+}
+#[repr(C)]
+pub struct cuMemFree_v2_params_st {
+    pub dptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuMemGetAccess_params_st {
+    pub flags: *mut ::core::ffi::c_ulonglong,
+    pub location: *const CUmemLocation,
+    pub ptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuMemGetAddressRange_params_st {
+    pub pbase: *mut CUdeviceptr_v1,
+    pub psize: *mut ::core::ffi::c_uint,
+    pub dptr: CUdeviceptr_v1,
+}
+#[repr(C)]
+pub struct cuMemGetAddressRange_v2_params_st {
+    pub pbase: *mut CUdeviceptr,
+    pub psize: *mut usize,
+    pub dptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuMemGetAllocationGranularity_params_st {
+    pub granularity: *mut usize,
+    pub prop: *const CUmemAllocationProp,
+    pub option: CUmemAllocationGranularity_flags,
+}
+#[repr(C)]
+pub struct cuMemGetAllocationPropertiesFromHandle_params_st {
+    pub prop: *mut CUmemAllocationProp,
+    pub handle: CUmemGenericAllocationHandle,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemGetDefaultMemPool_params_st {
+    pub pool_out: *mut CUmemoryPool,
+    pub location: *mut CUmemLocation,
+    pub type_: CUmemAllocationType,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMemGetHandleForAddressRange_params_st {
+    pub handle: *mut ::core::ffi::c_void,
+    pub dptr: CUdeviceptr,
+    pub size: usize,
+    pub handleType: CUmemRangeHandleType,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemGetInfo_params_st {
+    pub free: *mut ::core::ffi::c_uint,
+    pub total: *mut ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemGetInfo_v2_params_st {
+    pub free: *mut usize,
+    pub total: *mut usize,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemGetMemPool_params_st {
+    pub pool: *mut CUmemoryPool,
+    pub location: *mut CUmemLocation,
+    pub type_: CUmemAllocationType,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostAlloc_params_st {
+    pub pp: *mut *mut ::core::ffi::c_void,
+    pub bytesize: usize,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostGetDevicePointer_params_st {
+    pub pdptr: *mut CUdeviceptr_v1,
+    pub p: *mut ::core::ffi::c_void,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostGetDevicePointer_v2_params_st {
+    pub pdptr: *mut CUdeviceptr,
+    pub p: *mut ::core::ffi::c_void,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostGetFlags_params_st {
+    pub pFlags: *mut ::core::ffi::c_uint,
+    pub p: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostRegister_params_st {
+    pub p: *mut ::core::ffi::c_void,
+    pub bytesize: usize,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostRegister_v2_params_st {
+    pub p: *mut ::core::ffi::c_void,
+    pub bytesize: usize,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemHostUnregister_params_st {
+    pub p: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuMemImportFromShareableHandle_params_st {
+    pub handle: *mut CUmemGenericAllocationHandle,
+    pub osHandle: *mut ::core::ffi::c_void,
+    pub shHandleType: CUmemAllocationHandleType,
+}
+#[repr(C)]
+pub struct cuMemMapArrayAsync_params_st {
+    pub mapInfoList: *mut CUarrayMapInfo,
+    pub count: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemMapArrayAsync_ptsz_params_st {
+    pub mapInfoList: *mut CUarrayMapInfo,
+    pub count: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemMap_params_st {
+    pub ptr: CUdeviceptr,
+    pub size: usize,
+    pub offset: usize,
+    pub handle: CUmemGenericAllocationHandle,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemPoolCreate_params_st {
+    pub pool: *mut CUmemoryPool,
+    pub poolProps: *const CUmemPoolProps,
+}
+#[repr(C)]
+pub struct cuMemPoolDestroy_params_st {
+    pub pool: CUmemoryPool,
+}
+#[repr(C)]
+pub struct cuMemPoolExportPointer_params_st {
+    pub shareData_out: *mut CUmemPoolPtrExportData,
+    pub ptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuMemPoolExportToShareableHandle_params_st {
+    pub handle_out: *mut ::core::ffi::c_void,
+    pub pool: CUmemoryPool,
+    pub handleType: CUmemAllocationHandleType,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+pub struct cuMemPoolGetAccess_params_st {
+    pub flags: *mut CUmemAccess_flags,
+    pub memPool: CUmemoryPool,
+    pub location: *mut CUmemLocation,
+}
+#[repr(C)]
+pub struct cuMemPoolGetAttribute_params_st {
+    pub pool: CUmemoryPool,
+    pub attr: CUmemPool_attribute,
+    pub value: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuMemPoolImportFromShareableHandle_params_st {
+    pub pool_out: *mut CUmemoryPool,
+    pub handle: *mut ::core::ffi::c_void,
+    pub handleType: CUmemAllocationHandleType,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+pub struct cuMemPoolImportPointer_params_st {
+    pub ptr_out: *mut CUdeviceptr,
+    pub pool: CUmemoryPool,
+    pub shareData: *mut CUmemPoolPtrExportData,
+}
+#[repr(C)]
+pub struct cuMemPoolSetAccess_params_st {
+    pub pool: CUmemoryPool,
+    pub map: *const CUmemAccessDesc,
+    pub count: usize,
+}
+#[repr(C)]
+pub struct cuMemPoolSetAttribute_params_st {
+    pub pool: CUmemoryPool,
+    pub attr: CUmemPool_attribute,
+    pub value: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuMemPoolTrimTo_params_st {
+    pub pool: CUmemoryPool,
+    pub minBytesToKeep: usize,
+}
+#[repr(C)]
+pub struct cuMemPrefetchAsync_params_st {
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+    pub dstDevice: CUdevice,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemPrefetchAsync_ptsz_params_st {
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+    pub dstDevice: CUdevice,
+    pub hStream: CUstream,
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMemPrefetchAsync_v2_params_st {
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+    pub location: CUmemLocation,
+    pub flags: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMemPrefetchAsync_v2_ptsz_params_st {
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+    pub location: CUmemLocation,
+    pub flags: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemPrefetchBatchAsync_params_st {
+    pub dptrs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub prefetchLocs: *mut CUmemLocation,
+    pub prefetchLocIdxs: *mut usize,
+    pub numPrefetchLocs: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemPrefetchBatchAsync_ptsz_params_st {
+    pub dptrs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub prefetchLocs: *mut CUmemLocation,
+    pub prefetchLocIdxs: *mut usize,
+    pub numPrefetchLocs: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemRangeGetAttribute_params_st {
+    pub data: *mut ::core::ffi::c_void,
+    pub dataSize: usize,
+    pub attribute: CUmem_range_attribute,
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+}
+#[repr(C)]
+pub struct cuMemRangeGetAttributes_params_st {
+    pub data: *mut *mut ::core::ffi::c_void,
+    pub dataSizes: *mut usize,
+    pub attributes: *mut CUmem_range_attribute,
+    pub numAttributes: usize,
+    pub devPtr: CUdeviceptr,
+    pub count: usize,
+}
+#[repr(C)]
+pub struct cuMemRelease_params_st {
+    pub handle: CUmemGenericAllocationHandle,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemRetainAllocationHandle_params_st {
+    pub handle: *mut CUmemGenericAllocationHandle,
+    pub addr: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+pub struct cuMemSetAccess_params_st {
+    pub ptr: CUdeviceptr,
+    pub size: usize,
+    pub desc: *const CUmemAccessDesc,
+    pub count: usize,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemSetMemPool_params_st {
+    pub location: *mut CUmemLocation,
+    pub type_: CUmemAllocationType,
+    pub pool: CUmemoryPool,
+}
+#[repr(C)]
+pub struct cuMemUnmap_params_st {
+    pub ptr: CUdeviceptr,
+    pub size: usize,
+}
+#[repr(C)]
+pub struct cuMemcpy2DAsync_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D_v1,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpy2DAsync_v2_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpy2DAsync_v2_ptsz_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy2DUnaligned_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D_v1,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy2DUnaligned_v2_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy2DUnaligned_v2_ptds_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy2D_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D_v1,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy2D_v2_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy2D_v2_ptds_params_st {
+    pub pCopy: *const CUDA_MEMCPY2D,
+}
+#[repr(C)]
+pub struct cuMemcpy3DAsync_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D_v1,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpy3DAsync_v2_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpy3DAsync_v2_ptsz_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpy3DBatchAsync_params_st {
+    pub numOps: usize,
+    pub opList: *mut CUDA_MEMCPY3D_BATCH_OP,
+    pub failIdx: *mut usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpy3DBatchAsync_ptsz_params_st {
+    pub numOps: usize,
+    pub opList: *mut CUDA_MEMCPY3D_BATCH_OP,
+    pub failIdx: *mut usize,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpy3DBatchAsync_v2_params_st {
+    pub numOps: usize,
+    pub opList: *mut CUDA_MEMCPY3D_BATCH_OP,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpy3DBatchAsync_v2_ptsz_params_st {
+    pub numOps: usize,
+    pub opList: *mut CUDA_MEMCPY3D_BATCH_OP,
+    pub flags: ::core::ffi::c_ulonglong,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpy3DPeerAsync_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D_PEER,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpy3DPeerAsync_ptsz_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D_PEER,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy3DPeer_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D_PEER,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy3DPeer_ptds_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D_PEER,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy3D_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D_v1,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy3D_v2_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMemcpy3D_v2_ptds_params_st {
+    pub pCopy: *const CUDA_MEMCPY3D,
+}
+#[repr(C)]
+pub struct cuMemcpyAsync_params_st {
+    pub dst: CUdeviceptr,
+    pub src: CUdeviceptr,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyAsync_ptsz_params_st {
+    pub dst: CUdeviceptr,
+    pub src: CUdeviceptr,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoA_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: ::core::ffi::c_uint,
+    pub srcArray: CUarray,
+    pub srcOffset: ::core::ffi::c_uint,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoA_v2_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoA_v2_ptds_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoD_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub srcArray: CUarray,
+    pub srcOffset: ::core::ffi::c_uint,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoD_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoD_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoHAsync_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcArray: CUarray,
+    pub srcOffset: ::core::ffi::c_uint,
+    pub ByteCount: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoHAsync_v2_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoHAsync_v2_ptsz_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoH_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcArray: CUarray,
+    pub srcOffset: ::core::ffi::c_uint,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoH_v2_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyAtoH_v2_ptds_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcArray: CUarray,
+    pub srcOffset: usize,
+    pub ByteCount: usize,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpyBatchAsync_params_st {
+    pub dsts: *mut CUdeviceptr,
+    pub srcs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub attrs: *mut CUmemcpyAttributes,
+    pub attrsIdxs: *mut usize,
+    pub numAttrs: usize,
+    pub failIdx: *mut usize,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpyBatchAsync_ptsz_params_st {
+    pub dsts: *mut CUdeviceptr,
+    pub srcs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub attrs: *mut CUmemcpyAttributes,
+    pub attrsIdxs: *mut usize,
+    pub numAttrs: usize,
+    pub failIdx: *mut usize,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpyBatchAsync_v2_params_st {
+    pub dsts: *mut CUdeviceptr,
+    pub srcs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub attrs: *mut CUmemcpyAttributes,
+    pub attrsIdxs: *mut usize,
+    pub numAttrs: usize,
+    pub hStream: CUstream,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuMemcpyBatchAsync_v2_ptsz_params_st {
+    pub dsts: *mut CUdeviceptr,
+    pub srcs: *mut CUdeviceptr,
+    pub sizes: *mut usize,
+    pub count: usize,
+    pub attrs: *mut CUmemcpyAttributes,
+    pub attrsIdxs: *mut usize,
+    pub numAttrs: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoA_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: ::core::ffi::c_uint,
+    pub srcDevice: CUdeviceptr_v1,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoA_v2_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoA_v2_ptds_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoDAsync_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub srcDevice: CUdeviceptr_v1,
+    pub ByteCount: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoDAsync_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoDAsync_v2_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoD_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub srcDevice: CUdeviceptr_v1,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoD_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoD_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoHAsync_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcDevice: CUdeviceptr_v1,
+    pub ByteCount: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoHAsync_v2_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoHAsync_v2_ptsz_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoH_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcDevice: CUdeviceptr_v1,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoH_v2_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyDtoH_v2_ptds_params_st {
+    pub dstHost: *mut ::core::ffi::c_void,
+    pub srcDevice: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoAAsync_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: ::core::ffi::c_uint,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoAAsync_v2_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoAAsync_v2_ptsz_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoA_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: ::core::ffi::c_uint,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoA_v2_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoA_v2_ptds_params_st {
+    pub dstArray: CUarray,
+    pub dstOffset: usize,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoDAsync_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: ::core::ffi::c_uint,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoDAsync_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoDAsync_v2_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoD_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoD_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyHtoD_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub srcHost: *const ::core::ffi::c_void,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyPeerAsync_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstContext: CUcontext,
+    pub srcDevice: CUdeviceptr,
+    pub srcContext: CUcontext,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyPeerAsync_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstContext: CUcontext,
+    pub srcDevice: CUdeviceptr,
+    pub srcContext: CUcontext,
+    pub ByteCount: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemcpyPeer_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstContext: CUcontext,
+    pub srcDevice: CUdeviceptr,
+    pub srcContext: CUcontext,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpyPeer_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstContext: CUcontext,
+    pub srcDevice: CUdeviceptr,
+    pub srcContext: CUcontext,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpy_params_st {
+    pub dst: CUdeviceptr,
+    pub src: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemcpy_ptds_params_st {
+    pub dst: CUdeviceptr,
+    pub src: CUdeviceptr,
+    pub ByteCount: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD16Async_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub us: ::core::ffi::c_ushort,
+    pub N: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD16Async_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub us: ::core::ffi::c_ushort,
+    pub N: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD16_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub us: ::core::ffi::c_ushort,
+    pub N: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemsetD16_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub us: ::core::ffi::c_ushort,
+    pub N: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD16_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub us: ::core::ffi::c_ushort,
+    pub N: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD2D16Async_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub us: ::core::ffi::c_ushort,
+    pub Width: usize,
+    pub Height: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD2D16Async_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub us: ::core::ffi::c_ushort,
+    pub Width: usize,
+    pub Height: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD2D16_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub dstPitch: ::core::ffi::c_uint,
+    pub us: ::core::ffi::c_ushort,
+    pub Width: ::core::ffi::c_uint,
+    pub Height: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemsetD2D16_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub us: ::core::ffi::c_ushort,
+    pub Width: usize,
+    pub Height: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD2D16_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub us: ::core::ffi::c_ushort,
+    pub Width: usize,
+    pub Height: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD2D32Async_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub ui: ::core::ffi::c_uint,
+    pub Width: usize,
+    pub Height: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD2D32Async_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub ui: ::core::ffi::c_uint,
+    pub Width: usize,
+    pub Height: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD2D32_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub dstPitch: ::core::ffi::c_uint,
+    pub ui: ::core::ffi::c_uint,
+    pub Width: ::core::ffi::c_uint,
+    pub Height: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemsetD2D32_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub ui: ::core::ffi::c_uint,
+    pub Width: usize,
+    pub Height: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD2D32_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub ui: ::core::ffi::c_uint,
+    pub Width: usize,
+    pub Height: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD2D8Async_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub uc: ::core::ffi::c_uchar,
+    pub Width: usize,
+    pub Height: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD2D8Async_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub uc: ::core::ffi::c_uchar,
+    pub Width: usize,
+    pub Height: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD2D8_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub dstPitch: ::core::ffi::c_uint,
+    pub uc: ::core::ffi::c_uchar,
+    pub Width: ::core::ffi::c_uint,
+    pub Height: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemsetD2D8_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub uc: ::core::ffi::c_uchar,
+    pub Width: usize,
+    pub Height: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD2D8_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub dstPitch: usize,
+    pub uc: ::core::ffi::c_uchar,
+    pub Width: usize,
+    pub Height: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD32Async_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub ui: ::core::ffi::c_uint,
+    pub N: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD32Async_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub ui: ::core::ffi::c_uint,
+    pub N: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD32_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub ui: ::core::ffi::c_uint,
+    pub N: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemsetD32_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub ui: ::core::ffi::c_uint,
+    pub N: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD32_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub ui: ::core::ffi::c_uint,
+    pub N: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD8Async_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub uc: ::core::ffi::c_uchar,
+    pub N: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD8Async_ptsz_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub uc: ::core::ffi::c_uchar,
+    pub N: usize,
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuMemsetD8_params_st {
+    pub dstDevice: CUdeviceptr_v1,
+    pub uc: ::core::ffi::c_uchar,
+    pub N: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMemsetD8_v2_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub uc: ::core::ffi::c_uchar,
+    pub N: usize,
+}
+#[repr(C)]
+pub struct cuMemsetD8_v2_ptds_params_st {
+    pub dstDevice: CUdeviceptr,
+    pub uc: ::core::ffi::c_uchar,
+    pub N: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMipmappedArrayCreate_params_st {
+    pub pHandle: *mut CUmipmappedArray,
+    pub pMipmappedArrayDesc: *const CUDA_ARRAY3D_DESCRIPTOR,
+    pub numMipmapLevels: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuMipmappedArrayDestroy_params_st {
+    pub hMipmappedArray: CUmipmappedArray,
+}
+#[repr(C)]
+pub struct cuMipmappedArrayGetLevel_params_st {
+    pub pLevelArray: *mut CUarray,
+    pub hMipmappedArray: CUmipmappedArray,
+    pub level: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMipmappedArrayGetMemoryRequirements_params_st {
+    pub memoryRequirements: *mut CUDA_ARRAY_MEMORY_REQUIREMENTS,
+    pub mipmap: CUmipmappedArray,
+    pub device: CUdevice,
+}
+#[repr(C)]
+pub struct cuMipmappedArrayGetSparseProperties_params_st {
+    pub sparseProperties: *mut CUDA_ARRAY_SPARSE_PROPERTIES,
+    pub mipmap: CUmipmappedArray,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuModuleEnumerateFunctions_params_st {
+    pub functions: *mut CUfunction,
+    pub numFunctions: ::core::ffi::c_uint,
+    pub mod_: CUmodule,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuModuleGetFunctionCount_params_st {
+    pub count: *mut ::core::ffi::c_uint,
+    pub mod_: CUmodule,
+}
+#[repr(C)]
+pub struct cuModuleGetFunction_params_st {
+    pub hfunc: *mut CUfunction,
+    pub hmod: CUmodule,
+    pub name: *const ::core::ffi::c_char,
+}
+#[repr(C)]
+pub struct cuModuleGetGlobal_params_st {
+    pub dptr: *mut CUdeviceptr_v1,
+    pub bytes: *mut ::core::ffi::c_uint,
+    pub hmod: CUmodule,
+    pub name: *const ::core::ffi::c_char,
+}
+#[repr(C)]
+pub struct cuModuleGetGlobal_v2_params_st {
+    pub dptr: *mut CUdeviceptr,
+    pub bytes: *mut usize,
+    pub hmod: CUmodule,
+    pub name: *const ::core::ffi::c_char,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuModuleGetLoadingMode_params_st {
+    pub mode: *mut CUmoduleLoadingMode,
+}
+#[repr(C)]
+pub struct cuModuleGetSurfRef_params_st {
+    pub pSurfRef: *mut CUsurfref,
+    pub hmod: CUmodule,
+    pub name: *const ::core::ffi::c_char,
+}
+#[repr(C)]
+pub struct cuModuleGetTexRef_params_st {
+    pub pTexRef: *mut CUtexref,
+    pub hmod: CUmodule,
+    pub name: *const ::core::ffi::c_char,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuModuleLoadDataEx_params_st {
+    pub module: *mut CUmodule,
+    pub image: *const ::core::ffi::c_void,
+    pub numOptions: ::core::ffi::c_uint,
+    pub options: *mut CUjit_option,
+    pub optionValues: *mut *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuModuleLoadData_params_st {
+    pub module: *mut CUmodule,
+    pub image: *const ::core::ffi::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuModuleLoadFatBinary_params_st {
+    pub module: *mut CUmodule,
+    pub fatCubin: *const ::core::ffi::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuModuleLoad_params_st {
+    pub module: *mut CUmodule,
+    pub fname: *const ::core::ffi::c_char,
+}
+#[repr(C)]
+pub struct cuModuleUnload_params_st {
+    pub hmod: CUmodule,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMulticastAddDevice_params_st {
+    pub mcHandle: CUmemGenericAllocationHandle,
+    pub dev: CUdevice,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMulticastBindAddr_params_st {
+    pub mcHandle: CUmemGenericAllocationHandle,
+    pub mcOffset: usize,
+    pub memptr: CUdeviceptr,
+    pub size: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMulticastBindMem_params_st {
+    pub mcHandle: CUmemGenericAllocationHandle,
+    pub mcOffset: usize,
+    pub memHandle: CUmemGenericAllocationHandle,
+    pub memOffset: usize,
+    pub size: usize,
+    pub flags: ::core::ffi::c_ulonglong,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuMulticastCreate_params_st {
+    pub mcHandle: *mut CUmemGenericAllocationHandle,
+    pub prop: *const CUmulticastObjectProp,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMulticastGetGranularity_params_st {
+    pub granularity: *mut usize,
+    pub prop: *const CUmulticastObjectProp,
+    pub option: CUmulticastGranularity_flags,
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuMulticastUnbind_params_st {
+    pub mcHandle: CUmemGenericAllocationHandle,
+    pub dev: CUdevice,
+    pub mcOffset: usize,
+    pub size: usize,
+}
+#[repr(C)]
+pub struct cuOccupancyAvailableDynamicSMemPerBlock_params_st {
+    pub dynamicSmemSize: *mut usize,
+    pub func: CUfunction,
+    pub numBlocks: ::core::ffi::c_int,
+    pub blockSize: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags_params_st {
+    pub numBlocks: *mut ::core::ffi::c_int,
+    pub func: CUfunction,
+    pub blockSize: ::core::ffi::c_int,
+    pub dynamicSMemSize: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuOccupancyMaxActiveBlocksPerMultiprocessor_params_st {
+    pub numBlocks: *mut ::core::ffi::c_int,
+    pub func: CUfunction,
+    pub blockSize: ::core::ffi::c_int,
+    pub dynamicSMemSize: usize,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuOccupancyMaxActiveClusters_params_st {
+    pub numClusters: *mut ::core::ffi::c_int,
+    pub func: CUfunction,
+    pub config: *const CUlaunchConfig,
+}
+#[repr(C)]
+pub struct cuOccupancyMaxPotentialBlockSizeWithFlags_params_st {
+    pub minGridSize: *mut ::core::ffi::c_int,
+    pub blockSize: *mut ::core::ffi::c_int,
+    pub func: CUfunction,
+    pub blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
+    pub dynamicSMemSize: usize,
+    pub blockSizeLimit: ::core::ffi::c_int,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuOccupancyMaxPotentialBlockSize_params_st {
+    pub minGridSize: *mut ::core::ffi::c_int,
+    pub blockSize: *mut ::core::ffi::c_int,
+    pub func: CUfunction,
+    pub blockSizeToDynamicSMemSize: CUoccupancyB2DSize,
+    pub dynamicSMemSize: usize,
+    pub blockSizeLimit: ::core::ffi::c_int,
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuOccupancyMaxPotentialClusterSize_params_st {
+    pub clusterSize: *mut ::core::ffi::c_int,
+    pub func: CUfunction,
+    pub config: *const CUlaunchConfig,
+}
+#[repr(C)]
+pub struct cuParamSetSize_params_st {
+    pub hfunc: CUfunction,
+    pub numbytes: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuParamSetTexRef_params_st {
+    pub hfunc: CUfunction,
+    pub texunit: ::core::ffi::c_int,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuParamSetf_params_st {
+    pub hfunc: CUfunction,
+    pub offset: ::core::ffi::c_int,
+    pub value: f32,
+}
+#[repr(C)]
+pub struct cuParamSeti_params_st {
+    pub hfunc: CUfunction,
+    pub offset: ::core::ffi::c_int,
+    pub value: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuParamSetv_params_st {
+    pub hfunc: CUfunction,
+    pub offset: ::core::ffi::c_int,
+    pub ptr: *mut ::core::ffi::c_void,
+    pub numbytes: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuPointerGetAttribute_params_st {
+    pub data: *mut ::core::ffi::c_void,
+    pub attribute: CUpointer_attribute,
+    pub ptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuPointerGetAttributes_params_st {
+    pub numAttributes: ::core::ffi::c_uint,
+    pub attributes: *mut CUpointer_attribute,
+    pub data: *mut *mut ::core::ffi::c_void,
+    pub ptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuPointerSetAttribute_params_st {
+    pub value: *const ::core::ffi::c_void,
+    pub attribute: CUpointer_attribute,
+    pub ptr: CUdeviceptr,
+}
+#[repr(C)]
+pub struct cuSignalExternalSemaphoresAsync_params_st {
+    pub extSemArray: *const CUexternalSemaphore,
+    pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
+    pub numExtSems: ::core::ffi::c_uint,
+    pub stream: CUstream,
+}
+#[repr(C)]
+pub struct cuSignalExternalSemaphoresAsync_ptsz_params_st {
+    pub extSemArray: *const CUexternalSemaphore,
+    pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS,
+    pub numExtSems: ::core::ffi::c_uint,
+    pub stream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamAddCallback_params_st {
+    pub hStream: CUstream,
+    pub callback: CUstreamCallback,
+    pub userData: *mut ::core::ffi::c_void,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamAddCallback_ptsz_params_st {
+    pub hStream: CUstream,
+    pub callback: CUstreamCallback,
+    pub userData: *mut ::core::ffi::c_void,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamAttachMemAsync_params_st {
+    pub hStream: CUstream,
+    pub dptr: CUdeviceptr,
+    pub length: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamAttachMemAsync_ptsz_params_st {
+    pub hStream: CUstream,
+    pub dptr: CUdeviceptr,
+    pub length: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamBatchMemOp_params_st {
+    pub stream: CUstream,
+    pub count: ::core::ffi::c_uint,
+    pub paramArray: *mut CUstreamBatchMemOpParams,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamBatchMemOp_ptsz_params_st {
+    pub stream: CUstream,
+    pub count: ::core::ffi::c_uint,
+    pub paramArray: *mut CUstreamBatchMemOpParams,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamBatchMemOp_v2_params_st {
+    pub stream: CUstream,
+    pub count: ::core::ffi::c_uint,
+    pub paramArray: *mut CUstreamBatchMemOpParams,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamBatchMemOp_v2_ptsz_params_st {
+    pub stream: CUstream,
+    pub count: ::core::ffi::c_uint,
+    pub paramArray: *mut CUstreamBatchMemOpParams,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamBeginCaptureToGraph_params_st {
+    pub hStream: CUstream,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub dependencyData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+    pub mode: CUstreamCaptureMode,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamBeginCaptureToGraph_ptsz_params_st {
+    pub hStream: CUstream,
+    pub hGraph: CUgraph,
+    pub dependencies: *const CUgraphNode,
+    pub dependencyData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+    pub mode: CUstreamCaptureMode,
+}
+#[repr(C)]
+pub struct cuStreamBeginCapture_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamBeginCapture_ptsz_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamBeginCapture_v2_params_st {
+    pub hStream: CUstream,
+    pub mode: CUstreamCaptureMode,
+}
+#[repr(C)]
+pub struct cuStreamBeginCapture_v2_ptsz_params_st {
+    pub hStream: CUstream,
+    pub mode: CUstreamCaptureMode,
+}
+#[repr(C)]
+pub struct cuStreamCopyAttributes_params_st {
+    pub dstStream: CUstream,
+    pub srcStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamCopyAttributes_ptsz_params_st {
+    pub dst: CUstream,
+    pub src: CUstream,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuStreamCreateWithPriority_params_st {
+    pub phStream: *mut CUstream,
+    pub flags: ::core::ffi::c_uint,
+    pub priority: ::core::ffi::c_int,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuStreamCreate_params_st {
+    pub phStream: *mut CUstream,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamDestroy_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamDestroy_v2_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamEndCapture_params_st {
+    pub hStream: CUstream,
+    pub phGraph: *mut CUgraph,
+}
+#[repr(C)]
+pub struct cuStreamEndCapture_ptsz_params_st {
+    pub hStream: CUstream,
+    pub phGraph: *mut CUgraph,
+}
+#[repr(C)]
+pub struct cuStreamGetAttribute_params_st {
+    pub hStream: CUstream,
+    pub attr: CUstreamAttrID,
+    pub value: *mut CUstreamAttrValue,
+}
+#[repr(C)]
+pub struct cuStreamGetAttribute_ptsz_params_st {
+    pub hStream: CUstream,
+    pub attr: CUstreamAttrID,
+    pub value_out: *mut CUstreamAttrValue,
+}
+#[repr(C)]
+pub struct cuStreamGetCaptureInfo_params_st {
+    pub hStream: CUstream,
+    pub captureStatus_out: *mut CUstreamCaptureStatus,
+    pub id_out: *mut cuuint64_t,
+}
+#[repr(C)]
+pub struct cuStreamGetCaptureInfo_ptsz_params_st {
+    pub hStream: CUstream,
+    pub captureStatus_out: *mut CUstreamCaptureStatus,
+    pub id_out: *mut cuuint64_t,
+}
+#[repr(C)]
+pub struct cuStreamGetCaptureInfo_v2_params_st {
+    pub hStream: CUstream,
+    pub captureStatus_out: *mut CUstreamCaptureStatus,
+    pub id_out: *mut cuuint64_t,
+    pub graph_out: *mut CUgraph,
+    pub dependencies_out: *mut *const CUgraphNode,
+    pub numDependencies_out: *mut usize,
+}
+#[repr(C)]
+pub struct cuStreamGetCaptureInfo_v2_ptsz_params_st {
+    pub hStream: CUstream,
+    pub captureStatus_out: *mut CUstreamCaptureStatus,
+    pub id_out: *mut cuuint64_t,
+    pub graph_out: *mut CUgraph,
+    pub dependencies_out: *mut *const CUgraphNode,
+    pub numDependencies_out: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetCaptureInfo_v3_params_st {
+    pub hStream: CUstream,
+    pub captureStatus_out: *mut CUstreamCaptureStatus,
+    pub id_out: *mut cuuint64_t,
+    pub graph_out: *mut CUgraph,
+    pub dependencies_out: *mut *const CUgraphNode,
+    pub edgeData_out: *mut *const CUgraphEdgeData,
+    pub numDependencies_out: *mut usize,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetCaptureInfo_v3_ptsz_params_st {
+    pub hStream: CUstream,
+    pub captureStatus_out: *mut CUstreamCaptureStatus,
+    pub id_out: *mut cuuint64_t,
+    pub graph_out: *mut CUgraph,
+    pub dependencies_out: *mut *const CUgraphNode,
+    pub edgeData_out: *mut *const CUgraphEdgeData,
+    pub numDependencies_out: *mut usize,
+}
+#[repr(C)]
+pub struct cuStreamGetCtx_params_st {
+    pub hStream: CUstream,
+    pub pctx: *mut CUcontext,
+}
+#[repr(C)]
+pub struct cuStreamGetCtx_ptsz_params_st {
+    pub hStream: CUstream,
+    pub pctx: *mut CUcontext,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetCtx_v2_params_st {
+    pub hStream: CUstream,
+    pub pCtx: *mut CUcontext,
+    pub pGreenCtx: *mut CUgreenCtx,
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetCtx_v2_ptsz_params_st {
+    pub hStream: CUstream,
+    pub pCtx: *mut CUcontext,
+    pub pGreenCtx: *mut CUgreenCtx,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuStreamGetDevice_params_st {
+    pub hStream: CUstream,
+    pub device: *mut CUdevice,
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuStreamGetDevice_ptsz_params_st {
+    pub hStream: CUstream,
+    pub device: *mut CUdevice,
+}
+#[repr(C)]
+pub struct cuStreamGetFlags_params_st {
+    pub hStream: CUstream,
+    pub flags: *mut ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamGetFlags_ptsz_params_st {
+    pub hStream: CUstream,
+    pub flags: *mut ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetGreenCtx_params_st {
+    pub hStream: CUstream,
+    pub phCtx: *mut CUgreenCtx,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetId_params_st {
+    pub hStream: CUstream,
+    pub streamId: *mut ::core::ffi::c_ulonglong,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamGetId_ptsz_params_st {
+    pub hStream: CUstream,
+    pub streamId: *mut ::core::ffi::c_ulonglong,
+}
+#[repr(C)]
+pub struct cuStreamGetPriority_params_st {
+    pub hStream: CUstream,
+    pub priority: *mut ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuStreamGetPriority_ptsz_params_st {
+    pub hStream: CUstream,
+    pub priority: *mut ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuStreamIsCapturing_params_st {
+    pub hStream: CUstream,
+    pub captureStatus: *mut CUstreamCaptureStatus,
+}
+#[repr(C)]
+pub struct cuStreamIsCapturing_ptsz_params_st {
+    pub hStream: CUstream,
+    pub captureStatus: *mut CUstreamCaptureStatus,
+}
+#[repr(C)]
+pub struct cuStreamQuery_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamQuery_ptsz_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamSetAttribute_params_st {
+    pub hStream: CUstream,
+    pub attr: CUstreamAttrID,
+    pub param: *const CUstreamAttrValue,
+}
+#[repr(C)]
+pub struct cuStreamSetAttribute_ptsz_params_st {
+    pub hStream: CUstream,
+    pub attr: CUstreamAttrID,
+    pub value: *const CUstreamAttrValue,
+}
+#[repr(C)]
+pub struct cuStreamSynchronize_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamSynchronize_ptsz_params_st {
+    pub hStream: CUstream,
+}
+#[repr(C)]
+pub struct cuStreamUpdateCaptureDependencies_params_st {
+    pub hStream: CUstream,
+    pub dependencies: *mut CUgraphNode,
+    pub numDependencies: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamUpdateCaptureDependencies_ptsz_params_st {
+    pub hStream: CUstream,
+    pub dependencies: *mut CUgraphNode,
+    pub numDependencies: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamUpdateCaptureDependencies_v2_params_st {
+    pub hStream: CUstream,
+    pub dependencies: *mut CUgraphNode,
+    pub dependencyData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamUpdateCaptureDependencies_v2_ptsz_params_st {
+    pub hStream: CUstream,
+    pub dependencies: *mut CUgraphNode,
+    pub dependencyData: *const CUgraphEdgeData,
+    pub numDependencies: usize,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWaitEvent_params_st {
+    pub hStream: CUstream,
+    pub hEvent: CUevent,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWaitEvent_ptsz_params_st {
+    pub hStream: CUstream,
+    pub hEvent: CUevent,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWaitValue32_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWaitValue32_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWaitValue32_v2_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWaitValue32_v2_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWaitValue64_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWaitValue64_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWaitValue64_v2_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWaitValue64_v2_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWriteValue32_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWriteValue32_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWriteValue32_v2_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWriteValue32_v2_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint32_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWriteValue64_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuStreamWriteValue64_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWriteValue64_v2_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuStreamWriteValue64_v2_ptsz_params_st {
+    pub stream: CUstream,
+    pub addr: CUdeviceptr,
+    pub value: cuuint64_t,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuSurfObjectCreate_params_st {
+    pub pSurfObject: *mut CUsurfObject,
+    pub pResDesc: *const CUDA_RESOURCE_DESC,
+}
+#[repr(C)]
+pub struct cuSurfObjectDestroy_params_st {
+    pub surfObject: CUsurfObject,
+}
+#[repr(C)]
+pub struct cuSurfObjectGetResourceDesc_params_st {
+    pub pResDesc: *mut CUDA_RESOURCE_DESC,
+    pub surfObject: CUsurfObject,
+}
+#[repr(C)]
+pub struct cuSurfRefGetArray_params_st {
+    pub phArray: *mut CUarray,
+    pub hSurfRef: CUsurfref,
+}
+#[repr(C)]
+pub struct cuSurfRefSetArray_params_st {
+    pub hSurfRef: CUsurfref,
+    pub hArray: CUarray,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[repr(C)]
+pub struct cuTensorMapEncodeIm2colWide_params_st {
+    pub tensorMap: *mut CUtensorMap,
+    pub tensorDataType: CUtensorMapDataType,
+    pub tensorRank: cuuint32_t,
+    pub globalAddress: *mut ::core::ffi::c_void,
+    pub globalDim: *const cuuint64_t,
+    pub globalStrides: *const cuuint64_t,
+    pub pixelBoxLowerCornerWidth: ::core::ffi::c_int,
+    pub pixelBoxUpperCornerWidth: ::core::ffi::c_int,
+    pub channelsPerPixel: cuuint32_t,
+    pub pixelsPerColumn: cuuint32_t,
+    pub elementStrides: *const cuuint32_t,
+    pub interleave: CUtensorMapInterleave,
+    pub mode: CUtensorMapIm2ColWideMode,
+    pub swizzle: CUtensorMapSwizzle,
+    pub l2Promotion: CUtensorMapL2promotion,
+    pub oobFill: CUtensorMapFloatOOBfill,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuTensorMapEncodeIm2col_params_st {
+    pub tensorMap: *mut CUtensorMap,
+    pub tensorDataType: CUtensorMapDataType,
+    pub tensorRank: cuuint32_t,
+    pub globalAddress: *mut ::core::ffi::c_void,
+    pub globalDim: *const cuuint64_t,
+    pub globalStrides: *const cuuint64_t,
+    pub pixelBoxLowerCorner: *const ::core::ffi::c_int,
+    pub pixelBoxUpperCorner: *const ::core::ffi::c_int,
+    pub channelsPerPixel: cuuint32_t,
+    pub pixelsPerColumn: cuuint32_t,
+    pub elementStrides: *const cuuint32_t,
+    pub interleave: CUtensorMapInterleave,
+    pub swizzle: CUtensorMapSwizzle,
+    pub l2Promotion: CUtensorMapL2promotion,
+    pub oobFill: CUtensorMapFloatOOBfill,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+pub struct cuTensorMapEncodeTiled_params_st {
+    pub tensorMap: *mut CUtensorMap,
+    pub tensorDataType: CUtensorMapDataType,
+    pub tensorRank: cuuint32_t,
+    pub globalAddress: *mut ::core::ffi::c_void,
+    pub globalDim: *const cuuint64_t,
+    pub globalStrides: *const cuuint64_t,
+    pub boxDim: *const cuuint32_t,
+    pub elementStrides: *const cuuint32_t,
+    pub interleave: CUtensorMapInterleave,
+    pub swizzle: CUtensorMapSwizzle,
+    pub l2Promotion: CUtensorMapL2promotion,
+    pub oobFill: CUtensorMapFloatOOBfill,
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuTensorMapReplaceAddress_params_st {
+    pub tensorMap: *mut CUtensorMap,
+    pub globalAddress: *mut ::core::ffi::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuTexObjectCreate_params_st {
+    pub pTexObject: *mut CUtexObject,
+    pub pResDesc: *const CUDA_RESOURCE_DESC,
+    pub pTexDesc: *const CUDA_TEXTURE_DESC,
+    pub pResViewDesc: *const CUDA_RESOURCE_VIEW_DESC,
+}
+#[repr(C)]
+pub struct cuTexObjectDestroy_params_st {
+    pub texObject: CUtexObject,
+}
+#[repr(C)]
+pub struct cuTexObjectGetResourceDesc_params_st {
+    pub pResDesc: *mut CUDA_RESOURCE_DESC,
+    pub texObject: CUtexObject,
+}
+#[repr(C)]
+pub struct cuTexObjectGetResourceViewDesc_params_st {
+    pub pResViewDesc: *mut CUDA_RESOURCE_VIEW_DESC,
+    pub texObject: CUtexObject,
+}
+#[repr(C)]
+pub struct cuTexObjectGetTextureDesc_params_st {
+    pub pTexDesc: *mut CUDA_TEXTURE_DESC,
+    pub texObject: CUtexObject,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuTexRefCreate_params_st {
+    pub pTexRef: *mut CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefDestroy_params_st {
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetAddressMode_params_st {
+    pub pam: *mut CUaddress_mode,
+    pub hTexRef: CUtexref,
+    pub dim: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuTexRefGetAddress_params_st {
+    pub pdptr: *mut CUdeviceptr_v1,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetAddress_v2_params_st {
+    pub pdptr: *mut CUdeviceptr,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetArray_params_st {
+    pub phArray: *mut CUarray,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetBorderColor_params_st {
+    pub pBorderColor: *mut f32,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetFilterMode_params_st {
+    pub pfm: *mut CUfilter_mode,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetFlags_params_st {
+    pub pFlags: *mut ::core::ffi::c_uint,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetFormat_params_st {
+    pub pFormat: *mut CUarray_format,
+    pub pNumChannels: *mut ::core::ffi::c_int,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetMaxAnisotropy_params_st {
+    pub pmaxAniso: *mut ::core::ffi::c_int,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetMipmapFilterMode_params_st {
+    pub pfm: *mut CUfilter_mode,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetMipmapLevelBias_params_st {
+    pub pbias: *mut f32,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetMipmapLevelClamp_params_st {
+    pub pminMipmapLevelClamp: *mut f32,
+    pub pmaxMipmapLevelClamp: *mut f32,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefGetMipmappedArray_params_st {
+    pub phMipmappedArray: *mut CUmipmappedArray,
+    pub hTexRef: CUtexref,
+}
+#[repr(C)]
+pub struct cuTexRefSetAddress2D_params_st {
+    pub hTexRef: CUtexref,
+    pub desc: *const CUDA_ARRAY_DESCRIPTOR_v1,
+    pub dptr: CUdeviceptr_v1,
+    pub Pitch: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuTexRefSetAddress2D_v2_params_st {
+    pub hTexRef: CUtexref,
+    pub desc: *const CUDA_ARRAY_DESCRIPTOR,
+    pub dptr: CUdeviceptr,
+    pub Pitch: usize,
+}
+#[repr(C)]
+pub struct cuTexRefSetAddress2D_v3_params_st {
+    pub hTexRef: CUtexref,
+    pub desc: *const CUDA_ARRAY_DESCRIPTOR,
+    pub dptr: CUdeviceptr,
+    pub Pitch: usize,
+}
+#[repr(C)]
+pub struct cuTexRefSetAddressMode_params_st {
+    pub hTexRef: CUtexref,
+    pub dim: ::core::ffi::c_int,
+    pub am: CUaddress_mode,
+}
+#[repr(C)]
+pub struct cuTexRefSetAddress_params_st {
+    pub ByteOffset: *mut ::core::ffi::c_uint,
+    pub hTexRef: CUtexref,
+    pub dptr: CUdeviceptr_v1,
+    pub bytes: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuTexRefSetAddress_v2_params_st {
+    pub ByteOffset: *mut usize,
+    pub hTexRef: CUtexref,
+    pub dptr: CUdeviceptr,
+    pub bytes: usize,
+}
+#[repr(C)]
+pub struct cuTexRefSetArray_params_st {
+    pub hTexRef: CUtexref,
+    pub hArray: CUarray,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuTexRefSetBorderColor_params_st {
+    pub hTexRef: CUtexref,
+    pub pBorderColor: *mut f32,
+}
+#[repr(C)]
+pub struct cuTexRefSetFilterMode_params_st {
+    pub hTexRef: CUtexref,
+    pub fm: CUfilter_mode,
+}
+#[repr(C)]
+pub struct cuTexRefSetFlags_params_st {
+    pub hTexRef: CUtexref,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuTexRefSetFormat_params_st {
+    pub hTexRef: CUtexref,
+    pub fmt: CUarray_format,
+    pub NumPackedComponents: ::core::ffi::c_int,
+}
+#[repr(C)]
+pub struct cuTexRefSetMaxAnisotropy_params_st {
+    pub hTexRef: CUtexref,
+    pub maxAniso: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuTexRefSetMipmapFilterMode_params_st {
+    pub hTexRef: CUtexref,
+    pub fm: CUfilter_mode,
+}
+#[repr(C)]
+pub struct cuTexRefSetMipmapLevelBias_params_st {
+    pub hTexRef: CUtexref,
+    pub bias: f32,
+}
+#[repr(C)]
+pub struct cuTexRefSetMipmapLevelClamp_params_st {
+    pub hTexRef: CUtexref,
+    pub minMipmapLevelClamp: f32,
+    pub maxMipmapLevelClamp: f32,
+}
+#[repr(C)]
+pub struct cuTexRefSetMipmappedArray_params_st {
+    pub hTexRef: CUtexref,
+    pub hMipmappedArray: CUmipmappedArray,
+    pub Flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cuThreadExchangeStreamCaptureMode_params_st {
+    pub mode: *mut CUstreamCaptureMode,
+}
+#[repr(C)]
+pub struct cuUserObjectCreate_params_st {
+    pub object_out: *mut CUuserObject,
+    pub ptr: *mut ::core::ffi::c_void,
+    pub destroy: CUhostFn,
+    pub initialRefcount: ::core::ffi::c_uint,
+    pub flags: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuUserObjectRelease_params_st {
+    pub object: CUuserObject,
+    pub count: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuUserObjectRetain_params_st {
+    pub object: CUuserObject,
+    pub count: ::core::ffi::c_uint,
+}
+#[repr(C)]
+pub struct cuWaitExternalSemaphoresAsync_params_st {
+    pub extSemArray: *const CUexternalSemaphore,
+    pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
+    pub numExtSems: ::core::ffi::c_uint,
+    pub stream: CUstream,
+}
+#[repr(C)]
+pub struct cuWaitExternalSemaphoresAsync_ptsz_params_st {
+    pub extSemArray: *const CUexternalSemaphore,
+    pub paramsArray: *const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS,
+    pub numExtSems: ::core::ffi::c_uint,
+    pub stream: CUstream,
+}
+#[repr(C)]
 pub struct cudaArrayGetInfo_v4010_params_st {
     pub desc: *mut cudaChannelFormatDesc,
     pub extent: *mut cudaExtent,
@@ -28827,6 +36021,6893 @@ impl Default for CUpti_SubscriberParams {
     }
 }
 impl Default for CUpti_SynchronizeData {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArray3DCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArray3DCreate_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArray3DGetDescriptor_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArray3DGetDescriptor_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayCreate_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayGetDescriptor_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayGetDescriptor_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuArrayGetMemoryRequirements_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayGetPlane_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuArrayGetSparseProperties_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuCheckpointProcessCheckpoint_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuCheckpointProcessGetRestoreThreadId_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuCheckpointProcessGetState_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuCheckpointProcessLock_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuCheckpointProcessRestore_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuCheckpointProcessUnlock_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCoredumpGetAttributeGlobal_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCoredumpGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCoredumpSetAttributeGlobal_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCoredumpSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxAttach_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxCreate_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxCreate_v3_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCtxCreate_v4_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxDestroy_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxDetach_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxDisablePeerAccess_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxEnablePeerAccess_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCtxFromGreenCtx_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetApiVersion_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetCacheConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetCurrent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCtxGetDevResource_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetDevice_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuCtxGetDevice_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetExecAffinity_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCtxGetId_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetLimit_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetSharedMemConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxGetStreamPriorityRange_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxPopCurrent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxPopCurrent_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxPushCurrent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxPushCurrent_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCtxRecordEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxSetCacheConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxSetCurrent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxSetLimit_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuCtxSetSharedMemConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuCtxSynchronize_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuCtxWaitEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDestroyExternalMemory_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDestroyExternalSemaphore_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuDevResourceGenerateDesc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuDevSmResourceSplitByCount_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceCanAccessPeer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceComputeCapability_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetByPCIBusId_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetCount_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetDefaultMemPool_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuDeviceGetDevResource_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetExecAffinitySupport_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetGraphMemAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuDeviceGetHostAtomicCapabilities_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetLuid_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetMemPool_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetName_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetNvSciSyncAttributes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuDeviceGetP2PAtomicCapabilities_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetP2PAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetPCIBusId_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetProperties_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetTexture1DLinearMaxWidth_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetUuid_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGetUuid_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGet_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceGraphMemTrim_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxGetState_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxRelease_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxRelease_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxReset_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxReset_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxRetain_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxSetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDevicePrimaryCtxSetFlags_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuDeviceRegisterAsyncNotification_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceSetGraphMemAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceSetMemPool_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceTotalMem_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDeviceTotalMem_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuDeviceUnregisterAsyncNotification_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuDriverGetVersion_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventDestroy_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventElapsedTime_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuEventElapsedTime_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventQuery_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventRecordWithFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventRecordWithFlags_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventRecord_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventRecord_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuEventSynchronize_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuExternalMemoryGetMappedBuffer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuExternalMemoryGetMappedMipmappedArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuFlushGPUDirectRDMAWrites_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncGetModule_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuFuncGetName_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuFuncGetParamInfo_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuFuncIsLoaded_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuFuncLoad_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncSetBlockShape_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncSetCacheConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncSetSharedMemConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuFuncSetSharedSize_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGetErrorName_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGetErrorString_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGetExportTable_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11040",
+    feature = "cuda-11050",
+    feature = "cuda-11060",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGetProcAddress_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGetProcAddress_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphAddBatchMemOpNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddChildGraphNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddDependencies_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphAddDependencies_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddEmptyNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddEventRecordNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddEventWaitNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddExternalSemaphoresSignalNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddExternalSemaphoresWaitNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddHostNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddKernelNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphAddKernelNode_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddMemAllocNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddMemFreeNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddMemcpyNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphAddMemsetNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphAddNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphAddNode_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphBatchMemOpNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphBatchMemOpNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphChildGraphNodeGetGraph_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphClone_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphConditionalHandleCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphDebugDotPrint_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphDestroyNode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphEventRecordNodeGetEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphEventRecordNodeSetEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphEventWaitNodeGetEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphEventWaitNodeSetEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphExecBatchMemOpNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecChildGraphNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecEventRecordNodeSetEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecEventWaitNodeSetEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecExternalSemaphoresSignalNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecExternalSemaphoresWaitNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphExecGetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecHostNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecKernelNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphExecKernelNodeSetParams_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecMemcpyNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecMemsetNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphExecNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExecUpdate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphExecUpdate_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExternalSemaphoresSignalNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExternalSemaphoresSignalNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExternalSemaphoresWaitNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphExternalSemaphoresWaitNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphGetEdges_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphGetEdges_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphGetNodes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphGetRootNodes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphHostNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphHostNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphInstantiateWithFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphInstantiateWithParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphInstantiateWithParams_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphInstantiate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphInstantiate_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphKernelNodeCopyAttributes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphKernelNodeGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphKernelNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphKernelNodeGetParams_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphKernelNodeSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphKernelNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphKernelNodeSetParams_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphLaunch_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphLaunch_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphMemAllocNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphMemFreeNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphMemcpyNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphMemcpyNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphMemsetNodeGetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphMemsetNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphNodeFindInClone_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphNodeGetDependencies_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphNodeGetDependencies_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphNodeGetDependentNodes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphNodeGetDependentNodes_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphNodeGetEnabled_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphNodeGetType_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphNodeSetEnabled_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphNodeSetParams_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphReleaseUserObject_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphRemoveDependencies_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGraphRemoveDependencies_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphRetainUserObject_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphUpload_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphUpload_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsMapResources_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsMapResources_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsResourceGetMappedMipmappedArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsResourceGetMappedPointer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsResourceGetMappedPointer_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsResourceSetMapFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsResourceSetMapFlags_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsSubResourceGetMappedArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsUnmapResources_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsUnmapResources_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuGraphicsUnregisterResource_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGreenCtxCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGreenCtxDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGreenCtxGetDevResource_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuGreenCtxGetId_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGreenCtxRecordEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGreenCtxStreamCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuGreenCtxWaitEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuImportExternalMemory_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuImportExternalSemaphore_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuIpcCloseMemHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuIpcGetEventHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuIpcGetMemHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuIpcOpenEventHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuIpcOpenMemHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuIpcOpenMemHandle_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelGetFunction_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelGetLibrary_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelGetName_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelGetParamInfo_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuKernelSetCacheConfig_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchCooperativeKernelMultiDevice_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchCooperativeKernel_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchCooperativeKernel_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchGridAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchGrid_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchHostFunc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchHostFunc_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLaunchKernelEx_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLaunchKernelEx_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchKernel_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunchKernel_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLaunch_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryEnumerateKernels_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryGetGlobal_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryGetKernelCount_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryGetKernel_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryGetManaged_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryGetModule_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryGetUnifiedFunction_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryLoadData_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryLoadFromFile_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuLibraryUnload_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkAddData_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkAddData_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkAddFile_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkAddFile_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkComplete_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkCreate_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuLinkDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuLogsCurrent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuLogsDumpToFile_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuLogsDumpToMemory_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuLogsRegisterCallback_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuLogsUnregisterCallback_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAddressFree_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAddressReserve_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAdvise_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMemAdvise_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocFromPoolAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocFromPoolAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocHost_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocHost_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocManaged_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocPitch_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAllocPitch_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAlloc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemAlloc_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuMemBatchDecompressAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuMemBatchDecompressAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemDiscardAndPrefetchBatchAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemDiscardAndPrefetchBatchAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemDiscardBatchAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemDiscardBatchAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemExportToShareableHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemFreeAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemFreeAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemFreeHost_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemFree_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemFree_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetAccess_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetAddressRange_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetAddressRange_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetAllocationGranularity_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetAllocationPropertiesFromHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemGetDefaultMemPool_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMemGetHandleForAddressRange_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetInfo_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemGetInfo_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemGetMemPool_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostAlloc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostGetDevicePointer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostGetDevicePointer_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostGetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostRegister_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostRegister_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemHostUnregister_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemImportFromShareableHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemMapArrayAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemMapArrayAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemMap_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolExportPointer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolExportToShareableHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolGetAccess_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolImportFromShareableHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolImportPointer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolSetAccess_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPoolTrimTo_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPrefetchAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemPrefetchAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMemPrefetchAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMemPrefetchAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemPrefetchBatchAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemPrefetchBatchAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemRangeGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemRangeGetAttributes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemRelease_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemRetainAllocationHandle_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemSetAccess_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemSetMemPool_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemUnmap_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2DAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2DAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2DAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2DUnaligned_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2DUnaligned_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2DUnaligned_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2D_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2D_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy2D_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuMemcpy3DBatchAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuMemcpy3DBatchAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemcpy3DBatchAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemcpy3DBatchAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DPeerAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DPeerAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DPeer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3DPeer_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3D_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3D_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy3D_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoA_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoA_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoA_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoD_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoD_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoD_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoHAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoHAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoHAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoH_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoH_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyAtoH_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuMemcpyBatchAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuMemcpyBatchAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemcpyBatchAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-13000"))]
+impl Default for cuMemcpyBatchAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoA_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoA_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoA_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoDAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoDAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoDAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoD_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoD_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoD_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoHAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoHAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoHAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoH_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoH_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyDtoH_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoAAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoAAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoAAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoA_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoA_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoA_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoDAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoDAsync_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoDAsync_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoD_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoD_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyHtoD_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyPeerAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyPeerAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyPeer_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpyPeer_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemcpy_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD16Async_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD16Async_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD16_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD16_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD16_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D16Async_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D16Async_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D16_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D16_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D16_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D32Async_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D32Async_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D32_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D32_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D32_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D8Async_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D8Async_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D8_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D8_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD2D8_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD32Async_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD32Async_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD32_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD32_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD32_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD8Async_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD8Async_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD8_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD8_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMemsetD8_v2_ptds_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMipmappedArrayCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMipmappedArrayDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMipmappedArrayGetLevel_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMipmappedArrayGetMemoryRequirements_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuMipmappedArrayGetSparseProperties_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuModuleEnumerateFunctions_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuModuleGetFunctionCount_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleGetFunction_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleGetGlobal_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleGetGlobal_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuModuleGetLoadingMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleGetSurfRef_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleGetTexRef_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleLoadDataEx_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleLoadData_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleLoadFatBinary_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleLoad_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuModuleUnload_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMulticastAddDevice_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMulticastBindAddr_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMulticastBindMem_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMulticastCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMulticastGetGranularity_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuMulticastUnbind_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuOccupancyAvailableDynamicSMemPerBlock_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuOccupancyMaxActiveBlocksPerMultiprocessor_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuOccupancyMaxActiveClusters_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuOccupancyMaxPotentialBlockSizeWithFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuOccupancyMaxPotentialBlockSize_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuOccupancyMaxPotentialClusterSize_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuParamSetSize_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuParamSetTexRef_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuParamSetf_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuParamSeti_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuParamSetv_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuPointerGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuPointerGetAttributes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuPointerSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSignalExternalSemaphoresAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSignalExternalSemaphoresAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamAddCallback_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamAddCallback_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamAttachMemAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamAttachMemAsync_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamBatchMemOp_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamBatchMemOp_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamBatchMemOp_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamBatchMemOp_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamBeginCaptureToGraph_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamBeginCaptureToGraph_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamBeginCapture_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamBeginCapture_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamBeginCapture_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamBeginCapture_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamCopyAttributes_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamCopyAttributes_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamCreateWithPriority_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamDestroy_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamEndCapture_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamEndCapture_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetAttribute_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetCaptureInfo_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetCaptureInfo_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetCaptureInfo_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetCaptureInfo_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetCaptureInfo_v3_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetCaptureInfo_v3_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetCtx_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetCtx_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetCtx_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetCtx_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuStreamGetDevice_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuStreamGetDevice_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetFlags_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetGreenCtx_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetId_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamGetId_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetPriority_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamGetPriority_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamIsCapturing_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamIsCapturing_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamQuery_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamQuery_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamSetAttribute_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamSetAttribute_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamSynchronize_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamSynchronize_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamUpdateCaptureDependencies_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamUpdateCaptureDependencies_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamUpdateCaptureDependencies_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamUpdateCaptureDependencies_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWaitEvent_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWaitEvent_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWaitValue32_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWaitValue32_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWaitValue32_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWaitValue32_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWaitValue64_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWaitValue64_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWaitValue64_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWaitValue64_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWriteValue32_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWriteValue32_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWriteValue32_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWriteValue32_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWriteValue64_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuStreamWriteValue64_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWriteValue64_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuStreamWriteValue64_v2_ptsz_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSurfObjectCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSurfObjectDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSurfObjectGetResourceDesc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSurfRefGetArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuSurfRefSetArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+impl Default for cuTensorMapEncodeIm2colWide_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuTensorMapEncodeIm2col_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuTensorMapEncodeTiled_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for cuTensorMapReplaceAddress_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexObjectCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexObjectDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexObjectGetResourceDesc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexObjectGetResourceViewDesc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexObjectGetTextureDesc_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefDestroy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetAddressMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetAddress_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetAddress_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetBorderColor_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetFilterMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetFormat_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetMaxAnisotropy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetMipmapFilterMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetMipmapLevelBias_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetMipmapLevelClamp_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefGetMipmappedArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetAddress2D_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetAddress2D_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetAddress2D_v3_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetAddressMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetAddress_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetAddress_v2_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetBorderColor_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetFilterMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetFlags_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetFormat_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetMaxAnisotropy_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetMipmapFilterMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetMipmapLevelBias_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetMipmapLevelClamp_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuTexRefSetMipmappedArray_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuThreadExchangeStreamCaptureMode_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuUserObjectCreate_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuUserObjectRelease_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuUserObjectRetain_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuWaitExternalSemaphoresAsync_params_st {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cuWaitExternalSemaphoresAsync_ptsz_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {

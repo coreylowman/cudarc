@@ -275,6 +275,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                     // headers. These help dissect data representing function arguments
                     // of CUDA functions in the CUPTI Callback API.
                     "^[Cc][Uu][Dd][Aa].*_params.*".into(),
+                    "^[Cc][Uu].*_params.*".into(),
                 ],
                 functions: vec!["^cupti.*".into()],
                 vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*".into()],
