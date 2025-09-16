@@ -8,18 +8,8 @@ extern crate alloc;
 extern crate no_std_compat as std;
 pub use self::CUpti_driver_api_trace_cbid_enum as CUpti_driver_api_trace_cbid;
 pub use self::CUpti_runtime_api_trace_cbid_enum as CUpti_runtime_api_trace_cbid;
-use crate::driver::sys::CUaccessPolicyWindow;
-use crate::driver::sys::CUcontext;
-use crate::driver::sys::CUdevice;
-use crate::driver::sys::CUdevice_attribute;
-use crate::driver::sys::CUgraph;
-use crate::driver::sys::CUgraphExec;
-use crate::driver::sys::CUgraphNode;
-use crate::driver::sys::CUgraphNodeType;
-use crate::driver::sys::CUstream;
-use crate::driver::sys::CUstreamAttrID;
-use crate::driver::sys::CUstreamAttrValue;
-use crate::driver::sys::CUuuid;
+use crate::driver::sys::*;
+use crate::runtime::sys::*;
 pub const CUPTILP64: u32 = 1;
 #[cfg(any(feature = "cuda-11040"))]
 pub const CUPTI_API_VERSION: u32 = 14;
@@ -93,6 +83,11 @@ pub const CUPTI_SUBSCRIBER_NAME_MAX_LEN: u32 = 53;
 ))]
 pub const CUPTI_SYNCHRONIZATION_INVALID_VALUE: i32 = -1;
 pub const CUPTI_TIMESTAMP_UNKNOWN: u32 = 0;
+pub type CUDA_ARRAY3D_DESCRIPTOR_v1 = CUDA_ARRAY3D_DESCRIPTOR_v1_st;
+pub type CUDA_ARRAY_DESCRIPTOR_v1 = CUDA_ARRAY_DESCRIPTOR_v1_st;
+pub type CUDA_MEMCPY2D_v1 = CUDA_MEMCPY2D_v1_st;
+pub type CUDA_MEMCPY3D_v1 = CUDA_MEMCPY3D_v1_st;
+pub type CUdeviceptr_v1 = ::core::ffi::c_uint;
 pub type CUpti_ActivityMemcpy2 = CUpti_ActivityMemcpyPtoP;
 pub type CUpti_BuffersCallbackCompleteFunc = ::core::option::Option<
     unsafe extern "C" fn(
@@ -20968,6 +20963,26 @@ pub enum CUpti_runtime_api_trace_cbid_enum {
     CUPTI_RUNTIME_TRACE_CBID_FORCE_INT = 2147483647,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUDA_ARRAY3D_DESCRIPTOR_v1_st {
+    pub dummy: ::core::ffi::c_int,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUDA_ARRAY_DESCRIPTOR_v1_st {
+    pub dummy: ::core::ffi::c_int,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUDA_MEMCPY2D_v1_st {
+    pub dummy: ::core::ffi::c_int,
+}
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct CUDA_MEMCPY3D_v1_st {
+    pub dummy: ::core::ffi::c_int,
+}
+#[repr(C)]
 #[repr(align(8))]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUpti_Activity {
@@ -26660,6 +26675,7 @@ pub struct cuMemFreeHost_params_st {
     pub p: *mut ::core::ffi::c_void,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemFree_params_st {
     pub dptr: CUdeviceptr_v1,
 }
@@ -26674,6 +26690,7 @@ pub struct cuMemGetAccess_params_st {
     pub ptr: CUdeviceptr,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemGetAddressRange_params_st {
     pub pbase: *mut CUdeviceptr_v1,
     pub psize: *mut ::core::ffi::c_uint,
@@ -27325,6 +27342,7 @@ pub struct cuMemcpyDtoDAsync_v2_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemcpyDtoD_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub srcDevice: CUdeviceptr_v1,
@@ -27364,6 +27382,7 @@ pub struct cuMemcpyDtoHAsync_v2_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemcpyDtoH_params_st {
     pub dstHost: *mut ::core::ffi::c_void,
     pub srcDevice: CUdeviceptr_v1,
@@ -27448,6 +27467,7 @@ pub struct cuMemcpyHtoDAsync_v2_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemcpyHtoD_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub srcHost: *const ::core::ffi::c_void,
@@ -27526,6 +27546,7 @@ pub struct cuMemsetD16Async_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemsetD16_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub us: ::core::ffi::c_ushort,
@@ -27562,6 +27583,7 @@ pub struct cuMemsetD2D16Async_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemsetD2D16_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub dstPitch: ::core::ffi::c_uint,
@@ -27604,6 +27626,7 @@ pub struct cuMemsetD2D32Async_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemsetD2D32_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub dstPitch: ::core::ffi::c_uint,
@@ -27646,6 +27669,7 @@ pub struct cuMemsetD2D8Async_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemsetD2D8_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub dstPitch: ::core::ffi::c_uint,
@@ -27684,6 +27708,7 @@ pub struct cuMemsetD32Async_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemsetD32_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub ui: ::core::ffi::c_uint,
@@ -27716,6 +27741,7 @@ pub struct cuMemsetD8Async_ptsz_params_st {
     pub hStream: CUstream,
 }
 #[repr(C)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cuMemsetD8_params_st {
     pub dstDevice: CUdeviceptr_v1,
     pub uc: ::core::ffi::c_uchar,
@@ -39633,15 +39659,6 @@ impl Default for cuMemFreeHost_params_st {
         }
     }
 }
-impl Default for cuMemFree_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 impl Default for cuMemFree_v2_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -40525,15 +40542,6 @@ impl Default for cuMemcpyDtoDAsync_v2_ptsz_params_st {
         }
     }
 }
-impl Default for cuMemcpyDtoD_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 impl Default for cuMemcpyDtoD_v2_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -40786,15 +40794,6 @@ impl Default for cuMemsetD16Async_ptsz_params_st {
         }
     }
 }
-impl Default for cuMemsetD16_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 impl Default for cuMemsetD16_v2_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -40823,15 +40822,6 @@ impl Default for cuMemsetD2D16Async_params_st {
     }
 }
 impl Default for cuMemsetD2D16Async_ptsz_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cuMemsetD2D16_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -40876,15 +40866,6 @@ impl Default for cuMemsetD2D32Async_ptsz_params_st {
         }
     }
 }
-impl Default for cuMemsetD2D32_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 impl Default for cuMemsetD2D32_v2_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -40913,15 +40894,6 @@ impl Default for cuMemsetD2D8Async_params_st {
     }
 }
 impl Default for cuMemsetD2D8Async_ptsz_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cuMemsetD2D8_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -40966,15 +40938,6 @@ impl Default for cuMemsetD32Async_ptsz_params_st {
         }
     }
 }
-impl Default for cuMemsetD32_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 impl Default for cuMemsetD32_v2_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
@@ -41003,15 +40966,6 @@ impl Default for cuMemsetD8Async_params_st {
     }
 }
 impl Default for cuMemsetD8Async_ptsz_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cuMemsetD8_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {

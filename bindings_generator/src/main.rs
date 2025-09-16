@@ -276,6 +276,16 @@ fn create_modules() -> Vec<ModuleConfig> {
                     // of CUDA functions in the CUPTI Callback API.
                     "^[Cc][Uu][Dd][Aa].*_params.*".into(),
                     "^[Cc][Uu].*_params.*".into(),
+                    // Types that are obsolete but still used in CUPTI.
+                    "CUDA_ARRAY_DESCRIPTOR_v1_st".into(),
+                    "CUDA_ARRAY_DESCRIPTOR_v1".into(),
+                    "CUDA_ARRAY3D_DESCRIPTOR_v1_st".into(),
+                    "CUDA_ARRAY3D_DESCRIPTOR_v1".into(),
+                    "CUDA_MEMCPY2D_v1_st".into(),
+                    "CUDA_MEMCPY2D_v1".into(),
+                    "CUDA_MEMCPY3D_v1_st".into(),
+                    "CUDA_MEMCPY3D_v1".into(),
+                    "CUdeviceptr_v1".into(),
                 ],
                 functions: vec!["^cupti.*".into()],
                 vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*".into()],
@@ -287,23 +297,10 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["cupti".into()],
-            raw_lines: [
-                "CUaccessPolicyWindow",
-                "CUcontext",
-                "CUdevice",
-                "CUdevice_attribute",
-                "CUgraph",
-                "CUgraphExec",
-                "CUgraphNode",
-                "CUgraphNodeType",
-                "CUstream",
-                "CUstreamAttrID",
-                "CUstreamAttrValue",
-                "CUuuid",
-            ]
-            .into_iter()
-            .map(|type_name| format!("use crate::driver::sys::{type_name};"))
-            .collect(),
+            raw_lines: vec![
+                "use crate::driver::sys::*;".into(),
+                "use crate::runtime::sys::*;".into(),
+            ],
         },
     ]
 }
