@@ -292,7 +292,20 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             allowlist_recursively: false,
             blocklist: Filters {
-                types: vec![],
+                types: vec![
+                    // For cuda-11040, the meta headers seem to include some osbolete
+                    // types for which the definitions are missing because they are not
+                    // included through any cupti headers, but only exist in a CUDA
+                    // source, block these:
+                    "cudaSignalExternalSemaphoresAsync_ptsz_v10000_params_st".into(),
+                    "cudaSignalExternalSemaphoresAsync_ptsz_v10000_params".into(),
+                    "cudaSignalExternalSemaphoresAsync_v10000_params_st".into(),
+                    "cudaSignalExternalSemaphoresAsync_v10000_params".into(),
+                    "cudaWaitExternalSemaphoresAsync_ptsz_v10000_params_st".into(),
+                    "cudaWaitExternalSemaphoresAsync_ptsz_v10000_params".into(),
+                    "cudaWaitExternalSemaphoresAsync_v10000_params_st".into(),
+                    "cudaWaitExternalSemaphoresAsync_v10000_params".into(),
+                ],
                 functions: vec![],
                 vars: vec![],
             },

@@ -3120,45 +3120,9 @@ pub type cudaSetDoubleForDevice_v3020_params = cudaSetDoubleForDevice_v3020_para
 ))]
 pub type cudaSetDoubleForHost_v3020_params = cudaSetDoubleForHost_v3020_params_st;
 pub type cudaSetValidDevices_v3020_params = cudaSetValidDevices_v3020_params_st;
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-pub type cudaSignalExternalSemaphoresAsync_ptsz_v10000_params =
-    cudaSignalExternalSemaphoresAsync_ptsz_v10000_params_st;
 #[cfg(any(feature = "cuda-13000"))]
 pub type cudaSignalExternalSemaphoresAsync_ptsz_v11020_params =
     cudaSignalExternalSemaphoresAsync_ptsz_v11020_params_st;
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-pub type cudaSignalExternalSemaphoresAsync_v10000_params =
-    cudaSignalExternalSemaphoresAsync_v10000_params_st;
 #[cfg(any(feature = "cuda-13000"))]
 pub type cudaSignalExternalSemaphoresAsync_v11020_params =
     cudaSignalExternalSemaphoresAsync_v11020_params_st;
@@ -3478,45 +3442,9 @@ pub type cudaUnbindTexture_v3020_params = cudaUnbindTexture_v3020_params_st;
 pub type cudaUserObjectCreate_v11030_params = cudaUserObjectCreate_v11030_params_st;
 pub type cudaUserObjectRelease_v11030_params = cudaUserObjectRelease_v11030_params_st;
 pub type cudaUserObjectRetain_v11030_params = cudaUserObjectRetain_v11030_params_st;
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-pub type cudaWaitExternalSemaphoresAsync_ptsz_v10000_params =
-    cudaWaitExternalSemaphoresAsync_ptsz_v10000_params_st;
 #[cfg(any(feature = "cuda-13000"))]
 pub type cudaWaitExternalSemaphoresAsync_ptsz_v11020_params =
     cudaWaitExternalSemaphoresAsync_ptsz_v11020_params_st;
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-pub type cudaWaitExternalSemaphoresAsync_v10000_params =
-    cudaWaitExternalSemaphoresAsync_v10000_params_st;
 #[cfg(any(feature = "cuda-13000"))]
 pub type cudaWaitExternalSemaphoresAsync_v11020_params =
     cudaWaitExternalSemaphoresAsync_v11020_params_st;
@@ -32460,64 +32388,11 @@ pub struct cudaSetValidDevices_v3020_params_st {
     pub device_arr: *mut ::core::ffi::c_int,
     pub len: ::core::ffi::c_int,
 }
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-#[repr(C)]
-pub struct cudaSignalExternalSemaphoresAsync_ptsz_v10000_params_st {
-    pub extSemArray: *const cudaExternalSemaphore_t,
-    pub paramsArray: *const cudaExternalSemaphoreSignalParams_v1,
-    pub numExtSems: ::core::ffi::c_uint,
-    pub stream: cudaStream_t,
-}
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
 pub struct cudaSignalExternalSemaphoresAsync_ptsz_v11020_params_st {
     pub extSemArray: *const cudaExternalSemaphore_t,
     pub paramsArray: *const cudaExternalSemaphoreSignalParams,
-    pub numExtSems: ::core::ffi::c_uint,
-    pub stream: cudaStream_t,
-}
-#[cfg(any(feature = "cuda-11040"))]
-#[repr(C)]
-pub struct cudaSignalExternalSemaphoresAsync_v10000_params_st {
-    pub extSemArray: *const cudaExternalSemaphore_t,
-    pub paramsArray: *mut cudaExternalSemaphoreSignalParams_v1,
-    pub numExtSems: ::core::ffi::c_uint,
-    pub stream: cudaStream_t,
-}
-#[cfg(any(
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-#[repr(C)]
-pub struct cudaSignalExternalSemaphoresAsync_v10000_params_st {
-    pub extSemArray: *const cudaExternalSemaphore_t,
-    pub paramsArray: *const cudaExternalSemaphoreSignalParams_v1,
     pub numExtSems: ::core::ffi::c_uint,
     pub stream: cudaStream_t,
 }
@@ -33253,64 +33128,11 @@ pub struct cudaUserObjectRetain_v11030_params_st {
     pub object: cudaUserObject_t,
     pub count: ::core::ffi::c_uint,
 }
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-#[repr(C)]
-pub struct cudaWaitExternalSemaphoresAsync_ptsz_v10000_params_st {
-    pub extSemArray: *const cudaExternalSemaphore_t,
-    pub paramsArray: *const cudaExternalSemaphoreWaitParams_v1,
-    pub numExtSems: ::core::ffi::c_uint,
-    pub stream: cudaStream_t,
-}
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
 pub struct cudaWaitExternalSemaphoresAsync_ptsz_v11020_params_st {
     pub extSemArray: *const cudaExternalSemaphore_t,
     pub paramsArray: *const cudaExternalSemaphoreWaitParams,
-    pub numExtSems: ::core::ffi::c_uint,
-    pub stream: cudaStream_t,
-}
-#[cfg(any(feature = "cuda-11040"))]
-#[repr(C)]
-pub struct cudaWaitExternalSemaphoresAsync_v10000_params_st {
-    pub extSemArray: *const cudaExternalSemaphore_t,
-    pub paramsArray: *mut cudaExternalSemaphoreWaitParams_v1,
-    pub numExtSems: ::core::ffi::c_uint,
-    pub stream: cudaStream_t,
-}
-#[cfg(any(
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-#[repr(C)]
-pub struct cudaWaitExternalSemaphoresAsync_v10000_params_st {
-    pub extSemArray: *const cudaExternalSemaphore_t,
-    pub paramsArray: *const cudaExternalSemaphoreWaitParams_v1,
     pub numExtSems: ::core::ffi::c_uint,
     pub stream: cudaStream_t,
 }
@@ -46711,58 +46533,8 @@ impl Default for cudaSetValidDevices_v3020_params_st {
         }
     }
 }
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-impl Default for cudaSignalExternalSemaphoresAsync_ptsz_v10000_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 #[cfg(any(feature = "cuda-13000"))]
 impl Default for cudaSignalExternalSemaphoresAsync_ptsz_v11020_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-impl Default for cudaSignalExternalSemaphoresAsync_v10000_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -47569,58 +47341,8 @@ impl Default for cudaUserObjectRetain_v11030_params_st {
         }
     }
 }
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-impl Default for cudaWaitExternalSemaphoresAsync_ptsz_v10000_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 #[cfg(any(feature = "cuda-13000"))]
 impl Default for cudaWaitExternalSemaphoresAsync_ptsz_v11020_params_st {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-#[cfg(any(
-    feature = "cuda-11040",
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090"
-))]
-impl Default for cudaWaitExternalSemaphoresAsync_v10000_params_st {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
