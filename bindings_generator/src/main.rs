@@ -604,9 +604,9 @@ fn generate_nccl(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let url = "https://developer.download.nvidia.com/compute/redist/nccl/";
-    let version = "2.26.2";
+    let version = "2.28.3";
 
-    let path = format!("v{version}/nccl_{version}-1+cuda12.8_x86_64.txz");
+    let path = format!("v{version}/nccl_{version}-1+cuda12.9_x86_64.txz");
     let full_url = format!("{url}/{path}");
     log::debug!("{}", full_url);
 
@@ -655,7 +655,7 @@ struct Args {
     skip_bindings: bool,
 
     #[arg(long, action)]
-    version: Option<String>,
+    cuda_version: Option<String>,
 
     /// Specify a single target to generate bindings for.
     #[arg(long, action)]
@@ -687,7 +687,7 @@ fn main() -> Result<()> {
         "cuda-12090",
         "cuda-13000",
     ];
-    if let Some(version) = args.version {
+    if let Some(version) = args.cuda_version {
         cuda_versions.retain(|&v| v == version);
     }
 
