@@ -943,6 +943,8 @@ pub mod external_memory {
             handle: sys::cudaExternalMemoryHandleDesc__bindgen_ty_1 { fd },
             size,
             flags: 0,
+            #[cfg(feature = "cuda-13000")]
+            reserved: [0; _],
         };
         sys::cudaImportExternalMemory(external_memory.as_mut_ptr(), &handle_description)
             .result()?;
@@ -1010,6 +1012,8 @@ pub mod external_memory {
             offset,
             size,
             flags: 0,
+            #[cfg(feature = "cuda-13000")]
+            reserved: [0; _],
         };
         sys::cudaExternalMemoryGetMappedBuffer(
             device_ptr.as_mut_ptr(),
