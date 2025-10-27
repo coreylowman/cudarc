@@ -17,6 +17,8 @@ Safe CUDA wrappers for:
 8. [cuSPARSE](https://docs.nvidia.com/cuda/cusparse/)
 9. [cuSOLVER](https://docs.nvidia.com/cuda/cusolver/)
 10. [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction)
+11. [cupti](https://docs.nvidia.com/cupti/)
+12. [nvtx](https://nvidia.github.io/NVTX/)
 
 **Contributions welcome!**
 

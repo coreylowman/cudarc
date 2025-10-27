@@ -10,6 +10,7 @@
 //! 9. [cuSOLVER](https://docs.nvidia.com/cuda/cusolver/)
 //! 10. [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction)
 //! 11. [CUPTI](https://docs.nvidia.com/cupti/)
+//! 12. [nvtx](https://nvidia.github.io/NVTX/)
 //!
 //! # crate organization
 //!
@@ -30,6 +31,7 @@
 //! | cusolver | [cusolver::safe] | [cusolver::result] | [cusolver::sys] |
 //! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
 //! | cupti | - | [cupti::result] | [cupti::sys] |
+//! | nvtx | [nvtx::safe] | [nvtx::result] | [nvtx::sys] |
 //!
 //! # Core Concepts
 //!
