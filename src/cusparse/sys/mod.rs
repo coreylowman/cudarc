@@ -668,8 +668,7 @@ pub enum cusparseSpMVAlg_t {
     feature = "cuda-12050",
     feature = "cuda-12060",
     feature = "cuda-12080",
-    feature = "cuda-12090",
-    feature = "cuda-13000"
+    feature = "cuda-12090"
 ))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -680,6 +679,18 @@ pub enum cusparseSpMVAlg_t {
     CUSPARSE_SPMV_COO_ALG1 = 1,
     CUSPARSE_SPMV_COO_ALG2 = 4,
     CUSPARSE_SPMV_SELL_ALG1 = 5,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cusparseSpMVAlg_t {
+    CUSPARSE_SPMV_ALG_DEFAULT = 0,
+    CUSPARSE_SPMV_CSR_ALG1 = 2,
+    CUSPARSE_SPMV_CSR_ALG2 = 3,
+    CUSPARSE_SPMV_COO_ALG1 = 1,
+    CUSPARSE_SPMV_COO_ALG2 = 4,
+    CUSPARSE_SPMV_SELL_ALG1 = 5,
+    CUSPARSE_SPMV_BSR_ALG1 = 6,
 }
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -1017,14 +1028,14 @@ pub struct cusparseSpVecDescr {
 }
 #[repr(C)]
 #[repr(align(16))]
-#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct double2 {
     pub x: f64,
     pub y: f64,
 }
 #[repr(C)]
 #[repr(align(8))]
-#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct float2 {
     pub x: f32,
     pub y: f32,
@@ -1145,31 +1156,6 @@ impl cusparseSpMVAlg_t {
 ))]
 impl cusparseSpMVAlg_t {
     pub const CUSPARSE_SPMV_CSR_ALG2: cusparseSpMVAlg_t = cusparseSpMVAlg_t::CUSPARSE_CSRMV_ALG2;
-}
-#[cfg(any(
-    feature = "cuda-11050",
-    feature = "cuda-11060",
-    feature = "cuda-11070",
-    feature = "cuda-11080",
-    feature = "cuda-12000",
-    feature = "cuda-12010",
-    feature = "cuda-12020",
-    feature = "cuda-12030",
-    feature = "cuda-12040",
-    feature = "cuda-12050",
-    feature = "cuda-12060",
-    feature = "cuda-12080",
-    feature = "cuda-12090",
-    feature = "cuda-13000"
-))]
-impl Default for _IO_FILE {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
 }
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {

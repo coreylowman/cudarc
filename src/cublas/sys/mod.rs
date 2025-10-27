@@ -8,6 +8,10 @@ extern crate alloc;
 extern crate no_std_compat as std;
 pub use self::cudaDataType as cublasDataType_t;
 pub use self::cudaDataType_t as cudaDataType;
+#[cfg(any(feature = "cuda-13000"))]
+pub use self::cudaEmulationMantissaControl_t as cudaEmulationMantissaControl;
+#[cfg(any(feature = "cuda-13000"))]
+pub use self::cudaEmulationSpecialValuesSupport_t as cudaEmulationSpecialValuesSupport;
 pub use self::libraryPropertyType_t as libraryPropertyType;
 pub type cuComplex = cuFloatComplex;
 pub type cuDoubleComplex = double2;
@@ -52,7 +56,7 @@ pub enum cublasComputeType_t {
     CUBLAS_COMPUTE_32I = 72,
     CUBLAS_COMPUTE_32I_PEDANTIC = 73,
 }
-#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[cfg(any(feature = "cuda-12090"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasComputeType_t {
@@ -66,6 +70,24 @@ pub enum cublasComputeType_t {
     CUBLAS_COMPUTE_32F_EMULATED_16BFX9 = 78,
     CUBLAS_COMPUTE_64F = 70,
     CUBLAS_COMPUTE_64F_PEDANTIC = 71,
+    CUBLAS_COMPUTE_32I = 72,
+    CUBLAS_COMPUTE_32I_PEDANTIC = 73,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cublasComputeType_t {
+    CUBLAS_COMPUTE_16F = 64,
+    CUBLAS_COMPUTE_16F_PEDANTIC = 65,
+    CUBLAS_COMPUTE_32F = 68,
+    CUBLAS_COMPUTE_32F_PEDANTIC = 69,
+    CUBLAS_COMPUTE_32F_FAST_16F = 74,
+    CUBLAS_COMPUTE_32F_FAST_16BF = 75,
+    CUBLAS_COMPUTE_32F_FAST_TF32 = 77,
+    CUBLAS_COMPUTE_32F_EMULATED_16BFX9 = 78,
+    CUBLAS_COMPUTE_64F = 70,
+    CUBLAS_COMPUTE_64F_PEDANTIC = 71,
+    CUBLAS_COMPUTE_64F_EMULATED_FIXEDPOINT = 79,
     CUBLAS_COMPUTE_32I = 72,
     CUBLAS_COMPUTE_32I_PEDANTIC = 73,
 }
@@ -224,7 +246,7 @@ pub enum cublasMath_t {
     CUBLAS_TF32_TENSOR_OP_MATH = 3,
     CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION = 16,
 }
-#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[cfg(any(feature = "cuda-12090"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasMath_t {
@@ -233,6 +255,18 @@ pub enum cublasMath_t {
     CUBLAS_PEDANTIC_MATH = 2,
     CUBLAS_TF32_TENSOR_OP_MATH = 3,
     CUBLAS_FP32_EMULATED_BF16X9_MATH = 4,
+    CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION = 16,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cublasMath_t {
+    CUBLAS_DEFAULT_MATH = 0,
+    CUBLAS_TENSOR_OP_MATH = 1,
+    CUBLAS_PEDANTIC_MATH = 2,
+    CUBLAS_TF32_TENSOR_OP_MATH = 3,
+    CUBLAS_FP32_EMULATED_BF16X9_MATH = 4,
+    CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH = 8,
     CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION = 16,
 }
 #[repr(u32)]
@@ -390,6 +424,22 @@ pub enum cudaDataType_t {
     CUDA_R_6F_E3M2 = 32,
     CUDA_R_4F_E2M1 = 33,
 }
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaEmulationMantissaControl_t {
+    CUDA_EMULATION_MANTISSA_CONTROL_DYNAMIC = 0,
+    CUDA_EMULATION_MANTISSA_CONTROL_FIXED = 1,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cudaEmulationSpecialValuesSupport_t {
+    CUDA_EMULATION_SPECIAL_VALUES_SUPPORT_DEFAULT = 65535,
+    CUDA_EMULATION_SPECIAL_VALUES_SUPPORT_NONE = 0,
+    CUDA_EMULATION_SPECIAL_VALUES_SUPPORT_INFINITY = 1,
+    CUDA_EMULATION_SPECIAL_VALUES_SUPPORT_NAN = 2,
+}
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum libraryPropertyType_t {
@@ -409,14 +459,14 @@ pub struct cublasContext {
 }
 #[repr(C)]
 #[repr(align(16))]
-#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct double2 {
     pub x: f64,
     pub y: f64,
 }
 #[repr(C)]
 #[repr(align(8))]
-#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct float2 {
     pub x: f32,
     pub y: f32,
@@ -4778,10 +4828,35 @@ extern "C" {
         mode: *mut cublasAtomicsMode_t,
     ) -> cublasStatus_t;
     pub fn cublasGetCudartVersion() -> usize;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasGetEmulationSpecialValuesSupport(
+        handle: cublasHandle_t,
+        mask: *mut cudaEmulationSpecialValuesSupport,
+    ) -> cublasStatus_t;
     #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
     pub fn cublasGetEmulationStrategy(
         handle: cublasHandle_t,
         emulationStrategy: *mut cublasEmulationStrategy_t,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasGetFixedPointEmulationMantissaBitCountPointer(
+        handle: cublasHandle_t,
+        mantissaBitCount: *mut *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasGetFixedPointEmulationMantissaBitOffset(
+        handle: cublasHandle_t,
+        mantissaBitOffset: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasGetFixedPointEmulationMantissaControl(
+        handle: cublasHandle_t,
+        mantissaControl: *mut cudaEmulationMantissaControl,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasGetFixedPointEmulationMaxMantissaBitCount(
+        handle: cublasHandle_t,
+        maxMantissaBitCount: *mut ::core::ffi::c_int,
     ) -> cublasStatus_t;
     pub fn cublasGetLoggerCallback(userCallback: *mut cublasLogCallback) -> cublasStatus_t;
     pub fn cublasGetMathMode(handle: cublasHandle_t, mode: *mut cublasMath_t) -> cublasStatus_t;
@@ -5569,10 +5644,35 @@ extern "C" {
         handle: cublasHandle_t,
         mode: cublasAtomicsMode_t,
     ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasSetEmulationSpecialValuesSupport(
+        handle: cublasHandle_t,
+        mask: cudaEmulationSpecialValuesSupport,
+    ) -> cublasStatus_t;
     #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
     pub fn cublasSetEmulationStrategy(
         handle: cublasHandle_t,
         emulationStrategy: cublasEmulationStrategy_t,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasSetFixedPointEmulationMantissaBitCountPointer(
+        handle: cublasHandle_t,
+        mantissaBitCount: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasSetFixedPointEmulationMantissaBitOffset(
+        handle: cublasHandle_t,
+        mantissaBitOffset: ::core::ffi::c_int,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasSetFixedPointEmulationMantissaControl(
+        handle: cublasHandle_t,
+        mantissaControl: cudaEmulationMantissaControl,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasSetFixedPointEmulationMaxMantissaBitCount(
+        handle: cublasHandle_t,
+        maxMantissaBitCount: ::core::ffi::c_int,
     ) -> cublasStatus_t;
     pub fn cublasSetLoggerCallback(userCallback: cublasLogCallback) -> cublasStatus_t;
     pub fn cublasSetMathMode(handle: cublasHandle_t, mode: cublasMath_t) -> cublasStatus_t;
@@ -14462,12 +14562,47 @@ mod loaded {
     pub unsafe fn cublasGetCudartVersion() -> usize {
         (culib().cublasGetCudartVersion)()
     }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasGetEmulationSpecialValuesSupport(
+        handle: cublasHandle_t,
+        mask: *mut cudaEmulationSpecialValuesSupport,
+    ) -> cublasStatus_t {
+        (culib().cublasGetEmulationSpecialValuesSupport)(handle, mask)
+    }
     #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
     pub unsafe fn cublasGetEmulationStrategy(
         handle: cublasHandle_t,
         emulationStrategy: *mut cublasEmulationStrategy_t,
     ) -> cublasStatus_t {
         (culib().cublasGetEmulationStrategy)(handle, emulationStrategy)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasGetFixedPointEmulationMantissaBitCountPointer(
+        handle: cublasHandle_t,
+        mantissaBitCount: *mut *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (culib().cublasGetFixedPointEmulationMantissaBitCountPointer)(handle, mantissaBitCount)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasGetFixedPointEmulationMantissaBitOffset(
+        handle: cublasHandle_t,
+        mantissaBitOffset: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (culib().cublasGetFixedPointEmulationMantissaBitOffset)(handle, mantissaBitOffset)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasGetFixedPointEmulationMantissaControl(
+        handle: cublasHandle_t,
+        mantissaControl: *mut cudaEmulationMantissaControl,
+    ) -> cublasStatus_t {
+        (culib().cublasGetFixedPointEmulationMantissaControl)(handle, mantissaControl)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasGetFixedPointEmulationMaxMantissaBitCount(
+        handle: cublasHandle_t,
+        maxMantissaBitCount: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (culib().cublasGetFixedPointEmulationMaxMantissaBitCount)(handle, maxMantissaBitCount)
     }
     pub unsafe fn cublasGetLoggerCallback(userCallback: *mut cublasLogCallback) -> cublasStatus_t {
         (culib().cublasGetLoggerCallback)(userCallback)
@@ -15447,12 +15582,47 @@ mod loaded {
     ) -> cublasStatus_t {
         (culib().cublasSetAtomicsMode)(handle, mode)
     }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasSetEmulationSpecialValuesSupport(
+        handle: cublasHandle_t,
+        mask: cudaEmulationSpecialValuesSupport,
+    ) -> cublasStatus_t {
+        (culib().cublasSetEmulationSpecialValuesSupport)(handle, mask)
+    }
     #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
     pub unsafe fn cublasSetEmulationStrategy(
         handle: cublasHandle_t,
         emulationStrategy: cublasEmulationStrategy_t,
     ) -> cublasStatus_t {
         (culib().cublasSetEmulationStrategy)(handle, emulationStrategy)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasSetFixedPointEmulationMantissaBitCountPointer(
+        handle: cublasHandle_t,
+        mantissaBitCount: *mut ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (culib().cublasSetFixedPointEmulationMantissaBitCountPointer)(handle, mantissaBitCount)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasSetFixedPointEmulationMantissaBitOffset(
+        handle: cublasHandle_t,
+        mantissaBitOffset: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (culib().cublasSetFixedPointEmulationMantissaBitOffset)(handle, mantissaBitOffset)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasSetFixedPointEmulationMantissaControl(
+        handle: cublasHandle_t,
+        mantissaControl: cudaEmulationMantissaControl,
+    ) -> cublasStatus_t {
+        (culib().cublasSetFixedPointEmulationMantissaControl)(handle, mantissaControl)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasSetFixedPointEmulationMaxMantissaBitCount(
+        handle: cublasHandle_t,
+        maxMantissaBitCount: ::core::ffi::c_int,
+    ) -> cublasStatus_t {
+        (culib().cublasSetFixedPointEmulationMaxMantissaBitCount)(handle, maxMantissaBitCount)
     }
     pub unsafe fn cublasSetLoggerCallback(userCallback: cublasLogCallback) -> cublasStatus_t {
         (culib().cublasSetLoggerCallback)(userCallback)
@@ -24004,11 +24174,40 @@ mod loaded {
             mode: *mut cublasAtomicsMode_t,
         ) -> cublasStatus_t,
         pub cublasGetCudartVersion: unsafe extern "C" fn() -> usize,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasGetEmulationSpecialValuesSupport: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mask: *mut cudaEmulationSpecialValuesSupport,
+        ) -> cublasStatus_t,
         #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
         pub cublasGetEmulationStrategy: unsafe extern "C" fn(
             handle: cublasHandle_t,
             emulationStrategy: *mut cublasEmulationStrategy_t,
         ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasGetFixedPointEmulationMantissaBitCountPointer:
+            unsafe extern "C" fn(
+                handle: cublasHandle_t,
+                mantissaBitCount: *mut *mut ::core::ffi::c_int,
+            ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasGetFixedPointEmulationMantissaBitOffset: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mantissaBitOffset: *mut ::core::ffi::c_int,
+        )
+            -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasGetFixedPointEmulationMantissaControl: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mantissaControl: *mut cudaEmulationMantissaControl,
+        )
+            -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasGetFixedPointEmulationMaxMantissaBitCount: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            maxMantissaBitCount: *mut ::core::ffi::c_int,
+        )
+            -> cublasStatus_t,
         pub cublasGetLoggerCallback:
             unsafe extern "C" fn(userCallback: *mut cublasLogCallback) -> cublasStatus_t,
         pub cublasGetMathMode:
@@ -24799,11 +24998,40 @@ mod loaded {
             handle: cublasHandle_t,
             mode: cublasAtomicsMode_t,
         ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasSetEmulationSpecialValuesSupport: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mask: cudaEmulationSpecialValuesSupport,
+        ) -> cublasStatus_t,
         #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
         pub cublasSetEmulationStrategy: unsafe extern "C" fn(
             handle: cublasHandle_t,
             emulationStrategy: cublasEmulationStrategy_t,
         ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasSetFixedPointEmulationMantissaBitCountPointer:
+            unsafe extern "C" fn(
+                handle: cublasHandle_t,
+                mantissaBitCount: *mut ::core::ffi::c_int,
+            ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasSetFixedPointEmulationMantissaBitOffset: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mantissaBitOffset: ::core::ffi::c_int,
+        )
+            -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasSetFixedPointEmulationMantissaControl: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            mantissaControl: cudaEmulationMantissaControl,
+        )
+            -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasSetFixedPointEmulationMaxMantissaBitCount: unsafe extern "C" fn(
+            handle: cublasHandle_t,
+            maxMantissaBitCount: ::core::ffi::c_int,
+        )
+            -> cublasStatus_t,
         pub cublasSetLoggerCallback:
             unsafe extern "C" fn(userCallback: cublasLogCallback) -> cublasStatus_t,
         pub cublasSetMathMode:
@@ -30717,9 +30945,34 @@ mod loaded {
                 .get(b"cublasGetCudartVersion\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasGetEmulationSpecialValuesSupport = __library
+                .get(b"cublasGetEmulationSpecialValuesSupport\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
             let cublasGetEmulationStrategy = __library
                 .get(b"cublasGetEmulationStrategy\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasGetFixedPointEmulationMantissaBitCountPointer = __library
+                .get(b"cublasGetFixedPointEmulationMantissaBitCountPointer\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasGetFixedPointEmulationMantissaBitOffset = __library
+                .get(b"cublasGetFixedPointEmulationMantissaBitOffset\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasGetFixedPointEmulationMantissaControl = __library
+                .get(b"cublasGetFixedPointEmulationMantissaControl\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasGetFixedPointEmulationMaxMantissaBitCount = __library
+                .get(b"cublasGetFixedPointEmulationMaxMantissaBitCount\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cublasGetLoggerCallback = __library
@@ -31274,9 +31527,34 @@ mod loaded {
                 .get(b"cublasSetAtomicsMode\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasSetEmulationSpecialValuesSupport = __library
+                .get(b"cublasSetEmulationSpecialValuesSupport\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
             let cublasSetEmulationStrategy = __library
                 .get(b"cublasSetEmulationStrategy\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasSetFixedPointEmulationMantissaBitCountPointer = __library
+                .get(b"cublasSetFixedPointEmulationMantissaBitCountPointer\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasSetFixedPointEmulationMantissaBitOffset = __library
+                .get(b"cublasSetFixedPointEmulationMantissaBitOffset\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasSetFixedPointEmulationMantissaControl = __library
+                .get(b"cublasSetFixedPointEmulationMantissaControl\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasSetFixedPointEmulationMaxMantissaBitCount = __library
+                .get(b"cublasSetFixedPointEmulationMaxMantissaBitCount\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let cublasSetLoggerCallback = __library
@@ -34820,8 +35098,18 @@ mod loaded {
                 cublasGemmStridedBatchedEx_64,
                 cublasGetAtomicsMode,
                 cublasGetCudartVersion,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasGetEmulationSpecialValuesSupport,
                 #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
                 cublasGetEmulationStrategy,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasGetFixedPointEmulationMantissaBitCountPointer,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasGetFixedPointEmulationMantissaBitOffset,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasGetFixedPointEmulationMantissaControl,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasGetFixedPointEmulationMaxMantissaBitCount,
                 cublasGetLoggerCallback,
                 cublasGetMathMode,
                 cublasGetMatrix,
@@ -35185,8 +35473,18 @@ mod loaded {
                 ))]
                 cublasSdot_v2_64,
                 cublasSetAtomicsMode,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasSetEmulationSpecialValuesSupport,
                 #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
                 cublasSetEmulationStrategy,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasSetFixedPointEmulationMantissaBitCountPointer,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasSetFixedPointEmulationMantissaBitOffset,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasSetFixedPointEmulationMantissaControl,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasSetFixedPointEmulationMaxMantissaBitCount,
                 cublasSetLoggerCallback,
                 cublasSetMathMode,
                 cublasSetMatrix,
