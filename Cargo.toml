@@ -11,7 +11,7 @@ documentation = "https://docs.rs/cudarc"
 repository = "https://github.com/coreylowman/cudarc"
 readme = "README.md"
 
-keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas", "cupti"]
+keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas"]
 categories = [
     "api-bindings",
     "hardware-support",
