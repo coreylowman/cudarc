@@ -113,6 +113,8 @@ pub mod driver;
 pub mod nccl;
 #[cfg(feature = "nvrtc")]
 pub mod nvrtc;
+#[cfg(feature = "nvtx")]
+pub mod nvtx;
 #[cfg(feature = "runtime")]
 pub mod runtime;
 

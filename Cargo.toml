@@ -80,6 +80,7 @@ cusparse = ["driver"]
 cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
 cusolvermg = ["cusolver"]
 cufile = ["driver"]
+nvtx = ["driver"]
 cupti = ["runtime", "driver"]
 
 std = []
