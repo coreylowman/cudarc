@@ -44,6 +44,8 @@ default = [
     "runtime",
     "nvrtc",
     "dynamic-loading",
+    "cuda-13000",
+    "nvtx",
 ]
 
 cuda-version-from-build-system = []
@@ -79,6 +81,7 @@ cusparse = ["driver"]
 cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
 cusolvermg = ["cusolver"]
 cufile = ["driver"]
+nvtx = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]

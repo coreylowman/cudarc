@@ -18,227 +18,251 @@ mod merge;
 fn create_modules() -> Vec<ModuleConfig> {
     vec![
         ModuleConfig {
-            cudarc_name: "driver".to_string(),
-            redist_name: "cuda_cudart".to_string(),
+            cudarc_name: "driver",
+            redist_name: "cuda_cudart",
             allowlist: Filters {
                 types: vec![
-                    "^CU.*".to_string(),
-                    "^cuuint(32|64)_t".to_string(),
-                    "^cudaError_enum".to_string(),
-                    "^cu.*Complex$".to_string(),
-                    "^cuda.*".to_string(),
-                    "^libraryPropertyType.*".to_string(),
+                    "^CU.*",
+                    "^cuuint(32|64)_t",
+                    "^cudaError_enum",
+                    "^cu.*Complex$",
+                    "^cuda.*",
+                    "^libraryPropertyType.*",
                 ],
-                functions: vec!["^cu.*".to_string()],
-                vars: vec!["^CU.*".to_string()],
+                functions: vec!["^cu.*"],
+                vars: vec!["^CU.*"],
             },
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/385
-                types: vec!["^cuCheckpoint.*".to_string()],
+                types: vec!["^cuCheckpoint.*"],
                 functions: vec![
-                    "^cuCheckpoint.*".to_string(),
-                    "cuDeviceGetNvSciSyncAttributes".to_string(),
+                    "^cuCheckpoint.*",
+                    "cuDeviceGetNvSciSyncAttributes",
                 ],
                 vars: vec![],
             },
-            libs: vec!["cuda".to_string(), "nvcuda".to_string()],
+            libs: vec!["cuda", "nvcuda"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cublas".to_string(),
-            redist_name: "libcublas".to_string(),
+            cudarc_name: "cublas",
+            redist_name: "libcublas",
             allowlist: Filters {
-                types: vec!["^cublas.*".to_string()],
-                functions: vec!["^cublas.*".to_string()],
-                vars: vec!["^cublas.*".to_string()],
+                types: vec!["^cublas.*"],
+                functions: vec!["^cublas.*"],
+                vars: vec!["^cublas.*"],
             },
             blocklist: Filters::none(),
-            libs: vec!["cublas".to_string()],
+            libs: vec!["cublas"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cublaslt".to_string(),
-            redist_name: "libcublas".to_string(),
+            cudarc_name: "cublaslt",
+            redist_name: "libcublas",
             allowlist: Filters {
-                types: vec!["^cublasLt.*".to_string()],
-                functions: vec!["^cublasLt.*".to_string()],
-                vars: vec!["^cublasLt.*".to_string()],
+                types: vec!["^cublasLt.*"],
+                functions: vec!["^cublasLt.*"],
+                vars: vec!["^cublasLt.*"],
             },
             blocklist: Filters {
                 types: vec![],
-                functions: vec!["cublasLtDisableCpuInstructionsSetMask".to_string()],
+                functions: vec!["cublasLtDisableCpuInstructionsSetMask"],
                 vars: vec![],
             },
-            libs: vec!["cublasLt".to_string()],
+            libs: vec!["cublasLt"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "curand".to_string(),
-            redist_name: "libcurand".to_string(),
+            cudarc_name: "curand",
+            redist_name: "libcurand",
             allowlist: Filters {
-                types: vec!["^curand.*".to_string()],
-                functions: vec!["^curand.*".to_string()],
-                vars: vec!["^curand.*".to_string()],
+                types: vec!["^curand.*"],
+                functions: vec!["^curand.*"],
+                vars: vec!["^curand.*"],
             },
             blocklist: Filters {
                 types: vec![],
                 functions: vec![
-                    "curandGenerateBinomial".to_string(),
-                    "curandGenerateBinomialMethod".to_string(),
+                    "curandGenerateBinomial",
+                    "curandGenerateBinomialMethod",
                 ],
                 vars: vec![],
             },
-            libs: vec!["curand".to_string()],
+            libs: vec!["curand"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "runtime".to_string(),
-            redist_name: "cuda_cudart".to_string(),
+            cudarc_name: "runtime",
+            redist_name: "cuda_cudart",
             allowlist: Filters {
-                types: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
-                functions: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
-                vars: vec!["^[Cc][Uu][Dd][Aa].*".to_string()],
+                types: vec!["^[Cc][Uu][Dd][Aa].*"],
+                functions: vec!["^[Cc][Uu][Dd][Aa].*"],
+                vars: vec!["^[Cc][Uu][Dd][Aa].*"],
             },
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/397
                 types: vec![],
-                functions: vec!["cudaDeviceGetNvSciSyncAttributes".to_string()],
+                functions: vec!["cudaDeviceGetNvSciSyncAttributes"],
                 vars: vec![],
             },
-            libs: vec!["cudart".to_string()],
+            libs: vec!["cudart"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "nvrtc".to_string(),
-            redist_name: "cuda_nvrtc".to_string(),
+            cudarc_name: "nvrtc",
+            redist_name: "cuda_nvrtc",
             allowlist: Filters {
-                types: vec!["^nvrtc.*".to_string()],
-                functions: vec!["^nvrtc.*".to_string()],
-                vars: vec!["^nvrtc.*".to_string()],
+                types: vec!["^nvrtc.*"],
+                functions: vec!["^nvrtc.*"],
+                vars: vec!["^nvrtc.*"],
             },
             blocklist: Filters {
                 // NOTE: see https://github.com/coreylowman/cudarc/pull/431
                 types: vec![],
                 functions: vec![
-                    "nvrtcGetPCHCreateStatus".to_string(),
-                    "nvrtcGetPCHHeapSize".to_string(),
-                    "nvrtcGetPCHHeapSizeRequired".to_string(),
-                    "nvrtcSetFlowCallback".to_string(),
-                    "nvrtcSetPCHHeapSize".to_string(),
+                    "nvrtcGetPCHCreateStatus",
+                    "nvrtcGetPCHHeapSize",
+                    "nvrtcGetPCHHeapSizeRequired",
+                    "nvrtcSetFlowCallback",
+                    "nvrtcSetPCHHeapSize",
                 ],
                 vars: vec![],
             },
-            libs: vec!["nvrtc".to_string()],
+            libs: vec!["nvrtc"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cudnn".to_string(),
-            redist_name: "cudnn".to_string(),
+            cudarc_name: "cudnn",
+            redist_name: "cudnn",
             allowlist: Filters {
-                types: vec!["^cudnn.*".to_string()],
-                functions: vec!["^cudnn.*".to_string()],
-                vars: vec!["^cudnn.*".to_string()],
+                types: vec!["^cudnn.*"],
+                functions: vec!["^cudnn.*"],
+                vars: vec!["^cudnn.*"],
             },
             blocklist: Filters::none(),
-            libs: vec!["cudnn".to_string()],
+            libs: vec!["cudnn"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "nccl".to_string(),
-            redist_name: "libnccl".to_string(),
+            cudarc_name: "nccl",
+            redist_name: "libnccl",
             allowlist: Filters {
-                types: vec!["^nccl.*".to_string()],
-                functions: vec!["^nccl.*".to_string()],
-                vars: vec!["^nccl.*".to_string()],
+                types: vec!["^nccl.*"],
+                functions: vec!["^nccl.*"],
+                vars: vec!["^nccl.*"],
             },
             blocklist: Filters::none(),
-            libs: vec!["nccl".to_string()],
+            libs: vec!["nccl"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cusparse".to_string(),
-            redist_name: "libcusparse".to_string(),
+            cudarc_name: "cusparse",
+            redist_name: "libcusparse",
             allowlist: Filters {
-                types: vec!["^cusparse.*".to_string()],
-                functions: vec!["^cusparse.*".to_string()],
-                vars: vec!["^cusparse.*".to_string()],
+                types: vec!["^cusparse.*"],
+                functions: vec!["^cusparse.*"],
+                vars: vec!["^cusparse.*"],
             },
             blocklist: Filters {
                 types: vec![],
                 functions: vec![
-                    "cusparseCbsric02_bufferSizeExt".into(),
-                    "cusparseCbsrilu02_bufferSizeExt".into(),
-                    "cusparseCbsrsm2_bufferSizeExt".into(),
-                    "cusparseCbsrsv2_bufferSizeExt".into(),
-                    "cusparseCcsr2gebsr_bufferSizeExt".into(),
-                    "cusparseCcsric02_bufferSizeExt".into(),
-                    "cusparseCcsrilu02_bufferSizeExt".into(),
-                    "cusparseCgebsr2gebsc_bufferSizeExt".into(),
-                    "cusparseCgebsr2gebsr_bufferSizeExt".into(),
-                    "cusparseDbsric02_bufferSizeExt".into(),
-                    "cusparseDbsrilu02_bufferSizeExt".into(),
-                    "cusparseDbsrsm2_bufferSizeExt".into(),
-                    "cusparseDbsrsv2_bufferSizeExt".into(),
-                    "cusparseDcsr2gebsr_bufferSizeExt".into(),
-                    "cusparseDcsric02_bufferSizeExt".into(),
-                    "cusparseDcsrilu02_bufferSizeExt".into(),
-                    "cusparseDgebsr2gebsc_bufferSizeExt".into(),
-                    "cusparseDgebsr2gebsr_bufferSizeExt".into(),
-                    "cusparseSbsric02_bufferSizeExt".into(),
-                    "cusparseSbsrilu02_bufferSizeExt".into(),
-                    "cusparseSbsrsm2_bufferSizeExt".into(),
-                    "cusparseSbsrsv2_bufferSizeExt".into(),
-                    "cusparseScsr2gebsr_bufferSizeExt".into(),
-                    "cusparseScsric02_bufferSizeExt".into(),
-                    "cusparseScsrilu02_bufferSizeExt".into(),
-                    "cusparseSgebsr2gebsc_bufferSizeExt".into(),
-                    "cusparseSgebsr2gebsr_bufferSizeExt".into(),
-                    "cusparseXgebsr2csr".into(),
-                    "cusparseZbsric02_bufferSizeExt".into(),
-                    "cusparseZbsrilu02_bufferSizeExt".into(),
-                    "cusparseZbsrsm2_bufferSizeExt".into(),
-                    "cusparseZbsrsv2_bufferSizeExt".into(),
-                    "cusparseZcsr2gebsr_bufferSizeExt".into(),
-                    "cusparseZcsric02_bufferSizeExt".into(),
-                    "cusparseZcsrilu02_bufferSizeExt".into(),
-                    "cusparseZgebsr2gebsc_bufferSizeExt".into(),
-                    "cusparseZgebsr2gebsr_bufferSizeExt".into(),
+                    "cusparseCbsric02_bufferSizeExt",
+                    "cusparseCbsrilu02_bufferSizeExt",
+                    "cusparseCbsrsm2_bufferSizeExt",
+                    "cusparseCbsrsv2_bufferSizeExt",
+                    "cusparseCcsr2gebsr_bufferSizeExt",
+                    "cusparseCcsric02_bufferSizeExt",
+                    "cusparseCcsrilu02_bufferSizeExt",
+                    "cusparseCgebsr2gebsc_bufferSizeExt",
+                    "cusparseCgebsr2gebsr_bufferSizeExt",
+                    "cusparseDbsric02_bufferSizeExt",
+                    "cusparseDbsrilu02_bufferSizeExt",
+                    "cusparseDbsrsm2_bufferSizeExt",
+                    "cusparseDbsrsv2_bufferSizeExt",
+                    "cusparseDcsr2gebsr_bufferSizeExt",
+                    "cusparseDcsric02_bufferSizeExt",
+                    "cusparseDcsrilu02_bufferSizeExt",
+                    "cusparseDgebsr2gebsc_bufferSizeExt",
+                    "cusparseDgebsr2gebsr_bufferSizeExt",
+                    "cusparseSbsric02_bufferSizeExt",
+                    "cusparseSbsrilu02_bufferSizeExt",
+                    "cusparseSbsrsm2_bufferSizeExt",
+                    "cusparseSbsrsv2_bufferSizeExt",
+                    "cusparseScsr2gebsr_bufferSizeExt",
+                    "cusparseScsric02_bufferSizeExt",
+                    "cusparseScsrilu02_bufferSizeExt",
+                    "cusparseSgebsr2gebsc_bufferSizeExt",
+                    "cusparseSgebsr2gebsr_bufferSizeExt",
+                    "cusparseXgebsr2csr",
+                    "cusparseZbsric02_bufferSizeExt",
+                    "cusparseZbsrilu02_bufferSizeExt",
+                    "cusparseZbsrsm2_bufferSizeExt",
+                    "cusparseZbsrsv2_bufferSizeExt",
+                    "cusparseZcsr2gebsr_bufferSizeExt",
+                    "cusparseZcsric02_bufferSizeExt",
+                    "cusparseZcsrilu02_bufferSizeExt",
+                    "cusparseZgebsr2gebsc_bufferSizeExt",
+                    "cusparseZgebsr2gebsr_bufferSizeExt",
                 ],
                 vars: vec![],
             },
-            libs: vec!["cusparse".to_string()],
+            libs: vec!["cusparse"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cusolver".to_string(),
-            redist_name: "libcusolver".to_string(),
+            cudarc_name: "cusolver",
+            redist_name: "libcusolver",
             allowlist: Filters {
-                types: vec!["^cusolver.*".to_string()],
-                functions: vec!["^cusolver.*".to_string()],
-                vars: vec!["^cusolver.*".to_string()],
+                types: vec!["^cusolver.*"],
+                functions: vec!["^cusolver.*"],
+                vars: vec!["^cusolver.*"],
             },
             blocklist: Filters {
-                types: vec!["^cusolverMg.*".to_string()],
+                types: vec!["^cusolverMg.*"],
                 functions: vec![
-                    "^cusolverMg.*".to_string(),
-                    "^cusolverDnLogger.*".to_string(),
+                    "^cusolverMg.*",
+                    "^cusolverDnLogger.*",
                 ],
-                vars: vec!["^cusolverMg.*".to_string()],
+                vars: vec!["^cusolverMg.*"],
             },
-            libs: vec!["cusolver".to_string()],
+            libs: vec!["cusolver"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cusolvermg".to_string(),
-            redist_name: "libcusolver".to_string(),
+            cudarc_name: "cusolvermg",
+            redist_name: "libcusolver",
             allowlist: Filters {
-                types: vec!["^cusolverMg.*".to_string()],
-                functions: vec!["^cusolverMg.*".to_string()],
-                vars: vec!["^cusolverMg.*".to_string()],
+                types: vec!["^cusolverMg.*"],
+                functions: vec!["^cusolverMg.*"],
+                vars: vec!["^cusolverMg.*"],
             },
             blocklist: Filters::none(),
-            libs: vec!["cusolverMg".to_string()],
+            libs: vec!["cusolverMg"],
+            clang_args: vec![],
         },
         ModuleConfig {
-            cudarc_name: "cufile".to_string(),
-            redist_name: "libcufile".to_string(),
+            cudarc_name: "cufile",
+            redist_name: "libcufile",
             allowlist: Filters {
-                types: vec!["^[Cc][Uu][Ff][Ii][Ll][Ee].*".to_string()],
-                functions: vec!["^cuFile.*".to_string()],
+                types: vec!["^[Cc][Uu][Ff][Ii][Ll][Ee].*"],
+                functions: vec!["^cuFile.*"],
                 vars: vec![],
             },
             blocklist: Filters::none(),
-            libs: vec!["cufile".to_string()],
+            libs: vec!["cufile"],
+            clang_args: vec![],
+        },
+        ModuleConfig {
+            cudarc_name: "nvtx",
+            redist_name: "cuda_nvtx",
+            allowlist: Filters {
+                types: vec!["^nvtx.*"],
+                functions: vec!["^nvtx.*"],
+                vars: vec!["^nvtx.*"],
+            },
+            blocklist: Filters::none(),
+            libs: vec!["nvtx"],
+            clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="]
         },
     ]
 }
@@ -246,9 +270,9 @@ fn create_modules() -> Vec<ModuleConfig> {
 #[derive(Debug)]
 struct ModuleConfig {
     /// Name of corresponding module in cudarc
-    cudarc_name: String,
+    cudarc_name: &'static str,
     /// The name of the library within cuda/redist
-    redist_name: String,
+    redist_name: &'static str,
     /// The various filter used in bindgen to select
     /// the symbols we re-expose
     allowlist: Filters,
@@ -256,7 +280,8 @@ struct ModuleConfig {
     /// The various names used to look for symbols
     /// Those names are only used with the `dynamic-loading`
     /// feature.
-    libs: Vec<String>,
+    libs: Vec<&'static str>,
+    clang_args: Vec<&'static str>,
 }
 
 impl ModuleConfig {
@@ -293,6 +318,10 @@ impl ModuleConfig {
             .generate_comments(false)
             .layout_tests(false)
             .use_core();
+
+        for &arg in self.clang_args.iter() {
+            builder = builder.clang_arg(arg);
+        }
 
         for filter_name in self.allowlist.types.iter() {
             builder = builder.allowlist_type(filter_name);
@@ -364,9 +393,9 @@ impl ModuleConfig {
 #[derive(Debug)]
 /// Bindgen filters
 struct Filters {
-    types: Vec<String>,
-    functions: Vec<String>,
-    vars: Vec<String>,
+    types: Vec<&'static str>,
+    functions: Vec<&'static str>,
+    vars: Vec<&'static str>,
 }
 
 impl Filters {
@@ -415,8 +444,8 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
         }
 
         for module in modules {
-            module_pb.set_message(module.cudarc_name.clone());
-            match module.cudarc_name.as_str() {
+            module_pb.set_message(module.cudarc_name);
+            match module.cudarc_name {
                 "cudnn" => generate_cudnn(cuda_version, module, &primary_archives, &multi_progress),
                 "nccl" => generate_nccl(cuda_version, module, &primary_archives, &multi_progress),
                 _ => generate_sys(cuda_version, module, &primary_archives, &multi_progress),

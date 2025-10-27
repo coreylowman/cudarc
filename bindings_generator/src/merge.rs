@@ -193,7 +193,7 @@ impl BindingMerger {
                                     .or_default()
                                     .insert(version, func.clone());
                             }
-                            other => panic!("Unhandled foreign item {other:?}"),
+                            other => println!("WARNING: Unhandled foreign item {other:?} in {path:?}... SKIPPING"),
                         }
                     }
                 }
@@ -517,7 +517,7 @@ pub fn merge_bindings(modules: &[ModuleConfig]) -> Result<()> {
         merge(
             format!("out/{}/sys/linked", config.cudarc_name),
             format!("../src/{}/sys/mod.rs", config.cudarc_name),
-            config.libs.clone(),
+            config.libs.iter().map(|&s| s.into()).collect(),
         )?;
     }
     Ok(())
