@@ -606,7 +606,6 @@ extern "C" {
         attribs: *mut nvtxResourceAttributes_t,
     ) -> nvtxResourceHandle_t;
     pub fn nvtxDomainResourceDestroy(resource: nvtxResourceHandle_t);
-    pub fn nvtxInitialize(reserved: *const ::core::ffi::c_void);
     pub fn nvtxMarkA(message: *const ::core::ffi::c_char);
     pub fn nvtxMarkEx(eventAttrib: *const nvtxEventAttributes_t);
     pub fn nvtxMarkW(message: *const wchar_t);
@@ -694,9 +693,6 @@ mod loaded {
     pub unsafe fn nvtxDomainResourceDestroy(resource: nvtxResourceHandle_t) {
         (culib().nvtxDomainResourceDestroy)(resource)
     }
-    pub unsafe fn nvtxInitialize(reserved: *const ::core::ffi::c_void) {
-        (culib().nvtxInitialize)(reserved)
-    }
     pub unsafe fn nvtxMarkA(message: *const ::core::ffi::c_char) {
         (culib().nvtxMarkA)(message)
     }
@@ -783,7 +779,6 @@ mod loaded {
             attribs: *mut nvtxResourceAttributes_t,
         ) -> nvtxResourceHandle_t,
         pub nvtxDomainResourceDestroy: unsafe extern "C" fn(resource: nvtxResourceHandle_t),
-        pub nvtxInitialize: unsafe extern "C" fn(reserved: *const ::core::ffi::c_void),
         pub nvtxMarkA: unsafe extern "C" fn(message: *const ::core::ffi::c_char),
         pub nvtxMarkEx: unsafe extern "C" fn(eventAttrib: *const nvtxEventAttributes_t),
         pub nvtxMarkW: unsafe extern "C" fn(message: *const wchar_t),
@@ -875,10 +870,6 @@ mod loaded {
                 .get(b"nvtxDomainResourceDestroy\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            let nvtxInitialize = __library
-                .get(b"nvtxInitialize\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             let nvtxMarkA = __library
                 .get(b"nvtxMarkA\0")
                 .map(|sym| *sym)
@@ -955,7 +946,6 @@ mod loaded {
                 nvtxDomainRegisterStringW,
                 nvtxDomainResourceCreate,
                 nvtxDomainResourceDestroy,
-                nvtxInitialize,
                 nvtxMarkA,
                 nvtxMarkEx,
                 nvtxMarkW,

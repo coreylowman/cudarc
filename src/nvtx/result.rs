@@ -2,11 +2,6 @@ use std::ffi::{c_int, CString};
 
 use super::sys;
 
-/// Force initialization - this is optional to call.
-pub fn initialize() {
-    unsafe { sys::nvtxInitialize(std::ptr::null()) };
-}
-
 /// Create a new domain. See [cuda docs](https://nvidia.github.io/NVTX/doxygen/group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d)
 pub fn domain_create<S: AsRef<str>>(name: S) -> sys::nvtxDomainHandle_t {
     let name = name.as_ref();
