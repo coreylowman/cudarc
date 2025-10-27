@@ -217,7 +217,7 @@ impl<X: CudnnDataType, C: CudnnDataType, Y: CudnnDataType> ConvForward<'_, X, C,
             NUM_ALGOS as u32
         );
         let mut returned_count = [0; 1];
-        let mut perf_results = [ unsafe { std::mem::zeroed() }; NUM_ALGOS];
+        let mut perf_results = [unsafe { std::mem::zeroed() }; NUM_ALGOS];
         unsafe {
             result::get_convolution_forward_algorithm(
                 self.conv.handle.handle,
