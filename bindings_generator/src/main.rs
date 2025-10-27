@@ -291,7 +291,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["nvToolsExt"],
-            clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="]
+            clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="],
             raw_lines: vec![],
         },
         ModuleConfig {
@@ -433,7 +433,7 @@ impl ModuleConfig {
             builder = builder.blocklist_function(filter_name);
         }
 
-        for raw_line in self.raw_lines.iter() {
+        for &raw_line in self.raw_lines.iter() {
             builder = builder.raw_line(raw_line);
         }
 
