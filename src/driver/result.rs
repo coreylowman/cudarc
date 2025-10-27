@@ -1161,7 +1161,7 @@ pub mod external_memory {
             handle: sys::CUDA_EXTERNAL_MEMORY_HANDLE_DESC_st__bindgen_ty_1 { fd },
             size,
             flags: 0,
-            reserved: [0; _],
+            reserved: [0; 16],
         };
         sys::cuImportExternalMemory(external_memory.as_mut_ptr(), &handle_description).result()?;
         Ok(external_memory.assume_init())
@@ -1227,7 +1227,7 @@ pub mod external_memory {
             offset,
             size,
             flags: 0,
-            reserved: [0; _],
+            reserved: [0; 16],
         };
         sys::cuExternalMemoryGetMappedBuffer(
             device_ptr.as_mut_ptr(),
