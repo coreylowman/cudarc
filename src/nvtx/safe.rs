@@ -3,7 +3,7 @@ use std::ffi::CString;
 use super::{result, sys};
 
 /// Create a range guard. Short hand for `Event::message(msg).range()`.
-/// 
+///
 /// Range is started on creation, and stopped when the returned [Range] is dropped.
 pub fn scoped_range<S: AsRef<str>>(msg: S) -> Range {
     Event::message(msg).range()
