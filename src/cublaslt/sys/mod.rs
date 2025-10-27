@@ -12,6 +12,8 @@ pub type FILE = _IO_FILE;
 pub type _IO_lock_t = ::core::ffi::c_void;
 pub type __off64_t = ::core::ffi::c_long;
 pub type __off_t = ::core::ffi::c_long;
+#[cfg(any(feature = "cuda-13000"))]
+pub type cublasLtEmulationDesc_t = *mut cublasLtEmulationDescOpaque_t;
 pub type cublasLtHandle_t = *mut cublasLtContext;
 pub type cublasLtLoggerCallback_t = ::core::option::Option<
     unsafe extern "C" fn(
@@ -56,7 +58,7 @@ pub enum cublasComputeType_t {
     CUBLAS_COMPUTE_32I = 72,
     CUBLAS_COMPUTE_32I_PEDANTIC = 73,
 }
-#[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
+#[cfg(any(feature = "cuda-12090"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasComputeType_t {
@@ -70,6 +72,24 @@ pub enum cublasComputeType_t {
     CUBLAS_COMPUTE_32F_EMULATED_16BFX9 = 78,
     CUBLAS_COMPUTE_64F = 70,
     CUBLAS_COMPUTE_64F_PEDANTIC = 71,
+    CUBLAS_COMPUTE_32I = 72,
+    CUBLAS_COMPUTE_32I_PEDANTIC = 73,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cublasComputeType_t {
+    CUBLAS_COMPUTE_16F = 64,
+    CUBLAS_COMPUTE_16F_PEDANTIC = 65,
+    CUBLAS_COMPUTE_32F = 68,
+    CUBLAS_COMPUTE_32F_PEDANTIC = 69,
+    CUBLAS_COMPUTE_32F_FAST_16F = 74,
+    CUBLAS_COMPUTE_32F_FAST_16BF = 75,
+    CUBLAS_COMPUTE_32F_FAST_TF32 = 77,
+    CUBLAS_COMPUTE_32F_EMULATED_16BFX9 = 78,
+    CUBLAS_COMPUTE_64F = 70,
+    CUBLAS_COMPUTE_64F_PEDANTIC = 71,
+    CUBLAS_COMPUTE_64F_EMULATED_FIXEDPOINT = 79,
     CUBLAS_COMPUTE_32I = 72,
     CUBLAS_COMPUTE_32I_PEDANTIC = 73,
 }
@@ -161,6 +181,17 @@ pub enum cublasLtClusterShape_t {
     CUBLASLT_CLUSTER_SHAPE_1x14x1 = 50,
     CUBLASLT_CLUSTER_SHAPE_1x15x1 = 51,
     CUBLASLT_CLUSTER_SHAPE_END = 52,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cublasLtEmulationDescAttributes_t {
+    CUBLASLT_EMULATION_DESC_STRATEGY = 0,
+    CUBLASLT_EMULATION_DESC_SPECIAL_VALUES_SUPPORT = 1,
+    CUBLASLT_EMULATION_DESC_FIXEDPOINT_MANTISSA_CONTROL = 2,
+    CUBLASLT_EMULATION_DESC_FIXEDPOINT_MAX_MANTISSA_BIT_COUNT = 3,
+    CUBLASLT_EMULATION_DESC_FIXEDPOINT_MANTISSA_BIT_OFFSET = 4,
+    CUBLASLT_EMULATION_DESC_FIXEDPOINT_MANTISSA_BIT_COUNT_POINTER = 5,
 }
 #[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
 #[repr(u32)]
@@ -581,6 +612,7 @@ pub enum cublasLtMatmulDescAttributes_t {
     CUBLASLT_MATMUL_DESC_EPILOGUE_AUX_SCALE_MODE = 35,
     CUBLASLT_MATMUL_DESC_D_OUT_SCALE_POINTER = 36,
     CUBLASLT_MATMUL_DESC_D_OUT_SCALE_MODE = 37,
+    CUBLASLT_MATMUL_DESC_EMULATION_DESCRIPTOR = 38,
 }
 #[cfg(any(
     feature = "cuda-11080",
@@ -853,7 +885,7 @@ pub enum cublasLtMatmulStages_t {
     CUBLASLT_MATMUL_STAGES_128xAUTO = 36,
     CUBLASLT_MATMUL_STAGES_END = 37,
 }
-#[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
+#[cfg(any(feature = "cuda-12080", feature = "cuda-12090"))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cublasLtMatmulStages_t {
@@ -894,6 +926,49 @@ pub enum cublasLtMatmulStages_t {
     CUBLASLT_MATMUL_STAGES_128xAUTO = 36,
     CUBLASLT_MATMUL_STAGES_256xAUTO = 37,
     CUBLASLT_MATMUL_STAGES_END = 38,
+}
+#[cfg(any(feature = "cuda-13000"))]
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub enum cublasLtMatmulStages_t {
+    CUBLASLT_MATMUL_STAGES_UNDEFINED = 0,
+    CUBLASLT_MATMUL_STAGES_16x1 = 1,
+    CUBLASLT_MATMUL_STAGES_16x2 = 2,
+    CUBLASLT_MATMUL_STAGES_16x3 = 3,
+    CUBLASLT_MATMUL_STAGES_16x4 = 4,
+    CUBLASLT_MATMUL_STAGES_16x5 = 5,
+    CUBLASLT_MATMUL_STAGES_16x6 = 6,
+    CUBLASLT_MATMUL_STAGES_32x1 = 7,
+    CUBLASLT_MATMUL_STAGES_32x2 = 8,
+    CUBLASLT_MATMUL_STAGES_32x3 = 9,
+    CUBLASLT_MATMUL_STAGES_32x4 = 10,
+    CUBLASLT_MATMUL_STAGES_32x5 = 11,
+    CUBLASLT_MATMUL_STAGES_32x6 = 12,
+    CUBLASLT_MATMUL_STAGES_64x1 = 13,
+    CUBLASLT_MATMUL_STAGES_64x2 = 14,
+    CUBLASLT_MATMUL_STAGES_64x3 = 15,
+    CUBLASLT_MATMUL_STAGES_64x4 = 16,
+    CUBLASLT_MATMUL_STAGES_64x5 = 17,
+    CUBLASLT_MATMUL_STAGES_64x6 = 18,
+    CUBLASLT_MATMUL_STAGES_128x1 = 19,
+    CUBLASLT_MATMUL_STAGES_128x2 = 20,
+    CUBLASLT_MATMUL_STAGES_128x3 = 21,
+    CUBLASLT_MATMUL_STAGES_128x4 = 22,
+    CUBLASLT_MATMUL_STAGES_128x5 = 23,
+    CUBLASLT_MATMUL_STAGES_128x6 = 24,
+    CUBLASLT_MATMUL_STAGES_32x10 = 25,
+    CUBLASLT_MATMUL_STAGES_8x4 = 26,
+    CUBLASLT_MATMUL_STAGES_16x10 = 27,
+    CUBLASLT_MATMUL_STAGES_8x5 = 28,
+    CUBLASLT_MATMUL_STAGES_8x3 = 31,
+    CUBLASLT_MATMUL_STAGES_8xAUTO = 32,
+    CUBLASLT_MATMUL_STAGES_16xAUTO = 33,
+    CUBLASLT_MATMUL_STAGES_32xAUTO = 34,
+    CUBLASLT_MATMUL_STAGES_64xAUTO = 35,
+    CUBLASLT_MATMUL_STAGES_128xAUTO = 36,
+    CUBLASLT_MATMUL_STAGES_256xAUTO = 37,
+    CUBLASLT_MATMUL_STAGES_768xAUTO = 38,
+    CUBLASLT_MATMUL_STAGES_END = 39,
 }
 #[cfg(any(
     feature = "cuda-11040",
@@ -2618,26 +2693,32 @@ pub struct _IO_wide_data {
 pub struct cublasLtContext {
     _unused: [u8; 0],
 }
+#[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct cublasLtEmulationDescOpaque_t {
+    pub data: [u64; 8usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulAlgo_t {
     pub data: [u64; 8usize],
 }
 #[cfg(any(feature = "cuda-11040"))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 11usize],
 }
 #[cfg(any(feature = "cuda-11050", feature = "cuda-11060", feature = "cuda-11070"))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 12usize],
 }
 #[cfg(any(feature = "cuda-11080", feature = "cuda-12000", feature = "cuda-12010"))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 23usize],
 }
@@ -2652,7 +2733,7 @@ pub struct cublasLtMatmulDescOpaque_t {
     feature = "cuda-13000"
 ))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 32usize],
 }
@@ -2673,7 +2754,7 @@ pub struct cublasLtMatmulHeuristicResult_t {
     feature = "cuda-11080"
 ))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulPreferenceOpaque_t {
     pub data: [u64; 10usize],
 }
@@ -2690,17 +2771,17 @@ pub struct cublasLtMatmulPreferenceOpaque_t {
     feature = "cuda-13000"
 ))]
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulPreferenceOpaque_t {
     pub data: [u64; 8usize],
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatrixLayoutOpaque_t {
     pub data: [u64; 8usize],
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatrixTransformDescOpaque_t {
     pub data: [u64; 8usize],
 }
@@ -2708,28 +2789,36 @@ pub struct cublasLtMatrixTransformDescOpaque_t {
 impl cudaDataType_t {
     pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
 }
-impl Default for _IO_FILE {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cublasLtMatmulHeuristicResult_t {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {
     pub fn cublasLtCreate(lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t;
     pub fn cublasLtDestroy(lightHandle: cublasLtHandle_t) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasLtEmulationDescCreate(
+        emulationDesc: *mut cublasLtEmulationDesc_t,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasLtEmulationDescDestroy(emulationDesc: cublasLtEmulationDesc_t) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasLtEmulationDescGetAttribute(
+        emulationDesc: cublasLtEmulationDesc_t,
+        attr: cublasLtEmulationDescAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasLtEmulationDescInit_internal(
+        emulationDesc: cublasLtEmulationDesc_t,
+        size: usize,
+    ) -> cublasStatus_t;
+    #[cfg(any(feature = "cuda-13000"))]
+    pub fn cublasLtEmulationDescSetAttribute(
+        emulationDesc: cublasLtEmulationDesc_t,
+        attr: cublasLtEmulationDescAttributes_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t;
     pub fn cublasLtGetCudartVersion() -> usize;
     pub fn cublasLtGetProperty(
         type_: libraryPropertyType,
@@ -2975,6 +3064,50 @@ mod loaded {
     }
     pub unsafe fn cublasLtDestroy(lightHandle: cublasLtHandle_t) -> cublasStatus_t {
         (culib().cublasLtDestroy)(lightHandle)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasLtEmulationDescCreate(
+        emulationDesc: *mut cublasLtEmulationDesc_t,
+    ) -> cublasStatus_t {
+        (culib().cublasLtEmulationDescCreate)(emulationDesc)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasLtEmulationDescDestroy(
+        emulationDesc: cublasLtEmulationDesc_t,
+    ) -> cublasStatus_t {
+        (culib().cublasLtEmulationDescDestroy)(emulationDesc)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasLtEmulationDescGetAttribute(
+        emulationDesc: cublasLtEmulationDesc_t,
+        attr: cublasLtEmulationDescAttributes_t,
+        buf: *mut ::core::ffi::c_void,
+        sizeInBytes: usize,
+        sizeWritten: *mut usize,
+    ) -> cublasStatus_t {
+        (culib().cublasLtEmulationDescGetAttribute)(
+            emulationDesc,
+            attr,
+            buf,
+            sizeInBytes,
+            sizeWritten,
+        )
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasLtEmulationDescInit_internal(
+        emulationDesc: cublasLtEmulationDesc_t,
+        size: usize,
+    ) -> cublasStatus_t {
+        (culib().cublasLtEmulationDescInit_internal)(emulationDesc, size)
+    }
+    #[cfg(any(feature = "cuda-13000"))]
+    pub unsafe fn cublasLtEmulationDescSetAttribute(
+        emulationDesc: cublasLtEmulationDesc_t,
+        attr: cublasLtEmulationDescAttributes_t,
+        buf: *const ::core::ffi::c_void,
+        sizeInBytes: usize,
+    ) -> cublasStatus_t {
+        (culib().cublasLtEmulationDescSetAttribute)(emulationDesc, attr, buf, sizeInBytes)
     }
     pub unsafe fn cublasLtGetCudartVersion() -> usize {
         (culib().cublasLtGetCudartVersion)()
@@ -3381,6 +3514,32 @@ mod loaded {
         pub cublasLtCreate:
             unsafe extern "C" fn(lightHandle: *mut cublasLtHandle_t) -> cublasStatus_t,
         pub cublasLtDestroy: unsafe extern "C" fn(lightHandle: cublasLtHandle_t) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasLtEmulationDescCreate:
+            unsafe extern "C" fn(emulationDesc: *mut cublasLtEmulationDesc_t) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasLtEmulationDescDestroy:
+            unsafe extern "C" fn(emulationDesc: cublasLtEmulationDesc_t) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasLtEmulationDescGetAttribute: unsafe extern "C" fn(
+            emulationDesc: cublasLtEmulationDesc_t,
+            attr: cublasLtEmulationDescAttributes_t,
+            buf: *mut ::core::ffi::c_void,
+            sizeInBytes: usize,
+            sizeWritten: *mut usize,
+        ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasLtEmulationDescInit_internal: unsafe extern "C" fn(
+            emulationDesc: cublasLtEmulationDesc_t,
+            size: usize,
+        ) -> cublasStatus_t,
+        #[cfg(any(feature = "cuda-13000"))]
+        pub cublasLtEmulationDescSetAttribute: unsafe extern "C" fn(
+            emulationDesc: cublasLtEmulationDesc_t,
+            attr: cublasLtEmulationDescAttributes_t,
+            buf: *const ::core::ffi::c_void,
+            sizeInBytes: usize,
+        ) -> cublasStatus_t,
         pub cublasLtGetCudartVersion: unsafe extern "C" fn() -> usize,
         pub cublasLtGetProperty: unsafe extern "C" fn(
             type_: libraryPropertyType,
@@ -3650,6 +3809,31 @@ mod loaded {
                 .get(b"cublasLtDestroy\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasLtEmulationDescCreate = __library
+                .get(b"cublasLtEmulationDescCreate\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasLtEmulationDescDestroy = __library
+                .get(b"cublasLtEmulationDescDestroy\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasLtEmulationDescGetAttribute = __library
+                .get(b"cublasLtEmulationDescGetAttribute\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasLtEmulationDescInit_internal = __library
+                .get(b"cublasLtEmulationDescInit_internal\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            #[cfg(any(feature = "cuda-13000"))]
+            let cublasLtEmulationDescSetAttribute = __library
+                .get(b"cublasLtEmulationDescSetAttribute\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             let cublasLtGetCudartVersion = __library
                 .get(b"cublasLtGetCudartVersion\0")
                 .map(|sym| *sym)
@@ -3848,6 +4032,16 @@ mod loaded {
                 __library,
                 cublasLtCreate,
                 cublasLtDestroy,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasLtEmulationDescCreate,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasLtEmulationDescDestroy,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasLtEmulationDescGetAttribute,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasLtEmulationDescInit_internal,
+                #[cfg(any(feature = "cuda-13000"))]
+                cublasLtEmulationDescSetAttribute,
                 cublasLtGetCudartVersion,
                 cublasLtGetProperty,
                 cublasLtGetStatusName,

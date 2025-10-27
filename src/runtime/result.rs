@@ -942,7 +942,9 @@ pub mod external_memory {
             type_: sys::cudaExternalMemoryHandleType::cudaExternalMemoryHandleTypeOpaqueFd,
             handle: sys::cudaExternalMemoryHandleDesc__bindgen_ty_1 { fd },
             size,
-            ..Default::default()
+            flags: 0,
+            #[cfg(feature = "cuda-13000")]
+            reserved: [0; _],
         };
         sys::cudaImportExternalMemory(external_memory.as_mut_ptr(), &handle_description)
             .result()?;
@@ -1009,7 +1011,9 @@ pub mod external_memory {
         let buffer_description = sys::cudaExternalMemoryBufferDesc {
             offset,
             size,
-            ..Default::default()
+            flags: 0,
+            #[cfg(feature = "cuda-13000")]
+            reserved: [0; _],
         };
         sys::cudaExternalMemoryGetMappedBuffer(
             device_ptr.as_mut_ptr(),

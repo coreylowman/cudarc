@@ -18,6 +18,25 @@ mod merge;
 fn create_modules() -> Vec<ModuleConfig> {
     vec![
         ModuleConfig {
+            cudarc_name: "runtime",
+            redist_name: "cuda_cudart",
+            allowlist: Filters {
+                types: vec!["^[Cc][Uu][Dd][Aa].*"],
+                functions: vec!["^[Cc][Uu][Dd][Aa].*"],
+                vars: vec!["^[Cc][Uu][Dd][Aa].*"],
+            },
+            allowlist_recursively: true,
+            blocklist: Filters {
+                // NOTE: See https://github.com/coreylowman/cudarc/issues/397
+                types: vec![],
+                functions: vec!["cudaDeviceGetNvSciSyncAttributes"],
+                vars: vec![],
+            },
+            libs: vec!["cudart"],
+            clang_args: vec![],
+            raw_lines: vec![],
+        },
+        ModuleConfig {
             cudarc_name: "driver",
             redist_name: "cuda_cudart",
             allowlist: Filters {
@@ -96,25 +115,6 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec![],
             },
             libs: vec!["curand"],
-            clang_args: vec![],
-            raw_lines: vec![],
-        },
-        ModuleConfig {
-            cudarc_name: "runtime",
-            redist_name: "cuda_cudart",
-            allowlist: Filters {
-                types: vec!["^[Cc][Uu][Dd][Aa].*"],
-                functions: vec!["^[Cc][Uu][Dd][Aa].*"],
-                vars: vec!["^[Cc][Uu][Dd][Aa].*"],
-            },
-            allowlist_recursively: true,
-            blocklist: Filters {
-                // NOTE: See https://github.com/coreylowman/cudarc/issues/397
-                types: vec![],
-                functions: vec!["cudaDeviceGetNvSciSyncAttributes"],
-                vars: vec![],
-            },
-            libs: vec!["cudart"],
             clang_args: vec![],
             raw_lines: vec![],
         },
@@ -355,8 +355,7 @@ struct ModuleConfig {
     cudarc_name: &'static str,
     /// The name of the library within cuda/redist
     redist_name: &'static str,
-    /// The various filter used in bindgen to select
-    /// the symbols we re-expose
+    /// The various filter used in bindgen to select the symbols we re-expose
     allowlist: Filters,
     blocklist: Filters,
     /// The various names used to look for symbols
@@ -400,7 +399,7 @@ impl ModuleConfig {
             .default_enum_style(bindgen::EnumVariation::Rust {
                 non_exhaustive: false,
             })
-            .derive_default(true)
+            .derive_default(false)
             .derive_eq(true)
             .derive_hash(true)
             .derive_ord(true)
@@ -518,45 +517,53 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
         overall_pb.set_position(i as u64);
         overall_pb.set_message(format!("{}", cuda_version));
 
+        // seed the initial primary archives - archives that contain header files
+        // that the rest might depend on. later as we build modules, we will continue
+        // to add to this list, but this set is ones that we don't actually produce
+        // bindings for
         let mut primary_archives = vec![];
+        {
+            let names = if cuda_version.starts_with("cuda-13") {
+                vec!["cuda_nvcc", "cuda_cccl", "cuda_crt"]
+            } else if cuda_version.starts_with("cuda-12") {
+                vec!["cuda_nvcc", "cuda_cccl"]
+            } else {
+                vec!["cuda_nvcc"]
+            };
+    
+            let archive_pb = multi_progress.add(ProgressBar::new(names.len() as u64));
+            archive_pb.set_style(
+                ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?,
+            );
+            for name in names {
+                archive_pb.set_message(name);
+                let archive = get_archive(cuda_version, name, "primary", &multi_progress)?;
+                primary_archives.push(archive);
+                archive_pb.inc(1);
+            }
+        }
 
-        let names = if cuda_version.starts_with("cuda-13") {
-            vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl", "cuda_crt"]
-        } else if cuda_version.starts_with("cuda-12") {
-            vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl"]
-        } else {
-            vec!["cuda_cudart", "cuda_nvcc"]
-        };
-
-        let module_pb = multi_progress.add(ProgressBar::new((modules.len() + names.len()) as u64));
-
+        let module_pb = multi_progress.add(ProgressBar::new(modules.len() as u64));
         module_pb.set_style(
             ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?,
         );
-        for name in names {
-            module_pb.set_message(format!("{name}"));
-            let archive = get_archive(cuda_version, name, "primary", &multi_progress)?;
-            primary_archives.push(archive);
-            module_pb.inc(1);
-        }
-
         for module in modules {
             module_pb.set_message(module.cudarc_name);
-            match module.cudarc_name {
+            let archive = match module.cudarc_name {
                 "cudnn" => generate_cudnn(cuda_version, module, &primary_archives, &multi_progress),
                 "nccl" => generate_nccl(cuda_version, module, &primary_archives, &multi_progress),
                 _ => generate_sys(cuda_version, module, &primary_archives, &multi_progress),
-            }
-            .context(format!(
+            };
+            let archive = archive.context(format!(
                 "Failed to generate {} for {cuda_version}",
                 module.cudarc_name
             ))?;
+            primary_archives.push(archive);
             module_pb.inc(1);
         }
         overall_pb.set_message(format!("Cuda version {cuda_version}"));
         overall_pb.inc(1);
     }
-
     overall_pb.finish_with_message("Completed all CUDA versions");
     Ok(())
 }
@@ -647,7 +654,7 @@ fn generate_sys(
     module: &ModuleConfig,
     primary_archives: &[PathBuf],
     multi_progress: &MultiProgress,
-) -> Result<()> {
+) -> Result<PathBuf> {
     let archive_dir = get_archive(
         cuda_version,
         &module.redist_name,
@@ -655,7 +662,7 @@ fn generate_sys(
         multi_progress,
     )?;
     module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
-    Ok(())
+    Ok(archive_dir)
 }
 
 fn generate_cudnn(
@@ -663,7 +670,7 @@ fn generate_cudnn(
     module: &ModuleConfig,
     primary_archives: &[PathBuf],
     multi_progress: &MultiProgress,
-) -> Result<()> {
+) -> Result<PathBuf> {
     let url = "https://developer.download.nvidia.com/compute/cudnn/redist/";
 
     let cuda_name = &module.redist_name;
@@ -720,7 +727,9 @@ fn generate_cudnn(
             .context("Extracting archive")?;
     }
 
-    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
+
+    Ok(archive_dir)
 }
 
 fn generate_nccl(
@@ -728,7 +737,7 @@ fn generate_nccl(
     module: &ModuleConfig,
     primary_archives: &[PathBuf],
     multi_progress: &MultiProgress,
-) -> Result<()> {
+) -> Result<PathBuf> {
     let url = "https://developer.download.nvidia.com/compute/redist/nccl/";
     let version = "2.28.3";
 
@@ -766,7 +775,9 @@ fn generate_nccl(
     }
     assert!(archive_dir.exists());
 
-    module.run_bindgen(cuda_version, &archive_dir, primary_archives)
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
+
+    Ok(archive_dir)
 }
 
 #[derive(Parser)]

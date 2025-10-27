@@ -1490,7 +1490,7 @@ pub struct cudnnFilterStruct {
     _unused: [u8; 0],
 }
 #[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cudnnFractionStruct {
     pub numerator: i64,
     pub denominator: i64,
@@ -1588,42 +1588,6 @@ impl cudnnStatus_t {
 impl cudnnStatus_t {
     pub const CUDNN_STATUS_VERSION_MISMATCH: cudnnStatus_t =
         cudnnStatus_t::CUDNN_STATUS_SUBLIBRARY_VERSION_MISMATCH;
-}
-impl Default for cudnnConvolutionBwdDataAlgoPerfStruct {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cudnnConvolutionBwdFilterAlgoPerfStruct {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cudnnConvolutionFwdAlgoPerfStruct {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-impl Default for cudnnDebugStruct {
-    fn default() -> Self {
-        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
 }
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {
