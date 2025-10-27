@@ -210,6 +210,7 @@ impl Comm {
 }
 
 impl Comm {
+    /// Send data to one peer, see [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/p2p.html#ncclsend)
     pub fn send<S: DevicePtr<T>, T: NcclType>(
         &self,
         data: &S,
@@ -229,6 +230,7 @@ impl Comm {
         Ok(())
     }
 
+    /// Receive data from one peer, see [cuda docs](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/api/p2p.html#ncclrecv)
     pub fn recv<R: DevicePtrMut<T>, T: NcclType>(
         &self,
         buff: &mut R,
