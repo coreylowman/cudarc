@@ -166,6 +166,8 @@ fn dynamic_linking(major: usize, minor: usize) {
         println!("cargo:rustc-link-lib=dylib=cufile");
         println!("cargo:rustc-link-lib=dylib=cufile_rdma");
     }
+    #[cfg(feature = "nvtx")]
+    println!("cargo:rustc-link-lib=dylib=nvToolsExt");
 }
 
 #[allow(unused)]
@@ -219,6 +221,8 @@ fn static_linking(major: usize, minor: usize) {
         println!("cargo:rustc-link-lib=static:+whole-archive=cufile_static");
         println!("cargo:rustc-link-lib=static:+whole-archive=cufile_rdma_static");
     }
+    #[cfg(feature = "nvtx")]
+    println!("cargo:rustc-link-lib=dylib=nvToolsExt");
 }
 
 #[allow(unused)]

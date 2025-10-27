@@ -261,7 +261,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec!["^nvtx.*"],
             },
             blocklist: Filters::none(),
-            libs: vec!["nvtx"],
+            libs: vec!["nvToolsExt"],
             clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="]
         },
     ]

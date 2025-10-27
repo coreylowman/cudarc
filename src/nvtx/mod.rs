@@ -1,5 +1,5 @@
 //! Safe wrapper for [nvtx](https://nvidia.github.io/NVTX/) apis. Use [`scoped_range()`], [`mark()`], or [`Event`].
-//! 
+//!
 /// Example [`mark()`]/[`Event::mark()`] usage:
 /// ```no_run
 /// Event::message("Hello world").mark();
@@ -11,7 +11,6 @@
 /// // ... stuff you want to mark
 /// drop(range);
 /// ```
-
 pub mod result;
 pub mod safe;
 #[allow(warnings)]

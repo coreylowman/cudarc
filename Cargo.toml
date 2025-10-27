@@ -44,8 +44,6 @@ default = [
     "runtime",
     "nvrtc",
     "dynamic-loading",
-    "cuda-13000",
-    "nvtx",
 ]
 
 cuda-version-from-build-system = []

@@ -975,7 +975,7 @@ mod loaded {
         }
     }
     pub unsafe fn is_culib_present() -> bool {
-        let lib_names = ["nvtx"];
+        let lib_names = ["nvToolsExt"];
         let choices = lib_names
             .iter()
             .map(|l| crate::get_lib_name_candidates(l))
@@ -990,7 +990,7 @@ mod loaded {
     pub unsafe fn culib() -> &'static Lib {
         static LIB: std::sync::OnceLock<Lib> = std::sync::OnceLock::new();
         LIB.get_or_init(|| {
-            let lib_names = std::vec!["nvtx"];
+            let lib_names = std::vec!["nvToolsExt"];
             let choices: std::vec::Vec<_> = lib_names
                 .iter()
                 .map(|l| crate::get_lib_name_candidates(l))
