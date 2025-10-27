@@ -43,7 +43,6 @@ pub struct Event {
 impl Event {
     /// Creates a new event builder struct with an associated message.
     pub fn message<S: AsRef<str>>(message: S) -> Self {
-        result::initialize();
         let message = message.as_ref();
         Self {
             category: None,
@@ -83,8 +82,7 @@ impl Event {
 /// Event::message("gemm").category(2).mark();
 /// ```
 pub fn name_category<S: AsRef<str>>(category: u32, name: S) {
-    result::initialize();
-    unsafe { result::name_category(category, name) };
+    result::name_category(category, name);
 }
 
 /// Value associated with an [Event]
@@ -115,7 +113,7 @@ impl Event {
                 ascii: self.message.as_ptr(),
             },
         };
-        unsafe { result::mark_ex(&event_attrib) }
+        result::mark_ex(&event_attrib)
     }
 
     /// Start's a [Range] notation as soon as you call this [`result::range_start_ex()`] will be called.
@@ -143,7 +141,7 @@ impl Event {
             },
         };
         Range {
-            id: unsafe { result::range_start_ex(&event_attrib) },
+            id: result::range_start_ex(&event_attrib),
         }
     }
 }
