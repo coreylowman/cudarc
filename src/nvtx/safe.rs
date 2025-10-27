@@ -1,19 +1,31 @@
 use std::ffi::CString;
 
-use super::{sys, result};
+use super::{result, sys};
+
+/// Create a range guard. Short hand for `Event::message(msg).range()`.
+/// 
+/// Range is started on creation, and stopped when the returned [Range] is dropped.
+pub fn scoped_range<S: AsRef<str>>(msg: S) -> Range {
+    Event::message(msg).range()
+}
+
+/// Mark an instant. Short hand for `Event::message(msg).mark()`
+pub fn mark<S: AsRef<str>>(msg: S) {
+    Event::message(msg).mark()
+}
 
 /// Builder struct; create with [`Event::message()`], and then you can set optional fields on it using:
 /// - [`Event::category()`]
 /// - [`Event::argb()`]
 /// - [`Event::payload()`]
-/// 
+///
 /// Finalized with [`Event::mark()`] (for marking an instant) or [`Event::range()`] (for marking a range).
-/// 
+///
 /// Example [`Event::mark()`] usage:
 /// ```no_run
 /// Event::message("Hello world").mark();
 /// ```
-/// 
+///
 /// Example [`Event::range()`] usage:
 /// ```no_run
 /// let range = Event::message("Hello_world").argb(0xffff0000).range();
@@ -22,7 +34,7 @@ use super::{sys, result};
 /// ```
 #[derive(Debug)]
 pub struct Event {
-    category: Option<u32>, // TODO does this HAVE to be named before use?
+    category: Option<u32>,
     argb: Option<u32>,
     payload: Option<Payload>,
     message: CString,
@@ -30,7 +42,7 @@ pub struct Event {
 
 impl Event {
     /// Creates a new event builder struct with an associated message.
-    pub fn message<S:AsRef<str>>(message: S) -> Self {
+    pub fn message<S: AsRef<str>>(message: S) -> Self {
         result::initialize();
         let message = message.as_ref();
         Self {
@@ -86,11 +98,10 @@ pub enum Payload {
     F64(f64),
 }
 
-
 impl Event {
     /// Mark an instant in nvtx.
     pub fn mark(self) {
-        let event_attrib =  sys::nvtxEventAttributes_t {
+        let event_attrib = sys::nvtxEventAttributes_t {
             version: self.cu_version(),
             size: self.cu_size(),
             category: self.cu_category(),
@@ -100,14 +111,16 @@ impl Event {
             reserved0: 0,
             payload: self.cu_payload_value(),
             messageType: sys::nvtxMessageType_t::NVTX_MESSAGE_TYPE_ASCII as u32 as i32,
-            message: sys::nvtxMessageValue_t { ascii: self.message.as_ptr() },
+            message: sys::nvtxMessageValue_t {
+                ascii: self.message.as_ptr(),
+            },
         };
         unsafe { result::mark_ex(&event_attrib) }
     }
 
     /// Start's a [Range] notation as soon as you call this [`result::range_start_ex()`] will be called.
     /// When the returned [Range] is dropped, [`result::range_end()`] will be called.
-    /// 
+    ///
     /// Example usage:
     /// ```no_run
     /// let guard = Event::message("hello world").range();
@@ -115,7 +128,7 @@ impl Event {
     /// drop(guard);
     /// ```
     pub fn range(self) -> Range {
-        let event_attrib =  sys::nvtxEventAttributes_t {
+        let event_attrib = sys::nvtxEventAttributes_t {
             version: self.cu_version(),
             size: self.cu_size(),
             category: self.cu_category(),
@@ -125,10 +138,12 @@ impl Event {
             reserved0: 0,
             payload: self.cu_payload_value(),
             messageType: sys::nvtxMessageType_t::NVTX_MESSAGE_TYPE_ASCII as u32 as i32,
-            message: sys::nvtxMessageValue_t { ascii: self.message.as_ptr() },
+            message: sys::nvtxMessageValue_t {
+                ascii: self.message.as_ptr(),
+            },
         };
         Range {
-            id: unsafe { result::range_start_ex(&event_attrib) }
+            id: unsafe { result::range_start_ex(&event_attrib) },
         }
     }
 }
@@ -162,8 +177,8 @@ impl Event {
     pub fn cu_payload_value(&self) -> sys::nvtxEventAttributes_v2_payload_t {
         match self.payload {
             None => sys::nvtxEventAttributes_v2_payload_t { iValue: 0 },
-            Some(Payload::I32(v)) => sys::nvtxEventAttributes_v2_payload_t { iValue: v},
-            Some(Payload::Int64(v)) => sys::nvtxEventAttributes_v2_payload_t { llValue: v},
+            Some(Payload::I32(v)) => sys::nvtxEventAttributes_v2_payload_t { iValue: v },
+            Some(Payload::Int64(v)) => sys::nvtxEventAttributes_v2_payload_t { llValue: v },
             Some(Payload::U32(v)) => sys::nvtxEventAttributes_v2_payload_t { uiValue: v },
             Some(Payload::U64(v)) => sys::nvtxEventAttributes_v2_payload_t { ullValue: v },
             Some(Payload::F32(v)) => sys::nvtxEventAttributes_v2_payload_t { fValue: v },
@@ -176,11 +191,11 @@ impl Event {
     }
 
     pub fn cu_version(&self) -> u16 {
-        todo!()
+        3
     }
 
     pub fn cu_size(&self) -> u16 {
-        todo!()
+        std::mem::size_of::<sys::nvtxEventAttributes_t>() as u16
     }
 }
 
@@ -196,7 +211,17 @@ impl Drop for Range {
     }
 }
 
-pub fn name_current_thread<S: AsRef<str>>(name: S) {
-    let id = std::thread::current().id();
-    todo!()
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_nvtx_mark() {
+        mark("hello mark");
+    }
+
+    #[test]
+    fn test_nvtx_range() {
+        let _range = scoped_range("hello range");
+    }
 }
