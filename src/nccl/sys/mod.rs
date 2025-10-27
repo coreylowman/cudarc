@@ -8,8 +8,9 @@ extern crate alloc;
 extern crate no_std_compat as std;
 pub type cudaStream_t = *mut CUstream_st;
 pub type ncclComm_t = *mut ncclComm;
-pub type ncclConfig_t = ncclConfig_v21700;
+pub type ncclConfig_t = ncclConfig_v22800;
 pub type ncclSimInfo_t = ncclSimInfo_v22200;
+pub type ncclWindow_t = *mut ncclWindow_vidmem;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum ncclDataType_t {
@@ -74,7 +75,7 @@ pub struct ncclComm {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct ncclConfig_v21700 {
+pub struct ncclConfig_v22800 {
     pub size: usize,
     pub magic: ::core::ffi::c_uint,
     pub version: ::core::ffi::c_uint,
@@ -85,6 +86,13 @@ pub struct ncclConfig_v21700 {
     pub netName: *const ::core::ffi::c_char,
     pub splitShare: ::core::ffi::c_int,
     pub trafficClass: ::core::ffi::c_int,
+    pub commName: *const ::core::ffi::c_char,
+    pub collnetEnable: ::core::ffi::c_int,
+    pub CTAPolicy: ::core::ffi::c_int,
+    pub shrinkShare: ::core::ffi::c_int,
+    pub nvlsCTAs: ::core::ffi::c_int,
+    pub nChannelsPerNetPeer: ::core::ffi::c_int,
+    pub nvlinkCentricSched: ::core::ffi::c_int,
 }
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
@@ -98,6 +106,11 @@ pub struct ncclSimInfo_v22200 {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct ncclUniqueId {
     pub internal: [::core::ffi::c_char; 128usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ncclWindow_vidmem {
+    _unused: [u8; 0],
 }
 impl ncclDataType_t {
     pub const ncclChar: ncclDataType_t = ncclDataType_t::ncclInt8;
@@ -114,7 +127,7 @@ impl ncclDataType_t {
 impl ncclDataType_t {
     pub const ncclInt: ncclDataType_t = ncclDataType_t::ncclInt32;
 }
-impl Default for ncclConfig_v21700 {
+impl Default for ncclConfig_v22800 {
     fn default() -> Self {
         let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -148,6 +161,14 @@ extern "C" {
         count: usize,
         datatype: ncclDataType_t,
         op: ncclRedOp_t,
+        comm: ncclComm_t,
+        stream: cudaStream_t,
+    ) -> ncclResult_t;
+    pub fn ncclAlltoAll(
+        sendbuff: *const ::core::ffi::c_void,
+        recvbuff: *mut ::core::ffi::c_void,
+        count: usize,
+        datatype: ncclDataType_t,
         comm: ncclComm_t,
         stream: cudaStream_t,
     ) -> ncclResult_t;
@@ -207,6 +228,14 @@ extern "C" {
         size: usize,
         handle: *mut *mut ::core::ffi::c_void,
     ) -> ncclResult_t;
+    pub fn ncclCommShrink(
+        comm: ncclComm_t,
+        excludeRanksList: *mut ::core::ffi::c_int,
+        excludeRanksCount: ::core::ffi::c_int,
+        newcomm: *mut ncclComm_t,
+        config: *mut ncclConfig_t,
+        shrinkFlags: ::core::ffi::c_int,
+    ) -> ncclResult_t;
     pub fn ncclCommSplit(
         comm: ncclComm_t,
         color: ::core::ffi::c_int,
@@ -215,6 +244,23 @@ extern "C" {
         config: *mut ncclConfig_t,
     ) -> ncclResult_t;
     pub fn ncclCommUserRank(comm: ncclComm_t, rank: *mut ::core::ffi::c_int) -> ncclResult_t;
+    pub fn ncclCommWindowDeregister(comm: ncclComm_t, win: ncclWindow_t) -> ncclResult_t;
+    pub fn ncclCommWindowRegister(
+        comm: ncclComm_t,
+        buff: *mut ::core::ffi::c_void,
+        size: usize,
+        win: *mut ncclWindow_t,
+        winFlags: ::core::ffi::c_int,
+    ) -> ncclResult_t;
+    pub fn ncclGather(
+        sendbuff: *const ::core::ffi::c_void,
+        recvbuff: *mut ::core::ffi::c_void,
+        count: usize,
+        datatype: ncclDataType_t,
+        root: ::core::ffi::c_int,
+        comm: ncclComm_t,
+        stream: cudaStream_t,
+    ) -> ncclResult_t;
     pub fn ncclGetErrorString(result: ncclResult_t) -> *const ::core::ffi::c_char;
     pub fn ncclGetLastError(comm: ncclComm_t) -> *const ::core::ffi::c_char;
     pub fn ncclGetUniqueId(uniqueId: *mut ncclUniqueId) -> ncclResult_t;
@@ -260,6 +306,15 @@ extern "C" {
         stream: cudaStream_t,
     ) -> ncclResult_t;
     pub fn ncclResetDebugInit();
+    pub fn ncclScatter(
+        sendbuff: *const ::core::ffi::c_void,
+        recvbuff: *mut ::core::ffi::c_void,
+        count: usize,
+        datatype: ncclDataType_t,
+        root: ::core::ffi::c_int,
+        comm: ncclComm_t,
+        stream: cudaStream_t,
+    ) -> ncclResult_t;
     pub fn ncclSend(
         sendbuff: *const ::core::ffi::c_void,
         count: usize,
@@ -292,6 +347,16 @@ mod loaded {
         stream: cudaStream_t,
     ) -> ncclResult_t {
         (culib().ncclAllReduce)(sendbuff, recvbuff, count, datatype, op, comm, stream)
+    }
+    pub unsafe fn ncclAlltoAll(
+        sendbuff: *const ::core::ffi::c_void,
+        recvbuff: *mut ::core::ffi::c_void,
+        count: usize,
+        datatype: ncclDataType_t,
+        comm: ncclComm_t,
+        stream: cudaStream_t,
+    ) -> ncclResult_t {
+        (culib().ncclAlltoAll)(sendbuff, recvbuff, count, datatype, comm, stream)
     }
     pub unsafe fn ncclBcast(
         buff: *mut ::core::ffi::c_void,
@@ -386,6 +451,23 @@ mod loaded {
     ) -> ncclResult_t {
         (culib().ncclCommRegister)(comm, buff, size, handle)
     }
+    pub unsafe fn ncclCommShrink(
+        comm: ncclComm_t,
+        excludeRanksList: *mut ::core::ffi::c_int,
+        excludeRanksCount: ::core::ffi::c_int,
+        newcomm: *mut ncclComm_t,
+        config: *mut ncclConfig_t,
+        shrinkFlags: ::core::ffi::c_int,
+    ) -> ncclResult_t {
+        (culib().ncclCommShrink)(
+            comm,
+            excludeRanksList,
+            excludeRanksCount,
+            newcomm,
+            config,
+            shrinkFlags,
+        )
+    }
     pub unsafe fn ncclCommSplit(
         comm: ncclComm_t,
         color: ::core::ffi::c_int,
@@ -400,6 +482,29 @@ mod loaded {
         rank: *mut ::core::ffi::c_int,
     ) -> ncclResult_t {
         (culib().ncclCommUserRank)(comm, rank)
+    }
+    pub unsafe fn ncclCommWindowDeregister(comm: ncclComm_t, win: ncclWindow_t) -> ncclResult_t {
+        (culib().ncclCommWindowDeregister)(comm, win)
+    }
+    pub unsafe fn ncclCommWindowRegister(
+        comm: ncclComm_t,
+        buff: *mut ::core::ffi::c_void,
+        size: usize,
+        win: *mut ncclWindow_t,
+        winFlags: ::core::ffi::c_int,
+    ) -> ncclResult_t {
+        (culib().ncclCommWindowRegister)(comm, buff, size, win, winFlags)
+    }
+    pub unsafe fn ncclGather(
+        sendbuff: *const ::core::ffi::c_void,
+        recvbuff: *mut ::core::ffi::c_void,
+        count: usize,
+        datatype: ncclDataType_t,
+        root: ::core::ffi::c_int,
+        comm: ncclComm_t,
+        stream: cudaStream_t,
+    ) -> ncclResult_t {
+        (culib().ncclGather)(sendbuff, recvbuff, count, datatype, root, comm, stream)
     }
     pub unsafe fn ncclGetErrorString(result: ncclResult_t) -> *const ::core::ffi::c_char {
         (culib().ncclGetErrorString)(result)
@@ -476,6 +581,17 @@ mod loaded {
     pub unsafe fn ncclResetDebugInit() {
         (culib().ncclResetDebugInit)()
     }
+    pub unsafe fn ncclScatter(
+        sendbuff: *const ::core::ffi::c_void,
+        recvbuff: *mut ::core::ffi::c_void,
+        count: usize,
+        datatype: ncclDataType_t,
+        root: ::core::ffi::c_int,
+        comm: ncclComm_t,
+        stream: cudaStream_t,
+    ) -> ncclResult_t {
+        (culib().ncclScatter)(sendbuff, recvbuff, count, datatype, root, comm, stream)
+    }
     pub unsafe fn ncclSend(
         sendbuff: *const ::core::ffi::c_void,
         count: usize,
@@ -502,6 +618,14 @@ mod loaded {
             count: usize,
             datatype: ncclDataType_t,
             op: ncclRedOp_t,
+            comm: ncclComm_t,
+            stream: cudaStream_t,
+        ) -> ncclResult_t,
+        pub ncclAlltoAll: unsafe extern "C" fn(
+            sendbuff: *const ::core::ffi::c_void,
+            recvbuff: *mut ::core::ffi::c_void,
+            count: usize,
+            datatype: ncclDataType_t,
             comm: ncclComm_t,
             stream: cudaStream_t,
         ) -> ncclResult_t,
@@ -567,6 +691,14 @@ mod loaded {
             size: usize,
             handle: *mut *mut ::core::ffi::c_void,
         ) -> ncclResult_t,
+        pub ncclCommShrink: unsafe extern "C" fn(
+            comm: ncclComm_t,
+            excludeRanksList: *mut ::core::ffi::c_int,
+            excludeRanksCount: ::core::ffi::c_int,
+            newcomm: *mut ncclComm_t,
+            config: *mut ncclConfig_t,
+            shrinkFlags: ::core::ffi::c_int,
+        ) -> ncclResult_t,
         pub ncclCommSplit: unsafe extern "C" fn(
             comm: ncclComm_t,
             color: ::core::ffi::c_int,
@@ -576,6 +708,24 @@ mod loaded {
         ) -> ncclResult_t,
         pub ncclCommUserRank:
             unsafe extern "C" fn(comm: ncclComm_t, rank: *mut ::core::ffi::c_int) -> ncclResult_t,
+        pub ncclCommWindowDeregister:
+            unsafe extern "C" fn(comm: ncclComm_t, win: ncclWindow_t) -> ncclResult_t,
+        pub ncclCommWindowRegister: unsafe extern "C" fn(
+            comm: ncclComm_t,
+            buff: *mut ::core::ffi::c_void,
+            size: usize,
+            win: *mut ncclWindow_t,
+            winFlags: ::core::ffi::c_int,
+        ) -> ncclResult_t,
+        pub ncclGather: unsafe extern "C" fn(
+            sendbuff: *const ::core::ffi::c_void,
+            recvbuff: *mut ::core::ffi::c_void,
+            count: usize,
+            datatype: ncclDataType_t,
+            root: ::core::ffi::c_int,
+            comm: ncclComm_t,
+            stream: cudaStream_t,
+        ) -> ncclResult_t,
         pub ncclGetErrorString:
             unsafe extern "C" fn(result: ncclResult_t) -> *const ::core::ffi::c_char,
         pub ncclGetLastError: unsafe extern "C" fn(comm: ncclComm_t) -> *const ::core::ffi::c_char,
@@ -624,6 +774,15 @@ mod loaded {
             stream: cudaStream_t,
         ) -> ncclResult_t,
         pub ncclResetDebugInit: unsafe extern "C" fn(),
+        pub ncclScatter: unsafe extern "C" fn(
+            sendbuff: *const ::core::ffi::c_void,
+            recvbuff: *mut ::core::ffi::c_void,
+            count: usize,
+            datatype: ncclDataType_t,
+            root: ::core::ffi::c_int,
+            comm: ncclComm_t,
+            stream: cudaStream_t,
+        ) -> ncclResult_t,
         pub ncclSend: unsafe extern "C" fn(
             sendbuff: *const ::core::ffi::c_void,
             count: usize,
@@ -652,6 +811,10 @@ mod loaded {
                 .expect("Expected symbol in library");
             let ncclAllReduce = __library
                 .get(b"ncclAllReduce\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            let ncclAlltoAll = __library
+                .get(b"ncclAlltoAll\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let ncclBcast = __library
@@ -710,12 +873,28 @@ mod loaded {
                 .get(b"ncclCommRegister\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            let ncclCommShrink = __library
+                .get(b"ncclCommShrink\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             let ncclCommSplit = __library
                 .get(b"ncclCommSplit\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let ncclCommUserRank = __library
                 .get(b"ncclCommUserRank\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            let ncclCommWindowDeregister = __library
+                .get(b"ncclCommWindowDeregister\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            let ncclCommWindowRegister = __library
+                .get(b"ncclCommWindowRegister\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
+            let ncclGather = __library
+                .get(b"ncclGather\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
             let ncclGetErrorString = __library
@@ -778,6 +957,10 @@ mod loaded {
                 .get(b"ncclResetDebugInit\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
+            let ncclScatter = __library
+                .get(b"ncclScatter\0")
+                .map(|sym| *sym)
+                .expect("Expected symbol in library");
             let ncclSend = __library
                 .get(b"ncclSend\0")
                 .map(|sym| *sym)
@@ -786,6 +969,7 @@ mod loaded {
                 __library,
                 ncclAllGather,
                 ncclAllReduce,
+                ncclAlltoAll,
                 ncclBcast,
                 ncclBroadcast,
                 ncclCommAbort,
@@ -800,8 +984,12 @@ mod loaded {
                 ncclCommInitRankConfig,
                 ncclCommInitRankScalable,
                 ncclCommRegister,
+                ncclCommShrink,
                 ncclCommSplit,
                 ncclCommUserRank,
+                ncclCommWindowDeregister,
+                ncclCommWindowRegister,
+                ncclGather,
                 ncclGetErrorString,
                 ncclGetLastError,
                 ncclGetUniqueId,
@@ -817,6 +1005,7 @@ mod loaded {
                 ncclReduce,
                 ncclReduceScatter,
                 ncclResetDebugInit,
+                ncclScatter,
                 ncclSend,
             })
         }

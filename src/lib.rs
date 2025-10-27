@@ -9,6 +9,7 @@
 //! 8. [cuSPARSE](https://docs.nvidia.com/cuda/cusparse/)
 //! 9. [cuSOLVER](https://docs.nvidia.com/cuda/cusolver/)
 //! 10. [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction)
+//! 11. [CUPTI](https://docs.nvidia.com/cupti/)
 //!
 //! # crate organization
 //!
@@ -28,6 +29,7 @@
 //! | cusparse | - | [cusparse::result] | [cusparse::sys] |
 //! | cusolver | [cusolver::safe] | [cusolver::result] | [cusolver::sys] |
 //! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
+//! | cupti | - | [cupti::result] | [cupti::sys] |
 //!
 //! # Core Concepts
 //!
@@ -95,6 +97,8 @@ pub mod cublaslt;
 pub mod cudnn;
 #[cfg(feature = "cufile")]
 pub mod cufile;
+#[cfg(feature = "cupti")]
+pub mod cupti;
 #[cfg(feature = "curand")]
 pub mod curand;
 #[cfg(feature = "cusolver")]

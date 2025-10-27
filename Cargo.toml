@@ -28,6 +28,7 @@ features = [
     "f16",
     "cudnn",
     "nccl",
+    "cupti",
     "cusparse",
     "cusolver",
     "cusolvermg",
@@ -80,6 +81,7 @@ cusolver = ["driver", "cublas", "cublaslt", "cusparse"]
 cusolvermg = ["cusolver"]
 cufile = ["driver"]
 nvtx = ["driver"]
+cupti = ["runtime", "driver"]
 
 std = []
 no-std = ["no-std-compat/std"]

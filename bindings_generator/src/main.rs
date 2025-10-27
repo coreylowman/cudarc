@@ -32,6 +32,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cu.*"],
                 vars: vec!["^CU.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/385
                 types: vec!["^cuCheckpoint.*"],
@@ -43,6 +44,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cuda", "nvcuda"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cublas",
@@ -52,9 +54,11 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cublas.*"],
                 vars: vec!["^cublas.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cublas"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cublaslt",
@@ -64,6 +68,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cublasLt.*"],
                 vars: vec!["^cublasLt.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
                 functions: vec!["cublasLtDisableCpuInstructionsSetMask"],
@@ -71,6 +76,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cublasLt"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "curand",
@@ -80,6 +86,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^curand.*"],
                 vars: vec!["^curand.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
                 functions: vec![
@@ -90,6 +97,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["curand"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "runtime",
@@ -99,6 +107,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^[Cc][Uu][Dd][Aa].*"],
                 vars: vec!["^[Cc][Uu][Dd][Aa].*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/397
                 types: vec![],
@@ -107,6 +116,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cudart"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "nvrtc",
@@ -116,6 +126,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^nvrtc.*"],
                 vars: vec!["^nvrtc.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 // NOTE: see https://github.com/coreylowman/cudarc/pull/431
                 types: vec![],
@@ -130,6 +141,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["nvrtc"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cudnn",
@@ -139,9 +151,11 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cudnn.*"],
                 vars: vec!["^cudnn.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cudnn"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "nccl",
@@ -151,9 +165,11 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^nccl.*"],
                 vars: vec!["^nccl.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["nccl"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cusparse",
@@ -163,6 +179,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cusparse.*"],
                 vars: vec!["^cusparse.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
                 functions: vec![
@@ -208,6 +225,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cusparse"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cusolver",
@@ -217,6 +235,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cusolver.*"],
                 vars: vec!["^cusolver.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters {
                 types: vec!["^cusolverMg.*"],
                 functions: vec![
@@ -227,6 +246,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cusolver"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cusolvermg",
@@ -236,9 +256,11 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cusolverMg.*"],
                 vars: vec!["^cusolverMg.*"],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cusolverMg"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "cufile",
@@ -248,9 +270,11 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^cuFile.*"],
                 vars: vec![],
             },
+            allowlist_recursively: true,
             blocklist: Filters::none(),
             libs: vec!["cufile"],
             clang_args: vec![],
+            raw_lines: vec![],
         },
         ModuleConfig {
             cudarc_name: "nvtx",
@@ -260,6 +284,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec!["^nvtx.*"],
                 vars: vec!["^nvtx.*"],
             },
+            allowlist_recursively: true,
             blocklist:  Filters {
                 types: vec![],
                 functions: vec!["nvtxInitialize"],
@@ -267,6 +292,59 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["nvToolsExt"],
             clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="]
+            raw_lines: vec![],
+        },
+        ModuleConfig {
+            cudarc_name: "cupti",
+            redist_name: "cuda_cupti",
+            allowlist: Filters {
+                types: vec![
+                    // CUPTI types:
+                    "^[Cc][Uu][Pp][Tt][Ii].*",
+                    // Types from the generated_cuda(_meta / runtime_api_meta).h
+                    // headers. These help dissect data representing function arguments
+                    // of CUDA functions in the CUPTI Callback API.
+                    "^[Cc][Uu][Dd][Aa].*_params.*",
+                    "^[Cc][Uu].*_params.*",
+                    // Types that are obsolete but still used in CUPTI.
+                    "CUDA_ARRAY_DESCRIPTOR_v1_st",
+                    "CUDA_ARRAY_DESCRIPTOR_v1",
+                    "CUDA_ARRAY3D_DESCRIPTOR_v1_st",
+                    "CUDA_ARRAY3D_DESCRIPTOR_v1",
+                    "CUDA_MEMCPY2D_v1_st",
+                    "CUDA_MEMCPY2D_v1",
+                    "CUDA_MEMCPY3D_v1_st",
+                    "CUDA_MEMCPY3D_v1",
+                    "CUdeviceptr_v1",
+                ],
+                functions: vec!["^cupti.*"],
+                vars: vec!["^[Cc][Uu][Pp][Tt][Ii].*"],
+            },
+            allowlist_recursively: false,
+            blocklist: Filters {
+                types: vec![
+                    // For cuda-11040, the meta headers seem to include some osbolete
+                    // types for which the definitions are missing because they are not
+                    // included through any cupti headers, but only exist in a CUDA
+                    // source, block these:
+                    "cudaSignalExternalSemaphoresAsync_ptsz_v10000_params_st",
+                    "cudaSignalExternalSemaphoresAsync_ptsz_v10000_params",
+                    "cudaSignalExternalSemaphoresAsync_v10000_params_st",
+                    "cudaSignalExternalSemaphoresAsync_v10000_params",
+                    "cudaWaitExternalSemaphoresAsync_ptsz_v10000_params_st",
+                    "cudaWaitExternalSemaphoresAsync_ptsz_v10000_params",
+                    "cudaWaitExternalSemaphoresAsync_v10000_params_st",
+                    "cudaWaitExternalSemaphoresAsync_v10000_params",
+                ],
+                functions: vec![],
+                vars: vec![],
+            },
+            libs: vec!["cupti"],
+            clang_args: vec![],
+            raw_lines: vec![
+                "use crate::driver::sys::*;",
+                "use crate::runtime::sys::*;",
+            ],
         },
     ]
 }
@@ -285,7 +363,14 @@ struct ModuleConfig {
     /// Those names are only used with the `dynamic-loading`
     /// feature.
     libs: Vec<&'static str>,
+    /// Arguments passed directly to clang.
     clang_args: Vec<&'static str>,
+    /// Whether to recursively add types from allowlist items. This can be set to false
+    /// in order to prevent duplicate definitions for headers that include other headers
+    /// for which bindings are also generated.
+    allowlist_recursively: bool,
+    /// Lines of code to add at the beginning of the generated bindings.
+    raw_lines: Vec<&'static str>,
 }
 
 impl ModuleConfig {
@@ -336,6 +421,8 @@ impl ModuleConfig {
         for filter_name in self.allowlist.functions.iter() {
             builder = builder.allowlist_function(filter_name);
         }
+        builder = builder.allowlist_recursively(self.allowlist_recursively);
+
         for filter_name in self.blocklist.types.iter() {
             builder = builder.blocklist_type(filter_name);
         }
@@ -344,6 +431,10 @@ impl ModuleConfig {
         }
         for filter_name in self.blocklist.functions.iter() {
             builder = builder.blocklist_function(filter_name);
+        }
+
+        for raw_line in self.raw_lines.iter() {
+            builder = builder.raw_line(raw_line);
         }
 
         let parent_sysdir = Path::new("..")
@@ -429,7 +520,9 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
 
         let mut primary_archives = vec![];
 
-        let names = if cuda_version.starts_with("cuda-12") {
+        let names = if cuda_version.starts_with("cuda-13") {
+            vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl", "cuda_crt"]
+        } else if cuda_version.starts_with("cuda-12") {
             vec!["cuda_cudart", "cuda_nvcc", "cuda_cccl"]
         } else {
             vec!["cuda_cudart", "cuda_nvcc"]
@@ -637,9 +730,9 @@ fn generate_nccl(
     multi_progress: &MultiProgress,
 ) -> Result<()> {
     let url = "https://developer.download.nvidia.com/compute/redist/nccl/";
-    let version = "2.26.2";
+    let version = "2.28.3";
 
-    let path = format!("v{version}/nccl_{version}-1+cuda12.8_x86_64.txz");
+    let path = format!("v{version}/nccl_{version}-1+cuda12.9_x86_64.txz");
     let full_url = format!("{url}/{path}");
     log::debug!("{}", full_url);
 
@@ -688,7 +781,7 @@ struct Args {
     skip_bindings: bool,
 
     #[arg(long, action)]
-    version: Option<String>,
+    cuda_version: Option<String>,
 
     /// Specify a single target to generate bindings for.
     #[arg(long, action)]
@@ -720,7 +813,7 @@ fn main() -> Result<()> {
         "cuda-12090",
         "cuda-13000",
     ];
-    if let Some(version) = args.version {
+    if let Some(version) = args.cuda_version {
         cuda_versions.retain(|&v| v == version);
     }
 

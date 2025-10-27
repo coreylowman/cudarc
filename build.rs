@@ -151,6 +151,8 @@ fn dynamic_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=dylib=cublas");
     #[cfg(any(feature = "cublas", feature = "cublaslt"))]
     println!("cargo:rustc-link-lib=dylib=cublasLt");
+    #[cfg(feature = "cupti")]
+    println!("cargo:rustc-link-lib=dylib=cupti");
     #[cfg(feature = "cusparse")]
     println!("cargo:rustc-link-lib=dylib=cusparse");
     #[cfg(feature = "cusolver")]
@@ -204,6 +206,8 @@ fn static_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=static:+whole-archive=cublas_static");
     #[cfg(any(feature = "cublas", feature = "cublaslt"))]
     println!("cargo:rustc-link-lib=static:+whole-archive=cublasLt_static");
+    #[cfg(feature = "cupti")]
+    println!("cargo:rustc-link-lib=static:+whole-archive=cupti_static");
     #[cfg(feature = "cusparse")]
     println!("cargo:rustc-link-lib=static:+whole-archive=cusparse_static");
     #[cfg(feature = "cusolver")]
