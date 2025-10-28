@@ -346,6 +346,7 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut UnifiedSlice<T>> for LaunchArgs
     }
 }
 
+#[cfg(feature = "nvrtc")]
 #[cfg(test)]
 mod tests {
     #![allow(clippy::needless_range_loop)]
