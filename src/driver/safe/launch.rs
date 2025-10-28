@@ -273,13 +273,13 @@ impl LaunchArgs<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        driver::{CudaContext, DriverError},
-        nvrtc::compile_ptx_with_opts,
-    };
+    use crate::driver::{CudaContext, DriverError};
+    #[cfg(feature = "nvrtc")]
+    use crate::nvrtc::compile_ptx_with_opts;
 
     use super::*;
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_arrays() -> Result<(), DriverError> {
         #[repr(C)]
@@ -341,6 +341,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
     }
 }";
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_mut_and_ref_cudarc() {
         let ctx = CudaContext::new(0).unwrap();
@@ -375,6 +376,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         drop(a_dev);
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_large_launches() {
         let ctx = CudaContext::new(0).unwrap();
@@ -407,6 +409,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         }
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_views() {
         let ctx = CudaContext::new(0).unwrap();
@@ -481,6 +484,7 @@ extern \"C\" __global__ void floating(float f, double d) {
 }
 ";
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_8bit() {
         let ctx = CudaContext::new(0).unwrap();
@@ -501,6 +505,7 @@ extern \"C\" __global__ void floating(float f, double d) {
         stream.synchronize().unwrap();
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_16bit() {
         let ctx = CudaContext::new(0).unwrap();
@@ -521,6 +526,7 @@ extern \"C\" __global__ void floating(float f, double d) {
         stream.synchronize().unwrap();
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_32bit() {
         let ctx = CudaContext::new(0).unwrap();
@@ -541,6 +547,7 @@ extern \"C\" __global__ void floating(float f, double d) {
         stream.synchronize().unwrap();
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_64bit() {
         let ctx = CudaContext::new(0).unwrap();
@@ -561,6 +568,7 @@ extern \"C\" __global__ void floating(float f, double d) {
         stream.synchronize().unwrap();
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_launch_with_floats() {
         let ctx = CudaContext::new(0).unwrap();
@@ -626,6 +634,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
 }
 ";
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_par_launch() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
@@ -698,6 +707,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         Ok(())
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_multi_stream_concurrent_reads() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
@@ -739,6 +749,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         Ok(())
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     fn test_multi_stream_writes_block() -> Result<(), DriverError> {
         let ptx = compile_ptx_with_opts(SLOW_KERNELS, Default::default()).unwrap();
@@ -778,6 +789,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
         Ok(())
     }
 
+    #[cfg(feature = "nvrtc")]
     #[test]
     #[ignore = "must be executed by itself"]
     fn test_device_side_assert() -> Result<(), DriverError> {

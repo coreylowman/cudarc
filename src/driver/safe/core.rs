@@ -1702,6 +1702,7 @@ impl CudaContext {
     /// Dynamically load a compiled ptx into this context.
     ///
     /// - `ptx` contains the compiled ptx
+    #[cfg(feature = "nvrtc")]
     pub fn load_module(
         self: &Arc<Self>,
         ptx: crate::nvrtc::Ptx,
