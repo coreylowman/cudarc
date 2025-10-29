@@ -1190,7 +1190,8 @@ pub mod external_memory {
                 },
             },
             size,
-            ..Default::default()
+            flags: 0,
+            reserved: [0; 16],
         };
         sys::cuImportExternalMemory(external_memory.as_mut_ptr(), &handle_description).result()?;
         Ok(external_memory.assume_init())
