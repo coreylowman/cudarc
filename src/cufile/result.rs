@@ -101,13 +101,11 @@ pub unsafe fn read(
     file_offset: i64,
     buf_ptr_offset: i64,
 ) -> Result<isize, CufileError> {
-    let bytes_read = sys::cuFileRead(
-        fh,
-        buf_ptr_base,
-        size,
-        file_offset as _,
-        buf_ptr_offset as _,
-    );
+    let file_offset = sys::off_t::try_from(file_offset)
+        .expect("Casting file_offset to platform specific size failed.");
+    let buf_ptr_offset = sys::off_t::try_from(buf_ptr_offset)
+        .expect("Casting buf_ptr_offset to platform specific size failed.");
+    let bytes_read = sys::cuFileRead(fh, buf_ptr_base, size, file_offset, buf_ptr_offset);
 
     if bytes_read == -1 {
         Err(CufileError::IO(std::io::Error::last_os_error()))
@@ -132,13 +130,12 @@ pub unsafe fn write(
     file_offset: i64,
     buf_ptr_offset: i64,
 ) -> Result<isize, CufileError> {
-    let bytes_written = sys::cuFileWrite(
-        fh,
-        buf_ptr_base,
-        size,
-        file_offset as _,
-        buf_ptr_offset as _,
-    );
+    let file_offset = sys::off_t::try_from(file_offset)
+        .expect("Casting file_offset to platform specific size failed.");
+    let buf_ptr_offset = sys::off_t::try_from(buf_ptr_offset)
+        .expect("Casting buf_ptr_offset to platform specific size failed.");
+
+    let bytes_written = sys::cuFileWrite(fh, buf_ptr_base, size, file_offset, buf_ptr_offset);
 
     if bytes_written == -1 {
         Err(CufileError::IO(std::io::Error::last_os_error()))
