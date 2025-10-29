@@ -101,7 +101,13 @@ pub unsafe fn read(
     file_offset: i64,
     buf_ptr_offset: i64,
 ) -> Result<isize, CufileError> {
-    let bytes_read = sys::cuFileRead(fh, buf_ptr_base, size, file_offset, buf_ptr_offset);
+    let bytes_read = sys::cuFileRead(
+        fh,
+        buf_ptr_base,
+        size,
+        file_offset as _,
+        buf_ptr_offset as _,
+    );
 
     if bytes_read == -1 {
         Err(CufileError::IO(std::io::Error::last_os_error()))
@@ -126,7 +132,13 @@ pub unsafe fn write(
     file_offset: i64,
     buf_ptr_offset: i64,
 ) -> Result<isize, CufileError> {
-    let bytes_written = sys::cuFileWrite(fh, buf_ptr_base, size, file_offset, buf_ptr_offset);
+    let bytes_written = sys::cuFileWrite(
+        fh,
+        buf_ptr_base,
+        size,
+        file_offset as _,
+        buf_ptr_offset as _,
+    );
 
     if bytes_written == -1 {
         Err(CufileError::IO(std::io::Error::last_os_error()))
