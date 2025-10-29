@@ -156,7 +156,13 @@ impl Cufile {
 
             // NOTE: placeholder, shouldn't ever reach this
             #[cfg(not(any(target_os = "linux", target_os = "windows")))]
-            let descr = Default::default();
+            let descr = sys::CUfileDescr_t {
+                type_: sys::CUfileFileHandleType::CU_FILE_HANDLE_TYPE_USERSPACE_FS,
+                handle: sys::CUfileDescr_t__bindgen_ty_1 {
+                    handle: std::ptr::null_mut(),
+                },
+                fs_ops: std::ptr::null(),
+            };
 
             let handle = result::handle_register(&descr)?;
 
