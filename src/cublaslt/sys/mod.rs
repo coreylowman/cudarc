@@ -2695,30 +2695,30 @@ pub struct cublasLtContext {
 }
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtEmulationDescOpaque_t {
     pub data: [u64; 8usize],
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulAlgo_t {
     pub data: [u64; 8usize],
 }
 #[cfg(any(feature = "cuda-11040"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 11usize],
 }
 #[cfg(any(feature = "cuda-11050", feature = "cuda-11060", feature = "cuda-11070"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 12usize],
 }
 #[cfg(any(feature = "cuda-11080", feature = "cuda-12000", feature = "cuda-12010"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 23usize],
 }
@@ -2733,7 +2733,7 @@ pub struct cublasLtMatmulDescOpaque_t {
     feature = "cuda-13000"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulDescOpaque_t {
     pub data: [u64; 32usize],
 }
@@ -2754,7 +2754,7 @@ pub struct cublasLtMatmulHeuristicResult_t {
     feature = "cuda-11080"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulPreferenceOpaque_t {
     pub data: [u64; 10usize],
 }
@@ -2771,23 +2771,41 @@ pub struct cublasLtMatmulPreferenceOpaque_t {
     feature = "cuda-13000"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatmulPreferenceOpaque_t {
     pub data: [u64; 8usize],
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatrixLayoutOpaque_t {
     pub data: [u64; 8usize],
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct cublasLtMatrixTransformDescOpaque_t {
     pub data: [u64; 8usize],
 }
 #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl cudaDataType_t {
     pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
+}
+impl Default for _IO_FILE {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cublasLtMatmulHeuristicResult_t {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
 }
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {

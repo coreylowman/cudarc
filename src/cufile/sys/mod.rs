@@ -1569,7 +1569,7 @@ pub struct CUfileDescr_t {
 }
 #[cfg(any(feature = "cuda-11040", feature = "cuda-11050"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileDrvProps {
     pub nvfs: CUfileDrvProps__bindgen_ty_1,
     pub fflags: ::core::ffi::c_uint,
@@ -1594,7 +1594,7 @@ pub struct CUfileDrvProps {
     feature = "cuda-13000"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileDrvProps {
     pub nvfs: CUfileDrvProps__bindgen_ty_1,
     pub fflags: ::core::ffi::c_uint,
@@ -1605,7 +1605,7 @@ pub struct CUfileDrvProps {
     pub max_batch_io_timeout_msecs: ::core::ffi::c_uint,
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileDrvProps__bindgen_ty_1 {
     pub major_version: ::core::ffi::c_uint,
     pub minor_version: ::core::ffi::c_uint,
@@ -1621,7 +1621,7 @@ pub struct CUfileError {
     pub cu_err: CUresult,
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileFSOps {
     pub fs_type: ::core::option::Option<
         unsafe extern "C" fn(handle: *mut ::core::ffi::c_void) -> *const ::core::ffi::c_char,
@@ -1731,14 +1731,14 @@ pub struct CUfileIOParams__bindgen_ty_1__bindgen_ty_1 {
 }
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileOpCounter {
     pub ok: u64,
     pub err: u64,
 }
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfilePerGpuStats {
     pub uuid: [::core::ffi::c_char; 16usize],
     pub read_bytes: u64,
@@ -1773,7 +1773,7 @@ pub struct CUfilePerGpuStats {
 }
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileStatsLevel1 {
     pub read_ops: CUfileOpCounter_t,
     pub write_ops: CUfileOpCounter_t,
@@ -1821,7 +1821,7 @@ pub struct CUfileStatsLevel1 {
 }
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileStatsLevel2 {
     pub basic: CUfileStatsLevel1_t,
     pub read_size_kb_hist: [u64; 32usize],
@@ -1829,7 +1829,7 @@ pub struct CUfileStatsLevel2 {
 }
 #[cfg(any(feature = "cuda-13000"))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct CUfileStatsLevel3 {
     pub detailed: CUfileStatsLevel2_t,
     pub num_gpus: u32,
@@ -1858,7 +1858,7 @@ pub struct cufileRDMAInfo {
     pub desc_str: *const ::core::ffi::c_char,
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct sockaddr {
     pub sa_family: sa_family_t,
     pub sa_data: [::core::ffi::c_char; 14usize],
@@ -1879,10 +1879,142 @@ pub struct sockaddr {
     feature = "cuda-13000"
 ))]
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct timespec {
     pub tv_sec: __time_t,
     pub tv_nsec: __syscall_slong_t,
+}
+impl Default for CUfileDescr_t {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for CUfileDescr_t__bindgen_ty_1 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for CUfileError {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for CUfileIOEvents {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for CUfileIOParams {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for CUfileIOParams__bindgen_ty_1 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[cfg(any(
+    feature = "cuda-11060",
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for CUfileIOParams__bindgen_ty_1__bindgen_ty_1 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for cufileRDMAInfo {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
 }
 #[repr(C)]
 #[derive(Copy, Clone)]

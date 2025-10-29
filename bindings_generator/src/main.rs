@@ -35,6 +35,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cudart"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "driver",
@@ -55,15 +56,13 @@ fn create_modules() -> Vec<ModuleConfig> {
             blocklist: Filters {
                 // NOTE: See https://github.com/coreylowman/cudarc/issues/385
                 types: vec!["^cuCheckpoint.*"],
-                functions: vec![
-                    "^cuCheckpoint.*",
-                    "cuDeviceGetNvSciSyncAttributes",
-                ],
+                functions: vec!["^cuCheckpoint.*", "cuDeviceGetNvSciSyncAttributes"],
                 vars: vec![],
             },
             libs: vec!["cuda", "nvcuda"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cublas",
@@ -78,6 +77,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cublas"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cublaslt",
@@ -96,6 +96,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cublasLt"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "curand",
@@ -108,15 +109,13 @@ fn create_modules() -> Vec<ModuleConfig> {
             allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
-                functions: vec![
-                    "curandGenerateBinomial",
-                    "curandGenerateBinomialMethod",
-                ],
+                functions: vec!["curandGenerateBinomial", "curandGenerateBinomialMethod"],
                 vars: vec![],
             },
             libs: vec!["curand"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "nvrtc",
@@ -142,6 +141,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["nvrtc"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cudnn",
@@ -156,6 +156,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cudnn"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "nccl",
@@ -170,6 +171,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["nccl"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cusparse",
@@ -226,6 +228,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cusparse"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cusolver",
@@ -238,15 +241,13 @@ fn create_modules() -> Vec<ModuleConfig> {
             allowlist_recursively: true,
             blocklist: Filters {
                 types: vec!["^cusolverMg.*"],
-                functions: vec![
-                    "^cusolverMg.*",
-                    "^cusolverDnLogger.*",
-                ],
+                functions: vec!["^cusolverMg.*", "^cusolverDnLogger.*"],
                 vars: vec!["^cusolverMg.*"],
             },
             libs: vec!["cusolver"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cusolvermg",
@@ -261,6 +262,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cusolverMg"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cufile",
@@ -275,6 +277,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cufile"],
             clang_args: vec![],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "nvtx",
@@ -285,7 +288,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec!["^nvtx.*"],
             },
             allowlist_recursively: true,
-            blocklist:  Filters {
+            blocklist: Filters {
                 types: vec![],
                 functions: vec!["nvtxInitialize"],
                 vars: vec![],
@@ -293,6 +296,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["nvToolsExt"],
             clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="],
             raw_lines: vec![],
+            derive_default: true,
         },
         ModuleConfig {
             cudarc_name: "cupti",
@@ -341,10 +345,8 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cupti"],
             clang_args: vec![],
-            raw_lines: vec![
-                "use crate::driver::sys::*;",
-                "use crate::runtime::sys::*;",
-            ],
+            raw_lines: vec!["use crate::driver::sys::*;", "use crate::runtime::sys::*;"],
+            derive_default: false,
         },
     ]
 }
@@ -370,6 +372,8 @@ struct ModuleConfig {
     allowlist_recursively: bool,
     /// Lines of code to add at the beginning of the generated bindings.
     raw_lines: Vec<&'static str>,
+    /// Whether to derive Default implementations for types.
+    derive_default: bool,
 }
 
 impl ModuleConfig {
@@ -399,7 +403,7 @@ impl ModuleConfig {
             .default_enum_style(bindgen::EnumVariation::Rust {
                 non_exhaustive: false,
             })
-            .derive_default(false)
+            .derive_default(self.derive_default)
             .derive_eq(true)
             .derive_hash(true)
             .derive_ord(true)
@@ -530,7 +534,7 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
             } else {
                 vec!["cuda_nvcc"]
             };
-    
+
             let archive_pb = multi_progress.add(ProgressBar::new(names.len() as u64));
             archive_pb.set_style(
                 ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?,

@@ -459,14 +459,14 @@ pub struct cublasContext {
 }
 #[repr(C)]
 #[repr(align(16))]
-#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
 pub struct double2 {
     pub x: f64,
     pub y: f64,
 }
 #[repr(C)]
 #[repr(align(8))]
-#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
 pub struct float2 {
     pub x: f32,
     pub y: f32,

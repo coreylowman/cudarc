@@ -95,7 +95,7 @@ pub struct ncclConfig_v22800 {
     pub nvlinkCentricSched: ::core::ffi::c_int,
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
 pub struct ncclSimInfo_v22200 {
     pub size: usize,
     pub magic: ::core::ffi::c_uint,
@@ -126,6 +126,24 @@ impl ncclDataType_t {
 }
 impl ncclDataType_t {
     pub const ncclInt: ncclDataType_t = ncclDataType_t::ncclInt32;
+}
+impl Default for ncclConfig_v22800 {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+impl Default for ncclUniqueId {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
 }
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {

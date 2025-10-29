@@ -651,14 +651,14 @@ pub struct cusparseMatDescr {
 }
 #[repr(C)]
 #[repr(align(16))]
-#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
 pub struct double2 {
     pub x: f64,
     pub y: f64,
 }
 #[repr(C)]
 #[repr(align(8))]
-#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+#[derive(Debug, Default, Copy, Clone, PartialOrd, PartialEq)]
 pub struct float2 {
     pub x: f32,
     pub y: f32,
@@ -679,6 +679,29 @@ impl cublasOperation_t {
 #[cfg(any(feature = "cuda-12080", feature = "cuda-12090", feature = "cuda-13000"))]
 impl cudaDataType_t {
     pub const CUDA_R_8F_UE4M3: cudaDataType_t = cudaDataType_t::CUDA_R_8F_E4M3;
+}
+#[cfg(any(
+    feature = "cuda-11070",
+    feature = "cuda-11080",
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
+impl Default for _IO_FILE {
+    fn default() -> Self {
+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
 }
 #[cfg(not(feature = "dynamic-loading"))]
 extern "C" {
