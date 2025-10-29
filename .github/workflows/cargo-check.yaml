@@ -4,11 +4,10 @@ jobs:
   cargo-check:
     name: cargo-check
 
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         version:
           - cuda-11040
           - cuda-11050
@@ -25,6 +24,8 @@ jobs:
           - cuda-12080
           - cuda-12090
           - cuda-13000
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
