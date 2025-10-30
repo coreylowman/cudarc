@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-const TYPICAL_CUDA_PATH_ENV_VARS: [&'static str; 5] = [
+const TYPICAL_CUDA_PATH_ENV_VARS: [&str; 5] = [
     "CUDA_HOME",
     "CUDA_PATH",
     "CUDA_ROOT",
