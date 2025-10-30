@@ -193,7 +193,9 @@ impl BindingMerger {
                                     .or_default()
                                     .insert(version, func.clone());
                             }
-                            other => println!("WARNING: Unhandled foreign item {other:?} in {path:?}... SKIPPING"),
+                            other => println!(
+                                "WARNING: Unhandled foreign item {other:?} in {path:?}... SKIPPING"
+                            ),
                         }
                     }
                 }
