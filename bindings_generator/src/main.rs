@@ -58,6 +58,8 @@ fn create_modules() -> Vec<ModuleConfig> {
                 functions: vec![
                     "^cuCheckpoint.*",
                     "cuDeviceGetNvSciSyncAttributes",
+                    // NOTE: see https://github.com/coreylowman/cudarc/issues/474
+                    "cuCtxCreate_v4",
                 ],
                 vars: vec![],
             },
@@ -108,10 +110,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             allowlist_recursively: true,
             blocklist: Filters {
                 types: vec![],
-                functions: vec![
-                    "curandGenerateBinomial",
-                    "curandGenerateBinomialMethod",
-                ],
+                functions: vec!["curandGenerateBinomial", "curandGenerateBinomialMethod"],
                 vars: vec![],
             },
             libs: vec!["curand"],
@@ -238,10 +237,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             allowlist_recursively: true,
             blocklist: Filters {
                 types: vec!["^cusolverMg.*"],
-                functions: vec![
-                    "^cusolverMg.*",
-                    "^cusolverDnLogger.*",
-                ],
+                functions: vec!["^cusolverMg.*", "^cusolverDnLogger.*"],
                 vars: vec!["^cusolverMg.*"],
             },
             libs: vec!["cusolver"],
@@ -285,7 +281,7 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec!["^nvtx.*"],
             },
             allowlist_recursively: true,
-            blocklist:  Filters {
+            blocklist: Filters {
                 types: vec![],
                 functions: vec!["nvtxInitialize"],
                 vars: vec![],
@@ -341,10 +337,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             libs: vec!["cupti"],
             clang_args: vec![],
-            raw_lines: vec![
-                "use crate::driver::sys::*;",
-                "use crate::runtime::sys::*;",
-            ],
+            raw_lines: vec!["use crate::driver::sys::*;", "use crate::runtime::sys::*;"],
         },
     ]
 }
@@ -530,7 +523,7 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
             } else {
                 vec!["cuda_nvcc"]
             };
-    
+
             let archive_pb = multi_progress.add(ProgressBar::new(names.len() as u64));
             archive_pb.set_style(
                 ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len} ({eta})")?,
