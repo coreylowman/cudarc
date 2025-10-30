@@ -251,7 +251,7 @@ fn link_searches(major: usize, minor: usize) -> Vec<PathBuf> {
     // occur. Print a warning with some guidance.
     #[cfg(feature = "dynamic-linking")]
     if env_vars.is_empty() && std::env::var("CONDA_PREFIX").is_ok() {
-        println!("cargo::warning=Detected CONDA_PREFIX in the environment, but no CUDA path was set through one of: {TYPICAL_CUDA_PATH_ENV_VARS:?}. Linker errors are likely to occur. Please ensure the environment contains all required dependencies (e.g. the \"cuda-driver-dev\") and retry building with CUDA_HOME=$CONDA_PREFIX.")
+        println!("cargo::warning=Detected $CONDA_PREFIX, but no CUDA path was set through one of: {TYPICAL_CUDA_PATH_ENV_VARS:?}. Linking to system CUDA libraries; linker errors may occur. To use CUDA installed via conda please ensure the environment contains all required dependencies (e.g. the \"cuda-driver-dev\") and retry building with CUDA_HOME=$CONDA_PREFIX.")
     }
 
     let typical_locations = [
