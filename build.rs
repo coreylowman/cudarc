@@ -1,5 +1,13 @@
 use std::path::PathBuf;
 
+const TYPICAL_CUDA_PATH_ENV_VARS: [&str; 5] = [
+    "CUDA_HOME",
+    "CUDA_PATH",
+    "CUDA_ROOT",
+    "CUDA_TOOLKIT_ROOT_DIR",
+    "CUDNN_LIB",
+];
+
 fn main() {
     #[cfg(all(
         not(feature = "dynamic-linking"),
@@ -15,10 +23,10 @@ fn main() {
     panic!("Both `dynamic-loading` and `dynamic-linking` features are active, this is a bug");
 
     println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-env-changed=CUDA_ROOT");
-    println!("cargo:rerun-if-env-changed=CUDA_PATH");
-    println!("cargo:rerun-if-env-changed=CUDA_TOOLKIT_ROOT_DIR");
     println!("cargo:rerun-if-env-changed=CUDARC_CUDA_VERSION");
+    TYPICAL_CUDA_PATH_ENV_VARS
+        .iter()
+        .for_each(|var| println!("cargo:rerun-if-env-changed={var}"));
 
     let (major, minor): (usize, usize) = if let Ok(version) = std::env::var("CUDARC_CUDA_VERSION") {
         let (major, minor) = match version.as_str() {
@@ -231,18 +239,22 @@ fn static_linking(major: usize, minor: usize) {
 
 #[allow(unused)]
 fn link_searches(major: usize, minor: usize) -> Vec<PathBuf> {
-    let env_vars = [
-        "CUDA_PATH",
-        "CUDA_ROOT",
-        "CUDA_TOOLKIT_ROOT_DIR",
-        "CUDNN_LIB",
-    ];
-    let env_vars = env_vars
-        .into_iter()
+    let env_vars = TYPICAL_CUDA_PATH_ENV_VARS
+        .iter()
         .map(std::env::var)
-        .filter_map(Result::ok);
+        .filter_map(Result::ok)
+        .collect::<Vec<_>>();
 
-    let standard_locations = [
+    // When building in a Conda-like environment with dynamic linking, if no
+    // CUDA path is supplied, then it is higly likely that, by defaulting our
+    // linker search paths to the typical locations below, linker errors will
+    // occur. Print a warning with some guidance.
+    #[cfg(feature = "dynamic-linking")]
+    if env_vars.is_empty() && std::env::var("CONDA_PREFIX").is_ok() {
+        println!("cargo::warning=Detected $CONDA_PREFIX, but no CUDA path was set through one of: {TYPICAL_CUDA_PATH_ENV_VARS:?}. Linking to system CUDA libraries; linker errors may occur. To use CUDA installed via conda please ensure the environment contains all required dependencies (e.g. the \"cuda-driver-dev\") and retry building with CUDA_HOME=$CONDA_PREFIX.")
+    }
+
+    let typical_locations = [
         "/usr",
         "/usr/local/cuda",
         "/opt/cuda",
@@ -264,13 +276,18 @@ fn link_searches(major: usize, minor: usize) -> Vec<PathBuf> {
         "C:/Program Files/NVIDIA/CUDNN/v9.1",
         "C:/Program Files/NVIDIA/CUDNN/v9.0",
     ];
-    let standard_locations = standard_locations.into_iter().map(Into::into);
+
+    let possible_locations = if env_vars.is_empty() {
+        typical_locations
+            .into_iter()
+            .map(Into::<String>::into)
+            .collect()
+    } else {
+        env_vars
+    };
 
     let mut candidates = Vec::new();
-    for root in env_vars
-        .chain(standard_locations)
-        .map(Into::<PathBuf>::into)
-    {
+    for root in possible_locations.into_iter().map(Into::<PathBuf>::into) {
         candidates.extend(
             [
                 "lib".into(),
