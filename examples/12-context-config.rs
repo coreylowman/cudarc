@@ -1,7 +1,6 @@
-use cudarc::driver::sys;
-use cudarc::driver::CudaContext;
+use cudarc::driver::{sys, CudaContext, DriverError};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), DriverError> {
     let dev = CudaContext::new(0)?;
 
     println!("=== Context Limits ===");
