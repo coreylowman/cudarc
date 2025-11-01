@@ -103,18 +103,17 @@ fn main() {
 
 #[allow(unused)]
 fn cuda_version_from_build_system() -> (usize, usize) {
-    let output = std::process::Command::new("nvcc")
-        .arg("--version")
-        .output()
-        .expect("Failed to execute `nvcc`");
+    let output = std::process::Command::new("nvcc").arg("--version").output();
 
-    if !output.status.success() {
-        panic!(
-            "`nvcc --version` failed.\nstdout:\n{}\n\nstderr:\n{}",
-            String::from_utf8_lossy(&output.stdout),
-            String::from_utf8_lossy(&output.stderr),
-        );
+    if output.is_err() || (output.as_ref().is_ok_and(|o| !o.status.success())) {
+        #[cfg(feature = "fallback-latest")]
+        return (13, 0);
+
+        #[cfg(not(feature = "fallback-latest"))]
+        panic!("`nvcc --version` failed.\n{output:?}");
     }
+
+    let output = output.unwrap();
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let version_line = stdout.lines().nth(3).unwrap();
