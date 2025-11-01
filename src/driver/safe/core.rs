@@ -1890,6 +1890,51 @@ impl CudaFunction {
         Ok(cluster_size as u32)
     }
 
+    /// Get the value of a specific attribute of this [CudaFunction].
+    ///
+    /// See [CUDA docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1g5e92a1b0d8d1b82cb00dcfb2de15961b)
+    pub fn get_attribute(
+        &self,
+        attribute: CUfunction_attribute_enum,
+    ) -> Result<i32, result::DriverError> {
+        unsafe { result::function::get_function_attribute(self.cu_function, attribute) }
+    }
+
+    /// Get the number of registers used per thread.
+    pub fn num_regs(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_NUM_REGS)
+    }
+
+    /// Get the size of statically-allocated shared memory in bytes.
+    pub fn shared_size_bytes(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES)
+    }
+
+    /// Get the size of constant memory in bytes used by this function.
+    pub fn const_size_bytes(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_CONST_SIZE_BYTES)
+    }
+
+    /// Get the size of local memory in bytes used per thread.
+    pub fn local_size_bytes(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES)
+    }
+
+    /// Get the maximum number of threads per block for this function.
+    pub fn max_threads_per_block(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK)
+    }
+
+    /// Get the PTX virtual architecture version for which the function was compiled.
+    pub fn ptx_version(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_PTX_VERSION)
+    }
+
+    /// Get the binary architecture version for which the function was compiled.
+    pub fn binary_version(&self) -> Result<i32, result::DriverError> {
+        self.get_attribute(CUfunction_attribute_enum::CU_FUNC_ATTRIBUTE_BINARY_VERSION)
+    }
+
     /// Set the value of a specific attribute of this [CudaFunction].
     pub fn set_attribute(
         &self,
