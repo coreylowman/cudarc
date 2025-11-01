@@ -180,6 +180,24 @@ pub mod device {
 
 pub mod function {
     use super::sys::{self, CUfunc_cache_enum, CUfunction_attribute_enum};
+    use std::mem::MaybeUninit;
+
+    /// Gets a specific attribute of a CUDA function.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__EXEC.html#group__CUDA__EXEC_1g5e92a1b0d8d1b82cb00dcfb2de15961b)
+    ///
+    /// # Safety
+    /// Function must exist.
+    pub unsafe fn get_function_attribute(
+        f: sys::CUfunction,
+        attribute: CUfunction_attribute_enum,
+    ) -> Result<i32, super::DriverError> {
+        let mut value = MaybeUninit::uninit();
+        unsafe {
+            sys::cuFuncGetAttribute(value.as_mut_ptr(), attribute, f).result()?;
+            Ok(value.assume_init())
+        }
+    }
 
     /// Sets the specific attribute of a cuda function.
     ///
