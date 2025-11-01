@@ -1819,7 +1819,7 @@ impl CudaModule {
     /// stream.memcpy_htos(&data, &symbol)?;
     /// ```
     pub fn get_global(self: &Arc<Self>, name: &str) -> Result<CudaSymbol, DriverError> {
-        let name_c = CString::new(name).unwrap();
+        let name_c = CString::new(name).map_err(|_| DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_VALUE))?;
         let (cu_device_ptr, bytes) =
             unsafe { result::module::get_global(self.cu_module, name_c) }?;
         Ok(CudaSymbol {
