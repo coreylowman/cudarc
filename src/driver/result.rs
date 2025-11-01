@@ -460,6 +460,42 @@ pub mod ctx {
     pub fn synchronize() -> Result<(), DriverError> {
         unsafe { sys::cuCtxSynchronize() }.result()
     }
+
+    /// Gets the value of a context limit.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g9f2d47d1745752aa16da4f8d6b7f6f06)
+    pub fn get_limit(limit: sys::CUlimit) -> Result<usize, DriverError> {
+        let mut value = MaybeUninit::uninit();
+        unsafe {
+            sys::cuCtxGetLimit(value.as_mut_ptr(), limit).result()?;
+            Ok(value.assume_init())
+        }
+    }
+
+    /// Sets the value of a context limit.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1gf9496524a98e2ee1896d4b97d4c7ef32)
+    pub fn set_limit(limit: sys::CUlimit, value: usize) -> Result<(), DriverError> {
+        unsafe { sys::cuCtxSetLimit(limit, value).result() }
+    }
+
+    /// Gets the cache configuration preference.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g40b6b141698f76b6bc8f4d3b1f0d85e7)
+    pub fn get_cache_config() -> Result<sys::CUfunc_cache, DriverError> {
+        let mut config = MaybeUninit::uninit();
+        unsafe {
+            sys::cuCtxGetCacheConfig(config.as_mut_ptr()).result()?;
+            Ok(config.assume_init())
+        }
+    }
+
+    /// Sets the cache configuration preference.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g54699acb1e6b97eee1535e59a738229a)
+    pub fn set_cache_config(config: sys::CUfunc_cache) -> Result<(), DriverError> {
+        unsafe { sys::cuCtxSetCacheConfig(config).result() }
+    }
 }
 
 pub mod stream {
