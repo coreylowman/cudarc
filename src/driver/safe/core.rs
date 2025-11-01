@@ -1761,6 +1761,38 @@ impl CudaModule {
             module: self.clone(),
         })
     }
+
+    /// Gets a global/constant symbol from the loaded module as a [CudaSlice<u8>].
+    ///
+    /// This can be used to access `__constant__` memory declared in CUDA kernels.
+    /// The returned slice can be transmuted to the appropriate type via views.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// // In CUDA: __constant__ float my_const[4];
+    /// let symbol = module.get_global("my_const", &stream)?;
+    /// let mut symbol_view = symbol.as_view_mut();
+    /// let mut symbol_f32 = unsafe { symbol_view.transmute_mut::<f32>(4).unwrap() };
+    /// stream.memcpy_htod(&[1.0f32, 2.0, 3.0, 4.0], &mut symbol_f32)?;
+    /// ```
+    pub fn get_global(
+        self: &Arc<Self>,
+        name: &str,
+        stream: &Arc<CudaStream>,
+    ) -> Result<CudaSlice<u8>, DriverError> {
+        let name_c =
+            CString::new(name).map_err(|_| DriverError(sys::CUresult::CUDA_ERROR_INVALID_VALUE))?;
+        let (cu_device_ptr, bytes) = unsafe { result::module::get_global(self.cu_module, name_c) }?;
+        Ok(CudaSlice {
+            cu_device_ptr,
+            len: bytes,
+            read: None,
+            write: None,
+            stream: stream.clone(),
+            marker: PhantomData,
+        })
+    }
 }
 
 impl CudaFunction {
