@@ -1298,62 +1298,6 @@ impl CudaStream {
         unsafe { result::memcpy_dtod_async(dst, src, num_bytes, self.cu_stream) }
     }
 
-    /// Copy a `[T]`/`Vec<T>`/[`PinnedHostSlice<T>`] to a global/constant symbol.
-    ///
-    /// This is used to copy data into `__constant__` memory declared in CUDA kernels.
-    ///
-    /// # Example
-    ///
-    /// ```ignore
-    /// // In CUDA: __constant__ float my_const[256];
-    /// let symbol = module.get_global("my_const")?;
-    /// let data = vec![1.0f32; 256];
-    /// stream.memcpy_htos(&data, &symbol)?;
-    /// ```
-    pub fn memcpy_htos<T: DeviceRepr, Src: HostSlice<T> + ?Sized>(
-        self: &Arc<Self>,
-        src: &Src,
-        symbol: &CudaSymbol,
-    ) -> Result<(), DriverError> {
-        let src_bytes = std::mem::size_of::<T>() * src.len();
-        assert!(
-            symbol.bytes >= src_bytes,
-            "Symbol size ({} bytes) is smaller than source data ({} bytes)",
-            symbol.bytes,
-            src_bytes
-        );
-        let (src, _record_src) = unsafe { src.stream_synced_slice(self) };
-        unsafe { result::memcpy_htod_async(symbol.cu_device_ptr, src, self.cu_stream) }
-    }
-
-    /// Copy a [`CudaSlice`]/[`CudaView`] to a global/constant symbol.
-    ///
-    /// This is used to copy data into `__constant__` memory declared in CUDA kernels.
-    ///
-    /// # Example
-    ///
-    /// ```ignore
-    /// // In CUDA: __constant__ float my_const[256];
-    /// let symbol = module.get_global("my_const")?;
-    /// let device_data = stream.memcpy_stod(&vec![1.0f32; 256])?;
-    /// stream.memcpy_dtos(&device_data, &symbol)?;
-    /// ```
-    pub fn memcpy_dtos<T, Src: DevicePtr<T>>(
-        self: &Arc<Self>,
-        src: &Src,
-        symbol: &CudaSymbol,
-    ) -> Result<(), DriverError> {
-        let src_bytes = src.num_bytes();
-        assert!(
-            symbol.bytes >= src_bytes,
-            "Symbol size ({} bytes) is smaller than source data ({} bytes)",
-            symbol.bytes,
-            src_bytes
-        );
-        let (src, _record_src) = src.device_ptr(self);
-        unsafe { result::memcpy_dtod_async(symbol.cu_device_ptr, src, src_bytes, self.cu_stream) }
-    }
-
     /// Copy a [`CudaSlice`]/[`CudaView`] to a new [`CudaSlice`].
     pub fn clone_dtod<T: DeviceRepr, Src: DevicePtr<T>>(
         self: &Arc<Self>,
@@ -1807,48 +1751,36 @@ impl CudaModule {
         })
     }
 
-    /// Gets a global/constant symbol from the loaded module.
+    /// Gets a global/constant symbol from the loaded module as a [CudaSlice<u8>].
     ///
     /// This can be used to access `__constant__` memory declared in CUDA kernels.
+    /// The returned slice can be transmuted to the appropriate type via views.
     ///
     /// # Example
     ///
     /// ```ignore
-    /// // In CUDA: __constant__ float my_const[256];
-    /// let symbol = module.get_global("my_const")?;
-    /// stream.memcpy_htos(&data, &symbol)?;
+    /// // In CUDA: __constant__ float my_const[4];
+    /// let symbol = module.get_global("my_const", &stream)?;
+    /// let mut symbol_view = symbol.as_view_mut();
+    /// let mut symbol_f32 = unsafe { symbol_view.transmute_mut::<f32>(4).unwrap() };
+    /// stream.memcpy_htod(&[1.0f32, 2.0, 3.0, 4.0], &mut symbol_f32)?;
     /// ```
-    pub fn get_global(self: &Arc<Self>, name: &str) -> Result<CudaSymbol, DriverError> {
-        let name_c = CString::new(name).map_err(|_| DriverError(sys::cudaError_enum::CUDA_ERROR_INVALID_VALUE))?;
-        let (cu_device_ptr, bytes) =
-            unsafe { result::module::get_global(self.cu_module, name_c) }?;
-        Ok(CudaSymbol {
+    pub fn get_global(
+        self: &Arc<Self>,
+        name: &str,
+        stream: &Arc<CudaStream>,
+    ) -> Result<CudaSlice<u8>, DriverError> {
+        let name_c =
+            CString::new(name).map_err(|_| DriverError(sys::CUresult::CUDA_ERROR_INVALID_VALUE))?;
+        let (cu_device_ptr, bytes) = unsafe { result::module::get_global(self.cu_module, name_c) }?;
+        Ok(CudaSlice {
             cu_device_ptr,
-            bytes,
-            module: self.clone(),
+            len: bytes,
+            read: None,
+            write: None,
+            stream: stream.clone(),
+            marker: PhantomData,
         })
-    }
-}
-
-/// Wrapper around a global/constant symbol from a CUDA module.
-///
-/// Created with [CudaModule::get_global()]. Use [CudaStream::memcpy_htos()]
-/// or [CudaStream::memcpy_dtos()] to copy data to the symbol.
-#[derive(Debug, Clone)]
-pub struct CudaSymbol {
-    pub(crate) cu_device_ptr: sys::CUdeviceptr,
-    pub(crate) bytes: usize,
-    #[allow(unused)]
-    pub(crate) module: Arc<CudaModule>,
-}
-
-unsafe impl Send for CudaSymbol {}
-unsafe impl Sync for CudaSymbol {}
-
-impl CudaSymbol {
-    /// Returns the size of the symbol in bytes.
-    pub fn num_bytes(&self) -> usize {
-        self.bytes
     }
 }
 

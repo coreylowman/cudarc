@@ -10,18 +10,20 @@ fn main() -> Result<(), DriverError> {
     // Load the module containing the kernel with constant memory
     let module = ctx.load_module(Ptx::from_file("./examples/constant_memory.ptx"))?;
 
-    // Get the constant memory symbol
-    let coefficients_symbol = module.get_global("coefficients")?;
+    // Get the constant memory symbol as a CudaSlice<u8>
+    let mut coefficients_symbol = module.get_global("coefficients", &stream)?;
     println!(
         "Constant memory symbol 'coefficients' has {} bytes",
-        coefficients_symbol.num_bytes()
+        coefficients_symbol.len()
     );
 
     // Set up polynomial coefficients: 1.0 + 2.0*x + 3.0*x^2 + 4.0*x^3
     let coefficients = [1.0f32, 2.0, 3.0, 4.0];
 
-    // Copy coefficients to constant memory
-    stream.memcpy_htos(&coefficients, &coefficients_symbol)?;
+    // Transmute the symbol to f32 and copy coefficients to constant memory
+    let mut symbol_view = coefficients_symbol.as_view_mut();
+    let mut symbol_f32 = unsafe { symbol_view.transmute_mut::<f32>(4).unwrap() };
+    stream.memcpy_htod(&coefficients, &mut symbol_f32)?;
 
     // Load the kernel function
     let polynomial_kernel = module.load_function("polynomial_kernel")?;
@@ -55,10 +57,7 @@ fn main() -> Result<(), DriverError> {
             + coefficients[1] * x
             + coefficients[2] * x * x
             + coefficients[3] * x * x * x;
-        println!(
-            "  f({:.1}) = {:.1} (expected {:.1})",
-            x, y, expected
-        );
+        println!("  f({:.1}) = {:.1} (expected {:.1})", x, y, expected);
         assert!(
             (y - expected).abs() < 1e-4,
             "Mismatch at index {}: got {}, expected {}",
