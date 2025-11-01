@@ -108,18 +108,10 @@ impl CudaContext {
     /// Get the compute capability of this device as a (major,minor) tuple
     pub fn compute_capability(&self) -> Result<(i32, i32), result::DriverError> {
         self.check_err()?;
-        let capability_major = unsafe {
-            result::device::get_attribute(
-                self.cu_device,
-                sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR,
-            )
-        }?;
-        let capability_minor = unsafe {
-            result::device::get_attribute(
-                self.cu_device,
-                sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR,
-            )
-        }?;
+        let capability_major =
+            self.attribute(sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR)?;
+        let capability_minor =
+            self.attribute(sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR)?;
 
         Ok((capability_major, capability_minor))
     }
