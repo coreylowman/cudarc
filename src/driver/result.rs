@@ -965,6 +965,24 @@ pub mod module {
         Ok(func.assume_init())
     }
 
+    /// Returns a pointer to a global/constant symbol in the module.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1gf3e43972c23c2d5c8a662f2d9a4d0c24)
+    ///
+    /// # Safety
+    /// `module` must be a properly allocated and not freed module.
+    pub unsafe fn get_global(
+        module: sys::CUmodule,
+        name: CString,
+    ) -> Result<(sys::CUdeviceptr, usize), DriverError> {
+        let name_ptr = name.as_c_str().as_ptr();
+        let mut dptr = MaybeUninit::uninit();
+        let mut bytes = MaybeUninit::uninit();
+        sys::cuModuleGetGlobal_v2(dptr.as_mut_ptr(), bytes.as_mut_ptr(), module, name_ptr)
+            .result()?;
+        Ok((dptr.assume_init(), bytes.assume_init()))
+    }
+
     /// Unloads a module.
     ///
     /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MODULE.html#group__CUDA__MODULE_1g8ea3d716524369de3763104ced4ea57b)
