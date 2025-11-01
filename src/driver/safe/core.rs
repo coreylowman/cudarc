@@ -183,6 +183,49 @@ impl CudaContext {
         result::ctx::set_flags(flags)
     }
 
+    /// Gets the value of a context limit.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g9f2d47d1745752aa16da7ed0d111b6a8)
+    pub fn get_limit(&self, limit: sys::CUlimit) -> Result<usize, DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::get_limit(limit)
+    }
+
+    /// Sets the value of a context limit.
+    ///
+    /// Common limits:
+    /// - `CU_LIMIT_STACK_SIZE` - Stack size for each thread
+    /// - `CU_LIMIT_PRINTF_FIFO_SIZE` - Size of printf buffer
+    /// - `CU_LIMIT_MALLOC_HEAP_SIZE` - Heap size for malloc() in kernels
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g0651954dfb9788173e60a9af7201e65a)
+    pub fn set_limit(&self, limit: sys::CUlimit, value: usize) -> Result<(), DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::set_limit(limit, value)
+    }
+
+    /// Gets the L1/shared memory cache configuration preference.
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g40b6b141698f76744dea6e39b9a25360)
+    pub fn get_cache_config(&self) -> Result<sys::CUfunc_cache, DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::get_cache_config()
+    }
+
+    /// Sets the L1/shared memory cache configuration preference.
+    ///
+    /// Options:
+    /// - `CU_FUNC_CACHE_PREFER_NONE` - No preference
+    /// - `CU_FUNC_CACHE_PREFER_SHARED` - Prefer larger shared memory, smaller L1
+    /// - `CU_FUNC_CACHE_PREFER_L1` - Prefer larger L1, smaller shared memory
+    /// - `CU_FUNC_CACHE_PREFER_EQUAL` - Equal split between L1 and shared
+    ///
+    /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CTX.html#group__CUDA__CTX_1g54699acf7e2ef27279d013ca2095f4a3)
+    pub fn set_cache_config(&self, config: sys::CUfunc_cache) -> Result<(), DriverError> {
+        self.bind_to_thread()?;
+        result::ctx::set_cache_config(config)
+    }
+
     /// Whether multiple streams have been created in this context. If so,
     /// the [CudaSlice::read] and [CudaSlice::write] events will be activated.
     ///
