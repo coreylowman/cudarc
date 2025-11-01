@@ -1897,6 +1897,7 @@ impl CudaFunction {
         &self,
         attribute: CUfunction_attribute_enum,
     ) -> Result<i32, result::DriverError> {
+        self.module.ctx.bind_to_thread()?;
         unsafe { result::function::get_function_attribute(self.cu_function, attribute) }
     }
 
