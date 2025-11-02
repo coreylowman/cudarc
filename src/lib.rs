@@ -11,6 +11,7 @@
 //! 10. [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction)
 //! 11. [CUPTI](https://docs.nvidia.com/cupti/)
 //! 12. [nvtx](https://nvidia.github.io/NVTX/)
+//! 13. [cuTENSOR](https://docs.nvidia.com/cuda/cutensor/index.html)
 //!
 //! # crate organization
 //!
@@ -32,6 +33,7 @@
 //! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
 //! | cupti | - | [cupti::result] | [cupti::sys] |
 //! | nvtx | [nvtx::safe] | [nvtx::result] | [nvtx::sys] |
+//! | cutensor | [cutensor::safe] | [cutensor::result] | [cutensor::sys] |
 //!
 //! # Core Concepts
 //!
@@ -105,6 +107,8 @@ pub mod cupti;
 pub mod curand;
 #[cfg(feature = "cusolver")]
 pub mod cusolver;
+#[cfg(feature = "cutensor")]
+pub mod cutensor;
 #[cfg(feature = "cusolvermg")]
 pub mod cusolvermg;
 #[cfg(feature = "cusparse")]

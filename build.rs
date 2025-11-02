@@ -178,6 +178,8 @@ fn dynamic_linking(major: usize, minor: usize) {
     }
     #[cfg(feature = "nvtx")]
     println!("cargo:rustc-link-lib=dylib=nvToolsExt");
+    #[cfg(feature = "cutensor")]
+    println!("cargo:rustc-link-lib=dylib=cutensor");
 }
 
 #[allow(unused)]
@@ -235,6 +237,8 @@ fn static_linking(major: usize, minor: usize) {
     }
     #[cfg(feature = "nvtx")]
     println!("cargo:rustc-link-lib=dylib=nvToolsExt");
+    #[cfg(feature = "cutensor")]
+    println!("cargo:rustc-link-lib=static:+whole-archive=cutensor_static");
 }
 
 #[allow(unused)]
