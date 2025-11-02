@@ -47,6 +47,7 @@ default = [
     "dynamic-loading",
 ]
 
+fallback-latest = []
 cuda-version-from-build-system = []
 cuda-11040 = []
 cuda-11050 = []
