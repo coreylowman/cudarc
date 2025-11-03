@@ -107,12 +107,12 @@ pub mod cupti;
 pub mod curand;
 #[cfg(feature = "cusolver")]
 pub mod cusolver;
-#[cfg(feature = "cutensor")]
-pub mod cutensor;
 #[cfg(feature = "cusolvermg")]
 pub mod cusolvermg;
 #[cfg(feature = "cusparse")]
 pub mod cusparse;
+#[cfg(feature = "cutensor")]
+pub mod cutensor;
 #[cfg(feature = "driver")]
 pub mod driver;
 #[cfg(feature = "nccl")]

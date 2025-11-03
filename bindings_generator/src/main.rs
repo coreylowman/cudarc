@@ -35,6 +35,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cudart"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "driver",
@@ -66,6 +67,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cuda", "nvcuda"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cublas",
@@ -80,6 +82,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cublas"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cublaslt",
@@ -98,6 +101,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cublasLt"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "curand",
@@ -116,6 +120,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["curand"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "nvrtc",
@@ -141,6 +146,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["nvrtc"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cudnn",
@@ -155,6 +161,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cudnn"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "nccl",
@@ -169,6 +176,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["nccl"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cusparse",
@@ -225,6 +233,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cusparse"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cusolver",
@@ -243,6 +252,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cusolver"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cusolvermg",
@@ -257,6 +267,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cusolverMg"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cufile",
@@ -271,6 +282,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cufile"],
             clang_args: vec![],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "nvtx",
@@ -289,6 +301,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["nvToolsExt"],
             clang_args: vec!["-DNVTX_NO_IMPL=0", "-DNVTX_DECLSPEC="],
             raw_lines: vec![],
+            min_cuda_version: None,
         },
         ModuleConfig {
             cudarc_name: "cupti",
@@ -338,6 +351,22 @@ fn create_modules() -> Vec<ModuleConfig> {
             libs: vec!["cupti"],
             clang_args: vec![],
             raw_lines: vec!["use crate::driver::sys::*;", "use crate::runtime::sys::*;"],
+            min_cuda_version: None,
+        },
+        ModuleConfig {
+            cudarc_name: "cutensor",
+            redist_name: "libcutensor",
+            allowlist: Filters {
+                types: vec!["^cutensor.*"],
+                functions: vec!["^cutensor.*"],
+                vars: vec!["^cutensor.*"],
+            },
+            allowlist_recursively: true,
+            blocklist: Filters::none(),
+            libs: vec!["cutensor"],
+            clang_args: vec![],
+            raw_lines: vec![],
+            min_cuda_version: Some("cuda-12000"),
         },
     ]
 }
@@ -363,6 +392,18 @@ struct ModuleConfig {
     allowlist_recursively: bool,
     /// Lines of code to add at the beginning of the generated bindings.
     raw_lines: Vec<&'static str>,
+    /// Minimum CUDA version required for this module. If None, all versions are supported.
+    min_cuda_version: Option<&'static str>,
+}
+
+impl ModuleConfig {
+    /// Returns true if this module is supported for the given CUDA version.
+    fn supports_cuda_version(&self, cuda_version: &str) -> bool {
+        match self.min_cuda_version {
+            None => true,
+            Some(min_version) => cuda_version >= min_version,
+        }
+    }
 }
 
 impl ModuleConfig {
@@ -542,9 +583,17 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
         );
         for module in modules {
             module_pb.set_message(module.cudarc_name);
+
+            // Skip modules that don't support this CUDA version
+            if !module.supports_cuda_version(cuda_version) {
+                module_pb.inc(1);
+                continue;
+            }
+
             let archive = match module.cudarc_name {
                 "cudnn" => generate_cudnn(cuda_version, module, &primary_archives, &multi_progress),
                 "nccl" => generate_nccl(cuda_version, module, &primary_archives, &multi_progress),
+                "cutensor" => generate_cutensor(cuda_version, module, &primary_archives, &multi_progress),
                 _ => generate_sys(cuda_version, module, &primary_archives, &multi_progress),
             };
             let archive = archive.context(format!(
@@ -767,6 +816,69 @@ fn generate_nccl(
         extract::extract_archive(&out_path, &output_dir, multi_progress)?;
     }
     assert!(archive_dir.exists());
+
+    module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
+
+    Ok(archive_dir)
+}
+
+fn generate_cutensor(
+    cuda_version: &str,
+    module: &ModuleConfig,
+    primary_archives: &[PathBuf],
+    multi_progress: &MultiProgress,
+) -> Result<PathBuf> {
+    let url = "https://developer.download.nvidia.com/compute/cutensor/redist/";
+
+    let cuda_name = &module.redist_name;
+    let (cuda_major, _, _) = get_version(cuda_version)?;
+
+    // cuTENSOR 2.3.1 supports CUDA 12 and 13
+    let (major, minor, patch) = (2, 3, 1);
+
+    let data = download::cuda_redist(major, minor, patch, url, multi_progress)?;
+    let lib = &data[cuda_name]["linux-x86_64"];
+    let lib = match cuda_major {
+        12 => &lib["cuda12"],
+        13 => &lib["cuda13"],
+        _ => return Err(anyhow::anyhow!("cuTENSOR only supports CUDA 12 and 13, got {}", cuda_major)),
+    };
+
+    let path = lib["relative_path"].as_str().context(format!(
+        "Missing relative_path in redistrib data for {cuda_name}",
+    ))?;
+    let checksum = lib["sha256"]
+        .as_str()
+        .context(format!("Missing sha256 in redistrib data for {cuda_name}"))?;
+    let url = format!("{url}/{path}");
+
+    let output_dir = Path::new("downloads").join(&module.cudarc_name);
+    let parts: Vec<_> = Path::new(path)
+        .file_name()
+        .context(format!("Failed to get file name from {path}"))?
+        .to_str()
+        .expect("A valid filename")
+        .split(".")
+        .collect();
+    let n = parts.len();
+    // NOTE: Extension is .tar.xz
+    let name = parts.into_iter().take(n - 2).collect::<Vec<_>>().join(".");
+    let archive_dir = output_dir.join(name);
+
+    if !archive_dir.exists() {
+        fs::create_dir_all(&archive_dir).context(format!(
+            "Failed to create directory {}",
+            archive_dir.display()
+        ))?;
+        let out_path = output_dir.join(
+            Path::new(path)
+                .file_name()
+                .context(format!("Failed to get file name from {path}"))?,
+        );
+        download::to_file_with_checksum(&url, &out_path, checksum, multi_progress)?;
+        extract::extract_archive(&out_path, &output_dir, multi_progress)
+            .context("Extracting archive")?;
+    }
 
     module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
 

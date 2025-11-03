@@ -12,7 +12,7 @@ trait CutensorResult {
 impl CutensorResult for sys::cutensorStatus_t {
     fn result(self) -> Result<(), CutensorError> {
         match self {
-            0 => Ok(()), // CUTENSOR_STATUS_SUCCESS
+            sys::cutensorStatus_t::CUTENSOR_STATUS_SUCCESS => Ok(()),
             _ => Err(CutensorError(self)),
         }
     }
@@ -75,7 +75,7 @@ pub unsafe fn create_tensor_descriptor(
     extent: *const i64,
     stride: *const i64,
     data_type: sys::cudaDataType_t,
-    unary_op: sys::cutensorOperator_t,
+    alignment_requirement: u32,
 ) -> Result<sys::cutensorTensorDescriptor_t, CutensorError> {
     let mut desc = MaybeUninit::uninit();
     sys::cutensorCreateTensorDescriptor(
@@ -85,7 +85,7 @@ pub unsafe fn create_tensor_descriptor(
         extent,
         stride,
         data_type,
-        unary_op,
+        alignment_requirement,
     )
     .result()?;
     Ok(desc.assume_init())

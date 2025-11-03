@@ -1,16 +1,23 @@
 //! Safe abstractions around [crate::cutensor::result] for tensor operations.
 //!
-//! Tensor data is stored in [crate::driver::CudaSlice], which provides:
+//! **Current Status:** Minimal implementation providing handle and descriptor creation only.
+//!
+//! **Implemented:**
+//! - [`CuTensor`] - cuTENSOR library handle (context/engine)
+//! - [`TensorDescriptor`] - Tensor metadata (shape, layout, data type)
+//!
+//! **TODO:** Integration with [crate::driver::CudaSlice] for safe tensor operations.
+//! Tensor data would be stored in `CudaSlice<T>`, which provides:
 //! - Automatic event tracking
 //! - Multi-stream synchronization
 //! - Memory management
 //! - Type safety
 //!
-//! Tensor descriptors ([TensorDescriptor]) describe the shape and layout,
-//! while the actual data lives in `CudaSlice<T>`.
+//! For now, users must use the unsafe functions in [crate::cutensor::result] directly
+//! to perform actual tensor operations (contractions, reductions, etc.).
 
 use super::{result, result::CutensorError, sys};
-use crate::driver::{CudaSlice, CudaStream};
+use crate::driver::CudaStream;
 use std::sync::Arc;
 
 /// Wrapper around [sys::cutensorHandle_t]
@@ -110,7 +117,9 @@ impl Drop for CuTensor {
 /// Wrapper around [sys::cutensorTensorDescriptor_t]
 ///
 /// Describes the shape, layout, and data type of a tensor.
-/// The actual tensor data is stored separately in a [CudaSlice].
+///
+/// **Note:** This only contains metadata - no actual tensor data.
+/// TODO: Integrate with [crate::driver::CudaSlice] for holding tensor data.
 ///
 /// # Example
 ///
@@ -121,6 +130,7 @@ impl Drop for CuTensor {
 ///     &[3, 4],           // extents (shape)
 ///     None,              // strides (None = packed/column-major)
 ///     sys::cudaDataType_t::CUDA_R_32F,
+///     None,              // alignment (None = 256 bytes)
 /// )?;
 /// ```
 #[derive(Debug)]
@@ -138,24 +148,27 @@ impl TensorDescriptor {
     /// * `extents` - The size of each mode (dimension)
     /// * `strides` - Optional strides for each mode. If None, uses packed column-major layout
     /// * `data_type` - The data type of the tensor elements
+    /// * `alignment` - Optional alignment requirement in bytes. If None, defaults to 256 bytes
     ///
     /// # Example
     ///
     /// ```rust,ignore
-    /// // 2x3 matrix, column-major (default)
+    /// // 2x3 matrix, column-major (default), 256-byte alignment
     /// let desc = TensorDescriptor::new(
     ///     &cutensor,
     ///     &[2, 3],
     ///     None,
     ///     sys::cudaDataType_t::CUDA_R_32F,
+    ///     None,
     /// )?;
     ///
-    /// // Custom strides (row-major)
+    /// // Custom strides (row-major) with custom alignment
     /// let desc = TensorDescriptor::new(
     ///     &cutensor,
     ///     &[2, 3],
     ///     Some(&[3, 1]),  // row-major: stride of 3 for rows, 1 for columns
     ///     sys::cudaDataType_t::CUDA_R_32F,
+    ///     Some(128),      // 128-byte alignment
     /// )?;
     /// ```
     pub fn new(
@@ -163,6 +176,7 @@ impl TensorDescriptor {
         extents: &[i64],
         strides: Option<&[i64]>,
         data_type: sys::cudaDataType_t,
+        alignment: Option<u32>,
     ) -> Result<Arc<Self>, CutensorError> {
         let num_modes = extents.len() as u32;
 
@@ -175,6 +189,8 @@ impl TensorDescriptor {
             default_strides.as_ptr()
         };
 
+        let alignment_requirement = alignment.unwrap_or(256);
+
         let desc = unsafe {
             result::create_tensor_descriptor(
                 handle.handle,
@@ -182,7 +198,7 @@ impl TensorDescriptor {
                 extents.as_ptr(),
                 strides_ptr,
                 data_type,
-                0, // CUTENSOR_OP_IDENTITY
+                alignment_requirement,
             )?
         };
 
