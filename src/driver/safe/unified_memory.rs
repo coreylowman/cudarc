@@ -1073,4 +1073,205 @@ extern \"C\" __global__ void kernel(float *buf) {
 
         Ok(())
     }
+
+    #[test]
+    fn test_unified_slice_copy_to_views() -> Result<(), DriverError> {
+        let ctx = CudaContext::new(0)?;
+        let stream = ctx.default_stream();
+
+        // Create multiple small unified slices with known data
+        let mut smalls = [
+            unsafe { ctx.alloc_unified::<f32>(2, true) }?,
+            unsafe { ctx.alloc_unified::<f32>(2, true) }?,
+            unsafe { ctx.alloc_unified::<f32>(2, true) }?,
+            unsafe { ctx.alloc_unified::<f32>(2, true) }?,
+            unsafe { ctx.alloc_unified::<f32>(2, true) }?,
+        ];
+
+        // Initialize the small slices with data
+        {
+            let buf = smalls[0].as_mut_slice()?;
+            buf[0] = -1.0;
+            buf[1] = -0.8;
+        }
+        {
+            let buf = smalls[1].as_mut_slice()?;
+            buf[0] = -0.6;
+            buf[1] = -0.4;
+        }
+        {
+            let buf = smalls[2].as_mut_slice()?;
+            buf[0] = -0.2;
+            buf[1] = 0.0;
+        }
+        {
+            let buf = smalls[3].as_mut_slice()?;
+            buf[0] = 0.2;
+            buf[1] = 0.4;
+        }
+        {
+            let buf = smalls[4].as_mut_slice()?;
+            buf[0] = 0.6;
+            buf[1] = 0.8;
+        }
+
+        // Create a large unified slice (zeroed)
+        let mut big = unsafe { ctx.alloc_unified::<f32>(10, true) }?;
+        stream.memset_zeros(&mut big)?;
+
+        // Use slice_mut to get sub-views and copy data into them
+        let mut offset = 0;
+        for small in smalls.iter() {
+            let mut sub = big.slice_mut(offset..offset + small.len());
+            stream.memcpy_dtod(small, &mut sub)?;
+            offset += small.len();
+        }
+
+        // Verify the result
+        stream.synchronize()?;
+        let result = stream.memcpy_dtov(&big)?;
+        assert_eq!(
+            result,
+            [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_unified_slice_split_at() -> Result<(), DriverError> {
+        let ctx = CudaContext::new(0)?;
+        let stream = ctx.default_stream();
+
+        // Create a unified slice with data [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        let mut unified = unsafe { ctx.alloc_unified::<f32>(10, true) }?;
+        {
+            let buf = unified.as_mut_slice()?;
+            for i in 0..10 {
+                buf[i] = i as f32;
+            }
+        }
+
+        // Test split_at with immutable views
+        let (left, right) = unified.split_at(5);
+        assert_eq!(left.len(), 5);
+        assert_eq!(right.len(), 5);
+
+        let left_data = stream.memcpy_dtov(&left)?;
+        let right_data = stream.memcpy_dtov(&right)?;
+        assert_eq!(left_data, [0.0, 1.0, 2.0, 3.0, 4.0]);
+        assert_eq!(right_data, [5.0, 6.0, 7.0, 8.0, 9.0]);
+
+        // Test split_at_mut with mutable views
+        let (mut left_mut, right_mut) = unified.split_at_mut(5);
+        assert_eq!(left_mut.len(), 5);
+        assert_eq!(right_mut.len(), 5);
+
+        // Modify the left half
+        let zeros = std::vec![0.0f32; 5];
+        stream.memcpy_htod(&zeros, &mut left_mut)?;
+
+        // Verify only left half was modified
+        stream.synchronize()?;
+        let result = stream.memcpy_dtov(&unified)?;
+        assert_eq!(result, [0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_unified_slice_views_respect_stream_attachment() -> Result<(), DriverError> {
+        let ctx = CudaContext::new(0)?;
+
+        // Create unified slice in GLOBAL mode
+        let mut unified = unsafe { ctx.alloc_unified::<f32>(100, true) }?;
+        {
+            let buf = unified.as_mut_slice()?;
+            for i in 0..100 {
+                buf[i] = i as f32;
+            }
+        }
+
+        let stream1 = ctx.default_stream();
+        let stream2 = ctx.new_stream()?;
+
+        // Initially in GLOBAL mode - both streams should work
+        let view1 = unified.slice(0..50);
+        let data1 = stream1.memcpy_dtov(&view1)?;
+        assert_eq!(data1[0], 0.0);
+        assert_eq!(data1[49], 49.0);
+
+        let view2 = unified.slice(50..100);
+        let data2 = stream2.memcpy_dtov(&view2)?;
+        assert_eq!(data2[0], 50.0);
+        assert_eq!(data2[49], 99.0);
+
+        // Test writing through a view in GLOBAL mode
+        let mut view_mut = unified.slice_mut(10..20);
+        let write_data = std::vec![999.0f32; 10];
+        stream1.memcpy_htod(&write_data, &mut view_mut)?;
+        stream1.synchronize()?;
+
+        // Verify the write succeeded
+        let verify_data = stream1.memcpy_dtov(&unified)?;
+        for i in 0..10 {
+            assert_eq!(
+                verify_data[i], i as f32,
+                "Data before write range should be unchanged"
+            );
+        }
+        for i in 10..20 {
+            assert_eq!(verify_data[i], 999.0, "Data in write range should be 999.0");
+        }
+        for i in 20..100 {
+            assert_eq!(
+                verify_data[i], i as f32,
+                "Data after write range should be unchanged"
+            );
+        }
+
+        // Switch to SINGLE mode attached to stream2
+        unified.attach(&stream2, sys::CUmemAttach_flags::CU_MEM_ATTACH_SINGLE)?;
+
+        // Create a view - it should inherit SINGLE mode
+        let view_single = unified.slice(0..50);
+
+        // Access with attached stream (stream2) should work
+        let data_ok = stream2.memcpy_dtov(&view_single)?;
+        assert_eq!(data_ok[0], 0.0);
+
+        // Access with different stream (stream1) should record an error
+        let _ = stream1.memcpy_dtov(&view_single);
+        // The error is recorded in the context, not returned synchronously
+        assert!(
+            ctx.check_err().is_err(),
+            "Expected error to be recorded when accessing SINGLE mode view from wrong stream"
+        );
+
+        // Test writing through a view in SINGLE mode with correct stream
+        let mut view_single_mut = unified.slice_mut(30..40);
+        let write_data2 = std::vec![777.0f32; 10];
+        stream2.memcpy_htod(&write_data2, &mut view_single_mut)?;
+        stream2.synchronize()?;
+
+        // Verify the write succeeded
+        let verify_data2 = stream2.memcpy_dtov(&unified)?;
+        for i in 30..40 {
+            assert_eq!(
+                verify_data2[i], 777.0,
+                "Data written through SINGLE mode view should be 777.0"
+            );
+        }
+
+        // Verify writing with wrong stream records an error
+        let mut view_wrong_stream = unified.slice_mut(40..50);
+        let _ = stream1.memcpy_htod(&write_data2, &mut view_wrong_stream);
+        // The error is recorded in the context
+        assert!(
+            ctx.check_err().is_err(),
+            "Expected error to be recorded when writing to SINGLE mode view from wrong stream"
+        );
+
+        Ok(())
+    }
 }
