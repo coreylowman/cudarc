@@ -4,12 +4,7 @@ use core::mem::MaybeUninit;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct CutensorError(pub sys::cutensorStatus_t);
 
-/// Extension trait to convert cutensorStatus_t to Result
-trait CutensorResult {
-    fn result(self) -> Result<(), CutensorError>;
-}
-
-impl CutensorResult for sys::cutensorStatus_t {
+impl sys::cutensorStatus_t {
     fn result(self) -> Result<(), CutensorError> {
         match self {
             sys::cutensorStatus_t::CUTENSOR_STATUS_SUCCESS => Ok(()),
