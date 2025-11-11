@@ -1,4 +1,5 @@
 use core::marker::PhantomData;
+use std::ops::{Bound, RangeBounds};
 use std::sync::Arc;
 
 use crate::driver::{result, sys};
@@ -49,6 +50,30 @@ impl<T> Drop for UnifiedSlice<T> {
             .ctx
             .record_err(unsafe { result::memory_free(self.cu_device_ptr) });
     }
+}
+
+/// `&[T]` on unified memory. An immutable sub-view into a [UnifiedSlice] created by [UnifiedSlice::as_view()]/[UnifiedSlice::slice()].
+#[derive(Debug, Copy, Clone)]
+pub struct UnifiedView<'a, T> {
+    pub(crate) ptr: sys::CUdeviceptr,
+    pub(crate) len: usize,
+    pub(crate) event: &'a CudaEvent,
+    pub(crate) stream: &'a Arc<CudaStream>,
+    pub(crate) attach_mode: sys::CUmemAttach_flags,
+    pub(crate) concurrent_managed_access: bool,
+    marker: PhantomData<&'a [T]>,
+}
+
+/// `&mut [T]` on unified memory. A mutable sub-view into a [UnifiedSlice] created by [UnifiedSlice::as_view_mut()]/[UnifiedSlice::slice_mut()].
+#[derive(Debug)]
+pub struct UnifiedViewMut<'a, T> {
+    pub(crate) ptr: sys::CUdeviceptr,
+    pub(crate) len: usize,
+    pub(crate) event: &'a CudaEvent,
+    pub(crate) stream: &'a Arc<CudaStream>,
+    pub(crate) attach_mode: sys::CUmemAttach_flags,
+    pub(crate) concurrent_managed_access: bool,
+    marker: PhantomData<&'a mut [T]>,
 }
 
 impl CudaContext {
@@ -232,6 +257,92 @@ impl<T> UnifiedSlice<T> {
         };
         Ok(())
     }
+
+    /// Creates an immutable view of the entire [UnifiedSlice].
+    pub fn as_view(&self) -> UnifiedView<'_, T> {
+        UnifiedView {
+            ptr: self.cu_device_ptr,
+            len: self.len,
+            event: &self.event,
+            stream: &self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        }
+    }
+
+    /// Creates a mutable view of the entire [UnifiedSlice].
+    pub fn as_view_mut(&mut self) -> UnifiedViewMut<'_, T> {
+        UnifiedViewMut {
+            ptr: self.cu_device_ptr,
+            len: self.len,
+            event: &self.event,
+            stream: &self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        }
+    }
+
+    /// Creates a [UnifiedView] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range.start >= self.len`.
+    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> UnifiedView<'_, T> {
+        self.as_view().slice(bounds)
+    }
+
+    /// Fallible version of [UnifiedSlice::slice()].
+    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<UnifiedView<'_, T>> {
+        self.as_view().try_slice(bounds)
+    }
+
+    /// Creates a [UnifiedViewMut] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range` and `0...self.len()` are not overlapping.
+    pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> UnifiedViewMut<'_, T> {
+        self.try_slice_mut(bounds).unwrap()
+    }
+
+    /// Fallible version of [UnifiedSlice::slice_mut]
+    pub fn try_slice_mut(
+        &mut self,
+        bounds: impl RangeBounds<usize>,
+    ) -> Option<UnifiedViewMut<'_, T>> {
+        to_range(bounds, self.len).map(|(start, end)| self.as_view_mut().resize(start, end))
+    }
+
+    pub fn split_at(&self, mid: usize) -> (UnifiedView<'_, T>, UnifiedView<'_, T>) {
+        self.try_split_at(mid).unwrap()
+    }
+
+    /// Fallible version of [UnifiedSlice::split_at]. Returns `None` if `mid > self.len`.
+    pub fn try_split_at(&self, mid: usize) -> Option<(UnifiedView<'_, T>, UnifiedView<'_, T>)> {
+        (mid <= self.len()).then(|| {
+            let view = self.as_view();
+            (view.resize(0, mid), view.resize(mid, self.len))
+        })
+    }
+
+    /// Splits the [UnifiedSlice] into two at the given index, returning two [UnifiedViewMut] for the two halves.
+    ///
+    /// Panics if `mid > self.len`.
+    pub fn split_at_mut(&mut self, mid: usize) -> (UnifiedViewMut<'_, T>, UnifiedViewMut<'_, T>) {
+        self.try_split_at_mut(mid).unwrap()
+    }
+
+    /// Fallible version of [UnifiedSlice::split_at_mut].
+    ///
+    /// Returns `None` if `mid > self.len`.
+    pub fn try_split_at_mut(
+        &mut self,
+        mid: usize,
+    ) -> Option<(UnifiedViewMut<'_, T>, UnifiedViewMut<'_, T>)> {
+        let length = self.len;
+        (mid <= length).then(|| {
+            let view = self.as_view_mut();
+            (view.resize(0, mid), view.resize(mid, length))
+        })
+    }
 }
 
 impl<T> DeviceSlice<T> for UnifiedSlice<T> {
@@ -344,6 +455,373 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut UnifiedSlice<T>> for LaunchArgs
             .push((&arg.cu_device_ptr) as *const sys::CUdeviceptr as _);
         self
     }
+}
+
+impl<T> DeviceSlice<T> for UnifiedView<'_, T> {
+    fn len(&self) -> usize {
+        self.len
+    }
+    fn stream(&self) -> &Arc<CudaStream> {
+        self.stream
+    }
+}
+
+impl<T> DeviceSlice<T> for UnifiedViewMut<'_, T> {
+    fn len(&self) -> usize {
+        self.len
+    }
+    fn stream(&self) -> &Arc<CudaStream> {
+        self.stream
+    }
+}
+
+impl<T> DevicePtr<T> for UnifiedView<'_, T> {
+    fn device_ptr<'a>(
+        &'a self,
+        stream: &'a CudaStream,
+    ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            self.ptr,
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+}
+
+impl<T> DevicePtr<T> for UnifiedViewMut<'_, T> {
+    fn device_ptr<'a>(
+        &'a self,
+        stream: &'a CudaStream,
+    ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            self.ptr,
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+}
+
+impl<T> DevicePtrMut<T> for UnifiedViewMut<'_, T> {
+    fn device_ptr_mut<'a>(
+        &'a mut self,
+        stream: &'a CudaStream,
+    ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            self.ptr,
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+}
+
+impl<T> HostSlice<T> for UnifiedView<'_, T> {
+    fn len(&self) -> usize {
+        self.len
+    }
+    unsafe fn stream_synced_slice<'a>(
+        &'a self,
+        stream: &'a CudaStream,
+    ) -> (&'a [T], super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            std::slice::from_raw_parts(self.ptr as *const T, self.len),
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+
+    unsafe fn stream_synced_mut_slice<'a>(
+        &'a mut self,
+        stream: &'a CudaStream,
+    ) -> (&'a mut [T], super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            std::slice::from_raw_parts_mut(self.ptr as *mut T, self.len),
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+}
+
+impl<T> HostSlice<T> for UnifiedViewMut<'_, T> {
+    fn len(&self) -> usize {
+        self.len
+    }
+    unsafe fn stream_synced_slice<'a>(
+        &'a self,
+        stream: &'a CudaStream,
+    ) -> (&'a [T], super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            std::slice::from_raw_parts(self.ptr as *const T, self.len),
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+
+    unsafe fn stream_synced_mut_slice<'a>(
+        &'a mut self,
+        stream: &'a CudaStream,
+    ) -> (&'a mut [T], super::SyncOnDrop<'a>) {
+        stream
+            .ctx
+            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(stream.wait(self.event));
+        (
+            std::slice::from_raw_parts_mut(self.ptr as *mut T, self.len),
+            super::SyncOnDrop::Record(Some((self.event, stream))),
+        )
+    }
+}
+
+unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedView<'b, T>> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b UnifiedView<'b, T>) -> &mut Self {
+        self.stream
+            .ctx
+            .record_err(check_device_access_view(arg, self.stream));
+        self.waits.push(arg.event);
+        self.records.push(arg.event);
+        self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
+        self
+    }
+}
+
+unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedViewMut<'b, T>> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b UnifiedViewMut<'b, T>) -> &mut Self {
+        self.stream
+            .ctx
+            .record_err(check_device_access_view_mut(arg, self.stream));
+        self.waits.push(arg.event);
+        self.records.push(arg.event);
+        self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
+        self
+    }
+}
+
+unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut UnifiedViewMut<'b, T>> for LaunchArgs<'a> {
+    #[inline(always)]
+    fn arg(&mut self, arg: &'b mut UnifiedViewMut<'b, T>) -> &mut Self {
+        self.stream
+            .ctx
+            .record_err(check_device_access_view_mut(arg, self.stream));
+        self.waits.push(arg.event);
+        self.records.push(arg.event);
+        self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
+        self
+    }
+}
+
+// Helper functions for access checking on views
+fn check_device_access_view<T>(
+    view: &UnifiedView<'_, T>,
+    stream: &CudaStream,
+) -> Result<(), DriverError> {
+    match view.attach_mode {
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
+            // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
+        }
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
+            let concurrent_managed_access = if view.stream.context() != stream.context() {
+                stream.context().attribute(
+                    sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
+                )? != 0
+            } else {
+                view.concurrent_managed_access
+            };
+            if !concurrent_managed_access {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+            }
+        }
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
+            if view.stream.as_ref() != stream {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+            }
+        }
+    };
+    Ok(())
+}
+
+fn check_device_access_view_mut<T>(
+    view: &UnifiedViewMut<'_, T>,
+    stream: &CudaStream,
+) -> Result<(), DriverError> {
+    match view.attach_mode {
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
+            // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
+        }
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
+            let concurrent_managed_access = if view.stream.context() != stream.context() {
+                stream.context().attribute(
+                    sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
+                )? != 0
+            } else {
+                view.concurrent_managed_access
+            };
+            if !concurrent_managed_access {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+            }
+        }
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
+            if view.stream.as_ref() != stream {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+            }
+        }
+    };
+    Ok(())
+}
+
+impl<'a, T> UnifiedView<'a, T> {
+    /// The number of elements `T` in this view.
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    fn resize(&self, start: usize, end: usize) -> Self {
+        assert!(start <= end && end <= self.len);
+        Self {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: self.event,
+            stream: self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        }
+    }
+
+    /// Creates a [UnifiedView] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range.start >= self.len`.
+    pub fn slice(&self, bounds: impl RangeBounds<usize>) -> Self {
+        self.try_slice(bounds).unwrap()
+    }
+
+    /// Fallible version of [UnifiedView::slice]
+    pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
+    }
+
+    pub fn split_at(&self, mid: usize) -> (Self, Self) {
+        self.try_split_at(mid).unwrap()
+    }
+
+    /// Fallible version of [UnifiedView::split_at].
+    ///
+    /// Returns `None` if `mid > self.len`.
+    pub fn try_split_at(&self, mid: usize) -> Option<(Self, Self)> {
+        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
+    }
+}
+
+impl<'a, T> UnifiedViewMut<'a, T> {
+    /// Number of elements `T` that are in this view.
+    pub fn len(&self) -> usize {
+        self.len
+    }
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    /// Downgrade this to a `&[T]`
+    pub fn as_view(&self) -> UnifiedView<'a, T> {
+        UnifiedView {
+            ptr: self.ptr,
+            len: self.len,
+            event: self.event,
+            stream: self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        }
+    }
+
+    fn resize(&self, start: usize, end: usize) -> Self {
+        Self {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: self.event,
+            stream: self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        }
+    }
+
+    /// Creates a [UnifiedView] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range` and `0...self.len()` are not overlapping.
+    pub fn slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> UnifiedView<'a, T> {
+        self.try_slice(bounds).unwrap()
+    }
+
+    /// Fallible version of [UnifiedViewMut::slice]
+    pub fn try_slice<'b: 'a>(
+        &'b self,
+        bounds: impl RangeBounds<usize>,
+    ) -> Option<UnifiedView<'a, T>> {
+        to_range(bounds, self.len).map(|(start, end)| self.as_view().resize(start, end))
+    }
+
+    /// Creates a [UnifiedViewMut] at the specified offset from the start of `self`.
+    ///
+    /// Panics if `range` and `0...self.len()` are not overlapping.
+    pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Self {
+        self.try_slice_mut(bounds).unwrap()
+    }
+
+    /// Fallible version of [UnifiedViewMut::slice_mut]
+    pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
+    }
+
+    /// Splits the [UnifiedViewMut] into two at the given index.
+    ///
+    /// Panics if `mid > self.len`.
+    pub fn split_at_mut(&mut self, mid: usize) -> (Self, Self) {
+        self.try_split_at_mut(mid).unwrap()
+    }
+
+    /// Fallible version of [UnifiedViewMut::split_at_mut].
+    ///
+    /// Returns `None` if `mid > self.len`
+    pub fn try_split_at_mut(&mut self, mid: usize) -> Option<(Self, Self)> {
+        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
+    }
+}
+
+fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
+    let start = match range.start_bound() {
+        Bound::Included(&n) => n,
+        Bound::Excluded(&n) => n + 1,
+        Bound::Unbounded => 0,
+    };
+    let end = match range.end_bound() {
+        Bound::Included(&n) => n + 1,
+        Bound::Excluded(&n) => n,
+        Bound::Unbounded => len,
+    };
+    (end <= len).then_some((start, end))
 }
 
 #[cfg(feature = "nvrtc")]
