@@ -15,6 +15,7 @@
 //! | [CUPTI](https://docs.nvidia.com/cupti/) | ✅ | ✅ | ✅ |
 //! | [nvtx](https://nvidia.github.io/NVTX/) | ✅ | ✅ | ❌ |
 //! | [cuTENSOR](https://docs.nvidia.com/cuda/cutensor/index.html) | ✅ | ✅ | ❌ |
+//!
 //! CUDA Versions supported
 //! - 11.4-11.8
 //! - 12.0-12.9

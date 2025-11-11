@@ -566,7 +566,14 @@ impl<T> Drop for CudaSlice<T> {
         if let Some(write) = self.write.as_ref() {
             ctx.record_err(self.stream.wait(write));
         }
-        ctx.record_err(unsafe { result::free_async(self.cu_device_ptr, self.stream.cu_stream) });
+        if ctx.has_async_alloc {
+            ctx.record_err(unsafe {
+                result::free_async(self.cu_device_ptr, self.stream.cu_stream)
+            });
+        } else {
+            ctx.record_err(self.stream.synchronize());
+            ctx.record_err(unsafe { result::free_sync(self.cu_device_ptr) });
+        }
     }
 }
 
@@ -1718,7 +1725,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 }
 
-fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
+pub(super) fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
     let start = match range.start_bound() {
         Bound::Included(&n) => n,
         Bound::Excluded(&n) => n + 1,
