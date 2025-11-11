@@ -1718,7 +1718,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 }
 
-fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
+pub(super) fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
     let start = match range.start_bound() {
         Bound::Included(&n) => n,
         Bound::Excluded(&n) => n + 1,
