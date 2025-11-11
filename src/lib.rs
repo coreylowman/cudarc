@@ -14,6 +14,7 @@
 //! | [cuFILE](https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html#introduction) | ✅ | ✅ | ✅ |
 //! | [CUPTI](https://docs.nvidia.com/cupti/) | ✅ | ✅ | ✅ |
 //! | [nvtx](https://nvidia.github.io/NVTX/) | ✅ | ✅ | ❌ |
+//! | [cuTENSOR](https://docs.nvidia.com/cuda/cutensor/index.html) | ✅ | ✅ | ❌ |
 //!
 //! CUDA Versions supported
 //! - 11.4-11.8
@@ -60,6 +61,7 @@
 //! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
 //! | cupti | - | [cupti::result] | [cupti::sys] |
 //! | nvtx | [nvtx::safe] | [nvtx::result] | [nvtx::sys] |
+//! | cutensor | [cutensor::safe] | [cutensor::result] | [cutensor::sys] |
 //!
 //! # Core Concepts
 //!
@@ -137,6 +139,8 @@ pub mod cusolver;
 pub mod cusolvermg;
 #[cfg(feature = "cusparse")]
 pub mod cusparse;
+#[cfg(feature = "cutensor")]
+pub mod cutensor;
 #[cfg(feature = "driver")]
 pub mod driver;
 #[cfg(feature = "nccl")]
