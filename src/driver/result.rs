@@ -711,6 +711,34 @@ pub unsafe fn malloc_managed(
     Ok(dev_ptr.assume_init())
 }
 
+/// Allocates pitched 2D memory.
+///
+/// Returns (device_ptr, pitch_in_bytes). The pitch may be larger than `width_in_bytes`
+/// for alignment purposes.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g802f38ca88abfc88aaea8ca1f07b7c56)
+///
+/// # Safety
+/// 1. The memory returned by this is unset, which may be invalid for `T`.
+/// 2. Memory should be freed with [free_sync].
+pub unsafe fn malloc_pitched(
+    width_in_bytes: usize,
+    height: usize,
+    elem_size_bytes: c_uint,
+) -> Result<(sys::CUdeviceptr, usize), DriverError> {
+    let mut dev_ptr = MaybeUninit::uninit();
+    let mut pitch = MaybeUninit::uninit();
+    sys::cuMemAllocPitch_v2(
+        dev_ptr.as_mut_ptr(),
+        pitch.as_mut_ptr(),
+        width_in_bytes,
+        height,
+        elem_size_bytes,
+    )
+    .result()?;
+    Ok((dev_ptr.assume_init(), pitch.assume_init()))
+}
+
 /// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g572ca4011bfcb25034888a14d4e035b9)
 /// # Safety
 /// 1. The memory return by this is unset, which may be invalid for `T`.
@@ -949,6 +977,64 @@ pub unsafe fn memcpy_dtod_sync(
     num_bytes: usize,
 ) -> Result<(), DriverError> {
     sys::cuMemcpyDtoD_v2(dst, src, num_bytes).result()
+}
+
+/// Copies 2D memory with stream ordered semantics.
+///
+/// The `copy_params` struct specifies source/destination memory types, pointers,
+/// pitches, and the region to copy.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g27f885e8a6e1f5896c47c55b4e3ff0a8)
+///
+/// # Safety
+/// 1. All pointers in `copy_params` must be valid for their specified memory types
+/// 2. Source and destination regions must not overlap (unless they're the same memory)
+/// 3. Pitches must be large enough for the width being copied
+/// 4. Memory must not have been freed
+pub unsafe fn memcpy_2d_async(
+    copy_params: &sys::CUDA_MEMCPY2D,
+    stream: sys::CUstream,
+) -> Result<(), DriverError> {
+    sys::cuMemcpy2DAsync_v2(copy_params, stream).result()
+}
+
+/// Copies 2D memory synchronously.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g27f885e8a6e1f5896c47c55b4e3ff0a8)
+///
+/// # Safety
+/// Same safety requirements as [memcpy_2d_async]
+pub unsafe fn memcpy_2d_sync(copy_params: &sys::CUDA_MEMCPY2D) -> Result<(), DriverError> {
+    sys::cuMemcpy2D_v2(copy_params).result()
+}
+
+/// Copies 3D memory with stream ordered semantics.
+///
+/// The `copy_params` struct specifies source/destination memory types, pointers,
+/// pitches, heights, and the 3D region to copy.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g1f5e25d5f88a15b45e6c0c6d3ee4ef0a)
+///
+/// # Safety
+/// 1. All pointers in `copy_params` must be valid for their specified memory types
+/// 2. Source and destination regions must not overlap (unless they're the same memory)
+/// 3. Pitches and heights must be large enough for the volume being copied
+/// 4. Memory must not have been freed
+pub unsafe fn memcpy_3d_async(
+    copy_params: &sys::CUDA_MEMCPY3D,
+    stream: sys::CUstream,
+) -> Result<(), DriverError> {
+    sys::cuMemcpy3DAsync_v2(copy_params, stream).result()
+}
+
+/// Copies 3D memory synchronously.
+///
+/// See [cuda docs](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1g1f5e25d5f88a15b45e6c0c6d3ee4ef0a)
+///
+/// # Safety
+/// Same safety requirements as [memcpy_3d_async]
+pub unsafe fn memcpy_3d_sync(copy_params: &sys::CUDA_MEMCPY3D) -> Result<(), DriverError> {
+    sys::cuMemcpy3D_v2(copy_params).result()
 }
 
 /// Returns (free, total) memory in bytes.
