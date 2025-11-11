@@ -1,12 +1,12 @@
 use core::marker::PhantomData;
-use std::ops::{Bound, RangeBounds};
+use std::ops::RangeBounds;
 use std::sync::Arc;
 
 use crate::driver::{result, sys};
 
 use super::{
-    CudaContext, CudaEvent, CudaStream, DevicePtr, DevicePtrMut, DeviceRepr, DeviceSlice,
-    DriverError, HostSlice, LaunchArgs, PushKernelArg, ValidAsZeroBits,
+    core::to_range, CudaContext, CudaEvent, CudaStream, DevicePtr, DevicePtrMut, DeviceRepr,
+    DeviceSlice, DriverError, HostSlice, LaunchArgs, PushKernelArg, ValidAsZeroBits,
 };
 
 /// Unified memory allocated with [CudaContext::alloc_unified()] (via [cuMemAllocManaged](https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html#group__CUDA__MEM_1gb347ded34dc326af404aa02af5388a32)).
@@ -226,38 +226,48 @@ impl<T> UnifiedSlice<T> {
     }
 
     pub fn check_device_access(&self, stream: &CudaStream) -> Result<(), DriverError> {
-        // > Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
-        match self.attach_mode {
-            sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
-                // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
-            }
-            sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
-                // > If CU_MEM_ATTACH_HOST is specified, then the allocation should not be accessed from devices that have a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS;
-                // > If the CU_MEM_ATTACH_HOST flag is specified, the program makes a guarantee that it won't access the memory on the device from any stream on a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS
-                let concurrent_managed_access = if self.stream.context() != stream.context() {
-                    // if we are going to access in a different context, we need to check for concurrent managed access
-                    stream.context().attribute(
-                        sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
-                    )? != 0
-                } else {
-                    // otherwise we can use the cached value for the attribute
-                    self.concurrent_managed_access
-                };
-                if !concurrent_managed_access {
-                    return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
-                }
-            }
-            sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
-                // > If the CU_MEM_ATTACH_SINGLE flag is specified and hStream is associated with a device that has a zero value for the device attribute CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS, the program makes a guarantee that it will only access the memory on the device from hStream
-                // > Accessing memory on the device from streams that are not associated with it will produce undefined results. No error checking is performed by the Unified Memory system to ensure that kernels launched into other streams do not access this region.
-                if self.stream.as_ref() != stream {
-                    return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
-                }
-            }
-        };
-        Ok(())
+        check_device_access(
+            self.attach_mode,
+            &self.stream,
+            self.concurrent_managed_access,
+            stream,
+        )
     }
+}
 
+// Consolidated device access validation function
+fn check_device_access(
+    attach_mode: sys::CUmemAttach_flags,
+    owner_stream: &Arc<CudaStream>,
+    concurrent_managed_access: bool,
+    stream: &CudaStream,
+) -> Result<(), DriverError> {
+    match attach_mode {
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
+            // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
+        }
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
+            let concurrent_managed_access = if owner_stream.context() != stream.context() {
+                stream.context().attribute(
+                    sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
+                )? != 0
+            } else {
+                concurrent_managed_access
+            };
+            if !concurrent_managed_access {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+            }
+        }
+        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
+            if owner_stream.as_ref() != stream {
+                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
+            }
+        }
+    };
+    Ok(())
+}
+
+impl<T> UnifiedSlice<T> {
     /// Creates an immutable view of the entire [UnifiedSlice].
     pub fn as_view(&self) -> UnifiedView<'_, T> {
         UnifiedView {
@@ -480,9 +490,12 @@ impl<T> DevicePtr<T> for UnifiedView<'_, T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             self.ptr,
@@ -496,9 +509,12 @@ impl<T> DevicePtr<T> for UnifiedViewMut<'_, T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             self.ptr,
@@ -512,9 +528,12 @@ impl<T> DevicePtrMut<T> for UnifiedViewMut<'_, T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (sys::CUdeviceptr, super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             self.ptr,
@@ -531,9 +550,12 @@ impl<T> HostSlice<T> for UnifiedView<'_, T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (&'a [T], super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             std::slice::from_raw_parts(self.ptr as *const T, self.len),
@@ -545,9 +567,12 @@ impl<T> HostSlice<T> for UnifiedView<'_, T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (&'a mut [T], super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             std::slice::from_raw_parts_mut(self.ptr as *mut T, self.len),
@@ -564,9 +589,12 @@ impl<T> HostSlice<T> for UnifiedViewMut<'_, T> {
         &'a self,
         stream: &'a CudaStream,
     ) -> (&'a [T], super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             std::slice::from_raw_parts(self.ptr as *const T, self.len),
@@ -578,9 +606,12 @@ impl<T> HostSlice<T> for UnifiedViewMut<'_, T> {
         &'a mut self,
         stream: &'a CudaStream,
     ) -> (&'a mut [T], super::SyncOnDrop<'a>) {
-        stream
-            .ctx
-            .record_err(check_device_access_view_mut(self, stream));
+        stream.ctx.record_err(check_device_access(
+            self.attach_mode,
+            self.stream,
+            self.concurrent_managed_access,
+            stream,
+        ));
         stream.ctx.record_err(stream.wait(self.event));
         (
             std::slice::from_raw_parts_mut(self.ptr as *mut T, self.len),
@@ -589,12 +620,15 @@ impl<T> HostSlice<T> for UnifiedViewMut<'_, T> {
     }
 }
 
-unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedView<'b, T>> for LaunchArgs<'a> {
+unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b UnifiedView<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
-    fn arg(&mut self, arg: &'b UnifiedView<'b, T>) -> &mut Self {
-        self.stream
-            .ctx
-            .record_err(check_device_access_view(arg, self.stream));
+    fn arg(&mut self, arg: &'b UnifiedView<'c, T>) -> &mut Self {
+        self.stream.ctx.record_err(check_device_access(
+            arg.attach_mode,
+            arg.stream,
+            arg.concurrent_managed_access,
+            self.stream,
+        ));
         self.waits.push(arg.event);
         self.records.push(arg.event);
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
@@ -602,12 +636,15 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedView<'b, T>> for LaunchArgs<
     }
 }
 
-unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedViewMut<'b, T>> for LaunchArgs<'a> {
+unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b UnifiedViewMut<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
-    fn arg(&mut self, arg: &'b UnifiedViewMut<'b, T>) -> &mut Self {
-        self.stream
-            .ctx
-            .record_err(check_device_access_view_mut(arg, self.stream));
+    fn arg(&mut self, arg: &'b UnifiedViewMut<'c, T>) -> &mut Self {
+        self.stream.ctx.record_err(check_device_access(
+            arg.attach_mode,
+            arg.stream,
+            arg.concurrent_managed_access,
+            self.stream,
+        ));
         self.waits.push(arg.event);
         self.records.push(arg.event);
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
@@ -615,76 +652,20 @@ unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b UnifiedViewMut<'b, T>> for LaunchAr
     }
 }
 
-unsafe impl<'a, 'b: 'a, T> PushKernelArg<&'b mut UnifiedViewMut<'b, T>> for LaunchArgs<'a> {
+unsafe impl<'a, 'b: 'a, 'c: 'b, T> PushKernelArg<&'b mut UnifiedViewMut<'c, T>> for LaunchArgs<'a> {
     #[inline(always)]
-    fn arg(&mut self, arg: &'b mut UnifiedViewMut<'b, T>) -> &mut Self {
-        self.stream
-            .ctx
-            .record_err(check_device_access_view_mut(arg, self.stream));
+    fn arg(&mut self, arg: &'b mut UnifiedViewMut<'c, T>) -> &mut Self {
+        self.stream.ctx.record_err(check_device_access(
+            arg.attach_mode,
+            arg.stream,
+            arg.concurrent_managed_access,
+            self.stream,
+        ));
         self.waits.push(arg.event);
         self.records.push(arg.event);
         self.args.push((&arg.ptr) as *const sys::CUdeviceptr as _);
         self
     }
-}
-
-// Helper functions for access checking on views
-fn check_device_access_view<T>(
-    view: &UnifiedView<'_, T>,
-    stream: &CudaStream,
-) -> Result<(), DriverError> {
-    match view.attach_mode {
-        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
-            // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
-        }
-        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
-            let concurrent_managed_access = if view.stream.context() != stream.context() {
-                stream.context().attribute(
-                    sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
-                )? != 0
-            } else {
-                view.concurrent_managed_access
-            };
-            if !concurrent_managed_access {
-                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
-            }
-        }
-        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
-            if view.stream.as_ref() != stream {
-                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
-            }
-        }
-    };
-    Ok(())
-}
-
-fn check_device_access_view_mut<T>(
-    view: &UnifiedViewMut<'_, T>,
-    stream: &CudaStream,
-) -> Result<(), DriverError> {
-    match view.attach_mode {
-        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_GLOBAL => {
-            // NOTE: no checks needed here, because any context/stream can access when GLOBAL mode is used.
-        }
-        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_HOST => {
-            let concurrent_managed_access = if view.stream.context() != stream.context() {
-                stream.context().attribute(
-                    sys::CUdevice_attribute::CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS,
-                )? != 0
-            } else {
-                view.concurrent_managed_access
-            };
-            if !concurrent_managed_access {
-                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
-            }
-        }
-        sys::CUmemAttach_flags_enum::CU_MEM_ATTACH_SINGLE => {
-            if view.stream.as_ref() != stream {
-                return Err(DriverError(sys::cudaError_enum::CUDA_ERROR_NOT_PERMITTED));
-            }
-        }
-    };
-    Ok(())
 }
 
 impl<'a, T> UnifiedView<'a, T> {
@@ -808,20 +789,6 @@ impl<'a, T> UnifiedViewMut<'a, T> {
     pub fn try_split_at_mut(&mut self, mid: usize) -> Option<(Self, Self)> {
         (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
-}
-
-fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(usize, usize)> {
-    let start = match range.start_bound() {
-        Bound::Included(&n) => n,
-        Bound::Excluded(&n) => n + 1,
-        Bound::Unbounded => 0,
-    };
-    let end = match range.end_bound() {
-        Bound::Included(&n) => n + 1,
-        Bound::Excluded(&n) => n,
-        Bound::Unbounded => len,
-    };
-    (end <= len).then_some((start, end))
 }
 
 #[cfg(feature = "nvrtc")]
