@@ -2,13 +2,13 @@
 name = "cudarc"
 version = "0.17.8"
 edition = "2021"
-authors = ["Corey Lowman <clowman1993@gmail.com>"]
+authors = ["Chelsea Lowman <clowman1993@gmail.com>"]
 license = "MIT OR Apache-2.0"
 
 description = "Safe and minimal CUDA bindings"
-homepage = "https://github.com/coreylowman/cudarc"
+homepage = "https://github.com/chelsea0x3b/cudarc"
 documentation = "https://docs.rs/cudarc"
-repository = "https://github.com/coreylowman/cudarc"
+repository = "https://github.com/chelsea0x3b/cudarc"
 readme = "README.md"
 
 keywords = ["cuda", "nvidia", "gpu", "cudnn", "cublas"]

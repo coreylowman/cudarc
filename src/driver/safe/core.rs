@@ -2246,7 +2246,7 @@ mod tests {
         assert_eq!(stream.memcpy_dtov(&c).unwrap(), &[1.0, 2.0, 3.0, 4.0, 5.0]);
     }
 
-    /// See https://github.com/coreylowman/cudarc/issues/160
+    /// See https://github.com/chelsea0x3b/cudarc/issues/160
     #[test]
     fn test_slice_is_freed_with_correct_context() {
         let ctx0 = CudaContext::new(0).unwrap();
@@ -2258,7 +2258,7 @@ mod tests {
         drop(ctx1);
     }
 
-    /// See https://github.com/coreylowman/cudarc/issues/161
+    /// See https://github.com/chelsea0x3b/cudarc/issues/161
     #[test]
     fn test_copy_uses_correct_context() {
         let ctx0 = CudaContext::new(0).unwrap();

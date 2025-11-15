@@ -27,7 +27,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             allowlist_recursively: true,
             blocklist: Filters {
-                // NOTE: See https://github.com/coreylowman/cudarc/issues/397
+                // NOTE: See https://github.com/chelsea0x3b/cudarc/issues/397
                 types: vec![],
                 functions: vec!["cudaDeviceGetNvSciSyncAttributes"],
                 vars: vec![],
@@ -54,12 +54,12 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             allowlist_recursively: true,
             blocklist: Filters {
-                // NOTE: See https://github.com/coreylowman/cudarc/issues/385
+                // NOTE: See https://github.com/chelsea0x3b/cudarc/issues/385
                 types: vec!["^cuCheckpoint.*"],
                 functions: vec![
                     "^cuCheckpoint.*",
                     "cuDeviceGetNvSciSyncAttributes",
-                    // NOTE: see https://github.com/coreylowman/cudarc/issues/474
+                    // NOTE: see https://github.com/chelsea0x3b/cudarc/issues/474
                     "cuCtxCreate_v4",
                 ],
                 vars: vec![],
@@ -132,7 +132,7 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             allowlist_recursively: true,
             blocklist: Filters {
-                // NOTE: see https://github.com/coreylowman/cudarc/pull/431
+                // NOTE: see https://github.com/chelsea0x3b/cudarc/pull/431
                 types: vec![],
                 functions: vec![
                     "nvrtcGetPCHCreateStatus",
