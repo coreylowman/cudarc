@@ -4828,11 +4828,6 @@ extern "C" {
         mode: *mut cublasAtomicsMode_t,
     ) -> cublasStatus_t;
     pub fn cublasGetCudartVersion() -> usize;
-    #[cfg(any(feature = "cuda-13000"))]
-    pub fn cublasGetEmulationSpecialValuesSupport(
-        handle: cublasHandle_t,
-        mask: *mut cudaEmulationSpecialValuesSupport,
-    ) -> cublasStatus_t;
     #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
     pub fn cublasGetEmulationStrategy(
         handle: cublasHandle_t,
@@ -14562,13 +14557,6 @@ mod loaded {
     pub unsafe fn cublasGetCudartVersion() -> usize {
         (culib().cublasGetCudartVersion)()
     }
-    #[cfg(any(feature = "cuda-13000"))]
-    pub unsafe fn cublasGetEmulationSpecialValuesSupport(
-        handle: cublasHandle_t,
-        mask: *mut cudaEmulationSpecialValuesSupport,
-    ) -> cublasStatus_t {
-        (culib().cublasGetEmulationSpecialValuesSupport)(handle, mask)
-    }
     #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
     pub unsafe fn cublasGetEmulationStrategy(
         handle: cublasHandle_t,
@@ -24174,11 +24162,6 @@ mod loaded {
             mode: *mut cublasAtomicsMode_t,
         ) -> cublasStatus_t,
         pub cublasGetCudartVersion: unsafe extern "C" fn() -> usize,
-        #[cfg(any(feature = "cuda-13000"))]
-        pub cublasGetEmulationSpecialValuesSupport: unsafe extern "C" fn(
-            handle: cublasHandle_t,
-            mask: *mut cudaEmulationSpecialValuesSupport,
-        ) -> cublasStatus_t,
         #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
         pub cublasGetEmulationStrategy: unsafe extern "C" fn(
             handle: cublasHandle_t,
@@ -30945,11 +30928,6 @@ mod loaded {
                 .get(b"cublasGetCudartVersion\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(any(feature = "cuda-13000"))]
-            let cublasGetEmulationSpecialValuesSupport = __library
-                .get(b"cublasGetEmulationSpecialValuesSupport\0")
-                .map(|sym| *sym)
-                .expect("Expected symbol in library");
             #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
             let cublasGetEmulationStrategy = __library
                 .get(b"cublasGetEmulationStrategy\0")
@@ -35098,8 +35076,6 @@ mod loaded {
                 cublasGemmStridedBatchedEx_64,
                 cublasGetAtomicsMode,
                 cublasGetCudartVersion,
-                #[cfg(any(feature = "cuda-13000"))]
-                cublasGetEmulationSpecialValuesSupport,
                 #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
                 cublasGetEmulationStrategy,
                 #[cfg(any(feature = "cuda-13000"))]

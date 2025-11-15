@@ -78,7 +78,14 @@ fn create_modules() -> Vec<ModuleConfig> {
                 vars: vec!["^cublas.*"],
             },
             allowlist_recursively: true,
-            blocklist: Filters::none(),
+            blocklist: Filters {
+                types: vec![],
+                functions: vec![
+                    // NOTE: see https://github.com/chelsea0x3b/cudarc/issues/489
+                    "cublasGetEmulationSpecialValuesSupport"
+                ],
+                vars: vec![],
+            },
             libs: vec!["cublas"],
             clang_args: vec![],
             raw_lines: vec![],
@@ -132,14 +139,17 @@ fn create_modules() -> Vec<ModuleConfig> {
             },
             allowlist_recursively: true,
             blocklist: Filters {
-                // NOTE: see https://github.com/chelsea0x3b/cudarc/pull/431
                 types: vec![],
                 functions: vec![
+                    // NOTE: see https://github.com/chelsea0x3b/cudarc/pull/431
                     "nvrtcGetPCHCreateStatus",
                     "nvrtcGetPCHHeapSize",
                     "nvrtcGetPCHHeapSizeRequired",
                     "nvrtcSetFlowCallback",
                     "nvrtcSetPCHHeapSize",
+                    // NOTE: see https://github.com/chelsea0x3b/cudarc/issues/490
+                    "nvrtcGetNVVM",
+                    "nvrtcGetNVVMSize",
                 ],
                 vars: vec![],
             },
