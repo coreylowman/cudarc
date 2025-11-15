@@ -720,7 +720,7 @@ impl<T> CudaViewMut<'_, T> {
     }
 
     /// Downgrade this to a `&[T]`
-    pub fn as_view(&self) -> CudaView<'_, T> {
+    pub fn as_view<'b>(&'b self) -> CudaView<'b, T> {
         CudaView {
             ptr: self.ptr,
             len: self.len,
@@ -1489,12 +1489,12 @@ impl<T> CudaSlice<T> {
     /// ```
     /// If you need non-overlapping mutable views into a [CudaSlice], you can use [CudaSlice::split_at_mut()].
     pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
-        self.as_view_mut().slice_mut(bounds)
+         self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
-        self.as_view_mut().try_slice_mut(bounds)
+        to_range(bounds, self.len).map(|(start, end)| self.as_view_mut().resize(start, end))
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1516,7 +1516,16 @@ impl<T> CudaSlice<T> {
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
     pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'_, S>> {
-        self.as_view_mut().transmute_mut(len)
+        (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
+            CudaViewMut {
+                ptr: self.cu_device_ptr,
+                len,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            },
+        )
     }
 
     pub fn split_at(&self, mid: usize) -> (CudaView<'_, T>, CudaView<'_, T>) {
@@ -1544,7 +1553,7 @@ impl<T> CudaSlice<T> {
     /// do_something(view1, view2);
     /// ```
     pub fn split_at_mut(&mut self, mid: usize) -> (CudaViewMut<'_, T>, CudaViewMut<'_, T>) {
-        self.as_view_mut().split_at_mut(mid)
+        self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaSlice::split_at_mut].
@@ -1554,7 +1563,11 @@ impl<T> CudaSlice<T> {
         &mut self,
         mid: usize,
     ) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
-        self.as_view_mut().try_split_at_mut(mid)
+        let length = self.len;
+        (mid <= length).then(|| {
+            let view = self.as_view_mut();
+            (view.resize(0, mid), view.resize(mid, length))
+        })
     }
 }
 
@@ -1648,13 +1661,13 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// do_something(view1, view2);
     /// ```
     /// If you need non-overlapping mutable views into a [CudaViewMut], you can use [CudaViewMut::split_at_mut()].
-    pub fn slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> CudaView<'a, T> {
+    pub fn slice<'b>(&'b self, bounds: impl RangeBounds<usize>) -> CudaView<'b, T> {
         self.try_slice(bounds).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::slice]
-    pub fn try_slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'a, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.as_view().resize(start, end))
+    pub fn try_slice<'b>(&'b self, bounds: impl RangeBounds<usize>) -> Option<CudaView<'b, T>> {
+        to_range(bounds, self.len).map(move |(start, end)| self.as_view().resize(start, end))
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1664,7 +1677,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// # Safety
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
-    pub unsafe fn transmute<S>(&self, len: usize) -> Option<CudaView<'a, S>> {
+    pub unsafe fn transmute<'b, S>(&'b self, len: usize) -> Option<CudaView<'b, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaView {
                 ptr: self.ptr,
@@ -1680,12 +1693,12 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Creates a [CudaViewMut] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
-    pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Self {
+    pub fn slice_mut<'b>(&'b mut self, bounds: impl RangeBounds<usize>) -> CudaViewMut<'b, T> {
         self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::slice_mut]
-    pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+    pub fn try_slice_mut<'b>(&'b mut self, bounds: impl RangeBounds<usize>) -> Option<CudaViewMut<'b, T>> {
         to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
@@ -1704,14 +1717,14 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// // split the view into two non-overlapping, mutable views
     /// let (mut view1, mut view2) = view.split_at_mut(25);
     /// do_something(view1, view2);
-    pub fn split_at_mut(&mut self, mid: usize) -> (Self, Self) {
+    pub fn split_at_mut<'b>(&'b mut self, mid: usize) -> (CudaViewMut<'b, T>, CudaViewMut<'b, T>) {
         self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [CudaViewMut::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`
-    pub fn try_split_at_mut(&mut self, mid: usize) -> Option<(Self, Self)> {
+    pub fn try_split_at_mut<'b>(&'b mut self, mid: usize) -> Option<(CudaViewMut<'b, T>, CudaViewMut<'b, T>)> {
         (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
 
@@ -1722,7 +1735,7 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// # Safety
     /// This is unsafe because not the memory for the view may not be a valid interpretation
     /// for the type `S`.
-    pub unsafe fn transmute_mut<S>(&mut self, len: usize) -> Option<CudaViewMut<'a, S>> {
+    pub unsafe fn transmute_mut<'b, S>(&'b mut self, len: usize) -> Option<CudaViewMut<'b, S>> {
         (len * std::mem::size_of::<S>() <= self.len * std::mem::size_of::<T>()).then_some(
             CudaViewMut {
                 ptr: self.ptr,

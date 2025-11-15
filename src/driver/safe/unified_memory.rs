@@ -725,7 +725,7 @@ impl<'a, T> UnifiedViewMut<'a, T> {
     }
 
     /// Downgrade this to a `&[T]`
-    pub fn as_view(&self) -> UnifiedView<'a, T> {
+    pub fn as_view<'b>(&'b self) -> UnifiedView<'b, T> {
         UnifiedView {
             ptr: self.ptr,
             len: self.len,
@@ -752,41 +752,41 @@ impl<'a, T> UnifiedViewMut<'a, T> {
     /// Creates a [UnifiedView] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
-    pub fn slice<'b: 'a>(&'b self, bounds: impl RangeBounds<usize>) -> UnifiedView<'a, T> {
+    pub fn slice<'b>(&'b self, bounds: impl RangeBounds<usize>) -> UnifiedView<'b, T> {
         self.try_slice(bounds).unwrap()
     }
 
     /// Fallible version of [UnifiedViewMut::slice]
-    pub fn try_slice<'b: 'a>(
+    pub fn try_slice<'b>(
         &'b self,
         bounds: impl RangeBounds<usize>,
-    ) -> Option<UnifiedView<'a, T>> {
+    ) -> Option<UnifiedView<'b, T>> {
         to_range(bounds, self.len).map(|(start, end)| self.as_view().resize(start, end))
     }
 
     /// Creates a [UnifiedViewMut] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
-    pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Self {
+    pub fn slice_mut<'b>(&'b mut self, bounds: impl RangeBounds<usize>) -> UnifiedViewMut<'b, T> {
         self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [UnifiedViewMut::slice_mut]
-    pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<Self> {
+    pub fn try_slice_mut<'b>(&'b mut self, bounds: impl RangeBounds<usize>) -> Option<UnifiedViewMut<'b, T>> {
         to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
     /// Splits the [UnifiedViewMut] into two at the given index.
     ///
     /// Panics if `mid > self.len`.
-    pub fn split_at_mut(&mut self, mid: usize) -> (Self, Self) {
+    pub fn split_at_mut<'b>(&'b mut self, mid: usize) -> (UnifiedViewMut<'b, T>, UnifiedViewMut<'b, T>) {
         self.try_split_at_mut(mid).unwrap()
     }
 
     /// Fallible version of [UnifiedViewMut::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`
-    pub fn try_split_at_mut(&mut self, mid: usize) -> Option<(Self, Self)> {
+    pub fn try_split_at_mut<'b>(&'b mut self, mid: usize) -> Option<(UnifiedViewMut<'b, T>, UnifiedViewMut<'b, T>)> {
         (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
 }
