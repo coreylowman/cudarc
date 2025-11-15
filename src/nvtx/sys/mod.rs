@@ -389,7 +389,7 @@ pub type nvtx_cudaStream_t = *mut ::core::ffi::c_void;
 pub type nvtx_nvtxSyncUserAttributes_t = ::core::ffi::c_void;
 #[cfg(any(feature = "cuda-12090", feature = "cuda-13000"))]
 pub type nvtx_nvtxSyncUser_t = *mut ::core::ffi::c_void;
-pub type wchar_t = ::core::ffi::c_int;
+pub type wchar_t = ::core::ffi::c_uint;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum nvtxColorType_t {
