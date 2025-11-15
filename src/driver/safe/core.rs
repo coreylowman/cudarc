@@ -1489,7 +1489,7 @@ impl<T> CudaSlice<T> {
     /// ```
     /// If you need non-overlapping mutable views into a [CudaSlice], you can use [CudaSlice::split_at_mut()].
     pub fn slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> CudaViewMut<'_, T> {
-         self.try_slice_mut(bounds).unwrap()
+        self.try_slice_mut(bounds).unwrap()
     }
 
     /// Fallible version of [CudaSlice::slice_mut]
@@ -1698,7 +1698,10 @@ impl<'a, T> CudaViewMut<'a, T> {
     }
 
     /// Fallible version of [CudaViewMut::slice_mut]
-    pub fn try_slice_mut<'b>(&'b mut self, bounds: impl RangeBounds<usize>) -> Option<CudaViewMut<'b, T>> {
+    pub fn try_slice_mut<'b>(
+        &'b mut self,
+        bounds: impl RangeBounds<usize>,
+    ) -> Option<CudaViewMut<'b, T>> {
         to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
     }
 
@@ -1724,7 +1727,10 @@ impl<'a, T> CudaViewMut<'a, T> {
     /// Fallible version of [CudaViewMut::split_at_mut].
     ///
     /// Returns `None` if `mid > self.len`
-    pub fn try_split_at_mut<'b>(&'b mut self, mid: usize) -> Option<(CudaViewMut<'b, T>, CudaViewMut<'b, T>)> {
+    pub fn try_split_at_mut<'b>(
+        &'b mut self,
+        mid: usize,
+    ) -> Option<(CudaViewMut<'b, T>, CudaViewMut<'b, T>)> {
         (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
     }
 
