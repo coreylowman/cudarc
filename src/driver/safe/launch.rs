@@ -353,7 +353,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
 
-        let a_dev = stream.memcpy_stod(&a_host).unwrap();
+        let a_dev = stream.clone_htod(&a_host).unwrap();
         let mut b_dev = a_dev.clone();
 
         unsafe {
@@ -366,7 +366,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         }
         .unwrap();
 
-        let b_host = stream.memcpy_dtov(&b_dev).unwrap();
+        let b_host = stream.clone_dtoh(&b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
@@ -390,7 +390,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             let mut a = Vec::with_capacity(numel);
             a.resize(numel, 1.0f32);
 
-            let a = stream.memcpy_stod(&a).unwrap();
+            let a = stream.clone_htod(&a).unwrap();
             let mut b = stream.alloc_zeros::<f32>(numel).unwrap();
             unsafe {
                 stream
@@ -402,7 +402,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             }
             .unwrap();
 
-            let b = stream.memcpy_dtov(&b).unwrap();
+            let b = stream.clone_dtoh(&b).unwrap();
             for v in b {
                 assert_eq!(v, 0.841471);
             }
@@ -420,7 +420,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
         let f = module.load_function("sin_kernel").unwrap();
 
         let a_host = [-1.0f32, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8];
-        let a_dev = stream.memcpy_stod(&a_host).unwrap();
+        let a_dev = stream.clone_htod(&a_host).unwrap();
         let mut b_dev = a_dev.clone();
 
         for i in 0..5 {
@@ -439,7 +439,7 @@ extern \"C\" __global__ void sin_kernel(float *out, const float *inp, size_t num
             .unwrap();
         }
 
-        let b_host = stream.memcpy_dtov(&b_dev).unwrap();
+        let b_host = stream.clone_dtoh(&b_dev).unwrap();
 
         for (a_i, b_i) in a_host.iter().zip(b_host.iter()) {
             let expected = a_i.sin();
@@ -795,7 +795,7 @@ extern \"C\" __global__ void slow_worker(const float *data, const size_t len, fl
     fn test_device_side_assert() -> Result<(), DriverError> {
         let ctx = CudaContext::new(0)?;
         let stream = ctx.new_stream()?;
-        let inp = stream.memcpy_stod(&[1.0f32; 100])?;
+        let inp = stream.clone_htod(&[1.0f32; 100])?;
         let mut out = stream.alloc_zeros::<f32>(100)?;
         let ptx = crate::nvrtc::compile_ptx(
             "

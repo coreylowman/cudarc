@@ -37,9 +37,9 @@ fn main() -> Result<(), DriverError> {
     let b_host = [1.0f32, 2.0, 3.0, 4.0];
     let mut c_host = [0.0f32; 4];
 
-    let a_dev = stream.memcpy_stod(&a_host)?;
-    let b_dev = stream.memcpy_stod(&b_host)?;
-    let mut c_dev = stream.memcpy_stod(&c_host)?;
+    let a_dev = stream.clone_htod(&a_host)?;
+    let b_dev = stream.clone_htod(&b_host)?;
+    let mut c_dev = stream.clone_htod(&c_host)?;
 
     println!("Copied in {:?}", start.elapsed());
 

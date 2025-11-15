@@ -60,7 +60,7 @@ let ctx = cudarc::driver::CudaContext::new(0)?;
 let stream = ctx.default_stream();
 
 // copy a rust slice to the device
-let inp = stream.memcpy_stod(&[1.0f32; 100])?;
+let inp = stream.clone_htod(&[1.0f32; 100])?;
 
 // or allocate directly
 let mut out = stream.alloc_zeros::<f32>(100)?;
@@ -95,7 +95,7 @@ unsafe { builder.launch(LaunchConfig::for_num_elems(100)) }?;
 And of course it's easy to copy things back to host after you're done:
 
 ```rust
-let out_host: Vec<f32> = stream.memcpy_dtov(&out)?;
+let out_host: Vec<f32> = stream.clone_dtoh(&out)?;
 assert_eq!(out_host, [1.0; 100].map(f32::sin));
 ```
 

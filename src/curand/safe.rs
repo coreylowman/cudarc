@@ -139,7 +139,7 @@ mod tests {
         let mut a_dev = stream.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, stream.clone()).unwrap();
         rng.fill_with_uniform(&mut a_dev).unwrap();
-        stream.memcpy_dtov(&a_dev).unwrap()
+        stream.clone_dtoh(&a_dev).unwrap()
     }
 
     fn gen_normal<T: ValidAsZeroBits + Clone + Default + Unpin + DeviceRepr>(
@@ -156,7 +156,7 @@ mod tests {
         let mut a_dev = stream.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, stream.clone()).unwrap();
         rng.fill_with_normal(&mut a_dev, mean, std).unwrap();
-        stream.memcpy_dtov(&a_dev).unwrap()
+        stream.clone_dtoh(&a_dev).unwrap()
     }
 
     fn gen_log_normal<T: ValidAsZeroBits + Clone + Default + Unpin + DeviceRepr>(
@@ -173,7 +173,7 @@ mod tests {
         let mut a_dev = stream.alloc_zeros::<T>(n).unwrap();
         let rng = CudaRng::new(seed, stream.clone()).unwrap();
         rng.fill_with_log_normal(&mut a_dev, mean, std).unwrap();
-        stream.memcpy_dtov(&a_dev).unwrap()
+        stream.clone_dtoh(&a_dev).unwrap()
     }
 
     #[test]
@@ -190,8 +190,8 @@ mod tests {
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
         b_rng.fill_with_uniform(&mut b_dev).unwrap();
 
-        let a_host = stream.memcpy_dtov(&a_dev).unwrap();
-        let b_host = stream.memcpy_dtov(&b_dev).unwrap();
+        let a_host = stream.clone_dtoh(&a_dev).unwrap();
+        let b_host = stream.clone_dtoh(&b_dev).unwrap();
         assert_eq!(a_host, b_host);
     }
 
@@ -209,8 +209,8 @@ mod tests {
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
         b_rng.fill_with_uniform(&mut b_dev).unwrap();
 
-        let a_host = stream.memcpy_dtov(&a_dev).unwrap();
-        let b_host = stream.memcpy_dtov(&b_dev).unwrap();
+        let a_host = stream.clone_dtoh(&a_dev).unwrap();
+        let b_host = stream.clone_dtoh(&b_dev).unwrap();
         assert_ne!(a_host, b_host);
     }
 
@@ -225,12 +225,12 @@ mod tests {
         a_rng.set_seed(42).unwrap();
         a_rng.set_offset(0).unwrap();
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
-        let a_host = stream.memcpy_dtov(&a_dev).unwrap();
+        let a_host = stream.clone_dtoh(&a_dev).unwrap();
 
         a_rng.set_seed(42).unwrap();
         a_rng.set_offset(0).unwrap();
         a_rng.fill_with_uniform(&mut a_dev).unwrap();
-        let b_host = stream.memcpy_dtov(&a_dev).unwrap();
+        let b_host = stream.clone_dtoh(&a_dev).unwrap();
 
         assert_eq!(a_host, b_host);
     }

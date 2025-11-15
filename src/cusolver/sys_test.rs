@@ -22,7 +22,7 @@ fn test_ssyevd() {
     let stream = ctx.default_stream();
     let n: usize = 5;
     let a: Vec<f32> = (0..n * n).map(|i| i as f32).collect();
-    let a = stream.memcpy_stod(&a).unwrap();
+    let a = stream.clone_htod(&a).unwrap();
     let lda = n;
     let w = stream.alloc_zeros::<f32>(n).unwrap();
     let work = stream.alloc_zeros::<f32>(1024).unwrap();
@@ -54,8 +54,8 @@ fn test_ssyevd() {
     };
     assert_eq!(stat, cusolverStatus_t::CUSOLVER_STATUS_SUCCESS);
 
-    let a = stream.memcpy_dtov(&a).unwrap();
-    let w = stream.memcpy_dtov(&w).unwrap();
+    let a = stream.clone_dtoh(&a).unwrap();
+    let w = stream.clone_dtoh(&w).unwrap();
 
     // reference value
     #[rustfmt::skip]

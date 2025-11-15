@@ -525,20 +525,20 @@ mod tests {
         matmul_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-            let a_dev = stream.memcpy_stod(&[
+        let a_dev = stream.clone_htod(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
             -1.6661372, -0.4568837, -0.9043474, 0.39125723,
         ]).unwrap();
         #[rustfmt::skip]
-            let b_dev = stream.memcpy_stod(&[
+        let b_dev = stream.clone_htod(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629,
             3.4746711, -1.0930681, 0.16502666, -0.59988785, 0.41375792,
         ]).unwrap();
         #[rustfmt::skip]
-            let bias = stream.alloc_zeros::<f32>(N).unwrap();
+        let bias = stream.alloc_zeros::<f32>(N).unwrap();
 
         let mut c_dev = stream.alloc_zeros::<f32>(M * N).unwrap();
         unsafe {
@@ -570,7 +570,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+        let c_host = stream.clone_dtoh(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
@@ -650,12 +650,12 @@ mod tests {
         );
 
         #[rustfmt::skip]
-            let a_dev = stream.memcpy_stod(&[
+            let a_dev = stream.clone_htod(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::f16::from_f32)).unwrap();
         #[rustfmt::skip]
-            let b_dev = stream.memcpy_stod(&[
+            let b_dev = stream.clone_htod(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
@@ -691,7 +691,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+        let c_host = stream.clone_dtoh(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];
@@ -704,12 +704,12 @@ mod tests {
         }
 
         #[rustfmt::skip]
-            let a_dev = stream.memcpy_stod(&[
+            let a_dev = stream.clone_htod(&[
             -0.5944882, 1.8055636, 0.52204555, -0.00397902,
             -0.38346434, -0.38013917, 0.4198623, -0.22479166,
         ].map(half::bf16::from_f32)).unwrap();
         #[rustfmt::skip]
-            let b_dev = stream.memcpy_stod(&[
+            let b_dev = stream.clone_htod(&[
             1.1292169, -0.13450263, 0.62789696, -0.5685516, 0.21946938, -1.6661372,
             1.0585804, -0.39789402, 0.90205914, 0.989318, -0.3443096, -0.4568837,
             1.3412506, 0.3059701, -0.9714474, -0.36113533, -1.6809629, -0.9043474,
@@ -744,7 +744,7 @@ mod tests {
             )
         }
         .unwrap();
-        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+        let c_host = stream.clone_dtoh(&c_dev).unwrap();
         for m in 0..M {
             for n in 0..N {
                 let found = c_host[m * N + n];

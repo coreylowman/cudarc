@@ -11,8 +11,8 @@ fn main() -> Result<(), DriverError> {
     let _: CudaSlice<f64> = stream.alloc_zeros::<f64>(10)?;
 
     // initialize with slices!
-    let _: CudaSlice<usize> = stream.memcpy_stod(&[0; 10])?;
-    let _: CudaSlice<u32> = stream.memcpy_stod(&[1, 2, 3])?;
+    let _: CudaSlice<usize> = stream.clone_htod(&[0; 10])?;
+    let _: CudaSlice<u32> = stream.clone_htod(&[1, 2, 3])?;
 
     Ok(())
 }

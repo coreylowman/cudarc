@@ -18,17 +18,17 @@
 //! let stream = ctx.default_stream();
 //! ```
 //!
-//! 3. Allocate device memory with [CudaStream::memcpy_stod()]/[CudaStream::memcpy_htod], [CudaStream::alloc_zeros()].
+//! 3. Allocate device memory with [CudaStream::clone_htod()]/[CudaStream::memcpy_htod], [CudaStream::alloc_zeros()].
 //!
 //! ```rust
 //! # use cudarc::driver::*;
 //! # let ctx = CudaContext::new(0).unwrap();
 //! # let stream = ctx.default_stream();
 //! let a_dev: CudaSlice<f32> = stream.alloc_zeros(10).unwrap();
-//! let b_dev: CudaSlice<f32> = stream.memcpy_stod(&[0.0; 10]).unwrap();
+//! let b_dev: CudaSlice<f32> = stream.clone_htod(&[0.0; 10]).unwrap();
 //! ```
 //!
-//! 3. Transfer to host memory with [CudaStream::memcpy_dtov()], or [CudaStream::memcpy_dtoh()]
+//! 3. Transfer to host memory with [CudaStream::clone_dtoh()], or [CudaStream::memcpy_dtoh()]
 //!
 //! ```rust
 //! # use cudarc::driver::*;
@@ -38,7 +38,7 @@
 //! let mut a_host: [f32; 10] = [1.0; 10];
 //! stream.memcpy_dtoh(&a_dev, &mut a_host);
 //! assert_eq!(a_host, [0.0; 10]);
-//! let a_host: Vec<f32> = stream.memcpy_dtov(&a_dev).unwrap();
+//! let a_host: Vec<f32> = stream.clone_dtoh(&a_dev).unwrap();
 //! assert_eq!(&a_host, &[0.0; 10]);
 //! ```
 //!
