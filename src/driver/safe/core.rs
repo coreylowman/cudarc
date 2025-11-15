@@ -433,7 +433,8 @@ unsafe impl Sync for CudaStream {}
 impl Drop for CudaStream {
     fn drop(&mut self) {
         self.ctx.record_err(self.ctx.bind_to_thread());
-        if !self.cu_stream.is_null() {
+        let cu_stream = std::mem::replace(&mut self.cu_stream, std::ptr::null_mut());
+        if !cu_stream.is_null() && cu_stream != (0x2 as _) {
             self.ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
             self.ctx
                 .record_err(unsafe { result::stream::destroy(self.cu_stream) });
@@ -447,6 +448,15 @@ impl CudaContext {
     pub fn default_stream(self: &Arc<Self>) -> Arc<CudaStream> {
         Arc::new(CudaStream {
             cu_stream: std::ptr::null_mut(),
+            ctx: self.clone(),
+        })
+    }
+
+    /// Get's the per-thread stream handle. See https://docs.nvidia.com/cuda/cuda-runtime-api/stream-sync-behavior.html#stream-sync-behavior
+    pub fn per_thread_stream(self: &Arc<Self>) -> Arc<CudaStream> {
+        Arc::new(CudaStream {
+            // See https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html#group__CUDART__TYPES_1g7b7129befd6f52708309acafd1c46197
+            cu_stream: 0x2 as _,
             ctx: self.clone(),
         })
     }
