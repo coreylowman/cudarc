@@ -50,7 +50,7 @@ By default we use `-F dynamic-loading`, which will not require any libraries to 
 
 You can also enable `-F dynamic-linking` or `-F static-linking` for your use case.
 
-# API 👀
+# Getting started
 
 It's easy to create a new device and transfer data to the gpu:
 
