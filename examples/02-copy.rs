@@ -15,11 +15,11 @@ fn main() -> Result<(), DriverError> {
     // you can use any type of slice
     stream.memcpy_htod(&[3.0; 10], &mut b)?;
 
-    // you can transfer back using memcpy_dtov
-    let mut a_host: Vec<f64> = stream.memcpy_dtov(&a)?;
+    // you can transfer back using clone_dtoh
+    let mut a_host: Vec<f64> = stream.clone_dtoh(&a)?;
     assert_eq!(a_host, [0.0; 10]);
 
-    let b_host = stream.memcpy_dtov(&b)?;
+    let b_host = stream.clone_dtoh(&b)?;
     assert_eq!(b_host, [3.0; 10]);
 
     // or transfer into a pre allocated slice

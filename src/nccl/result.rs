@@ -328,7 +328,7 @@ mod tests {
         for i in 0..n_devices {
             let ctx = CudaContext::new(i).unwrap();
             let stream = ctx.default_stream();
-            let slice = stream.memcpy_stod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
+            let slice = stream.clone_htod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
             sendslices.push(slice);
             let slice = stream.alloc_zeros::<f32>(n).unwrap();
             recvslices.push(slice);
@@ -364,7 +364,7 @@ mod tests {
             // Get the current device context
             let ctx = CudaContext::new(i).unwrap();
             let stream = ctx.default_stream();
-            let out = stream.memcpy_dtov(recv).unwrap();
+            let out = stream.clone_dtoh(recv).unwrap();
             assert_eq!(out, vec![(n_devices * (n_devices + 1)) as f32 / 2.0; n]);
         }
     }
@@ -380,7 +380,7 @@ mod tests {
                 std::thread::spawn(move || {
                     let ctx = CudaContext::new(i).unwrap();
                     let stream = ctx.default_stream();
-                    let sendslice = stream.memcpy_stod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
+                    let sendslice = stream.clone_htod(&vec![(i + 1) as f32 * 1.0; n]).unwrap();
                     let recvslice = stream.alloc_zeros::<f32>(n).unwrap();
                     let mut comm = MaybeUninit::uninit();
                     unsafe {

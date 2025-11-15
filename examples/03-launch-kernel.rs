@@ -15,7 +15,7 @@ fn main() -> Result<(), DriverError> {
 
     let a_host = [1.0, 2.0, 3.0];
 
-    let a_dev = stream.memcpy_stod(&a_host)?;
+    let a_dev = stream.clone_htod(&a_host)?;
     let mut b_dev = a_dev.clone();
 
     // we use a buidler pattern to launch kernels.
@@ -27,8 +27,8 @@ fn main() -> Result<(), DriverError> {
     launch_args.arg(&n);
     unsafe { launch_args.launch(cfg) }?;
 
-    let a_host_2 = stream.memcpy_dtov(&a_dev)?;
-    let b_host = stream.memcpy_dtov(&b_dev)?;
+    let a_host_2 = stream.clone_dtoh(&a_dev)?;
+    let b_host = stream.clone_dtoh(&b_dev)?;
 
     println!("Found {b_host:?}");
     println!("Expected {:?}", a_host.map(f32::sin));

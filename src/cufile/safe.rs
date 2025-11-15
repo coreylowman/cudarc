@@ -408,7 +408,7 @@ mod tests {
         let mut handle = cufile.register(file)?;
 
         let data = [0u8, 1, 2, 3, 4];
-        let buf = stream.memcpy_stod(&data).unwrap();
+        let buf = stream.clone_htod(&data).unwrap();
         let written = handle.sync_write(0, &buf)?;
         assert_eq!(written, data.len() as isize);
 
@@ -434,7 +434,7 @@ mod tests {
         assert_eq!(read, data.len() as isize);
 
         // NOTE: asserting device equals our data
-        let host_buf = stream.memcpy_dtov(&buf).unwrap();
+        let host_buf = stream.clone_dtoh(&buf).unwrap();
         assert_eq!(&host_buf, &data);
 
         // NOTE: asserting file is unchanged
@@ -462,7 +462,7 @@ mod tests {
         for i in 0..(1024 * 1024) {
             data.push((i % 256) as u8);
         }
-        let buf = stream.memcpy_stod(&data).unwrap();
+        let buf = stream.clone_htod(&data).unwrap();
 
         let cufile = Cufile::new()?;
         let file = std::fs::File::create("/tmp/cudarc-cufile-test_dtof_async").unwrap();
@@ -507,7 +507,7 @@ mod tests {
         assert_eq!(read, data.len() as isize);
 
         // NOTE: asserting device equals our data
-        let host_buf = stream.memcpy_dtov(&buf).unwrap();
+        let host_buf = stream.clone_dtoh(&buf).unwrap();
         assert_eq!(&host_buf, &data);
 
         // NOTE: asserting file is unchanged

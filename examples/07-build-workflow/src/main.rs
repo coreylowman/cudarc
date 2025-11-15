@@ -52,7 +52,7 @@ fn main() -> Result<(), DriverError> {
     let my_structs = vec![MyStruct { data: [1.0; 4] }; n];
 
     // copy to GPU
-    let mut gpu_my_structs = stream.memcpy_stod(&my_structs)?;
+    let mut gpu_my_structs = stream.clone_htod(&my_structs)?;
 
     println!("Time taken to initialise data: {:.2?}", now.elapsed());
 
@@ -65,7 +65,7 @@ fn main() -> Result<(), DriverError> {
 
     println!("Time taken to call kernel: {:.2?}", now.elapsed());
 
-    let my_structs = stream.memcpy_dtov(&gpu_my_structs)?;
+    let my_structs = stream.clone_dtoh(&gpu_my_structs)?;
 
     assert!(my_structs.iter().all(|i| i.data == [2.0; 4]));
 

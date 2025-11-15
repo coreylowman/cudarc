@@ -104,7 +104,7 @@ mod tests {
             let mut expected = result;
             sasum_truth(x, &mut actual, n, incx);
 
-            let x = stream.memcpy_stod(x).unwrap();
+            let x = stream.clone_htod(x).unwrap();
             unsafe {
                 blas.asum(
                     AsumConfig {
@@ -144,7 +144,7 @@ mod tests {
             let mut expected = result;
             dasum_truth(x, &mut actual, n, incx);
 
-            let x = stream.memcpy_stod(x).unwrap();
+            let x = stream.clone_htod(x).unwrap();
             unsafe {
                 blas.asum(
                     AsumConfig {

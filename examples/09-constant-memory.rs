@@ -33,7 +33,7 @@ fn main() -> Result<(), DriverError> {
     let n = input.len();
 
     // Copy input to device
-    let input_dev = stream.memcpy_stod(&input)?;
+    let input_dev = stream.clone_htod(&input)?;
     let mut output_dev = stream.alloc_zeros::<f32>(n)?;
 
     // Launch kernel
@@ -48,7 +48,7 @@ fn main() -> Result<(), DriverError> {
     }?;
 
     // Copy results back
-    let output = stream.memcpy_dtov(&output_dev)?;
+    let output = stream.clone_dtoh(&output_dev)?;
 
     // Verify results
     println!("\nPolynomial evaluation (1.0 + 2.0*x + 3.0*x^2 + 4.0*x^3):");

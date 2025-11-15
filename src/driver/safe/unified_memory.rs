@@ -856,14 +856,14 @@ extern \"C\" __global__ void kernel(float *buf) {
         }
 
         // check usage as device ptr
-        let vs = stream1.memcpy_dtov(&a)?;
+        let vs = stream1.clone_dtoh(&a)?;
         for i in 0..100 {
             assert_eq!(vs[i], i as f32);
         }
 
         // check usage as host ptr
-        let b = stream1.memcpy_stod(&a)?;
-        let vs = stream1.memcpy_dtov(&b)?;
+        let b = stream1.clone_htod(&a)?;
+        let vs = stream1.clone_dtoh(&b)?;
         for i in 0..100 {
             assert_eq!(vs[i], i as f32);
         }
@@ -936,14 +936,14 @@ extern \"C\" __global__ void kernel(float *buf) {
         }
 
         // check usage as device ptr
-        let vs = stream1.memcpy_dtov(&a)?;
+        let vs = stream1.clone_dtoh(&a)?;
         for i in 0..100 {
             assert_eq!(vs[i], i as f32);
         }
 
         // check usage as host ptr
-        let b = stream1.memcpy_stod(&a)?;
-        let vs = stream1.memcpy_dtov(&b)?;
+        let b = stream1.clone_htod(&a)?;
+        let vs = stream1.clone_dtoh(&b)?;
         for i in 0..100 {
             assert_eq!(vs[i], i as f32);
         }
@@ -1017,14 +1017,14 @@ extern \"C\" __global__ void kernel(float *buf) {
         }
 
         // check usage as device ptr
-        let vs = stream2.memcpy_dtov(&a)?;
+        let vs = stream2.clone_dtoh(&a)?;
         for i in 0..100 {
             assert_eq!(vs[i], i as f32);
         }
 
         // check usage as host ptr
-        let b = stream2.memcpy_stod(&a)?;
-        let vs = stream2.memcpy_dtov(&b)?;
+        let b = stream2.clone_htod(&a)?;
+        let vs = stream2.clone_dtoh(&b)?;
         for i in 0..100 {
             assert_eq!(vs[i], i as f32);
         }
@@ -1096,7 +1096,7 @@ extern \"C\" __global__ void kernel(float *buf) {
 
         // Verify the result
         stream.synchronize()?;
-        let result = stream.memcpy_dtov(&big)?;
+        let result = stream.clone_dtoh(&big)?;
         assert_eq!(
             result,
             [-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]
@@ -1124,8 +1124,8 @@ extern \"C\" __global__ void kernel(float *buf) {
         assert_eq!(left.len(), 5);
         assert_eq!(right.len(), 5);
 
-        let left_data = stream.memcpy_dtov(&left)?;
-        let right_data = stream.memcpy_dtov(&right)?;
+        let left_data = stream.clone_dtoh(&left)?;
+        let right_data = stream.clone_dtoh(&right)?;
         assert_eq!(left_data, [0.0, 1.0, 2.0, 3.0, 4.0]);
         assert_eq!(right_data, [5.0, 6.0, 7.0, 8.0, 9.0]);
 
@@ -1140,7 +1140,7 @@ extern \"C\" __global__ void kernel(float *buf) {
 
         // Verify only left half was modified
         stream.synchronize()?;
-        let result = stream.memcpy_dtov(&unified)?;
+        let result = stream.clone_dtoh(&unified)?;
         assert_eq!(result, [0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
 
         Ok(())
@@ -1164,12 +1164,12 @@ extern \"C\" __global__ void kernel(float *buf) {
 
         // Initially in GLOBAL mode - both streams should work
         let view1 = unified.slice(0..50);
-        let data1 = stream1.memcpy_dtov(&view1)?;
+        let data1 = stream1.clone_dtoh(&view1)?;
         assert_eq!(data1[0], 0.0);
         assert_eq!(data1[49], 49.0);
 
         let view2 = unified.slice(50..100);
-        let data2 = stream2.memcpy_dtov(&view2)?;
+        let data2 = stream2.clone_dtoh(&view2)?;
         assert_eq!(data2[0], 50.0);
         assert_eq!(data2[49], 99.0);
 
@@ -1180,7 +1180,7 @@ extern \"C\" __global__ void kernel(float *buf) {
         stream1.synchronize()?;
 
         // Verify the write succeeded
-        let verify_data = stream1.memcpy_dtov(&unified)?;
+        let verify_data = stream1.clone_dtoh(&unified)?;
         for i in 0..10 {
             assert_eq!(
                 verify_data[i], i as f32,
@@ -1204,11 +1204,11 @@ extern \"C\" __global__ void kernel(float *buf) {
         let view_single = unified.slice(0..50);
 
         // Access with attached stream (stream2) should work
-        let data_ok = stream2.memcpy_dtov(&view_single)?;
+        let data_ok = stream2.clone_dtoh(&view_single)?;
         assert_eq!(data_ok[0], 0.0);
 
         // Access with different stream (stream1) should record an error
-        let _ = stream1.memcpy_dtov(&view_single);
+        let _ = stream1.clone_dtoh(&view_single);
         // The error is recorded in the context, not returned synchronously
         assert!(
             ctx.check_err().is_err(),
@@ -1222,7 +1222,7 @@ extern \"C\" __global__ void kernel(float *buf) {
         stream2.synchronize()?;
 
         // Verify the write succeeded
-        let verify_data2 = stream2.memcpy_dtov(&unified)?;
+        let verify_data2 = stream2.clone_dtoh(&unified)?;
         for i in 30..40 {
             assert_eq!(
                 verify_data2[i], 777.0,

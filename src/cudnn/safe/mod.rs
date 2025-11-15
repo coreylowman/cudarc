@@ -161,12 +161,12 @@ mod tests {
         // dimensions
 
         // Create input, filter and output tensors
-        let x = stream.memcpy_stod(&vec![1.0f32; 100 * 128 * 32]).unwrap();
+        let x = stream.clone_htod(&vec![1.0f32; 100 * 128 * 32]).unwrap();
         let x_desc = cudnn.create_4d_tensor::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             [100, 128, 32, 1],
         )?;
-        let filter = stream.memcpy_stod(&vec![1.0f32; 256 * 128 * 3]).unwrap();
+        let filter = stream.clone_htod(&vec![1.0f32; 256 * 128 * 3]).unwrap();
         let filter_desc = cudnn.create_nd_filter::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[256, 128, 3, 1],
@@ -199,7 +199,7 @@ mod tests {
                 op.launch(algo, Some(&mut workspace), (1.0, 0.0), &x, &filter, &mut y)?;
             }
 
-            let y_host = stream.memcpy_dtov(&y).unwrap();
+            let y_host = stream.clone_dtoh(&y).unwrap();
             assert_eq!(y_host.len(), 100 * 256 * 30);
             assert_eq!(y_host[0], 128.0 * 3.0);
         }
@@ -222,14 +222,14 @@ mod tests {
 
         // Create input, filter and output tensors
         let x = stream
-            .memcpy_stod(&vec![1.0f32; 32 * 3 * 64 * 64 * 64])
+            .clone_htod(&vec![1.0f32; 32 * 3 * 64 * 64 * 64])
             .unwrap();
         let x_desc = cudnn.create_nd_tensor::<f32>(
             &[32, 3, 64, 64, 64],
             &[3 * 64 * 64 * 64, 64 * 64 * 64, 64 * 64, 64, 1],
         )?;
         let filter = stream
-            .memcpy_stod(&vec![1.0f32; 32 * 3 * 4 * 4 * 4])
+            .clone_htod(&vec![1.0f32; 32 * 3 * 4 * 4 * 4])
             .unwrap();
         let filter_desc = cudnn.create_nd_filter::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
@@ -261,7 +261,7 @@ mod tests {
                 op.launch(algo, Some(&mut workspace), (1.0, 0.0), &x, &filter, &mut y)?;
             }
 
-            let y_host = stream.memcpy_dtov(&y).unwrap();
+            let y_host = stream.clone_dtoh(&y).unwrap();
             assert_eq!(y_host.len(), 32 * 32 * 61 * 61 * 61);
             assert_eq!(y_host[0], 3.0 * 4.0 * 4.0 * 4.0);
         }
@@ -276,7 +276,7 @@ mod tests {
         let cudnn = Cudnn::new(stream.clone()).unwrap();
 
         let a = stream
-            .memcpy_stod(&std::vec![1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0])
+            .clone_htod(&std::vec![1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0])
             .unwrap();
         let mut c = stream.alloc_zeros::<f32>(1).unwrap();
 
@@ -303,7 +303,7 @@ mod tests {
 
         unsafe { op.launch(&mut workspace, (1.0, 0.0), &a, &mut c) }.unwrap();
 
-        let c_host = stream.memcpy_dtov(&c).unwrap();
+        let c_host = stream.clone_dtoh(&c).unwrap();
         assert_eq!(c_host.len(), 1);
         assert_eq!(c_host[0], 21.0);
     }
@@ -323,20 +323,20 @@ mod tests {
 
         // Create input, filter and output tensors
         let x = stream
-            .memcpy_stod(&vec![1.0f32; 32 * 3 * 64 * 64 * 64])
+            .clone_htod(&vec![1.0f32; 32 * 3 * 64 * 64 * 64])
             .unwrap();
         let x_desc = cudnn.create_nd_tensor::<f32>(
             &[32, 3, 64, 64, 64],
             &[3 * 64 * 64 * 64, 64 * 64 * 64, 64 * 64, 64, 1],
         )?;
         let filter = stream
-            .memcpy_stod(&vec![1.0f32; 32 * 3 * 4 * 4 * 4])
+            .clone_htod(&vec![1.0f32; 32 * 3 * 4 * 4 * 4])
             .unwrap();
         let filter_desc = cudnn.create_nd_filter::<f32>(
             cudnn::sys::cudnnTensorFormat_t::CUDNN_TENSOR_NCHW,
             &[32, 3, 4, 4, 4],
         )?;
-        let bias = stream.memcpy_stod(&[1.0f32; 32]).unwrap();
+        let bias = stream.clone_htod(&[1.0f32; 32]).unwrap();
         let bias_desc = cudnn.create_nd_tensor::<f32>(&[1, 32, 1, 1, 1], &[32, 1, 1, 1, 1])?;
         let activation_desc = cudnn.create_activation::<f32>(
             cudnn::sys::cudnnActivationMode_t::CUDNN_ACTIVATION_RELU,
@@ -344,7 +344,7 @@ mod tests {
             f64::MAX,
         )?;
         let z = stream
-            .memcpy_stod(&vec![0.0f32; 32 * 32 * 61 * 61 * 61])
+            .clone_htod(&vec![0.0f32; 32 * 32 * 61 * 61 * 61])
             .unwrap();
         let z_desc = cudnn.create_nd_tensor::<f32>(
             &[32, 32, 61, 61, 61],
@@ -388,7 +388,7 @@ mod tests {
                 )?;
             }
 
-            let y_host = stream.memcpy_dtov(&y).unwrap();
+            let y_host = stream.clone_dtoh(&y).unwrap();
             assert_eq!(y_host.len(), 32 * 32 * 61 * 61 * 61);
             assert_eq!(y_host[0], 3.0 * 4.0 * 4.0 * 4.0 + 1.0);
         }
@@ -412,7 +412,7 @@ mod tests {
 
         // Create input, filter and output tensors
         let x = stream
-            .memcpy_stod(&[
+            .clone_htod(&[
                 1.0, 1.0, 2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 3.0, 2.0, 1.0, 0.0, 1.0, 2.0, 3.0, 4.0,
             ])
             .unwrap();
@@ -432,7 +432,7 @@ mod tests {
                 op.launch((1.0, 0.0), &x, &mut y)?;
             }
 
-            let y_host = stream.memcpy_dtov(&y).unwrap();
+            let y_host = stream.clone_dtoh(&y).unwrap();
             assert_eq!(y_host.len(), 32 * 3 * 2 * 2);
             assert_eq!(y_host[0], 6.0);
         }
@@ -453,7 +453,7 @@ mod tests {
         )?;
 
         // Create input, filter and output tensors
-        let x = stream.memcpy_stod(&[-1.0, 2.0, -3.0, 100.0]).unwrap();
+        let x = stream.clone_htod(&[-1.0, 2.0, -3.0, 100.0]).unwrap();
         let x_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
         let mut y = stream.alloc_zeros::<f32>(4).unwrap();
         let y_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
@@ -470,7 +470,7 @@ mod tests {
                 op.launch((1.0, 0.0), &x, &mut y)?;
             }
 
-            let y_host = stream.memcpy_dtov(&y).unwrap();
+            let y_host = stream.clone_dtoh(&y).unwrap();
             assert_eq!(y_host.len(), 2 * 2);
             assert_eq!(y_host[0], 0.0);
             assert_eq!(y_host[1], 2.0);
@@ -491,7 +491,7 @@ mod tests {
             .create_softmax::<f32>(cudnn::sys::cudnnSoftmaxMode_t::CUDNN_SOFTMAX_MODE_INSTANCE)?;
 
         // Create input, filter and output tensors.
-        let x = stream.memcpy_stod(&[1.0, 2.0, 3.0, 4.0]).unwrap();
+        let x = stream.clone_htod(&[1.0, 2.0, 3.0, 4.0]).unwrap();
         let x_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
         let mut y = stream.alloc_zeros::<f32>(4).unwrap();
         let y_desc = cudnn.create_nd_tensor::<f32>(&[1, 1, 2, 2], &[2 * 2, 2 * 2, 2, 1])?;
@@ -512,7 +512,7 @@ mod tests {
                 )?;
             }
 
-            let y_host = stream.memcpy_dtov(&y).unwrap();
+            let y_host = stream.clone_dtoh(&y).unwrap();
             assert_eq!(y_host.len(), 2 * 2);
             assert_eq!(y_host[0], 0.0320586);
             assert_eq!(y_host[1], 0.08714432);

@@ -132,11 +132,11 @@ mod tests {
         gemv_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = stream.memcpy_stod(&[
+        let a_dev = stream.clone_htod(&[
             0.9314776, 0.10300648, -0.620774, 1.527075, 0.0259804,
             0.16820757, -0.94463515, -1.3850101, 1.0600523, 1.5124008,
         ]).unwrap();
-        let b_dev = stream.memcpy_stod(&b).unwrap();
+        let b_dev = stream.clone_htod(&b).unwrap();
         let mut c_dev = stream.alloc_zeros(M).unwrap();
         unsafe {
             blas.gemv(
@@ -157,7 +157,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+        let c_host = stream.clone_dtoh(&c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-6);
         }
@@ -186,7 +186,7 @@ mod tests {
         gemv_truth(1.0, &a, &b, 0.0, &mut c);
 
         #[rustfmt::skip]
-        let a_dev = stream.memcpy_stod(&[
+        let a_dev = stream.clone_htod(&[
             0.96151888, -0.36771390, 0.94069099,
             2.20621538, -0.16479775, -1.78425562,
             0.41080803, -0.56567699, -0.72781092,
@@ -196,7 +196,7 @@ mod tests {
             -1.84258616, 0.24096519, -0.04563522,
             -0.53364468, -1.07902217, 0.46823528,
         ]).unwrap();
-        let b_dev = stream.memcpy_stod(&b).unwrap();
+        let b_dev = stream.clone_htod(&b).unwrap();
         let mut c_dev = stream.alloc_zeros(M).unwrap();
         unsafe {
             blas.gemv(
@@ -217,7 +217,7 @@ mod tests {
         }
         .unwrap();
 
-        let c_host = stream.memcpy_dtov(&c_dev).unwrap();
+        let c_host = stream.clone_dtoh(&c_dev).unwrap();
         for i in 0..M {
             assert!((c_host[i] - c[i]).abs() <= 1e-8);
         }

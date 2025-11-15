@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     handle.sync_read(0, &mut buf)?;
 
-    let verify_dst = stream.memcpy_dtov(&buf)?;
+    let verify_dst = stream.clone_dtoh(&buf)?;
     assert_eq!(verify_dst, data);
 
     Ok(())
