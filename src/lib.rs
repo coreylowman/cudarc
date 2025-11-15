@@ -41,29 +41,9 @@
 //!
 //! You can also enable `-F dynamic-linking` or `-F static-linking` for your use case.
 //!
-//! # crate organization
+//! # Getting started
 //!
-//! Each of the modules for the above is organized into three levels:
-//! 1. A `safe` module which provides safe abstractions over the `result` module
-//! 2. A `result` which is a thin wrapper around the `sys` module to ensure all functions return [Result]
-//! 3. A `sys` module which contains the raw FFI bindings
-//!
-//! | API | Safe | Result | Sys |
-//! | --- | --- | --- | --- |
-//! | driver | [driver::safe] | [driver::result] | [driver::sys] |
-//! | cublas | [cublas::safe] | [cublas::result] | [cublas::sys] |
-//! | cublaslt | [cublaslt::safe] | [cublaslt::result] | [cublaslt::sys] |
-//! | nvrtc | [nvrtc::safe] | [nvrtc::result] | [nvrtc::sys] |
-//! | curand | [curand::safe] | [curand::result] | [curand::sys] |
-//! | cudnn | [cudnn::safe] | [cudnn::result] | [cudnn::sys] |
-//! | cusparse | - | [cusparse::result] | [cusparse::sys] |
-//! | cusolver | [cusolver::safe] | [cusolver::result] | [cusolver::sys] |
-//! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
-//! | cupti | - | [cupti::result] | [cupti::sys] |
-//! | nvtx | [nvtx::safe] | [nvtx::result] | [nvtx::sys] |
-//! | cutensor | [cutensor::safe] | [cutensor::result] | [cutensor::sys] |
-//!
-//! # Core Concepts
+//! **See [driver] for more examples**
 //!
 //! At the core is the [driver] API, which exposes a bunch of structs, but the main ones are:
 //!
@@ -113,6 +93,28 @@
 //!
 //! **If you need some functionality that isn't present in the safe api, please
 //! open a ticket.**
+//!
+//! # crate organization
+//!
+//! Each of the modules for the above is organized into three levels:
+//! 1. A `safe` module which provides safe abstractions over the `result` module
+//! 2. A `result` which is a thin wrapper around the `sys` module to ensure all functions return [Result]
+//! 3. A `sys` module which contains the raw FFI bindings
+//!
+//! | API | Safe | Result | Sys |
+//! | --- | --- | --- | --- |
+//! | driver | [driver::safe] | [driver::result] | [driver::sys] |
+//! | cublas | [cublas::safe] | [cublas::result] | [cublas::sys] |
+//! | cublaslt | [cublaslt::safe] | [cublaslt::result] | [cublaslt::sys] |
+//! | nvrtc | [nvrtc::safe] | [nvrtc::result] | [nvrtc::sys] |
+//! | curand | [curand::safe] | [curand::result] | [curand::sys] |
+//! | cudnn | [cudnn::safe] | [cudnn::result] | [cudnn::sys] |
+//! | cusparse | - | [cusparse::result] | [cusparse::sys] |
+//! | cusolver | [cusolver::safe] | [cusolver::result] | [cusolver::sys] |
+//! | cusolvermg | [cusolvermg::safe] | [cusolvermg::result] | [cusolvermg::sys] |
+//! | cupti | - | [cupti::result] | [cupti::sys] |
+//! | nvtx | [nvtx::safe] | [nvtx::result] | [nvtx::sys] |
+//! | cutensor | [cutensor::safe] | [cutensor::result] | [cutensor::sys] |
 
 #![cfg_attr(feature = "no-std", no_std)]
 

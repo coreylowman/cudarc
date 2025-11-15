@@ -24,7 +24,7 @@ categories = [
 
 [package.metadata.docs.rs]
 features = [
-    "cuda-12090",
+    "cuda-13000",
     "f16",
     "cudnn",
     "nccl",
@@ -33,6 +33,9 @@ features = [
     "cusolver",
     "cusolvermg",
     "cufile",
+    "nvtx",
+    "cupti",
+    "cutensor",
 ]
 
 [features]
