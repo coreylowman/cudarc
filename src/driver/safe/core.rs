@@ -730,17 +730,6 @@ impl<T> CudaViewMut<'_, T> {
             marker: PhantomData,
         }
     }
-
-    fn resize(&self, start: usize, end: usize) -> Self {
-        Self {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            read: self.read,
-            write: self.write,
-            stream: self.stream,
-            marker: PhantomData,
-        }
-    }
 }
 
 /// Marker trait to indicate that the type is valid
@@ -1494,7 +1483,14 @@ impl<T> CudaSlice<T> {
 
     /// Fallible version of [CudaSlice::slice_mut]
     pub fn try_slice_mut(&mut self, bounds: impl RangeBounds<usize>) -> Option<CudaViewMut<'_, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.as_view_mut().resize(start, end))
+        to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
+            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            read: &self.read,
+            write: &self.write,
+            stream: &self.stream,
+            marker: PhantomData,
+        })
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1565,8 +1561,23 @@ impl<T> CudaSlice<T> {
     ) -> Option<(CudaViewMut<'_, T>, CudaViewMut<'_, T>)> {
         let length = self.len;
         (mid <= length).then(|| {
-            let view = self.as_view_mut();
-            (view.resize(0, mid), view.resize(mid, length))
+            let a = CudaViewMut {
+                ptr: self.cu_device_ptr,
+                len: mid,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            };
+            let b = CudaViewMut {
+                ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: length - mid,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            };
+            (a, b)
         })
     }
 }
@@ -1702,7 +1713,14 @@ impl<'a, T> CudaViewMut<'a, T> {
         &'b mut self,
         bounds: impl RangeBounds<usize>,
     ) -> Option<CudaViewMut<'b, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
+        to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            read: &self.read,
+            write: &self.write,
+            stream: &self.stream,
+            marker: PhantomData,
+        })
     }
 
     /// Splits the [CudaViewMut] into two at the given index.
@@ -1731,7 +1749,26 @@ impl<'a, T> CudaViewMut<'a, T> {
         &'b mut self,
         mid: usize,
     ) -> Option<(CudaViewMut<'b, T>, CudaViewMut<'b, T>)> {
-        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
+        let length = self.len;
+        (mid <= length).then(|| {
+            let a = CudaViewMut {
+                ptr: self.ptr,
+                len: mid,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            };
+            let b = CudaViewMut {
+                ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: length - mid,
+                read: &self.read,
+                write: &self.write,
+                stream: &self.stream,
+                marker: PhantomData,
+            };
+            (a, b)
+        })
     }
 
     /// Reinterprets the slice of memory into a different type. `len` is the number
@@ -1766,7 +1803,7 @@ pub(super) fn to_range(range: impl RangeBounds<usize>, len: usize) -> Option<(us
         Bound::Excluded(&n) => n,
         Bound::Unbounded => len,
     };
-    (end <= len).then_some((start, end))
+    (start <= end && end <= len).then_some((start, end))
 }
 
 /// Wrapper around [sys::CUmodule]. Create with [CudaContext::load_module()].

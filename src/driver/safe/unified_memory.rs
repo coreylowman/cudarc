@@ -318,7 +318,15 @@ impl<T> UnifiedSlice<T> {
         &mut self,
         bounds: impl RangeBounds<usize>,
     ) -> Option<UnifiedViewMut<'_, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.as_view_mut().resize(start, end))
+        to_range(bounds, self.len).map(|(start, end)| UnifiedViewMut {
+            ptr: self.cu_device_ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: &self.event,
+            stream: &self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        })
     }
 
     pub fn split_at(&self, mid: usize) -> (UnifiedView<'_, T>, UnifiedView<'_, T>) {
@@ -327,9 +335,26 @@ impl<T> UnifiedSlice<T> {
 
     /// Fallible version of [UnifiedSlice::split_at]. Returns `None` if `mid > self.len`.
     pub fn try_split_at(&self, mid: usize) -> Option<(UnifiedView<'_, T>, UnifiedView<'_, T>)> {
-        (mid <= self.len()).then(|| {
-            let view = self.as_view();
-            (view.resize(0, mid), view.resize(mid, self.len))
+        (mid <= self.len).then(|| {
+            let a = UnifiedView {
+                ptr: self.cu_device_ptr,
+                len: mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            let b = UnifiedView {
+                ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: self.len - mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            (a, b)
         })
     }
 
@@ -349,8 +374,25 @@ impl<T> UnifiedSlice<T> {
     ) -> Option<(UnifiedViewMut<'_, T>, UnifiedViewMut<'_, T>)> {
         let length = self.len;
         (mid <= length).then(|| {
-            let view = self.as_view_mut();
-            (view.resize(0, mid), view.resize(mid, length))
+            let a = UnifiedViewMut {
+                ptr: self.cu_device_ptr,
+                len: mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            let b = UnifiedViewMut {
+                ptr: self.cu_device_ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: self.len - mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            (a, b)
         })
     }
 }
@@ -678,19 +720,6 @@ impl<'a, T> UnifiedView<'a, T> {
         self.len == 0
     }
 
-    fn resize(&self, start: usize, end: usize) -> Self {
-        assert!(start <= end && end <= self.len);
-        Self {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            event: self.event,
-            stream: self.stream,
-            attach_mode: self.attach_mode,
-            concurrent_managed_access: self.concurrent_managed_access,
-            marker: PhantomData,
-        }
-    }
-
     /// Creates a [UnifiedView] at the specified offset from the start of `self`.
     ///
     /// Panics if `range.start >= self.len`.
@@ -700,7 +729,15 @@ impl<'a, T> UnifiedView<'a, T> {
 
     /// Fallible version of [UnifiedView::slice]
     pub fn try_slice(&self, bounds: impl RangeBounds<usize>) -> Option<Self> {
-        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
+        to_range(bounds, self.len).map(|(start, end)| UnifiedView {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: &self.event,
+            stream: &self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        })
     }
 
     pub fn split_at(&self, mid: usize) -> (Self, Self) {
@@ -711,7 +748,27 @@ impl<'a, T> UnifiedView<'a, T> {
     ///
     /// Returns `None` if `mid > self.len`.
     pub fn try_split_at(&self, mid: usize) -> Option<(Self, Self)> {
-        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
+        (mid <= self.len).then(|| {
+            let a = UnifiedView {
+                ptr: self.ptr,
+                len: mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            let b = UnifiedView {
+                ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: self.len - mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            (a, b)
+        })
     }
 }
 
@@ -737,18 +794,6 @@ impl<'a, T> UnifiedViewMut<'a, T> {
         }
     }
 
-    fn resize(&self, start: usize, end: usize) -> Self {
-        Self {
-            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
-            len: end - start,
-            event: self.event,
-            stream: self.stream,
-            attach_mode: self.attach_mode,
-            concurrent_managed_access: self.concurrent_managed_access,
-            marker: PhantomData,
-        }
-    }
-
     /// Creates a [UnifiedView] at the specified offset from the start of `self`.
     ///
     /// Panics if `range` and `0...self.len()` are not overlapping.
@@ -758,7 +803,15 @@ impl<'a, T> UnifiedViewMut<'a, T> {
 
     /// Fallible version of [UnifiedViewMut::slice]
     pub fn try_slice<'b>(&'b self, bounds: impl RangeBounds<usize>) -> Option<UnifiedView<'b, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.as_view().resize(start, end))
+        to_range(bounds, self.len).map(|(start, end)| UnifiedView {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: &self.event,
+            stream: &self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        })
     }
 
     /// Creates a [UnifiedViewMut] at the specified offset from the start of `self`.
@@ -773,7 +826,15 @@ impl<'a, T> UnifiedViewMut<'a, T> {
         &'b mut self,
         bounds: impl RangeBounds<usize>,
     ) -> Option<UnifiedViewMut<'b, T>> {
-        to_range(bounds, self.len).map(|(start, end)| self.resize(start, end))
+        to_range(bounds, self.len).map(|(start, end)| UnifiedViewMut {
+            ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
+            len: end - start,
+            event: &self.event,
+            stream: &self.stream,
+            attach_mode: self.attach_mode,
+            concurrent_managed_access: self.concurrent_managed_access,
+            marker: PhantomData,
+        })
     }
 
     /// Splits the [UnifiedViewMut] into two at the given index.
@@ -793,7 +854,27 @@ impl<'a, T> UnifiedViewMut<'a, T> {
         &'b mut self,
         mid: usize,
     ) -> Option<(UnifiedViewMut<'b, T>, UnifiedViewMut<'b, T>)> {
-        (mid <= self.len()).then(|| (self.resize(0, mid), self.resize(mid, self.len)))
+        (mid <= self.len()).then(|| {
+            let a = UnifiedViewMut {
+                ptr: self.ptr,
+                len: mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            let b = UnifiedViewMut {
+                ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
+                len: self.len - mid,
+                event: &self.event,
+                stream: &self.stream,
+                attach_mode: self.attach_mode,
+                concurrent_managed_access: self.concurrent_managed_access,
+                marker: PhantomData,
+            };
+            (a, b)
+        })
     }
 }
 
