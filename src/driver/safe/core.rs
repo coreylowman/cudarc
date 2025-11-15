@@ -437,7 +437,7 @@ impl Drop for CudaStream {
         if !cu_stream.is_null() && cu_stream != (0x2 as _) {
             self.ctx.num_streams.fetch_sub(1, Ordering::Relaxed);
             self.ctx
-                .record_err(unsafe { result::stream::destroy(self.cu_stream) });
+                .record_err(unsafe { result::stream::destroy(cu_stream) });
         }
     }
 }
