@@ -1716,9 +1716,9 @@ impl<'a, T> CudaViewMut<'a, T> {
         to_range(bounds, self.len).map(|(start, end)| CudaViewMut {
             ptr: self.ptr + (start * std::mem::size_of::<T>()) as u64,
             len: end - start,
-            read: &self.read,
-            write: &self.write,
-            stream: &self.stream,
+            read: self.read,
+            write: self.write,
+            stream: self.stream,
             marker: PhantomData,
         })
     }
@@ -1754,17 +1754,17 @@ impl<'a, T> CudaViewMut<'a, T> {
             let a = CudaViewMut {
                 ptr: self.ptr,
                 len: mid,
-                read: &self.read,
-                write: &self.write,
-                stream: &self.stream,
+                read: self.read,
+                write: self.write,
+                stream: self.stream,
                 marker: PhantomData,
             };
             let b = CudaViewMut {
                 ptr: self.ptr + (mid * std::mem::size_of::<T>()) as u64,
                 len: length - mid,
-                read: &self.read,
-                write: &self.write,
-                stream: &self.stream,
+                read: self.read,
+                write: self.write,
+                stream: self.stream,
                 marker: PhantomData,
             };
             (a, b)
