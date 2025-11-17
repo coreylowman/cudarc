@@ -82,7 +82,16 @@ fn create_modules() -> Vec<ModuleConfig> {
                 types: vec![],
                 functions: vec![
                     // NOTE: see https://github.com/chelsea0x3b/cudarc/issues/489
-                    "cublasGetEmulationSpecialValuesSupport"
+                    "cublasGetEmulationSpecialValuesSupport",
+                    "cublasGetFixedPointEmulationMantissaBitCountPointer",
+                    "cublasGetFixedPointEmulationMantissaBitOffset",
+                    "cublasGetFixedPointEmulationMantissaControl",
+                    "cublasGetFixedPointEmulationMaxMantissaBitCount",
+                    "cublasSetEmulationSpecialValuesSupport",
+                    "cublasSetFixedPointEmulationMantissaBitCountPointer",
+                    "cublasSetFixedPointEmulationMantissaBitOffset",
+                    "cublasSetFixedPointEmulationMantissaControl",
+                    "cublasSetFixedPointEmulationMaxMantissaBitCount",
                 ],
                 vars: vec![],
             },
