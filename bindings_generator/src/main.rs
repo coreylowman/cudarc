@@ -387,6 +387,37 @@ fn create_modules() -> Vec<ModuleConfig> {
             raw_lines: vec![],
             min_cuda_version: Some("cuda-12000"),
         },
+        ModuleConfig {
+            cudarc_name: "tensorrt",
+            redist_name: "libnvinfer", // Not actually used for TensorRT
+            allowlist: Filters {
+                types: vec![
+                    "^IBuilder$",
+                    "^INetworkDefinition$",
+                    "^IBuilderConfig$",
+                    "^IHostMemory$",
+                    "^IRuntime$",
+                    "^ICudaEngine$",
+                    "^IExecutionContext$",
+                    "^ITensor$",
+                    "^IOptimizationProfile$",
+                    "^IOnnxParser$",
+                    "^IParserError$",
+                    "^DataType$",
+                    "^MemoryPoolType$",
+                    "^Dims$",
+                    "^LogSeverity$",
+                ],
+                functions: vec!["^trt_.*"],
+                vars: vec![],
+            },
+            allowlist_recursively: false, // C wrapper is self-contained
+            blocklist: Filters::none(),
+            libs: vec![], // Empty - wrapper is statically linked, not dynamically loaded
+            clang_args: vec![],
+            raw_lines: vec![],
+            min_cuda_version: Some("cuda-11040"), // TensorRT requires CUDA 11+
+        },
     ]
 }
 
@@ -613,6 +644,7 @@ fn create_bindings(modules: &[ModuleConfig], cuda_versions: &[&str]) -> Result<(
                 "cudnn" => generate_cudnn(cuda_version, module, &primary_archives, &multi_progress),
                 "nccl" => generate_nccl(cuda_version, module, &primary_archives, &multi_progress),
                 "cutensor" => generate_cutensor(cuda_version, module, &primary_archives, &multi_progress),
+                "tensorrt" => generate_tensorrt(cuda_version, module, &primary_archives, &multi_progress),
                 _ => generate_sys(cuda_version, module, &primary_archives, &multi_progress),
             };
             let archive = archive.context(format!(
@@ -791,6 +823,44 @@ fn generate_cudnn(
     module.run_bindgen(cuda_version, &archive_dir, primary_archives)?;
 
     Ok(archive_dir)
+}
+
+fn generate_tensorrt(
+    cuda_version: &str,
+    module: &ModuleConfig,
+    primary_archives: &[PathBuf],
+    _multi_progress: &MultiProgress,
+) -> Result<PathBuf> {
+    // TensorRT is not in NVIDIA's redistrib, so we use local installation
+    let trt_root = std::env::var("TRT_ROOT").unwrap_or_else(|_| {
+        // Try common TensorRT installation paths
+        for path in [
+            "/usr/local/TensorRT",
+            "/opt/TensorRT",
+            "/usr",
+        ] {
+            if Path::new(path).join("include/NvInfer.h").exists() {
+                return path.to_string();
+            }
+        }
+        panic!(
+            "TensorRT not found. Please set TRT_ROOT environment variable to your TensorRT installation path.\n\
+             Example: export TRT_ROOT=/opt/TensorRT-10.0.1"
+        );
+    });
+
+    let trt_path = PathBuf::from(&trt_root);
+    if !trt_path.join("include/NvInfer.h").exists() {
+        return Err(anyhow::anyhow!(
+            "TensorRT installation at {} does not contain include/NvInfer.h",
+            trt_root
+        ));
+    }
+
+    // Run bindgen on the C wrapper header
+    module.run_bindgen(cuda_version, &trt_path, primary_archives)?;
+
+    Ok(trt_path)
 }
 
 fn generate_nccl(

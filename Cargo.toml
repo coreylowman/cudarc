@@ -36,6 +36,7 @@ features = [
     "nvtx",
     "cupti",
     "cutensor",
+    "tensorrt",
 ]
 
 [features]
@@ -87,6 +88,7 @@ cufile = ["driver"]
 nvtx = ["driver"]
 cupti = ["runtime", "driver"]
 cutensor = ["driver"]
+tensorrt = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]
@@ -103,3 +105,6 @@ half = { version = "2", optional = true, default-features = false, features = [
 float8 = { version = "0.3.0", optional = true }
 float4 = { version = "0.1.0", optional = true }
 libloading = "0.8"
+
+[build-dependencies]
+cc = "1.0"

@@ -153,6 +153,8 @@ pub mod nvrtc;
 pub mod nvtx;
 #[cfg(feature = "runtime")]
 pub mod runtime;
+#[cfg(feature = "tensorrt")]
+pub mod tensorrt;
 
 pub mod types;
 
