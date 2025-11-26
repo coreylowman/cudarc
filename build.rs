@@ -94,6 +94,10 @@ fn main() {
     println!("cargo:rustc-env=CUDA_MAJOR_VERSION={major}");
     println!("cargo:rustc-env=CUDA_MINOR_VERSION={minor}");
 
+    // Compile TensorRT C++ wrapper
+    #[cfg(feature = "tensorrt")]
+    compile_tensorrt_wrapper(major, minor);
+
     #[cfg(feature = "dynamic-linking")]
     dynamic_linking(major, minor);
 
@@ -143,6 +147,76 @@ fn cuda_version_from_build_system() -> (usize, usize) {
 }
 
 #[allow(unused)]
+fn compile_tensorrt_wrapper(major: usize, minor: usize) {
+    // Get TensorRT root directory from environment or use default
+    let trt_root = std::env::var("TRT_ROOT").unwrap_or_else(|_| {
+        // Try common TensorRT installation paths
+        for path in [
+            "/usr/local/TensorRT",
+            "/opt/TensorRT",
+            "/usr",
+        ] {
+            if std::path::Path::new(path).join("include/NvInfer.h").exists() {
+                return path.to_string();
+            }
+        }
+        panic!(
+            "TensorRT not found. Please set TRT_ROOT environment variable to your TensorRT installation path.\n\
+             Example: export TRT_ROOT=/opt/TensorRT-10.0.1"
+        );
+    });
+
+    // Get CUDA root directory
+    let cuda_root = TYPICAL_CUDA_PATH_ENV_VARS
+        .iter()
+        .find_map(|var| std::env::var(var).ok())
+        .unwrap_or_else(|| {
+            for path in ["/usr/local/cuda", "/opt/cuda", "/usr"] {
+                if std::path::Path::new(path).join("include/cuda.h").exists() {
+                    return path.to_string();
+                }
+            }
+            "/usr/local/cuda".to_string()
+        });
+
+    let trt_include = format!("{}/include", trt_root);
+    let cuda_include = format!("{}/include", cuda_root);
+
+    println!("cargo:rerun-if-changed=src/tensorrt/sys/cpp_wrapper/trt_wrapper.cpp");
+    println!("cargo:rerun-if-changed=src/tensorrt/sys/cpp_wrapper/trt_wrapper.h");
+    println!("cargo:rerun-if-env-changed=TRT_ROOT");
+
+    // Always build C++ wrapper as static library (it's small and cudarc-specific)
+    // The wrapper will be linked into cudarc, then calls TensorRT
+    cc::Build::new()
+        .cpp(true)
+        .file("src/tensorrt/sys/cpp_wrapper/trt_wrapper.cpp")
+        .include(&trt_include)
+        .include(&cuda_include)
+        .flag("-std=c++11")
+        .compile("trt_wrapper");
+
+    // Add TensorRT library search paths
+    for subdir in ["lib", "lib64", "lib/x86_64-linux-gnu"] {
+        let lib_path = format!("{}/{}", trt_root, subdir);
+        if std::path::Path::new(&lib_path).is_dir() {
+            println!("cargo:rustc-link-search=native={}", lib_path);
+        }
+    }
+
+    // Link C++ standard library (required for wrapper)
+    #[cfg(target_os = "linux")]
+    println!("cargo:rustc-link-lib=dylib=stdc++");
+    #[cfg(target_os = "macos")]
+    println!("cargo:rustc-link-lib=dylib=c++");
+
+    // Always link TensorRT libraries - the wrapper needs them
+    // (wrapper is statically linked, but it calls TensorRT which can be dynamic/static)
+    println!("cargo:rustc-link-lib=dylib=nvinfer");
+    println!("cargo:rustc-link-lib=dylib=nvonnxparser");
+}
+
+#[allow(unused)]
 fn dynamic_linking(major: usize, minor: usize) {
     for path in link_searches(major, minor) {
         println!("cargo:rustc-link-search=native={}", path.display());
@@ -181,6 +255,18 @@ fn dynamic_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=dylib=nvToolsExt");
     #[cfg(feature = "cutensor")]
     println!("cargo:rustc-link-lib=dylib=cutensor");
+    #[cfg(feature = "tensorrt")]
+    {
+        // Note: wrapper is statically linked, but TensorRT libs are dynamic
+        println!("cargo:rustc-link-lib=dylib=nvinfer");
+        println!("cargo:rustc-link-lib=dylib=nvonnxparser");
+
+        // Link C++ standard library
+        #[cfg(target_os = "linux")]
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+        #[cfg(target_os = "macos")]
+        println!("cargo:rustc-link-lib=dylib=c++");
+    }
 }
 
 #[allow(unused)]
@@ -189,7 +275,19 @@ fn static_linking(major: usize, minor: usize) {
         println!("cargo:rustc-link-search=native={}", path.display());
     }
 
-    println!("cargo:rustc-link-lib=static:+whole-archive=stdc++");
+    // Add system library paths for stdc++
+    #[cfg(target_os = "linux")]
+    {
+        println!("cargo:rustc-link-search=native=/usr/lib");
+        if std::path::Path::new("/usr/lib64").exists() {
+            println!("cargo:rustc-link-search=native=/usr/lib64");
+        }
+        if std::path::Path::new("/usr/lib/x86_64-linux-gnu").exists() {
+            println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+        }
+    }
+
+    println!("cargo:rustc-link-lib=static=stdc++");
     #[cfg(any(feature = "driver", feature = "runtime"))]
     {
         println!("cargo:rustc-link-lib=dylib=cuda");
@@ -240,6 +338,18 @@ fn static_linking(major: usize, minor: usize) {
     println!("cargo:rustc-link-lib=dylib=nvToolsExt");
     #[cfg(feature = "cutensor")]
     println!("cargo:rustc-link-lib=static:+whole-archive=cutensor_static");
+    #[cfg(feature = "tensorrt")]
+    {
+        // Note: wrapper is statically linked, but TensorRT libs are dynamic (no static TRT libs)
+        println!("cargo:rustc-link-lib=dylib=nvinfer");
+        println!("cargo:rustc-link-lib=dylib=nvonnxparser");
+
+        // Link C++ standard library
+        #[cfg(target_os = "linux")]
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+        #[cfg(target_os = "macos")]
+        println!("cargo:rustc-link-lib=dylib=c++");
+    }
 }
 
 #[allow(unused)]
