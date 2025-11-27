@@ -8,6 +8,7 @@ use std::sync::Arc;
 mod asum;
 mod gemm;
 mod gemv;
+mod gmm;
 
 pub use asum::*;
 pub use gemm::*;
