@@ -241,11 +241,11 @@ impl<T: GmmDType> Gmm<T> for CudaBlas {
 mod tests {
     use super::*;
     use crate::driver::{CudaContext, DevicePtr};
-    use half::{bf16, f16};
 
     #[test]
     #[cfg(feature = "f16")]
     fn test_grouped_gemm_raw_f16() {
+        use half::f16;
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let handle = CudaBlas::new(stream.clone()).unwrap();
@@ -343,6 +343,7 @@ mod tests {
     #[test]
     #[cfg(feature = "f16")]
     fn test_grouped_gemm_raw_bf16() {
+        use half::bf16;
         let ctx = CudaContext::new(0).unwrap();
         let stream = ctx.default_stream();
         let handle = CudaBlas::new(stream.clone()).unwrap();
