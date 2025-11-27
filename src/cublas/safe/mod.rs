@@ -8,16 +8,18 @@ use std::sync::Arc;
 mod asum;
 mod gemm;
 mod gemv;
+mod gmm;
 
 pub use asum::*;
 pub use gemm::*;
 pub use gemv::*;
+pub use gmm::*;
 
 /// Wrapper around [sys::cublasHandle_t]
 ///
 /// 1. Create with [CudaBlas::new()]
-/// 2. Execute gemm/gemv kernels with [Gemv] and [Gemm]. Both f32 and f64 are supported
-///    for both
+/// 2. Execute gemm/gemv/gmm kernels with [Gemv], [Gemm] and [Gmm]. Both f32 and f64 are supported
+///    for [Gemm] and [Gemv], f16 and bf16 are supported for [Gmm] if feature `half` is activated.
 ///
 /// Note: This maintains a instance of [`Arc<CudaDevice>`], so will prevent the device
 /// from being dropped.
