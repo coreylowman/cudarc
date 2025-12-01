@@ -143,6 +143,8 @@ pub mod cusolvermg;
 pub mod cusparse;
 #[cfg(feature = "cutensor")]
 pub mod cutensor;
+#[cfg(feature = "cufft")]
+pub mod cufft;
 #[cfg(feature = "driver")]
 pub mod driver;
 #[cfg(feature = "nccl")]
