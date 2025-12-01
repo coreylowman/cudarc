@@ -7,16 +7,14 @@ extern crate alloc;
 #[cfg(feature = "no-std")]
 extern crate no_std_compat as std;
 pub use self::cufftCompatibility_t as cufftCompatibility;
-#[cfg(
-    any(
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090",
-        feature = "cuda-13000"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 pub use self::cufftProperty_t as cufftProperty;
 pub use self::cufftResult_t as cufftResult;
 pub use self::cufftType_t as cufftType;
@@ -41,34 +39,30 @@ pub enum cufftCompatibility_t {
 pub enum cufftProperty_t {
     NVFFT_PLAN_PROPERTY_INT64_PATIENT_JIT = 1,
 }
-#[cfg(
-    any(
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090",
-        feature = "cuda-13000"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090",
+    feature = "cuda-13000"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cufftProperty_t {
     NVFFT_PLAN_PROPERTY_INT64_PATIENT_JIT = 1,
     NVFFT_PLAN_PROPERTY_INT64_MAX_NUM_HOST_THREADS = 2,
 }
-#[cfg(
-    any(
-        feature = "cuda-12000",
-        feature = "cuda-12010",
-        feature = "cuda-12020",
-        feature = "cuda-12030",
-        feature = "cuda-12040",
-        feature = "cuda-12050",
-        feature = "cuda-12060",
-        feature = "cuda-12080",
-        feature = "cuda-12090"
-    )
-)]
+#[cfg(any(
+    feature = "cuda-12000",
+    feature = "cuda-12010",
+    feature = "cuda-12020",
+    feature = "cuda-12030",
+    feature = "cuda-12040",
+    feature = "cuda-12050",
+    feature = "cuda-12060",
+    feature = "cuda-12080",
+    feature = "cuda-12090"
+))]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum cufftResult_t {
@@ -217,16 +211,14 @@ extern "C" {
         odata: *mut cufftDoubleComplex,
         direction: ::core::ffi::c_int,
     ) -> cufftResult;
-    #[cfg(
-        any(
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090",
-            feature = "cuda-13000"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn cufftGetPlanPropertyInt64(
         plan: cufftHandle,
         property: cufftProperty,
@@ -370,44 +362,34 @@ extern "C" {
         type_: cufftType,
         batch: ::core::ffi::c_int,
     ) -> cufftResult;
-    #[cfg(
-        any(
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090",
-            feature = "cuda-13000"
-        )
-    )]
-    pub fn cufftResetPlanProperty(
-        plan: cufftHandle,
-        property: cufftProperty,
-    ) -> cufftResult;
+    #[cfg(any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
+    pub fn cufftResetPlanProperty(plan: cufftHandle, property: cufftProperty) -> cufftResult;
     pub fn cufftSetAutoAllocation(
         plan: cufftHandle,
         autoAllocate: ::core::ffi::c_int,
     ) -> cufftResult;
-    #[cfg(
-        any(
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090",
-            feature = "cuda-13000"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub fn cufftSetPlanPropertyInt64(
         plan: cufftHandle,
         property: cufftProperty,
         inputValueInt: ::core::ffi::c_longlong,
     ) -> cufftResult;
     pub fn cufftSetStream(plan: cufftHandle, stream: cudaStream_t) -> cufftResult;
-    pub fn cufftSetWorkArea(
-        plan: cufftHandle,
-        workArea: *mut ::core::ffi::c_void,
-    ) -> cufftResult;
+    pub fn cufftSetWorkArea(plan: cufftHandle, workArea: *mut ::core::ffi::c_void) -> cufftResult;
 }
 #[cfg(feature = "dynamic-loading")]
 mod loaded {
@@ -456,19 +438,8 @@ mod loaded {
         batch: ::core::ffi::c_int,
         workSize: *mut usize,
     ) -> cufftResult {
-        (culib()
-            .cufftEstimateMany)(
-            rank,
-            n,
-            inembed,
-            istride,
-            idist,
-            onembed,
-            ostride,
-            odist,
-            type_,
-            batch,
-            workSize,
+        (culib().cufftEstimateMany)(
+            rank, n, inembed, istride, idist, onembed, ostride, odist, type_, batch, workSize,
         )
     }
     pub unsafe fn cufftExecC2C(
@@ -515,16 +486,14 @@ mod loaded {
     ) -> cufftResult {
         (culib().cufftExecZ2Z)(plan, idata, odata, direction)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090",
-            feature = "cuda-13000"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn cufftGetPlanPropertyInt64(
         plan: cufftHandle,
         property: cufftProperty,
@@ -538,10 +507,7 @@ mod loaded {
     ) -> cufftResult {
         (culib().cufftGetProperty)(type_, value)
     }
-    pub unsafe fn cufftGetSize(
-        handle: cufftHandle,
-        workSize: *mut usize,
-    ) -> cufftResult {
+    pub unsafe fn cufftGetSize(handle: cufftHandle, workSize: *mut usize) -> cufftResult {
         (culib().cufftGetSize)(handle, workSize)
     }
     pub unsafe fn cufftGetSize1d(
@@ -586,19 +552,8 @@ mod loaded {
         batch: ::core::ffi::c_int,
         workArea: *mut usize,
     ) -> cufftResult {
-        (culib()
-            .cufftGetSizeMany)(
-            handle,
-            rank,
-            n,
-            inembed,
-            istride,
-            idist,
-            onembed,
-            ostride,
-            odist,
-            type_,
-            batch,
+        (culib().cufftGetSizeMany)(
+            handle, rank, n, inembed, istride, idist, onembed, ostride, odist, type_, batch,
             workArea,
         )
     }
@@ -616,20 +571,8 @@ mod loaded {
         batch: ::core::ffi::c_longlong,
         workSize: *mut usize,
     ) -> cufftResult {
-        (culib()
-            .cufftGetSizeMany64)(
-            plan,
-            rank,
-            n,
-            inembed,
-            istride,
-            idist,
-            onembed,
-            ostride,
-            odist,
-            type_,
-            batch,
-            workSize,
+        (culib().cufftGetSizeMany64)(
+            plan, rank, n, inembed, istride, idist, onembed, ostride, odist, type_, batch, workSize,
         )
     }
     pub unsafe fn cufftGetVersion(version: *mut ::core::ffi::c_int) -> cufftResult {
@@ -677,20 +620,8 @@ mod loaded {
         batch: ::core::ffi::c_int,
         workSize: *mut usize,
     ) -> cufftResult {
-        (culib()
-            .cufftMakePlanMany)(
-            plan,
-            rank,
-            n,
-            inembed,
-            istride,
-            idist,
-            onembed,
-            ostride,
-            odist,
-            type_,
-            batch,
-            workSize,
+        (culib().cufftMakePlanMany)(
+            plan, rank, n, inembed, istride, idist, onembed, ostride, odist, type_, batch, workSize,
         )
     }
     pub unsafe fn cufftMakePlanMany64(
@@ -707,20 +638,8 @@ mod loaded {
         batch: ::core::ffi::c_longlong,
         workSize: *mut usize,
     ) -> cufftResult {
-        (culib()
-            .cufftMakePlanMany64)(
-            plan,
-            rank,
-            n,
-            inembed,
-            istride,
-            idist,
-            onembed,
-            ostride,
-            odist,
-            type_,
-            batch,
-            workSize,
+        (culib().cufftMakePlanMany64)(
+            plan, rank, n, inembed, istride, idist, onembed, ostride, odist, type_, batch, workSize,
         )
     }
     pub unsafe fn cufftPlan1d(
@@ -761,31 +680,18 @@ mod loaded {
         type_: cufftType,
         batch: ::core::ffi::c_int,
     ) -> cufftResult {
-        (culib()
-            .cufftPlanMany)(
-            plan,
-            rank,
-            n,
-            inembed,
-            istride,
-            idist,
-            onembed,
-            ostride,
-            odist,
-            type_,
-            batch,
+        (culib().cufftPlanMany)(
+            plan, rank, n, inembed, istride, idist, onembed, ostride, odist, type_, batch,
         )
     }
-    #[cfg(
-        any(
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090",
-            feature = "cuda-13000"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn cufftResetPlanProperty(
         plan: cufftHandle,
         property: cufftProperty,
@@ -798,16 +704,14 @@ mod loaded {
     ) -> cufftResult {
         (culib().cufftSetAutoAllocation)(plan, autoAllocate)
     }
-    #[cfg(
-        any(
-            feature = "cuda-12040",
-            feature = "cuda-12050",
-            feature = "cuda-12060",
-            feature = "cuda-12080",
-            feature = "cuda-12090",
-            feature = "cuda-13000"
-        )
-    )]
+    #[cfg(any(
+        feature = "cuda-12040",
+        feature = "cuda-12050",
+        feature = "cuda-12060",
+        feature = "cuda-12080",
+        feature = "cuda-12090",
+        feature = "cuda-13000"
+    ))]
     pub unsafe fn cufftSetPlanPropertyInt64(
         plan: cufftHandle,
         property: cufftProperty,
@@ -815,10 +719,7 @@ mod loaded {
     ) -> cufftResult {
         (culib().cufftSetPlanPropertyInt64)(plan, property, inputValueInt)
     }
-    pub unsafe fn cufftSetStream(
-        plan: cufftHandle,
-        stream: cudaStream_t,
-    ) -> cufftResult {
+    pub unsafe fn cufftSetStream(plan: cufftHandle, stream: cudaStream_t) -> cufftResult {
         (culib().cufftSetStream)(plan, stream)
     }
     pub unsafe fn cufftSetWorkArea(
@@ -895,16 +796,14 @@ mod loaded {
             odata: *mut cufftDoubleComplex,
             direction: ::core::ffi::c_int,
         ) -> cufftResult,
-        #[cfg(
-            any(
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090",
-                feature = "cuda-13000"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub cufftGetPlanPropertyInt64: unsafe extern "C" fn(
             plan: cufftHandle,
             property: cufftProperty,
@@ -914,10 +813,8 @@ mod loaded {
             type_: libraryPropertyType,
             value: *mut ::core::ffi::c_int,
         ) -> cufftResult,
-        pub cufftGetSize: unsafe extern "C" fn(
-            handle: cufftHandle,
-            workSize: *mut usize,
-        ) -> cufftResult,
+        pub cufftGetSize:
+            unsafe extern "C" fn(handle: cufftHandle, workSize: *mut usize) -> cufftResult,
         pub cufftGetSize1d: unsafe extern "C" fn(
             handle: cufftHandle,
             nx: ::core::ffi::c_int,
@@ -968,9 +865,7 @@ mod loaded {
             batch: ::core::ffi::c_longlong,
             workSize: *mut usize,
         ) -> cufftResult,
-        pub cufftGetVersion: unsafe extern "C" fn(
-            version: *mut ::core::ffi::c_int,
-        ) -> cufftResult,
+        pub cufftGetVersion: unsafe extern "C" fn(version: *mut ::core::ffi::c_int) -> cufftResult,
         pub cufftMakePlan1d: unsafe extern "C" fn(
             plan: cufftHandle,
             nx: ::core::ffi::c_int,
@@ -1053,43 +948,35 @@ mod loaded {
             type_: cufftType,
             batch: ::core::ffi::c_int,
         ) -> cufftResult,
-        #[cfg(
-            any(
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090",
-                feature = "cuda-13000"
-            )
-        )]
-        pub cufftResetPlanProperty: unsafe extern "C" fn(
-            plan: cufftHandle,
-            property: cufftProperty,
-        ) -> cufftResult,
+        #[cfg(any(
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
+        pub cufftResetPlanProperty:
+            unsafe extern "C" fn(plan: cufftHandle, property: cufftProperty) -> cufftResult,
         pub cufftSetAutoAllocation: unsafe extern "C" fn(
             plan: cufftHandle,
             autoAllocate: ::core::ffi::c_int,
         ) -> cufftResult,
-        #[cfg(
-            any(
-                feature = "cuda-12040",
-                feature = "cuda-12050",
-                feature = "cuda-12060",
-                feature = "cuda-12080",
-                feature = "cuda-12090",
-                feature = "cuda-13000"
-            )
-        )]
+        #[cfg(any(
+            feature = "cuda-12040",
+            feature = "cuda-12050",
+            feature = "cuda-12060",
+            feature = "cuda-12080",
+            feature = "cuda-12090",
+            feature = "cuda-13000"
+        ))]
         pub cufftSetPlanPropertyInt64: unsafe extern "C" fn(
             plan: cufftHandle,
             property: cufftProperty,
             inputValueInt: ::core::ffi::c_longlong,
         ) -> cufftResult,
-        pub cufftSetStream: unsafe extern "C" fn(
-            plan: cufftHandle,
-            stream: cudaStream_t,
-        ) -> cufftResult,
+        pub cufftSetStream:
+            unsafe extern "C" fn(plan: cufftHandle, stream: cudaStream_t) -> cufftResult,
         pub cufftSetWorkArea: unsafe extern "C" fn(
             plan: cufftHandle,
             workArea: *mut ::core::ffi::c_void,
@@ -1156,16 +1043,14 @@ mod loaded {
                 .get(b"cufftExecZ2Z\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090",
-                    feature = "cuda-13000"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let cufftGetPlanPropertyInt64 = __library
                 .get(b"cufftGetPlanPropertyInt64\0")
                 .map(|sym| *sym)
@@ -1238,16 +1123,14 @@ mod loaded {
                 .get(b"cufftPlanMany\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090",
-                    feature = "cuda-13000"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let cufftResetPlanProperty = __library
                 .get(b"cufftResetPlanProperty\0")
                 .map(|sym| *sym)
@@ -1256,16 +1139,14 @@ mod loaded {
                 .get(b"cufftSetAutoAllocation\0")
                 .map(|sym| *sym)
                 .expect("Expected symbol in library");
-            #[cfg(
-                any(
-                    feature = "cuda-12040",
-                    feature = "cuda-12050",
-                    feature = "cuda-12060",
-                    feature = "cuda-12080",
-                    feature = "cuda-12090",
-                    feature = "cuda-13000"
-                )
-            )]
+            #[cfg(any(
+                feature = "cuda-12040",
+                feature = "cuda-12050",
+                feature = "cuda-12060",
+                feature = "cuda-12080",
+                feature = "cuda-12090",
+                feature = "cuda-13000"
+            ))]
             let cufftSetPlanPropertyInt64 = __library
                 .get(b"cufftSetPlanPropertyInt64\0")
                 .map(|sym| *sym)
@@ -1292,16 +1173,14 @@ mod loaded {
                 cufftExecR2C,
                 cufftExecZ2D,
                 cufftExecZ2Z,
-                #[cfg(
-                    any(
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090",
-                        feature = "cuda-13000"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 cufftGetPlanPropertyInt64,
                 cufftGetProperty,
                 cufftGetSize,
@@ -1320,28 +1199,24 @@ mod loaded {
                 cufftPlan2d,
                 cufftPlan3d,
                 cufftPlanMany,
-                #[cfg(
-                    any(
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090",
-                        feature = "cuda-13000"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 cufftResetPlanProperty,
                 cufftSetAutoAllocation,
-                #[cfg(
-                    any(
-                        feature = "cuda-12040",
-                        feature = "cuda-12050",
-                        feature = "cuda-12060",
-                        feature = "cuda-12080",
-                        feature = "cuda-12090",
-                        feature = "cuda-13000"
-                    )
-                )]
+                #[cfg(any(
+                    feature = "cuda-12040",
+                    feature = "cuda-12050",
+                    feature = "cuda-12060",
+                    feature = "cuda-12080",
+                    feature = "cuda-12090",
+                    feature = "cuda-13000"
+                ))]
                 cufftSetPlanPropertyInt64,
                 cufftSetStream,
                 cufftSetWorkArea,

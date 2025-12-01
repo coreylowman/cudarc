@@ -129,6 +129,8 @@ pub mod cublas;
 pub mod cublaslt;
 #[cfg(feature = "cudnn")]
 pub mod cudnn;
+#[cfg(feature = "cufft")]
+pub mod cufft;
 #[cfg(feature = "cufile")]
 pub mod cufile;
 #[cfg(feature = "cupti")]
@@ -143,8 +145,6 @@ pub mod cusolvermg;
 pub mod cusparse;
 #[cfg(feature = "cutensor")]
 pub mod cutensor;
-#[cfg(feature = "cufft")]
-pub mod cufft;
 #[cfg(feature = "driver")]
 pub mod driver;
 #[cfg(feature = "nccl")]
