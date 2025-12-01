@@ -387,6 +387,21 @@ fn create_modules() -> Vec<ModuleConfig> {
             raw_lines: vec![],
             min_cuda_version: Some("cuda-12000"),
         },
+        ModuleConfig {
+            cudarc_name: "cufft",
+            redist_name: "libcufft",
+            allowlist: Filters {
+                types: vec!["^cufft.*"],
+                functions: vec!["^cufft.*"],
+                vars: vec!["^cufft.*"],
+            },
+            allowlist_recursively: true,
+            blocklist: Filters::none(),
+            libs: vec!["cufft"],
+            clang_args: vec![],
+            raw_lines: vec![],
+            min_cuda_version: Some("cuda-12000"),
+        },
     ]
 }
 

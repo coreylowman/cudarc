@@ -87,6 +87,7 @@ cufile = ["driver"]
 nvtx = ["driver"]
 cupti = ["runtime", "driver"]
 cutensor = ["driver"]
+cufft = ["driver"]
 
 std = []
 no-std = ["no-std-compat/std"]
