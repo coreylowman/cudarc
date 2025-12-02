@@ -40,6 +40,16 @@ impl Ptx {
             }
         }
     }
+
+    /// If `self` is a compiled image (obtained using [compile_ptx] or [compile_ptx_with_opts]), get as bytes.
+    pub fn as_bytes(&self) -> Option<&[u8]> {
+        match &self.0 {
+            PtxKind::Image(bytes) => unsafe {
+                Some(std::slice::from_raw_parts(bytes.as_ptr().cast(), bytes.len()))
+            },
+            PtxKind::Src(_) | PtxKind::File(_) => None
+        }
+    }
 }
 
 impl<S: Into<String>> From<S> for Ptx {
