@@ -45,9 +45,12 @@ impl Ptx {
     pub fn as_bytes(&self) -> Option<&[u8]> {
         match &self.0 {
             PtxKind::Image(bytes) => unsafe {
-                Some(std::slice::from_raw_parts(bytes.as_ptr().cast(), bytes.len()))
+                Some(std::slice::from_raw_parts(
+                    bytes.as_ptr().cast(),
+                    bytes.len(),
+                ))
             },
-            PtxKind::Src(_) | PtxKind::File(_) => None
+            PtxKind::Src(_) | PtxKind::File(_) => None,
         }
     }
 }
